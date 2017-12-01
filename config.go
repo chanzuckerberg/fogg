@@ -19,6 +19,15 @@ type Config struct {
 	Defaults defaults `json:"defaults"`
 }
 
+func DefaultConfig() *Config {
+	return &Config{
+		Defaults: defaults{
+			SharedInfraPath:  "git@github.com:chanzuckerberg/shared-infra//",
+			TerraformVersion: "0.11.0",
+		},
+	}
+}
+
 func ReadConfig(f io.ReadCloser) (*Config, error) {
 	c := &Config{}
 	b, err := ioutil.ReadAll(f)
