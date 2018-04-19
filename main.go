@@ -2,10 +2,9 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"io"
 	"os"
 
+	"github.com/ryanking/fogg/plan"
 	"github.com/spf13/afero"
 )
 
@@ -16,12 +15,11 @@ func main() {
 	pwd, _ := os.Getwd()
 	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
-	if cmd == "init" {
+	switch cmd {
+	case "init":
 		Init(fs)
-		return
+	case "plan":
+		plan.Plan(fs)
 	}
-	f, _ := os.Open("fogg.json")
-	c, _ := ReadConfig(io.ReadCloser(f))
-	fmt.Println("hello world")
-	fmt.Printf("%#v\n", c)
+	return
 }

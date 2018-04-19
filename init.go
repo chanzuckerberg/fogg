@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 
+	"github.com/ryanking/fogg/config"
 	prompt "github.com/segmentio/go-prompt"
 	"github.com/spf13/afero"
 )
@@ -16,8 +17,8 @@ func userPrompt() (string, string, string, string) {
 	return project, region, bucket, profile
 }
 
-func createConfig(project, region, bucket, profile string) *Config {
-	c := DefaultConfig()
+func createConfig(project, region, bucket, profile string) *config.Config {
+	c := config.DefaultConfig()
 	c.Defaults.Project = project
 	c.Defaults.AWSRegion = region
 	c.Defaults.InfraBucket = bucket
@@ -26,7 +27,7 @@ func createConfig(project, region, bucket, profile string) *Config {
 	return c
 }
 
-func writeConfig(fs afero.Fs, config *Config) error {
+func writeConfig(fs afero.Fs, config *config.Config) error {
 	json, e := json.MarshalIndent(config, "", "  ")
 	if e != nil {
 		return e
