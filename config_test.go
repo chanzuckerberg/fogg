@@ -38,3 +38,8 @@ func TestJsonFailure(t *testing.T) {
 	assert.Nil(t, c)
 	assert.NotNil(t, e)
 }
+
+func TestDefaultConfig(t *testing.T) {
+	config := DefaultConfig()
+	assert.Equal(t, "0.11.0", config.Defaults.TerraformVersion)
+}
