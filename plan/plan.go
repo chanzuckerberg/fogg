@@ -6,24 +6,19 @@ import (
 	"github.com/spf13/afero"
 )
 
-type common struct {
-	AWSRegion          string
-	InfraBucket        string
-	Project            string
-	SharedInfraPath    string
-	TerraformVersion   string
-	AWSRegions         string
-	SharedInfraVersion string
-	Owner              string
+type account struct {
+	AccountName        string
 	AWSProfileBackend  string
 	AWSProfileProvider string
-}
-
-type account struct {
-	AccountName   string
-	OtherAccounts string
-
-	common
+	AWSRegion          string
+	AWSRegions         string
+	InfraBucket        string
+	OtherAccounts      string
+	Owner              string
+	Project            string
+	SharedInfraPath    string
+	SharedInfraVersion string
+	TerraformVersion   string
 }
 
 type plan struct {
@@ -44,15 +39,23 @@ func Plan(fs afero.Fs) (*plan, error) {
 }
 
 func buildAccounts(c *config.Config) (map[string]*account, error) {
+	defaults := c.Defaults
 	accountPlans := make(map[string]*account, len(c.Accounts))
 	for name, config := range c.Accounts {
-		util.Dump(name)
-		util.Dump(config)
 		accountPlan := &account{}
-		// copy defaults
+		accountPlan.AccountName = name
+
+		accountPlan.AWSRegion = resolveRequired(defaults.AWSRegion, config.AWSRegion)
+
+		// Set profiles
+		profile := resolveRequired(defaults.AWSProfile, config.AWSProfile)
+		profileBackend := resolveOptional(defaults.AWSProfileBackend, config.AWSProfileBackend)
+		profileProvider := resolveOptional(defaults.AWSProfileBackend, config.AWSProfileBackend)
+
+		accountPlan.AWSProfileBackend = resolveRequired(profile, profileBackend)
+		accountPlan.AWSProfileProvider = resolveRequired(profile, profileProvider)
+
 		// fix shared infra base
-		// resolve account name
-		// resolve profiles
 		// resolve other accounts
 		accountPlans[name] = accountPlan
 	}
@@ -60,11 +63,16 @@ func buildAccounts(c *config.Config) (map[string]*account, error) {
 	return accountPlans, nil
 }
 
-func coalesceStrings(in []*string) *string {
-	for i := 0; i < len(in); i++ {
-		if in[i] != nil {
-			return in[i]
-		}
+func resolveRequired(def string, override *string) string {
+	if override != nil {
+		return *override
 	}
-	return nil
+	return def
+}
+
+func resolveOptional(def *string, override *string) *string {
+	if override != nil {
+		return override
+	}
+	return def
 }

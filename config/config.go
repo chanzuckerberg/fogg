@@ -9,12 +9,14 @@ import (
 )
 
 type defaults struct {
-	AWSRegion        string `json:"aws_region"`
-	AWSProfile       string `json:"aws_profile"`
-	InfraBucket      string `json:"infra_bucket"`
-	Project          string `json:"project"`
-	SharedInfraPath  string `json:"shared_infra_base"`
-	TerraformVersion string `json:"terraform_version"`
+	AWSRegion          string  `json:"aws_region"`
+	AWSProfile         string  `json:"aws_profile"`
+	AWSProfileBackend  *string `json:"aws_profile_backend"`
+	AWSProfileProvider *string `json:"aws_profile_provider"`
+	InfraBucket        string  `json:"infra_bucket"`
+	Project            string  `json:"project"`
+	SharedInfraPath    string  `json:"shared_infra_base"`
+	TerraformVersion   string  `json:"terraform_version"`
 	// regions
 	// shared infra version
 	// owner
@@ -23,7 +25,10 @@ type defaults struct {
 }
 
 type account struct {
-	defaults
+	AWSRegion          *string `json:"aws_region"`
+	AWSProfile         *string `json:"aws_profile"`
+	AWSProfileBackend  *string `json:"aws_profile_backend"`
+	AWSProfileProvider *string `json:"aws_profile_provider"`
 }
 
 type Config struct {

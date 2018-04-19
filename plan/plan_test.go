@@ -6,26 +6,27 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCoalesceStrings(t *testing.T) {
-	var r *string
-	r = coalesceStrings([]*string{})
-	assert.Nil(t, r)
+func TestResolveRequired(t *testing.T) {
+	var resolved string
 
-	r = coalesceStrings([]*string{nil})
-	assert.Nil(t, r)
+	resolved = resolveRequired("def", nil)
+	assert.Equal(t, "def", resolved)
 
-	in := "foo"
-	r = coalesceStrings([]*string{&in})
-	assert.NotNil(t, r)
-	assert.Equal(t, "foo", *r)
+	over := "over"
+	resolved = resolveRequired("def", &over)
+	assert.Equal(t, "over", resolved)
+}
 
-	a, b, c := "a", "b", "c"
-	r = coalesceStrings([]*string{&a, &b, &c})
-	assert.NotNil(t, r)
-	assert.Equal(t, "a", *r)
+func TestResolveOptional(t *testing.T) {
+	def, override := "def", "override"
+	var resolved *string
 
-	d := "d"
-	r = coalesceStrings([]*string{nil, &d})
-	assert.NotNil(t, r)
-	assert.Equal(t, "d", *r)
+	resolved = resolveOptional(&def, &override)
+	assert.NotNil(t, resolved)
+	assert.Equal(t, *resolved, override)
+
+	resolved = resolveOptional(&def, nil)
+	assert.NotNil(t, resolved)
+	assert.Equal(t, *resolved, def)
+
 }
