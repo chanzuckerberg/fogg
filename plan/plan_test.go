@@ -3,6 +3,7 @@ package plan
 import (
 	"testing"
 
+	"github.com/ryanking/fogg/config"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -29,4 +30,23 @@ func TestResolveOptional(t *testing.T) {
 	assert.NotNil(t, resolved)
 	assert.Equal(t, *resolved, def)
 
+}
+
+func TestResolveOtherAccounts(t *testing.T) {
+	foo, bar := int64(123), int64(456)
+
+	accounts := map[string]config.Account{
+		"foo": config.Account{
+			AccountId: &foo,
+		},
+		"bar": config.Account{
+			AccountId: &bar,
+		},
+		"baz": config.Account{},
+	}
+
+	var other map[string]int64
+	other = resolveOtherAccounts(accounts, "foo")
+	assert.NotNil(t, other)
+	assert.Equal(t, map[string]int64{"bar": bar}, other)
 }

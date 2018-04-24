@@ -43,6 +43,7 @@ func buildAccounts(c *config.Config) (map[string]*account, error) {
 	accountPlans := make(map[string]*account, len(c.Accounts))
 	for name, config := range c.Accounts {
 		accountPlan := &account{}
+
 		accountPlan.AccountName = name
 
 		accountPlan.AWSRegion = resolveRequired(defaults.AWSRegion, config.AWSRegion)
@@ -55,9 +56,11 @@ func buildAccounts(c *config.Config) (map[string]*account, error) {
 		accountPlan.AWSProfileBackend = resolveRequired(profile, profileBackend)
 		accountPlan.AWSProfileProvider = resolveRequired(profile, profileProvider)
 
+		// resolve and sort other accounts
+
 		// fix shared infra base
-		// resolve other accounts
 		accountPlans[name] = accountPlan
+
 	}
 
 	return accountPlans, nil
@@ -76,3 +79,18 @@ func resolveOptional(def *string, override *string) *string {
 	}
 	return def
 }
+
+func resolveOtherAccounts(accounts map[string]config.Account, currentAccount string) map[string]int64 {
+	other := make(map[string]int64)
+	for name, account := range accounts {
+		if name != currentAccount && account.AccountId != nil {
+			other[name] = *account.AccountId
+		}
+	}
+	return other
+}
+
+// def fix_local_shared_infra_base(path):
+//     if path.startswith("../"):
+//         return path.replace("../", "", 1)
+//     return path

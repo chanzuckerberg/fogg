@@ -24,18 +24,19 @@ type defaults struct {
 	// aws_profile_provider
 }
 
-type account struct {
-	AWSRegion          *string `json:"aws_region"`
+type Account struct {
+	AccountId          *int64  `json:"account_id"`
 	AWSProfile         *string `json:"aws_profile"`
 	AWSProfileBackend  *string `json:"aws_profile_backend"`
 	AWSProfileProvider *string `json:"aws_profile_provider"`
+	AWSRegion          *string `json:"aws_region"`
 }
 
 type Config struct {
 	Defaults defaults `json:"defaults"`
 	// Envs     map[string]env     `json:"envs"`
 	// Modules  map[string]module  `json:"modules"`
-	Accounts map[string]account `json:"account"`
+	Accounts map[string]Account `json:"account"`
 }
 
 func DefaultConfig() *Config {
