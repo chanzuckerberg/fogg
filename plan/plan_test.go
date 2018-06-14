@@ -50,3 +50,19 @@ func TestResolveOtherAccounts(t *testing.T) {
 	assert.NotNil(t, other)
 	assert.Equal(t, map[string]int64{"bar": bar}, other)
 }
+
+func TestResolveStringArray(t *testing.T) {
+	def := []string{"foo"}
+	override := &[]string{"bar"}
+
+	result := resolveStringArray(def, override)
+	assert.Len(t, result, 1)
+	assert.Equal(t, "bar", result[0])
+
+	override = nil
+
+	result2 := resolveStringArray(def, override)
+	assert.Len(t, result2, 1)
+	assert.Equal(t, "foo", result2[0])
+
+}
