@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/ryanking/fogg/config"
+	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -65,4 +66,34 @@ func TestResolveStringArray(t *testing.T) {
 	assert.Len(t, result2, 1)
 	assert.Equal(t, "foo", result2[0])
 
+}
+
+func TestPlanBasic(t *testing.T) {
+	config := `
+{
+  "defaults": {
+    "aws_region": "reg",
+    "aws_profile": "prof",
+    "infra_bucket": "buck",
+    "project": "proj",
+    "terraform_version": "0.100.0",
+    "owner": "foo@example.com"
+  },
+  "accounts": {
+    "foo": {
+      "account_id": 123
+    },
+    "bar": {
+      "account_id": 456
+    }
+  }
+}
+`
+	fs := afero.NewMemMapFs()
+	// create test files and directories
+	afero.WriteFile(fs, "fogg.json", []byte(config), 0644)
+	plan, _ := Plan(fs)
+	assert.NotNil(t, plan)
+	assert.NotNil(t, plan.Accounts)
+	assert.Len(t, plan.Accounts, 2)
 }

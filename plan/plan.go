@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/ryanking/fogg/config"
-	"github.com/ryanking/fogg/util"
 	"github.com/spf13/afero"
 )
 
@@ -30,7 +29,6 @@ type plan struct {
 
 func Plan(fs afero.Fs) (*plan, error) {
 	c, _ := config.FindAndReadConfig(fs)
-	util.Dump(c)
 	p := &plan{}
 	// read config and validate
 	// build repo plan
