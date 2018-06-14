@@ -6,9 +6,14 @@
     "project": "asdf",
     "shared_infra_base": "git@github.com:chanzuckerberg/shared-infra//",
     "terraform_version": "0.11.0",
+    "owner": "foo@example.com"
   },
   "accounts": {
-    "foo": {},
-    "bar": {}
+    "foo": {
+        "account_id": 123
+    },
+    "bar": {
+        "account_id": 456
+    }
   }
 }
