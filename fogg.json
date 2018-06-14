@@ -5,6 +5,10 @@
     "infra_bucket": "asdf",
     "project": "asdf",
     "shared_infra_base": "git@github.com:chanzuckerberg/shared-infra//",
-    "terraform_version": "0.11.0"
+    "terraform_version": "0.11.0",
+  },
+  "accounts": {
+    "foo": {},
+    "bar": {}
   }
 }

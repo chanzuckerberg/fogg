@@ -19,7 +19,8 @@ func main() {
 	case "init":
 		Init(fs)
 	case "plan":
-		plan.Plan(fs)
+		p, _ := plan.Plan(fs)
+		plan.Print(p)
 	}
 	return
 }

@@ -1,19 +1,22 @@
 package plan
 
 import (
+	"fmt"
+
 	"github.com/ryanking/fogg/config"
 	"github.com/ryanking/fogg/util"
 	"github.com/spf13/afero"
 )
 
 type account struct {
+	AccountId          *int64
 	AccountName        string
 	AWSProfileBackend  string
 	AWSProfileProvider string
 	AWSRegion          string
-	AWSRegions         string
+	AWSRegions         []string
 	InfraBucket        string
-	OtherAccounts      string
+	OtherAccounts      map[string]int64
 	Owner              string
 	Project            string
 	SharedInfraPath    string
@@ -22,33 +25,60 @@ type account struct {
 }
 
 type plan struct {
-	accounts map[string]account
+	Accounts map[string]*account
 }
 
 func Plan(fs afero.Fs) (*plan, error) {
 	c, _ := config.FindAndReadConfig(fs)
 	util.Dump(c)
+	p := &plan{}
 	// read config and validate
 	// build repo plan
 	// build .sicc version plan
-	buildAccounts(c)
+	p.Accounts = buildAccounts(c)
 	// build modules plan
 	// build envs plan
 	// walk config and apply inheritance rules
-	return nil, nil
+	return p, nil
 }
 
-func buildAccounts(c *config.Config) (map[string]*account, error) {
+func Print(p *plan) error {
+	fmt.Println("Accounts:")
+	for name, account := range p.Accounts {
+		fmt.Printf("\t%s:\n", name)
+		if account.AccountId != nil {
+			fmt.Printf("\t\taccount id: %d\n", account.AccountId)
+		}
+		fmt.Printf("\t\tregions: %v\n", account.AWSRegions)
+		fmt.Printf("\t\tid: %v\n", account.AccountId)
+		fmt.Printf("\t\tname: %v\n", account.AccountName)
+		fmt.Printf("\t\taws_profile_backend: %v\n", account.AWSProfileBackend)
+		fmt.Printf("\t\taws_profile_provider: %v\n", account.AWSProfileProvider)
+		fmt.Printf("\t\taws_region: %v\n", account.AWSRegion)
+		fmt.Printf("\t\taws_regions: %v\n", account.AWSRegions)
+		fmt.Printf("\t\tinfra_bucket: %v\n", account.InfraBucket)
+		fmt.Printf("\t\tother_accounts: %v\n", account.OtherAccounts)
+		fmt.Printf("\t\towner: %v\n", account.Owner)
+		fmt.Printf("\t\tproject: %v\n", account.Project)
+		fmt.Printf("\t\tterraform_version: %v\n", account.TerraformVersion)
+
+	}
+	return nil
+}
+
+func buildAccounts(c *config.Config) map[string]*account {
 	defaults := c.Defaults
 	accountPlans := make(map[string]*account, len(c.Accounts))
 	for name, config := range c.Accounts {
 		accountPlan := &account{}
 
 		accountPlan.AccountName = name
+		accountPlan.AccountId = config.AccountId
 
 		accountPlan.AWSRegion = resolveRequired(defaults.AWSRegion, config.AWSRegion)
 
-		// Set profiles
+		accountPlan.AWSRegions = resolveStringArray(defaults.AWSRegions, config.AWSRegions)
+
 		profile := resolveRequired(defaults.AWSProfile, config.AWSProfile)
 		profileBackend := resolveOptional(defaults.AWSProfileBackend, config.AWSProfileBackend)
 		profileProvider := resolveOptional(defaults.AWSProfileBackend, config.AWSProfileBackend)
@@ -56,14 +86,27 @@ func buildAccounts(c *config.Config) (map[string]*account, error) {
 		accountPlan.AWSProfileBackend = resolveRequired(profile, profileBackend)
 		accountPlan.AWSProfileProvider = resolveRequired(profile, profileProvider)
 
-		// resolve and sort other accounts
+		// TODO resolve and sort other accounts
+		accountPlan.OtherAccounts = resolveOtherAccounts(c.Accounts, name)
 
-		// fix shared infra base
 		accountPlans[name] = accountPlan
-
 	}
 
-	return accountPlans, nil
+	return accountPlans
+}
+
+func resolve(def interface{}, override interface{}) interface{} {
+	if override != nil {
+		return override
+	}
+	return def
+}
+
+func resolveStringArray(def []string, override *[]string) []string {
+	if override != nil {
+		return *override
+	}
+	return def
 }
 
 func resolveRequired(def string, override *string) string {
