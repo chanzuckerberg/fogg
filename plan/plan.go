@@ -92,13 +92,6 @@ func buildAccounts(c *config.Config) map[string]*account {
 	return accountPlans
 }
 
-func resolve(def interface{}, override interface{}) interface{} {
-	if override != nil {
-		return override
-	}
-	return def
-}
-
 func resolveStringArray(def []string, override *[]string) []string {
 	if override != nil {
 		return *override
