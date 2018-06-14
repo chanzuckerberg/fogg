@@ -90,7 +90,6 @@ func TestPlanBasic(t *testing.T) {
 }
 `
 	fs := afero.NewMemMapFs()
-	// create test files and directories
 	afero.WriteFile(fs, "fogg.json", []byte(config), 0644)
 	plan, _ := Plan(fs)
 	assert.NotNil(t, plan)
