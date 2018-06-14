@@ -86,7 +86,6 @@ func buildAccounts(c *config.Config) map[string]*account {
 		accountPlan.AWSProfileBackend = resolveRequired(profile, profileBackend)
 		accountPlan.AWSProfileProvider = resolveRequired(profile, profileProvider)
 
-		// TODO resolve and sort other accounts
 		accountPlan.OtherAccounts = resolveOtherAccounts(c.Accounts, name)
 
 		accountPlans[name] = accountPlan
