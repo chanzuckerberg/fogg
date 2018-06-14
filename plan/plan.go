@@ -18,8 +18,6 @@ type account struct {
 	OtherAccounts      map[string]int64
 	Owner              string
 	Project            string
-	SharedInfraPath    string
-	SharedInfraVersion string
 	TerraformVersion   string
 }
 
@@ -122,8 +120,3 @@ func resolveOtherAccounts(accounts map[string]config.Account, currentAccount str
 	}
 	return other
 }
-
-// def fix_local_shared_infra_base(path):
-//     if path.startswith("../"):
-//         return path.replace("../", "", 1)
-//     return path
