@@ -4,6 +4,7 @@ import (
 	"flag"
 	"os"
 
+	finit "github.com/ryanking/fogg/init" // cannot import as init
 	"github.com/ryanking/fogg/plan"
 	"github.com/spf13/afero"
 )
@@ -17,7 +18,7 @@ func main() {
 
 	switch cmd {
 	case "init":
-		Init(fs)
+		finit.Init(fs)
 	case "plan":
 		p, _ := plan.Plan(fs)
 		plan.Print(p)
