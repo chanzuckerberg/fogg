@@ -31,6 +31,7 @@ type Account struct {
 	AWSRegions         *[]string `json:"aws_regions"` // maybe rename to provider region
 	TerraformVersion   *string   `json:"terraform_version"`
 	InfraBucket        *string   `json:"infra_s3_bucket"`
+	Owner              *string   `json:"owner"`
 }
 
 type Env struct{}
