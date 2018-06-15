@@ -5,7 +5,6 @@ DIRTY=$(shell if `git diff-index --quiet HEAD --`; then echo false; else echo tr
 LDFLAGS=-ldflags "-w -s -X github.com/ryanking/fogg/util.GitSha=${SHA} -X github.com/ryanking/fogg/util.Version=${VERSION} -X github.com/ryanking/fogg/util.Dirty=${DIRTY}"
 
 build:
-	@echo $(SHA)
 	go build ${LDFLAGS} .
 
 coverage:
@@ -15,6 +14,6 @@ test:
 	go test -cover ./...
 
 install:
-	go install .
+	go install ${LDFLAGS} .
 
 .PHONY: build coverage test install
