@@ -18,8 +18,6 @@ type defaults struct {
 	Project            string    `json:"project"`
 	TerraformVersion   string    `json:"terraform_version"`
 	Owner              string    `json:"owner"`
-	// aws_profile_backend
-	// aws_profile_provider
 }
 
 type Account struct {
@@ -32,6 +30,7 @@ type Account struct {
 	TerraformVersion   *string   `json:"terraform_version"`
 	InfraBucket        *string   `json:"infra_s3_bucket"`
 	Owner              *string   `json:"owner"`
+	Project            *string   `json:"project"`
 }
 
 type Env struct{}

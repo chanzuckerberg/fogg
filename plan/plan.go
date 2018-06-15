@@ -46,7 +46,6 @@ func Print(p *plan) error {
 		if account.AccountId != nil {
 			fmt.Printf("\t\taccount id: %d\n", account.AccountId)
 		}
-		fmt.Printf("\t\tregions: %v\n", account.AWSRegions)
 		fmt.Printf("\t\tid: %d\n", account.AccountId)
 		fmt.Printf("\t\tname: %v\n", account.AccountName)
 		fmt.Printf("\t\taws_profile_backend: %v\n", account.AWSProfileBackend)
@@ -76,22 +75,18 @@ func buildAccounts(c *config.Config) map[string]*account {
 		accountPlan.AccountId = config.AccountId
 
 		accountPlan.AWSRegion = resolveRequired(defaults.AWSRegion, config.AWSRegion)
-
 		accountPlan.AWSRegions = resolveStringArray(defaults.AWSRegions, config.AWSRegions)
 
 		profile := resolveRequired(defaults.AWSProfile, config.AWSProfile)
 		profileBackend := resolveOptional(defaults.AWSProfileBackend, config.AWSProfileBackend)
 		profileProvider := resolveOptional(defaults.AWSProfileBackend, config.AWSProfileBackend)
-
 		accountPlan.AWSProfileBackend = resolveRequired(profile, profileBackend)
 		accountPlan.AWSProfileProvider = resolveRequired(profile, profileProvider)
-
 		accountPlan.OtherAccounts = resolveOtherAccounts(c.Accounts, name)
-
 		accountPlan.TerraformVersion = resolveRequired(defaults.TerraformVersion, config.TerraformVersion)
 		accountPlan.InfraBucket = resolveRequired(defaults.InfraBucket, config.InfraBucket)
-
 		accountPlan.Owner = resolveRequired(defaults.Owner, config.Owner)
+		accountPlan.Project = resolveRequired(defaults.Project, config.Project)
 
 		accountPlans[name] = accountPlan
 	}
