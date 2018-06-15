@@ -47,17 +47,20 @@ func Print(p *plan) error {
 			fmt.Printf("\t\taccount id: %d\n", account.AccountId)
 		}
 		fmt.Printf("\t\tregions: %v\n", account.AWSRegions)
-		fmt.Printf("\t\tid: %v\n", account.AccountId)
+		fmt.Printf("\t\tid: %d\n", account.AccountId)
 		fmt.Printf("\t\tname: %v\n", account.AccountName)
 		fmt.Printf("\t\taws_profile_backend: %v\n", account.AWSProfileBackend)
 		fmt.Printf("\t\taws_profile_provider: %v\n", account.AWSProfileProvider)
 		fmt.Printf("\t\taws_region: %v\n", account.AWSRegion)
 		fmt.Printf("\t\taws_regions: %v\n", account.AWSRegions)
 		fmt.Printf("\t\tinfra_bucket: %v\n", account.InfraBucket)
-		fmt.Printf("\t\tother_accounts: %v\n", account.OtherAccounts)
 		fmt.Printf("\t\towner: %v\n", account.Owner)
 		fmt.Printf("\t\tproject: %v\n", account.Project)
 		fmt.Printf("\t\tterraform_version: %v\n", account.TerraformVersion)
+		fmt.Printf("\t\tother_accounts:\n")
+		for acct, id := range account.OtherAccounts {
+			fmt.Printf("\t\t\t%s: %d\n", acct, id)
+		}
 
 	}
 	return nil
