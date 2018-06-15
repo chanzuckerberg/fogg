@@ -79,7 +79,7 @@ func buildAccounts(c *config.Config) map[string]*account {
 
 		profile := resolveRequired(defaults.AWSProfile, config.AWSProfile)
 		profileBackend := resolveOptional(defaults.AWSProfileBackend, config.AWSProfileBackend)
-		profileProvider := resolveOptional(defaults.AWSProfileBackend, config.AWSProfileBackend)
+		profileProvider := resolveOptional(defaults.AWSProfileProvider, config.AWSProfileProvider)
 		accountPlan.AWSProfileBackend = resolveRequired(profile, profileBackend)
 		accountPlan.AWSProfileProvider = resolveRequired(profile, profileProvider)
 		accountPlan.OtherAccounts = resolveOtherAccounts(c.Accounts, name)
