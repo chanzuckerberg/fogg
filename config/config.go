@@ -29,6 +29,7 @@ type Account struct {
 	AWSProfileProvider *string   `json:"aws_profile_provider"`
 	AWSRegion          *string   `json:"aws_region"`  // maybe rename to provider region
 	AWSRegions         *[]string `json:"aws_regions"` // maybe rename to provider region
+	TerraformVersion   *string   `json:"terraform_version"`
 }
 
 type Env struct{}
