@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/ryanking/fogg/config"
+	"github.com/ryanking/fogg/util"
 	"github.com/spf13/afero"
 )
 
@@ -90,11 +91,16 @@ func buildAccounts(c *config.Config) map[string]*account {
 	return accountPlans
 }
 
-func resolveStringArray(def []string, override *[]string) []string {
+func resolveStringArray(def *[]string, override *[]string) []string {
+	util.Dump(def)
+	util.Dump(override)
 	if override != nil {
 		return *override
 	}
-	return def
+	if def != nil {
+		return *def
+	}
+	return []string{}
 }
 
 func resolveRequired(def string, override *string) string {

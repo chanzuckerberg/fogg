@@ -53,7 +53,7 @@ func TestResolveOtherAccounts(t *testing.T) {
 }
 
 func TestResolveStringArray(t *testing.T) {
-	def := []string{"foo"}
+	def := &[]string{"foo"}
 	override := &[]string{"bar"}
 
 	result := resolveStringArray(def, override)

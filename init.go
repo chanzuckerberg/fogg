@@ -8,23 +8,14 @@ import (
 	"github.com/spf13/afero"
 )
 
-func userPrompt() (string, string, string, string) {
+func userPrompt() (string, string, string, string, string) {
 	project := prompt.StringRequired("project name? ")
 	region := prompt.StringRequired("aws region? ")
 	bucket := prompt.StringRequired("infra bucket name? ")
 	profile := prompt.StringRequired("auth profile? ")
+	owner := prompt.StringRequired("owner? ")
 
-	return project, region, bucket, profile
-}
-
-func createConfig(project, region, bucket, profile string) *config.Config {
-	c := config.DefaultConfig()
-	c.Defaults.Project = project
-	c.Defaults.AWSRegion = region
-	c.Defaults.InfraBucket = bucket
-	c.Defaults.AWSProfile = profile
-
-	return c
+	return project, region, bucket, profile, owner
 }
 
 func writeConfig(fs afero.Fs, config *config.Config) error {
@@ -44,8 +35,8 @@ func writeConfig(fs afero.Fs, config *config.Config) error {
 }
 
 func Init(fs afero.Fs) error {
-	project, region, bucket, profile := userPrompt()
-	config := createConfig(project, region, bucket, profile)
+	project, region, bucket, profile, owner := userPrompt()
+	config := config.InitConfig(project, region, bucket, profile, owner)
 	e := writeConfig(fs, config)
 	return e
 }

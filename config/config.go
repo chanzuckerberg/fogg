@@ -9,17 +9,15 @@ import (
 )
 
 type defaults struct {
-	AWSProfile         string   `json:"aws_profile"`
-	AWSProfileBackend  *string  `json:"aws_profile_backend"`
-	AWSProfileProvider *string  `json:"aws_profile_provider"`
-	AWSRegion          string   `json:"aws_region"`
-	AWSRegions         []string `json:"aws_regions"`
-	InfraBucket        string   `json:"infra_bucket"`
-	Project            string   `json:"project"`
-	SharedInfraPath    string   `json:"shared_infra_base"`
-	TerraformVersion   string   `json:"terraform_version"`
-	// shared infra version
-	// owner
+	AWSProfile         string    `json:"aws_profile"`
+	AWSProfileBackend  *string   `json:"aws_profile_backend,omitempty"`
+	AWSProfileProvider *string   `json:"aws_profile_provider,omitempty"`
+	AWSRegion          string    `json:"aws_region"`
+	AWSRegions         *[]string `json:"aws_regions,omitempty"`
+	InfraBucket        string    `json:"infra_bucket"`
+	Project            string    `json:"project"`
+	TerraformVersion   string    `json:"terraform_version"`
+	Owner              string    `json:"owner"`
 	// aws_profile_backend
 	// aws_profile_provider
 }
@@ -33,36 +31,29 @@ type Account struct {
 	AWSRegions         *[]string `json:"aws_regions"` // maybe rename to provider region
 }
 
+type Env struct{}
+type Module struct{}
+
 type Config struct {
 	Defaults defaults           `json:"defaults"`
 	Accounts map[string]Account `json:"accounts"`
-	// Envs     map[string]env     `json:"envs"`
-	// Modules  map[string]module  `json:"modules"`
+	Envs     map[string]Env     `json:"envs"`
+	Modules  map[string]Module  `json:"modules"`
 }
 
-func DefaultConfig() *Config {
+func InitConfig(project, region, bucket, aws_profile, owner string) *Config {
 	return &Config{
 		Defaults: defaults{
-			SharedInfraPath:  "git@github.com:chanzuckerberg/shared-infra//",
 			TerraformVersion: "0.11.0",
-			AWSRegions: []string{
-				"ap-northeast-1",
-				"ap-northeast-2",
-				"ap-south-1",
-				"ap-southeast-1",
-				"ap-southeast-2",
-				"ca-central-1",
-				"eu-central-1",
-				"eu-west-1",
-				"eu-west-2",
-				"eu-west-3",
-				"sa-east-1",
-				"us-east-1",
-				"us-east-2",
-				"us-west-1",
-				"us-west-2",
-			},
+			Project:          project,
+			AWSRegion:        region,
+			InfraBucket:      bucket,
+			AWSProfile:       aws_profile,
+			Owner:            owner,
 		},
+		Accounts: map[string]Account{},
+		Envs:     map[string]Env{},
+		Modules:  map[string]Module{},
 	}
 }
 
