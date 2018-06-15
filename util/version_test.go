@@ -9,13 +9,13 @@ import (
 func TestVersionString(t *testing.T) {
 	var s string
 
-	s = VersionString("0.1.0", "abcdef", true, false)
+	s = versionString("0.1.0", "abcdef", true, false)
 	assert.Equal(t, "0.1.0", s)
 
-	s = VersionString("0.1.0", "abcdef", false, false)
+	s = versionString("0.1.0", "abcdef", false, false)
 	assert.Equal(t, "0.1.0-abcdef", s)
 
-	s = VersionString("0.1.0", "abcdef", false, true)
+	s = versionString("0.1.0", "abcdef", false, true)
 	assert.Equal(t, "0.1.0-abcdef-dirty", s)
 
 }

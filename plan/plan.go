@@ -26,8 +26,8 @@ type plan struct {
 	Accounts map[string]*account
 }
 
-func Plan(fs afero.Fs) (*plan, error) {
-	c, _ := config.FindAndReadConfig(fs)
+func Plan(fs afero.Fs, configFile string) (*plan, error) {
+	c, _ := config.FindAndReadConfig(fs, configFile)
 	p := &plan{}
 	// read config and validate
 	// build repo plan

@@ -15,12 +15,15 @@ var (
 func VersionString() string {
 	release, _ := strconv.ParseBool(Release)
 	dirty, _ := strconv.ParseBool(Dirty)
+	return versionString(Version, GitSha, release, dirty)
+}
 
+func versionString(version, sha string, release, dirty bool) string {
 	if release {
-		return Version
+		return version
 	}
 	if !dirty {
-		return fmt.Sprintf("%s-%s", Version, GitSha)
+		return fmt.Sprintf("%s-%s", version, sha)
 	}
-	return fmt.Sprintf("%s-%s-dirty", Version, GitSha)
+	return fmt.Sprintf("%s-%s-dirty", version, sha)
 }

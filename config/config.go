@@ -70,8 +70,8 @@ func ReadConfig(f io.ReadCloser) (*Config, error) {
 	return c, nil
 }
 
-func FindAndReadConfig(fs afero.Fs) (*Config, error) {
-	f, err := fs.Open("fogg.json")
+func FindAndReadConfig(fs afero.Fs, configFile string) (*Config, error) {
+	f, err := fs.Open(configFile)
 	if err != nil {
 		return nil, err
 	}
