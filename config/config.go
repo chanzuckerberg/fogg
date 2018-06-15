@@ -14,7 +14,7 @@ type defaults struct {
 	AWSProfileProvider *string   `json:"aws_profile_provider,omitempty"`
 	AWSRegion          string    `json:"aws_region"`
 	AWSRegions         *[]string `json:"aws_regions,omitempty"`
-	InfraBucket        string    `json:"infra_bucket"`
+	InfraBucket        string    `json:"infra_s3_bucket"`
 	Project            string    `json:"project"`
 	TerraformVersion   string    `json:"terraform_version"`
 	Owner              string    `json:"owner"`
@@ -30,6 +30,7 @@ type Account struct {
 	AWSRegion          *string   `json:"aws_region"`  // maybe rename to provider region
 	AWSRegions         *[]string `json:"aws_regions"` // maybe rename to provider region
 	TerraformVersion   *string   `json:"terraform_version"`
+	InfraBucket        *string   `json:"infra_s3_bucket"`
 }
 
 type Env struct{}

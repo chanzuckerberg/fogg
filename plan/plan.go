@@ -89,6 +89,10 @@ func buildAccounts(c *config.Config) map[string]*account {
 		accountPlan.OtherAccounts = resolveOtherAccounts(c.Accounts, name)
 
 		accountPlan.TerraformVersion = resolveRequired(defaults.TerraformVersion, config.TerraformVersion)
+		util.Dump("XXX")
+		util.Dump(defaults.InfraBucket)
+		util.Dump(config.InfraBucket)
+		accountPlan.InfraBucket = resolveRequired(defaults.InfraBucket, config.InfraBucket)
 
 		accountPlans[name] = accountPlan
 	}

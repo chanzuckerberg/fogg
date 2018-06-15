@@ -14,7 +14,7 @@ func TestParse(t *testing.T) {
 		"defaults": {
 			"aws_region": "us-west-2",
 			"aws_profile": "czi",
-			"infra_bucket": "the-bucket",
+			"infra_s3_bucket": "the-bucket",
 			"project": "test-project",
 			"shared_infra_base": "../../../../",
 			"terraform_version": "0.11.0"

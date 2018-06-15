@@ -74,7 +74,7 @@ func TestPlanBasic(t *testing.T) {
   "defaults": {
     "aws_region": "reg",
     "aws_profile": "prof",
-    "infra_bucket": "buck",
+    "infra_s3_bucket": "buck",
     "project": "proj",
     "terraform_version": "0.100.0",
     "owner": "foo@example.com"
