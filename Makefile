@@ -1,7 +1,8 @@
 SHA=$(shell git rev-parse --short HEAD)
 VERSION=$(shell cat VERSION)
 DIRTY=$(shell if `git diff-index --quiet HEAD --`; then echo false; else echo true;  fi)
-LDFLAGS=-ldflags "-w -s -X main.GitSha=${SHA} -X main.Version=${VERSION} -X main.Dirty=${DIRTY}"
+# TODO add release flag
+LDFLAGS=-ldflags "-w -s -X github.com/ryanking/fogg/util.GitSha=${SHA} -X github.com/ryanking/fogg/util.Version=${VERSION} -X github.com/ryanking/fogg/util.Dirty=${DIRTY}"
 
 build:
 	@echo $(SHA)
