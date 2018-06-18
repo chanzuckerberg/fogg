@@ -72,6 +72,12 @@ func Print(p *plan) error {
 		}
 
 	}
+
+	fmt.Println("Modules:")
+	for name, module := range p.Modules {
+		fmt.Printf("%s:\n", name)
+		fmt.Printf("\tterraform_version: %s\n", module.TerraformVersion)
+	}
 	return nil
 }
 
