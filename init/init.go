@@ -3,7 +3,7 @@ package init
 import (
 	"encoding/json"
 
-	"github.com/ryanking/fogg/config"
+	"github.com/chanzuckerberg/fogg/config"
 	prompt "github.com/segmentio/go-prompt"
 	"github.com/spf13/afero"
 )

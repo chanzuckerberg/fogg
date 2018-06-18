@@ -1,6 +1,6 @@
 package main
 
-import "github.com/ryanking/fogg/cmd"
+import "github.com/chanzuckerberg/fogg/cmd"
 
 func main() {
 	cmd.Execute()

@@ -3,7 +3,7 @@ package cmd
 import (
 	"os"
 
-	fogg_init "github.com/ryanking/fogg/init"
+	fogg_init "github.com/chanzuckerberg/fogg/init"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )

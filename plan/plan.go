@@ -3,8 +3,8 @@ package plan
 import (
 	"fmt"
 
-	"github.com/ryanking/fogg/config"
-	"github.com/ryanking/fogg/util"
+	"github.com/chanzuckerberg/fogg/config"
+	"github.com/chanzuckerberg/fogg/util"
 	"github.com/spf13/afero"
 )
 

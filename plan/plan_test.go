@@ -3,7 +3,7 @@ package plan
 import (
 	"testing"
 
-	"github.com/ryanking/fogg/config"
+	"github.com/chanzuckerberg/fogg/config"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 )

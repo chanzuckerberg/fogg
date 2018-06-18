@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/ryanking/fogg/util"
+	"github.com/chanzuckerberg/fogg/util"
 	"github.com/spf13/cobra"
 )
 

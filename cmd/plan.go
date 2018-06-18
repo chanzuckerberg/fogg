@@ -3,7 +3,7 @@ package cmd
 import (
 	"os"
 
-	"github.com/ryanking/fogg/plan"
+	"github.com/chanzuckerberg/fogg/plan"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
