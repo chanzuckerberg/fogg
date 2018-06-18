@@ -33,7 +33,10 @@ type plan struct {
 }
 
 func Plan(fs afero.Fs, configFile string) (*plan, error) {
-	c, _ := config.FindAndReadConfig(fs, configFile)
+	c, err := config.FindAndReadConfig(fs, configFile)
+	if err != nil {
+		return nil, err
+	}
 	p := &plan{}
 	// read config and validate
 	// build repo plan

@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/chanzuckerberg/fogg/plan"
+	"github.com/chanzuckerberg/fogg/util"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
@@ -23,7 +24,11 @@ var planCmd = &cobra.Command{
 		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 		configFile, _ := cmd.Flags().GetString("config")
 
-		p, _ := plan.Plan(fs, configFile)
+		p, err := plan.Plan(fs, configFile)
+		if err != nil {
+			util.Dump(err)
+			return
+		}
 		plan.Print(p)
 	},
 }
