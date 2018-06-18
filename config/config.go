@@ -34,7 +34,9 @@ type Account struct {
 }
 
 type Env struct{}
-type Module struct{}
+type Module struct {
+	TerraformVersion *string `json:"terraform_version"`
+}
 
 type Config struct {
 	Defaults defaults           `json:"defaults"`

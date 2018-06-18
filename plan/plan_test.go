@@ -86,6 +86,9 @@ func TestPlanBasic(t *testing.T) {
     "bar": {
       "account_id": 456
     }
+  },
+  "modules": {
+    "my_module": {}
   }
 }
 `
@@ -95,4 +98,8 @@ func TestPlanBasic(t *testing.T) {
 	assert.NotNil(t, plan)
 	assert.NotNil(t, plan.Accounts)
 	assert.Len(t, plan.Accounts, 2)
+
+	assert.NotNil(t, plan.Modules)
+	assert.Len(t, plan.Modules, 1)
+	assert.Equal(t, "0.100.0", plan.Modules["my_module"].TerraformVersion)
 }

@@ -22,9 +22,14 @@ type account struct {
 	TerraformVersion   string
 }
 
+type module struct {
+	TerraformVersion string
+}
+
 type plan struct {
 	Accounts map[string]*account
 	Version  string
+	Modules  map[string]*module
 }
 
 func Plan(fs afero.Fs, configFile string) (*plan, error) {
@@ -35,7 +40,9 @@ func Plan(fs afero.Fs, configFile string) (*plan, error) {
 	// build .sicc version plan
 	p.Version = util.VersionString()
 	p.Accounts = buildAccounts(c)
+	p.Modules = buildModules(c)
 	// build modules plan
+
 	// build envs plan
 	// walk config and apply inheritance rules
 	return p, nil
@@ -95,6 +102,17 @@ func buildAccounts(c *config.Config) map[string]*account {
 	}
 
 	return accountPlans
+}
+
+func buildModules(c *config.Config) map[string]*module {
+	modulePlans := make(map[string]*module, len(c.Modules))
+	for name, conf := range c.Modules {
+		modulePlan := &module{}
+
+		modulePlan.TerraformVersion = resolveRequired(c.Defaults.TerraformVersion, conf.TerraformVersion)
+		modulePlans[name] = modulePlan
+	}
+	return modulePlans
 }
 
 func resolveStringArray(def *[]string, override *[]string) []string {
