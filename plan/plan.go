@@ -24,6 +24,7 @@ type account struct {
 
 type plan struct {
 	Accounts map[string]*account
+	Version  string
 }
 
 func Plan(fs afero.Fs, configFile string) (*plan, error) {
@@ -32,6 +33,7 @@ func Plan(fs afero.Fs, configFile string) (*plan, error) {
 	// read config and validate
 	// build repo plan
 	// build .sicc version plan
+	p.Version = util.VersionString()
 	p.Accounts = buildAccounts(c)
 	// build modules plan
 	// build envs plan
@@ -40,6 +42,7 @@ func Plan(fs afero.Fs, configFile string) (*plan, error) {
 }
 
 func Print(p *plan) error {
+	fmt.Printf("Version: %s\n", p.Version)
 	fmt.Println("Accounts:")
 	for name, account := range p.Accounts {
 		fmt.Printf("\t%s:\n", name)
@@ -95,8 +98,6 @@ func buildAccounts(c *config.Config) map[string]*account {
 }
 
 func resolveStringArray(def *[]string, override *[]string) []string {
-	util.Dump(def)
-	util.Dump(override)
 	if override != nil {
 		return *override
 	}
