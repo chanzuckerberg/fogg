@@ -56,19 +56,19 @@ type env struct {
 	Components map[string]*component
 }
 
-type plan struct {
+type Plan struct {
 	Accounts map[string]*account
 	Version  string
 	Modules  map[string]*module
 	Envs     map[string]*env
 }
 
-func Plan(fs afero.Fs, configFile string) (*plan, error) {
+func Eval(fs afero.Fs, configFile string) (*Plan, error) {
 	c, err := config.FindAndReadConfig(fs, configFile)
 	if err != nil {
 		return nil, err
 	}
-	p := &plan{}
+	p := &Plan{}
 	// read config and validate
 	// build repo plan
 	p.Version = util.VersionString()
@@ -78,7 +78,7 @@ func Plan(fs afero.Fs, configFile string) (*plan, error) {
 	return p, nil
 }
 
-func Print(p *plan) error {
+func Print(p *Plan) error {
 	fmt.Printf("Version: %s\n", p.Version)
 	fmt.Println("Accounts:")
 	for name, account := range p.Accounts {

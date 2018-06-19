@@ -24,7 +24,7 @@ var planCmd = &cobra.Command{
 		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 		configFile, _ := cmd.Flags().GetString("config")
 
-		p, err := plan.Plan(fs, configFile)
+		p, err := plan.Eval(fs, configFile)
 		if err != nil {
 			util.Dump(err)
 			return
