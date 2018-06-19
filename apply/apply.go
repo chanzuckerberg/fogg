@@ -38,19 +38,10 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) error {
 			//     template(source, dest, substitutions)
 			//     if dest.endswith('.tf'):
 			//         subprocess.call(['terraform', 'fmt', dest])
-			// elif ext == '.create':
-			//     dest, _ = os.path.splitext(dest)
-			//     if not os.path.exists(dest):
-			//         shutil.copy(source, dest)
-			//         if dest.endswith('.tf'):
-			//             subprocess.call(['terraform', 'fmt', dest])
-		} else if extension == ".touch" {
+		} else if extension == ".touch" || extension == ".create" {
 			d := removeExtension(path)
 			log.Printf("touching %s", d)
 			dest.Create(d)
-			//     dest, _ = os.path.splitext(dest)
-			//     print("touching %s" % dest)
-			//     Path(dest).touch()
 			//     if dest.endswith('.tf'):
 			//         subprocess.call(['terraform', 'fmt', dest])
 
