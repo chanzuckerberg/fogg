@@ -209,11 +209,11 @@ func buildEnvs(conf *config.Config) map[string]*env {
 		components := make(map[string]*component)
 
 		// FIXME no longer needed
-		for name, _ := range conf.Envs[envName].Components {
+		for name := range conf.Envs[envName].Components {
 			components[name] = nil
 		}
 
-		for componentName, _ := range components {
+		for componentName := range components {
 			componentPlan := &component{}
 			componentConf := envConf
 			componentPlan.AccountId = resolveOptionalInt(envPlan.AccountId, componentConf.AccountId)

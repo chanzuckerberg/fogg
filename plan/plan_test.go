@@ -37,13 +37,13 @@ func TestResolveOtherAccounts(t *testing.T) {
 	foo, bar := int64(123), int64(456)
 
 	accounts := map[string]config.Account{
-		"foo": config.Account{
+		"foo": {
 			AccountId: &foo,
 		},
-		"bar": config.Account{
+		"bar": {
 			AccountId: &bar,
 		},
-		"baz": config.Account{},
+		"baz": {},
 	}
 
 	var other map[string]int64
