@@ -9,9 +9,8 @@ import (
 )
 
 type defaults struct {
-	AWSProfile         string    `json:"aws_profile"`
-	AWSProfileBackend  *string   `json:"aws_profile_backend,omitempty"`
-	AWSProfileProvider *string   `json:"aws_profile_provider,omitempty"`
+	AWSProfileBackend  string    `json:"aws_profile_backend,omitempty"`
+	AWSProfileProvider string    `json:"aws_profile_provider,omitempty"`
 	AWSRegion          string    `json:"aws_region"`
 	AWSRegions         *[]string `json:"aws_regions,omitempty"`
 	InfraBucket        string    `json:"infra_s3_bucket"`
@@ -22,7 +21,6 @@ type defaults struct {
 
 type Account struct {
 	AccountId          *int64    `json:"account_id"`
-	AWSProfile         *string   `json:"aws_profile"`
 	AWSProfileBackend  *string   `json:"aws_profile_backend"`
 	AWSProfileProvider *string   `json:"aws_profile_provider"`
 	AWSRegion          *string   `json:"aws_region"`  // maybe rename to provider region
@@ -33,7 +31,32 @@ type Account struct {
 	Project            *string   `json:"project"`
 }
 
-type Env struct{}
+type Env struct {
+	AccountId          *int64    `json:"account_id"`
+	AWSProfileBackend  *string   `json:"aws_profile_backend"`
+	AWSProfileProvider *string   `json:"aws_profile_provider"`
+	AWSRegion          *string   `json:"aws_region"`  // maybe rename to provider region
+	AWSRegions         *[]string `json:"aws_regions"` // maybe rename to provider region
+	TerraformVersion   *string   `json:"terraform_version"`
+	InfraBucket        *string   `json:"infra_s3_bucket"`
+	Owner              *string   `json:"owner"`
+	Project            *string   `json:"project"`
+
+	Components map[string]*Component `json:"components"`
+}
+
+type Component struct {
+	AccountId          *int64    `json:"account_id"`
+	AWSProfileBackend  *string   `json:"aws_profile_backend"`
+	AWSProfileProvider *string   `json:"aws_profile_provider"`
+	AWSRegion          *string   `json:"aws_region"`  // maybe rename to provider region
+	AWSRegions         *[]string `json:"aws_regions"` // maybe rename to provider region
+	TerraformVersion   *string   `json:"terraform_version"`
+	InfraBucket        *string   `json:"infra_s3_bucket"`
+	Owner              *string   `json:"owner"`
+	Project            *string   `json:"project"`
+}
+
 type Module struct {
 	TerraformVersion *string `json:"terraform_version"`
 }
@@ -48,12 +71,13 @@ type Config struct {
 func InitConfig(project, region, bucket, aws_profile, owner string) *Config {
 	return &Config{
 		Defaults: defaults{
-			TerraformVersion: "0.11.0",
-			Project:          project,
-			AWSRegion:        region,
-			InfraBucket:      bucket,
-			AWSProfile:       aws_profile,
-			Owner:            owner,
+			TerraformVersion:   "0.11.0",
+			Project:            project,
+			AWSRegion:          region,
+			InfraBucket:        bucket,
+			AWSProfileBackend:  aws_profile,
+			AWSProfileProvider: aws_profile,
+			Owner:              owner,
 		},
 		Accounts: map[string]Account{},
 		Envs:     map[string]Env{},

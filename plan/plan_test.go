@@ -89,6 +89,10 @@ func TestPlanBasic(t *testing.T) {
   },
   "modules": {
     "my_module": {}
+  },
+  "envs": {
+    "staging":{},
+    "prod": {}
   }
 }
 `
@@ -102,4 +106,7 @@ func TestPlanBasic(t *testing.T) {
 	assert.NotNil(t, plan.Modules)
 	assert.Len(t, plan.Modules, 1)
 	assert.Equal(t, "0.100.0", plan.Modules["my_module"].TerraformVersion)
+
+	assert.NotNil(t, plan.Envs)
+	assert.Len(t, plan.Envs, 2)
 }

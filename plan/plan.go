@@ -26,10 +26,41 @@ type module struct {
 	TerraformVersion string
 }
 
+type component struct {
+	AccountId          *int64
+	AccountName        string
+	AWSProfileBackend  string
+	AWSProfileProvider string
+	AWSRegion          string
+	AWSRegions         []string
+	InfraBucket        string
+	Owner              string
+	Project            string
+	Env                string
+	TerraformVersion   string
+}
+
+type env struct {
+	AccountId          *int64
+	AccountName        string
+	AWSProfileBackend  string
+	AWSProfileProvider string
+	AWSRegion          string
+	AWSRegions         []string
+	InfraBucket        string
+	Owner              string
+	Project            string
+	Env                string
+	TerraformVersion   string
+
+	Components map[string]*component
+}
+
 type plan struct {
 	Accounts map[string]*account
 	Version  string
 	Modules  map[string]*module
+	Envs     map[string]*env
 }
 
 func Plan(fs afero.Fs, configFile string) (*plan, error) {
@@ -40,14 +71,10 @@ func Plan(fs afero.Fs, configFile string) (*plan, error) {
 	p := &plan{}
 	// read config and validate
 	// build repo plan
-	// build .sicc version plan
 	p.Version = util.VersionString()
 	p.Accounts = buildAccounts(c)
+	p.Envs = buildEnvs(c)
 	p.Modules = buildModules(c)
-	// build modules plan
-
-	// build envs plan
-	// walk config and apply inheritance rules
 	return p, nil
 }
 
@@ -96,11 +123,8 @@ func buildAccounts(c *config.Config) map[string]*account {
 		accountPlan.AWSRegion = resolveRequired(defaults.AWSRegion, config.AWSRegion)
 		accountPlan.AWSRegions = resolveStringArray(defaults.AWSRegions, config.AWSRegions)
 
-		profile := resolveRequired(defaults.AWSProfile, config.AWSProfile)
-		profileBackend := resolveOptional(defaults.AWSProfileBackend, config.AWSProfileBackend)
-		profileProvider := resolveOptional(defaults.AWSProfileProvider, config.AWSProfileProvider)
-		accountPlan.AWSProfileBackend = resolveRequired(profile, profileBackend)
-		accountPlan.AWSProfileProvider = resolveRequired(profile, profileProvider)
+		accountPlan.AWSProfileBackend = resolveRequired(defaults.AWSProfileBackend, config.AWSProfileBackend)
+		accountPlan.AWSProfileProvider = resolveRequired(defaults.AWSProfileProvider, config.AWSProfileProvider)
 		accountPlan.OtherAccounts = resolveOtherAccounts(c.Accounts, name)
 		accountPlan.TerraformVersion = resolveRequired(defaults.TerraformVersion, config.TerraformVersion)
 		accountPlan.InfraBucket = resolveRequired(defaults.InfraBucket, config.InfraBucket)
@@ -124,6 +148,62 @@ func buildModules(c *config.Config) map[string]*module {
 	return modulePlans
 }
 
+func newEnvPlan() *env {
+	ep := &env{}
+	ep.Components = make(map[string]*component)
+	return ep
+}
+
+func buildEnvs(conf *config.Config) map[string]*env {
+	envPlans := make(map[string]*env, len(conf.Envs))
+	defaults := conf.Defaults
+	for envName, envConf := range conf.Envs {
+		envPlan := newEnvPlan()
+
+		envPlan.AccountId = envConf.AccountId
+
+		envPlan.AWSRegion = resolveRequired(defaults.AWSRegion, envConf.AWSRegion)
+		envPlan.AWSRegions = resolveStringArray(defaults.AWSRegions, envConf.AWSRegions)
+
+		envPlan.AWSProfileBackend = resolveRequired(defaults.AWSProfileBackend, envConf.AWSProfileBackend)
+		envPlan.AWSProfileProvider = resolveRequired(defaults.AWSProfileProvider, envConf.AWSProfileProvider)
+
+		envPlan.TerraformVersion = resolveRequired(defaults.TerraformVersion, envConf.TerraformVersion)
+		envPlan.InfraBucket = resolveRequired(defaults.InfraBucket, envConf.InfraBucket)
+		envPlan.Owner = resolveRequired(defaults.Owner, envConf.Owner)
+		envPlan.Project = resolveRequired(defaults.Project, envConf.Project)
+
+		components := make(map[string]*component)
+
+		// FIXME no longer needed
+		for name, _ := range conf.Envs[envName].Components {
+			components[name] = nil
+		}
+
+		for componentName, _ := range components {
+			componentPlan := &component{}
+			componentConf := envConf
+			componentPlan.AccountId = resolveOptionalInt(envPlan.AccountId, componentConf.AccountId)
+
+			componentPlan.AWSRegion = resolveRequired(envPlan.AWSRegion, componentConf.AWSRegion)
+			componentPlan.AWSRegions = resolveStringArray(&envPlan.AWSRegions, componentConf.AWSRegions)
+
+			componentPlan.AWSProfileBackend = resolveRequired(envPlan.AWSProfileBackend, componentConf.AWSProfileBackend)
+			componentPlan.AWSProfileProvider = resolveRequired(envPlan.AWSProfileProvider, componentConf.AWSProfileProvider)
+
+			componentPlan.TerraformVersion = resolveRequired(envPlan.TerraformVersion, componentConf.TerraformVersion)
+			componentPlan.InfraBucket = resolveRequired(envPlan.InfraBucket, componentConf.InfraBucket)
+			componentPlan.Owner = resolveRequired(envPlan.Owner, componentConf.Owner)
+			componentPlan.Project = resolveRequired(envPlan.Project, componentConf.Project)
+
+			envPlan.Components[componentName] = componentPlan
+		}
+
+		envPlans[envName] = envPlan
+	}
+	return envPlans
+}
+
 func resolveStringArray(def *[]string, override *[]string) []string {
 	if override != nil {
 		return *override
@@ -142,6 +222,13 @@ func resolveRequired(def string, override *string) string {
 }
 
 func resolveOptional(def *string, override *string) *string {
+	if override != nil {
+		return override
+	}
+	return def
+}
+
+func resolveOptionalInt(def *int64, override *int64) *int64 {
 	if override != nil {
 		return override
 	}
