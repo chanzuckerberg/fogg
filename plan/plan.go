@@ -103,6 +103,12 @@ func Print(p *plan) error {
 
 	}
 
+	fmt.Println("Envs:")
+
+	for name, env := range p.Envs {
+		fmt.Printf("%s:\n", name)
+	}
+
 	fmt.Println("Modules:")
 	for name, module := range p.Modules {
 		fmt.Printf("%s:\n", name)
