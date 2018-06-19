@@ -4,6 +4,12 @@ DIRTY=$(shell if `git diff-index --quiet HEAD --`; then echo false; else echo tr
 # TODO add release flag
 LDFLAGS=-ldflags "-w -s -X github.com/chanzuckerberg/fogg/util.GitSha=${SHA} -X github.com/chanzuckerberg/fogg/util.Version=${VERSION} -X github.com/chanzuckerberg/fogg/util.Dirty=${DIRTY}"
 
+lint:
+	gometalinter --fast ./...
+
+lint-slow:
+	gometalinter ./...
+
 build:
 	go build ${LDFLAGS} .
 
@@ -16,4 +22,4 @@ test:
 install:
 	go install ${LDFLAGS} .
 
-.PHONY: build coverage test install
+.PHONY: build coverage test install lint lint-slow
