@@ -106,13 +106,40 @@ func Print(p *plan) error {
 	fmt.Println("Envs:")
 
 	for name, env := range p.Envs {
-		fmt.Printf("%s:\n", name)
+		fmt.Printf("\t%s:\n", name)
+		fmt.Printf("\t\tid: %d\n", env.AccountId)
+		fmt.Printf("\t\tname: %v\n", env.AccountName)
+		fmt.Printf("\t\taws_profile_backend: %v\n", env.AWSProfileBackend)
+		fmt.Printf("\t\taws_profile_provider: %v\n", env.AWSProfileProvider)
+		fmt.Printf("\t\taws_region: %v\n", env.AWSRegion)
+		fmt.Printf("\t\taws_regions: %v\n", env.AWSRegions)
+		fmt.Printf("\t\tinfra_bucket: %v\n", env.InfraBucket)
+		fmt.Printf("\t\towner: %v\n", env.Owner)
+		fmt.Printf("\t\tproject: %v\n", env.Project)
+		fmt.Printf("\t\tterraform_version: %v\n", env.TerraformVersion)
+
+		fmt.Println("\t\tComponents:")
+
+		for name, component := range env.Components {
+			fmt.Printf("\t\t\t%s:\n", name)
+			fmt.Printf("\t\t\t\tid: %d\n", component.AccountId)
+			fmt.Printf("\t\t\t\tname: %v\n", component.AccountName)
+			fmt.Printf("\t\t\t\taws_profile_backend: %v\n", component.AWSProfileBackend)
+			fmt.Printf("\t\t\t\taws_profile_provider: %v\n", component.AWSProfileProvider)
+			fmt.Printf("\t\t\t\taws_region: %v\n", component.AWSRegion)
+			fmt.Printf("\t\t\t\taws_regions: %v\n", component.AWSRegions)
+			fmt.Printf("\t\t\t\tinfra_bucket: %v\n", component.InfraBucket)
+			fmt.Printf("\t\t\t\towner: %v\n", component.Owner)
+			fmt.Printf("\t\t\t\tproject: %v\n", component.Project)
+			fmt.Printf("\t\t\t\tterraform_version: %v\n", component.TerraformVersion)
+		}
+
 	}
 
 	fmt.Println("Modules:")
 	for name, module := range p.Modules {
-		fmt.Printf("%s:\n", name)
-		fmt.Printf("\tterraform_version: %s\n", module.TerraformVersion)
+		fmt.Printf("\t%s:\n", name)
+		fmt.Printf("\t\tterraform_version: %s\n", module.TerraformVersion)
 	}
 	return nil
 }
