@@ -45,10 +45,6 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) error {
 			//     if dest.endswith('.tf'):
 			//         subprocess.call(['terraform', 'fmt', dest])
 
-			// elif ext == '.rm':
-			//     dest, _ = os.path.splitext(dest)
-			//     print("removing %s" % dest)
-			//     silentremove(dest)
 		} else {
 			log.Printf("copying %s", path)
 			afero.WriteReader(dest, path, sourceFile)
