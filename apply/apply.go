@@ -1,11 +1,16 @@
 package apply
 
 import (
+	"html/template"
+	"io"
+	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
 	"sort"
 	"strings"
 
+	"github.com/Masterminds/sprig"
 	"github.com/chanzuckerberg/fogg/plan"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
@@ -23,7 +28,7 @@ func Apply(fs afero.Fs, configFile string, tmp *templates.T) error {
 }
 
 func applyRepo(fs afero.Fs, p *plan.Plan, repoBox *packr.Box) error {
-	applyTree(repoBox, fs, nil)
+	applyTree(repoBox, fs, p)
 	return nil
 }
 
@@ -33,10 +38,12 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) error {
 		// util.Dump(path)
 		// util.Dump(sourceFile)
 		// util.Dump(extension)
-		if extension == ".tpl" {
-			// if ext == '.tpl':
-			//     dest, _ = os.path.splitext(dest)
-			//     template(source, dest, substitutions)
+		if extension == ".tmpl" {
+			d := removeExtension(path)
+			log.Printf("templating %s", d)
+			writer, _ := dest.OpenFile(d, os.O_RDWR|os.O_CREATE, 0755)
+			applyTemplate(sourceFile, writer, subst)
+
 			//     if dest.endswith('.tf'):
 			//         subprocess.call(['terraform', 'fmt', dest])
 		} else if extension == ".touch" {
@@ -84,4 +91,14 @@ func joinEnvs(m map[string]plan.Env) string {
 	}
 	sort.Strings(keys)
 	return strings.Join(keys, " ")
+}
+
+func applyTemplate(source packr.File, dest io.Writer, overrides interface{}) error {
+	s, err := ioutil.ReadAll(source)
+	if err != nil {
+		return err
+	}
+	t := template.Must(template.New("tmpl").Funcs(sprig.FuncMap()).Parse(string(s)))
+	return t.Execute(dest, overrides)
+
 }

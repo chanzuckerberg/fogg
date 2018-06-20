@@ -6,7 +6,7 @@
 require 'json'
 require 'pp'
 
-ENVS = %w[{{ joinEnvs .Envs}}]
+ENVS = %w[{{ .Envs | keys | sortAlpha}}]
 
 d = ENVS.map do |env|
     outputs = `cd terraform/envs/#{env}/cloud-env && terraform output -json`
