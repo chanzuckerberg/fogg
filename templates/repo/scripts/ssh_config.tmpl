@@ -6,7 +6,7 @@
 require 'json'
 require 'pp'
 
-ENVS = %w[{% for env in aws_envs|sort %}{{env}}{{ " " if not loop.last }}{% endfor %}]
+ENVS = %w[{{ joinEnvs .Envs}}]
 
 d = ENVS.map do |env|
     outputs = `cd terraform/envs/#{env}/cloud-env && terraform output -json`
@@ -40,4 +40,3 @@ Host #{bastion}
 
 END
 end
-
