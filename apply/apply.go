@@ -51,7 +51,17 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) error {
 			//     if dest.endswith('.tf'):
 			//         subprocess.call(['terraform', 'fmt', dest])
 
-			// extension == ".create"
+		} else if extension == ".create" {
+			d := removeExtension(path)
+			_, err := dest.Stat(d)
+			if err != nil { // TODO we might not want to do this for all errors
+				log.Printf("creating %s", d)
+				afero.WriteReader(dest, path, sourceFile)
+			} else {
+				log.Printf("skipping create on existing file %s", d)
+			}
+			//     if dest.endswith('.tf'):
+			//         subprocess.call(['terraform', 'fmt', dest])
 
 		} else {
 			log.Printf("copying %s", path)
