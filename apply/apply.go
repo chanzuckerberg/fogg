@@ -1,14 +1,16 @@
 package apply
 
 import (
-	"html/template"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
+	"reflect"
 	"sort"
 	"strings"
+	"text/template"
 
 	"github.com/Masterminds/sprig"
 	"github.com/chanzuckerberg/fogg/plan"
@@ -41,8 +43,14 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) error {
 		if extension == ".tmpl" {
 			d := removeExtension(path)
 			log.Printf("templating %s", d)
-			writer, _ := dest.OpenFile(d, os.O_RDWR|os.O_CREATE, 0755)
-			applyTemplate(sourceFile, writer, subst)
+			writer, err := dest.OpenFile(d, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+			if err != nil {
+				panic(err)
+			}
+			err = applyTemplate(sourceFile, writer, subst)
+			if err != nil {
+				panic(err)
+			}
 
 			//     if dest.endswith('.tf'):
 			//         subprocess.call(['terraform', 'fmt', dest])
@@ -93,12 +101,28 @@ func joinEnvs(m map[string]plan.Env) string {
 	return strings.Join(keys, " ")
 }
 
+func dict(in interface{}) map[string]interface{} {
+	v := reflect.ValueOf(in)
+	if v.Kind() == reflect.Map {
+		r := make(map[string]interface{})
+		for _, key := range v.MapKeys() {
+			strct := v.MapIndex(key)
+			fmt.Println(key.Interface(), strct.Interface())
+			r[key.String()] = strct.Interface()
+		}
+		return r
+	}
+	return nil
+}
+
 func applyTemplate(source packr.File, dest io.Writer, overrides interface{}) error {
 	s, err := ioutil.ReadAll(source)
 	if err != nil {
-		return err
+		panic(err)
 	}
-	t := template.Must(template.New("tmpl").Funcs(sprig.FuncMap()).Parse(string(s)))
+	funcs := sprig.TxtFuncMap()
+	funcs["dict"] = dict
+	t := template.Must(template.New("tmpl").Funcs(funcs).Parse(string(s)))
 	return t.Execute(dest, overrides)
 
 }
