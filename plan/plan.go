@@ -40,7 +40,7 @@ type component struct {
 	TerraformVersion   string
 }
 
-type env struct {
+type Env struct {
 	AccountId          *int64
 	AccountName        string
 	AWSProfileBackend  string
@@ -53,14 +53,14 @@ type env struct {
 	Env                string
 	TerraformVersion   string
 
-	Components map[string]*component
+	Components map[string]component
 }
 
 type Plan struct {
-	Accounts map[string]*account
+	Accounts map[string]account
 	Version  string
-	Modules  map[string]*module
-	Envs     map[string]*env
+	Modules  map[string]module
+	Envs     map[string]Env
 }
 
 func Eval(fs afero.Fs, configFile string) (*Plan, error) {
@@ -144,11 +144,11 @@ func Print(p *Plan) error {
 	return nil
 }
 
-func buildAccounts(c *config.Config) map[string]*account {
+func buildAccounts(c *config.Config) map[string]account {
 	defaults := c.Defaults
-	accountPlans := make(map[string]*account, len(c.Accounts))
+	accountPlans := make(map[string]account, len(c.Accounts))
 	for name, config := range c.Accounts {
-		accountPlan := &account{}
+		accountPlan := account{}
 
 		accountPlan.AccountName = name
 		accountPlan.AccountId = config.AccountId
@@ -170,10 +170,10 @@ func buildAccounts(c *config.Config) map[string]*account {
 	return accountPlans
 }
 
-func buildModules(c *config.Config) map[string]*module {
-	modulePlans := make(map[string]*module, len(c.Modules))
+func buildModules(c *config.Config) map[string]module {
+	modulePlans := make(map[string]module, len(c.Modules))
 	for name, conf := range c.Modules {
-		modulePlan := &module{}
+		modulePlan := module{}
 
 		modulePlan.TerraformVersion = resolveRequired(c.Defaults.TerraformVersion, conf.TerraformVersion)
 		modulePlans[name] = modulePlan
@@ -181,14 +181,14 @@ func buildModules(c *config.Config) map[string]*module {
 	return modulePlans
 }
 
-func newEnvPlan() *env {
-	ep := &env{}
-	ep.Components = make(map[string]*component)
+func newEnvPlan() Env {
+	ep := Env{}
+	ep.Components = make(map[string]component)
 	return ep
 }
 
-func buildEnvs(conf *config.Config) map[string]*env {
-	envPlans := make(map[string]*env, len(conf.Envs))
+func buildEnvs(conf *config.Config) map[string]Env {
+	envPlans := make(map[string]Env, len(conf.Envs))
 	defaults := conf.Defaults
 	for envName, envConf := range conf.Envs {
 		envPlan := newEnvPlan()
@@ -214,7 +214,7 @@ func buildEnvs(conf *config.Config) map[string]*env {
 		}
 
 		for componentName := range components {
-			componentPlan := &component{}
+			componentPlan := component{}
 			componentConf := envConf
 			componentPlan.AccountId = resolveOptionalInt(envPlan.AccountId, componentConf.AccountId)
 
