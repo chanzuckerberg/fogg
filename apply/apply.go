@@ -1,18 +1,13 @@
 package apply
 
 import (
-	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
-	"reflect"
 	"sort"
 	"strings"
-	"text/template"
 
-	"github.com/Masterminds/sprig"
 	"github.com/chanzuckerberg/fogg/plan"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
@@ -101,28 +96,8 @@ func joinEnvs(m map[string]plan.Env) string {
 	return strings.Join(keys, " ")
 }
 
-func dict(in interface{}) map[string]interface{} {
-	v := reflect.ValueOf(in)
-	if v.Kind() == reflect.Map {
-		r := make(map[string]interface{})
-		for _, key := range v.MapKeys() {
-			strct := v.MapIndex(key)
-			fmt.Println(key.Interface(), strct.Interface())
-			r[key.String()] = strct.Interface()
-		}
-		return r
-	}
-	return nil
-}
-
 func applyTemplate(source packr.File, dest io.Writer, overrides interface{}) error {
-	s, err := ioutil.ReadAll(source)
-	if err != nil {
-		panic(err)
-	}
-	funcs := sprig.TxtFuncMap()
-	funcs["dict"] = dict
-	t := template.Must(template.New("tmpl").Funcs(funcs).Parse(string(s)))
+	t := util.OpenTemplate(source)
 	return t.Execute(dest, overrides)
 
 }
