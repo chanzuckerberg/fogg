@@ -32,9 +32,6 @@ func applyRepo(fs afero.Fs, p *plan.Plan, repoBox *packr.Box) error {
 func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) error {
 	source.Walk(func(path string, sourceFile packr.File) error {
 		extension := filepath.Ext(path)
-		// util.Dump(path)
-		// util.Dump(sourceFile)
-		// util.Dump(extension)
 		if extension == ".tmpl" {
 			d := removeExtension(path)
 			log.Printf("templating %s", d)
@@ -84,7 +81,6 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) error {
 
 func removeExtension(path string) string {
 	return strings.TrimSuffix(path, filepath.Ext(path))
-
 }
 
 func joinEnvs(m map[string]plan.Env) string {
@@ -99,5 +95,4 @@ func joinEnvs(m map[string]plan.Env) string {
 func applyTemplate(source packr.File, dest io.Writer, overrides interface{}) error {
 	t := util.OpenTemplate(source)
 	return t.Execute(dest, overrides)
-
 }
