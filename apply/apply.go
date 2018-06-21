@@ -1,7 +1,6 @@
 package apply
 
 import (
-	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -33,13 +32,8 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) error {
 	source.Walk(func(path string, sourceFile packr.File) error {
 		extension := filepath.Ext(path)
 		if extension == ".tmpl" {
-			d := removeExtension(path)
-			log.Printf("templating %s", d)
-			writer, err := dest.OpenFile(d, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
-			if err != nil {
-				panic(err)
-			}
-			err = applyTemplate(sourceFile, writer, subst)
+
+			err := applyTemplate(sourceFile, dest, path, subst)
 			if err != nil {
 				panic(err)
 			}
@@ -92,7 +86,13 @@ func joinEnvs(m map[string]plan.Env) string {
 	return strings.Join(keys, " ")
 }
 
-func applyTemplate(source packr.File, dest io.Writer, overrides interface{}) error {
-	t := util.OpenTemplate(source)
-	return t.Execute(dest, overrides)
+func applyTemplate(sourceFile packr.File, dest afero.Fs, path string, overrides interface{}) error {
+	d := removeExtension(path)
+	log.Printf("templating %s", d)
+	writer, err := dest.OpenFile(d, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	if err != nil {
+		panic(err)
+	}
+	t := util.OpenTemplate(sourceFile)
+	return t.Execute(writer, overrides)
 }
