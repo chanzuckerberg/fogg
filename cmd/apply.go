@@ -5,7 +5,6 @@ import (
 
 	"github.com/chanzuckerberg/fogg/apply"
 	"github.com/chanzuckerberg/fogg/templates"
-	"github.com/chanzuckerberg/fogg/util"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
@@ -25,7 +24,6 @@ var applyCmd = &cobra.Command{
 
 		err := apply.Apply(fs, configFile, templates.Templates)
 		if err != nil {
-			util.Dump(err)
 			return
 		}
 		// apply.Print(p)

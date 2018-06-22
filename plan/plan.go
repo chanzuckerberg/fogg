@@ -165,9 +165,6 @@ func buildAccounts(c *config.Config) map[string]account {
 		accountPlan.AccountId = config.AccountId
 
 		accountPlan.AWSRegion = resolveRequired(defaults.AWSRegion, config.AWSRegion)
-		util.Dump("XXX")
-		util.Dump(defaults.AWSRegions)
-		util.Dump(config.AWSRegions)
 		accountPlan.AWSRegions = resolveStringArray(defaults.AWSRegions, config.AWSRegions)
 
 		accountPlan.AWSProfileBackend = resolveRequired(defaults.AWSProfileBackend, config.AWSProfileBackend)

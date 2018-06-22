@@ -19,12 +19,14 @@ const rootPath = "terraform"
 
 func Apply(fs afero.Fs, configFile string, tmp *templates.T) error {
 	p, err := plan.Eval(fs, configFile)
-	util.Dump(err)
-	util.Dump(p)
+	if err != nil {
+		return err
+	}
 
 	applyRepo(fs, p, &tmp.Repo)
 	applyAccounts(fs, p, &tmp.Account)
 	applyEnvs(fs, p, &tmp.Env)
+
 	return nil
 }
 

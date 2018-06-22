@@ -4,7 +4,6 @@ import (
 	"os"
 
 	"github.com/chanzuckerberg/fogg/plan"
-	"github.com/chanzuckerberg/fogg/util"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
@@ -24,8 +23,7 @@ var planCmd = &cobra.Command{
 
 		p, err := plan.Eval(fs, configFile)
 		if err != nil {
-			util.Dump(err)
-			return
+			panic(err)
 		}
 		plan.Print(p)
 	},
