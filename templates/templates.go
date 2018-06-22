@@ -3,9 +3,11 @@ package templates
 import "github.com/gobuffalo/packr"
 
 type T struct {
-	Repo packr.Box
+	Account packr.Box
+	Repo    packr.Box
 }
 
 var Templates = &T{
-	Repo: packr.NewBox("repo"),
+	Account: packr.NewBox("account"),
+	Repo:    packr.NewBox("repo"),
 }

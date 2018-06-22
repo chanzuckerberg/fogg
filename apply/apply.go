@@ -1,6 +1,7 @@
 package apply
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -14,17 +15,29 @@ import (
 	"github.com/spf13/afero"
 )
 
+const rootPath = "terraform"
+
 func Apply(fs afero.Fs, configFile string, tmp *templates.T) error {
 	p, err := plan.Eval(fs, configFile)
 	util.Dump(err)
 	util.Dump(p)
 
 	applyRepo(fs, p, &tmp.Repo)
+	applyAccounts(fs, p, &tmp.Account)
 	return nil
 }
 
 func applyRepo(fs afero.Fs, p *plan.Plan, repoBox *packr.Box) error {
 	applyTree(repoBox, fs, p)
+	return nil
+}
+
+func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) error {
+	for account, accountPlan := range p.Accounts {
+		path := fmt.Sprintf("%s/accounts/%s", rootPath, account)
+		fs.MkdirAll(path, 0755)
+		applyTree(accountBox, afero.NewBasePathFs(fs, path), accountPlan)
+	}
 	return nil
 }
 
