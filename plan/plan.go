@@ -120,6 +120,7 @@ func Print(p *Plan) error {
 		fmt.Printf("\t\taws_provider_version: %v\n", env.AWSProviderVersion)
 		fmt.Printf("\t\taws_region: %v\n", env.AWSRegion)
 		fmt.Printf("\t\taws_regions: %v\n", env.AWSRegions)
+		fmt.Printf("\t\tenv: %v\n", env.Env)
 		fmt.Printf("\t\tinfra_bucket: %v\n", env.InfraBucket)
 		fmt.Printf("\t\tname: %v\n", env.AccountName)
 		fmt.Printf("\t\towner: %v\n", env.Owner)
@@ -208,6 +209,7 @@ func buildEnvs(conf *config.Config) map[string]Env {
 		envPlan := newEnvPlan()
 
 		envPlan.AccountId = envConf.AccountId
+		envPlan.Env = envName
 
 		envPlan.AWSRegion = resolveRequired(defaults.AWSRegion, envConf.AWSRegion)
 		envPlan.AWSRegions = resolveStringArray(defaults.AWSRegions, envConf.AWSRegions)
