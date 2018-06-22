@@ -9,38 +9,41 @@ import (
 )
 
 type defaults struct {
-	AWSProfileBackend  string    `json:"aws_profile_backend,omitempty"`
-	AWSProfileProvider string    `json:"aws_profile_provider,omitempty"`
-	AWSRegion          string    `json:"aws_region"`
-	AWSRegions         *[]string `json:"aws_regions,omitempty"`
-	InfraBucket        string    `json:"infra_s3_bucket"`
-	Project            string    `json:"project"`
-	TerraformVersion   string    `json:"terraform_version"`
-	Owner              string    `json:"owner"`
+	AWSProfileBackend  string   `json:"aws_profile_backend,omitempty"`
+	AWSProfileProvider string   `json:"aws_profile_provider,omitempty"`
+	AWSProviderVersion string   `json:"aws_provider_version,omitempty"`
+	AWSRegion          string   `json:"aws_region"`
+	AWSRegions         []string `json:"aws_regions,omitempty"`
+	InfraBucket        string   `json:"infra_s3_bucket"`
+	Owner              string   `json:"owner"`
+	Project            string   `json:"project"`
+	TerraformVersion   string   `json:"terraform_version"`
 }
 
 type Account struct {
 	AccountId          *int64    `json:"account_id"`
 	AWSProfileBackend  *string   `json:"aws_profile_backend"`
 	AWSProfileProvider *string   `json:"aws_profile_provider"`
+	AWSProviderVersion *string   `json:"aws_provider_version,omitempty"`
 	AWSRegion          *string   `json:"aws_region"`  // maybe rename to provider region
 	AWSRegions         *[]string `json:"aws_regions"` // maybe rename to provider region
-	TerraformVersion   *string   `json:"terraform_version"`
 	InfraBucket        *string   `json:"infra_s3_bucket"`
 	Owner              *string   `json:"owner"`
 	Project            *string   `json:"project"`
+	TerraformVersion   *string   `json:"terraform_version"`
 }
 
 type Env struct {
 	AccountId          *int64    `json:"account_id"`
 	AWSProfileBackend  *string   `json:"aws_profile_backend"`
 	AWSProfileProvider *string   `json:"aws_profile_provider"`
+	AWSProviderVersion *string   `json:"aws_provider_version,omitempty"`
 	AWSRegion          *string   `json:"aws_region"`  // maybe rename to provider region
 	AWSRegions         *[]string `json:"aws_regions"` // maybe rename to provider region
-	TerraformVersion   *string   `json:"terraform_version"`
 	InfraBucket        *string   `json:"infra_s3_bucket"`
 	Owner              *string   `json:"owner"`
 	Project            *string   `json:"project"`
+	TerraformVersion   *string   `json:"terraform_version"`
 
 	Components map[string]*Component `json:"components"`
 }
@@ -49,12 +52,13 @@ type Component struct {
 	AccountId          *int64    `json:"account_id"`
 	AWSProfileBackend  *string   `json:"aws_profile_backend"`
 	AWSProfileProvider *string   `json:"aws_profile_provider"`
+	AWSProviderVersion *string   `json:"aws_provider_version,omitempty"`
 	AWSRegion          *string   `json:"aws_region"`  // maybe rename to provider region
 	AWSRegions         *[]string `json:"aws_regions"` // maybe rename to provider region
-	TerraformVersion   *string   `json:"terraform_version"`
 	InfraBucket        *string   `json:"infra_s3_bucket"`
 	Owner              *string   `json:"owner"`
 	Project            *string   `json:"project"`
+	TerraformVersion   *string   `json:"terraform_version"`
 }
 
 type Module struct {
@@ -68,16 +72,35 @@ type Config struct {
 	Modules  map[string]Module  `json:"modules"`
 }
 
+var allRegions = []string{
+	"ap-south-1",
+	"eu-west-3",
+	"eu-west-2",
+	"eu-west-1",
+	"ap-northeast-2",
+	"ap-northeast-1",
+	"sa-east-1",
+	"ca-central-1",
+	"ap-southeast-1",
+	"ap-southeast-2",
+	"eu-central-1",
+	"us-east-1",
+	"us-east-2",
+	"us-west-1",
+	"us-west-2",
+}
+
 func InitConfig(project, region, bucket, aws_profile, owner string) *Config {
 	return &Config{
 		Defaults: defaults{
-			TerraformVersion:   "0.11.0",
-			Project:            project,
-			AWSRegion:          region,
-			InfraBucket:        bucket,
 			AWSProfileBackend:  aws_profile,
 			AWSProfileProvider: aws_profile,
+			AWSRegion:          region,
+			AWSRegions:         allRegions,
+			InfraBucket:        bucket,
 			Owner:              owner,
+			Project:            project,
+			TerraformVersion:   "0.11.0",
 		},
 		Accounts: map[string]Account{},
 		Envs:     map[string]Env{},
