@@ -25,7 +25,8 @@ func Apply(fs afero.Fs, configFile string, tmp *templates.T) error {
 
 	applyRepo(fs, p, &tmp.Repo)
 	applyAccounts(fs, p, &tmp.Account)
-	applyEnvs(fs, p, &tmp.Env)
+	applyEnvs(fs, p, &tmp.Env, &tmp.Component)
+	// TODO global
 
 	return nil
 }
@@ -44,11 +45,16 @@ func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) error {
 	return nil
 }
 
-func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box) error {
+func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr.Box) error {
 	for env, envPlan := range p.Envs {
 		path := fmt.Sprintf("%s/envs/%s", rootPath, env)
 		fs.MkdirAll(path, 0755)
 		applyTree(envBox, afero.NewBasePathFs(fs, path), envPlan)
+		for component, componentPlan := range envPlan.Components {
+			path := fmt.Sprintf("%s/envs/%s/%s", rootPath, env, component)
+			fs.MkdirAll(path, 0755)
+			applyTree(componentBox, afero.NewBasePathFs(fs, path), componentPlan)
+		}
 	}
 	return nil
 }

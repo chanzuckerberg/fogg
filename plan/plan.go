@@ -35,8 +35,10 @@ type component struct {
 	AWSProviderVersion string
 	AWSRegion          string
 	AWSRegions         []string
+	Component          string
 	Env                string
 	InfraBucket        string
+	OtherComponents    []string
 	Owner              string
 	Project            string
 	TerraformVersion   string
@@ -135,14 +137,15 @@ func Print(p *Plan) error {
 
 			fmt.Printf("\t\t\t\taws_profile_backend: %v\n", component.AWSProfileBackend)
 			fmt.Printf("\t\t\t\taws_profile_provider: %v\n", component.AWSProfileProvider)
+			fmt.Printf("\t\t\t\taws_provider_version: %v\n", component.AWSProviderVersion)
 			fmt.Printf("\t\t\t\taws_region: %v\n", component.AWSRegion)
 			fmt.Printf("\t\t\t\taws_regions: %v\n", component.AWSRegions)
 			fmt.Printf("\t\t\t\tinfra_bucket: %v\n", component.InfraBucket)
 			fmt.Printf("\t\t\t\tname: %v\n", component.AccountName)
+			fmt.Printf("\t\t\t\tother_components: %v\n", component.OtherComponents)
 			fmt.Printf("\t\t\t\towner: %v\n", component.Owner)
 			fmt.Printf("\t\t\t\tproject: %v\n", component.Project)
 			fmt.Printf("\t\t\t\tterraform_version: %v\n", component.TerraformVersion)
-			fmt.Printf("\t\t\t\taws_provider_version: %v\n", component.AWSProviderVersion)
 		}
 
 	}
@@ -220,29 +223,26 @@ func buildEnvs(conf *config.Config) map[string]Env {
 		envPlan.Owner = resolveRequired(defaults.Owner, envConf.Owner)
 		envPlan.Project = resolveRequired(defaults.Project, envConf.Project)
 
-		components := make(map[string]*component)
-
-		// FIXME no longer needed
-		for name := range conf.Envs[envName].Components {
-			components[name] = nil
-		}
-
-		for componentName := range components {
+		for componentName, componentConf := range conf.Envs[envName].Components {
 			componentPlan := component{}
-			componentConf := envConf
-			componentPlan.AccountId = resolveOptionalInt(envPlan.AccountId, componentConf.AccountId)
 
+			componentPlan.AccountId = resolveOptionalInt(envPlan.AccountId, componentConf.AccountId)
 			componentPlan.AWSRegion = resolveRequired(envPlan.AWSRegion, componentConf.AWSRegion)
 			componentPlan.AWSRegions = resolveStringArray(envPlan.AWSRegions, componentConf.AWSRegions)
 
 			componentPlan.AWSProfileBackend = resolveRequired(envPlan.AWSProfileBackend, componentConf.AWSProfileBackend)
 			componentPlan.AWSProfileProvider = resolveRequired(envPlan.AWSProfileProvider, componentConf.AWSProfileProvider)
-			componentPlan.AWSProviderVersion = resolveRequired(defaults.AWSProviderVersion, componentConf.AWSProviderVersion)
+			componentPlan.AWSProviderVersion = resolveRequired(envPlan.AWSProviderVersion, componentConf.AWSProviderVersion)
+			componentPlan.AccountId = resolveOptionalInt(envPlan.AccountId, componentConf.AccountId)
 
 			componentPlan.TerraformVersion = resolveRequired(envPlan.TerraformVersion, componentConf.TerraformVersion)
 			componentPlan.InfraBucket = resolveRequired(envPlan.InfraBucket, componentConf.InfraBucket)
 			componentPlan.Owner = resolveRequired(envPlan.Owner, componentConf.Owner)
 			componentPlan.Project = resolveRequired(envPlan.Project, componentConf.Project)
+
+			componentPlan.Env = envName
+			componentPlan.Component = componentName
+			componentPlan.OtherComponents = otherComponentNames(conf.Envs[envName].Components, componentName)
 
 			envPlan.Components[componentName] = componentPlan
 		}
@@ -250,6 +250,16 @@ func buildEnvs(conf *config.Config) map[string]Env {
 		envPlans[envName] = envPlan
 	}
 	return envPlans
+}
+
+func otherComponentNames(components map[string]*config.Component, thisComponent string) []string {
+	r := make([]string, 0)
+	for componentName, _ := range components {
+		if componentName != thisComponent {
+			r = append(r, componentName)
+		}
+	}
+	return r
 }
 
 func resolveStringArray(def []string, override *[]string) []string {
