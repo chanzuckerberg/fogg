@@ -258,7 +258,7 @@ func buildEnvs(conf *config.Config) map[string]Env {
 
 func otherComponentNames(components map[string]*config.Component, thisComponent string) []string {
 	r := make([]string, 0)
-	for componentName, _ := range components {
+	for componentName := range components {
 		if componentName != thisComponent {
 			r = append(r, componentName)
 		}
