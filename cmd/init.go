@@ -16,9 +16,16 @@ var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Run init",
 	Run: func(cmd *cobra.Command, args []string) {
-		pwd, _ := os.Getwd()
+		var e error
+		pwd, e := os.Getwd()
+		if e != nil {
+			panic(e)
+		}
 		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
-		fogg_init.Init(fs)
+		e = fogg_init.Init(fs)
+		if e != nil {
+			panic(e)
+		}
 	},
 }

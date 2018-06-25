@@ -18,13 +18,20 @@ var applyCmd = &cobra.Command{
 	Use:   "apply",
 	Short: "Run an apply",
 	Run: func(cmd *cobra.Command, args []string) {
-		pwd, _ := os.Getwd()
+		var e error
+		pwd, e := os.Getwd()
+		if e != nil {
+			panic(e)
+		}
 		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
-		configFile, _ := cmd.Flags().GetString("config")
+		configFile, e := cmd.Flags().GetString("config")
+		if e != nil {
+			panic(e)
+		}
 
-		err := apply.Apply(fs, configFile, templates.Templates)
-		if err != nil {
-			return
+		e = apply.Apply(fs, configFile, templates.Templates)
+		if e != nil {
+			panic(e)
 		}
 		// apply.Print(p)
 	},

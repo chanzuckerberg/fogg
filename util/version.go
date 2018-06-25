@@ -12,10 +12,16 @@ var (
 	Dirty   string
 )
 
-func VersionString() string {
-	release, _ := strconv.ParseBool(Release)
-	dirty, _ := strconv.ParseBool(Dirty)
-	return versionString(Version, GitSha, release, dirty)
+func VersionString() (string, error) {
+	release, e := strconv.ParseBool(Release)
+	if e != nil {
+		return "", e
+	}
+	dirty, e := strconv.ParseBool(Dirty)
+	if e != nil {
+		return "", e
+	}
+	return versionString(Version, GitSha, release, dirty), nil
 }
 
 func versionString(version, sha string, release, dirty bool) string {

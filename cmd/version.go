@@ -15,6 +15,10 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print the version number of fogg",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(util.VersionString())
+		v, e := util.VersionString()
+		if e != nil {
+			panic(e)
+		}
+		fmt.Println(v)
 	},
 }

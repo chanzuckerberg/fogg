@@ -17,14 +17,24 @@ var planCmd = &cobra.Command{
 	Use:   "plan",
 	Short: "Run a plan",
 	Run: func(cmd *cobra.Command, args []string) {
-		pwd, _ := os.Getwd()
-		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
-		configFile, _ := cmd.Flags().GetString("config")
-
-		p, err := plan.Eval(fs, configFile)
-		if err != nil {
-			panic(err)
+		var e error
+		pwd, e := os.Getwd()
+		if e != nil {
+			panic(e)
 		}
-		plan.Print(p)
+		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
+		configFile, e := cmd.Flags().GetString("config")
+		if e != nil {
+			panic(e)
+		}
+
+		p, e := plan.Eval(fs, configFile)
+		if e != nil {
+			panic(e)
+		}
+		e = plan.Print(p)
+		if e != nil {
+			panic(e)
+		}
 	},
 }

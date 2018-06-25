@@ -23,44 +23,75 @@ func Apply(fs afero.Fs, configFile string, tmp *templates.T) error {
 		return err
 	}
 
-	applyRepo(fs, p, &tmp.Repo)
-	applyAccounts(fs, p, &tmp.Account)
-	applyEnvs(fs, p, &tmp.Env, &tmp.Component)
+	var e error
+
+	e = applyRepo(fs, p, &tmp.Repo)
+	if e != nil {
+		return e
+	}
+
+	e = applyAccounts(fs, p, &tmp.Account)
+	if e != nil {
+		return e
+	}
+
+	e = applyEnvs(fs, p, &tmp.Env, &tmp.Component)
+	if e != nil {
+		return e
+	}
+
 	// TODO global
 
 	return nil
 }
 
 func applyRepo(fs afero.Fs, p *plan.Plan, repoBox *packr.Box) error {
-	applyTree(repoBox, fs, p)
-	return nil
+	return applyTree(repoBox, fs, p)
 }
 
-func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) error {
+func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) (e error) {
 	for account, accountPlan := range p.Accounts {
 		path := fmt.Sprintf("%s/accounts/%s", rootPath, account)
-		fs.MkdirAll(path, 0755)
-		applyTree(accountBox, afero.NewBasePathFs(fs, path), accountPlan)
-	}
-	return nil
-}
-
-func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr.Box) error {
-	for env, envPlan := range p.Envs {
-		path := fmt.Sprintf("%s/envs/%s", rootPath, env)
-		fs.MkdirAll(path, 0755)
-		applyTree(envBox, afero.NewBasePathFs(fs, path), envPlan)
-		for component, componentPlan := range envPlan.Components {
-			path := fmt.Sprintf("%s/envs/%s/%s", rootPath, env, component)
-			fs.MkdirAll(path, 0755)
-			applyTree(componentBox, afero.NewBasePathFs(fs, path), componentPlan)
+		e = fs.MkdirAll(path, 0755)
+		if e != nil {
+			return e
+		}
+		e = applyTree(accountBox, afero.NewBasePathFs(fs, path), accountPlan)
+		if e != nil {
+			return e
 		}
 	}
 	return nil
 }
 
-func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) error {
-	source.Walk(func(path string, sourceFile packr.File) error {
+func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr.Box) (e error) {
+	for env, envPlan := range p.Envs {
+		path := fmt.Sprintf("%s/envs/%s", rootPath, env)
+		e = fs.MkdirAll(path, 0755)
+		if e != nil {
+			return e
+		}
+		e := applyTree(envBox, afero.NewBasePathFs(fs, path), envPlan)
+		if e != nil {
+			return e
+		}
+		for component, componentPlan := range envPlan.Components {
+			path := fmt.Sprintf("%s/envs/%s/%s", rootPath, env, component)
+			e = fs.MkdirAll(path, 0755)
+			if e != nil {
+				return e
+			}
+			e := applyTree(componentBox, afero.NewBasePathFs(fs, path), componentPlan)
+			if e != nil {
+				return e
+			}
+		}
+	}
+	return nil
+}
+
+func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
+	return source.Walk(func(path string, sourceFile packr.File) error {
 		extension := filepath.Ext(path)
 		if extension == ".tmpl" {
 
@@ -76,7 +107,10 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) error {
 			_, err := dest.Stat(d)
 			if err != nil { // TODO we might not want to do this for all errors
 				log.Printf("touching %s", d)
-				dest.Create(d)
+				_, e = dest.Create(d)
+				if e != nil {
+					return e
+				}
 			} else {
 				log.Printf("skipping touch on existing file %s", d)
 			}
@@ -88,7 +122,10 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) error {
 			_, err := dest.Stat(d)
 			if err != nil { // TODO we might not want to do this for all errors
 				log.Printf("creating %s", d)
-				afero.WriteReader(dest, path, sourceFile)
+				e = afero.WriteReader(dest, path, sourceFile)
+				if e != nil {
+					return e
+				}
 			} else {
 				log.Printf("skipping create on existing file %s", d)
 			}
@@ -97,11 +134,14 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) error {
 
 		} else {
 			log.Printf("copying %s", path)
-			afero.WriteReader(dest, path, sourceFile)
+			e = afero.WriteReader(dest, path, sourceFile)
+			if e != nil {
+				return e
+			}
 		}
 		return nil
 	})
-	return nil
+
 }
 
 func removeExtension(path string) string {
@@ -110,7 +150,7 @@ func removeExtension(path string) string {
 
 func joinEnvs(m map[string]plan.Env) string {
 	keys := make([]string, 0)
-	for k, _ := range m {
+	for k := range m {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)

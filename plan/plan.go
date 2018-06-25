@@ -76,7 +76,11 @@ func Eval(fs afero.Fs, configFile string) (*Plan, error) {
 	p := &Plan{}
 	// read config and validate
 	// build repo plan
-	p.Version = util.VersionString()
+	v, e := util.VersionString()
+	if e != nil {
+		return nil, e
+	}
+	p.Version = v
 	p.Accounts = buildAccounts(c)
 	p.Envs = buildEnvs(c)
 	p.Modules = buildModules(c)
