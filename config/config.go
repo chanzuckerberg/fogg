@@ -21,7 +21,7 @@ type defaults struct {
 }
 
 type Account struct {
-	AccountId          *int64    `json:"account_id"`
+	AccountID          *int64    `json:"account_id"`
 	AWSProfileBackend  *string   `json:"aws_profile_backend"`
 	AWSProfileProvider *string   `json:"aws_profile_provider"`
 	AWSProviderVersion *string   `json:"aws_provider_version,omitempty"`
@@ -34,7 +34,7 @@ type Account struct {
 }
 
 type Env struct {
-	AccountId          *int64    `json:"account_id"`
+	AccountID          *int64    `json:"account_id"`
 	AWSProfileBackend  *string   `json:"aws_profile_backend"`
 	AWSProfileProvider *string   `json:"aws_profile_provider"`
 	AWSProviderVersion *string   `json:"aws_provider_version,omitempty"`
@@ -49,7 +49,7 @@ type Env struct {
 }
 
 type Component struct {
-	AccountId          *int64    `json:"account_id"`
+	AccountID          *int64    `json:"account_id"`
 	AWSProfileBackend  *string   `json:"aws_profile_backend"`
 	AWSProfileProvider *string   `json:"aws_profile_provider"`
 	AWSProviderVersion *string   `json:"aws_provider_version,omitempty"`

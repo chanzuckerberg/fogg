@@ -38,10 +38,10 @@ func TestResolveOtherAccounts(t *testing.T) {
 
 	accounts := map[string]config.Account{
 		"foo": {
-			AccountId: &foo,
+			AccountID: &foo,
 		},
 		"bar": {
-			AccountId: &bar,
+			AccountID: &bar,
 		},
 		"baz": {},
 	}

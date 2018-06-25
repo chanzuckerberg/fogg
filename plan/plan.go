@@ -169,7 +169,7 @@ func buildAccounts(c *config.Config) map[string]account {
 		accountPlan := account{}
 
 		accountPlan.AccountName = name
-		accountPlan.AccountId = config.AccountId
+		accountPlan.AccountId = config.AccountID
 
 		accountPlan.AWSRegion = resolveRequired(defaults.AWSRegion, config.AWSRegion)
 		accountPlan.AWSRegions = resolveStringArray(defaults.AWSRegions, config.AWSRegions)
@@ -212,7 +212,7 @@ func buildEnvs(conf *config.Config) map[string]Env {
 	for envName, envConf := range conf.Envs {
 		envPlan := newEnvPlan()
 
-		envPlan.AccountId = envConf.AccountId
+		envPlan.AccountId = envConf.AccountID
 		envPlan.Env = envName
 
 		envPlan.AWSRegion = resolveRequired(defaults.AWSRegion, envConf.AWSRegion)
@@ -230,14 +230,14 @@ func buildEnvs(conf *config.Config) map[string]Env {
 		for componentName, componentConf := range conf.Envs[envName].Components {
 			componentPlan := component{}
 
-			componentPlan.AccountId = resolveOptionalInt(envPlan.AccountId, componentConf.AccountId)
+			componentPlan.AccountId = resolveOptionalInt(envPlan.AccountId, componentConf.AccountID)
 			componentPlan.AWSRegion = resolveRequired(envPlan.AWSRegion, componentConf.AWSRegion)
 			componentPlan.AWSRegions = resolveStringArray(envPlan.AWSRegions, componentConf.AWSRegions)
 
 			componentPlan.AWSProfileBackend = resolveRequired(envPlan.AWSProfileBackend, componentConf.AWSProfileBackend)
 			componentPlan.AWSProfileProvider = resolveRequired(envPlan.AWSProfileProvider, componentConf.AWSProfileProvider)
 			componentPlan.AWSProviderVersion = resolveRequired(envPlan.AWSProviderVersion, componentConf.AWSProviderVersion)
-			componentPlan.AccountId = resolveOptionalInt(envPlan.AccountId, componentConf.AccountId)
+			componentPlan.AccountId = resolveOptionalInt(envPlan.AccountId, componentConf.AccountID)
 
 			componentPlan.TerraformVersion = resolveRequired(envPlan.TerraformVersion, componentConf.TerraformVersion)
 			componentPlan.InfraBucket = resolveRequired(envPlan.InfraBucket, componentConf.InfraBucket)
@@ -297,8 +297,8 @@ func resolveOptionalInt(def *int64, override *int64) *int64 {
 func resolveOtherAccounts(accounts map[string]config.Account, currentAccount string) map[string]int64 {
 	other := make(map[string]int64)
 	for name, account := range accounts {
-		if name != currentAccount && account.AccountId != nil {
-			other[name] = *account.AccountId
+		if name != currentAccount && account.AccountID != nil {
+			other[name] = *account.AccountID
 		}
 	}
 	return other
