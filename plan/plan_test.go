@@ -19,20 +19,6 @@ func TestResolveRequired(t *testing.T) {
 	assert.Equal(t, "over", resolved)
 }
 
-func TestResolveOptional(t *testing.T) {
-	def, override := "def", "override"
-	var resolved *string
-
-	resolved = resolveOptional(&def, &override)
-	assert.NotNil(t, resolved)
-	assert.Equal(t, *resolved, override)
-
-	resolved = resolveOptional(&def, nil)
-	assert.NotNil(t, resolved)
-	assert.Equal(t, *resolved, def)
-
-}
-
 func TestResolveOtherAccounts(t *testing.T) {
 	foo, bar := int64(123), int64(456)
 

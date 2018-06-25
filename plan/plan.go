@@ -280,13 +280,6 @@ func resolveRequired(def string, override *string) string {
 	return def
 }
 
-func resolveOptional(def *string, override *string) *string {
-	if override != nil {
-		return override
-	}
-	return def
-}
-
 func resolveOptionalInt(def *int64, override *int64) *int64 {
 	if override != nil {
 		return override
