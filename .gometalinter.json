@@ -1,0 +1,6 @@
+{
+  "Exclude": [
+    "exported type (\\w+) should have comment or be unexported",
+    "exported function (\\w+) should have comment or be unexported"
+  ]
+}
