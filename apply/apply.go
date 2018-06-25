@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"sort"
 	"strings"
 
 	"github.com/chanzuckerberg/fogg/plan"
@@ -146,15 +145,6 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
 
 func removeExtension(path string) string {
 	return strings.TrimSuffix(path, filepath.Ext(path))
-}
-
-func joinEnvs(m map[string]plan.Env) string {
-	keys := make([]string, 0)
-	for k := range m {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-	return strings.Join(keys, " ")
 }
 
 func applyTemplate(sourceFile packr.File, dest afero.Fs, path string, overrides interface{}) error {
