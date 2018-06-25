@@ -9,7 +9,7 @@ import (
 )
 
 type account struct {
-	AccountId          *int64
+	AccountID          *int64
 	AccountName        string
 	AWSProfileBackend  string
 	AWSProfileProvider string
@@ -28,7 +28,7 @@ type module struct {
 }
 
 type component struct {
-	AccountId          *int64
+	AccountID          *int64
 	AccountName        string
 	AWSProfileBackend  string
 	AWSProfileProvider string
@@ -45,7 +45,7 @@ type component struct {
 }
 
 type Env struct {
-	AccountId          *int64
+	AccountID          *int64
 	AccountName        string
 	AWSProfileBackend  string
 	AWSProfileProvider string
@@ -92,10 +92,10 @@ func Print(p *Plan) error {
 	fmt.Println("Accounts:")
 	for name, account := range p.Accounts {
 		fmt.Printf("\t%s:\n", name)
-		if account.AccountId != nil {
-			fmt.Printf("\t\taccount id: %d\n", account.AccountId)
+		if account.AccountID != nil {
+			fmt.Printf("\t\taccount id: %d\n", account.AccountID)
 		}
-		fmt.Printf("\t\tid: %d\n", account.AccountId)
+		fmt.Printf("\t\tid: %d\n", account.AccountID)
 
 		fmt.Printf("\t\taws_profile_backend: %v\n", account.AWSProfileBackend)
 		fmt.Printf("\t\taws_profile_provider: %v\n", account.AWSProfileProvider)
@@ -119,7 +119,7 @@ func Print(p *Plan) error {
 
 	for name, env := range p.Envs {
 		fmt.Printf("\t%s:\n", name)
-		fmt.Printf("\t\tid: %d\n", env.AccountId)
+		fmt.Printf("\t\tid: %d\n", env.AccountID)
 
 		fmt.Printf("\t\taws_profile_backend: %v\n", env.AWSProfileBackend)
 		fmt.Printf("\t\taws_profile_provider: %v\n", env.AWSProfileProvider)
@@ -137,7 +137,7 @@ func Print(p *Plan) error {
 
 		for name, component := range env.Components {
 			fmt.Printf("\t\t\t%s:\n", name)
-			fmt.Printf("\t\t\t\tid: %d\n", component.AccountId)
+			fmt.Printf("\t\t\t\tid: %d\n", component.AccountID)
 
 			fmt.Printf("\t\t\t\taws_profile_backend: %v\n", component.AWSProfileBackend)
 			fmt.Printf("\t\t\t\taws_profile_provider: %v\n", component.AWSProfileProvider)
@@ -169,7 +169,7 @@ func buildAccounts(c *config.Config) map[string]account {
 		accountPlan := account{}
 
 		accountPlan.AccountName = name
-		accountPlan.AccountId = config.AccountID
+		accountPlan.AccountID = config.AccountID
 
 		accountPlan.AWSRegion = resolveRequired(defaults.AWSRegion, config.AWSRegion)
 		accountPlan.AWSRegions = resolveStringArray(defaults.AWSRegions, config.AWSRegions)
@@ -212,7 +212,7 @@ func buildEnvs(conf *config.Config) map[string]Env {
 	for envName, envConf := range conf.Envs {
 		envPlan := newEnvPlan()
 
-		envPlan.AccountId = envConf.AccountID
+		envPlan.AccountID = envConf.AccountID
 		envPlan.Env = envName
 
 		envPlan.AWSRegion = resolveRequired(defaults.AWSRegion, envConf.AWSRegion)
@@ -230,14 +230,14 @@ func buildEnvs(conf *config.Config) map[string]Env {
 		for componentName, componentConf := range conf.Envs[envName].Components {
 			componentPlan := component{}
 
-			componentPlan.AccountId = resolveOptionalInt(envPlan.AccountId, componentConf.AccountID)
+			componentPlan.AccountID = resolveOptionalInt(envPlan.AccountID, componentConf.AccountID)
 			componentPlan.AWSRegion = resolveRequired(envPlan.AWSRegion, componentConf.AWSRegion)
 			componentPlan.AWSRegions = resolveStringArray(envPlan.AWSRegions, componentConf.AWSRegions)
 
 			componentPlan.AWSProfileBackend = resolveRequired(envPlan.AWSProfileBackend, componentConf.AWSProfileBackend)
 			componentPlan.AWSProfileProvider = resolveRequired(envPlan.AWSProfileProvider, componentConf.AWSProfileProvider)
 			componentPlan.AWSProviderVersion = resolveRequired(envPlan.AWSProviderVersion, componentConf.AWSProviderVersion)
-			componentPlan.AccountId = resolveOptionalInt(envPlan.AccountId, componentConf.AccountID)
+			componentPlan.AccountID = resolveOptionalInt(envPlan.AccountID, componentConf.AccountID)
 
 			componentPlan.TerraformVersion = resolveRequired(envPlan.TerraformVersion, componentConf.TerraformVersion)
 			componentPlan.InfraBucket = resolveRequired(envPlan.InfraBucket, componentConf.InfraBucket)

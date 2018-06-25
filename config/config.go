@@ -90,11 +90,11 @@ var allRegions = []string{
 	"us-west-2",
 }
 
-func InitConfig(project, region, bucket, aws_profile, owner string) *Config {
+func InitConfig(project, region, bucket, awsProfile, owner string) *Config {
 	return &Config{
 		Defaults: defaults{
-			AWSProfileBackend:  aws_profile,
-			AWSProfileProvider: aws_profile,
+			AWSProfileBackend:  awsProfile,
+			AWSProfileProvider: awsProfile,
 			AWSRegion:          region,
 			AWSRegions:         allRegions,
 			InfraBucket:        bucket,
