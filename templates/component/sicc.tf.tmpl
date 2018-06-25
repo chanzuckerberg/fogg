@@ -5,7 +5,6 @@ provider "aws" {
   version = "~> {{ .AWSProviderVersion }}"
   region = "{{ .AWSRegion }}"
   profile = "{{ .AWSProfileProvider }}"
-  //{{.AccountId}}
   {{ if .AccountId }}allowed_account_ids = [{{ .AccountId }}]{{ end }}
 }
 
