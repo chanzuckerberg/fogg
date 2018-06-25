@@ -6,10 +6,10 @@ import (
 )
 
 var (
-	Version string
-	GitSha  string
-	Release string
-	Dirty   string
+	Version string = "undefined"
+	GitSha  string = "undefined"
+	Release string = "false"
+	Dirty   string = "true"
 )
 
 func VersionString() (string, error) {
