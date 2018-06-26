@@ -2,12 +2,12 @@ package util
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"reflect"
 	"text/template"
 
 	"github.com/Masterminds/sprig"
-	"github.com/gobuffalo/packr"
 )
 
 func dict(in interface{}) map[string]interface{} {
@@ -24,7 +24,7 @@ func dict(in interface{}) map[string]interface{} {
 	return nil
 }
 
-func OpenTemplate(source packr.File) *template.Template {
+func OpenTemplate(source io.Reader) *template.Template {
 	s, err := ioutil.ReadAll(source)
 	if err != nil {
 		panic(err)

@@ -9,9 +9,7 @@ import (
 )
 
 func TestResolveRequired(t *testing.T) {
-	var resolved string
-
-	resolved = resolveRequired("def", nil)
+	resolved := resolveRequired("def", nil)
 	assert.Equal(t, "def", resolved)
 
 	over := "over"
@@ -32,8 +30,7 @@ func TestResolveOtherAccounts(t *testing.T) {
 		"baz": {},
 	}
 
-	var other map[string]int64
-	other = resolveOtherAccounts(accounts, "foo")
+	other := resolveOtherAccounts(accounts, "foo")
 	assert.NotNil(t, other)
 	assert.Equal(t, map[string]int64{"bar": bar}, other)
 }

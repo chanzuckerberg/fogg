@@ -28,10 +28,7 @@ func writeConfig(fs afero.Fs, config *config.Config) error {
 		return e2
 	}
 	_, e3 := configFile.Write(json)
-	if e3 != nil {
-		return e3
-	}
-	return nil
+	return e3
 }
 
 func Init(fs afero.Fs) error {

@@ -109,6 +109,7 @@ func InitConfig(project, region, bucket, awsProfile, owner string) *Config {
 }
 
 func ReadConfig(f io.ReadCloser) (*Config, error) {
+	defer f.Close()
 	c := &Config{}
 	b, err := ioutil.ReadAll(f)
 	if err != nil {

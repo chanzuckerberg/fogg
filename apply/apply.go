@@ -2,6 +2,7 @@ package apply
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -22,9 +23,7 @@ func Apply(fs afero.Fs, configFile string, tmp *templates.T) error {
 		return err
 	}
 
-	var e error
-
-	e = applyRepo(fs, p, &tmp.Repo)
+	e := applyRepo(fs, p, &tmp.Repo)
 	if e != nil {
 		return e
 	}
@@ -147,7 +146,7 @@ func removeExtension(path string) string {
 	return strings.TrimSuffix(path, filepath.Ext(path))
 }
 
-func applyTemplate(sourceFile packr.File, dest afero.Fs, path string, overrides interface{}) error {
+func applyTemplate(sourceFile io.Reader, dest afero.Fs, path string, overrides interface{}) error {
 	d := removeExtension(path)
 	log.Printf("templating %s", d)
 	writer, err := dest.OpenFile(d, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)

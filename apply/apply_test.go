@@ -7,9 +7,7 @@ import (
 )
 
 func TestRemoveExtension(t *testing.T) {
-	var x string
-
-	x = removeExtension("foo")
+	x := removeExtension("foo")
 	assert.Equal(t, "foo", x)
 
 	x = removeExtension("foo.txt")
