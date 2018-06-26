@@ -71,6 +71,7 @@ func TestTouchFile(t *testing.T) {
 	e = touchFile(fs, "asdf")
 	assert.Nil(t, e)
 	r, e = readFile(fs, "asdf")
+	assert.Nil(t, e)
 	assert.Equal(t, "jkl", r)
 
 }
