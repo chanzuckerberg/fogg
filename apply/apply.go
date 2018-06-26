@@ -95,7 +95,7 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
 
 			err := applyTemplate(sourceFile, dest, path, subst)
 			if err != nil {
-				panic(err)
+				return err
 			}
 
 			//     if dest.endswith('.tf'):
@@ -151,7 +151,7 @@ func applyTemplate(sourceFile io.Reader, dest afero.Fs, path string, overrides i
 	log.Printf("templating %s", d)
 	writer, err := dest.OpenFile(d, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	t := util.OpenTemplate(sourceFile)
 	return t.Execute(writer, overrides)
