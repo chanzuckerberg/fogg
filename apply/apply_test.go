@@ -76,6 +76,38 @@ func TestTouchFile(t *testing.T) {
 
 }
 
+func TestCreateFile(t *testing.T) {
+	fs := afero.NewMemMapFs()
+
+	// create new file
+
+	e := createFile(fs, "foo", strings.NewReader("bar"))
+	assert.Nil(t, e)
+
+	r, e := readFile(fs, "foo")
+	assert.Nil(t, e)
+	assert.Equal(t, "bar", r)
+
+	// not overwrite existing file
+
+	fs = afero.NewMemMapFs()
+
+	e = createFile(fs, "foo", strings.NewReader("bar"))
+	assert.Nil(t, e)
+
+	r, e = readFile(fs, "foo")
+	assert.Nil(t, e)
+	assert.Equal(t, "bar", r)
+
+	e = createFile(fs, "foo", strings.NewReader("BAM"))
+	assert.Nil(t, e)
+
+	r, e = readFile(fs, "foo")
+	assert.Nil(t, e)
+	assert.Equal(t, "bar", r)
+
+}
+
 func readFile(fs afero.Fs, path string) (string, error) {
 	f, e := fs.Open(path)
 	if e != nil {

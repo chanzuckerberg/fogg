@@ -107,16 +107,7 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
 			//         subprocess.call(['terraform', 'fmt', dest])
 
 		} else if extension == ".create" {
-			_, err := dest.Stat(basename)
-			if err != nil { // TODO we might not want to do this for all errors
-				log.Printf("creating %s", basename)
-				e = afero.WriteReader(dest, path, sourceFile)
-				if e != nil {
-					return e
-				}
-			} else {
-				log.Printf("skipping create on existing file %s", basename)
-			}
+			createFile(dest, basename, sourceFile)
 			//     if dest.endswith('.tf'):
 			//         subprocess.call(['terraform', 'fmt', dest])
 
@@ -142,6 +133,20 @@ func touchFile(dest afero.Fs, path string) error {
 		}
 	} else {
 		log.Printf("skipping touch on existing file %s", path)
+	}
+	return nil
+}
+
+func createFile(dest afero.Fs, path string, sourceFile io.Reader) error {
+	_, err := dest.Stat(path)
+	if err != nil { // TODO we might not want to do this for all errors
+		log.Printf("creating %s", path)
+		err = afero.WriteReader(dest, path, sourceFile)
+		if err != nil {
+			return err
+		}
+	} else {
+		log.Printf("skipping create on existing file %s", path)
 	}
 	return nil
 }
