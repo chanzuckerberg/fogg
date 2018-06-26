@@ -93,7 +93,8 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
 		extension := filepath.Ext(path)
 		if extension == ".tmpl" {
 
-			err := applyTemplate(sourceFile, dest, path, subst)
+			d := removeExtension(path)
+			err := applyTemplate(sourceFile, dest, d, subst)
 			if err != nil {
 				return err
 			}
@@ -147,9 +148,8 @@ func removeExtension(path string) string {
 }
 
 func applyTemplate(sourceFile io.Reader, dest afero.Fs, path string, overrides interface{}) error {
-	d := removeExtension(path)
-	log.Printf("templating %s", d)
-	writer, err := dest.OpenFile(d, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	log.Printf("templating %s", path)
+	writer, err := dest.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return err
 	}
