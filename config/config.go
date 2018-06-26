@@ -22,44 +22,44 @@ type defaults struct {
 }
 
 type Account struct {
-	AccountID          *int64    `json:"account_id"`
-	AWSProfileBackend  *string   `json:"aws_profile_backend"`
-	AWSProfileProvider *string   `json:"aws_profile_provider"`
-	AWSProviderVersion *string   `json:"aws_provider_version,omitempty"`
-	AWSRegion          *string   `json:"aws_region"`  // maybe rename to provider region
-	AWSRegions         *[]string `json:"aws_regions"` // maybe rename to provider region
-	InfraBucket        *string   `json:"infra_s3_bucket"`
-	Owner              *string   `json:"owner"`
-	Project            *string   `json:"project"`
-	TerraformVersion   *string   `json:"terraform_version"`
+	AccountID          *int64   `json:"account_id"`
+	AWSProfileBackend  *string  `json:"aws_profile_backend"`
+	AWSProfileProvider *string  `json:"aws_profile_provider"`
+	AWSProviderVersion *string  `json:"aws_provider_version,omitempty"`
+	AWSRegion          *string  `json:"aws_region"`  // maybe rename to provider region
+	AWSRegions         []string `json:"aws_regions"` // maybe rename to provider region
+	InfraBucket        *string  `json:"infra_s3_bucket"`
+	Owner              *string  `json:"owner"`
+	Project            *string  `json:"project"`
+	TerraformVersion   *string  `json:"terraform_version"`
 }
 
 type Env struct {
-	AccountID          *int64    `json:"account_id"`
-	AWSProfileBackend  *string   `json:"aws_profile_backend"`
-	AWSProfileProvider *string   `json:"aws_profile_provider"`
-	AWSProviderVersion *string   `json:"aws_provider_version,omitempty"`
-	AWSRegion          *string   `json:"aws_region"`  // maybe rename to provider region
-	AWSRegions         *[]string `json:"aws_regions"` // maybe rename to provider region
-	InfraBucket        *string   `json:"infra_s3_bucket"`
-	Owner              *string   `json:"owner"`
-	Project            *string   `json:"project"`
-	TerraformVersion   *string   `json:"terraform_version"`
+	AccountID          *int64   `json:"account_id"`
+	AWSProfileBackend  *string  `json:"aws_profile_backend"`
+	AWSProfileProvider *string  `json:"aws_profile_provider"`
+	AWSProviderVersion *string  `json:"aws_provider_version,omitempty"`
+	AWSRegion          *string  `json:"aws_region"`  // maybe rename to provider region
+	AWSRegions         []string `json:"aws_regions"` // maybe rename to provider region
+	InfraBucket        *string  `json:"infra_s3_bucket"`
+	Owner              *string  `json:"owner"`
+	Project            *string  `json:"project"`
+	TerraformVersion   *string  `json:"terraform_version"`
 
 	Components map[string]*Component `json:"components"`
 }
 
 type Component struct {
-	AccountID          *int64    `json:"account_id"`
-	AWSProfileBackend  *string   `json:"aws_profile_backend"`
-	AWSProfileProvider *string   `json:"aws_profile_provider"`
-	AWSProviderVersion *string   `json:"aws_provider_version,omitempty"`
-	AWSRegion          *string   `json:"aws_region"`  // maybe rename to provider region
-	AWSRegions         *[]string `json:"aws_regions"` // maybe rename to provider region
-	InfraBucket        *string   `json:"infra_s3_bucket"`
-	Owner              *string   `json:"owner"`
-	Project            *string   `json:"project"`
-	TerraformVersion   *string   `json:"terraform_version"`
+	AccountID          *int64   `json:"account_id"`
+	AWSProfileBackend  *string  `json:"aws_profile_backend"`
+	AWSProfileProvider *string  `json:"aws_profile_provider"`
+	AWSProviderVersion *string  `json:"aws_provider_version,omitempty"`
+	AWSRegion          *string  `json:"aws_region"`  // maybe rename to provider region
+	AWSRegions         []string `json:"aws_regions"` // maybe rename to provider region
+	InfraBucket        *string  `json:"infra_s3_bucket"`
+	Owner              *string  `json:"owner"`
+	Project            *string  `json:"project"`
+	TerraformVersion   *string  `json:"terraform_version"`
 }
 
 type Module struct {
