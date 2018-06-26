@@ -266,9 +266,9 @@ func otherComponentNames(components map[string]*config.Component, thisComponent 
 	return r
 }
 
-func resolveStringArray(def []string, override *[]string) []string {
+func resolveStringArray(def []string, override []string) []string {
 	if override != nil {
-		return *override
+		return override
 	}
 	return def
 }

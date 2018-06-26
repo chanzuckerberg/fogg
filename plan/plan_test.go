@@ -37,7 +37,7 @@ func TestResolveOtherAccounts(t *testing.T) {
 
 func TestResolveStringArray(t *testing.T) {
 	def := []string{"foo"}
-	override := &[]string{"bar"}
+	override := []string{"bar"}
 
 	result := resolveStringArray(def, override)
 	assert.Len(t, result, 1)
