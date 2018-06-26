@@ -5,6 +5,7 @@ import (
 	"io"
 	"io/ioutil"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/afero"
 )
 
@@ -111,21 +112,21 @@ func InitConfig(project, region, bucket, awsProfile, owner string) *Config {
 func ReadConfig(f io.ReadCloser) (*Config, error) {
 	defer f.Close()
 	c := &Config{}
-	b, err := ioutil.ReadAll(f)
-	if err != nil {
-		return nil, err
+	b, e := ioutil.ReadAll(f)
+	if e != nil {
+		return nil, errors.Wrap(e, "unable to read config")
 	}
-	err2 := json.Unmarshal(b, c)
-	if err2 != nil {
-		return nil, err2
+	e = json.Unmarshal(b, c)
+	if e != nil {
+		return nil, errors.Wrap(e, "unable to parse json config file")
 	}
 	return c, nil
 }
 
 func FindAndReadConfig(fs afero.Fs, configFile string) (*Config, error) {
-	f, err := fs.Open(configFile)
-	if err != nil {
-		return nil, err
+	f, e := fs.Open(configFile)
+	if e != nil {
+		return nil, errors.Wrap(e, "unable to open config file")
 	}
 	c, err2 := ReadConfig(io.ReadCloser(f))
 	return c, err2

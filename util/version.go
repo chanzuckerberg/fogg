@@ -3,23 +3,25 @@ package util
 import (
 	"fmt"
 	"strconv"
+
+	"github.com/pkg/errors"
 )
 
 var (
-	Version  = "undefined"
-	GitSha   = "undefined"
-	Release  = "false"
-	Dirty    = "true"
+	Version = "undefined"
+	GitSha  = "undefined"
+	Release = "false"
+	Dirty   = "true"
 )
 
 func VersionString() (string, error) {
 	release, e := strconv.ParseBool(Release)
 	if e != nil {
-		return "", e
+		return "", errors.Wrapf(e, "unable to parse version release field %s", Release)
 	}
 	dirty, e := strconv.ParseBool(Dirty)
 	if e != nil {
-		return "", e
+		return "", errors.Wrapf(e, "unable to parse version dirty field %s", Dirty)
 	}
 	return versionString(Version, GitSha, release, dirty), nil
 }

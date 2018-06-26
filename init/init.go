@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/chanzuckerberg/fogg/config"
+	"github.com/pkg/errors"
 	prompt "github.com/segmentio/go-prompt"
 	"github.com/spf13/afero"
 )
@@ -21,11 +22,11 @@ func userPrompt() (string, string, string, string, string) {
 func writeConfig(fs afero.Fs, config *config.Config) error {
 	json, e := json.MarshalIndent(config, "", "  ")
 	if e != nil {
-		return e
+		return errors.Wrap(e, "unable to marshal json")
 	}
-	configFile, e2 := fs.Create("fogg.json")
-	if e2 != nil {
-		return e2
+	configFile, e := fs.Create("fogg.json")
+	if e != nil {
+		return errors.Wrap(e, "unable to create config file fogg.json")
 	}
 	_, e3 := configFile.Write(json)
 	return e3
