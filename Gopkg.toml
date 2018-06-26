@@ -1,0 +1,27 @@
+[[constraint]]
+  name = "github.com/Masterminds/sprig"
+  version = "2.15.0"
+
+[[constraint]]
+  name = "github.com/gobuffalo/packr"
+  version = "1.11.1"
+
+[[constraint]]
+  name = "github.com/segmentio/go-prompt"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/spf13/afero"
+  version = "1.1.1"
+
+[[constraint]]
+  name = "github.com/spf13/cobra"
+  version = "0.0.3"
+
+[[constraint]]
+  name = "github.com/stretchr/testify"
+  version = "1.2.2"
+
+[prune]
+  go-tests = true
+  unused-packages = true
