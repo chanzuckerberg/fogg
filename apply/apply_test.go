@@ -2,6 +2,7 @@ package apply
 
 import (
 	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 
@@ -48,4 +49,49 @@ func TestApplyTemplate(t *testing.T) {
 	r, e := ioutil.ReadAll(f)
 	assert.Nil(t, e)
 	assert.Equal(t, "Hello World", string(r))
+}
+
+func TestTouchFile(t *testing.T) {
+	fs := afero.NewMemMapFs()
+
+	e := touchFile(fs, "foo")
+	assert.Nil(t, e)
+	r, e := readFile(fs, "foo")
+	assert.Nil(t, e)
+	assert.Equal(t, "", r)
+
+	fs = afero.NewMemMapFs()
+
+	writeFile(fs, "asdf", "jkl")
+
+	r, e = readFile(fs, "asdf")
+	assert.Nil(t, e)
+	assert.Equal(t, "jkl", r)
+
+	e = touchFile(fs, "asdf")
+	assert.Nil(t, e)
+	r, e = readFile(fs, "asdf")
+	assert.Equal(t, "jkl", r)
+
+}
+
+func readFile(fs afero.Fs, path string) (string, error) {
+	f, e := fs.Open(path)
+	if e != nil {
+		return "", e
+	}
+	r, e := ioutil.ReadAll(f)
+	if e != nil {
+		return "", e
+	}
+	return string(r), nil
+}
+
+func writeFile(fs afero.Fs, path string, contents string) error {
+	f, e := fs.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	if e != nil {
+		return e
+	}
+	_, e = f.WriteString(contents)
+	return e
 }

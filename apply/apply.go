@@ -91,10 +91,10 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
 	return source.Walk(func(path string, sourceFile packr.File) error {
 		extension := filepath.Ext(path)
+		basename := removeExtension(path)
 		if extension == ".tmpl" {
 
-			d := removeExtension(path)
-			err := applyTemplate(sourceFile, dest, d, subst)
+			err := applyTemplate(sourceFile, dest, basename, subst)
 			if err != nil {
 				return err
 			}
@@ -102,31 +102,20 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
 			//     if dest.endswith('.tf'):
 			//         subprocess.call(['terraform', 'fmt', dest])
 		} else if extension == ".touch" {
-			d := removeExtension(path)
-			_, err := dest.Stat(d)
-			if err != nil { // TODO we might not want to do this for all errors
-				log.Printf("touching %s", d)
-				_, e = dest.Create(d)
-				if e != nil {
-					return e
-				}
-			} else {
-				log.Printf("skipping touch on existing file %s", d)
-			}
+			touchFile(dest, basename)
 			//     if dest.endswith('.tf'):
 			//         subprocess.call(['terraform', 'fmt', dest])
 
 		} else if extension == ".create" {
-			d := removeExtension(path)
-			_, err := dest.Stat(d)
+			_, err := dest.Stat(basename)
 			if err != nil { // TODO we might not want to do this for all errors
-				log.Printf("creating %s", d)
+				log.Printf("creating %s", basename)
 				e = afero.WriteReader(dest, path, sourceFile)
 				if e != nil {
 					return e
 				}
 			} else {
-				log.Printf("skipping create on existing file %s", d)
+				log.Printf("skipping create on existing file %s", basename)
 			}
 			//     if dest.endswith('.tf'):
 			//         subprocess.call(['terraform', 'fmt', dest])
@@ -141,6 +130,20 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
 		return nil
 	})
 
+}
+
+func touchFile(dest afero.Fs, path string) error {
+	_, err := dest.Stat(path)
+	if err != nil { // TODO we might not want to do this for all errors
+		log.Printf("touching %s", path)
+		_, err = dest.Create(path)
+		if err != nil {
+			return err
+		}
+	} else {
+		log.Printf("skipping touch on existing file %s", path)
+	}
+	return nil
 }
 
 func removeExtension(path string) string {
