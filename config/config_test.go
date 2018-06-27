@@ -22,7 +22,9 @@ func TestParse(t *testing.T) {
 		}
 	}`
 	r := ioutil.NopCloser(strings.NewReader(json))
-	c, _ := ReadConfig(r)
+	defer r.Close()
+	c, e := ReadConfig(r)
+	assert.Nil(t, e)
 	assert.NotNil(t, c.Defaults)
 	assert.Equal(t, "us-west-2", c.Defaults.AWSRegion)
 	assert.Equal(t, "czi", c.Defaults.AWSProfileBackend)
@@ -35,6 +37,7 @@ func TestParse(t *testing.T) {
 func TestJsonFailure(t *testing.T) {
 	json := `foo`
 	r := ioutil.NopCloser(strings.NewReader(json))
+	defer r.Close()
 	c, e := ReadConfig(r)
 	assert.Nil(t, c)
 	assert.NotNil(t, e)
