@@ -108,8 +108,7 @@ func InitConfig(project, region, bucket, awsProfile, owner string) *Config {
 	}
 }
 
-func ReadConfig(f io.ReadCloser) (*Config, error) {
-	defer f.Close()
+func ReadConfig(f io.Reader) (*Config, error) {
 	c := &Config{}
 	b, err := ioutil.ReadAll(f)
 	if err != nil {
@@ -127,6 +126,8 @@ func FindAndReadConfig(fs afero.Fs, configFile string) (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	c, err2 := ReadConfig(io.ReadCloser(f))
+	reader := io.ReadCloser(f)
+	defer reader.Close()
+	c, err2 := ReadConfig(reader)
 	return c, err2
 }
