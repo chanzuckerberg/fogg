@@ -27,7 +27,7 @@ type module struct {
 	TerraformVersion string
 }
 
-type component struct {
+type Component struct {
 	AccountID          *int64
 	AccountName        string
 	AWSProfileBackend  string
@@ -58,13 +58,13 @@ type Env struct {
 	Project            string
 	TerraformVersion   string
 
-	Components map[string]component
+	Components map[string]Component
 }
 
 type Plan struct {
 	Accounts map[string]account
 	Envs     map[string]Env
-	Global   component
+	Global   Component
 	Modules  map[string]module
 	Version  string
 }
@@ -218,13 +218,13 @@ func buildModules(c *config.Config) map[string]module {
 
 func newEnvPlan() Env {
 	ep := Env{}
-	ep.Components = make(map[string]component)
+	ep.Components = make(map[string]Component)
 	return ep
 }
 
-func buildGlobal(conf *config.Config) component {
+func buildGlobal(conf *config.Config) Component {
 	// Global just uses defaults because that's the way sicc works. We should make it directly configurable after transition.
-	componentPlan := component{}
+	componentPlan := Component{}
 
 	// TODO add accountID to defaults
 	componentPlan.AWSRegion = conf.Defaults.AWSRegion
@@ -267,7 +267,7 @@ func buildEnvs(conf *config.Config) map[string]Env {
 		envPlan.Project = resolveRequired(defaults.Project, envConf.Project)
 
 		for componentName, componentConf := range conf.Envs[envName].Components {
-			componentPlan := component{}
+			componentPlan := Component{}
 
 			componentPlan.AWSRegion = resolveRequired(envPlan.AWSRegion, componentConf.AWSRegion)
 			componentPlan.AWSRegions = resolveStringArray(envPlan.AWSRegions, componentConf.AWSRegions)
