@@ -50,8 +50,6 @@ func applyRepo(fs afero.Fs, p *plan.Plan, repoBox *packr.Box) error {
 }
 
 func applyGlobal(fs afero.Fs, p plan.Component, repoBox *packr.Box) error {
-	log.Println("global")
-	util.Dump(p)
 	path := fmt.Sprintf("%s/global", rootPath)
 	e := fs.MkdirAll(path, 0755)
 	if e != nil {
