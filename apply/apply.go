@@ -92,9 +92,10 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
 	return source.Walk(func(path string, sourceFile packr.File) error {
 		extension := filepath.Ext(path)
+		basename := removeExtension(path)
 		if extension == ".tmpl" {
 
-			err := applyTemplate(sourceFile, dest, path, subst)
+			err := applyTemplate(sourceFile, dest, basename, subst)
 			if err != nil {
 				return errors.Wrap(err, "unable to apply template")
 			}
@@ -102,32 +103,12 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
 			//     if dest.endswith('.tf'):
 			//         subprocess.call(['terraform', 'fmt', dest])
 		} else if extension == ".touch" {
-			d := removeExtension(path)
-			_, err := dest.Stat(d)
-			if err != nil { // TODO we might not want to do this for all errors
-				log.Printf("touching %s", d)
-				_, e = dest.Create(d)
-				if e != nil {
-					return errors.Wrap(e, "unable to touch file")
-				}
-			} else {
-				log.Printf("skipping touch on existing file %s", d)
-			}
+			touchFile(dest, basename)
 			//     if dest.endswith('.tf'):
 			//         subprocess.call(['terraform', 'fmt', dest])
 
 		} else if extension == ".create" {
-			d := removeExtension(path)
-			_, err := dest.Stat(d)
-			if err != nil { // TODO we might not want to do this for all errors
-				log.Printf("creating %s", d)
-				e = afero.WriteReader(dest, path, sourceFile)
-				if e != nil {
-					return errors.Wrap(e, "unable to create file")
-				}
-			} else {
-				log.Printf("skipping create on existing file %s", d)
-			}
+			createFile(dest, basename, sourceFile)
 			//     if dest.endswith('.tf'):
 			//         subprocess.call(['terraform', 'fmt', dest])
 
@@ -143,14 +124,41 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
 
 }
 
+func touchFile(dest afero.Fs, path string) error {
+	_, err := dest.Stat(path)
+	if err != nil { // TODO we might not want to do this for all errors
+		log.Printf("touching %s", path)
+		_, err = dest.Create(path)
+		if err != nil {
+			return errors.Wrap(err, "unable to touch file")
+		}
+	} else {
+		log.Printf("skipping touch on existing file %s", path)
+	}
+	return nil
+}
+
+func createFile(dest afero.Fs, path string, sourceFile io.Reader) error {
+	_, err := dest.Stat(path)
+	if err != nil { // TODO we might not want to do this for all errors
+		log.Printf("creating %s", path)
+		err = afero.WriteReader(dest, path, sourceFile)
+		if err != nil {
+			return errors.Wrap(err, "unable to create file")
+		}
+	} else {
+		log.Printf("skipping create on existing file %s", path)
+	}
+	return nil
+}
+
 func removeExtension(path string) string {
 	return strings.TrimSuffix(path, filepath.Ext(path))
 }
 
 func applyTemplate(sourceFile io.Reader, dest afero.Fs, path string, overrides interface{}) error {
-	d := removeExtension(path)
-	log.Printf("templating %s", d)
-	writer, err := dest.OpenFile(d, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	log.Printf("templating %s", path)
+	writer, err := dest.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return errors.Wrap(err, "unable to open file")
 	}
