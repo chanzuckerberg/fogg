@@ -17,7 +17,7 @@ func TestResolveRequired(t *testing.T) {
 	assert.Equal(t, "over", resolved)
 }
 
-func TestResolveOtherAccounts(t *testing.T) {
+func TestResolveAccounts(t *testing.T) {
 	foo, bar := int64(123), int64(456)
 
 	accounts := map[string]config.Account{
@@ -30,9 +30,9 @@ func TestResolveOtherAccounts(t *testing.T) {
 		"baz": {},
 	}
 
-	other := resolveOtherAccounts(accounts, "foo")
+	other := resolveAccounts(accounts)
 	assert.NotNil(t, other)
-	assert.Equal(t, map[string]int64{"bar": bar}, other)
+	assert.Equal(t, map[string]int64{"bar": bar, "foo": foo}, other)
 }
 
 func TestResolveStringArray(t *testing.T) {

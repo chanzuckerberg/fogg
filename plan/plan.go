@@ -11,13 +11,13 @@ import (
 type account struct {
 	AccountID          *int64
 	AccountName        string
+	AllAccounts        map[string]int64
 	AWSProfileBackend  string
 	AWSProfileProvider string
 	AWSProviderVersion string
 	AWSRegion          string
 	AWSRegions         []string
 	InfraBucket        string
-	OtherAccounts      map[string]int64
 	Owner              string
 	Project            string
 	TerraformVersion   string
@@ -108,8 +108,8 @@ func Print(p *Plan) error {
 		fmt.Printf("\t\tproject: %v\n", account.Project)
 		fmt.Printf("\t\tterraform_version: %v\n", account.TerraformVersion)
 
-		fmt.Printf("\t\tother_accounts:\n")
-		for acct, id := range account.OtherAccounts {
+		fmt.Printf("\t\tall_accounts:\n")
+		for acct, id := range account.AllAccounts {
 			fmt.Printf("\t\t\t%s: %d\n", acct, id)
 		}
 
@@ -177,7 +177,7 @@ func buildAccounts(c *config.Config) map[string]account {
 		accountPlan.AWSProfileBackend = resolveRequired(defaults.AWSProfileBackend, config.AWSProfileBackend)
 		accountPlan.AWSProfileProvider = resolveRequired(defaults.AWSProfileProvider, config.AWSProfileProvider)
 		accountPlan.AWSProviderVersion = resolveRequired(defaults.AWSProviderVersion, config.AWSProviderVersion)
-		accountPlan.OtherAccounts = resolveOtherAccounts(c.Accounts, name)
+		accountPlan.AllAccounts = resolveAccounts(c.Accounts)
 		accountPlan.TerraformVersion = resolveRequired(defaults.TerraformVersion, config.TerraformVersion)
 		accountPlan.InfraBucket = resolveRequired(defaults.InfraBucket, config.InfraBucket)
 		accountPlan.Owner = resolveRequired(defaults.Owner, config.Owner)
@@ -287,12 +287,12 @@ func resolveOptionalInt(def *int64, override *int64) *int64 {
 	return def
 }
 
-func resolveOtherAccounts(accounts map[string]config.Account, currentAccount string) map[string]int64 {
-	other := make(map[string]int64)
+func resolveAccounts(accounts map[string]config.Account) map[string]int64 {
+	a := make(map[string]int64)
 	for name, account := range accounts {
-		if name != currentAccount && account.AccountID != nil {
-			other[name] = *account.AccountID
+		if account.AccountID != nil {
+			a[name] = *account.AccountID
 		}
 	}
-	return other
+	return a
 }
