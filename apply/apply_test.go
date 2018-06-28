@@ -149,6 +149,28 @@ func TestApplySmokeTest(t *testing.T) {
 	assert.Nil(t, e)
 }
 
+func TestGetTargetPath(t *testing.T) {
+	data := []struct {
+		source  string
+		siccOff string
+		siccOn  string
+	}{
+		{"foo.tmpl", "foo", "foo"},
+		{"foo.tf.tmpl", "foo.tf", "foo.tf"},
+		{"fogg.tf", "fogg.tf", "sicc.tf"},
+		{"fogg.tf.tmpl", "fogg.tf", "sicc.tf"},
+	}
+	for _, test := range data {
+		t.Run(test.source, func(t *testing.T) {
+			off := getTargetPath(test.source, false)
+			on := getTargetPath(test.source, true)
+			assert.Equal(t, test.siccOff, off)
+			assert.Equal(t, test.siccOn, on)
+
+		})
+	}
+}
+
 func readFile(fs afero.Fs, path string) (string, error) {
 	f, e := fs.Open(path)
 	if e != nil {

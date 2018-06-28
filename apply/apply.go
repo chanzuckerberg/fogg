@@ -49,7 +49,7 @@ func Apply(fs afero.Fs, configFile string, tmp *templates.T, siccMode bool) erro
 }
 
 func applyRepo(fs afero.Fs, p *plan.Plan, repoBox *packr.Box) error {
-	return applyTree(repoBox, fs, p)
+	return applyTree(repoBox, fs, p.SiccMode, p)
 }
 
 func applyGlobal(fs afero.Fs, p plan.Component, repoBox *packr.Box) error {
@@ -58,7 +58,7 @@ func applyGlobal(fs afero.Fs, p plan.Component, repoBox *packr.Box) error {
 	if e != nil {
 		return e
 	}
-	return applyTree(repoBox, afero.NewBasePathFs(fs, path), p)
+	return applyTree(repoBox, afero.NewBasePathFs(fs, path), p.SiccMode, p)
 }
 
 func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) (e error) {
@@ -68,7 +68,7 @@ func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) (e error) {
 		if e != nil {
 			return e
 		}
-		e = applyTree(accountBox, afero.NewBasePathFs(fs, path), accountPlan)
+		e = applyTree(accountBox, afero.NewBasePathFs(fs, path), accountPlan.SiccMode, accountPlan)
 		if e != nil {
 			return e
 		}
@@ -83,7 +83,7 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 		if e != nil {
 			return e
 		}
-		e := applyTree(envBox, afero.NewBasePathFs(fs, path), envPlan)
+		e := applyTree(envBox, afero.NewBasePathFs(fs, path), envPlan.SiccMode, envPlan)
 		if e != nil {
 			return e
 		}
@@ -93,7 +93,7 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 			if e != nil {
 				return e
 			}
-			e := applyTree(componentBox, afero.NewBasePathFs(fs, path), componentPlan)
+			e := applyTree(componentBox, afero.NewBasePathFs(fs, path), componentPlan.SiccMode, componentPlan)
 			if e != nil {
 				return e
 			}
@@ -102,13 +102,13 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 	return nil
 }
 
-func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
+func applyTree(source *packr.Box, dest afero.Fs, siccMode bool, subst interface{}) (e error) {
 	return source.Walk(func(path string, sourceFile packr.File) error {
 		extension := filepath.Ext(path)
-		basename := removeExtension(path)
+		target := getTargetPath(path, siccMode)
 		if extension == ".tmpl" {
 
-			err := applyTemplate(sourceFile, dest, basename, subst)
+			err := applyTemplate(sourceFile, dest, target, subst)
 			if err != nil {
 				return err
 			}
@@ -116,12 +116,12 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
 			//     if dest.endswith('.tf'):
 			//         subprocess.call(['terraform', 'fmt', dest])
 		} else if extension == ".touch" {
-			touchFile(dest, basename)
+			touchFile(dest, target)
 			//     if dest.endswith('.tf'):
 			//         subprocess.call(['terraform', 'fmt', dest])
 
 		} else if extension == ".create" {
-			createFile(dest, basename, sourceFile)
+			createFile(dest, target, sourceFile)
 			//     if dest.endswith('.tf'):
 			//         subprocess.call(['terraform', 'fmt', dest])
 
@@ -131,6 +131,10 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
 			if e != nil {
 				return e
 			}
+		}
+		if !siccMode && target == "fogg.tf" {
+			log.Println("removing sicc.tf")
+			dest.Remove("sicc.tf")
 		}
 		return nil
 	})
@@ -177,4 +181,19 @@ func applyTemplate(sourceFile io.Reader, dest afero.Fs, path string, overrides i
 	}
 	t := util.OpenTemplate(sourceFile)
 	return t.Execute(writer, overrides)
+}
+
+func getTargetPath(path string, siccMode bool) string {
+	target := path
+	extension := filepath.Ext(path)
+
+	if extension == ".tmpl" || extension == ".touch" || extension == ".create" {
+		target = removeExtension(path)
+	}
+
+	if siccMode && filepath.Base(target) == "fogg.tf" {
+		target = filepath.Join(filepath.Dir(target), "sicc.tf")
+	}
+
+	return target
 }
