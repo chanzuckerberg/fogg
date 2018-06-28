@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 )
@@ -106,6 +107,46 @@ func TestCreateFile(t *testing.T) {
 	assert.Nil(t, e)
 	assert.Equal(t, "bar", r)
 
+}
+
+func TestApplySmokeTest(t *testing.T) {
+	fs := afero.NewMemMapFs()
+	config := `
+{
+  "defaults": {
+    "aws_region": "reg",
+    "aws_profile": "prof",
+    "infra_s3_bucket": "buck",
+    "project": "proj",
+    "terraform_version": "0.100.0",
+    "owner": "foo@example.com"
+  },
+  "accounts": {
+    "foo": {
+      "account_id": 123
+    },
+    "bar": {
+      "account_id": 456
+    }
+  },
+  "modules": {
+    "my_module": {}
+  },
+  "envs": {
+    "staging":{
+        "components": {
+            "comp1": {},
+            "comp2": {}
+        }
+    },
+    "prod": {}
+  }
+}
+`
+	afero.WriteReader(fs, "fogg.json", strings.NewReader(config))
+
+	e := Apply(fs, "fogg.json", templates.Templates)
+	assert.Nil(t, e)
 }
 
 func readFile(fs afero.Fs, path string) (string, error) {
