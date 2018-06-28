@@ -56,7 +56,7 @@ variable "owner" {
 variable "aws_accounts" {
   type = "map"
   default = {
-  {{ range $account, $id := .OtherAccounts }}
+  {{ range $account, $id := .AllAccounts }}
     {{ if $id }}
         {{ $account }} = {{ $id }}
     {{ end }}
