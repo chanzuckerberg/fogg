@@ -6,7 +6,7 @@ provider "aws" {
   version = "~> {{ .AWSProviderVersion }}"
   region = "{{ .AWSRegion }}"
   profile = "{{ .AWSProfileProvider }}"
-  {{ if .AccountId }}allowed_account_ids = [{{ .AccountId }}]{{ end }}
+  {{ if .AccountID }}allowed_account_ids = [{{ .AccountID }}]{{ end }}
 }
 
 # Aliased Providers (for doing things in every region).
@@ -17,7 +17,7 @@ provider "aws" {
     version = "~> {{ $out.AWSProviderVersion }}"
     region = "{{ $region }}"
     profile = "{{ $out.AWSProfileProvider }}"
-    {{ if $out.AccountId }}allowed_account_ids = [{{ $out.AccountId }}]{{ end }}
+    {{ if $out.AccountID }}allowed_account_ids = [{{ $out.AccountID }}]{{ end }}
   }
 {{ end }}
 
@@ -56,7 +56,7 @@ variable "owner" {
 variable "aws_accounts" {
   type = "map"
   default = {
-  {{ range $account, $id := .OtherAccounts }}
+  {{ range $account, $id := .AllAccounts }}
     {{ if $id }}
         {{ $account }} = {{ $id }}
     {{ end }}
