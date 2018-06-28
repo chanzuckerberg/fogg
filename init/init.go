@@ -8,8 +8,6 @@ import (
 	"github.com/spf13/afero"
 )
 
-const DefaultPath = "fogg.json"
-
 func userPrompt() (string, string, string, string, string) {
 	project := prompt.StringRequired("project name? ")
 	region := prompt.StringRequired("aws region? ")
@@ -25,7 +23,7 @@ func writeConfig(fs afero.Fs, config *config.Config) error {
 	if e != nil {
 		return e
 	}
-	configFile, e2 := fs.Create(DefaultPath)
+	configFile, e2 := fs.Create("fogg.json")
 	if e2 != nil {
 		return e2
 	}
@@ -33,13 +31,9 @@ func writeConfig(fs afero.Fs, config *config.Config) error {
 	return e3
 }
 
-func Init(fs afero.Fs, project, region, bucket, profile, owner string) error {
-	config := config.InitConfig(project, region, bucket, profile, owner)
-	return writeConfig(fs, config)
-}
-
-func PromptAndInit(fs afero.Fs) error {
+func Init(fs afero.Fs) error {
 	project, region, bucket, profile, owner := userPrompt()
-	e := Init(fs, project, region, bucket, profile, owner)
+	config := config.InitConfig(project, region, bucket, profile, owner)
+	e := writeConfig(fs, config)
 	return e
 }

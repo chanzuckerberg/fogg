@@ -23,7 +23,7 @@ var initCmd = &cobra.Command{
 		}
 		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
-		e = fogg_init.PromptAndInit(fs)
+		e = fogg_init.Init(fs)
 		if e != nil {
 			panic(e)
 		}
