@@ -1,6 +1,7 @@
 package apply
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"log"
@@ -12,6 +13,7 @@ import (
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/gobuffalo/packr"
+	"github.com/hashicorp/hcl/hcl/printer"
 	"github.com/spf13/afero"
 )
 
@@ -92,6 +94,7 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
 	return source.Walk(func(path string, sourceFile packr.File) error {
 		extension := filepath.Ext(path)
 		basename := removeExtension(path)
+		destExtension := filepath.Ext(basename)
 		if extension == ".tmpl" {
 
 			err := applyTemplate(sourceFile, dest, basename, subst)
@@ -99,18 +102,17 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
 				return err
 			}
 
-			//     if dest.endswith('.tf'):
-			//         subprocess.call(['terraform', 'fmt', dest])
 		} else if extension == ".touch" {
-			touchFile(dest, basename)
-			//     if dest.endswith('.tf'):
-			//         subprocess.call(['terraform', 'fmt', dest])
+			err := touchFile(dest, basename)
+			if err != nil {
+				return err
+			}
 
 		} else if extension == ".create" {
-			createFile(dest, basename, sourceFile)
-			//     if dest.endswith('.tf'):
-			//         subprocess.call(['terraform', 'fmt', dest])
-
+			err := createFile(dest, basename, sourceFile)
+			if err != nil {
+				return err
+			}
 		} else {
 			log.Printf("copying %s", path)
 			e = afero.WriteReader(dest, path, sourceFile)
@@ -118,9 +120,27 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
 				return e
 			}
 		}
+
+		if destExtension == ".tf" {
+			fmtHcl(dest, basename)
+		}
+
 		return nil
 	})
 
+}
+
+func fmtHcl(fs afero.Fs, path string) error {
+	in, e := afero.ReadFile(fs, path)
+	if e != nil {
+		return e
+	}
+	out, e := printer.Format(in)
+	e = afero.WriteReader(fs, path, bytes.NewReader(out))
+	if e != nil {
+		return e
+	}
+	return e
 }
 
 func touchFile(dest afero.Fs, path string) error {

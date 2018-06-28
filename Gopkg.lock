@@ -39,6 +39,22 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/hashicorp/hcl"
+  packages = [
+    ".",
+    "hcl/ast",
+    "hcl/parser",
+    "hcl/scanner",
+    "hcl/strconv",
+    "hcl/token",
+    "json/parser",
+    "json/scanner",
+    "json/token"
+  ]
+  revision = "ef8a98b0bbce4a65b5aa4c368430a80ddc533168"
+
+[[projects]]
+  branch = "master"
   name = "github.com/howeyc/gopass"
   packages = ["."]
   revision = "bf9dde6d0d2c004a008c27aaee91170c786f6db8"
@@ -141,6 +157,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "0914236150f9fb0b08221a1207d4fe1c7660b694e00213ca6daf03a3aa63eb77"
+  inputs-digest = "e5125011a0b1ace18b6c4d34a9c4893d62420442d6b8ae4214ba9e625abf9208"
   solver-name = "gps-cdcl"
   solver-version = 1
