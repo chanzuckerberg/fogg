@@ -145,7 +145,7 @@ func TestApplySmokeTest(t *testing.T) {
 `
 	afero.WriteReader(fs, "fogg.json", strings.NewReader(config))
 
-	e := Apply(fs, "fogg.json", templates.Templates)
+	e := Apply(fs, "fogg.json", templates.Templates, true)
 	assert.Nil(t, e)
 }
 

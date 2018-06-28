@@ -86,7 +86,7 @@ func TestPlanBasic(t *testing.T) {
 `
 	fs := afero.NewMemMapFs()
 	afero.WriteFile(fs, "fogg.json", []byte(config), 0644)
-	plan, e := Eval(fs, "fogg.json")
+	plan, e := Eval(fs, "fogg.json", true)
 	assert.Nil(t, e)
 	assert.NotNil(t, plan)
 	assert.NotNil(t, plan.Accounts)

@@ -21,6 +21,7 @@ type account struct {
 	Owner              string
 	Project            string
 	TerraformVersion   string
+	SiccMode           bool
 }
 
 type module struct {
@@ -42,6 +43,7 @@ type Component struct {
 	Owner              string
 	Project            string
 	TerraformVersion   string
+	SiccMode           bool
 }
 
 type Env struct {
@@ -57,6 +59,7 @@ type Env struct {
 	Owner              string
 	Project            string
 	TerraformVersion   string
+	SiccMode           bool
 
 	Components map[string]Component
 }
@@ -66,31 +69,32 @@ type Plan struct {
 	Envs     map[string]Env
 	Global   Component
 	Modules  map[string]module
+	SiccMode bool
 	Version  string
 }
 
-func Eval(fs afero.Fs, configFile string) (*Plan, error) {
+func Eval(fs afero.Fs, configFile string, siccMode bool) (*Plan, error) {
 	c, err := config.FindAndReadConfig(fs, configFile)
 	if err != nil {
 		return nil, err
 	}
 	p := &Plan{}
-	// read config and validate
-	// build repo plan
 	v, e := util.VersionString()
 	if e != nil {
 		return nil, e
 	}
 	p.Version = v
-	p.Accounts = buildAccounts(c)
-	p.Envs = buildEnvs(c)
-	p.Global = buildGlobal(c)
-	p.Modules = buildModules(c)
+	p.SiccMode = siccMode
+	p.Accounts = buildAccounts(c, siccMode)
+	p.Envs = buildEnvs(c, siccMode)
+	p.Global = buildGlobal(c, siccMode)
+	p.Modules = buildModules(c, siccMode)
 	return p, nil
 }
 
 func Print(p *Plan) error {
 	fmt.Printf("Version: %s\n", p.Version)
+	fmt.Printf("sicc mode: %t\n", p.SiccMode)
 	fmt.Println("Accounts:")
 	for name, account := range p.Accounts {
 		fmt.Printf("\t%s:\n", name)
@@ -178,7 +182,7 @@ func Print(p *Plan) error {
 	return nil
 }
 
-func buildAccounts(c *config.Config) map[string]account {
+func buildAccounts(c *config.Config, siccMode bool) map[string]account {
 	defaults := c.Defaults
 	accountPlans := make(map[string]account, len(c.Accounts))
 	for name, config := range c.Accounts {
@@ -198,6 +202,7 @@ func buildAccounts(c *config.Config) map[string]account {
 		accountPlan.InfraBucket = resolveRequired(defaults.InfraBucket, config.InfraBucket)
 		accountPlan.Owner = resolveRequired(defaults.Owner, config.Owner)
 		accountPlan.Project = resolveRequired(defaults.Project, config.Project)
+		accountPlan.SiccMode = siccMode
 
 		accountPlans[name] = accountPlan
 	}
@@ -205,7 +210,7 @@ func buildAccounts(c *config.Config) map[string]account {
 	return accountPlans
 }
 
-func buildModules(c *config.Config) map[string]module {
+func buildModules(c *config.Config, siccMode bool) map[string]module {
 	modulePlans := make(map[string]module, len(c.Modules))
 	for name, conf := range c.Modules {
 		modulePlan := module{}
@@ -222,7 +227,7 @@ func newEnvPlan() Env {
 	return ep
 }
 
-func buildGlobal(conf *config.Config) Component {
+func buildGlobal(conf *config.Config, siccMode bool) Component {
 	// Global just uses defaults because that's the way sicc works. We should make it directly configurable after transition.
 	componentPlan := Component{}
 
@@ -242,10 +247,11 @@ func buildGlobal(conf *config.Config) Component {
 	componentPlan.Project = conf.Defaults.Project
 
 	componentPlan.Component = "global"
+	componentPlan.SiccMode = siccMode
 	return componentPlan
 }
 
-func buildEnvs(conf *config.Config) map[string]Env {
+func buildEnvs(conf *config.Config, siccMode bool) map[string]Env {
 	envPlans := make(map[string]Env, len(conf.Envs))
 	defaults := conf.Defaults
 	for envName, envConf := range conf.Envs {
@@ -265,6 +271,7 @@ func buildEnvs(conf *config.Config) map[string]Env {
 		envPlan.InfraBucket = resolveRequired(defaults.InfraBucket, envConf.InfraBucket)
 		envPlan.Owner = resolveRequired(defaults.Owner, envConf.Owner)
 		envPlan.Project = resolveRequired(defaults.Project, envConf.Project)
+		envPlan.SiccMode = siccMode
 
 		for componentName, componentConf := range conf.Envs[envName].Components {
 			componentPlan := Component{}
@@ -285,6 +292,7 @@ func buildEnvs(conf *config.Config) map[string]Env {
 			componentPlan.Env = envName
 			componentPlan.Component = componentName
 			componentPlan.OtherComponents = otherComponentNames(conf.Envs[envName].Components, componentName)
+			componentPlan.SiccMode = siccMode
 
 			envPlan.Components[componentName] = componentPlan
 		}
