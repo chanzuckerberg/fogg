@@ -39,6 +39,9 @@ func Apply(fs afero.Fs, configFile string, tmp *templates.T) error {
 	}
 
 	e = applyGlobal(fs, p.Global, &tmp.Global)
+	if e != nil {
+		return e
+	}
 
 	// TODO modules
 
