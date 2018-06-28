@@ -12,6 +12,7 @@ import (
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/gobuffalo/packr"
+	"github.com/pkg/errors"
 	"github.com/spf13/afero"
 )
 
@@ -20,22 +21,22 @@ const rootPath = "terraform"
 func Apply(fs afero.Fs, configFile string, tmp *templates.T) error {
 	p, err := plan.Eval(fs, configFile)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to evaluate plan")
 	}
 
 	e := applyRepo(fs, p, &tmp.Repo)
 	if e != nil {
-		return e
+		return errors.Wrap(e, "unable to apply repo")
 	}
 
 	e = applyAccounts(fs, p, &tmp.Account)
 	if e != nil {
-		return e
+		return errors.Wrap(e, "unable to apply accounts")
 	}
 
 	e = applyEnvs(fs, p, &tmp.Env, &tmp.Component)
 	if e != nil {
-		return e
+		return errors.Wrap(e, "unable to apply envs")
 	}
 
 	e = applyGlobal(fs, p.Global, &tmp.Global)
@@ -66,11 +67,11 @@ func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) (e error) {
 		path := fmt.Sprintf("%s/accounts/%s", rootPath, account)
 		e = fs.MkdirAll(path, 0755)
 		if e != nil {
-			return e
+			return errors.Wrap(e, "unable to make directories for accounts")
 		}
 		e = applyTree(accountBox, afero.NewBasePathFs(fs, path), accountPlan)
 		if e != nil {
-			return e
+			return errors.Wrap(e, "unable to apply templates to account")
 		}
 	}
 	return nil
@@ -81,21 +82,21 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 		path := fmt.Sprintf("%s/envs/%s", rootPath, env)
 		e = fs.MkdirAll(path, 0755)
 		if e != nil {
-			return e
+			return errors.Wrap(e, "unable to make directies for envs")
 		}
 		e := applyTree(envBox, afero.NewBasePathFs(fs, path), envPlan)
 		if e != nil {
-			return e
+			return errors.Wrap(e, "unable to apply templates to env")
 		}
 		for component, componentPlan := range envPlan.Components {
 			path := fmt.Sprintf("%s/envs/%s/%s", rootPath, env, component)
 			e = fs.MkdirAll(path, 0755)
 			if e != nil {
-				return e
+				return errors.Wrap(e, "unable to make directories for component")
 			}
 			e := applyTree(componentBox, afero.NewBasePathFs(fs, path), componentPlan)
 			if e != nil {
-				return e
+				return errors.Wrap(e, "unable to apply templates for component")
 			}
 		}
 	}
@@ -110,7 +111,7 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
 
 			err := applyTemplate(sourceFile, dest, basename, subst)
 			if err != nil {
-				return err
+				return errors.Wrap(err, "unable to apply template")
 			}
 
 			//     if dest.endswith('.tf'):
@@ -129,7 +130,7 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
 			log.Printf("copying %s", path)
 			e = afero.WriteReader(dest, path, sourceFile)
 			if e != nil {
-				return e
+				return errors.Wrap(e, "unable to copy file")
 			}
 		}
 		return nil
@@ -143,7 +144,7 @@ func touchFile(dest afero.Fs, path string) error {
 		log.Printf("touching %s", path)
 		_, err = dest.Create(path)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "unable to touch file")
 		}
 	} else {
 		log.Printf("skipping touch on existing file %s", path)
@@ -157,7 +158,7 @@ func createFile(dest afero.Fs, path string, sourceFile io.Reader) error {
 		log.Printf("creating %s", path)
 		err = afero.WriteReader(dest, path, sourceFile)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "unable to create file")
 		}
 	} else {
 		log.Printf("skipping create on existing file %s", path)
@@ -173,7 +174,7 @@ func applyTemplate(sourceFile io.Reader, dest afero.Fs, path string, overrides i
 	log.Printf("templating %s", path)
 	writer, err := dest.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to open file")
 	}
 	t := util.OpenTemplate(sourceFile)
 	return t.Execute(writer, overrides)
