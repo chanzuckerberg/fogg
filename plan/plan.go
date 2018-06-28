@@ -27,7 +27,7 @@ type module struct {
 	TerraformVersion string
 }
 
-type component struct {
+type Component struct {
 	AccountID          *int64
 	AccountName        string
 	AWSProfileBackend  string
@@ -58,12 +58,13 @@ type Env struct {
 	Project            string
 	TerraformVersion   string
 
-	Components map[string]component
+	Components map[string]Component
 }
 
 type Plan struct {
 	Accounts map[string]account
 	Envs     map[string]Env
+	Global   Component
 	Modules  map[string]module
 	Version  string
 }
@@ -83,6 +84,7 @@ func Eval(fs afero.Fs, configFile string) (*Plan, error) {
 	p.Version = v
 	p.Accounts = buildAccounts(c)
 	p.Envs = buildEnvs(c)
+	p.Global = buildGlobal(c)
 	p.Modules = buildModules(c)
 	return p, nil
 }
@@ -114,6 +116,20 @@ func Print(p *Plan) error {
 		}
 
 	}
+
+	fmt.Println("Global:")
+	fmt.Printf("\tid: %d\n", p.Global.AccountID)
+	fmt.Printf("\taws_profile_backend: %v\n", p.Global.AWSProfileBackend)
+	fmt.Printf("\taws_profile_provider: %v\n", p.Global.AWSProfileProvider)
+	fmt.Printf("\taws_provider_version: %v\n", p.Global.AWSProviderVersion)
+	fmt.Printf("\taws_region: %v\n", p.Global.AWSRegion)
+	fmt.Printf("\taws_regions: %v\n", p.Global.AWSRegions)
+	fmt.Printf("\tinfra_bucket: %v\n", p.Global.InfraBucket)
+	fmt.Printf("\tname: %v\n", p.Global.AccountName)
+	fmt.Printf("\tother_p.Globals: %v\n", p.Global.OtherComponents)
+	fmt.Printf("\towner: %v\n", p.Global.Owner)
+	fmt.Printf("\tproject: %v\n", p.Global.Project)
+	fmt.Printf("\tterraform_version: %v\n", p.Global.TerraformVersion)
 
 	fmt.Println("Envs:")
 
@@ -202,8 +218,31 @@ func buildModules(c *config.Config) map[string]module {
 
 func newEnvPlan() Env {
 	ep := Env{}
-	ep.Components = make(map[string]component)
+	ep.Components = make(map[string]Component)
 	return ep
+}
+
+func buildGlobal(conf *config.Config) Component {
+	// Global just uses defaults because that's the way sicc works. We should make it directly configurable after transition.
+	componentPlan := Component{}
+
+	// TODO add accountID to defaults
+	componentPlan.AWSRegion = conf.Defaults.AWSRegion
+	componentPlan.AWSRegions = conf.Defaults.AWSRegions
+
+	componentPlan.AWSProfileBackend = conf.Defaults.AWSProfileBackend
+	componentPlan.AWSProfileProvider = conf.Defaults.AWSProfileProvider
+	componentPlan.AWSProviderVersion = conf.Defaults.AWSProviderVersion
+	// TODO add AccountID to defaults
+	// componentPlan.AccountID = conf.Defaults.AccountID
+
+	componentPlan.TerraformVersion = conf.Defaults.TerraformVersion
+	componentPlan.InfraBucket = conf.Defaults.InfraBucket
+	componentPlan.Owner = conf.Defaults.Owner
+	componentPlan.Project = conf.Defaults.Project
+
+	componentPlan.Component = "global"
+	return componentPlan
 }
 
 func buildEnvs(conf *config.Config) map[string]Env {
@@ -228,9 +267,8 @@ func buildEnvs(conf *config.Config) map[string]Env {
 		envPlan.Project = resolveRequired(defaults.Project, envConf.Project)
 
 		for componentName, componentConf := range conf.Envs[envName].Components {
-			componentPlan := component{}
+			componentPlan := Component{}
 
-			componentPlan.AccountID = resolveOptionalInt(envPlan.AccountID, componentConf.AccountID)
 			componentPlan.AWSRegion = resolveRequired(envPlan.AWSRegion, componentConf.AWSRegion)
 			componentPlan.AWSRegions = resolveStringArray(envPlan.AWSRegions, componentConf.AWSRegions)
 
