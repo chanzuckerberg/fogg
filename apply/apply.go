@@ -2,7 +2,9 @@ package apply
 
 import (
 	"fmt"
+	"html/template"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -12,6 +14,10 @@ import (
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/gobuffalo/packr"
+	"github.com/hashicorp/terraform/config"
+	"github.com/hashicorp/terraform/config/module"
+	"github.com/hashicorp/terraform/svchost/auth"
+	"github.com/hashicorp/terraform/svchost/disco"
 	"github.com/pkg/errors"
 	"github.com/spf13/afero"
 )
@@ -99,6 +105,10 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 				return errors.Wrap(e, "unable to apply templates for component")
 			}
 		}
+		path = filepath.Join(rootPath, "envs", env, "cloud-env")
+		if envPlan.Type == "aws" {
+			applyModule(fs, path, "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-env")
+		}
 	}
 	return nil
 }
@@ -178,4 +188,81 @@ func applyTemplate(sourceFile io.Reader, dest afero.Fs, path string, overrides i
 	}
 	t := util.OpenTemplate(sourceFile)
 	return t.Execute(writer, overrides)
+}
+
+func downloadModule(dir, mod string) error {
+	disco := disco.NewDisco()
+	s := module.NewStorage(dir, disco, auth.NoCredentials)
+
+	return s.GetModule(dir, mod)
+}
+
+func downloadAndParseModule(dir, mod string) (*config.Config, error) {
+	e := downloadModule(dir, mod)
+	if e != nil {
+		return nil, errors.Wrap(e, "unable to download module")
+	}
+	return config.LoadDir(dir)
+}
+
+type moduleData struct {
+	ModuleName   string
+	ModuleSource string
+	Variables    []string
+	Outputs      []string
+}
+
+func applyModule(fs afero.Fs, path, mod string) error {
+	e := fs.MkdirAll(path, 0755)
+	if e != nil {
+		return errors.Wrapf(e, "couldn't create %s directory", path)
+	}
+
+	dir, e := ioutil.TempDir("", "fogg")
+	if e != nil {
+		return e
+	}
+	c, e := downloadAndParseModule(dir, mod)
+	variables := make([]string, 0)
+	for _, v := range c.Variables {
+		variables = append(variables, v.Name)
+	}
+	outputs := make([]string, 0)
+	for _, o := range c.Outputs {
+		outputs = append(outputs, o.Name)
+	}
+	moduleName := filepath.Base(mod)
+
+	main := `
+module "{{.ModuleName}}" {
+  source = "{{.ModuleSource}}"
+  {{range .Variables -}}
+    {{.}} = "${var.{{.}}}"
+  {{ end}}
+}
+`
+	mainTemp := template.Must(template.New("tmpl").Parse(string(main)))
+	mainFile, e := fs.OpenFile(filepath.Join(path, "main.tf"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	if e != nil {
+		return errors.Wrapf(e, "unable to open %s", filepath.Join(path, "main.tf"))
+	}
+	mainTemp.Execute(mainFile, &moduleData{moduleName, mod, variables, outputs})
+
+	output := `
+{{ $outer := . -}}
+{{- range .Outputs -}}
+output "{{.}}" {
+  value = "${module.{{$outer.ModuleName}}.{{.}}}"
+}
+
+{{end}}`
+	outputsTemp := template.Must(template.New("tmpl").Parse(string(output)))
+	outputFile, e := fs.OpenFile(filepath.Join(path, "outputs.tf"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	if e != nil {
+		return errors.Wrapf(e, "unable to open %s", filepath.Join(path, "outputs.tf"))
+	}
+
+	outputsTemp.Execute(outputFile, &moduleData{moduleName, mod, variables, outputs})
+
+	return e
 }

@@ -18,6 +18,7 @@ type defaults struct {
 	InfraBucket        string   `json:"infra_s3_bucket"`
 	Owner              string   `json:"owner"`
 	Project            string   `json:"project"`
+	SharedInfraVersion string   `json:"shared_infra_version"`
 	TerraformVersion   string   `json:"terraform_version"`
 }
 
@@ -45,6 +46,7 @@ type Env struct {
 	Owner              *string  `json:"owner"`
 	Project            *string  `json:"project"`
 	TerraformVersion   *string  `json:"terraform_version"`
+	Type               *string  `json:type`
 
 	Components map[string]*Component `json:"components"`
 }
@@ -59,6 +61,7 @@ type Component struct {
 	InfraBucket        *string  `json:"infra_s3_bucket"`
 	Owner              *string  `json:"owner"`
 	Project            *string  `json:"project"`
+	SharedInfraVersion *string  `json:"shared_infra_version"`
 	TerraformVersion   *string  `json:"terraform_version"`
 }
 

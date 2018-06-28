@@ -149,6 +149,65 @@ func TestApplySmokeTest(t *testing.T) {
 	assert.Nil(t, e)
 }
 
+func TestDownloadModule(t *testing.T) {
+	dir, e := ioutil.TempDir("", "fogg")
+
+	e = downloadModule(dir, "./test-module")
+	assert.Nil(t, e)
+	// TODO more asserts
+}
+
+func TestDownloadAndParseModule(t *testing.T) {
+	dir, e := ioutil.TempDir("", "fogg")
+
+	c, e := downloadAndParseModule(dir, "./test-module")
+	assert.Nil(t, e)
+	assert.NotNil(t, c)
+	assert.Len(t, c.Variables, 2)
+	assert.Len(t, c.Outputs, 2)
+}
+
+func TestApplyModule(t *testing.T) {
+	fs := afero.NewMemMapFs()
+
+	e := applyModule(fs, "mymodule", "./test-module")
+	assert.Nil(t, e)
+
+	s, e := fs.Stat("mymodule")
+	assert.Nil(t, e)
+	assert.True(t, s.IsDir())
+
+	_, e = fs.Stat("mymodule/main.tf")
+	assert.Nil(t, e)
+	r, e := afero.ReadFile(fs, "mymodule/main.tf")
+	assert.Nil(t, e)
+	expected := `
+module "test-module" {
+  source = "./test-module"
+  foo = "${var.foo}"
+  bar = "${var.bar}"
+  
+}
+`
+	assert.Equal(t, expected, string(r))
+
+	_, e = fs.Stat("mymodule/outputs.tf")
+	assert.Nil(t, e)
+	r, e = afero.ReadFile(fs, "mymodule/outputs.tf")
+	assert.Nil(t, e)
+	expected = `
+output "foo" {
+  value = "${module.test-module.foo}"
+}
+
+output "bar" {
+  value = "${module.test-module.bar}"
+}
+
+`
+	assert.Equal(t, expected, string(r))
+}
+
 func readFile(fs afero.Fs, path string) (string, error) {
 	f, e := fs.Open(path)
 	if e != nil {
