@@ -39,13 +39,27 @@ func Apply(fs afero.Fs, configFile string, tmp *templates.T) error {
 		return errors.Wrap(e, "unable to apply envs")
 	}
 
-	// TODO global
+	e = applyGlobal(fs, p.Global, &tmp.Global)
+	if e != nil {
+		return e
+	}
+
+	// TODO modules
 
 	return nil
 }
 
 func applyRepo(fs afero.Fs, p *plan.Plan, repoBox *packr.Box) error {
 	return applyTree(repoBox, fs, p)
+}
+
+func applyGlobal(fs afero.Fs, p plan.Component, repoBox *packr.Box) error {
+	path := fmt.Sprintf("%s/global", rootPath)
+	e := fs.MkdirAll(path, 0755)
+	if e != nil {
+		return e
+	}
+	return applyTree(repoBox, afero.NewBasePathFs(fs, path), p)
 }
 
 func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) (e error) {
