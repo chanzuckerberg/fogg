@@ -180,6 +180,7 @@
     ".",
     "hcl/ast",
     "hcl/parser",
+    "hcl/printer",
     "hcl/scanner",
     "hcl/strconv",
     "hcl/token",
@@ -431,7 +432,7 @@
     "html/atom",
     "idna"
   ]
-  revision = "d1d521f6884855bc0e59c3d011574bd0678f18bc"
+  revision = "4cb1c02c05b0e749b0365f61ae859a8e0cfceed9"
 
 [[projects]]
   branch = "master"
@@ -440,7 +441,7 @@
     "unix",
     "windows"
   ]
-  revision = "c4afb3effaa53fd9a06ca61262dc7ce8df4c081b"
+  revision = "7138fd3d9dc8335c567ca206f4333fb75eb05d56"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -466,6 +467,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f1b31e33138d7d0d1899d3e34faabb4508e085ebc93a45bd88d2c7b183689581"
+  inputs-digest = "61c2198474b746188b6331fb02afc08fc9a75b51c324cf4ea12028ad0b32c5e3"
   solver-name = "gps-cdcl"
   solver-version = 1
