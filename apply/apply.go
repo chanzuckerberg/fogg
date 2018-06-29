@@ -20,8 +20,8 @@ import (
 
 const rootPath = "terraform"
 
-func Apply(fs afero.Fs, configFile string, tmp *templates.T) error {
-	p, err := plan.Eval(fs, configFile)
+func Apply(fs afero.Fs, configFile string, tmp *templates.T, siccMode bool) error {
+	p, err := plan.Eval(fs, configFile, siccMode)
 	if err != nil {
 		return errors.Wrap(err, "unable to evaluate plan")
 	}
@@ -47,15 +47,12 @@ func Apply(fs afero.Fs, configFile string, tmp *templates.T) error {
 	}
 
 	e = applyModules(fs, p.Modules, &tmp.Module)
-	if e != nil {
-		return e
-	}
 
-	return nil
+	return e
 }
 
 func applyRepo(fs afero.Fs, p *plan.Plan, repoBox *packr.Box) error {
-	return applyTree(repoBox, fs, p)
+	return applyTree(repoBox, fs, p.SiccMode, p)
 }
 
 func applyGlobal(fs afero.Fs, p plan.Component, repoBox *packr.Box) error {
@@ -64,7 +61,7 @@ func applyGlobal(fs afero.Fs, p plan.Component, repoBox *packr.Box) error {
 	if e != nil {
 		return e
 	}
-	return applyTree(repoBox, afero.NewBasePathFs(fs, path), p)
+	return applyTree(repoBox, afero.NewBasePathFs(fs, path), p.SiccMode, p)
 }
 
 func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) (e error) {
@@ -74,7 +71,7 @@ func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) (e error) {
 		if e != nil {
 			return errors.Wrap(e, "unable to make directories for accounts")
 		}
-		e = applyTree(accountBox, afero.NewBasePathFs(fs, path), accountPlan)
+		e = applyTree(accountBox, afero.NewBasePathFs(fs, path), accountPlan.SiccMode, accountPlan)
 		if e != nil {
 			return errors.Wrap(e, "unable to apply templates to account")
 		}
@@ -90,7 +87,7 @@ func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox *packr.Box) e
 		if e != nil {
 			return e
 		}
-		e = applyTree(moduleBox, afero.NewBasePathFs(fs, path), modulePlan)
+		e = applyTree(moduleBox, afero.NewBasePathFs(fs, path), modulePlan.SiccMode, modulePlan)
 		if e != nil {
 			return e
 		}
@@ -105,7 +102,7 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 		if e != nil {
 			return errors.Wrap(e, "unable to make directies for envs")
 		}
-		e := applyTree(envBox, afero.NewBasePathFs(fs, path), envPlan)
+		e := applyTree(envBox, afero.NewBasePathFs(fs, path), envPlan.SiccMode, envPlan)
 		if e != nil {
 			return errors.Wrap(e, "unable to apply templates to env")
 		}
@@ -115,7 +112,7 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 			if e != nil {
 				return errors.Wrap(e, "unable to make directories for component")
 			}
-			e := applyTree(componentBox, afero.NewBasePathFs(fs, path), componentPlan)
+			e := applyTree(componentBox, afero.NewBasePathFs(fs, path), componentPlan.SiccMode, componentPlan)
 			if e != nil {
 				return errors.Wrap(e, "unable to apply templates for component")
 			}
@@ -124,46 +121,58 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 	return nil
 }
 
-func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
+func applyTree(source *packr.Box, dest afero.Fs, siccMode bool, subst interface{}) (e error) {
 	return source.Walk(func(path string, sourceFile packr.File) error {
 		extension := filepath.Ext(path)
-		basename := removeExtension(path)
-		destExtension := filepath.Ext(basename)
+		target := getTargetPath(path, siccMode)
+		targetExtension := filepath.Ext(target)
 		if extension == ".tmpl" {
 
-			err := applyTemplate(sourceFile, dest, basename, subst)
-			if err != nil {
-				return errors.Wrap(err, "unable to apply template")
+			e = applyTemplate(sourceFile, dest, target, subst)
+			if e != nil {
+				return errors.Wrap(e, "unable to apply template")
 			}
 
 		} else if extension == ".touch" {
-			err := touchFile(dest, basename)
-			if err != nil {
-				return err
+
+			e = touchFile(dest, target)
+			if e != nil {
+				return e
 			}
 
 		} else if extension == ".create" {
-			err := createFile(dest, basename, sourceFile)
-			if err != nil {
-				return err
+
+			e = createFile(dest, target, sourceFile)
+			if e != nil {
+				return errors.Wrapf(e, "unable to create file %s", target)
 			}
+
 		} else {
+
 			log.Printf("copying %s", path)
 			e = afero.WriteReader(dest, path, sourceFile)
 			if e != nil {
 				return errors.Wrap(e, "unable to copy file")
 			}
+
 		}
 
-		if destExtension == ".tf" {
-			e = fmtHcl(dest, basename)
+		if !siccMode && target == "fogg.tf" {
+			log.Println("removing sicc.tf")
+			e = dest.Remove("sicc.tf")
 			if e != nil {
-				return e
+				log.Println("error removing sicc.tf. ignoring")
+			}
+		}
+
+		if targetExtension == ".tf" {
+			e = fmtHcl(dest, target)
+			if e != nil {
+				return errors.Wrap(e, "unable to format HCL")
 			}
 		}
 		return nil
 	})
-
 }
 
 func fmtHcl(fs afero.Fs, path string) error {
@@ -218,4 +227,19 @@ func applyTemplate(sourceFile io.Reader, dest afero.Fs, path string, overrides i
 	}
 	t := util.OpenTemplate(sourceFile)
 	return t.Execute(writer, overrides)
+}
+
+func getTargetPath(path string, siccMode bool) string {
+	target := path
+	extension := filepath.Ext(path)
+
+	if extension == ".tmpl" || extension == ".touch" || extension == ".create" {
+		target = removeExtension(path)
+	}
+
+	if siccMode && filepath.Base(target) == "fogg.tf" {
+		target = filepath.Join(filepath.Dir(target), "sicc.tf")
+	}
+
+	return target
 }
