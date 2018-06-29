@@ -1,6 +1,7 @@
 package apply
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"log"
@@ -12,6 +13,7 @@ import (
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/gobuffalo/packr"
+	"github.com/hashicorp/hcl/hcl/printer"
 	"github.com/pkg/errors"
 	"github.com/spf13/afero"
 )
@@ -126,6 +128,7 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
 	return source.Walk(func(path string, sourceFile packr.File) error {
 		extension := filepath.Ext(path)
 		basename := removeExtension(path)
+		destExtension := filepath.Ext(basename)
 		if extension == ".tmpl" {
 
 			err := applyTemplate(sourceFile, dest, basename, subst)
@@ -133,18 +136,17 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
 				return errors.Wrap(err, "unable to apply template")
 			}
 
-			//     if dest.endswith('.tf'):
-			//         subprocess.call(['terraform', 'fmt', dest])
 		} else if extension == ".touch" {
-			touchFile(dest, basename)
-			//     if dest.endswith('.tf'):
-			//         subprocess.call(['terraform', 'fmt', dest])
+			err := touchFile(dest, basename)
+			if err != nil {
+				return err
+			}
 
 		} else if extension == ".create" {
-			createFile(dest, basename, sourceFile)
-			//     if dest.endswith('.tf'):
-			//         subprocess.call(['terraform', 'fmt', dest])
-
+			err := createFile(dest, basename, sourceFile)
+			if err != nil {
+				return err
+			}
 		} else {
 			log.Printf("copying %s", path)
 			e = afero.WriteReader(dest, path, sourceFile)
@@ -152,9 +154,28 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
 				return errors.Wrap(e, "unable to copy file")
 			}
 		}
+
+		if destExtension == ".tf" {
+			e = fmtHcl(dest, basename)
+			if e != nil {
+				return e
+			}
+		}
 		return nil
 	})
 
+}
+
+func fmtHcl(fs afero.Fs, path string) error {
+	in, e := afero.ReadFile(fs, path)
+	if e != nil {
+		return e
+	}
+	out, e := printer.Format(in)
+	if e != nil {
+		return e
+	}
+	return afero.WriteReader(fs, path, bytes.NewReader(out))
 }
 
 func touchFile(dest afero.Fs, path string) error {

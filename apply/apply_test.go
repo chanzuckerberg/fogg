@@ -149,6 +149,26 @@ func TestApplySmokeTest(t *testing.T) {
 	assert.Nil(t, e)
 }
 
+func TestFmtHcl(t *testing.T) {
+	before := `foo { bar     = "bam"}`
+	after := `foo {
+  bar = "bam"
+}
+`
+	fs := afero.NewMemMapFs()
+	in := strings.NewReader(before)
+	e := afero.WriteReader(fs, "foo.tf", in)
+	assert.Nil(t, e)
+	e = fmtHcl(fs, "foo.tf")
+	assert.Nil(t, e)
+	out, e := afero.ReadFile(fs, "foo.tf")
+	assert.Nil(t, e)
+	assert.NotNil(t, out)
+	s := string(out)
+	assert.Equal(t, after, s)
+
+}
+
 func readFile(fs afero.Fs, path string) (string, error) {
 	f, e := fs.Open(path)
 	if e != nil {
