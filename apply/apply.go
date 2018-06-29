@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -14,6 +15,10 @@ import (
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/gobuffalo/packr"
 	"github.com/hashicorp/hcl/hcl/printer"
+	"github.com/hashicorp/terraform/config"
+	"github.com/hashicorp/terraform/config/module"
+	"github.com/hashicorp/terraform/svchost/auth"
+	"github.com/hashicorp/terraform/svchost/disco"
 	"github.com/pkg/errors"
 	"github.com/spf13/afero"
 )
@@ -107,7 +112,7 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 			return errors.Wrap(e, "unable to apply templates to env")
 		}
 		for component, componentPlan := range envPlan.Components {
-			path := fmt.Sprintf("%s/envs/%s/%s", rootPath, env, component)
+			path = fmt.Sprintf("%s/envs/%s/%s", rootPath, env, component)
 			e = fs.MkdirAll(path, 0755)
 			if e != nil {
 				return errors.Wrap(e, "unable to make directories for component")
@@ -115,6 +120,13 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 			e := applyTree(componentBox, afero.NewBasePathFs(fs, path), componentPlan.SiccMode, componentPlan)
 			if e != nil {
 				return errors.Wrap(e, "unable to apply templates for component")
+			}
+		}
+		path = filepath.Join(rootPath, "envs", env, "cloud-env")
+		if envPlan.Type == "aws" {
+			e := applyModule(fs, path, "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-env", templates.Templates.ModuleInvocation)
+			if e != nil {
+				return errors.Wrap(e, "unable to apply module")
 			}
 		}
 	}
@@ -227,6 +239,82 @@ func applyTemplate(sourceFile io.Reader, dest afero.Fs, path string, overrides i
 	}
 	t := util.OpenTemplate(sourceFile)
 	return t.Execute(writer, overrides)
+}
+
+func downloadModule(dir, mod string) error {
+	disco := disco.NewDisco()
+	s := module.NewStorage(dir, disco, auth.NoCredentials)
+
+	return s.GetModule(dir, mod)
+}
+
+func downloadAndParseModule(mod string) (*config.Config, error) {
+	dir, e := ioutil.TempDir("", "fogg")
+	if e != nil {
+		return nil, errors.Wrap(e, "unable to create tempdir")
+	}
+	e = downloadModule(dir, mod)
+	if e != nil {
+		return nil, errors.Wrap(e, "unable to download module")
+	}
+	return config.LoadDir(dir)
+}
+
+// This should really be part of the plan stage, not apply. But going to
+// leave it here for now and re-think it when we make this mechanism
+// general purpose.
+type moduleData struct {
+	ModuleName   string
+	ModuleSource string
+	Variables    []string
+	Outputs      []string
+}
+
+func applyModule(fs afero.Fs, path, mod string, box packr.Box) error {
+	e := fs.MkdirAll(path, 0755)
+	if e != nil {
+		return errors.Wrapf(e, "couldn't create %s directory", path)
+	}
+
+	c, e := downloadAndParseModule(mod)
+	if e != nil {
+		return errors.Wrap(e, "could not download or parse module")
+	}
+
+	// This should really be part of the plan stage, not apply. But going to
+	// leave it here for now and re-think it when we make this mechanism
+	// general purpose.
+	variables := make([]string, 0)
+	for _, v := range c.Variables {
+		variables = append(variables, v.Name)
+	}
+	outputs := make([]string, 0)
+	for _, o := range c.Outputs {
+		outputs = append(outputs, o.Name)
+	}
+	moduleName := filepath.Base(mod)
+
+	f, e := box.Open("main.tf.tmpl")
+	if e != nil {
+		return errors.Wrap(e, "could not open template file")
+	}
+
+	e = applyTemplate(f, fs, filepath.Join(path, "main.tf"), &moduleData{moduleName, mod, variables, outputs})
+	if e != nil {
+		return e
+	}
+
+	f, e = box.Open("outputs.tf.tmpl")
+	if e != nil {
+		return errors.Wrap(e, "could not open template file")
+	}
+
+	e = applyTemplate(f, fs, filepath.Join(path, "outputs.tf"), &moduleData{moduleName, mod, variables, outputs})
+	if e != nil {
+		return e
+	}
+
+	return nil
 }
 
 func getTargetPath(path string, siccMode bool) string {

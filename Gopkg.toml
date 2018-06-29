@@ -32,4 +32,8 @@
 
 [[constraint]]
   name = "github.com/pkg/errors"
-  version = "0.8.0"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/hashicorp/terraform"
+  version = "0.11.7"

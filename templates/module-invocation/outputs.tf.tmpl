@@ -1,0 +1,7 @@
+{{ $outer := . -}}
+{{- range .Outputs -}}
+output "{{.}}" {
+  value = "${module.{{$outer.ModuleName}}.{{.}}}"
+}
+
+{{end}}

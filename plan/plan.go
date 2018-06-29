@@ -43,6 +43,7 @@ type Component struct {
 	OtherComponents    []string
 	Owner              string
 	Project            string
+	SharedInfraVersion string
 	TerraformVersion   string
 	SiccMode           bool
 }
@@ -60,6 +61,7 @@ type Env struct {
 	Owner              string
 	Project            string
 	TerraformVersion   string
+	Type               string
 	SiccMode           bool
 
 	Components map[string]Component
@@ -170,6 +172,7 @@ func Print(p *Plan) error {
 			fmt.Printf("\t\t\t\tother_components: %v\n", component.OtherComponents)
 			fmt.Printf("\t\t\t\towner: %v\n", component.Owner)
 			fmt.Printf("\t\t\t\tproject: %v\n", component.Project)
+			fmt.Printf("\t\t\t\tshared_infra_version: %v\n", component.SharedInfraVersion)
 			fmt.Printf("\t\t\t\tterraform_version: %v\n", component.TerraformVersion)
 		}
 
@@ -273,6 +276,11 @@ func buildEnvs(conf *config.Config, siccMode bool) map[string]Env {
 		envPlan.InfraBucket = resolveRequired(defaults.InfraBucket, envConf.InfraBucket)
 		envPlan.Owner = resolveRequired(defaults.Owner, envConf.Owner)
 		envPlan.Project = resolveRequired(defaults.Project, envConf.Project)
+		if envConf.Type != nil {
+			envPlan.Type = *envConf.Type
+		} else {
+			envPlan.Type = "aws"
+		}
 		envPlan.SiccMode = siccMode
 
 		for componentName, componentConf := range conf.Envs[envName].Components {
@@ -290,6 +298,7 @@ func buildEnvs(conf *config.Config, siccMode bool) map[string]Env {
 			componentPlan.InfraBucket = resolveRequired(envPlan.InfraBucket, componentConf.InfraBucket)
 			componentPlan.Owner = resolveRequired(envPlan.Owner, componentConf.Owner)
 			componentPlan.Project = resolveRequired(envPlan.Project, componentConf.Project)
+			componentPlan.SharedInfraVersion = resolveRequired(conf.Defaults.SharedInfraVersion, componentConf.SharedInfraVersion)
 
 			componentPlan.Env = envName
 			componentPlan.Component = componentName
