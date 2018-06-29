@@ -7,6 +7,7 @@ type T struct {
 	Component packr.Box
 	Env       packr.Box
 	Global    packr.Box
+	Module    packr.Box
 	Repo      packr.Box
 }
 
@@ -15,5 +16,6 @@ var Templates = &T{
 	Component: packr.NewBox("component"),
 	Env:       packr.NewBox("env"),
 	Global:    packr.NewBox("global"),
+	Module:    packr.NewBox("module"),
 	Repo:      packr.NewBox("repo"),
 }

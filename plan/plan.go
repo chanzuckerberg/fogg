@@ -23,7 +23,7 @@ type account struct {
 	TerraformVersion   string
 }
 
-type module struct {
+type Module struct {
 	TerraformVersion string
 }
 
@@ -65,7 +65,7 @@ type Plan struct {
 	Accounts map[string]account
 	Envs     map[string]Env
 	Global   Component
-	Modules  map[string]module
+	Modules  map[string]Module
 	Version  string
 }
 
@@ -205,10 +205,10 @@ func buildAccounts(c *config.Config) map[string]account {
 	return accountPlans
 }
 
-func buildModules(c *config.Config) map[string]module {
-	modulePlans := make(map[string]module, len(c.Modules))
+func buildModules(c *config.Config) map[string]Module {
+	modulePlans := make(map[string]Module, len(c.Modules))
 	for name, conf := range c.Modules {
-		modulePlan := module{}
+		modulePlan := Module{}
 
 		modulePlan.TerraformVersion = resolveRequired(c.Defaults.TerraformVersion, conf.TerraformVersion)
 		modulePlans[name] = modulePlan
