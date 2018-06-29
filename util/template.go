@@ -30,11 +30,8 @@ func tool(in interface{}) string {
 		b := v.Bool()
 		if b {
 			return "sicc"
-		} else {
-			return "fogg"
 		}
-	} else {
-		return ""
+		return "fogg"
 	}
 	return ""
 }

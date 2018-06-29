@@ -47,11 +47,8 @@ func Apply(fs afero.Fs, configFile string, tmp *templates.T, siccMode bool) erro
 	}
 
 	e = applyModules(fs, p.Modules, &tmp.Module)
-	if e != nil {
-		return e
-	}
 
-	return nil
+	return e
 }
 
 func applyRepo(fs afero.Fs, p *plan.Plan, repoBox *packr.Box) error {
@@ -162,7 +159,10 @@ func applyTree(source *packr.Box, dest afero.Fs, siccMode bool, subst interface{
 
 		if !siccMode && target == "fogg.tf" {
 			log.Println("removing sicc.tf")
-			dest.Remove("sicc.tf")
+			e = dest.Remove("sicc.tf")
+			if e != nil {
+				log.Println("error removing sicc.tf. ignoring")
+			}
 		}
 
 		if targetExtension == ".tf" {
