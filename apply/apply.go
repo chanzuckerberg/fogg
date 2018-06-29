@@ -208,6 +208,9 @@ func downloadAndParseModule(mod string) (*config.Config, error) {
 	return config.LoadDir(dir)
 }
 
+// This should really be part of the plan stage, not apply. But going to
+// leave it here for now and re-think it when we make this mechanism
+// general purpose.
 type moduleData struct {
 	ModuleName   string
 	ModuleSource string
@@ -241,14 +244,20 @@ func applyModule(fs afero.Fs, path, mod string, box packr.Box) error {
 		return errors.Wrap(e, "could not open template file")
 	}
 
-	applyTemplate(f, fs, filepath.Join(path, "main.tf"), &moduleData{moduleName, mod, variables, outputs})
+	e = applyTemplate(f, fs, filepath.Join(path, "main.tf"), &moduleData{moduleName, mod, variables, outputs})
+	if e != nil {
+		return e
+	}
 
 	f, e = box.Open("outputs.tf.tmpl")
 	if e != nil {
 		return errors.Wrap(e, "could not open template file")
 	}
 
-	applyTemplate(f, fs, filepath.Join(path, "outputs.tf"), &moduleData{moduleName, mod, variables, outputs})
+	e = applyTemplate(f, fs, filepath.Join(path, "outputs.tf"), &moduleData{moduleName, mod, variables, outputs})
+	if e != nil {
+		return e
+	}
 
-	return e
+	return nil
 }
