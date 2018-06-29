@@ -225,6 +225,9 @@ func applyModule(fs afero.Fs, path, mod string, box packr.Box) error {
 	}
 
 	c, e := downloadAndParseModule(mod)
+	if e != nil {
+		return errors.Wrap(e, "could not download or parse module")
+	}
 
 	// This should really be part of the plan stage, not apply. But going to
 	// leave it here for now and re-think it when we make this mechanism
