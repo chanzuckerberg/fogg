@@ -2,7 +2,6 @@ package apply
 
 import (
 	"fmt"
-	"html/template"
 	"io"
 	"io/ioutil"
 	"log"
@@ -107,7 +106,7 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 		}
 		path = filepath.Join(rootPath, "envs", env, "cloud-env")
 		if envPlan.Type == "aws" {
-			applyModule(fs, path, "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-env")
+			applyModule(fs, path, "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-env", templates.Templates.Module)
 		}
 	}
 	return nil
@@ -197,8 +196,12 @@ func downloadModule(dir, mod string) error {
 	return s.GetModule(dir, mod)
 }
 
-func downloadAndParseModule(dir, mod string) (*config.Config, error) {
-	e := downloadModule(dir, mod)
+func downloadAndParseModule(mod string) (*config.Config, error) {
+	dir, e := ioutil.TempDir("", "fogg")
+	if e != nil {
+		return nil, e
+	}
+	e = downloadModule(dir, mod)
 	if e != nil {
 		return nil, errors.Wrap(e, "unable to download module")
 	}
@@ -212,17 +215,17 @@ type moduleData struct {
 	Outputs      []string
 }
 
-func applyModule(fs afero.Fs, path, mod string) error {
+func applyModule(fs afero.Fs, path, mod string, box packr.Box) error {
 	e := fs.MkdirAll(path, 0755)
 	if e != nil {
 		return errors.Wrapf(e, "couldn't create %s directory", path)
 	}
 
-	dir, e := ioutil.TempDir("", "fogg")
-	if e != nil {
-		return e
-	}
-	c, e := downloadAndParseModule(dir, mod)
+	c, e := downloadAndParseModule(mod)
+
+	// This should really be part of the plan stage, not apply. But going to
+	// leave it here for now and re-think it when we make this mechanism
+	// general purpose.
 	variables := make([]string, 0)
 	for _, v := range c.Variables {
 		variables = append(variables, v.Name)
@@ -233,36 +236,19 @@ func applyModule(fs afero.Fs, path, mod string) error {
 	}
 	moduleName := filepath.Base(mod)
 
-	main := `
-module "{{.ModuleName}}" {
-  source = "{{.ModuleSource}}"
-  {{range .Variables -}}
-    {{.}} = "${var.{{.}}}"
-  {{ end}}
-}
-`
-	mainTemp := template.Must(template.New("tmpl").Parse(string(main)))
-	mainFile, e := fs.OpenFile(filepath.Join(path, "main.tf"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	f, e := box.Open("main.tf.tmpl")
 	if e != nil {
-		return errors.Wrapf(e, "unable to open %s", filepath.Join(path, "main.tf"))
-	}
-	mainTemp.Execute(mainFile, &moduleData{moduleName, mod, variables, outputs})
-
-	output := `
-{{ $outer := . -}}
-{{- range .Outputs -}}
-output "{{.}}" {
-  value = "${module.{{$outer.ModuleName}}.{{.}}}"
-}
-
-{{end}}`
-	outputsTemp := template.Must(template.New("tmpl").Parse(string(output)))
-	outputFile, e := fs.OpenFile(filepath.Join(path, "outputs.tf"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
-	if e != nil {
-		return errors.Wrapf(e, "unable to open %s", filepath.Join(path, "outputs.tf"))
+		return errors.Wrap(e, "could not open template file")
 	}
 
-	outputsTemp.Execute(outputFile, &moduleData{moduleName, mod, variables, outputs})
+	applyTemplate(f, fs, filepath.Join(path, "main.tf"), &moduleData{moduleName, mod, variables, outputs})
+
+	f, e = box.Open("outputs.tf.tmpl")
+	if e != nil {
+		return errors.Wrap(e, "could not open template file")
+	}
+
+	applyTemplate(f, fs, filepath.Join(path, "outputs.tf"), &moduleData{moduleName, mod, variables, outputs})
 
 	return e
 }

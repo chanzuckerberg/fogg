@@ -158,9 +158,7 @@ func TestDownloadModule(t *testing.T) {
 }
 
 func TestDownloadAndParseModule(t *testing.T) {
-	dir, e := ioutil.TempDir("", "fogg")
-
-	c, e := downloadAndParseModule(dir, "./test-module")
+	c, e := downloadAndParseModule("./test-module")
 	assert.Nil(t, e)
 	assert.NotNil(t, c)
 	assert.Len(t, c.Variables, 2)
@@ -170,7 +168,7 @@ func TestDownloadAndParseModule(t *testing.T) {
 func TestApplyModule(t *testing.T) {
 	fs := afero.NewMemMapFs()
 
-	e := applyModule(fs, "mymodule", "./test-module")
+	e := applyModule(fs, "mymodule", "./test-module", templates.Templates.Module)
 	assert.Nil(t, e)
 
 	s, e := fs.Stat("mymodule")
@@ -181,22 +179,19 @@ func TestApplyModule(t *testing.T) {
 	assert.Nil(t, e)
 	r, e := afero.ReadFile(fs, "mymodule/main.tf")
 	assert.Nil(t, e)
-	expected := `
-module "test-module" {
+	expected := `module "test-module" {
   source = "./test-module"
   foo = "${var.foo}"
   bar = "${var.bar}"
   
-}
-`
+}`
 	assert.Equal(t, expected, string(r))
 
 	_, e = fs.Stat("mymodule/outputs.tf")
 	assert.Nil(t, e)
 	r, e = afero.ReadFile(fs, "mymodule/outputs.tf")
 	assert.Nil(t, e)
-	expected = `
-output "foo" {
+	expected = `output "foo" {
   value = "${module.test-module.foo}"
 }
 
