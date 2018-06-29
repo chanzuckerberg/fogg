@@ -199,7 +199,7 @@ func downloadModule(dir, mod string) error {
 func downloadAndParseModule(mod string) (*config.Config, error) {
 	dir, e := ioutil.TempDir("", "fogg")
 	if e != nil {
-		return nil, e
+		return nil, errors.Wrap(e, "unable to create tempdir")
 	}
 	e = downloadModule(dir, mod)
 	if e != nil {
