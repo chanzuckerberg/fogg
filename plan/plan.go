@@ -24,7 +24,8 @@ type account struct {
 	SiccMode           bool
 }
 
-type module struct {
+type Module struct {
+	SiccMode         bool
 	TerraformVersion string
 }
 
@@ -68,7 +69,7 @@ type Plan struct {
 	Accounts map[string]account
 	Envs     map[string]Env
 	Global   Component
-	Modules  map[string]module
+	Modules  map[string]Module
 	SiccMode bool
 	Version  string
 }
@@ -210,12 +211,13 @@ func buildAccounts(c *config.Config, siccMode bool) map[string]account {
 	return accountPlans
 }
 
-func buildModules(c *config.Config, siccMode bool) map[string]module {
-	modulePlans := make(map[string]module, len(c.Modules))
+func buildModules(c *config.Config, siccMode bool) map[string]Module {
+	modulePlans := make(map[string]Module, len(c.Modules))
 	for name, conf := range c.Modules {
-		modulePlan := module{}
+		modulePlan := Module{}
 
 		modulePlan.TerraformVersion = resolveRequired(c.Defaults.TerraformVersion, conf.TerraformVersion)
+		modulePlan.SiccMode = siccMode
 		modulePlans[name] = modulePlan
 	}
 	return modulePlans

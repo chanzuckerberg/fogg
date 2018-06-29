@@ -27,5 +27,9 @@
   unused-packages = true
 
 [[constraint]]
+  branch = "master"
+  name = "github.com/hashicorp/hcl"
+
+[[constraint]]
   name = "github.com/pkg/errors"
   version = "0.8.0"

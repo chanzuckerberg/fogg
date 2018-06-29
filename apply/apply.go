@@ -1,6 +1,7 @@
 package apply
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"log"
@@ -12,6 +13,7 @@ import (
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/gobuffalo/packr"
+	"github.com/hashicorp/hcl/hcl/printer"
 	"github.com/pkg/errors"
 	"github.com/spf13/afero"
 )
@@ -44,7 +46,10 @@ func Apply(fs afero.Fs, configFile string, tmp *templates.T, siccMode bool) erro
 		return e
 	}
 
-	// TODO modules
+	e = applyModules(fs, p.Modules, &tmp.Module)
+	if e != nil {
+		return e
+	}
 
 	return nil
 }
@@ -72,6 +77,22 @@ func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) (e error) {
 		e = applyTree(accountBox, afero.NewBasePathFs(fs, path), accountPlan.SiccMode, accountPlan)
 		if e != nil {
 			return errors.Wrap(e, "unable to apply templates to account")
+		}
+	}
+	return nil
+}
+
+func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox *packr.Box) error {
+	var e error
+	for module, modulePlan := range p {
+		path := fmt.Sprintf("%s/modules/%s", rootPath, module)
+		e = fs.MkdirAll(path, 0755)
+		if e != nil {
+			return e
+		}
+		e = applyTree(moduleBox, afero.NewBasePathFs(fs, path), modulePlan.SiccMode, modulePlan)
+		if e != nil {
+			return e
 		}
 	}
 	return nil
@@ -107,39 +128,63 @@ func applyTree(source *packr.Box, dest afero.Fs, siccMode bool, subst interface{
 	return source.Walk(func(path string, sourceFile packr.File) error {
 		extension := filepath.Ext(path)
 		target := getTargetPath(path, siccMode)
+		targetExtension := filepath.Ext(target)
 		if extension == ".tmpl" {
 
-			err := applyTemplate(sourceFile, dest, target, subst)
-			if err != nil {
-				return errors.Wrap(err, "unable to apply template")
+			e = applyTemplate(sourceFile, dest, target, subst)
+			if e != nil {
+				return errors.Wrap(e, "unable to apply template")
 			}
 
-			//     if dest.endswith('.tf'):
-			//         subprocess.call(['terraform', 'fmt', dest])
 		} else if extension == ".touch" {
-			touchFile(dest, target)
-			//     if dest.endswith('.tf'):
-			//         subprocess.call(['terraform', 'fmt', dest])
+
+			e = touchFile(dest, target)
+			if e != nil {
+				return e
+			}
 
 		} else if extension == ".create" {
-			createFile(dest, target, sourceFile)
-			//     if dest.endswith('.tf'):
-			//         subprocess.call(['terraform', 'fmt', dest])
+
+			e = createFile(dest, target, sourceFile)
+			if e != nil {
+				return errors.Wrapf(e, "unable to create file %s", target)
+			}
 
 		} else {
+
 			log.Printf("copying %s", path)
 			e = afero.WriteReader(dest, path, sourceFile)
 			if e != nil {
 				return errors.Wrap(e, "unable to copy file")
 			}
+
 		}
+
 		if !siccMode && target == "fogg.tf" {
 			log.Println("removing sicc.tf")
 			dest.Remove("sicc.tf")
 		}
+
+		if targetExtension == ".tf" {
+			e = fmtHcl(dest, target)
+			if e != nil {
+				return errors.Wrap(e, "unable to format HCL")
+			}
+		}
 		return nil
 	})
+}
 
+func fmtHcl(fs afero.Fs, path string) error {
+	in, e := afero.ReadFile(fs, path)
+	if e != nil {
+		return e
+	}
+	out, e := printer.Format(in)
+	if e != nil {
+		return e
+	}
+	return afero.WriteReader(fs, path, bytes.NewReader(out))
 }
 
 func touchFile(dest afero.Fs, path string) error {
