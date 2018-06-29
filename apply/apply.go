@@ -46,7 +46,10 @@ func Apply(fs afero.Fs, configFile string, tmp *templates.T) error {
 		return e
 	}
 
-	// TODO modules
+	e = applyModules(fs, p.Modules, &tmp.Module)
+	if e != nil {
+		return e
+	}
 
 	return nil
 }
@@ -74,6 +77,22 @@ func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) (e error) {
 		e = applyTree(accountBox, afero.NewBasePathFs(fs, path), accountPlan)
 		if e != nil {
 			return errors.Wrap(e, "unable to apply templates to account")
+		}
+	}
+	return nil
+}
+
+func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox *packr.Box) error {
+	var e error
+	for module, modulePlan := range p {
+		path := fmt.Sprintf("%s/modules/%s", rootPath, module)
+		e = fs.MkdirAll(path, 0755)
+		if e != nil {
+			return e
+		}
+		e = applyTree(moduleBox, afero.NewBasePathFs(fs, path), modulePlan)
+		if e != nil {
+			return e
 		}
 	}
 	return nil
