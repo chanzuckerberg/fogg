@@ -170,11 +170,7 @@ func fmtHcl(fs afero.Fs, path string) error {
 		return e
 	}
 	out, e := printer.Format(in)
-	e = afero.WriteReader(fs, path, bytes.NewReader(out))
-	if e != nil {
-		return e
-	}
-	return e
+	return afero.WriteReader(fs, path, bytes.NewReader(out))
 }
 
 func touchFile(dest afero.Fs, path string) error {
