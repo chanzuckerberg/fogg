@@ -170,6 +170,9 @@ func fmtHcl(fs afero.Fs, path string) error {
 		return e
 	}
 	out, e := printer.Format(in)
+	if e != nil {
+		return e
+	}
 	return afero.WriteReader(fs, path, bytes.NewReader(out))
 }
 
