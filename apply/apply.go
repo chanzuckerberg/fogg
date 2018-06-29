@@ -156,9 +156,11 @@ func applyTree(source *packr.Box, dest afero.Fs, subst interface{}) (e error) {
 		}
 
 		if destExtension == ".tf" {
-			fmtHcl(dest, basename)
+			e = fmtHcl(dest, basename)
+			if e != nil {
+				return e
+			}
 		}
-
 		return nil
 	})
 
