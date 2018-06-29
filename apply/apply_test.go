@@ -151,6 +151,7 @@ func TestApplySmokeTest(t *testing.T) {
 
 func TestDownloadModule(t *testing.T) {
 	dir, e := ioutil.TempDir("", "fogg")
+	assert.Nil(t, e)
 
 	e = downloadModule(dir, "./test-module")
 	assert.Nil(t, e)

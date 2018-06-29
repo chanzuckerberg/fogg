@@ -94,7 +94,7 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 			return errors.Wrap(e, "unable to apply templates to env")
 		}
 		for component, componentPlan := range envPlan.Components {
-			path := fmt.Sprintf("%s/envs/%s/%s", rootPath, env, component)
+			path = fmt.Sprintf("%s/envs/%s/%s", rootPath, env, component)
 			e = fs.MkdirAll(path, 0755)
 			if e != nil {
 				return errors.Wrap(e, "unable to make directories for component")
@@ -106,7 +106,10 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 		}
 		path = filepath.Join(rootPath, "envs", env, "cloud-env")
 		if envPlan.Type == "aws" {
-			applyModule(fs, path, "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-env", templates.Templates.Module)
+			e := applyModule(fs, path, "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-env", templates.Templates.Module)
+			if e != nil {
+				return errors.Wrap(e, "unable to apply module")
+			}
 		}
 	}
 	return nil
