@@ -124,7 +124,7 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 		}
 		path = filepath.Join(rootPath, "envs", env, "cloud-env")
 		if envPlan.Type == "aws" {
-			e := applyModule(fs, path, "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-env", templates.Templates.Module)
+			e := applyModule(fs, path, "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-env", templates.Templates.ModuleInvocation)
 			if e != nil {
 				return errors.Wrap(e, "unable to apply module")
 			}

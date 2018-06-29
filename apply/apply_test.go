@@ -169,7 +169,7 @@ func TestDownloadAndParseModule(t *testing.T) {
 func TestApplyModule(t *testing.T) {
 	fs := afero.NewMemMapFs()
 
-	e := applyModule(fs, "mymodule", "./test-module", templates.Templates.Module)
+	e := applyModule(fs, "mymodule", "./test-module", templates.Templates.ModuleInvocation)
 	assert.Nil(t, e)
 
 	s, e := fs.Stat("mymodule")
