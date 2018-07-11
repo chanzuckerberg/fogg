@@ -13,7 +13,8 @@ type defaults struct {
 	AWSProfileBackend  string   `json:"aws_profile_backend,omitempty"`
 	AWSProfileProvider string   `json:"aws_profile_provider,omitempty"`
 	AWSProviderVersion string   `json:"aws_provider_version,omitempty"`
-	AWSRegion          string   `json:"aws_region"`
+	AWSRegionBackend   string   `json:"aws_region_backend"`
+	AWSRegionProvider  string   `json:"aws_region_provider"`
 	AWSRegions         []string `json:"aws_regions,omitempty"`
 	InfraBucket        string   `json:"infra_s3_bucket"`
 	Owner              string   `json:"owner"`
@@ -27,8 +28,9 @@ type Account struct {
 	AWSProfileBackend  *string  `json:"aws_profile_backend"`
 	AWSProfileProvider *string  `json:"aws_profile_provider"`
 	AWSProviderVersion *string  `json:"aws_provider_version,omitempty"`
-	AWSRegion          *string  `json:"aws_region"`  // maybe rename to provider region
-	AWSRegions         []string `json:"aws_regions"` // maybe rename to provider region
+	AWSRegionBackend   *string  `json:"aws_region_backend"`
+	AWSRegionProvider  *string  `json:"aws_region_provider"`
+	AWSRegions         []string `json:"aws_regions"`
 	InfraBucket        *string  `json:"infra_s3_bucket"`
 	Owner              *string  `json:"owner"`
 	Project            *string  `json:"project"`
@@ -40,8 +42,9 @@ type Env struct {
 	AWSProfileBackend  *string  `json:"aws_profile_backend"`
 	AWSProfileProvider *string  `json:"aws_profile_provider"`
 	AWSProviderVersion *string  `json:"aws_provider_version,omitempty"`
-	AWSRegion          *string  `json:"aws_region"`  // maybe rename to provider region
-	AWSRegions         []string `json:"aws_regions"` // maybe rename to provider region
+	AWSRegionBackend   *string  `json:"aws_region_backend"`
+	AWSRegionProvider  *string  `json:"aws_region_provider"`
+	AWSRegions         []string `json:"aws_regions"`
 	InfraBucket        *string  `json:"infra_s3_bucket"`
 	Owner              *string  `json:"owner"`
 	Project            *string  `json:"project"`
@@ -56,8 +59,9 @@ type Component struct {
 	AWSProfileBackend  *string  `json:"aws_profile_backend"`
 	AWSProfileProvider *string  `json:"aws_profile_provider"`
 	AWSProviderVersion *string  `json:"aws_provider_version,omitempty"`
-	AWSRegion          *string  `json:"aws_region"`  // maybe rename to provider region
-	AWSRegions         []string `json:"aws_regions"` // maybe rename to provider region
+	AWSRegionBackend   *string  `json:"aws_region_backend"`
+	AWSRegionProvider  *string  `json:"aws_region_provider"`
+	AWSRegions         []string `json:"aws_regions"`
 	InfraBucket        *string  `json:"infra_s3_bucket"`
 	Owner              *string  `json:"owner"`
 	Project            *string  `json:"project"`
@@ -99,7 +103,8 @@ func InitConfig(project, region, bucket, awsProfile, owner string) *Config {
 		Defaults: defaults{
 			AWSProfileBackend:  awsProfile,
 			AWSProfileProvider: awsProfile,
-			AWSRegion:          region,
+			AWSRegionBackend:   region,
+			AWSRegionProvider:  region,
 			AWSRegions:         allRegions,
 			InfraBucket:        bucket,
 			Owner:              owner,

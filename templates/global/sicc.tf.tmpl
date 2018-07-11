@@ -3,7 +3,7 @@
 
 provider "aws" {
   version = "~> {{ .AWSProviderVersion }}"
-  region = "{{ .AWSRegion }}"
+  region = "{{ .AWSRegionProvider }}"
   profile = "{{ .AWSProfileProvider }}"
 }
 
@@ -32,7 +32,7 @@ terraform {
     {%- endif %}
 */}}
     encrypt = true
-    region = "{{ .AWSRegion }}"
+    region = "{{ .AWSRegionBackend }}"
     profile = "{{ .AWSProfileBackend }}"
   }
 }
@@ -49,7 +49,7 @@ variable "project" {
 
 variable "region" {
   type    = "string"
-  default = "{{ .AWSRegion }}"
+  default = "{{ .AWSRegionProvider }}"
 }
 
 variable "component" {
@@ -85,7 +85,7 @@ data "terraform_remote_state" "{{ $component }}" {
   config {
     bucket = "{{ $out.InfraBucket }}"
     key    = "terraform/{{ $out.Project }}/envs/{{ $out.Env }}/components/{{ $component }}.tfstate"
-    region = "{{ $out.AWSRegion }}"
+    region = "{{ $out.AWSRegionBackend }}"
     {{ if $out.AWSProfileBackend }}profile = "{{ $out.AWSProfileBackend }}"{{ end }}
   }
 }
