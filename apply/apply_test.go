@@ -182,10 +182,10 @@ func TestApplyModule(t *testing.T) {
 	assert.Nil(t, e)
 	expected := `module "test-module" {
   source = "./test-module"
-  bar = "${var.bar}"
-  foo = "${var.foo}"
-  
-}`
+  bar    = "${var.bar}"
+  foo    = "${var.foo}"
+}
+`
 	assert.Equal(t, expected, string(r))
 
 	_, e = fs.Stat("mymodule/outputs.tf")
