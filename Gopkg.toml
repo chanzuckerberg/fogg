@@ -37,3 +37,15 @@
 [[constraint]]
   name = "github.com/hashicorp/terraform"
   version = "0.11.7"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/mitchellh/go-homedir"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/hashicorp/go-getter"
+
+[[constraint]]
+  name = "github.com/blang/semver"
+  version = "3.5.1"

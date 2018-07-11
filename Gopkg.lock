@@ -218,17 +218,9 @@
   packages = [
     "config",
     "config/hcl2shim",
-    "config/module",
-    "dag",
     "helper/hilmapstructure",
     "httpclient",
     "plugin/discovery",
-    "registry",
-    "registry/regsrc",
-    "registry/response",
-    "svchost",
-    "svchost/auth",
-    "svchost/disco",
     "tfdiags",
     "version"
   ]
@@ -429,8 +421,7 @@
   name = "golang.org/x/net"
   packages = [
     "html",
-    "html/atom",
-    "idna"
+    "html/atom"
   ]
   revision = "4cb1c02c05b0e749b0365f61ae859a8e0cfceed9"
 
@@ -446,20 +437,12 @@
 [[projects]]
   name = "golang.org/x/text"
   packages = [
-    "collate",
-    "collate/build",
-    "internal/colltab",
     "internal/gen",
-    "internal/tag",
     "internal/triegen",
     "internal/ucd",
-    "language",
-    "secure/bidirule",
     "transform",
-    "unicode/bidi",
     "unicode/cldr",
-    "unicode/norm",
-    "unicode/rangetable"
+    "unicode/norm"
   ]
   revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
   version = "v0.3.0"
@@ -467,6 +450,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "61c2198474b746188b6331fb02afc08fc9a75b51c324cf4ea12028ad0b32c5e3"
+  inputs-digest = "f568c29fbc1b38b6f160ddcca24559ddfce45e16cfc05bc0919d064b7f91dbbe"
   solver-name = "gps-cdcl"
   solver-version = 1
