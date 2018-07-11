@@ -306,6 +306,10 @@ func applyModule(fs afero.Fs, path, mod string, box packr.Box) error {
 	if e != nil {
 		return e
 	}
+	e = fmtHcl(fs, filepath.Join(path, "main.tf"))
+	if e != nil {
+		return e
+	}
 
 	f, e = box.Open("outputs.tf.tmpl")
 	if e != nil {
