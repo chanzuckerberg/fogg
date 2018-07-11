@@ -11,6 +11,7 @@ import (
 func init() {
 	planCmd.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
 	planCmd.Flags().BoolP("sicc", "s", false, "Use this to turn on sicc-compatibility mode. Implies -c sicc.json.")
+	planCmd.Flags().BoolP("verbose", "v", false, "use this to turn on verbose output")
 	rootCmd.AddCommand(planCmd)
 }
 
@@ -32,6 +33,10 @@ var planCmd = &cobra.Command{
 		if e != nil {
 			panic(e)
 		}
+		verbose, e := cmd.Flags().GetBool("verbose")
+		if e != nil {
+			panic(e)
+		}
 		var configFile string
 		if siccMode {
 			configFile = "sicc.json"
@@ -42,7 +47,7 @@ var planCmd = &cobra.Command{
 			}
 		}
 
-		p, e := plan.Eval(fs, configFile, siccMode)
+		p, e := plan.Eval(fs, configFile, siccMode, verbose)
 		if e != nil {
 			panic(e)
 		}
