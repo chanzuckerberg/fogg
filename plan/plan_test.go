@@ -103,7 +103,7 @@ func TestPlanBasic(t *testing.T) {
 	assert.Equal(t, plan.Envs["staging"].TerraformVersion, "0.100.0")
 
 	assert.NotNil(t, plan.Envs["staging"].Components)
-	assert.Len(t, plan.Envs["staging"].Components, 2)
+	assert.Len(t, plan.Envs["staging"].Components, 3) // includes implicit cloud-env
 
 	assert.NotNil(t, plan.Envs["staging"].Components["comp1"])
 	assert.Equal(t, plan.Envs["staging"].Components["comp1"].TerraformVersion, "0.100.0")
