@@ -81,8 +81,13 @@ type Plan struct {
 	Version  string
 }
 
-func Eval(fs afero.Fs, configFile string, siccMode bool) (*Plan, error) {
+func Eval(fs afero.Fs, configFile string, siccMode, verbose bool) (*Plan, error) {
 	c, err := config.FindAndReadConfig(fs, configFile)
+	if verbose {
+		fmt.Println("CONFIG")
+		fmt.Printf("%#v\n=====", c)
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +114,7 @@ func Print(p *Plan) error {
 		if account.AccountID != nil {
 			fmt.Printf("\t\taccount id: %d\n", account.AccountID)
 		}
-		fmt.Printf("\t\tid: %d\n", account.AccountID)
+		fmt.Printf("\t\taccount_id: %d\n", account.AccountID)
 
 		fmt.Printf("\t\taws_profile_backend: %v\n", account.AWSProfileBackend)
 		fmt.Printf("\t\taws_profile_provider: %v\n", account.AWSProfileProvider)
@@ -131,7 +136,7 @@ func Print(p *Plan) error {
 	}
 
 	fmt.Println("Global:")
-	fmt.Printf("\tid: %d\n", p.Global.AccountID)
+	fmt.Printf("\taccount_id: %d\n", p.Global.AccountID)
 	fmt.Printf("\taws_profile_backend: %v\n", p.Global.AWSProfileBackend)
 	fmt.Printf("\taws_profile_provider: %v\n", p.Global.AWSProfileProvider)
 	fmt.Printf("\taws_provider_version: %v\n", p.Global.AWSProviderVersion)
@@ -149,7 +154,7 @@ func Print(p *Plan) error {
 
 	for name, env := range p.Envs {
 		fmt.Printf("\t%s:\n", name)
-		fmt.Printf("\t\tid: %d\n", env.AccountID)
+		fmt.Printf("\t\taccount_id: %d\n", env.AccountID)
 
 		fmt.Printf("\t\taws_profile_backend: %v\n", env.AWSProfileBackend)
 		fmt.Printf("\t\taws_profile_provider: %v\n", env.AWSProfileProvider)
@@ -168,7 +173,7 @@ func Print(p *Plan) error {
 
 		for name, component := range env.Components {
 			fmt.Printf("\t\t\t%s:\n", name)
-			fmt.Printf("\t\t\t\tid: %d\n", component.AccountID)
+			fmt.Printf("\t\t\t\taccount_id: %d\n", component.AccountID)
 
 			fmt.Printf("\t\t\t\taws_profile_backend: %v\n", component.AWSProfileBackend)
 			fmt.Printf("\t\t\t\taws_profile_provider: %v\n", component.AWSProfileProvider)
@@ -202,7 +207,7 @@ func buildAccounts(c *config.Config, siccMode bool) map[string]account {
 		accountPlan := account{}
 
 		accountPlan.AccountName = name
-		accountPlan.AccountID = config.AccountID
+		accountPlan.AccountID = resolveOptionalInt(c.Defaults.AccountID, config.AccountID)
 
 		accountPlan.AWSRegionBackend = resolveRequired(defaults.AWSRegionBackend, config.AWSRegionBackend)
 		accountPlan.AWSRegionProvider = resolveRequired(defaults.AWSRegionProvider, config.AWSRegionProvider)
@@ -246,7 +251,8 @@ func buildGlobal(conf *config.Config, siccMode bool) Component {
 	// Global just uses defaults because that's the way sicc works. We should make it directly configurable after transition.
 	componentPlan := Component{}
 
-	// TODO add accountID to defaults
+	componentPlan.AccountID = conf.Defaults.AccountID
+
 	componentPlan.AWSRegionBackend = conf.Defaults.AWSRegionBackend
 	componentPlan.AWSRegionProvider = conf.Defaults.AWSRegionProvider
 	componentPlan.AWSRegions = conf.Defaults.AWSRegions
@@ -273,7 +279,7 @@ func buildEnvs(conf *config.Config, siccMode bool) map[string]Env {
 	for envName, envConf := range conf.Envs {
 		envPlan := newEnvPlan()
 
-		envPlan.AccountID = envConf.AccountID
+		envPlan.AccountID = resolveOptionalInt(conf.Defaults.AccountID, envConf.AccountID)
 		envPlan.Env = envName
 
 		envPlan.AWSRegionBackend = resolveRequired(defaults.AWSRegionBackend, envConf.AWSRegionBackend)
@@ -298,6 +304,7 @@ func buildEnvs(conf *config.Config, siccMode bool) map[string]Env {
 		for componentName, componentConf := range conf.Envs[envName].Components {
 			componentPlan := Component{}
 
+			componentPlan.AccountID = resolveOptionalInt(envPlan.AccountID, componentConf.AccountID)
 			componentPlan.AWSRegionBackend = resolveRequired(envPlan.AWSRegionBackend, componentConf.AWSRegionBackend)
 			componentPlan.AWSRegionProvider = resolveRequired(envPlan.AWSRegionProvider, componentConf.AWSRegionProvider)
 			componentPlan.AWSRegions = resolveStringArray(envPlan.AWSRegions, componentConf.AWSRegions)
@@ -328,6 +335,7 @@ func buildEnvs(conf *config.Config, siccMode bool) map[string]Env {
 		if envPlan.Type == "aws" {
 			componentPlan := Component{}
 
+			componentPlan.AccountID = envPlan.AccountID
 			componentPlan.AWSRegionBackend = envPlan.AWSRegionBackend
 			componentPlan.AWSRegionProvider = envPlan.AWSRegionProvider
 			componentPlan.AWSRegions = envPlan.AWSRegions

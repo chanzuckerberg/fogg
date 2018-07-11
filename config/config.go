@@ -10,6 +10,7 @@ import (
 )
 
 type defaults struct {
+	AccountID          *int64   `json:"account_id,omitempty"`
 	AWSProfileBackend  string   `json:"aws_profile_backend,omitempty"`
 	AWSProfileProvider string   `json:"aws_profile_provider,omitempty"`
 	AWSProviderVersion string   `json:"aws_provider_version,omitempty"`

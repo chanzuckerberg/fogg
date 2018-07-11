@@ -27,7 +27,7 @@ import (
 const rootPath = "terraform"
 
 func Apply(fs afero.Fs, configFile string, tmp *templates.T, siccMode bool) error {
-	p, err := plan.Eval(fs, configFile, siccMode)
+	p, err := plan.Eval(fs, configFile, siccMode, false)
 	if err != nil {
 		return errors.Wrap(err, "unable to evaluate plan")
 	}
