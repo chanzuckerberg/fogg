@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/chanzuckerberg/fogg/plan"
@@ -288,10 +289,12 @@ func applyModule(fs afero.Fs, path, mod string, box packr.Box) error {
 	for _, v := range c.Variables {
 		variables = append(variables, v.Name)
 	}
+	sort.Strings(variables)
 	outputs := make([]string, 0)
 	for _, o := range c.Outputs {
 		outputs = append(outputs, o.Name)
 	}
+	sort.Strings(outputs)
 	moduleName := filepath.Base(mod)
 
 	f, e := box.Open("main.tf.tmpl")
