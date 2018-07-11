@@ -12,7 +12,8 @@ func TestParse(t *testing.T) {
 	json := `
 	{
 		"defaults": {
-			"aws_region": "us-west-2",
+			"aws_region_backend": "us-west-2",
+			"aws_region_provider": "us-west-1",
 			"aws_profile_backend": "czi",
 			"aws_profile_provider": "czi",
 			"infra_s3_bucket": "the-bucket",
@@ -26,7 +27,8 @@ func TestParse(t *testing.T) {
 	c, e := ReadConfig(r)
 	assert.Nil(t, e)
 	assert.NotNil(t, c.Defaults)
-	assert.Equal(t, "us-west-2", c.Defaults.AWSRegion)
+	assert.Equal(t, "us-west-2", c.Defaults.AWSRegionBackend)
+	assert.Equal(t, "us-west-1", c.Defaults.AWSRegionProvider)
 	assert.Equal(t, "czi", c.Defaults.AWSProfileBackend)
 	assert.Equal(t, "czi", c.Defaults.AWSProfileProvider)
 	assert.Equal(t, "the-bucket", c.Defaults.InfraBucket)

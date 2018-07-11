@@ -4,7 +4,7 @@
 # Default Provider
 provider "aws" {
   version = "~> {{ .AWSProviderVersion }}"
-  region = "{{ .AWSRegion }}"
+  region = "{{ .AWSRegionProvider }}"
   profile = "{{ .AWSProfileProvider }}"
   {{ if .AccountID }}allowed_account_ids = [{{ .AccountID }}]{{ end }}
 }
@@ -28,7 +28,7 @@ terraform {
     bucket  = "{{ .InfraBucket }}"
     key     = "terraform/{{ .Project }}/accounts/{{ .AccountName }}.tfstate"
     encrypt = true
-    region  = "{{ .AWSRegion }}"
+    region  = "{{ .AWSRegionBackend }}"
     profile = "{{ .AWSProfileBackend }}"
   }
 }
@@ -40,7 +40,7 @@ variable "project" {
 
 variable "region" {
   type    = "string"
-  default = "{{ .AWSRegion }}"
+  default = "{{ .AWSRegionBackend }}"
 }
 
 variable "aws_profile" {
@@ -70,7 +70,7 @@ data "terraform_remote_state" "global" {
   config {
     bucket = "{{ .InfraBucket }}"
     key    = "terraform/{{ .Project }}/global.tfstate"
-    region = "{{ .AWSRegion }}"
+    region = "{{ .AWSRegionBackend }}"
     {{ if .AWSProfileBackend }}profile = "{{ .AWSProfileBackend }}"{{ end }}
   }
 }
