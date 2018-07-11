@@ -15,7 +15,8 @@ type account struct {
 	AWSProfileBackend  string
 	AWSProfileProvider string
 	AWSProviderVersion string
-	AWSRegion          string
+	AWSRegionBackend   string
+	AWSRegionProvider  string
 	AWSRegions         []string
 	InfraBucket        string
 	Owner              string
@@ -35,7 +36,8 @@ type Component struct {
 	AWSProfileBackend  string
 	AWSProfileProvider string
 	AWSProviderVersion string
-	AWSRegion          string
+	AWSRegionBackend   string
+	AWSRegionProvider  string
 	AWSRegions         []string
 	Component          string
 	Env                string
@@ -54,7 +56,8 @@ type Env struct {
 	AWSProfileBackend  string
 	AWSProfileProvider string
 	AWSProviderVersion string
-	AWSRegion          string
+	AWSRegionBackend   string
+	AWSRegionProvider  string
 	AWSRegions         []string
 	Env                string
 	InfraBucket        string
@@ -109,7 +112,8 @@ func Print(p *Plan) error {
 		fmt.Printf("\t\taws_profile_backend: %v\n", account.AWSProfileBackend)
 		fmt.Printf("\t\taws_profile_provider: %v\n", account.AWSProfileProvider)
 		fmt.Printf("\t\taws_provider_version: %v\n", account.AWSProviderVersion)
-		fmt.Printf("\t\taws_region: %v\n", account.AWSRegion)
+		fmt.Printf("\t\taws_region_backend: %v\n", account.AWSRegionBackend)
+		fmt.Printf("\t\taws_region_provider: %v\n", account.AWSRegionProvider)
 		fmt.Printf("\t\taws_regions: %v\n", account.AWSRegions)
 		fmt.Printf("\t\tinfra_bucket: %v\n", account.InfraBucket)
 		fmt.Printf("\t\tname: %v\n", account.AccountName)
@@ -129,7 +133,8 @@ func Print(p *Plan) error {
 	fmt.Printf("\taws_profile_backend: %v\n", p.Global.AWSProfileBackend)
 	fmt.Printf("\taws_profile_provider: %v\n", p.Global.AWSProfileProvider)
 	fmt.Printf("\taws_provider_version: %v\n", p.Global.AWSProviderVersion)
-	fmt.Printf("\taws_region: %v\n", p.Global.AWSRegion)
+	fmt.Printf("\taws_region_backend: %v\n", p.Global.AWSRegionBackend)
+	fmt.Printf("\taws_region_provider: %v\n", p.Global.AWSRegionProvider)
 	fmt.Printf("\taws_regions: %v\n", p.Global.AWSRegions)
 	fmt.Printf("\tinfra_bucket: %v\n", p.Global.InfraBucket)
 	fmt.Printf("\tname: %v\n", p.Global.AccountName)
@@ -147,7 +152,8 @@ func Print(p *Plan) error {
 		fmt.Printf("\t\taws_profile_backend: %v\n", env.AWSProfileBackend)
 		fmt.Printf("\t\taws_profile_provider: %v\n", env.AWSProfileProvider)
 		fmt.Printf("\t\taws_provider_version: %v\n", env.AWSProviderVersion)
-		fmt.Printf("\t\taws_region: %v\n", env.AWSRegion)
+		fmt.Printf("\t\taws_region_backend: %v\n", env.AWSRegionBackend)
+		fmt.Printf("\t\taws_region_provider: %v\n", env.AWSRegionProvider)
 		fmt.Printf("\t\taws_regions: %v\n", env.AWSRegions)
 		fmt.Printf("\t\tenv: %v\n", env.Env)
 		fmt.Printf("\t\tinfra_bucket: %v\n", env.InfraBucket)
@@ -165,7 +171,8 @@ func Print(p *Plan) error {
 			fmt.Printf("\t\t\t\taws_profile_backend: %v\n", component.AWSProfileBackend)
 			fmt.Printf("\t\t\t\taws_profile_provider: %v\n", component.AWSProfileProvider)
 			fmt.Printf("\t\t\t\taws_provider_version: %v\n", component.AWSProviderVersion)
-			fmt.Printf("\t\t\t\taws_region: %v\n", component.AWSRegion)
+			fmt.Printf("\t\t\t\taws_region_backend: %v\n", component.AWSRegionBackend)
+			fmt.Printf("\t\t\t\taws_region_provider: %v\n", component.AWSRegionProvider)
 			fmt.Printf("\t\t\t\taws_regions: %v\n", component.AWSRegions)
 			fmt.Printf("\t\t\t\tinfra_bucket: %v\n", component.InfraBucket)
 			fmt.Printf("\t\t\t\tname: %v\n", component.AccountName)
@@ -195,7 +202,8 @@ func buildAccounts(c *config.Config, siccMode bool) map[string]account {
 		accountPlan.AccountName = name
 		accountPlan.AccountID = config.AccountID
 
-		accountPlan.AWSRegion = resolveRequired(defaults.AWSRegion, config.AWSRegion)
+		accountPlan.AWSRegionBackend = resolveRequired(defaults.AWSRegionBackend, config.AWSRegionBackend)
+		accountPlan.AWSRegionProvider = resolveRequired(defaults.AWSRegionProvider, config.AWSRegionProvider)
 		accountPlan.AWSRegions = resolveStringArray(defaults.AWSRegions, config.AWSRegions)
 
 		accountPlan.AWSProfileBackend = resolveRequired(defaults.AWSProfileBackend, config.AWSProfileBackend)
@@ -237,7 +245,8 @@ func buildGlobal(conf *config.Config, siccMode bool) Component {
 	componentPlan := Component{}
 
 	// TODO add accountID to defaults
-	componentPlan.AWSRegion = conf.Defaults.AWSRegion
+	componentPlan.AWSRegionBackend = conf.Defaults.AWSRegionBackend
+	componentPlan.AWSRegionProvider = conf.Defaults.AWSRegionProvider
 	componentPlan.AWSRegions = conf.Defaults.AWSRegions
 
 	componentPlan.AWSProfileBackend = conf.Defaults.AWSProfileBackend
@@ -265,7 +274,8 @@ func buildEnvs(conf *config.Config, siccMode bool) map[string]Env {
 		envPlan.AccountID = envConf.AccountID
 		envPlan.Env = envName
 
-		envPlan.AWSRegion = resolveRequired(defaults.AWSRegion, envConf.AWSRegion)
+		envPlan.AWSRegionBackend = resolveRequired(defaults.AWSRegionBackend, envConf.AWSRegionBackend)
+		envPlan.AWSRegionProvider = resolveRequired(defaults.AWSRegionProvider, envConf.AWSRegionProvider)
 		envPlan.AWSRegions = resolveStringArray(defaults.AWSRegions, envConf.AWSRegions)
 
 		envPlan.AWSProfileBackend = resolveRequired(defaults.AWSProfileBackend, envConf.AWSProfileBackend)
@@ -286,7 +296,8 @@ func buildEnvs(conf *config.Config, siccMode bool) map[string]Env {
 		for componentName, componentConf := range conf.Envs[envName].Components {
 			componentPlan := Component{}
 
-			componentPlan.AWSRegion = resolveRequired(envPlan.AWSRegion, componentConf.AWSRegion)
+			componentPlan.AWSRegionBackend = resolveRequired(envPlan.AWSRegionBackend, componentConf.AWSRegionBackend)
+			componentPlan.AWSRegionProvider = resolveRequired(envPlan.AWSRegionProvider, componentConf.AWSRegionProvider)
 			componentPlan.AWSRegions = resolveStringArray(envPlan.AWSRegions, componentConf.AWSRegions)
 
 			componentPlan.AWSProfileBackend = resolveRequired(envPlan.AWSProfileBackend, componentConf.AWSProfileBackend)
