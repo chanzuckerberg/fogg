@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -16,10 +15,6 @@ import (
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/gobuffalo/packr"
 	"github.com/hashicorp/hcl/hcl/printer"
-	"github.com/hashicorp/terraform/config"
-	"github.com/hashicorp/terraform/config/module"
-	"github.com/hashicorp/terraform/svchost/auth"
-	"github.com/hashicorp/terraform/svchost/disco"
 	"github.com/pkg/errors"
 	"github.com/spf13/afero"
 )
@@ -243,25 +238,6 @@ func applyTemplate(sourceFile io.Reader, dest afero.Fs, path string, overrides i
 	return t.Execute(writer, overrides)
 }
 
-func downloadModule(dir, mod string) error {
-	disco := disco.NewDisco()
-	s := module.NewStorage(dir, disco, auth.NoCredentials)
-
-	return s.GetModule(dir, mod)
-}
-
-func downloadAndParseModule(mod string) (*config.Config, error) {
-	dir, e := ioutil.TempDir("", "fogg")
-	if e != nil {
-		return nil, errors.Wrap(e, "unable to create tempdir")
-	}
-	e = downloadModule(dir, mod)
-	if e != nil {
-		return nil, errors.Wrap(e, "unable to download module")
-	}
-	return config.LoadDir(dir)
-}
-
 // This should really be part of the plan stage, not apply. But going to
 // leave it here for now and re-think it when we make this mechanism
 // general purpose.
@@ -278,7 +254,7 @@ func applyModule(fs afero.Fs, path, mod string, box packr.Box) error {
 		return errors.Wrapf(e, "couldn't create %s directory", path)
 	}
 
-	c, e := downloadAndParseModule(mod)
+	c, e := util.DownloadAndParseModule(mod)
 	if e != nil {
 		return errors.Wrap(e, "could not download or parse module")
 	}
