@@ -23,6 +23,9 @@ var initCmd = &cobra.Command{
 		}
 		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
+		// check that we are at root of initialized git repo
+		openGitOrExit(pwd)
+
 		e = fogg_init.Init(fs)
 		if e != nil {
 			panic(e)
