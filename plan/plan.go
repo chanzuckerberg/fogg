@@ -48,6 +48,8 @@ type Component struct {
 	SharedInfraVersion string
 	TerraformVersion   string
 	SiccMode           bool
+
+	BootstrapModule string
 }
 
 type Env struct {
@@ -314,9 +316,41 @@ func buildEnvs(conf *config.Config, siccMode bool) map[string]Env {
 			componentPlan.Env = envName
 			componentPlan.Component = componentName
 			componentPlan.OtherComponents = otherComponentNames(conf.Envs[envName].Components, componentName)
+			// This is a bit awkward but should go away when we make the modules thing first-class.
+			if envPlan.Type == "aws" {
+				componentPlan.OtherComponents = append(componentPlan.OtherComponents, "cloud-env")
+			}
 			componentPlan.SiccMode = siccMode
 
 			envPlan.Components[componentName] = componentPlan
+		}
+
+		if envPlan.Type == "aws" {
+			componentPlan := Component{}
+
+			componentPlan.AWSRegionBackend = envPlan.AWSRegionBackend
+			componentPlan.AWSRegionProvider = envPlan.AWSRegionProvider
+			componentPlan.AWSRegions = envPlan.AWSRegions
+
+			componentPlan.AWSProfileBackend = envPlan.AWSProfileBackend
+			componentPlan.AWSProfileProvider = envPlan.AWSProfileProvider
+			componentPlan.AWSProviderVersion = envPlan.AWSProviderVersion
+			componentPlan.AccountID = envPlan.AccountID
+
+			componentPlan.TerraformVersion = envPlan.TerraformVersion
+			componentPlan.InfraBucket = envPlan.InfraBucket
+			componentPlan.Owner = envPlan.Owner
+			componentPlan.Project = envPlan.Project
+			componentPlan.SharedInfraVersion = conf.Defaults.SharedInfraVersion
+
+			componentPlan.Env = envName
+			componentPlan.Component = "cloud-env"
+			componentPlan.OtherComponents = []string{}
+			componentPlan.SiccMode = siccMode
+
+			componentPlan.BootstrapModule = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-env"
+
+			envPlan.Components["cloud-env"] = componentPlan
 		}
 
 		envPlans[envName] = envPlan
