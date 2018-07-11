@@ -13,8 +13,8 @@ docker_base = \
 	-e GIT_SSH_COMMAND='ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
 	-e TF_PLUGIN_CACHE_DIR="/repo/.terraform.d/plugin-cache" -e TF="$(TF)" \
 	-w /repo/$(REPO_RELATIVE_PATH) $(TF_VARS) $$($(REPO_ROOT)/scripts/docker-ssh-mount.sh)
-docker_terraform = $(docker_base) hashicorp/terraform:{{ .TerraformVersion }}
-docker_sh = $(docker_base) --entrypoint='/bin/sh' hashicorp/terraform:{{ .TerraformVersion }}
+docker_terraform = $(docker_base) chanzuckerberg/terraform:{{ .TerraformVersion }}
+docker_sh = $(docker_base) --entrypoint='/bin/sh' chanzuckerberg/terraform:{{ .TerraformVersion }}
 
 all:
 
