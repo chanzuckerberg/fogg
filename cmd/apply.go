@@ -42,6 +42,9 @@ var applyCmd = &cobra.Command{
 			}
 		}
 
+		// check that we are at root of initialized git repo
+		openGitOrExit(pwd)
+
 		// apply
 		e = apply.Apply(fs, configFile, templates.Templates, siccMode)
 		if e != nil {

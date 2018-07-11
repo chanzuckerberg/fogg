@@ -47,6 +47,9 @@ var planCmd = &cobra.Command{
 			}
 		}
 
+		// check that we are at root of initialized git repo
+		openGitOrExit(pwd)
+
 		p, e := plan.Eval(fs, configFile, siccMode, verbose)
 		if e != nil {
 			panic(e)
