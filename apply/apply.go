@@ -17,7 +17,7 @@ import (
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/gobuffalo/packr"
 	"github.com/hashicorp/hcl/hcl/printer"
-	tf_config "github.com/hashicorp/terraform/config"
+	tfConfig "github.com/hashicorp/terraform/config"
 	"github.com/hashicorp/terraform/config/module"
 	"github.com/hashicorp/terraform/svchost/auth"
 	"github.com/hashicorp/terraform/svchost/disco"
@@ -251,7 +251,7 @@ func downloadModule(dir, mod string) error {
 	return s.GetModule(dir, mod)
 }
 
-func downloadAndParseModule(mod string) (*tf_config.Config, error) {
+func downloadAndParseModule(mod string) (*tfConfig.Config, error) {
 	dir, e := ioutil.TempDir("", "fogg")
 	if e != nil {
 		return nil, errors.Wrap(e, "unable to create tempdir")
@@ -260,7 +260,7 @@ func downloadAndParseModule(mod string) (*tf_config.Config, error) {
 	if e != nil {
 		return nil, errors.Wrap(e, "unable to download module")
 	}
-	return tf_config.LoadDir(dir)
+	return tfConfig.LoadDir(dir)
 }
 
 // This should really be part of the plan stage, not apply. But going to
