@@ -12,9 +12,9 @@ import (
 
 type defaults struct {
 	AccountID          *int64   `json:"account_id,omitempty"`
-	AWSProfileBackend  string   `json:"aws_profile_backend,omitempty" validate:"required"`
-	AWSProfileProvider string   `json:"aws_profile_provider,omitempty" validate:"required"`
-	AWSProviderVersion string   `json:"aws_provider_version,omitempty" validate:"required"`
+	AWSProfileBackend  string   `json:"aws_profile_backend" validate:"required"`
+	AWSProfileProvider string   `json:"aws_profile_provider" validate:"required"`
+	AWSProviderVersion string   `json:"aws_provider_version" validate:"required"`
 	AWSRegionBackend   string   `json:"aws_region_backend" validate:"required"`
 	AWSRegionProvider  string   `json:"aws_region_provider" validate:"required"`
 	AWSRegions         []string `json:"aws_regions,omitempty"`

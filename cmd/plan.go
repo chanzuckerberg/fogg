@@ -8,6 +8,7 @@ import (
 	"github.com/chanzuckerberg/fogg/plan"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
+	validator "gopkg.in/go-playground/validator.v9"
 )
 
 func init() {
@@ -59,6 +60,17 @@ var planCmd = &cobra.Command{
 		if verbose {
 			fmt.Println("CONFIG")
 			fmt.Printf("%#v\n=====", config)
+		}
+
+		err = config.Validate()
+
+		if err != nil {
+			fmt.Println("Config Error(s):")
+			for _, err := range err.(validator.ValidationErrors) {
+				fmt.Printf("\t%s is a %s %s\n", err.Namespace(), err.Tag(), err.Kind())
+			}
+
+			os.Exit(1)
 		}
 
 		p, e := plan.Eval(config, siccMode, verbose)
