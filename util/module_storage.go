@@ -12,19 +12,37 @@ import (
 )
 
 func DownloadModule(cacheDir, source string) (string, error) {
-	pwd, _ := os.Getwd()
-	s, _ := getter.Detect(source, pwd, getter.Detectors)
+	pwd, e := os.Getwd()
+	if e != nil {
+		return "", errors.Wrap(e, "could not get pwd")
+	}
+	s, e := getter.Detect(source, pwd, getter.Detectors)
+	if e != nil {
+		return "", errors.Wrap(e, "could not detect module type")
+	}
 
 	storage := &getter.FolderStorage{
 		StorageDir: cacheDir,
 	}
 	h := sha256.New()
-	h.Write([]byte(VersionCacheKey()))
-	h.Write([]byte(source))
+	_, e = h.Write([]byte(VersionCacheKey()))
+	if e != nil {
+		return "", errors.Wrap(e, "could not hash")
+	}
+	_, e = h.Write([]byte(source))
+	if e != nil {
+		return "", errors.Wrap(e, "could not hash")
+	}
 	hash := string(h.Sum(nil))
 
-	storage.Get(hash, s, false)
-	d, _, _ := storage.Dir(hash)
+	e = storage.Get(hash, s, false)
+	if e != nil {
+		return "", e
+	}
+	d, _, e := storage.Dir(hash)
+	if e != nil {
+		return "", errors.Wrap(e, "could not get module storage dir")
+	}
 	return d, nil
 }
 
