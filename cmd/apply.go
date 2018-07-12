@@ -4,7 +4,6 @@ import (
 	"os"
 
 	"github.com/chanzuckerberg/fogg/apply"
-	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
@@ -13,6 +12,7 @@ import (
 func init() {
 	applyCmd.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
 	applyCmd.Flags().BoolP("sicc", "s", false, "Use this to turn on sicc-compatibility mode. Implies -c sicc.json.")
+	applyCmd.Flags().BoolP("verbose", "v", false, "use this to turn on verbose output")
 	rootCmd.AddCommand(applyCmd)
 }
 
@@ -33,6 +33,10 @@ var applyCmd = &cobra.Command{
 		if e != nil {
 			panic(e)
 		}
+		verbose, e := cmd.Flags().GetBool("verbose")
+		if e != nil {
+			panic(e)
+		}
 		var configFile string
 		if siccMode {
 			configFile = "sicc.json"
@@ -46,13 +50,12 @@ var applyCmd = &cobra.Command{
 		// check that we are at root of initialized git repo
 		openGitOrExit(pwd)
 
-		c, err := config.FindAndReadConfig(fs, configFile)
-		if err != nil {
-			panic(err)
-		}
+		config, err := readAndValidateConfig(fs, configFile, verbose)
+
+		exitOnConfigErrors(err)
 
 		// apply
-		e = apply.Apply(fs, c, templates.Templates, siccMode)
+		e = apply.Apply(fs, config, templates.Templates, siccMode)
 		if e != nil {
 			panic(e)
 		}

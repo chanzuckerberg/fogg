@@ -1,14 +1,11 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 
-	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/plan"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
-	validator "gopkg.in/go-playground/validator.v9"
 )
 
 func init() {
@@ -53,25 +50,9 @@ var planCmd = &cobra.Command{
 		// check that we are at root of initialized git repo
 		openGitOrExit(pwd)
 
-		config, err := config.FindAndReadConfig(fs, configFile)
-		if err != nil {
-			panic(err)
-		}
-		if verbose {
-			fmt.Println("CONFIG")
-			fmt.Printf("%#v\n=====", config)
-		}
+		config, err := readAndValidateConfig(fs, configFile, verbose)
 
-		err = config.Validate()
-
-		if err != nil {
-			fmt.Println("Config Error(s):")
-			for _, err := range err.(validator.ValidationErrors) {
-				fmt.Printf("\t%s is a %s %s\n", err.Namespace(), err.Tag(), err.Kind())
-			}
-
-			os.Exit(1)
-		}
+		exitOnConfigErrors(err)
 
 		p, e := plan.Eval(config, siccMode, verbose)
 		if e != nil {
