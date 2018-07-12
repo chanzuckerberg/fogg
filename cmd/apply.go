@@ -47,10 +47,6 @@ var applyCmd = &cobra.Command{
 		openGitOrExit(pwd)
 
 		c, err := config.FindAndReadConfig(fs, configFile)
-		// if verbose {
-		// 	fmt.Println("CONFIG")
-		// 	fmt.Printf("%#v\n=====", config)
-		// }
 		if err != nil {
 			panic(err)
 		}
