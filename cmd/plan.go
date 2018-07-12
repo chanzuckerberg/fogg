@@ -1,8 +1,10 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
+	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/plan"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
@@ -50,7 +52,16 @@ var planCmd = &cobra.Command{
 		// check that we are at root of initialized git repo
 		openGitOrExit(pwd)
 
-		p, e := plan.Eval(fs, configFile, siccMode, verbose)
+		config, err := config.FindAndReadConfig(fs, configFile)
+		if err != nil {
+			panic(err)
+		}
+		if verbose {
+			fmt.Println("CONFIG")
+			fmt.Printf("%#v\n=====", config)
+		}
+
+		p, e := plan.Eval(config, siccMode, verbose)
 		if e != nil {
 			panic(e)
 		}

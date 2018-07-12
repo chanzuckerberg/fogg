@@ -5,7 +5,6 @@ import (
 
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/util"
-	"github.com/spf13/afero"
 )
 
 type account struct {
@@ -81,16 +80,7 @@ type Plan struct {
 	Version  string
 }
 
-func Eval(fs afero.Fs, configFile string, siccMode, verbose bool) (*Plan, error) {
-	c, err := config.FindAndReadConfig(fs, configFile)
-	if verbose {
-		fmt.Println("CONFIG")
-		fmt.Printf("%#v\n=====", c)
-	}
-
-	if err != nil {
-		return nil, err
-	}
+func Eval(config *config.Config, siccMode, verbose bool) (*Plan, error) {
 	p := &Plan{}
 	v, e := util.VersionString()
 	if e != nil {
@@ -98,10 +88,10 @@ func Eval(fs afero.Fs, configFile string, siccMode, verbose bool) (*Plan, error)
 	}
 	p.Version = v
 	p.SiccMode = siccMode
-	p.Accounts = buildAccounts(c, siccMode)
-	p.Envs = buildEnvs(c, siccMode)
-	p.Global = buildGlobal(c, siccMode)
-	p.Modules = buildModules(c, siccMode)
+	p.Accounts = buildAccounts(config, siccMode)
+	p.Envs = buildEnvs(config, siccMode)
+	p.Global = buildGlobal(config, siccMode)
+	p.Modules = buildModules(config, siccMode)
 	return p, nil
 }
 

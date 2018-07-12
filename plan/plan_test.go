@@ -1,10 +1,11 @@
 package plan
 
 import (
+	"io/ioutil"
+	"strings"
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/config"
-	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -52,7 +53,7 @@ func TestResolveStringArray(t *testing.T) {
 }
 
 func TestPlanBasic(t *testing.T) {
-	config := `
+	json := `
 {
   "defaults": {
     "aws_region": "reg",
@@ -84,9 +85,9 @@ func TestPlanBasic(t *testing.T) {
   }
 }
 `
-	fs := afero.NewMemMapFs()
-	afero.WriteFile(fs, "fogg.json", []byte(config), 0644)
-	plan, e := Eval(fs, "fogg.json", true, false)
+	c, err := config.ReadConfig(ioutil.NopCloser(strings.NewReader(json)))
+	assert.Nil(t, err)
+	plan, e := Eval(c, true, false)
 	assert.Nil(t, e)
 	assert.NotNil(t, plan)
 	assert.NotNil(t, plan.Accounts)

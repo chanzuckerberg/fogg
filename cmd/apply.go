@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/chanzuckerberg/fogg/apply"
+	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
@@ -45,8 +46,17 @@ var applyCmd = &cobra.Command{
 		// check that we are at root of initialized git repo
 		openGitOrExit(pwd)
 
+		c, err := config.FindAndReadConfig(fs, configFile)
+		// if verbose {
+		// 	fmt.Println("CONFIG")
+		// 	fmt.Printf("%#v\n=====", config)
+		// }
+		if err != nil {
+			panic(err)
+		}
+
 		// apply
-		e = apply.Apply(fs, configFile, templates.Templates, siccMode)
+		e = apply.Apply(fs, c, templates.Templates, siccMode)
 		if e != nil {
 			panic(e)
 		}
