@@ -4,6 +4,7 @@ import (
 	"os"
 
 	fogg_init "github.com/chanzuckerberg/fogg/init"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
@@ -14,12 +15,13 @@ func init() {
 
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "Run init",
+	Short: "Initialize a new repo for use with fogg",
+	Long:  "fogg init will ask you some questions and generate a basic fogg.json.",
 	Run: func(cmd *cobra.Command, args []string) {
 		var e error
 		pwd, e := os.Getwd()
 		if e != nil {
-			panic(e)
+			log.Panic(e)
 		}
 		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
@@ -28,7 +30,7 @@ var initCmd = &cobra.Command{
 
 		e = fogg_init.Init(fs)
 		if e != nil {
-			panic(e)
+			log.Panic(e)
 		}
 	},
 }

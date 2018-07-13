@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/chanzuckerberg/fogg/plan"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
@@ -18,24 +19,25 @@ func init() {
 var planCmd = &cobra.Command{
 	Use:   "plan",
 	Short: "Run a plan",
+	Long:  "plan will read fogg.json, use that to generate a plan and print that plan out. It will make no changes.",
 	Run: func(cmd *cobra.Command, args []string) {
 		var e error
 		// Set up fs
 
 		pwd, e := os.Getwd()
 		if e != nil {
-			panic(e)
+			log.Panic(e)
 		}
 		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
 		// handle flags
 		siccMode, e := cmd.Flags().GetBool("sicc")
 		if e != nil {
-			panic(e)
+			log.Panic(e)
 		}
 		verbose, e := cmd.Flags().GetBool("verbose")
 		if e != nil {
-			panic(e)
+			log.Panic(e)
 		}
 		var configFile string
 		if siccMode {
@@ -43,7 +45,7 @@ var planCmd = &cobra.Command{
 		} else {
 			configFile, e = cmd.Flags().GetString("config")
 			if e != nil {
-				panic(e)
+				log.Panic(e)
 			}
 		}
 
@@ -56,11 +58,11 @@ var planCmd = &cobra.Command{
 
 		p, e := plan.Eval(config, siccMode, verbose)
 		if e != nil {
-			panic(e)
+			log.Panic(e)
 		}
 		e = plan.Print(p)
 		if e != nil {
-			panic(e)
+			log.Panic(e)
 		}
 	},
 }

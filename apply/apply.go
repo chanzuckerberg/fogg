@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"sort"
@@ -17,6 +16,7 @@ import (
 	"github.com/gobuffalo/packr"
 	"github.com/hashicorp/hcl/hcl/printer"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
 
