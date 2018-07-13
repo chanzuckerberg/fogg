@@ -8,6 +8,7 @@ import (
 	"text/template"
 
 	"github.com/Masterminds/sprig"
+	log "github.com/sirupsen/logrus"
 )
 
 func dict(in interface{}) map[string]interface{} {
@@ -39,7 +40,7 @@ func tool(in interface{}) string {
 func OpenTemplate(source io.Reader) *template.Template {
 	s, err := ioutil.ReadAll(source)
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 	funcs := sprig.TxtFuncMap()
 	funcs["dict"] = dict

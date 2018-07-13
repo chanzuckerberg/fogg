@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/chanzuckerberg/fogg/util"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -17,7 +18,7 @@ var versionCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		v, e := util.VersionString()
 		if e != nil {
-			panic(e)
+			log.Panic(e)
 		}
 		fmt.Println(v)
 	},

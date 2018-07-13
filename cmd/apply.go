@@ -5,6 +5,7 @@ import (
 
 	"github.com/chanzuckerberg/fogg/apply"
 	"github.com/chanzuckerberg/fogg/templates"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
@@ -24,18 +25,18 @@ var applyCmd = &cobra.Command{
 		// Set up fs
 		pwd, e := os.Getwd()
 		if e != nil {
-			panic(e)
+			log.Panic(e)
 		}
 		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
 		// handle flags
 		siccMode, e := cmd.Flags().GetBool("sicc")
 		if e != nil {
-			panic(e)
+			log.Panic(e)
 		}
 		verbose, e := cmd.Flags().GetBool("verbose")
 		if e != nil {
-			panic(e)
+			log.Panic(e)
 		}
 		var configFile string
 		if siccMode {
@@ -43,7 +44,7 @@ var applyCmd = &cobra.Command{
 		} else {
 			configFile, e = cmd.Flags().GetString("config")
 			if e != nil {
-				panic(e)
+				log.Panic(e)
 			}
 		}
 
@@ -57,7 +58,7 @@ var applyCmd = &cobra.Command{
 		// apply
 		e = apply.Apply(fs, config, templates.Templates, siccMode)
 		if e != nil {
-			panic(e)
+			log.Panic(e)
 		}
 	},
 }
