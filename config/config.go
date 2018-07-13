@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"io"
 	"io/ioutil"
+	"reflect"
+	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/afero"
@@ -145,7 +147,14 @@ func FindAndReadConfig(fs afero.Fs, configFile string) (*Config, error) {
 
 func (c *Config) Validate() error {
 	v := validator.New()
-	err := v.Struct(c)
-	errs := err.(validator.ValidationErrors)
-	return errs
+	// https://github.com/go-playground/validator/issues/323#issuecomment-343670840
+	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+
+		if name == "-" {
+			return ""
+		}
+		return name
+	})
+	return v.Struct(c)
 }
