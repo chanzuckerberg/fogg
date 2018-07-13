@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/blang/semver"
 	"github.com/pkg/errors"
 )
 
@@ -24,6 +25,15 @@ func VersionString() (string, error) {
 		return "", errors.Wrapf(e, "unable to parse version dirty field %s", Dirty)
 	}
 	return versionString(Version, GitSha, release, dirty), nil
+}
+
+func VersionCacheKey() string {
+	versionString, _ := VersionString()
+	v, e := semver.Parse(versionString)
+	if e != nil {
+		return ""
+	}
+	return fmt.Sprintf("%d.%d.%d", v.Major, v.Minor, v.Patch)
 }
 
 func versionString(version, sha string, release, dirty bool) string {
