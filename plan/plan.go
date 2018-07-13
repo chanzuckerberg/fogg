@@ -5,6 +5,7 @@ import (
 
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/util"
+	"github.com/pkg/errors"
 )
 
 type account struct {
@@ -84,7 +85,7 @@ func Eval(config *config.Config, siccMode, verbose bool) (*Plan, error) {
 	p := &Plan{}
 	v, e := util.VersionString()
 	if e != nil {
-		return nil, e
+		return nil, errors.Wrap(e, "unable to parse fogg version")
 	}
 	p.Version = v
 	p.SiccMode = siccMode

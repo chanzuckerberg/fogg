@@ -45,12 +45,12 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, siccMode bool) er
 
 	e = applyGlobal(fs, p.Global, &tmp.Global)
 	if e != nil {
-		return e
+		return errors.Wrap(e, "unable to apply global")
 	}
 
 	e = applyModules(fs, p.Modules, &tmp.Module)
 
-	return e
+	return errors.Wrap(e, "unable to apply modules")
 }
 
 func applyRepo(fs afero.Fs, p *plan.Plan, repoBox *packr.Box) error {
@@ -61,7 +61,7 @@ func applyGlobal(fs afero.Fs, p plan.Component, repoBox *packr.Box) error {
 	path := fmt.Sprintf("%s/global", rootPath)
 	e := fs.MkdirAll(path, 0755)
 	if e != nil {
-		return e
+		return errors.Wrapf(e, "unable to make directory %s", path)
 	}
 	return applyTree(repoBox, afero.NewBasePathFs(fs, path), p.SiccMode, p)
 }
@@ -87,11 +87,11 @@ func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox *packr.Box) e
 		path := fmt.Sprintf("%s/modules/%s", rootPath, module)
 		e = fs.MkdirAll(path, 0755)
 		if e != nil {
-			return e
+			return errors.Wrapf(e, "unable to make path %s", path)
 		}
 		e = applyTree(moduleBox, afero.NewBasePathFs(fs, path), modulePlan.SiccMode, modulePlan)
 		if e != nil {
-			return e
+			return errors.Wrap(e, "unable to apply tree")
 		}
 	}
 	return nil
@@ -102,7 +102,7 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 		path := fmt.Sprintf("%s/envs/%s", rootPath, env)
 		e = fs.MkdirAll(path, 0755)
 		if e != nil {
-			return errors.Wrap(e, "unable to make directies for envs")
+			return errors.Wrapf(e, "unable to make directory %s", path)
 		}
 		e := applyTree(envBox, afero.NewBasePathFs(fs, path), envPlan.SiccMode, envPlan)
 		if e != nil {
@@ -147,7 +147,7 @@ func applyTree(source *packr.Box, dest afero.Fs, siccMode bool, subst interface{
 
 			e = touchFile(dest, target)
 			if e != nil {
-				return e
+				return errors.Wrapf(e, "unable to touch file %s", target)
 			}
 
 		} else if extension == ".create" {
@@ -188,11 +188,11 @@ func applyTree(source *packr.Box, dest afero.Fs, siccMode bool, subst interface{
 func fmtHcl(fs afero.Fs, path string) error {
 	in, e := afero.ReadFile(fs, path)
 	if e != nil {
-		return e
+		return errors.Wrapf(e, "unable to read file %s", path)
 	}
 	out, e := printer.Format(in)
 	if e != nil {
-		return e
+		return errors.Wrapf(e, "fmt hcl failed for %s", path)
 	}
 	return afero.WriteReader(fs, path, bytes.NewReader(out))
 }
@@ -282,11 +282,11 @@ func applyModule(fs afero.Fs, path, mod string, box packr.Box) error {
 
 	e = applyTemplate(f, fs, filepath.Join(path, "main.tf"), &moduleData{moduleName, mod, variables, outputs})
 	if e != nil {
-		return e
+		return errors.Wrap(e, "unable to apply template for main.tf")
 	}
 	e = fmtHcl(fs, filepath.Join(path, "main.tf"))
 	if e != nil {
-		return e
+		return errors.Wrap(e, "unable to format main.tf")
 	}
 
 	f, e = box.Open("outputs.tf.tmpl")
@@ -296,8 +296,14 @@ func applyModule(fs afero.Fs, path, mod string, box packr.Box) error {
 
 	e = applyTemplate(f, fs, filepath.Join(path, "outputs.tf"), &moduleData{moduleName, mod, variables, outputs})
 	if e != nil {
-		return e
+		return errors.Wrap(e, "unable to apply template for outputs.tf")
 	}
+
+	// TODO
+	// e = fmtHcl(fs, filepath.Join(path, "outputs.tf"))
+	// if e != nil {
+	// 	return errors.Wrap(e, "unable to format outputs.tf")
+	// }
 
 	return nil
 }
