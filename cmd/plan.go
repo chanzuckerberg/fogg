@@ -50,7 +50,11 @@ var planCmd = &cobra.Command{
 		// check that we are at root of initialized git repo
 		openGitOrExit(pwd)
 
-		p, e := plan.Eval(fs, configFile, siccMode, verbose)
+		config, err := readAndValidateConfig(fs, configFile, verbose)
+
+		exitOnConfigErrors(err)
+
+		p, e := plan.Eval(config, siccMode, verbose)
 		if e != nil {
 			panic(e)
 		}

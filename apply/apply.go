@@ -10,6 +10,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/plan"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
@@ -21,8 +22,8 @@ import (
 
 const rootPath = "terraform"
 
-func Apply(fs afero.Fs, configFile string, tmp *templates.T, siccMode bool) error {
-	p, err := plan.Eval(fs, configFile, siccMode, false)
+func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, siccMode bool) error {
+	p, err := plan.Eval(conf, siccMode, false)
 	if err != nil {
 		return errors.Wrap(err, "unable to evaluate plan")
 	}
