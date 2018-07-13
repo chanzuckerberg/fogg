@@ -19,7 +19,8 @@ func init() {
 
 var applyCmd = &cobra.Command{
 	Use:   "apply",
-	Short: "Run an apply",
+	Short: "Apply model defined in fogg.json to the current tree.",
+	Long:  "This command will take the model defined in fogg.json, build a plan and generate the appropriate files from templates.",
 	Run: func(cmd *cobra.Command, args []string) {
 		var e error
 		// Set up fs

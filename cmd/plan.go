@@ -19,6 +19,7 @@ func init() {
 var planCmd = &cobra.Command{
 	Use:   "plan",
 	Short: "Run a plan",
+	Long:  "plan will read fogg.json, use that to generate a plan and print that plan out. It will make no changes.",
 	Run: func(cmd *cobra.Command, args []string) {
 		var e error
 		// Set up fs
