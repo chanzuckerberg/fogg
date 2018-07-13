@@ -6,6 +6,7 @@ import (
 
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/go-playground/validator"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	git "gopkg.in/src-d/go-git.v4"
 )
@@ -43,7 +44,7 @@ func exitOnConfigErrors(err error) {
 				fmt.Printf("\t%s is a %s %s\n", err.Namespace(), err.Tag(), err.Kind())
 			}
 		} else {
-			panic(err)
+			log.Panic(err)
 		}
 		os.Exit(1)
 	}

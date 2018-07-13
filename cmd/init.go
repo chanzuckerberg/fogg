@@ -4,6 +4,7 @@ import (
 	"os"
 
 	fogg_init "github.com/chanzuckerberg/fogg/init"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
@@ -20,7 +21,7 @@ var initCmd = &cobra.Command{
 		var e error
 		pwd, e := os.Getwd()
 		if e != nil {
-			panic(e)
+			log.Panic(e)
 		}
 		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
@@ -29,7 +30,7 @@ var initCmd = &cobra.Command{
 
 		e = fogg_init.Init(fs)
 		if e != nil {
-			panic(e)
+			log.Panic(e)
 		}
 	},
 }
