@@ -145,5 +145,7 @@ func FindAndReadConfig(fs afero.Fs, configFile string) (*Config, error) {
 
 func (c *Config) Validate() error {
 	v := validator.New()
-	return v.Struct(c)
+	err := v.Struct(c)
+	errs := err.(validator.ValidationErrors)
+	return errs
 }
