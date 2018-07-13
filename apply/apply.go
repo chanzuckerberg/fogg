@@ -11,12 +11,13 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/plan"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/gobuffalo/packr"
 	"github.com/hashicorp/hcl/hcl/printer"
-	"github.com/hashicorp/terraform/config"
+	tfConfig "github.com/hashicorp/terraform/config"
 	"github.com/hashicorp/terraform/config/module"
 	"github.com/hashicorp/terraform/svchost/auth"
 	"github.com/hashicorp/terraform/svchost/disco"
@@ -26,8 +27,8 @@ import (
 
 const rootPath = "terraform"
 
-func Apply(fs afero.Fs, configFile string, tmp *templates.T, siccMode bool) error {
-	p, err := plan.Eval(fs, configFile, siccMode, false)
+func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, siccMode bool) error {
+	p, err := plan.Eval(conf, siccMode, false)
 	if err != nil {
 		return errors.Wrap(err, "unable to evaluate plan")
 	}
@@ -250,7 +251,7 @@ func downloadModule(dir, mod string) error {
 	return s.GetModule(dir, mod)
 }
 
-func downloadAndParseModule(mod string) (*config.Config, error) {
+func downloadAndParseModule(mod string) (*tfConfig.Config, error) {
 	dir, e := ioutil.TempDir("", "fogg")
 	if e != nil {
 		return nil, errors.Wrap(e, "unable to create tempdir")
@@ -259,7 +260,7 @@ func downloadAndParseModule(mod string) (*config.Config, error) {
 	if e != nil {
 		return nil, errors.Wrap(e, "unable to download module")
 	}
-	return config.LoadDir(dir)
+	return tfConfig.LoadDir(dir)
 }
 
 // This should really be part of the plan stage, not apply. But going to

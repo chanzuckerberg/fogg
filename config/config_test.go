@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	validator "gopkg.in/go-playground/validator.v9"
 )
 
 func TestParse(t *testing.T) {
@@ -43,4 +44,24 @@ func TestJsonFailure(t *testing.T) {
 	c, e := ReadConfig(r)
 	assert.Nil(t, c)
 	assert.NotNil(t, e)
+}
+
+func TestValidation(t *testing.T) {
+	json := `{}`
+	r := ioutil.NopCloser(strings.NewReader(json))
+	defer r.Close()
+	c, e := ReadConfig(r)
+
+	assert.NotNil(t, c)
+	assert.Nil(t, e)
+
+	e = c.Validate()
+	assert.NotNil(t, e)
+
+	_, ok := e.(*validator.InvalidValidationError)
+	assert.False(t, ok)
+
+	err, ok := e.(validator.ValidationErrors)
+	assert.True(t, ok)
+	assert.Len(t, err, 10)
 }
