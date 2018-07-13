@@ -2,10 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/spf13/afero"
+	validator "gopkg.in/go-playground/validator.v9"
 	git "gopkg.in/src-d/go-git.v4"
 )
 
@@ -36,15 +38,14 @@ func readAndValidateConfig(fs afero.Fs, configFile string, verbose bool) (*confi
 func exitOnConfigErrors(err error) {
 	if err != nil {
 		fmt.Println("Config Error(s):")
-		// errs := err.(validator.ValidationErrors)
-		// util.Dump(errs)
-		// if ok {
-		// 	for _, err := range errs {
-		// 		fmt.Printf("\t%s is a %s %s\n", err.Namespace(), err.Tag(), err.Kind())
-		// 	}
-		// } else {
-		// 	log.Panic(err)
-		// }
+		errs, ok := err.(validator.ValidationErrors)
+		if ok {
+			for _, err := range errs {
+				fmt.Printf("\t%s is a %s %s\n", err.Namespace(), err.Tag(), err.Kind())
+			}
+		} else {
+			log.Panic(err)
+		}
 		os.Exit(1)
 	}
 }
