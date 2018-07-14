@@ -37,7 +37,7 @@ func DownloadModule(cacheDir, source string) (string, error) {
 
 	e = storage.Get(hash, s, false)
 	if e != nil {
-		return "", e
+		return "", errors.Wrap(e, "unable to read module from local storage")
 	}
 	d, _, e := storage.Dir(hash)
 	if e != nil {
