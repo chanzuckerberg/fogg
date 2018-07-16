@@ -145,12 +145,6 @@
   version = "v0.16.0"
 
 [[projects]]
-  name = "github.com/go-playground/validator"
-  packages = ["."]
-  revision = "ab2a8a99087e827c9af87ed6777ba897348fb178"
-  version = "v9.20.2"
-
-[[projects]]
   name = "github.com/gobuffalo/packr"
   packages = ["."]
   revision = "bd47f2894846e32edcf9aa37290fef76c327883f"
@@ -612,6 +606,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a95f676026c5113cbbb52cfe46c642b44774a502ec15d121fd79f1975d393085"
+  inputs-digest = "a9f92da71f1277e20a2de930cfe9a7683463f90daaea643bf271c003c57b81e4"
   solver-name = "gps-cdcl"
   solver-version = 1
