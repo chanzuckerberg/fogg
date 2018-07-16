@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/chanzuckerberg/fogg/config"
@@ -15,7 +14,7 @@ func openGitOrExit(pwd string) *git.Repository {
 	g, err := git.PlainOpen(pwd)
 	if err != nil {
 		// assuming this means no repository
-		fmt.Println("fogg must be run from the root of a git repo")
+		log.Fatal("fogg must be run from the root of a git repo")
 		os.Exit(1)
 	}
 	return g
@@ -27,8 +26,8 @@ func readAndValidateConfig(fs afero.Fs, configFile string, verbose bool) (*confi
 		return nil, err
 	}
 	if verbose {
-		fmt.Println("CONFIG")
-		fmt.Printf("%#v\n=====", config)
+		log.Debug("CONFIG")
+		log.Debug("%#v\n=====", config)
 	}
 
 	err = config.Validate()
@@ -37,11 +36,11 @@ func readAndValidateConfig(fs afero.Fs, configFile string, verbose bool) (*confi
 
 func exitOnConfigErrors(err error) {
 	if err != nil {
-		fmt.Println("Config Error(s):")
+		log.Error("Config Error(s):")
 		errs, ok := err.(validator.ValidationErrors)
 		if ok {
 			for _, err := range errs {
-				fmt.Printf("\t%s is a %s %s\n", err.Namespace(), err.Tag(), err.Kind())
+				log.Error("\t%s is a %s %s\n", err.Namespace(), err.Tag(), err.Kind())
 			}
 		} else {
 			log.Panic(err)
