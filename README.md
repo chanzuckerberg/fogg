@@ -2,14 +2,18 @@
 
 Fogg is an opinionated tool for managing infrastructure-as-code repositories using Terraform.
 
-It is the result of a desire to standardize and automate best practices. Some of the things it standardizes–
+Terraform is a powerful tool for managing infrastructure– great when things go right, but dangerous when they don't. Best practices are emerging for reducing this risk, but they require significant work and knowledge to apply consistently.
+
+We built fogg to automate these practices and scale to a larger pool of engineers who don't have to be terraform experts to use it safely.
+
+A few of the things fogg standardizes–
 
 * repository layout
-* remote state
+* remote state (locking coming soon)
 * resource naming
 * resource isolation
 
-It makes life easy for folks working with cloud infrastructure. We've been using fogg and its predecessor internally at CZI for ~10 months. It has made it possible for many developers without terraform experience to roll new infrastructure with little stress and high quality.
+It makes life easy for folks working with cloud infrastructure. We've been using fogg and its predecessor internally at CZI for ~10 months. It has made it possible for many developers without terraform experience to safely roll new infrastructure with less stress and higher quality.
 
 "I hope one day you might consider open sourcing `fogg`, i really love it. This would of saved me so much time in the past." - @lenn0x
 
@@ -17,11 +21,11 @@ It makes life easy for folks working with cloud infrastructure. We've been using
 
 Binaries are available on the releases page. Download one for your architecture, put it in your path and make it executeable.
 
-A homebrew tap will be coming soon.
+A homebrew tap will be coming soon. Other package managers to be considered if folks want them.
 
 ## Usage
 
-Fogg works entirely by code generation. It will generate diretories and files to organize and standardize your repo and then it gets out of your way for you to use terraform and make to manage your infrastructure.
+Fogg works entirely by generating code (terraform and make). It will generate diretories and files to organize and standardize your repo and then it gets out of your way for you to use terraform and make to manage your infrastructure.
 
 The basic workflow is –
 
@@ -37,12 +41,11 @@ Much like Ruby on Rails, we prefer to use conventions to organize our repos rath
 
 ### Transparency
 
-Fogg tries to stay out of your way– it will do the work it needs to by generating Terraform and make files, then it steps aside for you to manage your infrastructure. Everything that could effect your infra is right there on disk in your directory for you to read and understand.
+Fogg tries to stay out of your way– it will do its work by generating Terraform and Make files, and then it step aside for you to manage your infrastructure. Everything that could effect your infrastructure is right there in your resposityr for you to read and understand.
 
 There is no magic.
 
-And if you ever decide to stop using it, you have a working repo you can take in a different direction, just stop running `fogg apply`.
-
+And if you ever decide to stop using it, you have a working repo you can take in a different direction, just stop running `fogg apply` and go your own way.
 
 ## Copyright
 
