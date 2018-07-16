@@ -19,13 +19,13 @@ It makes life easy for folks working with cloud infrastructure. We've been using
 
 ## Install
 
-Binaries are available on the releases page. Download one for your architecture, put it in your path and make it executeable.
+Binaries are available on the releases page. Download one for your architecture, put it in your path and make it executable.
 
 A homebrew tap will be coming soon. Other package managers to be considered if folks want them.
 
 ## Usage
 
-Fogg works entirely by generating code (terraform and make). It will generate diretories and files to organize and standardize your repo and then it gets out of your way for you to use terraform and make to manage your infrastructure.
+Fogg works entirely by generating code (terraform and make). It will generate directories and files to organize and standardize your repo and then it gets out of your way for you to use terraform and make to manage your infrastructure.
 
 The basic workflow is –
 
@@ -41,7 +41,7 @@ Much like Ruby on Rails, we prefer to use conventions to organize our repos rath
 
 ### Transparency
 
-Fogg tries to stay out of your way– it will do its work by generating Terraform and Make files, and then it step aside for you to manage your infrastructure. Everything that could effect your infrastructure is right there in your resposityr for you to read and understand.
+Fogg tries to stay out of your way– it will do its work by generating Terraform and Make files, and then it step aside for you to manage your infrastructure. Everything that could effect your infrastructure is right there in your repository for you to read and understand.
 
 There is no magic.
 
