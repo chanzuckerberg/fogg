@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
 	"github.com/chanzuckerberg/fogg/config"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	validator "gopkg.in/go-playground/validator.v9"
 	git "gopkg.in/src-d/go-git.v4"
@@ -16,7 +16,7 @@ func openGitOrExit(pwd string) *git.Repository {
 	g, err := git.PlainOpen(pwd)
 	if err != nil {
 		// assuming this means no repository
-		fmt.Println("fogg must be run from the root of a git repo")
+		log.Fatal("fogg must be run from the root of a git repo")
 		os.Exit(1)
 	}
 	return g
@@ -28,8 +28,8 @@ func readAndValidateConfig(fs afero.Fs, configFile string, verbose bool) (*confi
 		return nil, err
 	}
 	if verbose {
-		fmt.Println("CONFIG")
-		fmt.Printf("%#v\n=====", config)
+		log.Debug("CONFIG")
+		log.Debug("%#v\n=====", config)
 	}
 
 	err = config.Validate()
