@@ -54,7 +54,15 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, siccMode bool) er
 }
 
 func applyRepo(fs afero.Fs, p *plan.Plan, repoBox *packr.Box) error {
-	return applyTree(repoBox, fs, p.SiccMode, p)
+	e := applyTree(repoBox, fs, p.SiccMode, p)
+	if e != nil {
+		return e
+	}
+	// Remove after migration.
+	if !p.SiccMode {
+		return fs.Remove(".sicc-version")
+	}
+	return nil
 }
 
 func applyGlobal(fs afero.Fs, p plan.Component, repoBox *packr.Box) error {
