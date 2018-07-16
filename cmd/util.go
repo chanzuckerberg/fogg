@@ -5,8 +5,6 @@ import (
 	"os"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/chanzuckerberg/fogg/config"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
