@@ -1,7 +1,7 @@
 package util
 
-import "fmt"
+import log "github.com/sirupsen/logrus"
 
 func Dump(foo interface{}) {
-	fmt.Printf("%#v\n", foo)
+	log.Debugf("%#v\n", foo)
 }

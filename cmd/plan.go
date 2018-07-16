@@ -21,9 +21,16 @@ var planCmd = &cobra.Command{
 	Short: "Run a plan",
 	Long:  "plan will read fogg.json, use that to generate a plan and print that plan out. It will make no changes.",
 	Run: func(cmd *cobra.Command, args []string) {
+		logLevel := log.InfoLevel
+		if debug { // debug overrides quiet
+			logLevel = log.DebugLevel
+		} else if quiet {
+			logLevel = log.FatalLevel
+		}
+		log.SetLevel(logLevel)
+
 		var e error
 		// Set up fs
-
 		pwd, e := os.Getwd()
 		if e != nil {
 			log.Panic(e)

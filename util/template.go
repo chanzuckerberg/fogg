@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"io"
 	"io/ioutil"
 	"reflect"
@@ -17,7 +16,7 @@ func dict(in interface{}) map[string]interface{} {
 		r := make(map[string]interface{})
 		for _, key := range v.MapKeys() {
 			strct := v.MapIndex(key)
-			fmt.Println(key.Interface(), strct.Interface())
+			log.Debug(key.Interface(), strct.Interface())
 			r[key.String()] = strct.Interface()
 		}
 		return r
