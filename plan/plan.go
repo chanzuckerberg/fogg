@@ -99,6 +99,7 @@ func Eval(config *config.Config, siccMode, verbose bool) (*Plan, error) {
 func Print(p *Plan) error {
 	fmt.Printf("Version: %s\n", p.Version)
 	fmt.Printf("sicc mode: %t\n", p.SiccMode)
+	fmt.Printf("fogg version: %s\n", p.Version)
 	fmt.Println("Accounts:")
 	for name, account := range p.Accounts {
 		fmt.Printf("\t%s:\n", name)
