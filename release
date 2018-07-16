@@ -1,0 +1,69 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'git'
+require 'logger'
+require 'semantic'
+
+
+RELEASE_TYPES = %w[major minor patch]
+
+# read release type argument (major, minor, patch)
+release_type = ARGV.first
+if !RELEASE_TYPES.include?(release_type)
+  print("Invalid release type '#{release_type}'. Valid options are #{RELEASE_TYPES}\n")
+  exit(1)
+end
+
+g = Git.open('.')
+g.fetch('.', {tags: true})
+
+# TODO check that we are on master? or maybe not?
+
+tag_index = g.tags.inject(Hash.new) do |ind, t|
+  ind[t.objectish] = t.name
+  ind
+end
+
+tag, sha = nil, nil
+
+g.log(1000).each do |c|
+  if (tag = tag_index[c.sha])
+    sha = c.sha
+    break
+  end
+end
+
+puts "Found tag #{tag}"
+puts "sha for that tag: #{sha}"
+
+v = open('VERSION').read.strip
+
+puts "VERSION file says #{v}"
+
+if tag.sub('v', '') != v
+  puts "tag does not match version file"
+  exit(1)
+end
+
+v = Semantic::Version.new(v)
+
+new_version = v.increment!(release_type.to_sym)
+
+puts "new version is #{new_version}"
+puts "is that ok? (y/n)"
+c = STDIN.gets.chomp
+if c != 'y'
+  puts("canceled")
+  exit(1)
+end
+
+f = open('VERSION', 'w')
+f.write(new_version.to_s)
+f.close()
+
+g.add('VERSION')
+g.commit("release version #{new_version.to_s}")
+g.add_tag("v#{new_version.to_s}")
+
+`goreleaser release --skip-publish`
