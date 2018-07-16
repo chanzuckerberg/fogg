@@ -48,4 +48,4 @@ And if you ever decide to stop using it, you have a working repo you can take in
 
 Copyright 2017-2018, Chan Zuckerberg Initiative, LLC
 
-For license, see (LICENSE).
+For license, see [LICENSE].
