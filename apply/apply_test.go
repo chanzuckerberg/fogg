@@ -184,7 +184,6 @@ func TestApplyModule(t *testing.T) {
 output "foo" {
   value = "${module.test-module.foo}"
 }
-
 `
 	assert.Equal(t, expected, string(r))
 }

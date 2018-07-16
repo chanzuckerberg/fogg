@@ -8,6 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/chanzuckerberg/fogg/config"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	validator "gopkg.in/go-playground/validator.v9"
 	git "gopkg.in/src-d/go-git.v4"
