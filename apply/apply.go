@@ -299,11 +299,10 @@ func applyModule(fs afero.Fs, path, mod string, box packr.Box) error {
 		return errors.Wrap(e, "unable to apply template for outputs.tf")
 	}
 
-	// TODO
-	// e = fmtHcl(fs, filepath.Join(path, "outputs.tf"))
-	// if e != nil {
-	// 	return errors.Wrap(e, "unable to format outputs.tf")
-	// }
+	e = fmtHcl(fs, filepath.Join(path, "outputs.tf"))
+	if e != nil {
+		return errors.Wrap(e, "unable to format outputs.tf")
+	}
 
 	return nil
 }
