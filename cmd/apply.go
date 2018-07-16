@@ -22,6 +22,14 @@ var applyCmd = &cobra.Command{
 	Short: "Apply model defined in fogg.json to the current tree.",
 	Long:  "This command will take the model defined in fogg.json, build a plan and generate the appropriate files from templates.",
 	Run: func(cmd *cobra.Command, args []string) {
+		logLevel := log.InfoLevel
+		if debug { // debug overrides quiet
+			logLevel = log.DebugLevel
+		} else if quiet {
+			logLevel = log.FatalLevel
+		}
+		log.SetLevel(logLevel)
+
 		var e error
 		// Set up fs
 		pwd, e := os.Getwd()
