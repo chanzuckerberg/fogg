@@ -1,6 +1,6 @@
 # fogg
 
-[![Build Status](https://travis-ci.com/chanzuckerberg/fogg.svg?token=JNM9vNLfRsFzCcF1uEgc&branch=master)](https://travis-ci.com/chanzuckerberg/fogg)
+[![Build Status](https://travis-ci.com/chanzuckerberg/fogg.svg?token=JNM9vNLfRsFzCcF1uEgc&branch=master)](https://travis-ci.com/chanzuckerberg/fogg) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/chanzuckerberg/fogg)
 
 Fogg is an opinionated tool for managing infrastructure-as-code repositories using Terraform.
 
