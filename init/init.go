@@ -9,12 +9,15 @@ import (
 	"github.com/spf13/afero"
 )
 
+const DefaultSharedInfraVersion = "0.10.0"
+const AWSProviderVersion = "1.27.0"
+
 func userPrompt() (string, string, string, string, string) {
-	project := prompt.StringRequired("project name? ")
-	region := prompt.StringRequired("aws region? ")
-	bucket := prompt.StringRequired("infra bucket name? ")
-	profile := prompt.StringRequired("auth profile? ")
-	owner := prompt.StringRequired("owner? ")
+	project := prompt.StringRequired("project name?")
+	region := prompt.StringRequired("aws region?")
+	bucket := prompt.StringRequired("infra bucket name?")
+	profile := prompt.StringRequired("auth profile?")
+	owner := prompt.StringRequired("owner?")
 
 	return project, region, bucket, profile, owner
 }
@@ -34,7 +37,7 @@ func writeConfig(fs afero.Fs, config *config.Config) error {
 
 func Init(fs afero.Fs) error {
 	project, region, bucket, profile, owner := userPrompt()
-	config := config.InitConfig(project, region, bucket, profile, owner)
+	config := config.InitConfig(project, region, bucket, profile, owner, DefaultSharedInfraVersion, AWSProviderVersion)
 	e := writeConfig(fs, config)
 	return e
 }

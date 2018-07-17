@@ -102,18 +102,20 @@ var allRegions = []string{
 	"us-west-2",
 }
 
-func InitConfig(project, region, bucket, awsProfile, owner string) *Config {
+func InitConfig(project, region, bucket, awsProfile, owner, sharedInfraVersion, awsProviderVersion string) *Config {
 	return &Config{
 		Defaults: defaults{
 			AWSProfileBackend:  awsProfile,
 			AWSProfileProvider: awsProfile,
 			AWSRegionBackend:   region,
 			AWSRegionProvider:  region,
+			AWSProviderVersion: awsProviderVersion,
 			AWSRegions:         allRegions,
 			InfraBucket:        bucket,
 			Owner:              owner,
 			Project:            project,
 			TerraformVersion:   "0.11.0",
+			SharedInfraVersion: sharedInfraVersion,
 		},
 		Accounts: map[string]Account{},
 		Envs:     map[string]Env{},
