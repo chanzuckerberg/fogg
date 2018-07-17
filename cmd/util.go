@@ -13,9 +13,11 @@ import (
 )
 
 func openGitOrExit(pwd string) *git.Repository {
+	log.Debugf("opening git at %s", pwd)
 	g, err := git.PlainOpen(pwd)
 	if err != nil {
 		// assuming this means no repository
+		log.Debug(err)
 		log.Fatal("fogg must be run from the root of a git repo")
 		os.Exit(1)
 	}
