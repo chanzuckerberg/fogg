@@ -149,34 +149,26 @@ func applyTree(source *packr.Box, dest afero.Fs, siccMode bool, subst interface{
 		target := getTargetPath(path, siccMode)
 		targetExtension := filepath.Ext(target)
 		if extension == ".tmpl" {
-
 			e = applyTemplate(sourceFile, dest, target, subst)
 			if e != nil {
 				return errors.Wrap(e, "unable to apply template")
 			}
-
 		} else if extension == ".touch" {
-
 			e = touchFile(dest, target)
 			if e != nil {
 				return errors.Wrapf(e, "unable to touch file %s", target)
 			}
-
 		} else if extension == ".create" {
-
 			e = createFile(dest, target, sourceFile)
 			if e != nil {
 				return errors.Wrapf(e, "unable to create file %s", target)
 			}
-
 		} else {
-
 			log.Printf("copying %s", path)
 			e = afero.WriteReader(dest, path, sourceFile)
 			if e != nil {
 				return errors.Wrap(e, "unable to copy file")
 			}
-
 		}
 
 		if !siccMode && target == "fogg.tf" {
@@ -193,7 +185,10 @@ func applyTree(source *packr.Box, dest afero.Fs, siccMode bool, subst interface{
 				return errors.Wrap(e, "unable to format HCL")
 			}
 		}
-		return nil
+		// Some output files need to be executable, but we lose all file mode info
+		// when the files get put in a Box. This is a blunt instrument to make
+		// sure those work
+		return dest.Chmod(target, 0644)
 	})
 }
 
