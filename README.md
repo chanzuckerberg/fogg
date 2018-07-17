@@ -15,7 +15,11 @@ A few of the things fogg standardizes–
 
 It makes life easy for folks working with cloud infrastructure. We've been using fogg and its predecessor internally at CZI for ~10 months. It has made it possible for many developers without terraform experience to safely roll new infrastructure with less stress and higher quality.
 
-"I hope one day you might consider open sourcing `fogg`, i really love it. This would of saved me so much time in the past." - @lenn0x
+"I hope one day you might consider open sourcing `fogg`, i really love it. This would have saved me so much time in the past." - @lenn0x
+
+## Getting Help
+
+If you need help getting started with fogg, either open a github issue or join our gitter chat room (TODO link).
 
 ## Install
 
@@ -46,6 +50,17 @@ Fogg tries to stay out of your way– it will do its work by generating Terrafor
 There is no magic.
 
 And if you ever decide to stop using it, you have a working repo you can take in a different direction, just stop running `fogg apply` and go your own way.
+
+## Contributing
+
+We use standard go tools + makefiles to build fogg. Getting started should be as simple as-
+
+0. install go
+1. go get github.com/chanzuckerberg/fogg
+2. cd $GOPATH/src/github.com/chanzuckerberg/fogg
+3. make
+
+If you would like to contribute some code, fork this repo and send a pull request.
 
 ## Copyright
 
