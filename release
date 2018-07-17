@@ -16,7 +16,7 @@ if !RELEASE_TYPES.include?(release_type)
 end
 
 g = Git.open('.')
-g.fetch('.', {tags: true})
+g.fetch('origin', {tags: true})
 
 # TODO check that we are on master? or maybe not?
 
@@ -66,4 +66,4 @@ g.add('VERSION')
 g.commit("release version #{new_version.to_s}")
 g.add_tag("v#{new_version.to_s}")
 
-`goreleaser release --skip-publish`
+`goreleaser release --rm-dist`
