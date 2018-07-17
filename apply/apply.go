@@ -63,7 +63,7 @@ func applyRepo(fs afero.Fs, p *plan.Plan, repoBox *packr.Box) error {
 	if !p.SiccMode {
 		e := fs.Remove(".sicc-version")
 		if e != nil {
-			log.Println("error removing .sicc-version. ignoring")
+			log.Debug("error removing .sicc-version. ignoring")
 		}
 	}
 	return nil
