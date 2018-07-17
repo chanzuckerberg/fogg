@@ -59,8 +59,12 @@ func applyRepo(fs afero.Fs, p *plan.Plan, repoBox *packr.Box) error {
 		return e
 	}
 	// Remove after migration.
+
 	if !p.SiccMode {
-		return fs.Remove(".sicc-version")
+		e := fs.Remove(".sicc-version")
+		if e != nil {
+			log.Println("error removing .sicc-version. ignoring")
+		}
 	}
 	return nil
 }
