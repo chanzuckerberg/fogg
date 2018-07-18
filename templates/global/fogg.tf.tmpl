@@ -24,7 +24,7 @@ terraform {
   backend "s3" {
     bucket = "{{ .InfraBucket }}"
     {{/* {%- if env is defined and component_name is defined %} */}}
-    key    = "terraform/{{ .Project }}/envs/{{ .Env }}/components/{{ .Component }}.tfstate"
+    key    = "terraform/{{ .Project }}/{{ .Component }}.tfstate"
 
 {{/*
     {%- else %}
