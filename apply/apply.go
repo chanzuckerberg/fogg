@@ -148,7 +148,7 @@ func applyTree(source *packr.Box, dest afero.Fs, targetBasePath string, siccMode
 	return source.Walk(func(path string, sourceFile packr.File) error {
 		extension := filepath.Ext(path)
 		target := getTargetPath(targetBasePath, path, siccMode)
-		log.Debugf("target: %s, targetBasePath: %s", target, targetBasePath)
+
 		targetExtension := filepath.Ext(target)
 		if extension == ".tmpl" {
 			e = applyTemplate(sourceFile, dest, target, subst)
@@ -166,7 +166,7 @@ func applyTree(source *packr.Box, dest afero.Fs, targetBasePath string, siccMode
 				return errors.Wrapf(e, "unable to create file %s", target)
 			}
 		} else {
-			log.Printf("copying %s", path)
+			log.Infof("%s copyied", path)
 			e = afero.WriteReader(dest, path, sourceFile)
 			if e != nil {
 				return errors.Wrap(e, "unable to copy file")
@@ -174,11 +174,11 @@ func applyTree(source *packr.Box, dest afero.Fs, targetBasePath string, siccMode
 		}
 
 		if !siccMode && target == "fogg.tf" {
-			log.Println("removing sicc.tf")
 			r := filepath.Join(targetBasePath, "sicc.tf")
+			log.Infof("%s removed", r)
 			e = dest.Remove(r)
 			if e != nil {
-				log.Printf("error removing %s. ignoring", r)
+				log.Debugf("error removing %s. ignoring", r)
 			}
 		}
 
@@ -210,13 +210,13 @@ func fmtHcl(fs afero.Fs, path string) error {
 func touchFile(dest afero.Fs, path string) error {
 	_, err := dest.Stat(path)
 	if err != nil { // TODO we might not want to do this for all errors
-		log.Printf("touching %s", path)
+		log.Infof("%s touched", path)
 		_, err = dest.Create(path)
 		if err != nil {
 			return errors.Wrap(err, "unable to touch file")
 		}
 	} else {
-		log.Printf("skipping touch on existing file %s", path)
+		log.Infof("%s skipped touch", path)
 	}
 	return nil
 }
@@ -224,13 +224,13 @@ func touchFile(dest afero.Fs, path string) error {
 func createFile(dest afero.Fs, path string, sourceFile io.Reader) error {
 	_, err := dest.Stat(path)
 	if err != nil { // TODO we might not want to do this for all errors
-		log.Printf("creating %s", path)
+		log.Infof("%s created", path)
 		err = afero.WriteReader(dest, path, sourceFile)
 		if err != nil {
 			return errors.Wrap(err, "unable to create file")
 		}
 	} else {
-		log.Printf("skipping create on existing file %s", path)
+		log.Infof("%s skipped", path)
 	}
 	return nil
 }
@@ -240,7 +240,7 @@ func removeExtension(path string) string {
 }
 
 func applyTemplate(sourceFile io.Reader, dest afero.Fs, path string, overrides interface{}) error {
-	log.Printf("templating %s", path)
+	log.Infof("%s templated", path)
 	writer, err := dest.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return errors.Wrap(err, "unable to open file")
