@@ -8,10 +8,14 @@ import (
 
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/templates"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 )
 
+func init() {
+	log.SetLevel(log.DebugLevel)
+}
 func TestRemoveExtension(t *testing.T) {
 	x := removeExtension("foo")
 	assert.Equal(t, "foo", x)
@@ -21,6 +25,9 @@ func TestRemoveExtension(t *testing.T) {
 
 	x = removeExtension("foo.txt.asdf")
 	assert.Equal(t, "foo.txt", x)
+
+	x = removeExtension("foo/bar.txt")
+	assert.Equal(t, "foo/bar", x)
 }
 
 func TestApplyTemplateBasic(t *testing.T) {
@@ -189,19 +196,24 @@ output "foo" {
 }
 func TestGetTargetPath(t *testing.T) {
 	data := []struct {
+		base    string
 		source  string
 		siccOff string
 		siccOn  string
 	}{
-		{"foo.tmpl", "foo", "foo"},
-		{"foo.tf.tmpl", "foo.tf", "foo.tf"},
-		{"fogg.tf", "fogg.tf", "sicc.tf"},
-		{"fogg.tf.tmpl", "fogg.tf", "sicc.tf"},
+		{"", "foo.tmpl", "foo", "foo"},
+		{"", "foo.tf.tmpl", "foo.tf", "foo.tf"},
+		{"", "fogg.tf", "fogg.tf", "sicc.tf"},
+		{"", "fogg.tf.tmpl", "fogg.tf", "sicc.tf"},
+		{"foo", "foo.tmpl", "foo/foo", "foo/foo"},
+		{"foo", "foo.tf.tmpl", "foo/foo.tf", "foo/foo.tf"},
+		{"foo", "fogg.tf", "foo/fogg.tf", "foo/sicc.tf"},
+		{"foo", "fogg.tf.tmpl", "foo/fogg.tf", "foo/sicc.tf"},
 	}
 	for _, test := range data {
 		t.Run(test.source, func(t *testing.T) {
-			off := getTargetPath(test.source, false)
-			on := getTargetPath(test.source, true)
+			off := getTargetPath(test.base, test.source, false)
+			on := getTargetPath(test.base, test.source, true)
 			assert.Equal(t, test.siccOff, off)
 			assert.Equal(t, test.siccOn, on)
 
