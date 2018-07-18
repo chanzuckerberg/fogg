@@ -6,9 +6,9 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
-	"regexp"
 
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/plan"
