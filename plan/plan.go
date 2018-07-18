@@ -348,7 +348,7 @@ func buildEnvs(conf *config.Config, siccMode bool) map[string]Env {
 			componentPlan.OtherComponents = []string{}
 			componentPlan.SiccMode = siccMode
 
-			componentPlan.BootstrapModule = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-env"
+			componentPlan.BootstrapModule = fmt.Sprintf("git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-env?ref=%s", componentPlan.SharedInfraVersion)
 
 			envPlan.Components["cloud-env"] = componentPlan
 		}
