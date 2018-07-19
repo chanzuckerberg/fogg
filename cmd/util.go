@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/chanzuckerberg/fogg/config"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	validator "gopkg.in/go-playground/validator.v9"
@@ -13,9 +14,11 @@ import (
 )
 
 func openGitOrExit(pwd string) *git.Repository {
+	log.Debugf("opening git at %s", pwd)
 	g, err := git.PlainOpen(pwd)
 	if err != nil {
 		// assuming this means no repository
+		log.Debug(errors.Wrap(err, "unable to open git index"))
 		log.Fatal("fogg must be run from the root of a git repo")
 		os.Exit(1)
 	}
@@ -25,7 +28,7 @@ func openGitOrExit(pwd string) *git.Repository {
 func readAndValidateConfig(fs afero.Fs, configFile string, verbose bool) (*config.Config, error) {
 	config, err := config.FindAndReadConfig(fs, configFile)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "unable to read config file")
 	}
 	if verbose {
 		log.Debug("CONFIG")
