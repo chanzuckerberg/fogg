@@ -54,8 +54,8 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, siccMode bool) er
 	return errors.Wrap(e, "unable to apply modules")
 }
 
-func applyRepo(fs afero.Fs, p *plan.Plan, repoBox *packr.Box) error {
-	e := applyTree(repoBox, fs, p.SiccMode, p)
+func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates *packr.Box) error {
+	e := applyTree(repoTemplates, fs, "", p.SiccMode, p)
 	if e != nil {
 		return e
 	}
@@ -76,7 +76,7 @@ func applyGlobal(fs afero.Fs, p plan.Component, repoBox *packr.Box) error {
 	if e != nil {
 		return errors.Wrapf(e, "unable to make directory %s", path)
 	}
-	return applyTree(repoBox, afero.NewBasePathFs(fs, path), p.SiccMode, p)
+	return applyTree(repoBox, fs, path, p.SiccMode, p)
 }
 
 func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) (e error) {
@@ -86,7 +86,7 @@ func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) (e error) {
 		if e != nil {
 			return errors.Wrap(e, "unable to make directories for accounts")
 		}
-		e = applyTree(accountBox, afero.NewBasePathFs(fs, path), accountPlan.SiccMode, accountPlan)
+		e = applyTree(accountBox, fs, path, accountPlan.SiccMode, accountPlan)
 		if e != nil {
 			return errors.Wrap(e, "unable to apply templates to account")
 		}
@@ -102,7 +102,7 @@ func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox *packr.Box) e
 		if e != nil {
 			return errors.Wrapf(e, "unable to make path %s", path)
 		}
-		e = applyTree(moduleBox, afero.NewBasePathFs(fs, path), modulePlan.SiccMode, modulePlan)
+		e = applyTree(moduleBox, fs, path, modulePlan.SiccMode, modulePlan)
 		if e != nil {
 			return errors.Wrap(e, "unable to apply tree")
 		}
@@ -117,7 +117,7 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 		if e != nil {
 			return errors.Wrapf(e, "unable to make directory %s", path)
 		}
-		e := applyTree(envBox, afero.NewBasePathFs(fs, path), envPlan.SiccMode, envPlan)
+		e := applyTree(envBox, fs, path, envPlan.SiccMode, envPlan)
 		if e != nil {
 			return errors.Wrap(e, "unable to apply templates to env")
 		}
@@ -127,7 +127,7 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 			if e != nil {
 				return errors.Wrap(e, "unable to make directories for component")
 			}
-			e := applyTree(componentBox, afero.NewBasePathFs(fs, path), componentPlan.SiccMode, componentPlan)
+			e := applyTree(componentBox, fs, path, componentPlan.SiccMode, componentPlan)
 			if e != nil {
 				return errors.Wrap(e, "unable to apply templates for component")
 			}
@@ -144,10 +144,11 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 	return nil
 }
 
-func applyTree(source *packr.Box, dest afero.Fs, siccMode bool, subst interface{}) (e error) {
+func applyTree(source *packr.Box, dest afero.Fs, targetBasePath string, siccMode bool, subst interface{}) (e error) {
 	return source.Walk(func(path string, sourceFile packr.File) error {
 		extension := filepath.Ext(path)
-		target := getTargetPath(path, siccMode)
+		target := getTargetPath(targetBasePath, path, siccMode)
+
 		targetExtension := filepath.Ext(target)
 		if extension == ".tmpl" {
 			e = applyTemplate(sourceFile, dest, target, subst)
@@ -165,7 +166,7 @@ func applyTree(source *packr.Box, dest afero.Fs, siccMode bool, subst interface{
 				return errors.Wrapf(e, "unable to create file %s", target)
 			}
 		} else {
-			log.Printf("copying %s", path)
+			log.Infof("%s copied", path)
 			e = afero.WriteReader(dest, path, sourceFile)
 			if e != nil {
 				return errors.Wrap(e, "unable to copy file")
@@ -173,10 +174,11 @@ func applyTree(source *packr.Box, dest afero.Fs, siccMode bool, subst interface{
 		}
 
 		if !siccMode && target == "fogg.tf" {
-			log.Println("removing sicc.tf")
-			e = dest.Remove("sicc.tf")
+			r := filepath.Join(targetBasePath, "sicc.tf")
+			log.Infof("%s removed", r)
+			e = dest.Remove(r)
 			if e != nil {
-				log.Println("error removing sicc.tf. ignoring")
+				log.Debugf("error removing %s. ignoring", r)
 			}
 		}
 
@@ -208,13 +210,13 @@ func fmtHcl(fs afero.Fs, path string) error {
 func touchFile(dest afero.Fs, path string) error {
 	_, err := dest.Stat(path)
 	if err != nil { // TODO we might not want to do this for all errors
-		log.Printf("touching %s", path)
+		log.Infof("%s touched", path)
 		_, err = dest.Create(path)
 		if err != nil {
 			return errors.Wrap(err, "unable to touch file")
 		}
 	} else {
-		log.Printf("skipping touch on existing file %s", path)
+		log.Infof("%s skipped touch", path)
 	}
 	return nil
 }
@@ -222,13 +224,13 @@ func touchFile(dest afero.Fs, path string) error {
 func createFile(dest afero.Fs, path string, sourceFile io.Reader) error {
 	_, err := dest.Stat(path)
 	if err != nil { // TODO we might not want to do this for all errors
-		log.Printf("creating %s", path)
+		log.Infof("%s created", path)
 		err = afero.WriteReader(dest, path, sourceFile)
 		if err != nil {
 			return errors.Wrap(err, "unable to create file")
 		}
 	} else {
-		log.Printf("skipping create on existing file %s", path)
+		log.Infof("%s skipped", path)
 	}
 	return nil
 }
@@ -238,7 +240,7 @@ func removeExtension(path string) string {
 }
 
 func applyTemplate(sourceFile io.Reader, dest afero.Fs, path string, overrides interface{}) error {
-	log.Printf("templating %s", path)
+	log.Infof("%s templated", path)
 	writer, err := dest.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return errors.Wrap(err, "unable to open file")
@@ -317,14 +319,13 @@ func applyModule(fs afero.Fs, path, mod string, box packr.Box) error {
 	return nil
 }
 
-func getTargetPath(path string, siccMode bool) string {
-	target := path
+func getTargetPath(basePath, path string, siccMode bool) string {
+	target := filepath.Join(basePath, path)
 	extension := filepath.Ext(path)
 
 	if extension == ".tmpl" || extension == ".touch" || extension == ".create" {
-		target = removeExtension(path)
+		target = removeExtension(target)
 	}
-
 	if siccMode && filepath.Base(target) == "fogg.tf" {
 		target = filepath.Join(filepath.Dir(target), "sicc.tf")
 	}
