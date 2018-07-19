@@ -284,7 +284,7 @@ func applyModule(fs afero.Fs, path, mod string, box packr.Box) error {
 	}
 	sort.Strings(outputs)
 	moduleName := filepath.Base(mod)
-	re := regexp.MustCompile("\\?ref=.*")
+	re := regexp.MustCompile(`\?ref=.*`)
 	moduleName = re.ReplaceAllString(moduleName, "")
 
 	f, e := box.Open("main.tf.tmpl")
