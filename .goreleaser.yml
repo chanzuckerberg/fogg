@@ -19,3 +19,11 @@ release:
   github:
     owner: chanzuckerberg
     name: fogg
+
+brew:
+  description: "Terraform without pain."
+  github:
+    owner: chanzuckerberg
+    name: homebrew-fogg
+  homepage: "https://github.com/chanzuckerberg/fogg"
+  test: system "#{bin}/fogg version"
