@@ -20,9 +20,6 @@ func init() {
 var rootCmd = &cobra.Command{
 	Use:   "fogg",
 	Short: "",
-	Run: func(cmd *cobra.Command, args []string) {
-		// Do Stuff Here
-	},
 }
 
 func Execute() {
