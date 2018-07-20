@@ -289,7 +289,7 @@ func buildEnvs(conf *config.Config, siccMode bool) map[string]Env {
 		if envConf.Type != nil {
 			envPlan.Type = *envConf.Type
 		} else {
-			envPlan.Type = "aws"
+			envPlan.Type = "bare"
 		}
 		envPlan.SiccMode = siccMode
 

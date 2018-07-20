@@ -142,6 +142,7 @@ func TestApplySmokeTest(t *testing.T) {
   },
   "envs": {
     "staging":{
+	"type": "aws",
         "components": {
             "comp1": {},
             "comp2": {}
