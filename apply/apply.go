@@ -191,7 +191,7 @@ func applyTree(source *packr.Box, dest afero.Fs, targetBasePath string, siccMode
 		// Some output files need to be executable, but we lose all file mode info
 		// when the files get put in a Box. This is a blunt instrument to make
 		// sure those work
-		return dest.Chmod(target, 0644)
+		return dest.Chmod(target, 0744)
 	})
 }
 
