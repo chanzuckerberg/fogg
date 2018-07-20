@@ -1,8 +1,11 @@
 # fogg tutorial
 
+* **Author:** @ryanking
+* **State**: Rough Draft - just trying to get all the content out
+
 This tutorial will walk you through using fogg to create a new infrastructure repository.
 
-Image your are a company named Acme Corporation and want to deploy staging and production versions of your website where each one consists of a single server (let's keep it simple).
+Image that you are a company named Acme Corporation and want to deploy staging and production versions of your website where each one consists of a single server (let's keep it simple).
 
 Note that fogg works by generating Terraform and Make files. It does not run any terraform commands for you.
 
@@ -14,7 +17,7 @@ Also note that we're not going to create the actual infrastructure here, just th
 
 1. *create a working directory*
 
-    Create a new directory for this tutorial and `cd` to it.
+    Create a new directory for this tutorial and `cd` into it.
 
 1. *setup git*
 
@@ -54,7 +57,7 @@ Also note that we're not going to create the actual infrastructure here, just th
 
     And now your directory should look like this–
 
-    ```shell
+    ```
     $ tree
     .
     └── fogg.json
@@ -64,7 +67,7 @@ Also note that we're not going to create the actual infrastructure here, just th
 
     And if you look at `fogg.json`–
 
-    ```
+    ```json
     $ cat fogg.json
     {
     "defaults": {
@@ -73,28 +76,11 @@ Also note that we're not going to create the actual infrastructure here, just th
         "aws_provider_version": "1.27.0",
         "aws_region_backend": "us-west-2",
         "aws_region_provider": "us-west-2",
-        "aws_regions": [
-            "ap-south-1",
-            "eu-west-3",
-            "eu-west-2",
-            "eu-west-1",
-            "ap-northeast-2",
-            "ap-northeast-1",
-            "sa-east-1",
-            "ca-central-1",
-            "ap-southeast-1",
-            "ap-southeast-2",
-            "eu-central-1",
-            "us-east-1",
-            "us-east-2",
-            "us-west-1",
-            "us-west-2"
-        ],
         "infra_s3_bucket": "acme-infra",
         "owner": "infra@acme.example",
         "project": "acme",
         "shared_infra_version": "0.10.0",
-        "terraform_version": "0.11.0"
+        "terraform_version": "0.11.7"
     },
     "accounts": {},
     "envs": {},
@@ -161,13 +147,26 @@ Also note that we're not going to create the actual infrastructure here, just th
 
     Fogg has created 3 directories and put some files in them – `scripts` which exists to hold a handful of shell scripts useful to our operations and `terraform` which will include all our terraform code, both reusable modules and live infrastructure.
 
+    Before go on – a bit about how fogg organizes repos –
+
+    Fogg applies an opinionated way to organize terraform repos. This serves to both make it easy to factor your terraform code into many scopes / state files and also provide some consistency (make working on a team a bit easier).
+
+    Fogg organizes tf code into `global`, `accounts`, `envs` and `components`.
+
+    * `global` - things are trying global across all your infrastructure. A good example is a Route53 zone, to which you want to add recrords from everywhere in your infra.
+    * `accounts` - things that are relavant at the account level (aws here) - most aws iam stuff goes here. Note that we make it easy to have multiple accounts which configs for each in `terraform/accounts/account-name`.
+    * `envs` - think staging vs prod here. fogg makes it easy to keep your tf separate for each one
+    * `components` - in addition to separating environments we do one step further and make it easy to have multiple state files for each environment. In fogg we call those components. Each env can have many components and they all get their own statefile. On top of that each gets a `terrafom_remote_state` data source for all the other components in the same env.
+
+    With that in mind, let's create a new env.
+
 1. *configure a staging env*
 
     Fogg helps you organize your terraform code and the resources they create into separate environments. Think 'staging' vs 'production'. It is advisable to have them separate so that you can operate on them independently. Let's create a 'staging' environment.
 
     To create a new env, edit your fogg.json to look like this–
 
-    ```
+    ```json
     {
         "defaults": {
             "aws_profile_backend": "acme-auth",
@@ -175,40 +174,21 @@ Also note that we're not going to create the actual infrastructure here, just th
             "aws_provider_version": "1.27.0",
             "aws_region_backend": "us-west-2",
             "aws_region_provider": "us-west-2",
-            "aws_regions": [
-                "ap-south-1",
-                "eu-west-3",
-                "eu-west-2",
-                "eu-west-1",
-                "ap-northeast-2",
-                "ap-northeast-1",
-                "sa-east-1",
-                "ca-central-1",
-                "ap-southeast-1",
-                "ap-southeast-2",
-                "eu-central-1",
-                "us-east-1",
-                "us-east-2",
-                "us-west-1",
-                "us-west-2"
-            ],
             "infra_s3_bucket": "acme-infra",
             "owner": "infra@acme.example",
             "project": "acme",
             "shared_infra_version": "0.10.0",
-            "terraform_version": "0.11.0"
+            "terraform_version": "0.11.7"
         },
         "accounts": {},
         "envs": {
-            "staging": {
-                "type": "bare"
-            }
-        },
+            "staging": {},
+        }
         "modules": {}
     }
     ```
 
-    Note that we added `"staging": { "type": "bare" }` in the `envs` object. [Future versions of fogg will add a command to do this and not require the "type": "bare"]
+    Note that we added `"staging": {}` in the `envs` object.
 
     `fogg apply`
 
@@ -264,8 +244,10 @@ Also note that we're not going to create the actual infrastructure here, just th
     5 directories, 15 files
     ```
 
-    A terraform/staging directory has been creaded with a few files in it.
+    A terraform/staging directory has been creaded with a few files in it, but nowhere to put terraform files yet– those go in components which are nested in envs. So let's create a component–
 
-* create component
-* create module
-* ?
+1. create vpc?
+1. create component
+1. create prod
+1. refactor to module
+1. create module
