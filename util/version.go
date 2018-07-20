@@ -28,7 +28,10 @@ func VersionString() (string, error) {
 }
 
 func VersionCacheKey() string {
-	versionString, _ := VersionString()
+	versionString, e := VersionString()
+	if e != nil {
+		return ""
+	}
 	v, e := semver.Parse(versionString)
 	if e != nil {
 		return ""
