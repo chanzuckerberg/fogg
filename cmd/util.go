@@ -10,19 +10,18 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	validator "gopkg.in/go-playground/validator.v9"
-	git "gopkg.in/src-d/go-git.v4"
 )
 
-func openGitOrExit(pwd string) *git.Repository {
+func openGitOrExit(pwd string) {
 	log.Debugf("opening git at %s", pwd)
-	g, err := git.PlainOpen(pwd)
+	// g, err := git.PlainOpen(pwd)
+	_, err := os.Stat(".git")
 	if err != nil {
 		// assuming this means no repository
 		log.Debug(errors.Wrap(err, "unable to open git index"))
 		log.Fatal("fogg must be run from the root of a git repo")
 		os.Exit(1)
 	}
-	return g
 }
 
 func readAndValidateConfig(fs afero.Fs, configFile string, verbose bool) (*config.Config, error) {
