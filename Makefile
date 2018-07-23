@@ -12,7 +12,13 @@ lint:
 lint-slow:
 	gometalinter --vendor --deadline 120s ./...
 
-build:
+packr:
+	packr
+
+release: packr
+	goreleaser release --rm-dist
+
+build: packr
 	go build ${LDFLAGS} .
 
 coverage:
@@ -21,7 +27,7 @@ coverage:
 test:
 	go test -cover ./...
 
-install:
+install: packr
 	go install ${LDFLAGS} .
 
-.PHONY: build coverage test install lint lint-slow
+.PHONY: build coverage test install lint lint-slow packr release
