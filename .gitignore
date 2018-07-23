@@ -2,3 +2,6 @@ fogg
 coverage.out
 dist
 .vscode
+
+# Ignore -packr generated files
+**-packr.go
