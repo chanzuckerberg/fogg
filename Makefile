@@ -27,7 +27,7 @@ coverage:
 test:
 	go test -cover ./...
 
-install: packr
+install:
 	go install ${LDFLAGS} .
 
 .PHONY: build coverage test install lint lint-slow packr release
