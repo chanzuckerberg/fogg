@@ -18,7 +18,19 @@ end
 g = Git.open('.')
 g.fetch('origin', {tags: true})
 
-# TODO check that we are on master? or maybe not?
+if g.status.changed.length > 0
+  puts "Please release only from a clean working directory (no uncommitted changes)."
+  exit(1)
+end
+
+head_sha = g.object("HEAD").sha
+master_sha = g.object("origin/master").sha
+
+if head_sha != master_sha
+  puts "Please only release versions from master, that way the tagged git sha is on master."
+  puts "SHAs on branches could go away if a PR is squash-merged."
+  exit(1)
+end
 
 tag_index = g.tags.inject(Hash.new) do |ind, t|
   ind[t.objectish] = t.name
