@@ -18,7 +18,7 @@ packr:
 release: packr
 	goreleaser release --rm-dist
 
-build: packr
+build:
 	go build ${LDFLAGS} .
 
 coverage:
