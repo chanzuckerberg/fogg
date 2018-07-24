@@ -1,0 +1,34 @@
+{
+  "defaults": {
+    "aws_region": "reg",
+    "aws_profile": "prof",
+    "infra_s3_bucket": "buck",
+    "project": "proj",
+    "terraform_version": "0.100.0",
+    "owner": "foo@example.com"
+  },
+  "accounts": {
+    "foo": {
+      "account_id": 123
+    },
+    "bar": {
+      "account_id": 456
+    }
+  },
+  "modules": {
+    "my_module": {}
+  },
+  "envs": {
+    "staging":{
+        "type": "aws",
+        "components": {
+						"cloud-env": {
+							"module_source": "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-env?ref=v0.10.0"
+						},
+            "comp1": {},
+            "comp2": {}
+        }
+    },
+    "prod": {}
+  }
+}

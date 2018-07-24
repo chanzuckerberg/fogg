@@ -1,8 +1,8 @@
 package plan
 
 import (
-	"io/ioutil"
-	"strings"
+	"bufio"
+	"os"
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/config"
@@ -53,41 +53,12 @@ func TestResolveStringArray(t *testing.T) {
 }
 
 func TestPlanBasic(t *testing.T) {
-	json := `
-{
-  "defaults": {
-    "aws_region": "reg",
-    "aws_profile": "prof",
-    "infra_s3_bucket": "buck",
-    "project": "proj",
-    "terraform_version": "0.100.0",
-    "owner": "foo@example.com"
-  },
-  "accounts": {
-    "foo": {
-      "account_id": 123
-    },
-    "bar": {
-      "account_id": 456
-    }
-  },
-  "modules": {
-    "my_module": {}
-  },
-  "envs": {
-    "staging":{
-        "type": "aws",
-        "components": {
-            "comp1": {},
-            "comp2": {}
-        }
-    },
-    "prod": {}
-  }
-}
-`
-	c, err := config.ReadConfig(ioutil.NopCloser(strings.NewReader(json)))
+	f, _ := os.Open("fixtures/full.json")
+	defer f.Close()
+	r := bufio.NewReader(f)
+	c, err := config.ReadConfig(r)
 	assert.Nil(t, err)
+
 	plan, e := Eval(c, true, false)
 	assert.Nil(t, e)
 	assert.NotNil(t, plan)
@@ -105,8 +76,11 @@ func TestPlanBasic(t *testing.T) {
 	assert.Equal(t, plan.Envs["staging"].TerraformVersion, "0.100.0")
 
 	assert.NotNil(t, plan.Envs["staging"].Components)
-	assert.Len(t, plan.Envs["staging"].Components, 3) // includes implicit cloud-env
+	assert.Len(t, plan.Envs["staging"].Components, 3)
+
+	assert.NotNil(t, plan.Envs["staging"].Components["cloud-env"])
+	assert.Equal(t, "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-env?ref=v0.10.0", *plan.Envs["staging"].Components["cloud-env"].ModuleSource)
 
 	assert.NotNil(t, plan.Envs["staging"].Components["comp1"])
-	assert.Equal(t, plan.Envs["staging"].Components["comp1"].TerraformVersion, "0.100.0")
+	assert.Equal(t, "0.100.0", plan.Envs["staging"].Components["comp1"].TerraformVersion)
 }
