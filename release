@@ -6,15 +6,6 @@ require 'logger'
 require 'semantic'
 
 
-RELEASE_TYPES = %w[major minor patch]
-
-# read release type argument (major, minor, patch)
-release_type = ARGV.first
-if !RELEASE_TYPES.include?(release_type)
-  print("Invalid release type '#{release_type}'. Valid options are #{RELEASE_TYPES}\n")
-  exit(1)
-end
-
 g = Git.open('.')
 g.fetch('origin', {tags: true})
 
@@ -50,6 +41,7 @@ puts "Found tag #{tag}"
 puts "sha for that tag: #{sha}"
 
 v = open('VERSION').read.strip
+semver = Semantic::Version.new(v)
 
 puts "VERSION file says #{v}"
 
@@ -58,15 +50,50 @@ if tag.sub('v', '') != v
   exit(1)
 end
 
-v = Semantic::Version.new(v)
+breaking = false
+feature = false
+puts "included commits…"
+g.log.between("v#{v}", 'HEAD').each do |commit|
+  puts "* #{commit.message}"
+  
+  if commit.message.include?("[breaking]")
+    breaking = true
+  end
+  if commit.message.include?("[feature]")
+    feature = true
+  end
+end
 
-new_version = v.increment!(release_type.to_sym)
+if breaking
+  puts "this appears to be a breaking change"
+else
+  puts "this appears not to be a breaking change"
+end
 
-puts "new version is #{new_version}"
-puts "is that ok? (y/n)"
-c = STDIN.gets.chomp
-if c != 'y'
-  puts("canceled")
+release_type = if semver.major < 1
+  if breaking || feature
+    "minor"
+  else
+    "patch"
+  end
+else
+  if breaking
+    "major"
+  elsif feature
+    "minor"
+  else
+    "patch"
+  end
+end
+
+puts "release type is #{release_type}"
+
+new_version = semver.increment!(release_type.to_sym)
+
+puts "shall we do a #{release_type} release? new version will be #{new_version} (y/n)"
+a = gets.chomp
+if a != 'y'
+  puts "canceled"
   exit(1)
 end
 
