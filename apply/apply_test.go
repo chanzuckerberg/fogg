@@ -15,6 +15,10 @@ import (
 
 func init() {
 	log.SetLevel(log.DebugLevel)
+	formatter := &log.TextFormatter{
+		DisableTimestamp: true,
+	}
+	log.SetFormatter(formatter)
 }
 func TestRemoveExtension(t *testing.T) {
 	x := removeExtension("foo")
@@ -159,10 +163,10 @@ func TestApplySmokeTest(t *testing.T) {
 	assert.Nil(t, e)
 }
 
-func TestApplyModule(t *testing.T) {
+func TestApplyModuleInvocation(t *testing.T) {
 	fs := afero.NewMemMapFs()
 
-	e := applyModule(fs, "mymodule", "../util/test-module", templates.Templates.ModuleInvocation)
+	e := applyModuleInvocation(fs, "mymodule", "../util/test-module", templates.Templates.ModuleInvocation)
 	assert.Nil(t, e)
 
 	s, e := fs.Stat("mymodule")
@@ -174,7 +178,7 @@ func TestApplyModule(t *testing.T) {
 	r, e := afero.ReadFile(fs, "mymodule/main.tf")
 	assert.Nil(t, e)
 	expected := `module "test-module" {
-  source = "../util/test-module"
+  source = "../../util/test-module"
   bar    = "${var.bar}"
   foo    = "${var.foo}"
 }
@@ -239,6 +243,34 @@ func TestFmtHcl(t *testing.T) {
 	assert.NotNil(t, out)
 	s := string(out)
 	assert.Equal(t, after, s)
+}
+
+func TestCalculateLocalPath(t *testing.T) {
+	data := []struct {
+		path          string
+		moduleAddress string
+		expected      string
+	}{
+		{"foo/bar", "bam/baz", "../../bam/baz"},
+		{
+			"foo/bar",
+			"git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-env?ref=v0.10.0",
+			"git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-env?ref=v0.10.0",
+		},
+		{"foo/bar", "github.com/asdf/jkl", "github.com/asdf/jkl"},
+		// TODO modules from the registry don't work because it is
+		// ambigious with file paths need to figure out how terraform
+		// does this internally
+		// {"foo/bar", "from/the/registry", "from/the/registry"},
+	}
+
+	for _, test := range data {
+		t.Run("", func(t *testing.T) {
+			p, e := calculateModuleAddressForSource(test.path, test.moduleAddress)
+			assert.Nil(t, e)
+			assert.Equal(t, test.expected, p)
+		})
+	}
 }
 
 func readFile(fs afero.Fs, path string) (string, error) {

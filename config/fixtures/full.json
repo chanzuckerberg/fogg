@@ -1,0 +1,29 @@
+{
+  "defaults": {
+    "account_id": 1,
+    "aws_profile_backend": "czi",
+    "aws_profile_provider": "czi",
+    "aws_region_backend": "us-west-2",
+    "aws_region_provider": "us-west-1",
+    "aws_provider_version": "0.1.0",
+    "infra_s3_bucket": "the-bucket",
+    "owner": "default@example.com",
+    "project": "test-project",
+    "shared_infra_version": "0.1.0",
+    "terraform_version": "0.11.0"
+  },
+  "accounts": {
+    "foo": {},
+    "bar": {}
+  },
+  "envs": {
+    "stage":{
+      "components": {
+        "env": {
+          "module_source": "github.com/foo/bar"
+        }
+      }
+    }
+  },
+  "modules": {}
+}

@@ -70,6 +70,7 @@ type Component struct {
 	Owner              *string  `json:"owner"`
 	Project            *string  `json:"project"`
 	SharedInfraVersion *string  `json:"shared_infra_version"`
+	ModuleSource       *string  `json:"module_source"`
 	TerraformVersion   *string  `json:"terraform_version"`
 }
 

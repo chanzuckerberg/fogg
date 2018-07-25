@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -15,6 +16,7 @@ import (
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/gobuffalo/packr"
+	getter "github.com/hashicorp/go-getter"
 	"github.com/hashicorp/hcl/hcl/printer"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -132,10 +134,10 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 				return errors.Wrap(e, "unable to apply templates for component")
 			}
 
-			if componentPlan.BootstrapModule != "" {
-				e := applyModule(fs, path, componentPlan.BootstrapModule, templates.Templates.ModuleInvocation)
+			if componentPlan.ModuleSource != nil {
+				e := applyModuleInvocation(fs, path, *componentPlan.ModuleSource, templates.Templates.ModuleInvocation)
 				if e != nil {
-					return errors.Wrap(e, "unable to apply module")
+					return errors.Wrap(e, "unable to apply module invocation")
 				}
 			}
 
@@ -259,13 +261,13 @@ type moduleData struct {
 	Outputs      []string
 }
 
-func applyModule(fs afero.Fs, path, mod string, box packr.Box) error {
+func applyModuleInvocation(fs afero.Fs, path, moduleAddress string, box packr.Box) error {
 	e := fs.MkdirAll(path, 0755)
 	if e != nil {
 		return errors.Wrapf(e, "couldn't create %s directory", path)
 	}
 
-	c, e := util.DownloadAndParseModule(mod)
+	moduleConfig, e := util.DownloadAndParseModule(moduleAddress)
 	if e != nil {
 		return errors.Wrap(e, "could not download or parse module")
 	}
@@ -274,25 +276,26 @@ func applyModule(fs afero.Fs, path, mod string, box packr.Box) error {
 	// leave it here for now and re-think it when we make this mechanism
 	// general purpose.
 	variables := make([]string, 0)
-	for _, v := range c.Variables {
+	for _, v := range moduleConfig.Variables {
 		variables = append(variables, v.Name)
 	}
 	sort.Strings(variables)
 	outputs := make([]string, 0)
-	for _, o := range c.Outputs {
+	for _, o := range moduleConfig.Outputs {
 		outputs = append(outputs, o.Name)
 	}
 	sort.Strings(outputs)
-	moduleName := filepath.Base(mod)
+	moduleName := filepath.Base(moduleAddress)
 	re := regexp.MustCompile(`\?ref=.*`)
 	moduleName = re.ReplaceAllString(moduleName, "")
 
+	moduleAddressForSource, _ := calculateModuleAddressForSource(path, moduleAddress)
+	// MAIN
 	f, e := box.Open("main.tf.tmpl")
 	if e != nil {
 		return errors.Wrap(e, "could not open template file")
 	}
-
-	e = applyTemplate(f, fs, filepath.Join(path, "main.tf"), &moduleData{moduleName, mod, variables, outputs})
+	e = applyTemplate(f, fs, filepath.Join(path, "main.tf"), &moduleData{moduleName, moduleAddressForSource, variables, outputs})
 	if e != nil {
 		return errors.Wrap(e, "unable to apply template for main.tf")
 	}
@@ -301,12 +304,13 @@ func applyModule(fs afero.Fs, path, mod string, box packr.Box) error {
 		return errors.Wrap(e, "unable to format main.tf")
 	}
 
+	// OUTPUTS
 	f, e = box.Open("outputs.tf.tmpl")
 	if e != nil {
 		return errors.Wrap(e, "could not open template file")
 	}
 
-	e = applyTemplate(f, fs, filepath.Join(path, "outputs.tf"), &moduleData{moduleName, mod, variables, outputs})
+	e = applyTemplate(f, fs, filepath.Join(path, "outputs.tf"), &moduleData{moduleName, moduleAddressForSource, variables, outputs})
 	if e != nil {
 		return errors.Wrap(e, "unable to apply template for outputs.tf")
 	}
@@ -319,6 +323,24 @@ func applyModule(fs afero.Fs, path, mod string, box packr.Box) error {
 	return nil
 }
 
+func calculateModuleAddressForSource(path, moduleAddress string) (string, error) {
+	// For cases where the module is a local path, we need to calculate the
+	// relative path from the component to the module.
+	// The module_source path in the fogg.json is relative to the repo root.
+	var moduleAddressForSource string
+	// getter will kinda normalize the module address, but it will actually be
+	// wrong for local file paths, so we need to calculate that ourselves below
+	s, e := getter.Detect(moduleAddress, path, getter.Detectors)
+	u, e := url.Parse(s)
+	if e != nil || u.Scheme == "file" {
+		// This indicates that we have a local path to the module.
+		// It is possible that this test is unreliable.
+		moduleAddressForSource, _ = filepath.Rel(path, moduleAddress)
+	} else {
+		moduleAddressForSource = moduleAddress
+	}
+	return moduleAddressForSource, nil
+}
 func getTargetPath(basePath, path string, siccMode bool) string {
 	target := filepath.Join(basePath, path)
 	extension := filepath.Ext(path)

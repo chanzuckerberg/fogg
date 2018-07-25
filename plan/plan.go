@@ -49,7 +49,7 @@ type Component struct {
 	TerraformVersion   string
 	SiccMode           bool
 
-	BootstrapModule string
+	ModuleSource *string
 }
 
 type Env struct {
@@ -286,11 +286,7 @@ func buildEnvs(conf *config.Config, siccMode bool) map[string]Env {
 		envPlan.InfraBucket = resolveRequired(defaults.InfraBucket, envConf.InfraBucket)
 		envPlan.Owner = resolveRequired(defaults.Owner, envConf.Owner)
 		envPlan.Project = resolveRequired(defaults.Project, envConf.Project)
-		if envConf.Type != nil {
-			envPlan.Type = *envConf.Type
-		} else {
-			envPlan.Type = "bare"
-		}
+
 		envPlan.SiccMode = siccMode
 
 		for componentName, componentConf := range conf.Envs[envName].Components {
@@ -320,37 +316,9 @@ func buildEnvs(conf *config.Config, siccMode bool) map[string]Env {
 				componentPlan.OtherComponents = append(componentPlan.OtherComponents, "cloud-env")
 			}
 			componentPlan.SiccMode = siccMode
+			componentPlan.ModuleSource = componentConf.ModuleSource
 
 			envPlan.Components[componentName] = componentPlan
-		}
-
-		if envPlan.Type == "aws" {
-			componentPlan := Component{}
-
-			componentPlan.AccountID = envPlan.AccountID
-			componentPlan.AWSRegionBackend = envPlan.AWSRegionBackend
-			componentPlan.AWSRegionProvider = envPlan.AWSRegionProvider
-			componentPlan.AWSRegions = envPlan.AWSRegions
-
-			componentPlan.AWSProfileBackend = envPlan.AWSProfileBackend
-			componentPlan.AWSProfileProvider = envPlan.AWSProfileProvider
-			componentPlan.AWSProviderVersion = envPlan.AWSProviderVersion
-			componentPlan.AccountID = envPlan.AccountID
-
-			componentPlan.TerraformVersion = envPlan.TerraformVersion
-			componentPlan.InfraBucket = envPlan.InfraBucket
-			componentPlan.Owner = envPlan.Owner
-			componentPlan.Project = envPlan.Project
-			componentPlan.SharedInfraVersion = conf.Defaults.SharedInfraVersion
-
-			componentPlan.Env = envName
-			componentPlan.Component = "cloud-env"
-			componentPlan.OtherComponents = []string{}
-			componentPlan.SiccMode = siccMode
-
-			componentPlan.BootstrapModule = fmt.Sprintf("git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-env?ref=%s", componentPlan.SharedInfraVersion)
-
-			envPlan.Components["cloud-env"] = componentPlan
 		}
 
 		envPlans[envName] = envPlan
