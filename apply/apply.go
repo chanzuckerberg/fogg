@@ -175,12 +175,12 @@ func applyTree(source *packr.Box, dest afero.Fs, targetBasePath string, siccMode
 			}
 		}
 
-		if !siccMode && target == "fogg.tf" {
+		if !siccMode && strings.HasSuffix(target, "fogg.tf") {
 			r := filepath.Join(targetBasePath, "sicc.tf")
 			log.Infof("%s removed", r)
 			e = dest.Remove(r)
 			if e != nil {
-				log.Debugf("error removing %s. ignoring", r)
+				log.Warnf("error removing %s. ignoring", r)
 			}
 		}
 
