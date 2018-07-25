@@ -180,7 +180,7 @@ func applyTree(source *packr.Box, dest afero.Fs, targetBasePath string, siccMode
 			log.Infof("%s removed", r)
 			e = dest.Remove(r)
 			if e != nil {
-				log.Warnf("error removing %s. ignoring", r)
+				log.Debugf("error removing %s. ignoring", r)
 			}
 		}
 
