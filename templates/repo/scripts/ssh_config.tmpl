@@ -34,6 +34,7 @@ d.each do |(pattern, bastion)|
     print <<-END
 Host #{pattern}
   ProxyCommand ssh -q #{bastion} -W %h:%p
+  User ec2-user
 
 Host #{bastion}
   User ec2-user
