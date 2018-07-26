@@ -5,7 +5,7 @@
 
 This tutorial will walk you through using fogg to create a new infrastructure repository.
 
-Image that you are a company named Acme Corporation and want to deploy staging and production versions of your website where each one consists of a single server (let's keep it simple).
+Imagine that you are a company named Acme Corporation and want to deploy staging and production versions of your website where each one consists of a single server (let's keep it simple).
 
 Note that fogg works by generating Terraform and Make files. It does not run any terraform commands for you.
 
@@ -23,13 +23,13 @@ Also note that we're not going to create the actual infrastructure here, just th
 
     `git init`
 
-   Terraform depends on working from the root of a git repository, though it doesn't need to be pushed anywhere, so `git init` is enough for now. After this, your directory should look like this–
+   Fogg depends on working from the root of a git repository, though it doesn't need to be pushed anywhere, so `git init` is enough for now. After this, your directory should look like this–
 
-   ```bash
-   $ tree .
-   .
+   ```
+    $ tree -a -L 1
+    .
+    └── .git
 
-   0 directories, 0 files
    ```
 
 1. *initialize fogg*
@@ -58,11 +58,12 @@ Also note that we're not going to create the actual infrastructure here, just th
     And now your directory should look like this–
 
     ```
-    $ tree
+    $ tree -a -L 1
     .
+    ├── .git
     └── fogg.json
 
-    0 directories, 1 file
+    1 directory, 1 file
     ```
 
     And if you look at `fogg.json`–
@@ -103,22 +104,22 @@ Also note that we're not going to create the actual infrastructure here, just th
 
     ```
     $ fogg apply
-    INFO templating .fogg-version
-    INFO templating .gitattributes
-    INFO templating .gitignore
-    INFO templating Makefile
-    INFO touching README.md
-    INFO copying scripts/docker-ssh-forward.sh
-    INFO copying scripts/docker-ssh-mount.sh
-    INFO copying scripts/install_or_update.sh
-    INFO templating scripts/ssh_config
-    INFO templating Makefile
-    INFO touching README.md
-    INFO touching main.tf
-    INFO touching outputs.tf
-    INFO templating sicc.tf
-    INFO touching variables.tf
-    ```
+    INFO .fogg-version templated
+    INFO .gitignore templated
+    INFO Makefile templated
+    INFO scripts/docker-ssh-mount.sh copied
+    INFO .gitattributes templated
+    INFO README.md touched
+    INFO scripts/docker-ssh-forward.sh copied
+    INFO scripts/install_or_update.sh copied
+    INFO scripts/ssh_config templated
+    INFO terraform/global/fogg.tf templated
+    INFO terraform/global/main.tf touched
+    INFO terraform/global/outputs.tf touched
+    INFO terraform/global/variables.tf touched
+    INFO terraform/global/Makefile templated
+    INFO terraform/global/README.md touched
+   ```
 
     You'll see some output about that fogg is doing and now we have some structure to our repository–
 
@@ -139,7 +140,7 @@ Also note that we're not going to create the actual infrastructure here, just th
             ├── README.md
             ├── main.tf
             ├── outputs.tf
-            ├── sicc.tf
+            ├── fogg.tf
             └── variables.tf
 
     3 directories, 13 files
@@ -154,7 +155,7 @@ Also note that we're not going to create the actual infrastructure here, just th
     Fogg organizes tf code into `global`, `accounts`, `envs` and `components`.
 
     * `global` - things are trying global across all your infrastructure. A good example is a Route53 zone, to which you want to add recrords from everywhere in your infra.
-    * `accounts` - things that are relavant at the account level (aws here) - most aws iam stuff goes here. Note that we make it easy to have multiple accounts which configs for each in `terraform/accounts/account-name`.
+    * `accounts` - things that are relavant at the account level (aws here) - most aws iam stuff goes here. Note that we make it easy to have multiple accounts with configs for each in `terraform/accounts/account-name`.
     * `envs` - think staging vs prod here. fogg makes it easy to keep your tf separate for each one
     * `components` - in addition to separating environments we do one step further and make it easy to have multiple state files for each environment. In fogg we call those components. Each env can have many components and they all get their own statefile. On top of that each gets a `terrafom_remote_state` data source for all the other components in the same env.
 
@@ -182,8 +183,8 @@ Also note that we're not going to create the actual infrastructure here, just th
         },
         "accounts": {},
         "envs": {
-            "staging": {},
-        }
+            "staging": {}
+        },
         "modules": {}
     }
     ```

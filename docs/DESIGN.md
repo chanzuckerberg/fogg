@@ -27,7 +27,7 @@ As we've built tools around Terraform our goal has been to avoid making this wor
 
 To that end, one of the significant decisions we made was to have this tool work via code generation. That means that you can always read the code we've generated to understand what's going on (you can even tweak it if you need to temporarily work around a limitation).
 
-This tranparency should make it easier to try out fogg– you can always see the code for yourself and if you eve decide to stop using it, you already have a working repository.
+This tranparency should make it easier to try out fogg– you can always see the code for yourself and if you even decide to stop using it, you already have a working repository.
 
 ## Terraform Best Practices
 
