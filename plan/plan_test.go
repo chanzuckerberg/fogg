@@ -6,9 +6,17 @@ import (
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/config"
+	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
+func init() {
+	log.SetLevel(log.DebugLevel)
+	formatter := &log.TextFormatter{
+		DisableTimestamp: true,
+	}
+	log.SetFormatter(formatter)
+}
 func TestResolveRequired(t *testing.T) {
 	resolved := resolveRequired("def", nil)
 	assert.Equal(t, "def", resolved)
@@ -78,8 +86,11 @@ func TestPlanBasic(t *testing.T) {
 	assert.NotNil(t, plan.Envs["staging"].Components)
 	assert.Len(t, plan.Envs["staging"].Components, 3)
 
-	assert.NotNil(t, plan.Envs["staging"].Components["cloud-env"])
-	assert.Equal(t, "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-env?ref=v0.10.0", *plan.Envs["staging"].Components["cloud-env"].ModuleSource)
+	assert.NotNil(t, plan.Envs["staging"])
+	assert.NotNil(t, plan.Envs["staging"].Components["vpc"])
+	log.Debugf("%#v\n", plan.Envs["staging"].Components["vpc"].ModuleSource)
+	assert.NotNil(t, *plan.Envs["staging"].Components["vpc"].ModuleSource)
+	assert.Equal(t, "github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0", *plan.Envs["staging"].Components["vpc"].ModuleSource)
 
 	assert.NotNil(t, plan.Envs["staging"].Components["comp1"])
 	assert.Equal(t, "0.100.0", plan.Envs["staging"].Components["comp1"].TerraformVersion)
@@ -101,6 +112,6 @@ func TestExtraVarsComposition(t *testing.T) {
 	// envs overwrite defaults
 	assert.Equal(t, "bar2", plan.Envs["staging"].Components["comp1"].ExtraVars["foo"])
 	// component overwrite env
-	assert.Equal(t, "bar3", plan.Envs["staging"].Components["cloud-env"].ExtraVars["foo"])
+	assert.Equal(t, "bar3", plan.Envs["staging"].Components["vpc"].ExtraVars["foo"])
 
 }
