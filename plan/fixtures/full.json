@@ -22,8 +22,8 @@
     "staging":{
         "type": "aws",
         "components": {
-						"cloud-env": {
-							"module_source": "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-env?ref=v0.10.0"
+						"vpc": {
+							"module_source": "github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0"
 						},
             "comp1": {},
             "comp2": {}
