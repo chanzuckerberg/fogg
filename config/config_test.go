@@ -96,11 +96,11 @@ func TestValidation(t *testing.T) {
 
 	err, ok := e.(validator.ValidationErrors)
 	assert.True(t, ok)
-	assert.Len(t, err, 10)
+	assert.Len(t, err, 9)
 }
 
 func TestInitConfig(t *testing.T) {
-	c := InitConfig("proj", "reg", "buck", "prof", "me@foo.example", "0.100.0", "0.99.0")
+	c := InitConfig("proj", "reg", "buck", "prof", "me@foo.example", "0.99.0")
 	assert.Equal(t, "prof", c.Defaults.AWSProfileBackend)
 	assert.Equal(t, "prof", c.Defaults.AWSProfileProvider)
 	assert.Equal(t, "reg", c.Defaults.AWSRegionBackend)
@@ -110,5 +110,4 @@ func TestInitConfig(t *testing.T) {
 	assert.Equal(t, "me@foo.example", c.Defaults.Owner)
 	assert.Equal(t, "proj", c.Defaults.Project)
 	assert.Equal(t, "0.11.7", c.Defaults.TerraformVersion)
-	assert.Equal(t, "0.100.0", c.Defaults.SharedInfraVersion)
 }
