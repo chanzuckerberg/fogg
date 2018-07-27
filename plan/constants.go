@@ -6,4 +6,6 @@ var reservedVariableNames = map[string]bool{
 	"aws_profile":  true,
 	"owner":        true,
 	"aws_accounts": true,
+	"env":          true,
+	"tags":         true,
 }

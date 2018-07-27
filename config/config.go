@@ -20,12 +20,12 @@ type defaults struct {
 	AWSRegionBackend   string            `json:"aws_region_backend" validate:"required"`
 	AWSRegionProvider  string            `json:"aws_region_provider" validate:"required"`
 	AWSRegions         []string          `json:"aws_regions,omitempty"`
+	ExtraVars          map[string]string `json:"extra_vars"`
 	InfraBucket        string            `json:"infra_s3_bucket" validate:"required"`
 	Owner              string            `json:"owner" validate:"required"`
 	Project            string            `json:"project" validate:"required"`
 	SharedInfraVersion string            `json:"shared_infra_version" validate:"required"`
 	TerraformVersion   string            `json:"terraform_version" validate:"required"`
-	ExtraVars          map[string]string `json:"extra_vars"`
 }
 
 type Account struct {
@@ -36,11 +36,11 @@ type Account struct {
 	AWSRegionBackend   *string           `json:"aws_region_backend"`
 	AWSRegionProvider  *string           `json:"aws_region_provider"`
 	AWSRegions         []string          `json:"aws_regions"`
+	ExtraVars          map[string]string `json:"extra_vars"`
 	InfraBucket        *string           `json:"infra_s3_bucket"`
 	Owner              *string           `json:"owner"`
 	Project            *string           `json:"project"`
 	TerraformVersion   *string           `json:"terraform_version"`
-	ExtraVars          map[string]string `json:"extra_vars"`
 }
 
 type Env struct {
@@ -51,12 +51,12 @@ type Env struct {
 	AWSRegionBackend   *string           `json:"aws_region_backend"`
 	AWSRegionProvider  *string           `json:"aws_region_provider"`
 	AWSRegions         []string          `json:"aws_regions"`
+	ExtraVars          map[string]string `json:"extra_vars"`
 	InfraBucket        *string           `json:"infra_s3_bucket"`
 	Owner              *string           `json:"owner"`
 	Project            *string           `json:"project"`
 	TerraformVersion   *string           `json:"terraform_version"`
 	Type               *string           `json:"type"`
-	ExtraVars          map[string]string `json:"extra_vars"`
 
 	Components map[string]*Component `json:"components"`
 }
@@ -69,13 +69,13 @@ type Component struct {
 	AWSRegionBackend   *string           `json:"aws_region_backend"`
 	AWSRegionProvider  *string           `json:"aws_region_provider"`
 	AWSRegions         []string          `json:"aws_regions"`
+	ExtraVars          map[string]string `json:"extra_vars"`
 	InfraBucket        *string           `json:"infra_s3_bucket"`
+	ModuleSource       *string           `json:"module_source"`
 	Owner              *string           `json:"owner"`
 	Project            *string           `json:"project"`
 	SharedInfraVersion *string           `json:"shared_infra_version"`
-	ModuleSource       *string           `json:"module_source"`
 	TerraformVersion   *string           `json:"terraform_version"`
-	ExtraVars          map[string]string `json:"extra_vars"`
 }
 
 type Module struct {

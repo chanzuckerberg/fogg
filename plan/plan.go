@@ -21,8 +21,8 @@ type account struct {
 	InfraBucket        string
 	Owner              string
 	Project            string
-	TerraformVersion   string
 	SiccMode           bool
+	TerraformVersion   string
 
 	ExtraVars map[string]string
 }
@@ -43,14 +43,14 @@ type Component struct {
 	AWSRegions         []string
 	Component          string
 	Env                string
+	ExtraVars          map[string]string
 	InfraBucket        string
 	OtherComponents    []string
 	Owner              string
 	Project            string
 	SharedInfraVersion string
-	TerraformVersion   string
 	SiccMode           bool
-	ExtraVars          map[string]string
+	TerraformVersion   string
 
 	ModuleSource *string
 }
@@ -65,13 +65,13 @@ type Env struct {
 	AWSRegionProvider  string
 	AWSRegions         []string
 	Env                string
+	ExtraVars          map[string]string
 	InfraBucket        string
 	Owner              string
 	Project            string
+	SiccMode           bool
 	TerraformVersion   string
 	Type               string
-	SiccMode           bool
-	ExtraVars          map[string]string
 
 	Components map[string]Component
 }
