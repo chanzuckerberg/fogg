@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/hashicorp/go-multierror"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/afero"
 	"gopkg.in/go-playground/validator.v9"
