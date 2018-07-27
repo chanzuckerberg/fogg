@@ -24,7 +24,6 @@ type defaults struct {
 	InfraBucket        string            `json:"infra_s3_bucket" validate:"required"`
 	Owner              string            `json:"owner" validate:"required"`
 	Project            string            `json:"project" validate:"required"`
-	SharedInfraVersion string            `json:"shared_infra_version" validate:"required"`
 	TerraformVersion   string            `json:"terraform_version" validate:"required"`
 }
 
@@ -74,7 +73,6 @@ type Component struct {
 	ModuleSource       *string           `json:"module_source"`
 	Owner              *string           `json:"owner"`
 	Project            *string           `json:"project"`
-	SharedInfraVersion *string           `json:"shared_infra_version"`
 	TerraformVersion   *string           `json:"terraform_version"`
 }
 
@@ -107,20 +105,19 @@ var allRegions = []string{
 	"us-west-2",
 }
 
-func InitConfig(project, region, bucket, awsProfile, owner, sharedInfraVersion, awsProviderVersion string) *Config {
+func InitConfig(project, region, bucket, awsProfile, owner, awsProviderVersion string) *Config {
 	return &Config{
 		Defaults: defaults{
 			AWSProfileBackend:  awsProfile,
 			AWSProfileProvider: awsProfile,
+			AWSProviderVersion: awsProviderVersion,
 			AWSRegionBackend:   region,
 			AWSRegionProvider:  region,
-			AWSProviderVersion: awsProviderVersion,
+			ExtraVars:          map[string]string{},
 			InfraBucket:        bucket,
 			Owner:              owner,
 			Project:            project,
 			TerraformVersion:   "0.11.7",
-			SharedInfraVersion: sharedInfraVersion,
-			ExtraVars:          map[string]string{},
 		},
 		Accounts: map[string]Account{},
 		Envs:     map[string]Env{},

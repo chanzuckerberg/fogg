@@ -9,7 +9,6 @@ import (
 	"github.com/spf13/afero"
 )
 
-const DefaultSharedInfraVersion = "0.10.0"
 const AWSProviderVersion = "1.27.0"
 
 func userPrompt() (string, string, string, string, string) {
@@ -37,7 +36,7 @@ func writeConfig(fs afero.Fs, config *config.Config) error {
 
 func Init(fs afero.Fs) error {
 	project, region, bucket, profile, owner := userPrompt()
-	config := config.InitConfig(project, region, bucket, profile, owner, DefaultSharedInfraVersion, AWSProviderVersion)
+	config := config.InitConfig(project, region, bucket, profile, owner, AWSProviderVersion)
 	e := writeConfig(fs, config)
 	return e
 }
