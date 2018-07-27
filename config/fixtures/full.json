@@ -9,7 +9,6 @@
     "infra_s3_bucket": "the-bucket",
     "owner": "default@example.com",
     "project": "test-project",
-    "shared_infra_version": "0.1.0",
     "terraform_version": "0.11.0"
   },
   "accounts": {
