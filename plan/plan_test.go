@@ -84,3 +84,23 @@ func TestPlanBasic(t *testing.T) {
 	assert.NotNil(t, plan.Envs["staging"].Components["comp1"])
 	assert.Equal(t, "0.100.0", plan.Envs["staging"].Components["comp1"].TerraformVersion)
 }
+
+func TestExtraVarsComposition(t *testing.T) {
+	f, _ := os.Open("fixtures/full.json")
+	defer f.Close()
+	r := bufio.NewReader(f)
+	c, err := config.ReadConfig(r)
+	assert.Nil(t, err)
+
+	plan, e := Eval(c, true, false)
+	assert.Nil(t, e)
+	assert.NotNil(t, plan)
+
+	// accts inherit defaults
+	assert.Equal(t, "bar1", plan.Accounts["foo"].ExtraVars["foo"])
+	// envs overwrite defaults
+	assert.Equal(t, "bar2", plan.Envs["staging"].Components["comp1"].ExtraVars["foo"])
+	// component overwrite env
+	assert.Equal(t, "bar3", plan.Envs["staging"].Components["cloud-env"].ExtraVars["foo"])
+
+}
