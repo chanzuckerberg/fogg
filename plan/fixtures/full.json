@@ -5,7 +5,10 @@
     "infra_s3_bucket": "buck",
     "project": "proj",
     "terraform_version": "0.100.0",
-    "owner": "foo@example.com"
+    "owner": "foo@example.com",
+    "extra_vars": {
+      "foo": "bar1"
+    }
   },
   "accounts": {
     "foo": {
@@ -19,15 +22,20 @@
     "my_module": {}
   },
   "envs": {
-    "staging":{
-        "type": "aws",
-        "components": {
-						"vpc": {
-							"module_source": "github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0"
-						},
-            "comp1": {},
-            "comp2": {}
-        }
+    "staging": {
+      "extra_vars": {
+        "foo": "bar2"
+      },
+      "components": {
+        "vpc": {
+					"module_source": "github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0",
+          "extra_vars": {
+            "foo": "bar3"
+          }
+        },
+        "comp1": {},
+        "comp2": {}
+      }
     },
     "prod": {}
   }

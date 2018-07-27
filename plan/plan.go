@@ -18,11 +18,12 @@ type account struct {
 	AWSRegionBackend   string
 	AWSRegionProvider  string
 	AWSRegions         []string
+	ExtraVars          map[string]string
 	InfraBucket        string
 	Owner              string
 	Project            string
-	TerraformVersion   string
 	SiccMode           bool
+	TerraformVersion   string
 }
 
 type Module struct {
@@ -41,14 +42,14 @@ type Component struct {
 	AWSRegions         []string
 	Component          string
 	Env                string
+	ExtraVars          map[string]string
 	InfraBucket        string
+	ModuleSource       *string
 	OtherComponents    []string
 	Owner              string
 	Project            string
-	TerraformVersion   string
 	SiccMode           bool
-
-	ModuleSource *string
+	TerraformVersion   string
 }
 
 type Env struct {
@@ -60,15 +61,15 @@ type Env struct {
 	AWSRegionBackend   string
 	AWSRegionProvider  string
 	AWSRegions         []string
+	Components         map[string]Component
 	Env                string
+	ExtraVars          map[string]string
 	InfraBucket        string
 	Owner              string
 	Project            string
+	SiccMode           bool
 	TerraformVersion   string
 	Type               string
-	SiccMode           bool
-
-	Components map[string]Component
 }
 
 type Plan struct {
@@ -88,10 +89,29 @@ func Eval(config *config.Config, siccMode, verbose bool) (*Plan, error) {
 	}
 	p.Version = v
 	p.SiccMode = siccMode
-	p.Accounts = buildAccounts(config, siccMode)
-	p.Envs = buildEnvs(config, siccMode)
-	p.Global = buildGlobal(config, siccMode)
-	p.Modules = buildModules(config, siccMode)
+	accounts, err := buildAccounts(config, siccMode)
+	if err != nil {
+		return nil, err
+	}
+	p.Accounts = accounts
+
+	envs, err := buildEnvs(config, siccMode)
+	if err != nil {
+		return nil, err
+	}
+	p.Envs = envs
+
+	global, err := buildGlobal(config, siccMode)
+	if err != nil {
+		return nil, err
+	}
+	p.Global = global
+
+	modules, err := buildModules(config, siccMode)
+	if err != nil {
+		return nil, err
+	}
+	p.Modules = modules
 	return p, nil
 }
 
@@ -190,8 +210,9 @@ func Print(p *Plan) error {
 	return nil
 }
 
-func buildAccounts(c *config.Config, siccMode bool) map[string]account {
+func buildAccounts(c *config.Config, siccMode bool) (map[string]account, error) {
 	defaults := c.Defaults
+
 	accountPlans := make(map[string]account, len(c.Accounts))
 	for name, config := range c.Accounts {
 		accountPlan := account{}
@@ -212,14 +233,15 @@ func buildAccounts(c *config.Config, siccMode bool) map[string]account {
 		accountPlan.Owner = resolveRequired(defaults.Owner, config.Owner)
 		accountPlan.Project = resolveRequired(defaults.Project, config.Project)
 		accountPlan.SiccMode = siccMode
+		accountPlan.ExtraVars = resolveExtraVars(defaults.ExtraVars, config.ExtraVars)
 
 		accountPlans[name] = accountPlan
 	}
 
-	return accountPlans
+	return accountPlans, nil
 }
 
-func buildModules(c *config.Config, siccMode bool) map[string]Module {
+func buildModules(c *config.Config, siccMode bool) (map[string]Module, error) {
 	modulePlans := make(map[string]Module, len(c.Modules))
 	for name, conf := range c.Modules {
 		modulePlan := Module{}
@@ -228,7 +250,7 @@ func buildModules(c *config.Config, siccMode bool) map[string]Module {
 		modulePlan.SiccMode = siccMode
 		modulePlans[name] = modulePlan
 	}
-	return modulePlans
+	return modulePlans, nil
 }
 
 func newEnvPlan() Env {
@@ -237,7 +259,7 @@ func newEnvPlan() Env {
 	return ep
 }
 
-func buildGlobal(conf *config.Config, siccMode bool) Component {
+func buildGlobal(conf *config.Config, siccMode bool) (Component, error) {
 	// Global just uses defaults because that's the way sicc works. We should make it directly configurable after transition.
 	componentPlan := Component{}
 
@@ -257,15 +279,19 @@ func buildGlobal(conf *config.Config, siccMode bool) Component {
 	componentPlan.InfraBucket = conf.Defaults.InfraBucket
 	componentPlan.Owner = conf.Defaults.Owner
 	componentPlan.Project = conf.Defaults.Project
+	componentPlan.ExtraVars = conf.Defaults.ExtraVars
 
 	componentPlan.Component = "global"
 	componentPlan.SiccMode = siccMode
-	return componentPlan
+	return componentPlan, nil
 }
 
-func buildEnvs(conf *config.Config, siccMode bool) map[string]Env {
+func buildEnvs(conf *config.Config, siccMode bool) (map[string]Env, error) {
 	envPlans := make(map[string]Env, len(conf.Envs))
 	defaults := conf.Defaults
+
+	defaultExtraVars := defaults.ExtraVars
+
 	for envName, envConf := range conf.Envs {
 		envPlan := newEnvPlan()
 
@@ -284,6 +310,7 @@ func buildEnvs(conf *config.Config, siccMode bool) map[string]Env {
 		envPlan.InfraBucket = resolveRequired(defaults.InfraBucket, envConf.InfraBucket)
 		envPlan.Owner = resolveRequired(defaults.Owner, envConf.Owner)
 		envPlan.Project = resolveRequired(defaults.Project, envConf.Project)
+		envPlan.ExtraVars = resolveExtraVars(defaultExtraVars, envConf.ExtraVars)
 
 		envPlan.SiccMode = siccMode
 
@@ -314,13 +341,14 @@ func buildEnvs(conf *config.Config, siccMode bool) map[string]Env {
 			}
 			componentPlan.SiccMode = siccMode
 			componentPlan.ModuleSource = componentConf.ModuleSource
+			componentPlan.ExtraVars = resolveExtraVars(envPlan.ExtraVars, componentConf.ExtraVars)
 
 			envPlan.Components[componentName] = componentPlan
 		}
 
 		envPlans[envName] = envPlan
 	}
-	return envPlans
+	return envPlans, nil
 }
 
 func otherComponentNames(components map[string]*config.Component, thisComponent string) []string {
@@ -331,6 +359,17 @@ func otherComponentNames(components map[string]*config.Component, thisComponent 
 		}
 	}
 	return r
+}
+
+func resolveExtraVars(def map[string]string, override map[string]string) map[string]string {
+	resolved := map[string]string{}
+	for k, v := range def {
+		resolved[k] = v
+	}
+	for k, v := range override {
+		resolved[k] = v
+	}
+	return resolved
 }
 
 func resolveStringArray(def []string, override []string) []string {

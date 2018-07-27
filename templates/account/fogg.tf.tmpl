@@ -61,8 +61,15 @@ variable "aws_accounts" {
         {{ $account }} = {{ $id }}
     {{ end }}
   {{ end }}
+  }
 }
+
+{{ range $key, $val := .ExtraVars }}
+variable "{{ $key }}" {
+  type = "string"
+  default = "{{ $val }}"
 }
+{{ end }}
 
 data "terraform_remote_state" "global" {
   backend = "s3"
