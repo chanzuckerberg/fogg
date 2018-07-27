@@ -78,6 +78,13 @@ variable "tags" {
   }
 }
 
+{{ range $key, $val := .ExtraVars }}
+variable "{{ $key }}" {
+  type = "string"
+  default = "{{ $val }}"
+}
+{{ end }}
+
 {{ range $component := .OtherComponents | sortAlpha  }}
 data "terraform_remote_state" "{{ $component }}" {
   backend = "s3"
