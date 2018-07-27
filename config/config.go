@@ -2,10 +2,13 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"reflect"
 	"strings"
+
+	"github.com/hashicorp/go-multierror"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/afero"
@@ -161,4 +164,30 @@ func (c *Config) Validate() error {
 		return name
 	})
 	return v.Struct(c)
+}
+
+func (c *Config) validateExtraVars() error {
+	var err *multierror.Error
+	validate := func(extraVars map[string]string) {
+		for extraVar := range extraVars {
+			if _, ok := reservedVariableNames[extraVar]; ok {
+				err = multierror.Append(err, fmt.Errorf("extra_var[%s] is a fogg reserved variable name", extraVar))
+			}
+		}
+		return
+	}
+
+	extraVars := []map[string]string{}
+	extraVars = append(extraVars, c.Defaults.ExtraVars)
+	for _, env := range c.Envs {
+		extraVars = append(extraVars, env.ExtraVars)
+		for _, component := range env.Components {
+			extraVars = append(extraVars, component.ExtraVars)
+		}
+	}
+	for _, extraVar := range extraVars {
+		validate(extraVar)
+	}
+
+	return errors.Wrap(err.ErrorOrNil(), "extra_vars contains reserved names")
 }

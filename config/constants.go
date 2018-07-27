@@ -1,11 +1,11 @@
-package plan
+package config
 
 var reservedVariableNames = map[string]bool{
+	"aws_accounts": true,
+	"aws_profile":  true,
+	"env":          true,
+	"owner":        true,
 	"project":      true,
 	"region":       true,
-	"aws_profile":  true,
-	"owner":        true,
-	"aws_accounts": true,
-	"env":          true,
 	"tags":         true,
 }
