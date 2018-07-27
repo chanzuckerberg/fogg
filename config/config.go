@@ -36,7 +36,7 @@ type Account struct {
 	AWSRegionBackend   *string           `json:"aws_region_backend"`
 	AWSRegionProvider  *string           `json:"aws_region_provider"`
 	AWSRegions         []string          `json:"aws_regions"`
-	ExtraVars          map[string]string `json:"extra_vars"`
+	ExtraVars          map[string]string `json:"extra_vars,omitempty"`
 	InfraBucket        *string           `json:"infra_s3_bucket"`
 	Owner              *string           `json:"owner"`
 	Project            *string           `json:"project"`
@@ -51,7 +51,7 @@ type Env struct {
 	AWSRegionBackend   *string           `json:"aws_region_backend"`
 	AWSRegionProvider  *string           `json:"aws_region_provider"`
 	AWSRegions         []string          `json:"aws_regions"`
-	ExtraVars          map[string]string `json:"extra_vars"`
+	ExtraVars          map[string]string `json:"extra_vars,omitempty"`
 	InfraBucket        *string           `json:"infra_s3_bucket"`
 	Owner              *string           `json:"owner"`
 	Project            *string           `json:"project"`
@@ -69,7 +69,7 @@ type Component struct {
 	AWSRegionBackend   *string           `json:"aws_region_backend"`
 	AWSRegionProvider  *string           `json:"aws_region_provider"`
 	AWSRegions         []string          `json:"aws_regions"`
-	ExtraVars          map[string]string `json:"extra_vars"`
+	ExtraVars          map[string]string `json:"extra_vars,omitempty"`
 	InfraBucket        *string           `json:"infra_s3_bucket"`
 	ModuleSource       *string           `json:"module_source"`
 	Owner              *string           `json:"owner"`
