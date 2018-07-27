@@ -55,7 +55,7 @@ feature = false
 puts "included commits…"
 g.log.between("v#{v}", 'HEAD').each do |commit|
   puts "* #{commit.message}"
-  
+
   if commit.message.include?("[breaking]")
     breaking = true
   end
@@ -71,7 +71,7 @@ else
 end
 
 release_type = if semver.major < 1
-  if breaking || feature
+  if breaking
     "minor"
   else
     "patch"
