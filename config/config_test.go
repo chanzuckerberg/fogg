@@ -99,6 +99,36 @@ func TestValidation(t *testing.T) {
 	assert.Len(t, err, 9)
 }
 
+func TestExtraVarsValidation(t *testing.T) {
+	json := `
+	{
+		"defaults": {
+			"aws_region_backend": "us-west-2",
+			"aws_region_provider": "us-west-1",
+			"aws_profile_backend": "czi",
+			"aws_profile_provider": "czi",
+			"aws_provider_version": "czi",
+			"infra_s3_bucket": "the-bucket",
+			"project": "test-project",
+			"shared_infra_base": "../../../../",
+			"owner": "test@test.com",
+			"terraform_version": "0.11.0"
+		}
+	}`
+	r := ioutil.NopCloser(strings.NewReader(json))
+	defer r.Close()
+	c, e := ReadConfig(r)
+	assert.Nil(t, e)
+
+	e = c.Validate()
+	assert.Nil(t, e)
+
+	c.Defaults.ExtraVars = map[string]string{}
+	c.Defaults.ExtraVars["env"] = "failme"
+	e = c.Validate()
+	assert.NotNil(t, e)
+}
+
 func TestInitConfig(t *testing.T) {
 	c := InitConfig("proj", "reg", "buck", "prof", "me@foo.example", "0.99.0")
 	assert.Equal(t, "prof", c.Defaults.AWSProfileBackend)

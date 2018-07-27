@@ -212,18 +212,9 @@ func Print(p *Plan) error {
 
 func buildAccounts(c *config.Config, siccMode bool) (map[string]account, error) {
 	defaults := c.Defaults
-	err := validateExtraVars(c.Defaults.ExtraVars)
-	if err != nil {
-		return nil, errors.Wrap(err, "Could not build plan")
-	}
 
 	accountPlans := make(map[string]account, len(c.Accounts))
 	for name, config := range c.Accounts {
-		err = validateExtraVars(config.ExtraVars)
-		if err != nil {
-			return nil, errors.Wrap(err, "Could not build plan")
-		}
-
 		accountPlan := account{}
 
 		accountPlan.AccountName = name
@@ -271,10 +262,6 @@ func newEnvPlan() Env {
 func buildGlobal(conf *config.Config, siccMode bool) (Component, error) {
 	// Global just uses defaults because that's the way sicc works. We should make it directly configurable after transition.
 	componentPlan := Component{}
-	err := validateExtraVars(conf.Defaults.ExtraVars)
-	if err != nil {
-		return componentPlan, errors.Wrap(err, "Could not build plan")
-	}
 
 	componentPlan.AccountID = conf.Defaults.AccountID
 
@@ -305,17 +292,8 @@ func buildEnvs(conf *config.Config, siccMode bool) (map[string]Env, error) {
 
 	defaultExtraVars := defaults.ExtraVars
 
-	err := validateExtraVars(defaults.ExtraVars)
-	if err != nil {
-		return nil, errors.Wrap(err, "Could not build plan")
-	}
-
 	for envName, envConf := range conf.Envs {
 		envPlan := newEnvPlan()
-		err := validateExtraVars(envConf.ExtraVars)
-		if err != nil {
-			return nil, errors.Wrap(err, "Could not build plan")
-		}
 
 		envPlan.AccountID = resolveOptionalInt(conf.Defaults.AccountID, envConf.AccountID)
 		envPlan.Env = envName
@@ -338,10 +316,6 @@ func buildEnvs(conf *config.Config, siccMode bool) (map[string]Env, error) {
 
 		for componentName, componentConf := range conf.Envs[envName].Components {
 			componentPlan := Component{}
-			err := validateExtraVars(componentConf.ExtraVars)
-			if err != nil {
-				return nil, errors.Wrap(err, "Could not build plan")
-			}
 
 			componentPlan.AccountID = resolveOptionalInt(envPlan.AccountID, componentConf.AccountID)
 			componentPlan.AWSRegionBackend = resolveRequired(envPlan.AWSRegionBackend, componentConf.AWSRegionBackend)
@@ -396,15 +370,6 @@ func resolveExtraVars(def map[string]string, override map[string]string) map[str
 		resolved[k] = v
 	}
 	return resolved
-}
-
-func validateExtraVars(extraVars map[string]string) error {
-	for key := range extraVars {
-		if _, ok := reservedVariableNames[key]; ok {
-			return errors.New(fmt.Sprintf("extra_var[%s] is a fogg reserved variable name", key))
-		}
-	}
-	return nil
 }
 
 func resolveStringArray(def []string, override []string) []string {

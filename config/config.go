@@ -152,7 +152,13 @@ func FindAndReadConfig(fs afero.Fs, configFile string) (*Config, error) {
 	return c, err2
 }
 
+// Validate validates the config
 func (c *Config) Validate() error {
+	err := c.validateExtraVars()
+	if err != nil {
+		return err
+	}
+
 	v := validator.New()
 	// https://github.com/go-playground/validator/issues/323#issuecomment-343670840
 	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
@@ -166,6 +172,7 @@ func (c *Config) Validate() error {
 	return v.Struct(c)
 }
 
+// validateExtraVars make sure users don't specify reserved variables
 func (c *Config) validateExtraVars() error {
 	var err *multierror.Error
 	validate := func(extraVars map[string]string) {
@@ -176,7 +183,6 @@ func (c *Config) validateExtraVars() error {
 		}
 		return
 	}
-
 	extraVars := []map[string]string{}
 	extraVars = append(extraVars, c.Defaults.ExtraVars)
 	for _, env := range c.Envs {
@@ -189,5 +195,5 @@ func (c *Config) validateExtraVars() error {
 		validate(extraVar)
 	}
 
-	return errors.Wrap(err.ErrorOrNil(), "extra_vars contains reserved names")
+	return errors.Wrap(err.ErrorOrNil(), "extra_vars contains reserved variable names")
 }
