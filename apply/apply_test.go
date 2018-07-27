@@ -260,8 +260,8 @@ func TestCalculateLocalPath(t *testing.T) {
 		{"foo/bar", "bam/baz", "../../bam/baz"},
 		{
 			"foo/bar",
-			"git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-env?ref=v0.10.0",
-			"git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-env?ref=v0.10.0",
+			"github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0",
+			"github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0",
 		},
 		{"foo/bar", "github.com/asdf/jkl", "github.com/asdf/jkl"},
 		// TODO modules from the registry don't work because it is
