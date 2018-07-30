@@ -21,7 +21,6 @@ func TestParseDefaults(t *testing.T) {
 			"aws_profile_provider": "czi",
 			"infra_s3_bucket": "the-bucket",
 			"project": "test-project",
-			"shared_infra_base": "../../../../",
 			"terraform_version": "0.11.0"
 		}
 	}`
@@ -110,7 +109,6 @@ func TestExtraVarsValidation(t *testing.T) {
 			"aws_provider_version": "czi",
 			"infra_s3_bucket": "the-bucket",
 			"project": "test-project",
-			"shared_infra_base": "../../../../",
 			"owner": "test@test.com",
 			"terraform_version": "0.11.0"
 		}
