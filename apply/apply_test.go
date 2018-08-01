@@ -182,8 +182,8 @@ func TestApplyModuleInvocation(t *testing.T) {
 
 module "test-module" {
   source = "../../util/test-module"
-  bar    = "${var.bar}"
-  foo    = "${var.foo}"
+  bar    = "${local.bar}"
+  foo    = "${local.foo}"
 }
 `
 	assert.Equal(t, expected, string(r))
