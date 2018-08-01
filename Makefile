@@ -6,28 +6,31 @@ LDFLAGS=-ldflags "-w -s -X github.com/chanzuckerberg/fogg/util.GitSha=${SHA} -X 
 
 all: test install
 
-lint:
+lint: ## run the fast go linters
 	gometalinter --vendor --fast ./...
 
-lint-slow:
+lint-slow: ## run all linters, even the slow ones
 	gometalinter --vendor --deadline 120s ./...
 
-packr:
+packr: ## run the packr tool to generate our static files
 	packr
 
 release: packr
 	goreleaser release --rm-dist
 
-build:
+build: ## build the binary
 	go build ${LDFLAGS} .
 
-coverage:
+coverage: ## run the go coverage tool, reading file coverage.out
 	go tool cover -html=coverage.out
 
-test:
+test: ## run the tests
 	go test -cover ./...
 
-install:
+install: # install the fogg binary in $GOPATH/bin
 	go install ${LDFLAGS} .
 
-.PHONY: build coverage test install lint lint-slow packr release
+help: ## display help for this makefile
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+.PHONY: build coverage test install lint lint-slow packr release help
