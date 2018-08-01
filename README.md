@@ -25,6 +25,15 @@ If you need help getting started with fogg, either open a github issue or join o
 
 ## Install
 
+## Mac
+
+You can use homebrew to install fogg –
+
+```
+brew tap chanzuckerberg/homebrew-fogg
+brew install fogg
+```
+
 Binaries are available on the releases page. Download one for your architecture, put it in your path and make it executable.
 
 A homebrew tap will be coming soon. Other package managers to be considered if folks want them.
