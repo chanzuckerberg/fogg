@@ -7,13 +7,13 @@ This tutorial will walk you through using fogg to create a new infrastructure re
 
 Imagine that you are a company named Acme Corporation and want to deploy staging and production versions of your website where each one consists of a single server (let's keep it simple).
 
-Note that fogg works by generating Terraform and Make files. It does not run any terraform commands for you.
+Note that fogg works by generating Terraform and Make files. It does not run any Terraform commands for you.
 
 Also note that we're not going to create the actual infrastructure here, just the scaffolding.
 
 1. *install fogg*
 
-    Go to https://github.com/chanzuckerberg/fogg/releases and download the latest version for your OS/arch. Put it in your $PATH and make it executeable.
+    Go to https://github.com/chanzuckerberg/fogg/ and follow the directions for installation of `fogg`.
 
 1. *create a working directory*
 
@@ -23,7 +23,7 @@ Also note that we're not going to create the actual infrastructure here, just th
 
     `git init`
 
-   Fogg depends on working from the root of a git repository, though it doesn't need to be pushed anywhere, so `git init` is enough for now. After this, your directory should look like this–
+   Fogg depends on working from the root of a git repository. The git repo doesn't need to be pushed anywhere, so `git init` is enough. After this, your directory should look like this–
 
    ```
     $ tree -a -L 1
@@ -38,7 +38,7 @@ Also note that we're not going to create the actual infrastructure here, just th
 
    Fogg uses a `fogg.json` file to define the structure of your repository. This command exists to help bootstrap this configuration file by asking some simple questions.
 
-   ```
+   ```shell
    $ fogg init
     project name?: acme
     aws region?: us-west-2
@@ -51,13 +51,13 @@ Also note that we're not going to create the actual infrastructure here, just th
 
     * *project name*: we've got to name things around here. This is a high level name for your site, infrastructure or product.
     * *aws region* our setup is super flexible to run things in any and/or multiple regions. To get started we need a single region that we will configure as a default. This is also the region for the s3 bucket that will hold state files, so maybe think about it a little bit.
-    * *infra bucket name* - we are going to store terraform's state files here. Currently fogg does not create this bucket, so you will need to do that ahead of time. Note that it should be in the same region you said above.
+    * *infra bucket name* - we are going to store terraform's state files here. Fogg does not create this bucket, so you will need to do that ahead of time. Note that it should be in the same region you said above.
     * *auth profile* - we use aws authentication profiles, use this to specify the one to be used as a default
     * *owner* we make it easy to tag all your resources with their owner. If you put this here will will drop variables everywhere with the owner in it.
 
     And now your directory should look like this–
 
-    ```
+    ```shell
     $ tree -a -L 1
     .
     ├── .git
@@ -68,7 +68,7 @@ Also note that we're not going to create the actual infrastructure here, just th
 
     And if you look at `fogg.json`–
 
-    ```json
+    ```shell
     $ cat fogg.json
     {
     "defaults": {
@@ -80,7 +80,6 @@ Also note that we're not going to create the actual infrastructure here, just th
         "infra_s3_bucket": "acme-infra",
         "owner": "infra@acme.example",
         "project": "acme",
-        "shared_infra_version": "0.10.0",
         "terraform_version": "0.11.7"
     },
     "accounts": {},
@@ -89,20 +88,20 @@ Also note that we're not going to create the actual infrastructure here, just th
     }
     ```
 
-    Note that the questions you answered have all been filled into parts of this file and fogg supplied some additional defaults.
+    Note that the questions you answered have all been filled into this file with some fogg-supplied defaults.
 
 1. *build initial repo*
 
     As we said before fogg works by generating code (terraform, make and bash) and the general workflow is–
 
-    1. update fogg.json
+    1. edit `fogg.json`
     2. run `fogg apply`
 
-    Apply is the command that actually writes out all the changes we've specified in fogg.json.
+    Apply is the command that actually writes out all the changes we've specified in `fogg.json`.
 
     So now that we've written an initial `fogg.json` let's do an apply–
 
-    ```
+    ```shell
     $ fogg apply
     INFO .fogg-version templated
     INFO .gitignore templated
@@ -123,7 +122,7 @@ Also note that we're not going to create the actual infrastructure here, just th
 
     You'll see some output about that fogg is doing and now we have some structure to our repository–
 
-    ```
+    ```shell
     $ tree .
     .
     ├── Makefile
@@ -150,12 +149,12 @@ Also note that we're not going to create the actual infrastructure here, just th
 
     Before go on – a bit about how fogg organizes repos –
 
-    Fogg applies an opinionated way to organize terraform repos. This serves to both make it easy to factor your terraform code into many scopes / state files and also provide some consistency (make working on a team a bit easier).
+    Fogg applies an opinionated repo organization. This serves to make it easy to factor your terraform code into many scopes/state-files and also provide some consistency and make working on a team a bit easier.
 
-    Fogg organizes tf code into `global`, `accounts`, `envs` and `components`.
+    Fogg organizes terraform code into `global`, `accounts`, `envs` and `components`.
 
     * `global` - things are trying global across all your infrastructure. A good example is a Route53 zone, to which you want to add recrords from everywhere in your infra.
-    * `accounts` - things that are relavant at the account level (aws here) - most aws iam stuff goes here. Note that we make it easy to have multiple accounts with configs for each in `terraform/accounts/account-name`.
+    * `accounts` - things that are relavant at the account level (aws here) - most, but not all aws iam stuff goes here. Note that we make it easy to have multiple accounts with configs for each in `terraform/accounts/account-name`.
     * `envs` - think staging vs prod here. fogg makes it easy to keep your tf separate for each one
     * `components` - in addition to separating environments we do one step further and make it easy to have multiple state files for each environment. In fogg we call those components. Each env can have many components and they all get their own statefile. On top of that each gets a `terrafom_remote_state` data source for all the other components in the same env.
 
@@ -193,7 +192,7 @@ Also note that we're not going to create the actual infrastructure here, just th
 
     `fogg apply`
 
-    ```
+    ```shell
     $ fogg apply
     INFO templating .fogg-version
     INFO templating .gitattributes
@@ -218,7 +217,7 @@ Also note that we're not going to create the actual infrastructure here, just th
 
     And your directory should look like:
 
-    ```
+    ```shell
     $ tree .
     .
     ├── Makefile
@@ -247,8 +246,8 @@ Also note that we're not going to create the actual infrastructure here, just th
 
     A terraform/staging directory has been creaded with a few files in it, but nowhere to put terraform files yet– those go in components which are nested in envs. So let's create a component–
 
-1. create vpc?
-1. create component
+1. create server component
+1. create database component
 1. create prod
 1. refactor to module
 1. create module
