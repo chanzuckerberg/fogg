@@ -62,7 +62,7 @@ check-plan: init get ssh-forward
 	fi
 
 ssh-forward:
-	sh $(REPO_ROOT)/scripts/docker-ssh-forward.sh
+	bash $(REPO_ROOT)/scripts/docker-ssh-forward.sh
 
 run:
 	$(docker_terraform) $(CMD)
