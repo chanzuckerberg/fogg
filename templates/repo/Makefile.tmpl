@@ -15,13 +15,11 @@ lint-terraform: lint-accounts lint-envs lint-modules
 
 lint-accounts:
 	@for account in $(ACCOUNTS); do \
-		$(figlet_docker) "account/$$account"; \
 		$(MAKE) -C terraform/accounts/$$account lint || exit $$?; \
 	done
 
 lint-envs:
 	@for env in $(ENVS); do \
-		$(figlet_docker) "envs/$$env"; \
 		$(MAKE) -C terraform/envs/$$env lint || exit $$?; \
 	done; \
 	$(figlet_docker) "global"; \
@@ -29,7 +27,6 @@ lint-envs:
 
 lint-modules:
 	@for module in $(MODULES); do \
-		$(figlet_docker) "modules/$$module"; \
 		$(MAKE) -C terraform/modules/$$module lint || exit $$?; \
 	done
 
@@ -37,23 +34,19 @@ fmt: fmt-accounts fmt-envs fmt-global fmt-modules
 
 fmt-accounts:
 	@for account in $(ACCOUNTS); do \
-		$(figlet_docker) "account/$$account"; \
 		$(MAKE) -C terraform/accounts/$$account fmt || exit $$?; \
 	done
 
 fmt-envs:
 	@for env in $(ENVS); do \
-		$(figlet_docker) "envs/$$env"; \
 		$(MAKE) -C terraform/envs/$$env fmt || exit $$?; \
 	done
 
 fmt-global:
-	$(figlet_docker) "global";
 	$(MAKE) -C terraform/global fmt || exit $$?
 
 fmt-modules:
 	@for module in $(MODULES); do \
-		$(figlet_docker) "modules/$$module"; \
 		$(MAKE) -C terraform/modules/$$module fmt || exit $$?; \
 	done
 
