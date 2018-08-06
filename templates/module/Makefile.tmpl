@@ -25,8 +25,7 @@ fmt:
 lint: lint-tf
 
 lint-tf:
-	@$(docker_sh) -c 'for f in $(TF); do printf .; terraform fmt --check=true --diff=true $$f || exit $$? ; done'; \
-	echo
+	@$(docker_sh) -c 'for f in $(TF); do printf .; terraform fmt --check=true --diff=true $$f || exit $$? ; done'
 
 readme:
 	bash .update-readme.sh update
