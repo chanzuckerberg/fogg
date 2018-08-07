@@ -83,7 +83,7 @@ func (cp *CustomProvider) processTar(path string, dest afero.Fs) error {
 			return errors.New("Nil tar file header")
 		}
 		// the target location where the dir/file should be created
-		target := filepath.Join(".terraform.d/plugin-cache", header.Name)
+		target := filepath.Join(".terraform.d/plugin-cache", header.Name) // TODO: don't hard code this
 		switch header.Typeflag {
 		case tar.TypeDir: // if its a dir and it doesn't exist create it
 			if _, err := dest.Stat(target); err != nil {
