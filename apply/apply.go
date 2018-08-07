@@ -52,7 +52,6 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, siccMode bool) er
 	}
 
 	e = applyModules(fs, p.Modules, &tmp.Module)
-
 	return errors.Wrap(e, "unable to apply modules")
 }
 
@@ -62,14 +61,23 @@ func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates *packr.Box) error {
 		return e
 	}
 	// Remove after migration.
-
 	if !p.SiccMode {
 		e := fs.Remove(".sicc-version")
 		if e != nil {
 			log.Debug("error removing .sicc-version. ignoring")
 		}
 	}
-	return nil
+	return applyCustomProviders(fs, p)
+}
+
+func applyCustomProviders(fs afero.Fs, p *plan.Plan) (err error) {
+	for providerName, customProvider := range p.CustomProviders {
+		err = customProvider.Install(providerName, fs)
+		if err != nil {
+			return errors.Wrapf(err, "Error applying custom provider %s", providerName)
+		}
+	}
+	return
 }
 
 func applyGlobal(fs afero.Fs, p plan.Component, repoBox *packr.Box) error {
@@ -96,8 +104,7 @@ func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) (e error) {
 	return nil
 }
 
-func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox *packr.Box) error {
-	var e error
+func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox *packr.Box) (e error) {
 	for module, modulePlan := range p {
 		path := fmt.Sprintf("%s/modules/%s", rootPath, module)
 		e = fs.MkdirAll(path, 0755)

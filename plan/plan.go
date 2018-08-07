@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/chanzuckerberg/fogg/config"
+	cp "github.com/chanzuckerberg/fogg/custom_providers"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/pkg/errors"
 )
@@ -73,12 +74,13 @@ type Env struct {
 }
 
 type Plan struct {
-	Accounts map[string]account
-	Envs     map[string]Env
-	Global   Component
-	Modules  map[string]Module
-	SiccMode bool
-	Version  string
+	Accounts        map[string]account
+	Envs            map[string]Env
+	Global          Component
+	Modules         map[string]Module
+	SiccMode        bool
+	Version         string
+	CustomProviders map[string]*cp.CustomProvider
 }
 
 func Eval(config *config.Config, siccMode, verbose bool) (*Plan, error) {
@@ -89,6 +91,8 @@ func Eval(config *config.Config, siccMode, verbose bool) (*Plan, error) {
 	}
 	p.Version = v
 	p.SiccMode = siccMode
+	p.CustomProviders = config.Defaults.CustomProviders
+
 	accounts, err := buildAccounts(config, siccMode)
 	if err != nil {
 		return nil, err

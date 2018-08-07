@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"strings"
 
+	cp "github.com/chanzuckerberg/fogg/custom_providers"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/spf13/afero"
@@ -15,13 +16,14 @@ import (
 )
 
 type defaults struct {
-	AccountID          *int64            `json:"account_id,omitempty"`
-	AWSProfileBackend  string            `json:"aws_profile_backend" validate:"required"`
-	AWSProfileProvider string            `json:"aws_profile_provider" validate:"required"`
-	AWSProviderVersion string            `json:"aws_provider_version" validate:"required"`
-	AWSRegionBackend   string            `json:"aws_region_backend" validate:"required"`
-	AWSRegionProvider  string            `json:"aws_region_provider" validate:"required"`
-	AWSRegions         []string          `json:"aws_regions,omitempty"`
+	AccountID          *int64   `json:"account_id,omitempty"`
+	AWSProfileBackend  string   `json:"aws_profile_backend" validate:"required"`
+	AWSProfileProvider string   `json:"aws_profile_provider" validate:"required"`
+	AWSProviderVersion string   `json:"aws_provider_version" validate:"required"`
+	AWSRegionBackend   string   `json:"aws_region_backend" validate:"required"`
+	AWSRegionProvider  string   `json:"aws_region_provider" validate:"required"`
+	AWSRegions         []string `json:"aws_regions,omitempty"`
+	CustomProviders    map[string]*cp.CustomProvider
 	ExtraVars          map[string]string `json:"extra_vars"`
 	InfraBucket        string            `json:"infra_s3_bucket" validate:"required"`
 	Owner              string            `json:"owner" validate:"required"`
@@ -78,6 +80,7 @@ type Component struct {
 	TerraformVersion   *string           `json:"terraform_version"`
 }
 
+// Module is a module
 type Module struct {
 	TerraformVersion *string `json:"terraform_version"`
 }
