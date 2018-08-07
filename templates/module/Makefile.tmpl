@@ -9,7 +9,7 @@ REPO_RELATIVE_PATH := $(shell git rev-parse --show-prefix)
 TF=$(wildcard *.tf)
 
 docker_base = \
-	docker run -it --rm -e HOME=/home -v $$HOME/.aws:/home/.aws -v $(REPO_ROOT):/repo \
+	docker run -u $(id -u):$(id -g) -it --rm -e HOME=/home -v $$HOME/.aws:/home/.aws -v $(REPO_ROOT):/repo \
 	-e GIT_SSH_COMMAND='ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
 	-e TF_PLUGIN_CACHE_DIR="/repo/.terraform.d/plugin-cache" -e TF="$(TF)" \
 	-w /repo/$(REPO_RELATIVE_PATH) $(TF_VARS) $$(sh $(REPO_ROOT)/scripts/docker-ssh-mount.sh)

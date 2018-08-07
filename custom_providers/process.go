@@ -9,9 +9,14 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/chanzuckerberg/fogg/util"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
+)
+
+const (
+	pluginCacheDir = ".terraform.d/plugin-cache/linux_amd64"
 )
 
 // Install installs the custom provider
@@ -62,6 +67,10 @@ func (cp *CustomProvider) process(path string, dest afero.Fs) error {
 
 // https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
 func (cp *CustomProvider) processTar(path string, dest afero.Fs) error {
+	err := util.CreateDirIfNotExists(pluginCacheDir, dest)
+	if err != nil {
+		return err
+	}
 	f, err := os.Open(path)
 	if err != nil {
 		return errors.Wrap(err, "custom provider")
@@ -84,13 +93,12 @@ func (cp *CustomProvider) processTar(path string, dest afero.Fs) error {
 			return errors.New("Nil tar file header")
 		}
 		// the target location where the dir/file should be created
-		target := filepath.Join(".terraform.d/plugin-cache", header.Name) // TODO: don't hard code this
+		target := filepath.Join(pluginCacheDir, header.Name) // TODO: don't hard code this
 		switch header.Typeflag {
 		case tar.TypeDir: // if its a dir and it doesn't exist create it
-			if _, err := dest.Stat(target); err != nil {
-				if err := dest.MkdirAll(target, 0755); err != nil {
-					return errors.Wrapf(err, "tar: could not create directory for %s", target)
-				}
+			err := util.CreateDirIfNotExists(target, dest)
+			if err != nil {
+				return err
 			}
 		case tar.TypeReg: // if it is a file create it
 			destFile, err := dest.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))

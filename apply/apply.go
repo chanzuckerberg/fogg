@@ -67,11 +67,13 @@ func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates *packr.Box) error {
 			log.Debug("error removing .sicc-version. ignoring")
 		}
 	}
+	log.Warn("Applying custom providers")
 	return applyCustomProviders(fs, p)
 }
 
 func applyCustomProviders(fs afero.Fs, p *plan.Plan) (err error) {
 	for providerName, customProvider := range p.CustomProviders {
+		log.Warnf("Applying custom provider %s", providerName)
 		err = customProvider.Install(providerName, fs)
 		if err != nil {
 			return errors.Wrapf(err, "Error applying custom provider %s", providerName)
