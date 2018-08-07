@@ -24,6 +24,7 @@ func (cp *CustomProvider) Install(providerName string, dest afero.Fs) error {
 	}
 
 	tmpPath, err := cp.fetch(providerName)
+	defer os.Remove(tmpPath) // clean up
 	if err != nil {
 		return err
 	}
@@ -105,6 +106,5 @@ func (cp *CustomProvider) processTar(path string, dest afero.Fs) error {
 			destFile.Close()
 		}
 	}
-
 	return nil
 }
