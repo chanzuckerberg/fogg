@@ -21,7 +21,7 @@ It makes life easy for folks working with cloud infrastructure. We've been using
 
 ## Getting Help
 
-If you need help getting started with fogg, either open a github issue or join our gitter chat room (TODO link).
+If you need help getting started with fogg, either open a github issue or join our [gitter chat room](https://gitter.im/chanzuckerberg/fogg).
 
 ## Install
 
