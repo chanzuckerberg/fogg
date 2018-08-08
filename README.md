@@ -34,9 +34,9 @@ brew tap chanzuckerberg/homebrew-fogg
 brew install fogg
 ```
 
-Binaries are available on the releases page. Download one for your architecture, put it in your path and make it executable.
+## Linux, Windows, etc.
 
-A homebrew tap will be coming soon. Other package managers to be considered if folks want them.
+Binaries are available on the releases page. Download one for your architecture, put it in your path and make it executable.
 
 ## Usage
 

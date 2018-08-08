@@ -11,8 +11,9 @@ TF=$(wildcard *.tf)
 docker_base = \
 	docker run -it --rm -e HOME=/home -v $$HOME/.aws:/home/.aws -v $(REPO_ROOT):/repo \
 	-e GIT_SSH_COMMAND='ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
+	-e RUN_USER_ID=$(shell id -u) -e RUN_GROUP_ID=$(shell id -g) \
 	-e TF_PLUGIN_CACHE_DIR="/repo/.terraform.d/plugin-cache" -e TF="$(TF)" \
-	-w /repo/$(REPO_RELATIVE_PATH) $(TF_VARS) $$($(REPO_ROOT)/scripts/docker-ssh-mount.sh)
+	-w /repo/$(REPO_RELATIVE_PATH) $(TF_VARS) $$(sh $(REPO_ROOT)/scripts/docker-ssh-mount.sh)
 docker_terraform = $(docker_base) chanzuckerberg/terraform:{{ .TerraformVersion }}
 docker_sh = $(docker_base) --entrypoint='/bin/sh' chanzuckerberg/terraform:{{ .TerraformVersion }}
 
@@ -25,8 +26,7 @@ fmt:
 lint: lint-tf
 
 lint-tf:
-	@$(docker_sh) -c 'for f in $(TF); do printf .; terraform fmt --check=true --diff=true $$f || exit $$? ; done'; \
-	echo
+	@$(docker_sh) -c 'for f in $(TF); do printf .; terraform fmt --check=true --diff=true $$f || exit $$? ; done'
 
 readme:
 	bash .update-readme.sh update

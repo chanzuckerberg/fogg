@@ -8,13 +8,11 @@ all:
 
 lint:
 	@for c in $(COMPONENTS); do \
-		$(figlet_docker) "envs/{{ .Env }}/$$c"; \
 		$(MAKE) -C $$c lint || exit $$? ; \
 	done
 
 fmt:
 	@for c in $(COMPONENTS); do \
-		$(figlet_docker) "envs/{{ .Env }}/$$c"; \
 		$(MAKE) -C $$c fmt || exit $$? ; \
 	done
 
