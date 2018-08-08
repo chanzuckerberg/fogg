@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/chanzuckerberg/fogg/config"
-	cp "github.com/chanzuckerberg/fogg/custom_providers"
+	"github.com/chanzuckerberg/fogg/providers"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/pkg/errors"
 )
@@ -80,7 +80,7 @@ type Plan struct {
 	Modules         map[string]Module
 	SiccMode        bool
 	Version         string
-	CustomProviders map[string]*cp.CustomProvider
+	CustomProviders map[string]*providers.CustomProvider
 }
 
 func Eval(config *config.Config, siccMode, verbose bool) (*Plan, error) {

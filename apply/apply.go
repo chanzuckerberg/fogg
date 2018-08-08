@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
 	"sort"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/plan"
+	"github.com/chanzuckerberg/fogg/providers"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/gobuffalo/packr"
@@ -36,6 +38,15 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, siccMode bool) er
 		return errors.Wrap(e, "unable to apply repo")
 	}
 
+	e = applyPluginCache(fs, p, &tmp.PluginCache)
+	if e != nil {
+		return errors.Wrap(e, "unable to apply repo")
+	}
+
+	e = applyCustomPluginCache(fs, p, &tmp.CustomPluginCache)
+	if e != nil {
+		return errors.Wrap(e, "unable to apply repo")
+	}
 	e = applyAccounts(fs, p, &tmp.Account)
 	if e != nil {
 		return errors.Wrap(e, "unable to apply accounts")
@@ -80,6 +91,26 @@ func applyCustomProviders(fs afero.Fs, p *plan.Plan) (err error) {
 		}
 	}
 	return
+}
+
+// Terraform won't cache providers unless the directory structure already exists
+func applyCustomPluginCache(fs afero.Fs, p *plan.Plan, repoBox *packr.Box) error {
+	path := path.Join(rootPath, providers.CustomPluginCacheDir)
+	err := fs.MkdirAll(path, 0755)
+	if err != nil {
+		return errors.Wrapf(err, "unable to make directory %s", path)
+	}
+	return applyTree(repoBox, fs, path, p.SiccMode, p)
+}
+
+// Terraform won't cache providers unless the directory structure already exists
+func applyPluginCache(fs afero.Fs, p *plan.Plan, repoBox *packr.Box) error {
+	path := path.Join(rootPath, providers.PluginCacheDir)
+	err := fs.MkdirAll(path, 0755)
+	if err != nil {
+		return errors.Wrapf(err, "unable to make directory %s", path)
+	}
+	return applyTree(repoBox, fs, path, p.SiccMode, p)
 }
 
 func applyGlobal(fs afero.Fs, p plan.Component, repoBox *packr.Box) error {

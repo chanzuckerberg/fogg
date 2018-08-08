@@ -1,4 +1,4 @@
-package customproviders
+package providers
 
 import (
 	"archive/tar"
@@ -13,10 +13,6 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
-)
-
-const (
-	pluginCacheDir = ".terraform.d/plugin-cache/linux_amd64"
 )
 
 // Install installs the custom provider
@@ -67,7 +63,7 @@ func (cp *CustomProvider) process(path string, dest afero.Fs) error {
 
 // https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
 func (cp *CustomProvider) processTar(path string, dest afero.Fs) error {
-	err := util.CreateDirIfNotExists(pluginCacheDir, dest)
+	err := util.CreateDirIfNotExists(CustomPluginCacheDir, dest)
 	if err != nil {
 		return err
 	}
@@ -93,7 +89,7 @@ func (cp *CustomProvider) processTar(path string, dest afero.Fs) error {
 			return errors.New("Nil tar file header")
 		}
 		// the target location where the dir/file should be created
-		target := filepath.Join(pluginCacheDir, header.Name) // TODO: don't hard code this
+		target := filepath.Join(CustomPluginCacheDir, header.Name)
 		switch header.Typeflag {
 		case tar.TypeDir: // if its a dir and it doesn't exist create it
 			err := util.CreateDirIfNotExists(target, dest)

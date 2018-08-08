@@ -1,4 +1,4 @@
-package customproviders
+package providers
 
 // TypeProviderFormat is the provider format such as binary, zip, tar
 type TypeProviderFormat string

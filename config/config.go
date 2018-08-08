@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"strings"
 
-	cp "github.com/chanzuckerberg/fogg/custom_providers"
+	"github.com/chanzuckerberg/fogg/providers"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/spf13/afero"
@@ -16,19 +16,19 @@ import (
 )
 
 type defaults struct {
-	AccountID          *int64                        `json:"account_id,omitempty"`
-	AWSProfileBackend  string                        `json:"aws_profile_backend,omitempty" validate:"required"`
-	AWSProfileProvider string                        `json:"aws_profile_provider,omitempty" validate:"required"`
-	AWSProviderVersion string                        `json:"aws_provider_version,omitempty" validate:"required"`
-	AWSRegionBackend   string                        `json:"aws_region_backend,omitempty" validate:"required"`
-	AWSRegionProvider  string                        `json:"aws_region_provider,omitempty" validate:"required"`
-	AWSRegions         []string                      `json:"aws_regions,omitempty"`
-	CustomProviders    map[string]*cp.CustomProvider `json:"custom_providers,omitempty"`
-	ExtraVars          map[string]string             `json:"extra_vars,omitempty"`
-	InfraBucket        string                        `json:"infra_s3_bucket,omitempty" validate:"required"`
-	Owner              string                        `json:"owner,omitempty" validate:"required"`
-	Project            string                        `json:"project,omitempty" validate:"required"`
-	TerraformVersion   string                        `json:"terraform_version,omitempty" validate:"required"`
+	AccountID          *int64                               `json:"account_id,omitempty"`
+	AWSProfileBackend  string                               `json:"aws_profile_backend,omitempty" validate:"required"`
+	AWSProfileProvider string                               `json:"aws_profile_provider,omitempty" validate:"required"`
+	AWSProviderVersion string                               `json:"aws_provider_version,omitempty" validate:"required"`
+	AWSRegionBackend   string                               `json:"aws_region_backend,omitempty" validate:"required"`
+	AWSRegionProvider  string                               `json:"aws_region_provider,omitempty" validate:"required"`
+	AWSRegions         []string                             `json:"aws_regions,omitempty"`
+	CustomProviders    map[string]*providers.CustomProvider `json:"custom_providers,omitempty"`
+	ExtraVars          map[string]string                    `json:"extra_vars,omitempty"`
+	InfraBucket        string                               `json:"infra_s3_bucket,omitempty" validate:"required"`
+	Owner              string                               `json:"owner,omitempty" validate:"required"`
+	Project            string                               `json:"project,omitempty" validate:"required"`
+	TerraformVersion   string                               `json:"terraform_version,omitempty" validate:"required"`
 }
 
 type Account struct {
