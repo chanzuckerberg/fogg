@@ -95,7 +95,7 @@ func applyCustomProviders(fs afero.Fs, p *plan.Plan) (err error) {
 
 // Terraform won't cache providers unless the directory structure already exists
 func applyCustomPluginCache(fs afero.Fs, p *plan.Plan, repoBox *packr.Box) error {
-	path := path.Join(rootPath, providers.CustomPluginCacheDir)
+	path := path.Join("", providers.CustomPluginCacheDir)
 	err := fs.MkdirAll(path, 0755)
 	if err != nil {
 		return errors.Wrapf(err, "unable to make directory %s", path)
@@ -105,7 +105,7 @@ func applyCustomPluginCache(fs afero.Fs, p *plan.Plan, repoBox *packr.Box) error
 
 // Terraform won't cache providers unless the directory structure already exists
 func applyPluginCache(fs afero.Fs, p *plan.Plan, repoBox *packr.Box) error {
-	path := path.Join(rootPath, providers.PluginCacheDir)
+	path := path.Join("", providers.PluginCacheDir)
 	err := fs.MkdirAll(path, 0755)
 	if err != nil {
 		return errors.Wrapf(err, "unable to make directory %s", path)
