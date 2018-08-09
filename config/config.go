@@ -24,7 +24,7 @@ type defaults struct {
 	AWSRegionProvider  string                               `json:"aws_region_provider" validate:"required"`
 	AWSRegions         []string                             `json:"aws_regions,omitempty"`
 	CustomProviders    map[string]*providers.CustomProvider `json:"custom_providers,omitempty"`
-	ExtraVars          map[string]string                    `json:"extra_vars,omitempty"`
+	ExtraVars          map[string]string                    `json:"extra_vars"`
 	InfraBucket        string                               `json:"infra_s3_bucket" validate:"required"`
 	Owner              string                               `json:"owner" validate:"required"`
 	Project            string                               `json:"project" validate:"required"`
