@@ -15,6 +15,20 @@ import (
 	"github.com/spf13/afero"
 )
 
+// TypeProviderFormat is the provider format such as binary, zip, tar
+type TypeProviderFormat string
+
+const (
+	// TypeProviderFormatTar is a tar archived provider
+	TypeProviderFormatTar TypeProviderFormat = "tar"
+)
+
+// CustomProvider is a custom terraform provider
+type CustomProvider struct {
+	URL    string             `json:"url,omitempty" validate:"required"`
+	Format TypeProviderFormat `json:"format,omitempty" validate:"required"`
+}
+
 // Install installs the custom provider
 func (cp *CustomProvider) Install(providerName string, dest afero.Fs) error {
 	if cp == nil {
@@ -29,7 +43,7 @@ func (cp *CustomProvider) Install(providerName string, dest afero.Fs) error {
 	if err != nil {
 		return err
 	}
-	return cp.process(tmpPath, dest)
+	return cp.process(providerName, tmpPath, dest)
 }
 
 // fetch fetches the custom provider at URL
@@ -48,14 +62,10 @@ func (cp *CustomProvider) fetch(providerName string) (string, error) {
 }
 
 // process the custom provider
-func (cp *CustomProvider) process(path string, dest afero.Fs) error {
+func (cp *CustomProvider) process(providerName string, path string, fs afero.Fs) error {
 	switch cp.Format {
-	// Binary formats do not need any special processing
-	case TypeProviderFormatBinary:
-		log.Debug("Binary format, nothing to do")
-		return nil
 	case TypeProviderFormatTar:
-		return cp.processTar(path, dest)
+		return cp.processTar(path, fs)
 	default:
 		return errors.Errorf("Unknown provider format %s", cp.Format)
 	}
@@ -97,7 +107,7 @@ func (cp *CustomProvider) processTar(path string, dest afero.Fs) error {
 				return err
 			}
 		case tar.TypeReg: // if it is a file create it
-			destFile, err := dest.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
+			destFile, err := dest.Create(target)
 			if err != nil {
 				return errors.Wrapf(err, "tar: could not open destination file for %s", target)
 			}
@@ -108,6 +118,8 @@ func (cp *CustomProvider) processTar(path string, dest afero.Fs) error {
 			}
 			// Manually take care of closing file since defer will pile them up
 			destFile.Close()
+		default:
+			log.Warnf("tar: unrecognized tar.Type %d", header.Typeflag)
 		}
 	}
 	return nil
