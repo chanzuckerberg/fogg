@@ -78,7 +78,7 @@ func (cp *CustomProvider) processTar(fs afero.Fs, path string) error {
 	}
 	f, err := os.Open(path)
 	if err != nil {
-		return errors.Wrap(err, "custom provider")
+		return errors.Wrap(err, "could not read staged custom provider")
 	}
 	defer f.Close()
 	gzr, err := gzip.NewReader(f)
