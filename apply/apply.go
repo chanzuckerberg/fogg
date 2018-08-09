@@ -41,11 +41,11 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, siccMode bool) er
 	if e != nil {
 		return errors.Wrap(e, "unable to apply plugin cache")
 	}
-
 	e = applyCustomPluginCache(fs, p, &tmp.CustomPluginCache)
 	if e != nil {
 		return errors.Wrap(e, "unable to apply custom plugin cache")
 	}
+
 	e = applyAccounts(fs, p, &tmp.Account)
 	if e != nil {
 		return errors.Wrap(e, "unable to apply accounts")
@@ -91,23 +91,23 @@ func applyCustomProviders(fs afero.Fs, p *plan.Plan) (err error) {
 	return
 }
 
-func applyCustomPluginCache(fs afero.Fs, p *plan.Plan, repoBox *packr.Box) error {
+func applyCustomPluginCache(fs afero.Fs, p *plan.Plan, customPluginBox *packr.Box) error {
 	path := providers.CustomPluginCacheDir
 	err := fs.MkdirAll(path, 0755)
 	if err != nil {
 		return errors.Wrapf(err, "unable to make directory %s", path)
 	}
-	return applyTree(fs, repoBox, path, p.SiccMode, p)
+	return applyTree(fs, customPluginBox, path, p.SiccMode, p)
 }
 
 // Terraform won't cache providers unless the directory structure already exists
-func applyPluginCache(fs afero.Fs, p *plan.Plan, repoBox *packr.Box) error {
+func applyPluginCache(fs afero.Fs, p *plan.Plan, pluginBox *packr.Box) error {
 	path := providers.PluginCacheDir
 	err := fs.MkdirAll(path, 0755)
 	if err != nil {
 		return errors.Wrapf(err, "unable to make directory %s", path)
 	}
-	return applyTree(fs, repoBox, path, p.SiccMode, p)
+	return applyTree(fs, pluginBox, path, p.SiccMode, p)
 }
 
 func applyGlobal(fs afero.Fs, p plan.Component, repoBox *packr.Box) error {
