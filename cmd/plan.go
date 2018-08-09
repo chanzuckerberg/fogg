@@ -11,7 +11,6 @@ import (
 
 func init() {
 	planCmd.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
-	planCmd.Flags().BoolP("sicc", "s", false, "Use this to turn on sicc-compatibility mode. Implies -c sicc.json.")
 	planCmd.Flags().BoolP("verbose", "v", false, "use this to turn on verbose output")
 	rootCmd.AddCommand(planCmd)
 }
@@ -38,22 +37,14 @@ var planCmd = &cobra.Command{
 		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
 		// handle flags
-		siccMode, e := cmd.Flags().GetBool("sicc")
-		if e != nil {
-			log.Panic(e)
-		}
 		verbose, e := cmd.Flags().GetBool("verbose")
 		if e != nil {
 			log.Panic(e)
 		}
-		var configFile string
-		if siccMode {
-			configFile = "sicc.json"
-		} else {
-			configFile, e = cmd.Flags().GetString("config")
-			if e != nil {
-				log.Panic(e)
-			}
+
+		configFile, e := cmd.Flags().GetString("config")
+		if e != nil {
+			log.Panic(e)
 		}
 
 		// check that we are at root of initialized git repo
@@ -63,7 +54,7 @@ var planCmd = &cobra.Command{
 
 		exitOnConfigErrors(err)
 
-		p, e := plan.Eval(config, siccMode, verbose)
+		p, e := plan.Eval(config, verbose)
 		if e != nil {
 			log.Panic(e)
 		}
