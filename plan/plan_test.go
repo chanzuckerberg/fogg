@@ -67,7 +67,7 @@ func TestPlanBasic(t *testing.T) {
 	c, err := config.ReadConfig(r)
 	assert.Nil(t, err)
 
-	plan, e := Eval(c, true, false)
+	plan, e := Eval(c, true)
 	assert.Nil(t, e)
 	assert.NotNil(t, plan)
 	assert.NotNil(t, plan.Accounts)
@@ -103,7 +103,7 @@ func TestExtraVarsComposition(t *testing.T) {
 	c, err := config.ReadConfig(r)
 	assert.Nil(t, err)
 
-	plan, e := Eval(c, true, false)
+	plan, e := Eval(c, true)
 	assert.Nil(t, e)
 	assert.NotNil(t, plan)
 
