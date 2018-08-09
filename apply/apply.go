@@ -40,12 +40,12 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, siccMode bool) er
 
 	e = applyPluginCache(fs, p, &tmp.PluginCache)
 	if e != nil {
-		return errors.Wrap(e, "unable to apply repo")
+		return errors.Wrap(e, "unable to apply plugin cache")
 	}
 
 	e = applyCustomPluginCache(fs, p, &tmp.CustomPluginCache)
 	if e != nil {
-		return errors.Wrap(e, "unable to apply repo")
+		return errors.Wrap(e, "unable to apply custom plugin cache")
 	}
 	e = applyAccounts(fs, p, &tmp.Account)
 	if e != nil {
