@@ -6,7 +6,7 @@ const (
 	// We vendor providers here
 	// See https://www.terraform.io/docs/configuration/providers.html#third-party-plugins
 	CustomPluginCacheDir = "terraform.d/plugins/linux_amd64"
-	// PluginCacheDir is the directory where terraform cahes tf approved providers
+	// PluginCacheDir is the directory where terraform caches tf approved providers
 	// See https://www.terraform.io/docs/configuration/providers.html#provider-plugin-cache
 	PluginCacheDir = ".terraform.d/plugin-cache"
 )

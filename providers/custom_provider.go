@@ -9,7 +9,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/chanzuckerberg/fogg/util"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
@@ -25,16 +24,16 @@ const (
 
 // CustomProvider is a custom terraform provider
 type CustomProvider struct {
-	URL    string             `json:"url,omitempty" validate:"required"`
-	Format TypeProviderFormat `json:"format,omitempty" validate:"required"`
+	URL    string             `json:"url" validate:"required"`
+	Format TypeProviderFormat `json:"format" validate:"required"`
 }
 
 // Install installs the custom provider
-func (cp *CustomProvider) Install(providerName string, dest afero.Fs) error {
+func (cp *CustomProvider) Install(fs afero.Fs, providerName string) error {
 	if cp == nil {
 		return errors.New("nil CustomProvider")
 	}
-	if dest == nil {
+	if fs == nil {
 		return errors.New("nil fs")
 	}
 
@@ -43,7 +42,7 @@ func (cp *CustomProvider) Install(providerName string, dest afero.Fs) error {
 	if err != nil {
 		return err
 	}
-	return cp.process(providerName, tmpPath, dest)
+	return cp.process(fs, providerName, tmpPath)
 }
 
 // fetch fetches the custom provider at URL
@@ -62,20 +61,20 @@ func (cp *CustomProvider) fetch(providerName string) (string, error) {
 }
 
 // process the custom provider
-func (cp *CustomProvider) process(providerName string, path string, fs afero.Fs) error {
+func (cp *CustomProvider) process(fs afero.Fs, providerName string, path string) error {
 	switch cp.Format {
 	case TypeProviderFormatTar:
-		return cp.processTar(path, fs)
+		return cp.processTar(fs, path)
 	default:
 		return errors.Errorf("Unknown provider format %s", cp.Format)
 	}
 }
 
 // https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
-func (cp *CustomProvider) processTar(path string, dest afero.Fs) error {
-	err := util.CreateDirIfNotExists(CustomPluginCacheDir, dest)
+func (cp *CustomProvider) processTar(fs afero.Fs, path string) error {
+	err := fs.MkdirAll(CustomPluginCacheDir, 0755)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "Could not create directory %s", CustomPluginCacheDir)
 	}
 	f, err := os.Open(path)
 	if err != nil {
@@ -102,12 +101,12 @@ func (cp *CustomProvider) processTar(path string, dest afero.Fs) error {
 		target := filepath.Join(CustomPluginCacheDir, header.Name)
 		switch header.Typeflag {
 		case tar.TypeDir: // if its a dir and it doesn't exist create it
-			err := util.CreateDirIfNotExists(target, dest)
+			err := fs.MkdirAll(target, 0755)
 			if err != nil {
-				return err
+				return errors.Wrapf(err, "tar: could not create directory %s", target)
 			}
 		case tar.TypeReg: // if it is a file create it
-			destFile, err := dest.Create(target)
+			destFile, err := fs.Create(target)
 			if err != nil {
 				return errors.Wrapf(err, "tar: could not open destination file for %s", target)
 			}

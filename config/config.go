@@ -17,18 +17,18 @@ import (
 
 type defaults struct {
 	AccountID          *int64                               `json:"account_id,omitempty"`
-	AWSProfileBackend  string                               `json:"aws_profile_backend,omitempty" validate:"required"`
-	AWSProfileProvider string                               `json:"aws_profile_provider,omitempty" validate:"required"`
-	AWSProviderVersion string                               `json:"aws_provider_version,omitempty" validate:"required"`
-	AWSRegionBackend   string                               `json:"aws_region_backend,omitempty" validate:"required"`
-	AWSRegionProvider  string                               `json:"aws_region_provider,omitempty" validate:"required"`
+	AWSProfileBackend  string                               `json:"aws_profile_backend" validate:"required"`
+	AWSProfileProvider string                               `json:"aws_profile_provider" validate:"required"`
+	AWSProviderVersion string                               `json:"aws_provider_version" validate:"required"`
+	AWSRegionBackend   string                               `json:"aws_region_backend" validate:"required"`
+	AWSRegionProvider  string                               `json:"aws_region_provider" validate:"required"`
 	AWSRegions         []string                             `json:"aws_regions,omitempty"`
 	CustomProviders    map[string]*providers.CustomProvider `json:"custom_providers,omitempty"`
 	ExtraVars          map[string]string                    `json:"extra_vars,omitempty"`
-	InfraBucket        string                               `json:"infra_s3_bucket,omitempty" validate:"required"`
-	Owner              string                               `json:"owner,omitempty" validate:"required"`
-	Project            string                               `json:"project,omitempty" validate:"required"`
-	TerraformVersion   string                               `json:"terraform_version,omitempty" validate:"required"`
+	InfraBucket        string                               `json:"infra_s3_bucket" validate:"required"`
+	Owner              string                               `json:"owner" validate:"required"`
+	Project            string                               `json:"project" validate:"required"`
+	TerraformVersion   string                               `json:"terraform_version" validate:"required"`
 }
 
 type Account struct {

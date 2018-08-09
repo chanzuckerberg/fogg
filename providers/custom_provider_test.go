@@ -39,7 +39,7 @@ func TestCustomProviderTar(t *testing.T) {
 		Format: providers.TypeProviderFormatTar,
 	}
 
-	err := customProvider.Install(providerName, fs)
+	err := customProvider.Install(fs, providerName)
 	a.Nil(err)
 
 	afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
