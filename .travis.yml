@@ -1,5 +1,7 @@
 language: go
 go:
 - '1.10'
+install:
+- go get -u github.com/gobuffalo/packr/...
 script:
 - make
