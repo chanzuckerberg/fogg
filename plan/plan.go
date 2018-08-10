@@ -53,7 +53,6 @@ type Env struct {
 	Owner            string
 	Project          string
 	TerraformVersion string
-	Type             string
 }
 
 type Plan struct {
@@ -311,10 +310,6 @@ func buildEnvs(conf *config.Config) (map[string]Env, error) {
 			componentPlan.Env = envName
 			componentPlan.Component = componentName
 			componentPlan.OtherComponents = otherComponentNames(conf.Envs[envName].Components, componentName)
-			// This is a bit awkward but should go away when we make the modules thing first-class.
-			if envPlan.Type == "aws" {
-				componentPlan.OtherComponents = append(componentPlan.OtherComponents, "cloud-env")
-			}
 			componentPlan.ModuleSource = componentConf.ModuleSource
 			componentPlan.ExtraVars = resolveExtraVars(envPlan.ExtraVars, componentConf.ExtraVars)
 
