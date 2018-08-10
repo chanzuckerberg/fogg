@@ -3,4 +3,4 @@
 
 *
 !.gitignore
-!.terraform-provider*
+!terraform-provider*
