@@ -8,21 +8,25 @@ import (
 	"github.com/pkg/errors"
 )
 
-type account struct {
+type AWSConfiguration struct {
 	AccountID          *int64
 	AccountName        string
-	AllAccounts        map[string]int64
 	AWSProfileBackend  string
 	AWSProfileProvider string
 	AWSProviderVersion string
 	AWSRegionBackend   string
 	AWSRegionProvider  string
 	AWSRegions         []string
-	ExtraVars          map[string]string
 	InfraBucket        string
-	Owner              string
-	Project            string
-	TerraformVersion   string
+}
+
+type account struct {
+	AWSConfiguration
+	AllAccounts      map[string]int64
+	ExtraVars        map[string]string
+	Owner            string
+	Project          string
+	TerraformVersion string
 }
 
 type Module struct {
@@ -30,42 +34,26 @@ type Module struct {
 }
 
 type Component struct {
-	AccountID          *int64
-	AccountName        string
-	AWSProfileBackend  string
-	AWSProfileProvider string
-	AWSProviderVersion string
-	AWSRegionBackend   string
-	AWSRegionProvider  string
-	AWSRegions         []string
-	Component          string
-	Env                string
-	ExtraVars          map[string]string
-	InfraBucket        string
-	ModuleSource       *string
-	OtherComponents    []string
-	Owner              string
-	Project            string
-	TerraformVersion   string
+	AWSConfiguration
+	Component        string
+	Env              string
+	ExtraVars        map[string]string
+	ModuleSource     *string
+	OtherComponents  []string
+	Owner            string
+	Project          string
+	TerraformVersion string
 }
 
 type Env struct {
-	AccountID          *int64
-	AccountName        string
-	AWSProfileBackend  string
-	AWSProfileProvider string
-	AWSProviderVersion string
-	AWSRegionBackend   string
-	AWSRegionProvider  string
-	AWSRegions         []string
-	Components         map[string]Component
-	Env                string
-	ExtraVars          map[string]string
-	InfraBucket        string
-	Owner              string
-	Project            string
-	TerraformVersion   string
-	Type               string
+	AWSConfiguration
+	Components       map[string]Component
+	Env              string
+	ExtraVars        map[string]string
+	Owner            string
+	Project          string
+	TerraformVersion string
+	Type             string
 }
 
 type Plan struct {
