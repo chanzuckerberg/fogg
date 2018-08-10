@@ -71,11 +71,11 @@ type Env struct {
 
 type Plan struct {
 	Accounts        map[string]account
+	CustomProviders map[string]*providers.CustomProvider
 	Envs            map[string]Env
 	Global          Component
 	Modules         map[string]Module
 	Version         string
-	CustomProviders map[string]*providers.CustomProvider
 }
 
 func Eval(config *config.Config, verbose bool) (*Plan, error) {
