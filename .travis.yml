@@ -2,6 +2,6 @@ language: go
 go:
 - '1.10'
 install:
-- go get -u github.com/gobuffalo/packr/...
+- curl https://github.com/gobuffalo/packr/releases/download/v1.13.1/packr_1.13.1_linux_amd64.tar.gz | tar -C /usr/bin zxf
 script:
 - make
