@@ -8,68 +8,51 @@ import (
 	"github.com/pkg/errors"
 )
 
-type account struct {
+type AWSConfiguration struct {
 	AccountID          *int64
 	AccountName        string
-	AllAccounts        map[string]int64
 	AWSProfileBackend  string
 	AWSProfileProvider string
 	AWSProviderVersion string
 	AWSRegionBackend   string
 	AWSRegionProvider  string
 	AWSRegions         []string
-	ExtraVars          map[string]string
 	InfraBucket        string
-	Owner              string
-	Project            string
-	SiccMode           bool
-	TerraformVersion   string
+}
+
+type account struct {
+	AWSConfiguration
+	AllAccounts      map[string]int64
+	ExtraVars        map[string]string
+	Owner            string
+	Project          string
+	TerraformVersion string
 }
 
 type Module struct {
-	SiccMode         bool
 	TerraformVersion string
 }
 
 type Component struct {
-	AccountID          *int64
-	AccountName        string
-	AWSProfileBackend  string
-	AWSProfileProvider string
-	AWSProviderVersion string
-	AWSRegionBackend   string
-	AWSRegionProvider  string
-	AWSRegions         []string
-	Component          string
-	Env                string
-	ExtraVars          map[string]string
-	InfraBucket        string
-	ModuleSource       *string
-	OtherComponents    []string
-	Owner              string
-	Project            string
-	SiccMode           bool
-	TerraformVersion   string
+	AWSConfiguration
+	Component        string
+	Env              string
+	ExtraVars        map[string]string
+	ModuleSource     *string
+	OtherComponents  []string
+	Owner            string
+	Project          string
+	TerraformVersion string
 }
 
 type Env struct {
-	AccountID          *int64
-	AccountName        string
-	AWSProfileBackend  string
-	AWSProfileProvider string
-	AWSProviderVersion string
-	AWSRegionBackend   string
-	AWSRegionProvider  string
-	AWSRegions         []string
-	Components         map[string]Component
-	Env                string
-	ExtraVars          map[string]string
-	InfraBucket        string
-	Owner              string
-	Project            string
-	SiccMode           bool
-	TerraformVersion   string
-	Type               string
+	AWSConfiguration
+	Components       map[string]Component
+	Env              string
+	ExtraVars        map[string]string
+	Owner            string
+	Project          string
+	TerraformVersion string
 }
 
 type Plan struct {
@@ -77,37 +60,35 @@ type Plan struct {
 	Envs     map[string]Env
 	Global   Component
 	Modules  map[string]Module
-	SiccMode bool
 	Version  string
 }
 
-func Eval(config *config.Config, siccMode, verbose bool) (*Plan, error) {
+func Eval(config *config.Config, verbose bool) (*Plan, error) {
 	p := &Plan{}
 	v, e := util.VersionString()
 	if e != nil {
 		return nil, errors.Wrap(e, "unable to parse fogg version")
 	}
 	p.Version = v
-	p.SiccMode = siccMode
-	accounts, err := buildAccounts(config, siccMode)
+	accounts, err := buildAccounts(config)
 	if err != nil {
 		return nil, err
 	}
 	p.Accounts = accounts
 
-	envs, err := buildEnvs(config, siccMode)
+	envs, err := buildEnvs(config)
 	if err != nil {
 		return nil, err
 	}
 	p.Envs = envs
 
-	global, err := buildGlobal(config, siccMode)
+	global, err := buildGlobal(config)
 	if err != nil {
 		return nil, err
 	}
 	p.Global = global
 
-	modules, err := buildModules(config, siccMode)
+	modules, err := buildModules(config)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +98,6 @@ func Eval(config *config.Config, siccMode, verbose bool) (*Plan, error) {
 
 func Print(p *Plan) error {
 	fmt.Printf("Version: %s\n", p.Version)
-	fmt.Printf("sicc mode: %t\n", p.SiccMode)
 	fmt.Printf("fogg version: %s\n", p.Version)
 	fmt.Println("Accounts:")
 	for name, account := range p.Accounts {
@@ -210,7 +190,7 @@ func Print(p *Plan) error {
 	return nil
 }
 
-func buildAccounts(c *config.Config, siccMode bool) (map[string]account, error) {
+func buildAccounts(c *config.Config) (map[string]account, error) {
 	defaults := c.Defaults
 
 	accountPlans := make(map[string]account, len(c.Accounts))
@@ -232,7 +212,6 @@ func buildAccounts(c *config.Config, siccMode bool) (map[string]account, error) 
 		accountPlan.InfraBucket = resolveRequired(defaults.InfraBucket, config.InfraBucket)
 		accountPlan.Owner = resolveRequired(defaults.Owner, config.Owner)
 		accountPlan.Project = resolveRequired(defaults.Project, config.Project)
-		accountPlan.SiccMode = siccMode
 		accountPlan.ExtraVars = resolveExtraVars(defaults.ExtraVars, config.ExtraVars)
 
 		accountPlans[name] = accountPlan
@@ -241,13 +220,12 @@ func buildAccounts(c *config.Config, siccMode bool) (map[string]account, error) 
 	return accountPlans, nil
 }
 
-func buildModules(c *config.Config, siccMode bool) (map[string]Module, error) {
+func buildModules(c *config.Config) (map[string]Module, error) {
 	modulePlans := make(map[string]Module, len(c.Modules))
 	for name, conf := range c.Modules {
 		modulePlan := Module{}
 
 		modulePlan.TerraformVersion = resolveRequired(c.Defaults.TerraformVersion, conf.TerraformVersion)
-		modulePlan.SiccMode = siccMode
 		modulePlans[name] = modulePlan
 	}
 	return modulePlans, nil
@@ -259,8 +237,8 @@ func newEnvPlan() Env {
 	return ep
 }
 
-func buildGlobal(conf *config.Config, siccMode bool) (Component, error) {
-	// Global just uses defaults because that's the way sicc works. We should make it directly configurable after transition.
+func buildGlobal(conf *config.Config) (Component, error) {
+	// Global just uses defaults because that's the way sicc worked. We should make it directly configurable.
 	componentPlan := Component{}
 
 	componentPlan.AccountID = conf.Defaults.AccountID
@@ -282,11 +260,10 @@ func buildGlobal(conf *config.Config, siccMode bool) (Component, error) {
 	componentPlan.ExtraVars = conf.Defaults.ExtraVars
 
 	componentPlan.Component = "global"
-	componentPlan.SiccMode = siccMode
 	return componentPlan, nil
 }
 
-func buildEnvs(conf *config.Config, siccMode bool) (map[string]Env, error) {
+func buildEnvs(conf *config.Config) (map[string]Env, error) {
 	envPlans := make(map[string]Env, len(conf.Envs))
 	defaults := conf.Defaults
 
@@ -312,8 +289,6 @@ func buildEnvs(conf *config.Config, siccMode bool) (map[string]Env, error) {
 		envPlan.Project = resolveRequired(defaults.Project, envConf.Project)
 		envPlan.ExtraVars = resolveExtraVars(defaultExtraVars, envConf.ExtraVars)
 
-		envPlan.SiccMode = siccMode
-
 		for componentName, componentConf := range conf.Envs[envName].Components {
 			componentPlan := Component{}
 
@@ -335,11 +310,6 @@ func buildEnvs(conf *config.Config, siccMode bool) (map[string]Env, error) {
 			componentPlan.Env = envName
 			componentPlan.Component = componentName
 			componentPlan.OtherComponents = otherComponentNames(conf.Envs[envName].Components, componentName)
-			// This is a bit awkward but should go away when we make the modules thing first-class.
-			if envPlan.Type == "aws" {
-				componentPlan.OtherComponents = append(componentPlan.OtherComponents, "cloud-env")
-			}
-			componentPlan.SiccMode = siccMode
 			componentPlan.ModuleSource = componentConf.ModuleSource
 			componentPlan.ExtraVars = resolveExtraVars(envPlan.ExtraVars, componentConf.ExtraVars)
 

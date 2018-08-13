@@ -25,8 +25,8 @@ import (
 
 const rootPath = "terraform"
 
-func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, siccMode bool) error {
-	p, err := plan.Eval(conf, siccMode, false)
+func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T) error {
+	p, err := plan.Eval(conf, false)
 	if err != nil {
 		return errors.Wrap(err, "unable to evaluate plan")
 	}
@@ -57,17 +57,9 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, siccMode bool) er
 }
 
 func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates *packr.Box) error {
-	e := applyTree(repoTemplates, fs, "", p.SiccMode, p)
+	e := applyTree(repoTemplates, fs, "", p)
 	if e != nil {
 		return e
-	}
-	// Remove after migration.
-
-	if !p.SiccMode {
-		e := fs.Remove(".sicc-version")
-		if e != nil {
-			log.Debug("error removing .sicc-version. ignoring")
-		}
 	}
 	return nil
 }
@@ -78,7 +70,7 @@ func applyGlobal(fs afero.Fs, p plan.Component, repoBox *packr.Box) error {
 	if e != nil {
 		return errors.Wrapf(e, "unable to make directory %s", path)
 	}
-	return applyTree(repoBox, fs, path, p.SiccMode, p)
+	return applyTree(repoBox, fs, path, p)
 }
 
 func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) (e error) {
@@ -88,7 +80,7 @@ func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) (e error) {
 		if e != nil {
 			return errors.Wrap(e, "unable to make directories for accounts")
 		}
-		e = applyTree(accountBox, fs, path, accountPlan.SiccMode, accountPlan)
+		e = applyTree(accountBox, fs, path, accountPlan)
 		if e != nil {
 			return errors.Wrap(e, "unable to apply templates to account")
 		}
@@ -104,7 +96,7 @@ func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox *packr.Box) e
 		if e != nil {
 			return errors.Wrapf(e, "unable to make path %s", path)
 		}
-		e = applyTree(moduleBox, fs, path, modulePlan.SiccMode, modulePlan)
+		e = applyTree(moduleBox, fs, path, modulePlan)
 		if e != nil {
 			return errors.Wrap(e, "unable to apply tree")
 		}
@@ -119,7 +111,7 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 		if e != nil {
 			return errors.Wrapf(e, "unable to make directory %s", path)
 		}
-		e := applyTree(envBox, fs, path, envPlan.SiccMode, envPlan)
+		e := applyTree(envBox, fs, path, envPlan)
 		if e != nil {
 			return errors.Wrap(e, "unable to apply templates to env")
 		}
@@ -129,7 +121,7 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 			if e != nil {
 				return errors.Wrap(e, "unable to make directories for component")
 			}
-			e := applyTree(componentBox, fs, path, componentPlan.SiccMode, componentPlan)
+			e := applyTree(componentBox, fs, path, componentPlan)
 			if e != nil {
 				return errors.Wrap(e, "unable to apply templates for component")
 			}
@@ -146,10 +138,10 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 	return nil
 }
 
-func applyTree(source *packr.Box, dest afero.Fs, targetBasePath string, siccMode bool, subst interface{}) (e error) {
+func applyTree(source *packr.Box, dest afero.Fs, targetBasePath string, subst interface{}) (e error) {
 	return source.Walk(func(path string, sourceFile packr.File) error {
 		extension := filepath.Ext(path)
-		target := getTargetPath(targetBasePath, path, siccMode)
+		target := getTargetPath(targetBasePath, path)
 
 		targetExtension := filepath.Ext(target)
 		if extension == ".tmpl" {
@@ -175,25 +167,13 @@ func applyTree(source *packr.Box, dest afero.Fs, targetBasePath string, siccMode
 			}
 		}
 
-		if !siccMode && strings.HasSuffix(target, "fogg.tf") {
-			r := filepath.Join(targetBasePath, "sicc.tf")
-			log.Infof("%s removed", r)
-			e = dest.Remove(r)
-			if e != nil {
-				log.Debugf("error removing %s. ignoring", r)
-			}
-		}
-
 		if targetExtension == ".tf" {
 			e = fmtHcl(dest, target)
 			if e != nil {
 				return errors.Wrap(e, "unable to format HCL")
 			}
 		}
-		// Some output files need to be executable, but we lose all file mode info
-		// when the files get put in a Box. This is a blunt instrument to make
-		// sure those work
-		return dest.Chmod(target, 0744)
+		return nil
 	})
 }
 
@@ -341,15 +321,12 @@ func calculateModuleAddressForSource(path, moduleAddress string) (string, error)
 	}
 	return moduleAddressForSource, nil
 }
-func getTargetPath(basePath, path string, siccMode bool) string {
+func getTargetPath(basePath, path string) string {
 	target := filepath.Join(basePath, path)
 	extension := filepath.Ext(path)
 
 	if extension == ".tmpl" || extension == ".touch" || extension == ".create" {
 		target = removeExtension(target)
-	}
-	if siccMode && filepath.Base(target) == "fogg.tf" {
-		target = filepath.Join(filepath.Dir(target), "sicc.tf")
 	}
 
 	return target

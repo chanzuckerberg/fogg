@@ -12,7 +12,6 @@ import (
 
 func init() {
 	applyCmd.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
-	applyCmd.Flags().BoolP("sicc", "s", false, "Use this to turn on sicc-compatibility mode. Implies -c sicc.json.")
 	applyCmd.Flags().BoolP("verbose", "v", false, "use this to turn on verbose output")
 	rootCmd.AddCommand(applyCmd)
 }
@@ -39,22 +38,13 @@ var applyCmd = &cobra.Command{
 		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
 		// handle flags
-		siccMode, e := cmd.Flags().GetBool("sicc")
-		if e != nil {
-			log.Panic(e)
-		}
 		verbose, e := cmd.Flags().GetBool("verbose")
 		if e != nil {
 			log.Panic(e)
 		}
-		var configFile string
-		if siccMode {
-			configFile = "sicc.json"
-		} else {
-			configFile, e = cmd.Flags().GetString("config")
-			if e != nil {
-				log.Panic(e)
-			}
+		configFile, e := cmd.Flags().GetString("config")
+		if e != nil {
+			log.Panic(e)
 		}
 
 		// check that we are at root of initialized git repo
@@ -65,7 +55,7 @@ var applyCmd = &cobra.Command{
 		exitOnConfigErrors(err)
 
 		// apply
-		e = apply.Apply(fs, config, templates.Templates, siccMode)
+		e = apply.Apply(fs, config, templates.Templates)
 		if e != nil {
 			log.Panic(e)
 		}

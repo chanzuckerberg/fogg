@@ -159,7 +159,7 @@ func TestApplySmokeTest(t *testing.T) {
 	c, e := config.ReadConfig(ioutil.NopCloser(strings.NewReader(json)))
 	assert.Nil(t, e)
 
-	e = Apply(fs, c, templates.Templates, true)
+	e = Apply(fs, c, templates.Templates)
 	assert.Nil(t, e)
 }
 
@@ -182,8 +182,8 @@ func TestApplyModuleInvocation(t *testing.T) {
 
 module "test-module" {
   source = "../../util/test-module"
-  bar    = "${var.bar}"
-  foo    = "${var.foo}"
+  bar    = "${local.bar}"
+  foo    = "${local.foo}"
 }
 `
 	assert.Equal(t, expected, string(r))
@@ -207,27 +207,23 @@ output "foo" {
 }
 func TestGetTargetPath(t *testing.T) {
 	data := []struct {
-		base    string
-		source  string
-		siccOff string
-		siccOn  string
+		base   string
+		source string
+		output string
 	}{
-		{"", "foo.tmpl", "foo", "foo"},
-		{"", "foo.tf.tmpl", "foo.tf", "foo.tf"},
-		{"", "fogg.tf", "fogg.tf", "sicc.tf"},
-		{"", "fogg.tf.tmpl", "fogg.tf", "sicc.tf"},
-		{"foo", "foo.tmpl", "foo/foo", "foo/foo"},
-		{"foo", "foo.tf.tmpl", "foo/foo.tf", "foo/foo.tf"},
-		{"foo", "fogg.tf", "foo/fogg.tf", "foo/sicc.tf"},
-		{"foo", "fogg.tf.tmpl", "foo/fogg.tf", "foo/sicc.tf"},
+		{"", "foo.tmpl", "foo"},
+		{"", "foo.tf.tmpl", "foo.tf"},
+		{"", "fogg.tf", "fogg.tf"},
+		{"", "fogg.tf.tmpl", "fogg.tf"},
+		{"foo", "foo.tmpl", "foo/foo"},
+		{"foo", "foo.tf.tmpl", "foo/foo.tf"},
+		{"foo", "fogg.tf", "foo/fogg.tf"},
+		{"foo", "fogg.tf.tmpl", "foo/fogg.tf"},
 	}
 	for _, test := range data {
 		t.Run(test.source, func(t *testing.T) {
-			off := getTargetPath(test.base, test.source, false)
-			on := getTargetPath(test.base, test.source, true)
-			assert.Equal(t, test.siccOff, off)
-			assert.Equal(t, test.siccOn, on)
-
+			out := getTargetPath(test.base, test.source)
+			assert.Equal(t, test.output, out)
 		})
 	}
 }

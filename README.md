@@ -21,7 +21,7 @@ It makes life easy for folks working with cloud infrastructure. We've been using
 
 ## Getting Help
 
-If you need help getting started with fogg, either open a github issue or join our gitter chat room (TODO link).
+If you need help getting started with fogg, either open a github issue or join our [gitter chat room](https://gitter.im/chanzuckerberg/fogg).
 
 ## Install
 
@@ -34,9 +34,9 @@ brew tap chanzuckerberg/homebrew-fogg
 brew install fogg
 ```
 
-Binaries are available on the releases page. Download one for your architecture, put it in your path and make it executable.
+## Linux, Windows, etc.
 
-A homebrew tap will be coming soon. Other package managers to be considered if folks want them.
+Binaries are available on the releases page. Download one for your architecture, put it in your path and make it executable.
 
 ## Usage
 
