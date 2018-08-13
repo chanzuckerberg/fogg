@@ -150,6 +150,14 @@ func Print(p *Plan) error {
 	fmt.Printf("\tproject: %v\n", p.Global.Project)
 	fmt.Printf("\tterraform_version: %v\n", p.Global.TerraformVersion)
 
+	fmt.Println("Plugins:")
+
+	for name, customProvider := range p.Plugins.CustomProviders {
+		fmt.Printf("\t%s:\n", name)
+		fmt.Printf("\t\turl: %s\n", customProvider.URL)
+		fmt.Printf("\t\tformat: %s\n", customProvider.Format)
+	}
+
 	fmt.Println("Envs:")
 
 	for name, env := range p.Envs {
