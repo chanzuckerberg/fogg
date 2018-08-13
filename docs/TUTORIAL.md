@@ -412,7 +412,7 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     7 directories, 27 files
     ```
 
-    Note that since we didn't specify a module_source here, the main.tf file in the database component is empty, Fogg is just creating the scaffoling, not any infrastructure for the database. You can then edit that main.tf file to create the infrastructure you want in that component.
+    Note that since we didn't specify a module_source here, the main.tf file in the database component is empty, Fogg is just creating the scaffolding, not any infrastructure for the database. You can then edit that main.tf file to create the infrastructure you want in that component.
 
 1. create server component
 
