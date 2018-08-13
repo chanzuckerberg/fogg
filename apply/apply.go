@@ -64,7 +64,7 @@ func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates *packr.Box) error {
 }
 
 func applyCustomProviders(fs afero.Fs, p *plan.Plan) (err error) {
-	for providerName, customProvider := range p.CustomProviders {
+	for providerName, customProvider := range p.Plugins.CustomProviders {
 		log.Infof("Applying custom provider %s", providerName)
 		err = customProvider.Install(fs, providerName)
 		if err != nil {

@@ -56,13 +56,18 @@ type Env struct {
 	TerraformVersion string
 }
 
-type Plan struct {
-	Accounts        map[string]account
+// Plugins contains a plan around terraform plugins
+type Plugins struct {
 	CustomProviders map[string]*providers.CustomProvider
-	Envs            map[string]Env
-	Global          Component
-	Modules         map[string]Module
-	Version         string
+}
+
+type Plan struct {
+	Accounts map[string]account
+	Envs     map[string]Env
+	Global   Component
+	Modules  map[string]Module
+	Plugins  Plugins
+	Version  string
 }
 
 func Eval(config *config.Config, verbose bool) (*Plan, error) {
@@ -72,7 +77,7 @@ func Eval(config *config.Config, verbose bool) (*Plan, error) {
 		return nil, errors.Wrap(e, "unable to parse fogg version")
 	}
 	p.Version = v
-	p.CustomProviders = config.Defaults.CustomProviders
+	p.Plugins.CustomProviders = config.Plugins.CustomProviders
 
 	accounts, err := buildAccounts(config)
 	if err != nil {
