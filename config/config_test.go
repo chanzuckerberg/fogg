@@ -95,7 +95,7 @@ func TestValidation(t *testing.T) {
 
 	err, ok := e.(validator.ValidationErrors)
 	assert.True(t, ok)
-	assert.Len(t, err, 9)
+	assert.Len(t, err, 10)
 }
 
 func TestExtraVarsValidation(t *testing.T) {
@@ -110,7 +110,8 @@ func TestExtraVarsValidation(t *testing.T) {
 			"infra_s3_bucket": "the-bucket",
 			"project": "test-project",
 			"owner": "test@test.com",
-			"terraform_version": "0.11.0"
+			"terraform_version": "0.11.0",
+			"docker_image_version": "0.11.0"
 		}
 	}`
 	r := ioutil.NopCloser(strings.NewReader(json))
@@ -138,4 +139,5 @@ func TestInitConfig(t *testing.T) {
 	assert.Equal(t, "me@foo.example", c.Defaults.Owner)
 	assert.Equal(t, "proj", c.Defaults.Project)
 	assert.Equal(t, "0.11.7", c.Defaults.TerraformVersion)
+	assert.Equal(t, "0.11.0", c.Defaults.DockerImageVersion)
 }

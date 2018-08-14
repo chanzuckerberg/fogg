@@ -5,6 +5,7 @@
     "infra_s3_bucket": "buck",
     "project": "proj",
     "terraform_version": "0.100.0",
+    "docker_image_version": "1.100.0",
     "owner": "foo@example.com",
     "extra_vars": {
       "foo": "bar1"
@@ -28,7 +29,7 @@
       },
       "components": {
         "vpc": {
-					"module_source": "github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0",
+          "module_source": "github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0",
           "extra_vars": {
             "foo": "bar3"
           }
