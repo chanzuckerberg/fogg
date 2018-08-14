@@ -8,6 +8,11 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	// The version of the chanzuckerberg/terraform docker image to use
+	dockerImageVersion = "0.1.0"
+)
+
 type AWSConfiguration struct {
 	AccountID          *int64
 	AccountName        string
@@ -56,11 +61,12 @@ type Env struct {
 }
 
 type Plan struct {
-	Accounts map[string]account
-	Envs     map[string]Env
-	Global   Component
-	Modules  map[string]Module
-	Version  string
+	Accounts           map[string]account
+	Envs               map[string]Env
+	Global             Component
+	Modules            map[string]Module
+	Version            string
+	DockerImageVersion string
 }
 
 func Eval(config *config.Config, verbose bool) (*Plan, error) {
@@ -70,6 +76,8 @@ func Eval(config *config.Config, verbose bool) (*Plan, error) {
 		return nil, errors.Wrap(e, "unable to parse fogg version")
 	}
 	p.Version = v
+	p.DockerImageVersion = dockerImageVersion
+
 	accounts, err := buildAccounts(config)
 	if err != nil {
 		return nil, err
