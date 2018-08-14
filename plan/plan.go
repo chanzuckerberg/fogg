@@ -77,7 +77,7 @@ func Eval(config *config.Config, verbose bool) (*Plan, error) {
 		return nil, errors.Wrap(e, "unable to parse fogg version")
 	}
 	p.Version = v
-	p.Plugins.CustomBinaries = config.Plugins.CustomBinaries
+	p.Plugins.CustomBinaries = config.Plugins.CustomPlugins
 
 	accounts, err := buildAccounts(config)
 	if err != nil {

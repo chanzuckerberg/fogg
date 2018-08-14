@@ -79,9 +79,9 @@ type Component struct {
 	TerraformVersion   *string           `json:"terraform_version"`
 }
 
-// Plugins contains configuration around terraform plugins
+// Plugins contains configuration around plugins
 type Plugins struct {
-	CustomBinaries map[string]*plugins.CustomPlugin `json:"custom_binaries,omitempty"`
+	CustomPlugins map[string]*plugins.CustomPlugin `json:"custom_plugins,omitempty"`
 }
 
 // Module is a module
