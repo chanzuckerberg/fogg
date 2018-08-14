@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/chanzuckerberg/fogg/providers"
+	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/spf13/afero"
@@ -81,7 +81,7 @@ type Component struct {
 
 // Plugins contains configuration around terraform plugins
 type Plugins struct {
-	CustomProviders map[string]*providers.CustomProvider `json:"custom_providers,omitempty"`
+	CustomBinaries map[string]*plugins.CustomPlugin `json:"custom_binaries,omitempty"`
 }
 
 // Module is a module

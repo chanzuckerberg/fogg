@@ -60,15 +60,15 @@ func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates *packr.Box) error {
 	if e != nil {
 		return e
 	}
-	return applyCustomProviders(fs, p)
+	return applyCustomPlugins(fs, p)
 }
 
-func applyCustomProviders(fs afero.Fs, p *plan.Plan) (err error) {
-	for providerName, customProvider := range p.Plugins.CustomProviders {
-		log.Infof("Applying custom provider %s", providerName)
-		err = customProvider.Install(fs, providerName)
+func applyCustomPlugins(fs afero.Fs, p *plan.Plan) (err error) {
+	for pluginName, plugin := range p.Plugins.CustomBinaries {
+		log.Infof("Applying custom plugin %s", pluginName)
+		err = plugin.Install(fs, pluginName)
 		if err != nil {
-			return errors.Wrapf(err, "Error applying custom provider %s", providerName)
+			return errors.Wrapf(err, "Error applying custom plugin %s", pluginName)
 		}
 	}
 	return

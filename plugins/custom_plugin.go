@@ -1,4 +1,4 @@
-package providers
+package plugins
 
 import (
 	"archive/tar"
@@ -14,40 +14,40 @@ import (
 	"github.com/spf13/afero"
 )
 
-// TypeProviderFormat is the provider format such as binary, zip, tar
-type TypeProviderFormat string
+// TypePluginFormat is the plugin format such as binary, zip, tar
+type TypePluginFormat string
 
 const (
-	// TypeProviderFormatTar is a tar archived provider
-	TypeProviderFormatTar TypeProviderFormat = "tar"
+	// TypePluginFormatTar is a tar archived plugin
+	TypePluginFormatTar TypePluginFormat = "tar"
 )
 
-// CustomProvider is a custom terraform provider
-type CustomProvider struct {
-	URL    string             `json:"url" validate:"required"`
-	Format TypeProviderFormat `json:"format" validate:"required"`
+// CustomPlugin is a custom plugin
+type CustomPlugin struct {
+	URL    string           `json:"url" validate:"required"`
+	Format TypePluginFormat `json:"format" validate:"required"`
 }
 
-// Install installs the custom provider
-func (cp *CustomProvider) Install(fs afero.Fs, providerName string) error {
+// Install installs the custom plugin
+func (cp *CustomPlugin) Install(fs afero.Fs, pluginName string) error {
 	if cp == nil {
-		return errors.New("nil CustomProvider")
+		return errors.New("nil CustomPlugin")
 	}
 	if fs == nil {
 		return errors.New("nil fs")
 	}
 
-	tmpPath, err := cp.fetch(providerName)
+	tmpPath, err := cp.fetch(pluginName)
 	defer os.Remove(tmpPath) // clean up
 	if err != nil {
 		return err
 	}
-	return cp.process(fs, providerName, tmpPath)
+	return cp.process(fs, pluginName, tmpPath)
 }
 
-// fetch fetches the custom provider at URL
-func (cp *CustomProvider) fetch(providerName string) (string, error) {
-	tmpFile, err := ioutil.TempFile("", providerName)
+// fetch fetches the custom plugin at URL
+func (cp *CustomPlugin) fetch(pluginName string) (string, error) {
+	tmpFile, err := ioutil.TempFile("", pluginName)
 	if err != nil {
 		return "", errors.Wrap(err, "could not create temporary directory")
 	}
@@ -60,25 +60,25 @@ func (cp *CustomProvider) fetch(providerName string) (string, error) {
 	return tmpFile.Name(), errors.Wrap(err, "could not download file")
 }
 
-// process the custom provider
-func (cp *CustomProvider) process(fs afero.Fs, providerName string, path string) error {
+// process the custom plugin
+func (cp *CustomPlugin) process(fs afero.Fs, pluginName string, path string) error {
 	switch cp.Format {
-	case TypeProviderFormatTar:
+	case TypePluginFormatTar:
 		return cp.processTar(fs, path)
 	default:
-		return errors.Errorf("Unknown provider format %s", cp.Format)
+		return errors.Errorf("Unknown plugin format %s", cp.Format)
 	}
 }
 
 // https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
-func (cp *CustomProvider) processTar(fs afero.Fs, path string) error {
-	err := fs.MkdirAll(CustomPluginCacheDir, 0755)
+func (cp *CustomPlugin) processTar(fs afero.Fs, path string) error {
+	err := fs.MkdirAll(CustomPluginDir, 0755)
 	if err != nil {
-		return errors.Wrapf(err, "Could not create directory %s", CustomPluginCacheDir)
+		return errors.Wrapf(err, "Could not create directory %s", CustomPluginDir)
 	}
 	f, err := os.Open(path)
 	if err != nil {
-		return errors.Wrap(err, "could not read staged custom provider")
+		return errors.Wrap(err, "could not read staged custom plugin")
 	}
 	defer f.Close()
 	gzr, err := gzip.NewReader(f)
@@ -98,7 +98,7 @@ func (cp *CustomProvider) processTar(fs afero.Fs, path string) error {
 			return errors.New("Nil tar file header")
 		}
 		// the target location where the dir/file should be created
-		target := filepath.Join(CustomPluginCacheDir, header.Name)
+		target := filepath.Join(CustomPluginDir, header.Name)
 		switch header.Typeflag {
 		case tar.TypeDir: // if its a dir and it doesn't exist create it
 			err := fs.MkdirAll(target, 0755)

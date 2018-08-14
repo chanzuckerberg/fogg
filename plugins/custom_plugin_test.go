@@ -1,4 +1,4 @@
-package providers_test
+package plugins_test
 
 import (
 	"archive/tar"
@@ -12,14 +12,14 @@ import (
 	"path"
 	"testing"
 
-	"github.com/chanzuckerberg/fogg/providers"
+	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCustomProviderTar(t *testing.T) {
+func TestCustomPluginTar(t *testing.T) {
 	a := assert.New(t)
-	providerName := "test-provider"
+	pluginName := "test-provider"
 	fs := afero.NewMemMapFs()
 
 	files := []string{"test.txt", "terraform-provider-testing"}
@@ -34,12 +34,12 @@ func TestCustomProviderTar(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	customProvider := &providers.CustomProvider{
+	customPlugin := &plugins.CustomPlugin{
 		URL:    ts.URL,
-		Format: providers.TypeProviderFormatTar,
+		Format: plugins.TypePluginFormatTar,
 	}
 
-	err := customProvider.Install(fs, providerName)
+	err := customPlugin.Install(fs, pluginName)
 	a.Nil(err)
 
 	afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
@@ -48,7 +48,7 @@ func TestCustomProviderTar(t *testing.T) {
 	})
 
 	for _, file := range files {
-		filePath := path.Join(providers.CustomPluginCacheDir, file)
+		filePath := path.Join(plugins.CustomPluginDir, file)
 		fi, err := fs.Stat(filePath)
 		a.Nil(err)
 		a.False(fi.IsDir())

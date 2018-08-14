@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/chanzuckerberg/fogg/config"
-	"github.com/chanzuckerberg/fogg/providers"
+	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/pkg/errors"
 )
@@ -58,7 +58,7 @@ type Env struct {
 
 // Plugins contains a plan around terraform plugins
 type Plugins struct {
-	CustomProviders map[string]*providers.CustomProvider
+	CustomBinaries map[string]*plugins.CustomPlugin
 }
 
 type Plan struct {
@@ -77,7 +77,7 @@ func Eval(config *config.Config, verbose bool) (*Plan, error) {
 		return nil, errors.Wrap(e, "unable to parse fogg version")
 	}
 	p.Version = v
-	p.Plugins.CustomProviders = config.Plugins.CustomProviders
+	p.Plugins.CustomBinaries = config.Plugins.CustomBinaries
 
 	accounts, err := buildAccounts(config)
 	if err != nil {
@@ -152,10 +152,10 @@ func Print(p *Plan) error {
 
 	fmt.Println("Plugins:")
 
-	for name, customProvider := range p.Plugins.CustomProviders {
+	for name, customPlugin := range p.Plugins.CustomBinaries {
 		fmt.Printf("\t%s:\n", name)
-		fmt.Printf("\t\turl: %s\n", customProvider.URL)
-		fmt.Printf("\t\tformat: %s\n", customProvider.Format)
+		fmt.Printf("\t\turl: %s\n", customPlugin.URL)
+		fmt.Printf("\t\tformat: %s\n", customPlugin.Format)
 	}
 
 	fmt.Println("Envs:")
