@@ -27,6 +27,7 @@ type defaults struct {
 	Owner              string            `json:"owner" validate:"required"`
 	Project            string            `json:"project" validate:"required"`
 	TerraformVersion   string            `json:"terraform_version" validate:"required"`
+	DockerImageVersion string            `json:"docker_image_version" validate:"required"`
 }
 
 type Account struct {
@@ -42,6 +43,7 @@ type Account struct {
 	Owner              *string           `json:"owner"`
 	Project            *string           `json:"project"`
 	TerraformVersion   *string           `json:"terraform_version"`
+	DockerImageVersion *string           `json:"docker_image_version"`
 }
 
 type Env struct {
@@ -52,6 +54,7 @@ type Env struct {
 	AWSRegionBackend   *string           `json:"aws_region_backend"`
 	AWSRegionProvider  *string           `json:"aws_region_provider"`
 	AWSRegions         []string          `json:"aws_regions"`
+	DockerImageVersion *string           `json:"docker_image_version"`
 	ExtraVars          map[string]string `json:"extra_vars,omitempty"`
 	InfraBucket        *string           `json:"infra_s3_bucket"`
 	Owner              *string           `json:"owner"`
@@ -70,6 +73,7 @@ type Component struct {
 	AWSRegionBackend   *string           `json:"aws_region_backend"`
 	AWSRegionProvider  *string           `json:"aws_region_provider"`
 	AWSRegions         []string          `json:"aws_regions"`
+	DockerImageVersion *string           `json:"docker_image_version"`
 	ExtraVars          map[string]string `json:"extra_vars,omitempty"`
 	InfraBucket        *string           `json:"infra_s3_bucket"`
 	ModuleSource       *string           `json:"module_source"`
@@ -79,7 +83,8 @@ type Component struct {
 }
 
 type Module struct {
-	TerraformVersion *string `json:"terraform_version"`
+	DockerImageVersion *string `json:"docker_image_version"`
+	TerraformVersion   *string `json:"terraform_version"`
 }
 
 type Config struct {
@@ -120,6 +125,7 @@ func InitConfig(project, region, bucket, awsProfile, owner, awsProviderVersion s
 			Owner:              owner,
 			Project:            project,
 			TerraformVersion:   "0.11.7",
+			DockerImageVersion: "0.11.0",
 		},
 		Accounts: map[string]Account{},
 		Envs:     map[string]Env{},

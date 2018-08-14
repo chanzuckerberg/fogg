@@ -22,37 +22,41 @@ type AWSConfiguration struct {
 
 type account struct {
 	AWSConfiguration
-	AllAccounts      map[string]int64
-	ExtraVars        map[string]string
-	Owner            string
-	Project          string
-	TerraformVersion string
+	AllAccounts        map[string]int64
+	DockerImageVersion string
+	ExtraVars          map[string]string
+	Owner              string
+	Project            string
+	TerraformVersion   string
 }
 
 type Module struct {
-	TerraformVersion string
+	DockerImageVersion string
+	TerraformVersion   string
 }
 
 type Component struct {
 	AWSConfiguration
-	Component        string
-	Env              string
-	ExtraVars        map[string]string
-	ModuleSource     *string
-	OtherComponents  []string
-	Owner            string
-	Project          string
-	TerraformVersion string
+	Component          string
+	DockerImageVersion string
+	Env                string
+	ExtraVars          map[string]string
+	ModuleSource       *string
+	OtherComponents    []string
+	Owner              string
+	Project            string
+	TerraformVersion   string
 }
 
 type Env struct {
 	AWSConfiguration
-	Components       map[string]Component
-	Env              string
-	ExtraVars        map[string]string
-	Owner            string
-	Project          string
-	TerraformVersion string
+	Components         map[string]Component
+	DockerImageVersion string
+	Env                string
+	ExtraVars          map[string]string
+	Owner              string
+	Project            string
+	TerraformVersion   string
 }
 
 type Plan struct {
@@ -118,6 +122,7 @@ func Print(p *Plan) error {
 		fmt.Printf("\t\towner: %v\n", account.Owner)
 		fmt.Printf("\t\tproject: %v\n", account.Project)
 		fmt.Printf("\t\tterraform_version: %v\n", account.TerraformVersion)
+		fmt.Printf("\t\tdocker_image_version: %v\n", account.DockerImageVersion)
 
 		fmt.Printf("\t\tall_accounts:\n")
 		for acct, id := range account.AllAccounts {
@@ -140,6 +145,7 @@ func Print(p *Plan) error {
 	fmt.Printf("\towner: %v\n", p.Global.Owner)
 	fmt.Printf("\tproject: %v\n", p.Global.Project)
 	fmt.Printf("\tterraform_version: %v\n", p.Global.TerraformVersion)
+	fmt.Printf("\tdocker_image_version: %v\n", p.Global.DockerImageVersion)
 
 	fmt.Println("Envs:")
 
@@ -159,6 +165,7 @@ func Print(p *Plan) error {
 		fmt.Printf("\t\towner: %v\n", env.Owner)
 		fmt.Printf("\t\tproject: %v\n", env.Project)
 		fmt.Printf("\t\tterraform_version: %v\n", env.TerraformVersion)
+		fmt.Printf("\t\tdocker_image_version: %v\n", env.DockerImageVersion)
 
 		fmt.Println("\t\tComponents:")
 
@@ -178,6 +185,7 @@ func Print(p *Plan) error {
 			fmt.Printf("\t\t\t\towner: %v\n", component.Owner)
 			fmt.Printf("\t\t\t\tproject: %v\n", component.Project)
 			fmt.Printf("\t\t\t\tterraform_version: %v\n", component.TerraformVersion)
+			fmt.Printf("\t\t\t\tdocker_image_version: %v\n", component.DockerImageVersion)
 		}
 
 	}
@@ -186,6 +194,7 @@ func Print(p *Plan) error {
 	for name, module := range p.Modules {
 		fmt.Printf("\t%s:\n", name)
 		fmt.Printf("\t\tterraform_version: %s\n", module.TerraformVersion)
+		fmt.Printf("\t\tdocker_image_version: %v\n", module.DockerImageVersion)
 	}
 	return nil
 }
@@ -209,6 +218,7 @@ func buildAccounts(c *config.Config) (map[string]account, error) {
 		accountPlan.AWSProviderVersion = resolveRequired(defaults.AWSProviderVersion, config.AWSProviderVersion)
 		accountPlan.AllAccounts = resolveAccounts(c.Accounts)
 		accountPlan.TerraformVersion = resolveRequired(defaults.TerraformVersion, config.TerraformVersion)
+		accountPlan.DockerImageVersion = resolveRequired(defaults.DockerImageVersion, config.DockerImageVersion)
 		accountPlan.InfraBucket = resolveRequired(defaults.InfraBucket, config.InfraBucket)
 		accountPlan.Owner = resolveRequired(defaults.Owner, config.Owner)
 		accountPlan.Project = resolveRequired(defaults.Project, config.Project)
@@ -226,6 +236,7 @@ func buildModules(c *config.Config) (map[string]Module, error) {
 		modulePlan := Module{}
 
 		modulePlan.TerraformVersion = resolveRequired(c.Defaults.TerraformVersion, conf.TerraformVersion)
+		modulePlan.DockerImageVersion = resolveRequired(c.Defaults.DockerImageVersion, conf.DockerImageVersion)
 		modulePlans[name] = modulePlan
 	}
 	return modulePlans, nil
@@ -254,6 +265,7 @@ func buildGlobal(conf *config.Config) (Component, error) {
 	// componentPlan.AccountID = conf.Defaults.AccountID
 
 	componentPlan.TerraformVersion = conf.Defaults.TerraformVersion
+	componentPlan.DockerImageVersion = conf.Defaults.DockerImageVersion
 	componentPlan.InfraBucket = conf.Defaults.InfraBucket
 	componentPlan.Owner = conf.Defaults.Owner
 	componentPlan.Project = conf.Defaults.Project
@@ -284,6 +296,7 @@ func buildEnvs(conf *config.Config) (map[string]Env, error) {
 		envPlan.AWSProviderVersion = resolveRequired(defaults.AWSProviderVersion, envConf.AWSProviderVersion)
 
 		envPlan.TerraformVersion = resolveRequired(defaults.TerraformVersion, envConf.TerraformVersion)
+		envPlan.DockerImageVersion = resolveRequired(defaults.DockerImageVersion, envConf.DockerImageVersion)
 		envPlan.InfraBucket = resolveRequired(defaults.InfraBucket, envConf.InfraBucket)
 		envPlan.Owner = resolveRequired(defaults.Owner, envConf.Owner)
 		envPlan.Project = resolveRequired(defaults.Project, envConf.Project)
@@ -303,6 +316,7 @@ func buildEnvs(conf *config.Config) (map[string]Env, error) {
 			componentPlan.AccountID = resolveOptionalInt(envPlan.AccountID, componentConf.AccountID)
 
 			componentPlan.TerraformVersion = resolveRequired(envPlan.TerraformVersion, componentConf.TerraformVersion)
+			componentPlan.DockerImageVersion = resolveRequired(envPlan.DockerImageVersion, componentConf.DockerImageVersion)
 			componentPlan.InfraBucket = resolveRequired(envPlan.InfraBucket, componentConf.InfraBucket)
 			componentPlan.Owner = resolveRequired(envPlan.Owner, componentConf.Owner)
 			componentPlan.Project = resolveRequired(envPlan.Project, componentConf.Project)

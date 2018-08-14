@@ -76,12 +76,14 @@ func TestPlanBasic(t *testing.T) {
 	assert.NotNil(t, plan.Modules)
 	assert.Len(t, plan.Modules, 1)
 	assert.Equal(t, "0.100.0", plan.Modules["my_module"].TerraformVersion)
+	assert.Equal(t, "1.100.0", plan.Modules["my_module"].DockerImageVersion)
 
 	assert.NotNil(t, plan.Envs)
 	assert.Len(t, plan.Envs, 2)
 
 	assert.NotNil(t, plan.Envs["staging"])
 	assert.Equal(t, plan.Envs["staging"].TerraformVersion, "0.100.0")
+	assert.Equal(t, plan.Envs["staging"].DockerImageVersion, "1.100.0")
 
 	assert.NotNil(t, plan.Envs["staging"].Components)
 	assert.Len(t, plan.Envs["staging"].Components, 3)
@@ -94,6 +96,7 @@ func TestPlanBasic(t *testing.T) {
 
 	assert.NotNil(t, plan.Envs["staging"].Components["comp1"])
 	assert.Equal(t, "0.100.0", plan.Envs["staging"].Components["comp1"].TerraformVersion)
+	assert.Equal(t, "1.100.0", plan.Envs["staging"].Components["comp1"].DockerImageVersion)
 }
 
 func TestExtraVarsComposition(t *testing.T) {

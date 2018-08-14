@@ -7,6 +7,7 @@ REPO_RELATIVE_PATH := $(shell git rev-parse --show-prefix)
 # We need to do this because `terraform fmt` recurses into .terraform/modules
 # and wont' accept more than one file at a time.
 TF=$(wildcard *.tf)
+DOCKER_TAG={{ .DockerImageVersion }}_TF{{ .TerraformVersion }}
 
 docker_base = \
 	docker run -it --rm -e HOME=/home -v $$HOME/.aws:/home/.aws -v $(REPO_ROOT):/repo \
@@ -14,8 +15,8 @@ docker_base = \
 	-e RUN_USER_ID=$(shell id -u) -e RUN_GROUP_ID=$(shell id -g) \
 	-e TF_PLUGIN_CACHE_DIR="/repo/.terraform.d/plugin-cache" -e TF="$(TF)" \
 	-w /repo/$(REPO_RELATIVE_PATH) $(TF_VARS) $$(sh $(REPO_ROOT)/scripts/docker-ssh-mount.sh)
-docker_terraform = $(docker_base) chanzuckerberg/terraform:{{ .TerraformVersion }}
-docker_sh = $(docker_base) --entrypoint='/bin/sh' chanzuckerberg/terraform:{{ .TerraformVersion }}
+docker_terraform = $(docker_base) chanzuckerberg/terraform:$(DOCKER_TAG)
+docker_sh = $(docker_base) --entrypoint='/bin/sh' chanzuckerberg/terraform:$(DOCKER_TAG)
 
 all: fmt lint doc
 
