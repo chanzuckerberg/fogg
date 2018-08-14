@@ -64,7 +64,7 @@ func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates *packr.Box) error {
 }
 
 func applyPlugins(fs afero.Fs, p *plan.Plan) (err error) {
-	for pluginName, plugin := range p.Plugins.CustomBinaries {
+	for pluginName, plugin := range p.Plugins.CustomPlugins {
 		log.Infof("Applying plugin %s", pluginName)
 		err = plugin.Install(fs, pluginName)
 		if err != nil {
