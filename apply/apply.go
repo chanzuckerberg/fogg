@@ -3,6 +3,7 @@ package apply
 import (
 	"bytes"
 	"fmt"
+	"github.com/chanzuckerberg/fogg/plugins"
 	"io"
 	"net/url"
 	"os"
@@ -64,11 +65,22 @@ func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates *packr.Box) error {
 }
 
 func applyPlugins(fs afero.Fs, p *plan.Plan) (err error) {
+	apply := func(name string, plugin *plugins.CustomPlugin) error {
+		log.Infof("Applying plugin %s", name)
+		return errors.Wrapf(plugin.Install(fs, name), "Error applying plugin %s", name)
+	}
+
 	for pluginName, plugin := range p.Plugins.CustomPlugins {
-		log.Infof("Applying plugin %s", pluginName)
-		err = plugin.Install(fs, pluginName)
+		err = apply(pluginName, plugin)
 		if err != nil {
-			return errors.Wrapf(err, "Error applying plugin %s", pluginName)
+			return err
+		}
+	}
+
+	for providerName, provider := range p.Plugins.TerraformProviders {
+		err = apply(providerName, provider)
+		if err != nil {
+			return err
 		}
 	}
 	return

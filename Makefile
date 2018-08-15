@@ -27,7 +27,7 @@ coverage: ## run the go coverage tool, reading file coverage.out
 test: packr ## run the tests
 	go test -cover ./...
 
-install: packr # install the fogg binary in $GOPATH/bin
+install: packr ## install the fogg binary in $GOPATH/bin
 	go install ${LDFLAGS} .
 
 help: ## display help for this makefile

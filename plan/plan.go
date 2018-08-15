@@ -9,6 +9,11 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	// The version of the chanzuckerberg/terraform docker image to use
+	dockerImageVersion = "0.1.1"
+)
+
 type AWSConfiguration struct {
 	AccountID          *int64
 	AccountName        string
@@ -22,38 +27,43 @@ type AWSConfiguration struct {
 }
 
 type account struct {
+	AllAccounts map[string]int64
 	AWSConfiguration
-	AllAccounts      map[string]int64
-	ExtraVars        map[string]string
-	Owner            string
-	Project          string
-	TerraformVersion string
+	DockerImageVersion string
+	ExtraVars          map[string]string
+	Owner              string
+	Project            string
+	TerraformVersion   string
 }
 
 type Module struct {
-	TerraformVersion string
+	DockerImageVersion string
+	TerraformVersion   string
 }
 
 type Component struct {
 	AWSConfiguration
-	Component        string
-	Env              string
-	ExtraVars        map[string]string
-	ModuleSource     *string
-	OtherComponents  []string
-	Owner            string
-	Project          string
-	TerraformVersion string
+
+	Component          string
+	DockerImageVersion string
+	Env                string
+	ExtraVars          map[string]string
+	ModuleSource       *string
+	OtherComponents    []string
+	Owner              string
+	Project            string
+	TerraformVersion   string
 }
 
 type Env struct {
 	AWSConfiguration
-	Components       map[string]Component
-	Env              string
-	ExtraVars        map[string]string
-	Owner            string
-	Project          string
-	TerraformVersion string
+	Components         map[string]Component
+	DockerImageVersion string
+	Env                string
+	ExtraVars          map[string]string
+	Owner              string
+	Project            string
+	TerraformVersion   string
 }
 
 // Plugins contains a plan around plugins
@@ -94,7 +104,6 @@ func Eval(config *config.Config, verbose bool) (*Plan, error) {
 		return nil, errors.Wrap(e, "unable to parse fogg version")
 	}
 	p.Version = v
-
 	p.Plugins.SetCustomPlugins(config.Plugins.CustomPlugins)
 	p.Plugins.SetTerraformProviders(config.Plugins.TerraformProviders)
 
@@ -232,6 +241,7 @@ func buildAccounts(c *config.Config) (map[string]account, error) {
 	accountPlans := make(map[string]account, len(c.Accounts))
 	for name, config := range c.Accounts {
 		accountPlan := account{}
+		accountPlan.DockerImageVersion = dockerImageVersion
 
 		accountPlan.AccountName = name
 		accountPlan.AccountID = resolveOptionalInt(c.Defaults.AccountID, config.AccountID)
@@ -261,6 +271,7 @@ func buildModules(c *config.Config) (map[string]Module, error) {
 	for name, conf := range c.Modules {
 		modulePlan := Module{}
 
+		modulePlan.DockerImageVersion = dockerImageVersion
 		modulePlan.TerraformVersion = resolveRequired(c.Defaults.TerraformVersion, conf.TerraformVersion)
 		modulePlans[name] = modulePlan
 	}
@@ -277,6 +288,7 @@ func buildGlobal(conf *config.Config) (Component, error) {
 	// Global just uses defaults because that's the way sicc worked. We should make it directly configurable.
 	componentPlan := Component{}
 
+	componentPlan.DockerImageVersion = dockerImageVersion
 	componentPlan.AccountID = conf.Defaults.AccountID
 
 	componentPlan.AWSRegionBackend = conf.Defaults.AWSRegionBackend
@@ -310,6 +322,7 @@ func buildEnvs(conf *config.Config) (map[string]Env, error) {
 
 		envPlan.AccountID = resolveOptionalInt(conf.Defaults.AccountID, envConf.AccountID)
 		envPlan.Env = envName
+		envPlan.DockerImageVersion = dockerImageVersion
 
 		envPlan.AWSRegionBackend = resolveRequired(defaults.AWSRegionBackend, envConf.AWSRegionBackend)
 		envPlan.AWSRegionProvider = resolveRequired(defaults.AWSRegionProvider, envConf.AWSRegionProvider)
@@ -345,6 +358,7 @@ func buildEnvs(conf *config.Config) (map[string]Env, error) {
 
 			componentPlan.Env = envName
 			componentPlan.Component = componentName
+			componentPlan.DockerImageVersion = dockerImageVersion
 			componentPlan.OtherComponents = otherComponentNames(conf.Envs[envName].Components, componentName)
 			componentPlan.ModuleSource = componentConf.ModuleSource
 			componentPlan.ExtraVars = resolveExtraVars(envPlan.ExtraVars, componentConf.ExtraVars)
