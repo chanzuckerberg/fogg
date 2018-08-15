@@ -72,16 +72,16 @@ type Plugins struct {
 	TerraformProviders map[string]*plugins.CustomPlugin
 }
 
-// SetCustomPlugins determines the plan for customPlugins
-func (p *Plugins) SetCustomPlugins(customPlugins map[string]*plugins.CustomPlugin) {
+// SetCustomPluginsPlan determines the plan for customPlugins
+func (p *Plugins) SetCustomPluginsPlan(customPlugins map[string]*plugins.CustomPlugin) {
 	p.CustomPlugins = customPlugins
 	for _, plugin := range p.CustomPlugins {
 		plugin.SetTargetPath(plugins.CustomPluginDir)
 	}
 }
 
-// SetTerraformProviders determines the plan for customPlugins
-func (p *Plugins) SetTerraformProviders(terraformProviders map[string]*plugins.CustomPlugin) {
+// SetTerraformProvidersPlan determines the plan for customPlugins
+func (p *Plugins) SetTerraformProvidersPlan(terraformProviders map[string]*plugins.CustomPlugin) {
 	p.TerraformProviders = terraformProviders
 	for _, plugin := range p.TerraformProviders {
 		plugin.SetTargetPath(plugins.TerraformCustomPluginCacheDir)
@@ -104,8 +104,8 @@ func Eval(config *config.Config, verbose bool) (*Plan, error) {
 		return nil, errors.Wrap(e, "unable to parse fogg version")
 	}
 	p.Version = v
-	p.Plugins.SetCustomPlugins(config.Plugins.CustomPlugins)
-	p.Plugins.SetTerraformProviders(config.Plugins.TerraformProviders)
+	p.Plugins.SetCustomPluginsPlan(config.Plugins.CustomPlugins)
+	p.Plugins.SetTerraformProvidersPlan(config.Plugins.TerraformProviders)
 
 	accounts, err := buildAccounts(config)
 	if err != nil {
