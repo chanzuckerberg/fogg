@@ -10,7 +10,7 @@ import (
 
 const (
 	// The version of the chanzuckerberg/terraform docker image to use
-	dockerImageVersion = "0.1.0"
+	dockerImageVersion = "0.1.1"
 )
 
 type AWSConfiguration struct {
