@@ -81,7 +81,8 @@ type Component struct {
 
 // Plugins contains configuration around plugins
 type Plugins struct {
-	CustomPlugins map[string]*plugins.CustomPlugin `json:"custom_plugins,omitempty"`
+	CustomPlugins      map[string]*plugins.CustomPlugin `json:"custom_plugins,omitempty"`
+	TerraformProviders map[string]*plugins.CustomPlugin `json:"terraform_providers,omitempty"`
 }
 
 // Module is a module

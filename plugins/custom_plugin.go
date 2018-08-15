@@ -24,8 +24,9 @@ const (
 
 // CustomPlugin is a custom plugin
 type CustomPlugin struct {
-	URL    string           `json:"url" validate:"required"`
-	Format TypePluginFormat `json:"format" validate:"required"`
+	URL       string           `json:"url" validate:"required"`
+	Format    TypePluginFormat `json:"format" validate:"required"`
+	targetDir string
 }
 
 // Install installs the custom plugin
@@ -43,6 +44,11 @@ func (cp *CustomPlugin) Install(fs afero.Fs, pluginName string) error {
 		return err
 	}
 	return cp.process(fs, pluginName, tmpPath)
+}
+
+// SetTargetPath sets the target path for this plugin
+func (cp *CustomPlugin) SetTargetPath(path string) {
+	cp.targetDir = path
 }
 
 // fetch fetches the custom plugin at URL
@@ -98,7 +104,7 @@ func (cp *CustomPlugin) processTar(fs afero.Fs, path string) error {
 			return errors.New("Nil tar file header")
 		}
 		// the target location where the dir/file should be created
-		target := filepath.Join(CustomPluginDir, header.Name)
+		target := filepath.Join(cp.targetDir, header.Name)
 		switch header.Typeflag {
 		case tar.TypeDir: // if its a dir and it doesn't exist create it
 			err := fs.MkdirAll(target, 0755)
