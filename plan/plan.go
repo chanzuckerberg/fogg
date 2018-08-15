@@ -84,7 +84,7 @@ func (p *Plugins) SetCustomPlugins(customPlugins map[string]*plugins.CustomPlugi
 func (p *Plugins) SetTerraformProviders(terraformProviders map[string]*plugins.CustomPlugin) {
 	p.TerraformProviders = terraformProviders
 	for _, plugin := range p.TerraformProviders {
-		plugin.SetTargetPath(plugins.TerraformPluginCacheDir)
+		plugin.SetTargetPath(plugins.TerraformCustomPluginCacheDir)
 	}
 }
 
