@@ -112,7 +112,7 @@ func (cp *CustomPlugin) processTar(fs afero.Fs, path string) error {
 				return errors.Wrapf(err, "tar: could not create directory %s", target)
 			}
 		case tar.TypeReg: // if it is a file create it
-			destFile, err := fs.Create(target)
+			destFile, err := os.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
 			if err != nil {
 				return errors.Wrapf(err, "tar: could not open destination file for %s", target)
 			}
