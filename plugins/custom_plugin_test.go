@@ -38,9 +38,8 @@ func TestCustomPluginTar(t *testing.T) {
 		URL:    ts.URL,
 		Format: plugins.TypePluginFormatTar,
 	}
-
-	err := customPlugin.Install(fs, pluginName)
-	a.Nil(err)
+	customPlugin.SetTargetPath(plugins.CustomPluginDir)
+	a.Nil(customPlugin.Install(fs, pluginName))
 
 	afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
 		a.Nil(err)
@@ -52,6 +51,7 @@ func TestCustomPluginTar(t *testing.T) {
 		fi, err := fs.Stat(filePath)
 		a.Nil(err)
 		a.False(fi.IsDir())
+		a.Equal(fi.Mode(), os.FileMode(0664))
 
 		bytes, err := afero.ReadFile(fs, filePath)
 		a.Nil(err)
@@ -74,7 +74,7 @@ func generateTar(t *testing.T, files []string) string {
 		header := new(tar.Header)
 		header.Name = file
 		header.Size = int64(len([]byte(file)))
-		header.Mode = int64(0644)
+		header.Mode = int64(0664)
 		header.Typeflag = tar.TypeReg
 
 		a.Nil(tw.WriteHeader(header))

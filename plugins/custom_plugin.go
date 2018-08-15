@@ -78,9 +78,9 @@ func (cp *CustomPlugin) process(fs afero.Fs, pluginName string, path string) err
 
 // https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
 func (cp *CustomPlugin) processTar(fs afero.Fs, path string) error {
-	err := fs.MkdirAll(CustomPluginDir, 0755)
+	err := fs.MkdirAll(cp.targetDir, 0755)
 	if err != nil {
-		return errors.Wrapf(err, "Could not create directory %s", CustomPluginDir)
+		return errors.Wrapf(err, "Could not create directory %s", cp.targetDir)
 	}
 	f, err := os.Open(path)
 	if err != nil {
@@ -91,6 +91,7 @@ func (cp *CustomPlugin) processTar(fs afero.Fs, path string) error {
 	if err != nil {
 		return errors.Wrap(err, "could not create gzip reader")
 	}
+	defer gzr.Close()
 	tr := tar.NewReader(gzr)
 	for {
 		header, err := tr.Next()
@@ -111,8 +112,8 @@ func (cp *CustomPlugin) processTar(fs afero.Fs, path string) error {
 			if err != nil {
 				return errors.Wrapf(err, "tar: could not create directory %s", target)
 			}
-		case tar.TypeReg: // if it is a file create it
-			destFile, err := os.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
+		case tar.TypeReg: // if it is a file create it, preserving the file mode
+			destFile, err := fs.OpenFile(target, os.O_RDWR|os.O_CREATE|os.O_TRUNC, os.FileMode(header.Mode))
 			if err != nil {
 				return errors.Wrapf(err, "tar: could not open destination file for %s", target)
 			}
