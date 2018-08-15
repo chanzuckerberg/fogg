@@ -3,7 +3,6 @@ package apply
 import (
 	"bytes"
 	"fmt"
-	"github.com/chanzuckerberg/fogg/plugins"
 	"io"
 	"net/url"
 	"os"
@@ -14,6 +13,7 @@ import (
 
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/plan"
+	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/gobuffalo/packr"
