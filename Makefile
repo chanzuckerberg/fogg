@@ -18,16 +18,16 @@ packr: ## run the packr tool to generate our static files
 release: packr
 	goreleaser release --rm-dist
 
-build: ## build the binary
+build: packr ## build the binary
 	go build ${LDFLAGS} .
 
 coverage: ## run the go coverage tool, reading file coverage.out
 	go tool cover -html=coverage.out
 
-test: ## run the tests
+test: packr ## run the tests
 	go test -cover ./...
 
-install: ## install the fogg binary in $GOPATH/bin
+install: packr ## install the fogg binary in $GOPATH/bin
 	go install ${LDFLAGS} .
 
 help: ## display help for this makefile

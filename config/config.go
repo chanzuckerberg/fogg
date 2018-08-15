@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/spf13/afero"
@@ -78,15 +79,23 @@ type Component struct {
 	TerraformVersion   *string           `json:"terraform_version"`
 }
 
+// Plugins contains configuration around plugins
+type Plugins struct {
+	CustomPlugins      map[string]*plugins.CustomPlugin `json:"custom_plugins,omitempty"`
+	TerraformProviders map[string]*plugins.CustomPlugin `json:"terraform_providers,omitempty"`
+}
+
+// Module is a module
 type Module struct {
 	TerraformVersion *string `json:"terraform_version"`
 }
 
 type Config struct {
-	Defaults defaults           `json:"defaults"`
 	Accounts map[string]Account `json:"accounts"`
+	Defaults defaults           `json:"defaults"`
 	Envs     map[string]Env     `json:"envs"`
 	Modules  map[string]Module  `json:"modules"`
+	Plugins  Plugins            `json:"plugins"`
 }
 
 var allRegions = []string{

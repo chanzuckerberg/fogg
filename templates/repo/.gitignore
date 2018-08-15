@@ -9,6 +9,7 @@
 
 # Module directory
 .terraform/
+terraform/**/terraform.d
 
 # legacy
 .rato_pass

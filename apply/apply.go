@@ -13,6 +13,7 @@ import (
 
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/plan"
+	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/gobuffalo/packr"
@@ -52,16 +53,37 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T) error {
 	}
 
 	e = applyModules(fs, p.Modules, &tmp.Module)
-
 	return errors.Wrap(e, "unable to apply modules")
 }
 
 func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates *packr.Box) error {
-	e := applyTree(repoTemplates, fs, "", p)
+	e := applyTree(fs, repoTemplates, "", p)
 	if e != nil {
 		return e
 	}
-	return nil
+	return applyPlugins(fs, p)
+}
+
+func applyPlugins(fs afero.Fs, p *plan.Plan) (err error) {
+	apply := func(name string, plugin *plugins.CustomPlugin) error {
+		log.Infof("Applying plugin %s", name)
+		return errors.Wrapf(plugin.Install(fs, name), "Error applying plugin %s", name)
+	}
+
+	for pluginName, plugin := range p.Plugins.CustomPlugins {
+		err = apply(pluginName, plugin)
+		if err != nil {
+			return err
+		}
+	}
+
+	for providerName, provider := range p.Plugins.TerraformProviders {
+		err = apply(providerName, provider)
+		if err != nil {
+			return err
+		}
+	}
+	return
 }
 
 func applyGlobal(fs afero.Fs, p plan.Component, repoBox *packr.Box) error {
@@ -70,7 +92,7 @@ func applyGlobal(fs afero.Fs, p plan.Component, repoBox *packr.Box) error {
 	if e != nil {
 		return errors.Wrapf(e, "unable to make directory %s", path)
 	}
-	return applyTree(repoBox, fs, path, p)
+	return applyTree(fs, repoBox, path, p)
 }
 
 func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) (e error) {
@@ -80,7 +102,7 @@ func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) (e error) {
 		if e != nil {
 			return errors.Wrap(e, "unable to make directories for accounts")
 		}
-		e = applyTree(accountBox, fs, path, accountPlan)
+		e = applyTree(fs, accountBox, path, accountPlan)
 		if e != nil {
 			return errors.Wrap(e, "unable to apply templates to account")
 		}
@@ -88,15 +110,14 @@ func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) (e error) {
 	return nil
 }
 
-func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox *packr.Box) error {
-	var e error
+func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox *packr.Box) (e error) {
 	for module, modulePlan := range p {
 		path := fmt.Sprintf("%s/modules/%s", rootPath, module)
 		e = fs.MkdirAll(path, 0755)
 		if e != nil {
 			return errors.Wrapf(e, "unable to make path %s", path)
 		}
-		e = applyTree(moduleBox, fs, path, modulePlan)
+		e = applyTree(fs, moduleBox, path, modulePlan)
 		if e != nil {
 			return errors.Wrap(e, "unable to apply tree")
 		}
@@ -111,7 +132,7 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 		if e != nil {
 			return errors.Wrapf(e, "unable to make directory %s", path)
 		}
-		e := applyTree(envBox, fs, path, envPlan)
+		e := applyTree(fs, envBox, path, envPlan)
 		if e != nil {
 			return errors.Wrap(e, "unable to apply templates to env")
 		}
@@ -121,7 +142,7 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 			if e != nil {
 				return errors.Wrap(e, "unable to make directories for component")
 			}
-			e := applyTree(componentBox, fs, path, componentPlan)
+			e := applyTree(fs, componentBox, path, componentPlan)
 			if e != nil {
 				return errors.Wrap(e, "unable to apply templates for component")
 			}
@@ -138,7 +159,7 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 	return nil
 }
 
-func applyTree(source *packr.Box, dest afero.Fs, targetBasePath string, subst interface{}) (e error) {
+func applyTree(dest afero.Fs, source *packr.Box, targetBasePath string, subst interface{}) (e error) {
 	return source.Walk(func(path string, sourceFile packr.File) error {
 		extension := filepath.Ext(path)
 		target := getTargetPath(targetBasePath, path)
