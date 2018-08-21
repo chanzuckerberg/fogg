@@ -181,8 +181,8 @@ func applyTree(dest afero.Fs, source *packr.Box, targetBasePath string, subst in
 				return errors.Wrapf(e, "unable to create file %s", target)
 			}
 		} else {
-			log.Infof("%s copied", path)
-			e = afero.WriteReader(dest, path, sourceFile)
+			log.Infof("%s copied", target)
+			e = afero.WriteReader(dest, target, sourceFile)
 			if e != nil {
 				return errors.Wrap(e, "unable to copy file")
 			}
