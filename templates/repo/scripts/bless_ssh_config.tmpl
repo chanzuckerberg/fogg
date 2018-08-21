@@ -15,6 +15,7 @@ remoteUser = gets
 ENVS = %w[{{ .Envs | dict | keys | sortAlpha | join " "}}]
 
 d = ENVS.map do |env|
+    `cd terraform/envs/#{env}/cloud-env && make init`
     outputs = `cd terraform/envs/#{env}/cloud-env && terraform output -json`
     begin
         data = JSON.parse(outputs)
