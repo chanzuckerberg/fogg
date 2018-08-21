@@ -7,10 +7,10 @@ require 'json'
 require 'pp'
 
 puts "What is the absolute path to your blessclient?"
-blessclientPath = gets
+blessclientPath = gets.chomp
 
 puts "What remote user are you using?"
-remoteUser = gets
+remoteUser = gets.chomp
 
 ENVS = %w[{{ .Envs | dict | keys | sortAlpha | join " "}}]
 
