@@ -1,7 +1,7 @@
 language: go
 go:
-- '1.10'
+- '1.11'
 install:
-- curl -fSL --retry 5 https://github.com/gobuffalo/packr/releases/download/v1.13.1/packr_1.13.1_linux_amd64.tar.gz | sudo tar zx -C /usr/bin/
+- curl -fSL --retry 5 https://github.com/gobuffalo/packr/releases/download/v1.13.2/packr_1.13.2_linux_amd64.tar.gz | sudo tar zx -C /usr/bin/
 script:
 - make

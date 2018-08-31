@@ -4,7 +4,7 @@
 
 [[constraint]]
   name = "github.com/gobuffalo/packr"
-  version = "1.11.1"
+  version = "1.13.2"
 
 [[constraint]]
   name = "github.com/segmentio/go-prompt"

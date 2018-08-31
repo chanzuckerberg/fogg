@@ -31,7 +31,7 @@ func readAndValidateConfig(fs afero.Fs, configFile string, verbose bool) (*confi
 	}
 	if verbose {
 		log.Debug("CONFIG")
-		log.Debug("%#v\n=====", config)
+		log.Debugf("%#v\n=====", config)
 	}
 
 	err = config.Validate()
