@@ -84,12 +84,18 @@ func TestCustomPluginBin(t *testing.T) {
 		return nil
 	})
 
-	f, err := fs.Open(path.Join(plugins.CustomPluginDir, pluginName))
+	customPluginPath := path.Join(plugins.CustomPluginDir, pluginName)
+	f, err := fs.Open(customPluginPath)
 	a.Nil(err)
 
 	contents, err := ioutil.ReadAll(f)
 	a.Nil(err)
 	a.Equal(string(contents), fileContents)
+
+	fi, err := fs.Stat(customPluginPath)
+	a.Nil(err)
+	a.False(fi.IsDir())
+	a.Equal(fi.Mode().Perm(), os.FileMode(0755))
 }
 
 func generateTar(t *testing.T, files []string) string {
