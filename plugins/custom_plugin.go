@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -20,6 +21,8 @@ type TypePluginFormat string
 const (
 	// TypePluginFormatTar is a tar archived plugin
 	TypePluginFormatTar TypePluginFormat = "tar"
+	// TypePluginFormatBin is a binary plugin
+	TypePluginFormatBin TypePluginFormat = "bin"
 )
 
 // CustomPlugin is a custom plugin
@@ -74,6 +77,20 @@ func (cp *CustomPlugin) process(fs afero.Fs, pluginName string, path string) err
 	default:
 		return errors.Errorf("Unknown plugin format %s", cp.Format)
 	}
+}
+
+func (cp *CustomPlugin) processBin(fs afero.Fs, name string, downloadPath string) error {
+	err := fs.MkdirAll(cp.targetDir, 0755)
+	if err != nil {
+		return errors.Wrapf(err, "Could not create directory %s", cp.targetDir)
+	}
+	targetPath := path.Join(cp.targetDir, name)
+	err = os.Rename(downloadPath, targetPath)
+	if err != nil {
+		return errors.Wrapf(err, "Could not move %s to %s", downloadPath, targetPath)
+	}
+	err = os.Chmod(targetPath, os.FileMode(0644))
+	return errors.Wrapf(err, "Error making %s executable", targetPath)
 }
 
 // https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
