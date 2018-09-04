@@ -3,10 +3,12 @@ package plugins
 import (
 	"archive/tar"
 	"compress/gzip"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -20,6 +22,8 @@ type TypePluginFormat string
 const (
 	// TypePluginFormatTar is a tar archived plugin
 	TypePluginFormatTar TypePluginFormat = "tar"
+	// TypePluginFormatBin is a binary plugin
+	TypePluginFormatBin TypePluginFormat = "bin"
 )
 
 // CustomPlugin is a custom plugin
@@ -53,7 +57,7 @@ func (cp *CustomPlugin) SetTargetPath(path string) {
 
 // fetch fetches the custom plugin at URL
 func (cp *CustomPlugin) fetch(pluginName string) (string, error) {
-	tmpFile, err := ioutil.TempFile("", pluginName)
+	tmpFile, err := ioutil.TempFile("", fmt.Sprintf("%s-*.tmp", pluginName))
 	if err != nil {
 		return "", errors.Wrap(err, "could not create temporary directory")
 	}
@@ -71,9 +75,33 @@ func (cp *CustomPlugin) process(fs afero.Fs, pluginName string, path string) err
 	switch cp.Format {
 	case TypePluginFormatTar:
 		return cp.processTar(fs, path)
+	case TypePluginFormatBin:
+		return cp.processBin(fs, pluginName, path)
 	default:
 		return errors.Errorf("Unknown plugin format %s", cp.Format)
 	}
+}
+
+func (cp *CustomPlugin) processBin(fs afero.Fs, name string, downloadPath string) error {
+	err := fs.MkdirAll(cp.targetDir, 0755)
+	if err != nil {
+		return errors.Wrapf(err, "Could not create directory %s", cp.targetDir)
+	}
+	targetPath := path.Join(cp.targetDir, name)
+	src, err := os.Open(downloadPath)
+	if err != nil {
+		return errors.Wrapf(err, "Could not open downloaded file at %s", downloadPath)
+	}
+	dst, err := fs.Create(targetPath)
+	if err != nil {
+		return errors.Wrapf(err, "Could not open target file at %s", targetPath)
+	}
+	_, err = io.Copy(dst, src)
+	if err != nil {
+		return errors.Wrapf(err, "Could not move %s to %s", downloadPath, targetPath)
+	}
+	err = fs.Chmod(targetPath, os.FileMode(0755))
+	return errors.Wrapf(err, "Error making %s executable", targetPath)
 }
 
 // https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
