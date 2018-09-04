@@ -59,6 +59,33 @@ func TestCustomPluginTar(t *testing.T) {
 	}
 }
 
+func TestCustomPluginBin(t *testing.T) {
+	a := assert.New(t)
+	pluginName := "test-provider"
+	fs := afero.NewMemMapFs()
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, err := fmt.Fprint(w, "some file content")
+		a.Nil(err)
+	}))
+	defer ts.Close()
+
+	customPlugin := &plugins.CustomPlugin{
+		URL:    ts.URL,
+		Format: plugins.TypePluginFormatBin,
+	}
+
+	customPlugin.SetTargetPath(plugins.CustomPluginDir)
+	a.Nil(customPlugin.Install(fs, pluginName))
+
+	afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
+		fmt.Println(path)
+		a.Nil(err)
+		return nil
+	})
+
+}
+
 func generateTar(t *testing.T, files []string) string {
 	a := assert.New(t)
 
