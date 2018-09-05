@@ -27,17 +27,20 @@ type AWSConfiguration struct {
 }
 
 type account struct {
-	AllAccounts map[string]int64
 	AWSConfiguration
+
+	AllAccounts        map[string]int64
 	DockerImageVersion string
 	ExtraVars          map[string]string
 	Owner              string
+	PathToRepoRoot     string
 	Project            string
 	TerraformVersion   string
 }
 
 type Module struct {
 	DockerImageVersion string
+	PathToRepoRoot     string
 	TerraformVersion   string
 }
 
@@ -51,6 +54,7 @@ type Component struct {
 	ModuleSource       *string
 	OtherComponents    []string
 	Owner              string
+	PathToRepoRoot     string
 	Project            string
 	TerraformVersion   string
 }
@@ -153,6 +157,7 @@ func Print(p *Plan) error {
 		fmt.Printf("\t\tinfra_bucket: %v\n", account.InfraBucket)
 		fmt.Printf("\t\tname: %v\n", account.AccountName)
 		fmt.Printf("\t\towner: %v\n", account.Owner)
+		fmt.Printf("\t\tpath_to_repo_root %s\n:", account.PathToRepoRoot)
 		fmt.Printf("\t\tproject: %v\n", account.Project)
 		fmt.Printf("\t\tterraform_version: %v\n", account.TerraformVersion)
 
@@ -175,6 +180,7 @@ func Print(p *Plan) error {
 	fmt.Printf("\tname: %v\n", p.Global.AccountName)
 	fmt.Printf("\tother_p.Globals: %v\n", p.Global.OtherComponents)
 	fmt.Printf("\towner: %v\n", p.Global.Owner)
+	fmt.Printf("\t\tpath_to_repo_root %s\n:", p.Global.PathToRepoRoot)
 	fmt.Printf("\tproject: %v\n", p.Global.Project)
 	fmt.Printf("\tterraform_version: %v\n", p.Global.TerraformVersion)
 
@@ -261,6 +267,7 @@ func buildAccounts(c *config.Config) (map[string]account, error) {
 		accountPlan.TerraformVersion = resolveRequired(defaults.TerraformVersion, config.TerraformVersion)
 		accountPlan.InfraBucket = resolveRequired(defaults.InfraBucket, config.InfraBucket)
 		accountPlan.Owner = resolveRequired(defaults.Owner, config.Owner)
+		accountPlan.PathToRepoRoot = "../../../"
 		accountPlan.Project = resolveRequired(defaults.Project, config.Project)
 		accountPlan.ExtraVars = resolveExtraVars(defaults.ExtraVars, config.ExtraVars)
 
@@ -276,6 +283,7 @@ func buildModules(c *config.Config) (map[string]Module, error) {
 		modulePlan := Module{}
 
 		modulePlan.DockerImageVersion = dockerImageVersion
+		modulePlan.PathToRepoRoot = "../../../"
 		modulePlan.TerraformVersion = resolveRequired(c.Defaults.TerraformVersion, conf.TerraformVersion)
 		modulePlans[name] = modulePlan
 	}
@@ -308,6 +316,7 @@ func buildGlobal(conf *config.Config) (Component, error) {
 	componentPlan.TerraformVersion = conf.Defaults.TerraformVersion
 	componentPlan.InfraBucket = conf.Defaults.InfraBucket
 	componentPlan.Owner = conf.Defaults.Owner
+	componentPlan.PathToRepoRoot = "../../"
 	componentPlan.Project = conf.Defaults.Project
 	componentPlan.ExtraVars = conf.Defaults.ExtraVars
 
@@ -366,6 +375,7 @@ func buildEnvs(conf *config.Config) (map[string]Env, error) {
 			componentPlan.OtherComponents = otherComponentNames(conf.Envs[envName].Components, componentName)
 			componentPlan.ModuleSource = componentConf.ModuleSource
 			componentPlan.ExtraVars = resolveExtraVars(envPlan.ExtraVars, componentConf.ExtraVars)
+			componentPlan.PathToRepoRoot = "../../../../"
 
 			envPlan.Components[componentName] = componentPlan
 		}
