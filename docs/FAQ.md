@@ -8,7 +8,19 @@ When looking for a name we searched for people and things related to the concept
 
 SICC was a predecessor to fogg that we used only internally at CZI.
 
-## Managing Multiple AWS Accounts
+
+## fogg.json
+
+### What are modules
+[Terraform modules](https://www.terraform.io/intro/getting-started/modules.html) are a collection of terraform resources (including module and data).
+
+### What are accounts
+Accounts correspond to AWS accounts. These can configure singleton resources such as IAM users and groups.
+
+### What are components
+Components are instantiations of terraform modules and resources. These can be things like RDS databases and their corresponding security groups, S3 website hosting, ECS clusters, etc.
+
+### Managing Multiple AWS Accounts
 A typical multi account scenario is having your staging and prod environments split into two different aws accounts.
 A `fogg.json` that might address this use-case:
 ```json
@@ -45,7 +57,10 @@ A `fogg.json` that might address this use-case:
     "aws-prod-account": {
       "account_id": 11111111111,
       "aws_profile_backend": "fogg-profile-prod",
-      "aws_profile_provider": "fogg-profile-prod"
+      "aws_profile_provider": "fogg-profile-prod",
+      "components": {
+        "iam-users":{}
+      }
     }
   },
   "envs": {
