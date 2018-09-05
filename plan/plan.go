@@ -7,6 +7,7 @@ import (
 	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/pkg/errors"
+	yaml "gopkg.in/yaml.v2"
 )
 
 const (
@@ -15,59 +16,59 @@ const (
 )
 
 type AWSConfiguration struct {
-	AccountID          *int64
-	AccountName        string
-	AWSProfileBackend  string
-	AWSProfileProvider string
-	AWSProviderVersion string
-	AWSRegionBackend   string
-	AWSRegionProvider  string
-	AWSRegions         []string
-	InfraBucket        string
+	AccountID          *int64   `yaml:"account_id"`
+	AccountName        string   `yaml:"account_name"`
+	AWSProfileBackend  string   `yaml:"aws_profile_backend"`
+	AWSProfileProvider string   `yaml:"aws_profile_provider"`
+	AWSProviderVersion string   `yaml:"aws_provider_version"`
+	AWSRegionBackend   string   `yaml:"aws_region_backend"`
+	AWSRegionProvider  string   `yaml:"aws_region_provider"`
+	AWSRegions         []string `yaml:"aws_regions"`
+	InfraBucket        string   `yaml:"infra_bucket"`
+}
+
+type Common struct {
+	DockerImageVersion string `yaml:"docker_image_version"`
+	PathToRepoRoot     string `yaml:"path_to_repo_root"`
+	TerraformVersion   string `yaml:"terraform_version"`
 }
 
 type account struct {
-	AWSConfiguration
+	AWSConfiguration `yaml:",inline"`
+	Common           `yaml:",inline"`
 
-	AllAccounts        map[string]int64
-	DockerImageVersion string
-	ExtraVars          map[string]string
-	Owner              string
-	PathToRepoRoot     string
-	Project            string
-	TerraformVersion   string
+	AllAccounts map[string]int64  `yaml:"all_accounts"`
+	ExtraVars   map[string]string `yaml:"extra_vars"`
+	Owner       string
+	Project     string
 }
 
 type Module struct {
-	DockerImageVersion string
-	PathToRepoRoot     string
-	TerraformVersion   string
+	Common `yaml:",inline"`
 }
 
 type Component struct {
-	AWSConfiguration
+	AWSConfiguration `yaml:",inline"`
+	Common           `yaml:",inline"`
 
-	Component          string
-	DockerImageVersion string
-	Env                string
-	ExtraVars          map[string]string
-	ModuleSource       *string
-	OtherComponents    []string
-	Owner              string
-	PathToRepoRoot     string
-	Project            string
-	TerraformVersion   string
+	Component       string
+	Env             string
+	ExtraVars       map[string]string `yaml:"extra_vars"`
+	ModuleSource    *string           `yaml:"module_source"`
+	OtherComponents []string          `yaml:"other_components"`
+	Owner           string
+	Project         string
 }
 
 type Env struct {
-	AWSConfiguration
-	Components         map[string]Component
-	DockerImageVersion string
-	Env                string
-	ExtraVars          map[string]string
-	Owner              string
-	Project            string
-	TerraformVersion   string
+	AWSConfiguration `yaml:",inline"`
+	Common           `yaml:",inline"`
+
+	Components map[string]Component
+	Env        string
+	ExtraVars  map[string]string `yaml:"extra_vars"`
+	Owner      string
+	Project    string
 }
 
 // Plugins contains a plan around plugins
@@ -138,111 +139,9 @@ func Eval(config *config.Config, verbose bool) (*Plan, error) {
 }
 
 func Print(p *Plan) error {
-	fmt.Printf("Version: %s\n", p.Version)
-	fmt.Printf("fogg version: %s\n", p.Version)
-	fmt.Println("Accounts:")
-	for name, account := range p.Accounts {
-		fmt.Printf("\t%s:\n", name)
-		if account.AccountID != nil {
-			fmt.Printf("\t\taccount id: %d\n", account.AccountID)
-		}
-		fmt.Printf("\t\taccount_id: %d\n", account.AccountID)
-
-		fmt.Printf("\t\taws_profile_backend: %v\n", account.AWSProfileBackend)
-		fmt.Printf("\t\taws_profile_provider: %v\n", account.AWSProfileProvider)
-		fmt.Printf("\t\taws_provider_version: %v\n", account.AWSProviderVersion)
-		fmt.Printf("\t\taws_region_backend: %v\n", account.AWSRegionBackend)
-		fmt.Printf("\t\taws_region_provider: %v\n", account.AWSRegionProvider)
-		fmt.Printf("\t\taws_regions: %v\n", account.AWSRegions)
-		fmt.Printf("\t\tinfra_bucket: %v\n", account.InfraBucket)
-		fmt.Printf("\t\tname: %v\n", account.AccountName)
-		fmt.Printf("\t\towner: %v\n", account.Owner)
-		fmt.Printf("\t\tpath_to_repo_root %s\n:", account.PathToRepoRoot)
-		fmt.Printf("\t\tproject: %v\n", account.Project)
-		fmt.Printf("\t\tterraform_version: %v\n", account.TerraformVersion)
-
-		fmt.Printf("\t\tall_accounts:\n")
-		for acct, id := range account.AllAccounts {
-			fmt.Printf("\t\t\t%s: %d\n", acct, id)
-		}
-
-	}
-
-	fmt.Println("Global:")
-	fmt.Printf("\taccount_id: %d\n", p.Global.AccountID)
-	fmt.Printf("\taws_profile_backend: %v\n", p.Global.AWSProfileBackend)
-	fmt.Printf("\taws_profile_provider: %v\n", p.Global.AWSProfileProvider)
-	fmt.Printf("\taws_provider_version: %v\n", p.Global.AWSProviderVersion)
-	fmt.Printf("\taws_region_backend: %v\n", p.Global.AWSRegionBackend)
-	fmt.Printf("\taws_region_provider: %v\n", p.Global.AWSRegionProvider)
-	fmt.Printf("\taws_regions: %v\n", p.Global.AWSRegions)
-	fmt.Printf("\tinfra_bucket: %v\n", p.Global.InfraBucket)
-	fmt.Printf("\tname: %v\n", p.Global.AccountName)
-	fmt.Printf("\tother_p.Globals: %v\n", p.Global.OtherComponents)
-	fmt.Printf("\towner: %v\n", p.Global.Owner)
-	fmt.Printf("\t\tpath_to_repo_root %s\n:", p.Global.PathToRepoRoot)
-	fmt.Printf("\tproject: %v\n", p.Global.Project)
-	fmt.Printf("\tterraform_version: %v\n", p.Global.TerraformVersion)
-
-	fmt.Println("Plugins:")
-	for name, customPlugin := range p.Plugins.CustomPlugins {
-		fmt.Printf("\t%s:\n", name)
-		fmt.Printf("\t\turl: %s\n", customPlugin.URL)
-		fmt.Printf("\t\tformat: %s\n", customPlugin.Format)
-	}
-	for name, customProvider := range p.Plugins.TerraformProviders {
-		fmt.Printf("\t%s:\n", name)
-		fmt.Printf("\t\turl: %s\n", customProvider.URL)
-		fmt.Printf("\t\tformat: %s\n", customProvider.Format)
-	}
-
-	fmt.Println("Envs:")
-
-	for name, env := range p.Envs {
-		fmt.Printf("\t%s:\n", name)
-		fmt.Printf("\t\taccount_id: %d\n", env.AccountID)
-
-		fmt.Printf("\t\taws_profile_backend: %v\n", env.AWSProfileBackend)
-		fmt.Printf("\t\taws_profile_provider: %v\n", env.AWSProfileProvider)
-		fmt.Printf("\t\taws_provider_version: %v\n", env.AWSProviderVersion)
-		fmt.Printf("\t\taws_region_backend: %v\n", env.AWSRegionBackend)
-		fmt.Printf("\t\taws_region_provider: %v\n", env.AWSRegionProvider)
-		fmt.Printf("\t\taws_regions: %v\n", env.AWSRegions)
-		fmt.Printf("\t\tenv: %v\n", env.Env)
-		fmt.Printf("\t\tinfra_bucket: %v\n", env.InfraBucket)
-		fmt.Printf("\t\tname: %v\n", env.AccountName)
-		fmt.Printf("\t\towner: %v\n", env.Owner)
-		fmt.Printf("\t\tproject: %v\n", env.Project)
-		fmt.Printf("\t\tterraform_version: %v\n", env.TerraformVersion)
-
-		fmt.Println("\t\tComponents:")
-
-		for name, component := range env.Components {
-			fmt.Printf("\t\t\t%s:\n", name)
-			fmt.Printf("\t\t\t\taccount_id: %d\n", component.AccountID)
-
-			fmt.Printf("\t\t\t\taws_profile_backend: %v\n", component.AWSProfileBackend)
-			fmt.Printf("\t\t\t\taws_profile_provider: %v\n", component.AWSProfileProvider)
-			fmt.Printf("\t\t\t\taws_provider_version: %v\n", component.AWSProviderVersion)
-			fmt.Printf("\t\t\t\taws_region_backend: %v\n", component.AWSRegionBackend)
-			fmt.Printf("\t\t\t\taws_region_provider: %v\n", component.AWSRegionProvider)
-			fmt.Printf("\t\t\t\taws_regions: %v\n", component.AWSRegions)
-			fmt.Printf("\t\t\t\tinfra_bucket: %v\n", component.InfraBucket)
-			fmt.Printf("\t\t\t\tname: %v\n", component.AccountName)
-			fmt.Printf("\t\t\t\tother_components: %v\n", component.OtherComponents)
-			fmt.Printf("\t\t\t\towner: %v\n", component.Owner)
-			fmt.Printf("\t\t\t\tproject: %v\n", component.Project)
-			fmt.Printf("\t\t\t\tterraform_version: %v\n", component.TerraformVersion)
-		}
-
-	}
-
-	fmt.Println("Modules:")
-	for name, module := range p.Modules {
-		fmt.Printf("\t%s:\n", name)
-		fmt.Printf("\t\tterraform_version: %s\n", module.TerraformVersion)
-	}
-	return nil
+	out, err := yaml.Marshal(p)
+	fmt.Print(string(out))
+	return err
 }
 
 func buildAccounts(c *config.Config) (map[string]account, error) {
