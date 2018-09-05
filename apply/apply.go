@@ -181,14 +181,11 @@ func applyTree(dest afero.Fs, source *packr.Box, targetBasePath string, subst in
 				return errors.Wrapf(e, "unable to create file %s", target)
 			}
 		} else if extension == ".rm" {
-			_, e = dest.Stat(target)
-			if e == nil {
-				e = os.Remove(target)
-				if e != nil {
-					return errors.Wrapf(e, "unable to remove %s", target)
-				}
-				log.Infof("%s removed", target)
+			e = os.Remove(target)
+			if e != nil && !os.IsNotExist(e) {
+				return errors.Wrapf(e, "unable to remove %s", target)
 			}
+			log.Infof("%s removed", target)
 		} else {
 			e = afero.WriteReader(dest, target, sourceFile)
 			if e != nil {
@@ -355,7 +352,7 @@ func getTargetPath(basePath, path string) string {
 	target := filepath.Join(basePath, path)
 	extension := filepath.Ext(path)
 
-	if extension == ".tmpl" || extension == ".touch" || extension == ".create" {
+	if extension == ".tmpl" || extension == ".touch" || extension == ".create" || extension == ".rm" {
 		target = removeExtension(target)
 	}
 
