@@ -25,9 +25,12 @@ fmt:
 	@$(docker_sh) -c 'for f in $(TF); do printf .; terraform fmt $$f; done'; \
 	echo
 
-lint: lint-tf
+lint: tf-validate lint-tf-fmt
 
-lint-tf:
+tf-validate: init
+	@$(docker_sh) -c 'terraform validate -check-variables=true $$f || exit $$?'
+
+lint-tf-fmt:
 	@$(docker_sh) -c 'for f in $(TF); do printf .; terraform fmt --check=true --diff=true $$f || exit $$? ; done'
 
 get: ssh-forward
