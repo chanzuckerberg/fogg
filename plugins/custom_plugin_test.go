@@ -2,6 +2,7 @@ package plugins_test
 
 import (
 	"archive/tar"
+	"archive/zip"
 	"compress/gzip"
 	"fmt"
 	"io"
@@ -10,6 +11,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path"
+	"strings"
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/plugins"
@@ -37,6 +39,48 @@ func TestCustomPluginTar(t *testing.T) {
 	customPlugin := &plugins.CustomPlugin{
 		URL:    ts.URL,
 		Format: plugins.TypePluginFormatTar,
+	}
+	customPlugin.SetTargetPath(plugins.CustomPluginDir)
+	a.Nil(customPlugin.Install(fs, pluginName))
+
+	afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
+		a.Nil(err)
+		return nil
+	})
+
+	for _, file := range files {
+		filePath := path.Join(plugins.CustomPluginDir, file)
+		fi, err := fs.Stat(filePath)
+		a.Nil(err)
+		a.False(fi.IsDir())
+		a.Equal(fi.Mode(), os.FileMode(0664))
+
+		bytes, err := afero.ReadFile(fs, filePath)
+		a.Nil(err)
+		a.Equal(bytes, []byte(file)) // We wrote the filename as the contents as well
+	}
+}
+
+func TestCustomPluginZip(t *testing.T) {
+	a := assert.New(t)
+	pluginName := "test-provider"
+	fs := afero.NewMemMapFs()
+
+	files := []string{"test.txt", "terraform-provider-testing"}
+	zipPath := generateZip(t, files)
+	defer os.Remove(zipPath)
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		f, err := os.Open(zipPath)
+		a.Nil(err)
+		_, err = io.Copy(w, f)
+		a.Nil(err)
+	}))
+	defer ts.Close()
+
+	customPlugin := &plugins.CustomPlugin{
+		URL:    ts.URL,
+		Format: plugins.TypePluginFormatZip,
 	}
 	customPlugin.SetTargetPath(plugins.CustomPluginDir)
 	a.Nil(customPlugin.Install(fs, pluginName))
@@ -121,5 +165,30 @@ func generateTar(t *testing.T, files []string) string {
 		a.Nil(err)
 	}
 
+	return f.Name()
+}
+
+// based on https://golangcode.com/create-zip-files-in-go/
+func generateZip(t *testing.T, files []string) string {
+	a := assert.New(t)
+	f, err := ioutil.TempFile("", "testing")
+	a.Nil(err)
+
+	defer f.Close()
+
+	zipWriter := zip.NewWriter(f)
+	defer zipWriter.Close()
+
+	for _, file := range files {
+
+		header := &zip.FileHeader{
+			Name: file,
+		}
+		header.SetMode(os.FileMode(0664))
+		writer, err := zipWriter.CreateHeader(header)
+		a.Nil(err)
+		_, err = io.Copy(writer, strings.NewReader(file))
+		a.Nil(err)
+	}
 	return f.Name()
 }
