@@ -10,12 +10,12 @@ TF=$(wildcard *.tf)
 IMAGE_VERSION=$(DOCKER_IMAGE_VERSION)_TF$(TERRAFORM_VERSION)
 
 docker_base = \
-	docker run -it --rm -e HOME=/home -v $$HOME/.aws:/home/.aws -v $(REPO_ROOT):/repo \
+	docker run --rm -e HOME=/home -v $$HOME/.aws:/home/.aws -v $(REPO_ROOT):/repo \
 	-v $(REPO_ROOT)/.bin:/usr/local/bin -v $(REPO_ROOT)/terraform.d:/repo/$(REPO_RELATIVE_PATH)/terraform.d \
 	-e GIT_SSH_COMMAND='ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
 	-e RUN_USER_ID=$(shell id -u) -e RUN_GROUP_ID=$(shell id -g) \
 	-e TF_PLUGIN_CACHE_DIR="/repo/.terraform.d/plugin-cache" -e TF="$(TF)" \
-	-w /repo/$(REPO_RELATIVE_PATH) $(TF_VARS) $$(sh $(REPO_ROOT)/scripts/docker-ssh-mount.sh)
+	-w /repo/$(REPO_RELATIVE_PATH) $(TF_VARS) $(FOGG_DOCKER_FLAGS) $$(sh $(REPO_ROOT)/scripts/docker-ssh-mount.sh)
 docker_terraform = $(docker_base) chanzuckerberg/terraform:$(IMAGE_VERSION)
 docker_sh = $(docker_base) --entrypoint='/bin/sh' chanzuckerberg/terraform:$(IMAGE_VERSION)
 
@@ -46,7 +46,10 @@ get: ssh-forward
 plan: fmt get init ssh-forward
 	$(docker_terraform) plan
 
-apply: fmt get init ssh-forward
+apply: fmt get init ssh-forward real-apply
+
+real-apply: FOGG_DOCKER_FLAGS = -it
+real-apply:
 	$(docker_terraform) apply -auto-approve=false
 
 docs:
