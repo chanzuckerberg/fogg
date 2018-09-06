@@ -58,7 +58,6 @@ type Env struct {
 	Owner              *string           `json:"owner"`
 	Project            *string           `json:"project"`
 	TerraformVersion   *string           `json:"terraform_version"`
-	Type               *string           `json:"type"`
 
 	Components map[string]*Component `json:"components"`
 }
