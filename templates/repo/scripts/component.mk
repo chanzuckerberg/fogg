@@ -25,9 +25,19 @@ fmt:
 	@$(docker_sh) -c 'for f in $(TF); do printf .; terraform fmt $$f; done'; \
 	echo
 
-lint: lint-tf
+lint: terraform-validate lint-terraform-fmt lint-tflint
 
-lint-tf:
+lint-tflint: init
+	@if (( $$TFLINT_ENABLED )); then \
+    $(docker_sh) -c 'tflint' || exit $$?; \
+	else \
+    echo "tflint not enabled"; \
+	fi \
+
+terraform-validate: init
+	@$(docker_sh) -c 'terraform validate -check-variables=true $$f || exit $$?'
+
+lint-terraform-fmt:
 	@$(docker_sh) -c 'for f in $(TF); do printf .; terraform fmt --check=true --diff=true $$f || exit $$? ; done'
 
 get: ssh-forward
