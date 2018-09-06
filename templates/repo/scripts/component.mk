@@ -37,7 +37,7 @@ lint-tflint: init
 terraform-validate: init
 	@$(docker_sh) -c 'terraform validate -check-variables=true $$f || exit $$?'
 
-lint-teraform-fmt:
+lint-terraform-fmt:
 	@$(docker_sh) -c 'for f in $(TF); do printf .; terraform fmt --check=true --diff=true $$f || exit $$? ; done'
 
 get: ssh-forward
