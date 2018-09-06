@@ -148,8 +148,11 @@ func Eval(config *config.Config, verbose bool) (*Plan, error) {
 
 func Print(p *Plan) error {
 	out, err := yaml.Marshal(p)
+	if err != nil {
+		return errors.Wrap(err, "yaml: could not marshal")
+	}
 	fmt.Print(string(out))
-	return err
+	return nil
 }
 
 func buildAccounts(c *config.Config) (map[string]account, error) {

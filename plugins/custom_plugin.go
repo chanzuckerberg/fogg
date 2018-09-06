@@ -179,32 +179,41 @@ func (cp *CustomPlugin) processZip(fs afero.Fs, downloadPath string) error {
 	defer r.Close()
 
 	for _, f := range r.File {
-		rc, err := f.Open()
+		// We run this in a closure to invoke the `defer`s after each iteration
+		err = func() error {
+			rc, err := f.Open()
+			if err != nil {
+				return errors.Wrapf(err, "error reading file from zip %s", f.Name)
+			}
+			defer rc.Close()
+			fpath := filepath.Join(cp.targetDir, f.Name)
+
+			// Check for ZipSlip. More Info: http://bit.ly/2MsjAWE
+			if !strings.HasPrefix(fpath, filepath.Clean(cp.targetDir)+string(os.PathSeparator)) {
+				return errors.Errorf("%s: illegal file path", fpath)
+			}
+
+			if f.FileInfo().IsDir() {
+				err = os.MkdirAll(fpath, os.ModePerm)
+				if err != nil {
+					return errors.Wrap(err, "zip: could not mkdirs")
+				}
+			} else {
+				destFile, err := fs.OpenFile(fpath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, os.FileMode(f.Mode()))
+				if err != nil {
+					return errors.Wrapf(err, "zip: could not open destination file for %s", fpath)
+				}
+				defer destFile.Close()
+				_, err = io.Copy(destFile, rc)
+				if err != nil {
+					destFile.Close()
+					return errors.Wrapf(err, "zip: could not copy file contents")
+				}
+			}
+			return nil
+		}()
 		if err != nil {
-			return errors.Wrapf(err, "error reading file from zip %s", f.Name)
-		}
-		defer rc.Close()
-		fpath := filepath.Join(cp.targetDir, f.Name)
-
-		// Check for ZipSlip. More Info: http://bit.ly/2MsjAWE
-		if !strings.HasPrefix(fpath, filepath.Clean(cp.targetDir)+string(os.PathSeparator)) {
-			return fmt.Errorf("%s: illegal file path", fpath)
-		}
-
-		if f.FileInfo().IsDir() {
-			os.MkdirAll(fpath, os.ModePerm)
-		} else {
-			destFile, err := fs.OpenFile(fpath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, os.FileMode(f.Mode()))
-			if err != nil {
-				return errors.Wrapf(err, "zip: could not open destination file for %s", fpath)
-			}
-			_, err = io.Copy(destFile, rc)
-			if err != nil {
-				destFile.Close()
-				return errors.Wrapf(err, "zip: could not copy file contents")
-			}
-			// Manually take care of closing file since defer will pile them up
-			destFile.Close()
+			return err
 		}
 	}
 	return nil
