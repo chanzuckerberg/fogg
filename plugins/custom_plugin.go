@@ -206,7 +206,6 @@ func (cp *CustomPlugin) processZip(fs afero.Fs, downloadPath string) error {
 				defer destFile.Close()
 				_, err = io.Copy(destFile, rc)
 				if err != nil {
-					destFile.Close()
 					return errors.Wrapf(err, "zip: could not copy file contents")
 				}
 			}
