@@ -65,7 +65,6 @@ type Env struct {
 	Project            *string           `json:"project"`
 	TerraformVersion   *string           `json:"terraform_version"`
 	TfLint             *TfLint           `json:"tflint,omitempty"`
-	Type               *string           `json:"type"`
 
 	Components map[string]*Component `json:"components"`
 }
