@@ -61,7 +61,7 @@ func TestResolveStringArray(t *testing.T) {
 }
 
 func TestPlanBasic(t *testing.T) {
-	f, _ := os.Open("fixtures/full.json")
+	f, _ := os.Open("testdata/full.json")
 	defer f.Close()
 	r := bufio.NewReader(f)
 	c, err := config.ReadConfig(r)
@@ -97,7 +97,7 @@ func TestPlanBasic(t *testing.T) {
 }
 
 func TestExtraVarsComposition(t *testing.T) {
-	f, _ := os.Open("fixtures/full.json")
+	f, _ := os.Open("testdata/full.json")
 	defer f.Close()
 	r := bufio.NewReader(f)
 	c, err := config.ReadConfig(r)
