@@ -46,10 +46,8 @@ get: ssh-forward
 plan: fmt get init ssh-forward
 	$(docker_terraform) plan
 
-apply: fmt get init ssh-forward real-apply
-
-real-apply: FOGG_DOCKER_FLAGS = -it
-real-apply:
+apply: FOGG_DOCKER_FLAGS = -it
+apply: fmt get init ssh-forward
 	$(docker_terraform) apply -auto-approve=false
 
 docs:
