@@ -18,7 +18,7 @@ SICC was a predecessor to fogg that we used only internally at CZI.
 Accounts correspond to AWS accounts. These can configure singleton resources such as IAM users and groups.
 
 ### What are components
-Components are instantiations of terraform modules and resources. These can be things like RDS databases and their corresponding security groups, S3 website hosting, ECS clusters, etc.
+Components are instantiations of terraform modules and resources. These can be things like RDS databases and their corresponding security groups, S3 website hosting, ECS clusters, etc. This is one of the places where you can `make apply` to run Terraform and create resources.
 
 ### Managing Multiple AWS Accounts
 A typical multi account scenario is having your staging and prod environments split into two different aws accounts.
