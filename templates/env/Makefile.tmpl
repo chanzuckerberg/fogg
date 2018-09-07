@@ -2,7 +2,7 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 COMPONENTS={{ .Components | dict | keys | sortAlpha | join " "}}
-figlet_docker = docker run -it --rm mbentley/figlet
+figlet_docker = docker run --rm mbentley/figlet
 
 all:
 

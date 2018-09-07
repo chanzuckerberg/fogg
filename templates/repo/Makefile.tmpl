@@ -5,7 +5,7 @@ ENVS={{ .Envs | dict | keys | sortAlpha | join " "}}
 MODULES={{ .Modules | dict | keys | sortAlpha | join " "}}
 ACCOUNTS={{ .Accounts | dict | keys | sortAlpha | join " "}}
 
-figlet_docker = docker run -it --rm mbentley/figlet
+figlet_docker = docker run --rm mbentley/figlet
 
 all: check
 
