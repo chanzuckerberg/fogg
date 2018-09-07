@@ -1,0 +1,17 @@
+{
+  "defaults": {
+    "aws_profile_backend": "profile_backend",
+    "aws_profile_provider": "profile_provider",
+    "aws_provider_version": "100.0.0",
+    "aws_region_backend": "region_backend",
+    "aws_region_provider": "region_provider",
+    "infra_s3_bucket": "bucket",
+    "owner": "me@example.com",
+    "project": "project",
+    "shared_infra_version": "0.100.0",
+    "terraform_version": "0.1000.0"
+  },
+  "accounts": {},
+  "envs": {},
+  "modules": {}
+}

@@ -26,6 +26,14 @@
   version = "v1.2.1"
 
 [[projects]]
+  branch = "master"
+  digest = "1:86d119ee8a0fb122f2d0e0fbbbd5d2f65953029248743462ee3908a21ae04247"
+  name = "github.com/andreyvit/diff"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "c7f18ee00883bfd3b00e0a2bf7607827e0148ad4"
+
+[[projects]]
   digest = "1:8f5416c7f59da8600725ae1ff00a99af1da8b04c211ae6f3c8f8bcab0164f650"
   name = "github.com/aokoli/goutils"
   packages = ["."]
@@ -421,6 +429,14 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:29f206c8a8b09e25b7b2a2895c79440e5037c96939d48f68d59000d2a3c82e4d"
+  name = "github.com/phayes/permbits"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "59f2482cd4603d9795e7b2385448d5d7f42fdeee"
+
+[[projects]]
+  branch = "master"
   digest = "1:3891cc78541df6e4596b3e73978eb062d32967084069270ec881b959be5155ae"
   name = "github.com/pkg/errors"
   packages = ["."]
@@ -455,6 +471,14 @@
   packages = ["."]
   pruneopts = "UT"
   revision = "f0d19b6901ade831d5a3204edc0d6a7d6457fbb2"
+
+[[projects]]
+  digest = "1:d917313f309bda80d27274d53985bc65651f81a5b66b820749ac7f8ef061fd04"
+  name = "github.com/sergi/go-diff"
+  packages = ["diffmatchpatch"]
+  pruneopts = "UT"
+  revision = "1744e2970ca51c86172c8190fadad617561ed6e7"
+  version = "v1.0.0"
 
 [[projects]]
   digest = "1:9e9193aa51197513b3abcb108970d831fbcf40ef96aa845c4f03276e1fa316d2"
@@ -607,6 +631,7 @@
   analyzer-version = 1
   input-imports = [
     "github.com/Masterminds/sprig",
+    "github.com/andreyvit/diff",
     "github.com/blang/semver",
     "github.com/gobuffalo/packr",
     "github.com/hashicorp/go-getter",
@@ -614,6 +639,7 @@
     "github.com/hashicorp/hcl/hcl/printer",
     "github.com/hashicorp/terraform/config",
     "github.com/mitchellh/go-homedir",
+    "github.com/phayes/permbits",
     "github.com/pkg/errors",
     "github.com/segmentio/go-prompt",
     "github.com/sirupsen/logrus",
