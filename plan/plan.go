@@ -41,6 +41,7 @@ type account struct {
 	ExtraVars   map[string]string `yaml:"extra_vars"`
 	Owner       string
 	Project     string
+	TfLint      TfLint
 }
 
 type Module struct {
@@ -58,6 +59,7 @@ type Component struct {
 	OtherComponents []string          `yaml:"other_components"`
 	Owner           string
 	Project         string
+	TfLint          TfLint
 }
 
 type Env struct {
@@ -69,6 +71,12 @@ type Env struct {
 	ExtraVars  map[string]string `yaml:"extra_vars"`
 	Owner      string
 	Project    string
+	TfLint     TfLint
+}
+
+// TfLint containts a plan for running tflint
+type TfLint struct {
+	Enabled bool
 }
 
 // Plugins contains a plan around plugins
@@ -140,8 +148,11 @@ func Eval(config *config.Config, verbose bool) (*Plan, error) {
 
 func Print(p *Plan) error {
 	out, err := yaml.Marshal(p)
+	if err != nil {
+		return errors.Wrap(err, "yaml: could not marshal")
+	}
 	fmt.Print(string(out))
-	return err
+	return nil
 }
 
 func buildAccounts(c *config.Config) (map[string]account, error) {
@@ -169,6 +180,8 @@ func buildAccounts(c *config.Config) (map[string]account, error) {
 		accountPlan.PathToRepoRoot = "../../../"
 		accountPlan.Project = resolveRequired(defaults.Project, config.Project)
 		accountPlan.ExtraVars = resolveExtraVars(defaults.ExtraVars, config.ExtraVars)
+
+		accountPlan.TfLint = resolveTfLint(defaults.TfLint, config.TfLint)
 
 		accountPlans[name] = accountPlan
 	}
@@ -218,6 +231,7 @@ func buildGlobal(conf *config.Config) (Component, error) {
 	componentPlan.PathToRepoRoot = "../../"
 	componentPlan.Project = conf.Defaults.Project
 	componentPlan.ExtraVars = conf.Defaults.ExtraVars
+	componentPlan.TfLint = resolveTfLint(conf.Defaults.TfLint, nil)
 
 	componentPlan.Component = "global"
 	return componentPlan, nil
@@ -249,6 +263,7 @@ func buildEnvs(conf *config.Config) (map[string]Env, error) {
 		envPlan.Owner = resolveRequired(defaults.Owner, envConf.Owner)
 		envPlan.Project = resolveRequired(defaults.Project, envConf.Project)
 		envPlan.ExtraVars = resolveExtraVars(defaultExtraVars, envConf.ExtraVars)
+		envPlan.TfLint = resolveTfLint(defaults.TfLint, envConf.TfLint)
 
 		for componentName, componentConf := range conf.Envs[envName].Components {
 			componentPlan := Component{}
@@ -275,6 +290,8 @@ func buildEnvs(conf *config.Config) (map[string]Env, error) {
 			componentPlan.ModuleSource = componentConf.ModuleSource
 			componentPlan.ExtraVars = resolveExtraVars(envPlan.ExtraVars, componentConf.ExtraVars)
 			componentPlan.PathToRepoRoot = "../../../../"
+
+			componentPlan.TfLint = resolveTfLintComponent(envPlan.TfLint, componentConf.TfLint)
 
 			envPlan.Components[componentName] = componentPlan
 		}
@@ -334,4 +351,27 @@ func resolveAccounts(accounts map[string]config.Account) map[string]int64 {
 		}
 	}
 	return a
+}
+
+func resolveTfLint(def *config.TfLint, override *config.TfLint) TfLint {
+	enabled := false
+	if def != nil && def.Enabled != nil {
+		enabled = *def.Enabled
+	}
+	if override != nil && override.Enabled != nil {
+		enabled = *override.Enabled
+	}
+	return TfLint{
+		Enabled: enabled,
+	}
+}
+
+func resolveTfLintComponent(def TfLint, override *config.TfLint) TfLint {
+	enabled := def.Enabled
+	if override != nil && override.Enabled != nil {
+		enabled = *override.Enabled
+	}
+	return TfLint{
+		Enabled: enabled,
+	}
 }

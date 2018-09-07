@@ -39,7 +39,7 @@ func TestParseDefaults(t *testing.T) {
 }
 
 func TestParse(t *testing.T) {
-	f, _ := os.Open("fixtures/full.json")
+	f, _ := os.Open("testdata/full.json")
 	defer f.Close()
 	r := bufio.NewReader(f)
 	c, e := ReadConfig(r)

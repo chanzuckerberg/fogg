@@ -15,6 +15,10 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+type TfLint struct {
+	Enabled *bool `json:"enabled,omitempty"`
+}
+
 type defaults struct {
 	AccountID          *int64            `json:"account_id,omitempty"`
 	AWSProfileBackend  string            `json:"aws_profile_backend" validate:"required"`
@@ -28,6 +32,7 @@ type defaults struct {
 	Owner              string            `json:"owner" validate:"required"`
 	Project            string            `json:"project" validate:"required"`
 	TerraformVersion   string            `json:"terraform_version" validate:"required"`
+	TfLint             *TfLint           `json:"tflint,omitempty"`
 }
 
 type Account struct {
@@ -43,6 +48,7 @@ type Account struct {
 	Owner              *string           `json:"owner"`
 	Project            *string           `json:"project"`
 	TerraformVersion   *string           `json:"terraform_version"`
+	TfLint             *TfLint           `json:"tflint,omitempty"`
 }
 
 type Env struct {
@@ -58,7 +64,7 @@ type Env struct {
 	Owner              *string           `json:"owner"`
 	Project            *string           `json:"project"`
 	TerraformVersion   *string           `json:"terraform_version"`
-	Type               *string           `json:"type"`
+	TfLint             *TfLint           `json:"tflint,omitempty"`
 
 	Components map[string]*Component `json:"components"`
 }
@@ -77,6 +83,7 @@ type Component struct {
 	Owner              *string           `json:"owner"`
 	Project            *string           `json:"project"`
 	TerraformVersion   *string           `json:"terraform_version"`
+	TfLint             *TfLint           `json:"tflint,omitempty"`
 }
 
 // Plugins contains configuration around plugins

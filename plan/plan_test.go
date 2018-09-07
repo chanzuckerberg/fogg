@@ -61,7 +61,7 @@ func TestResolveStringArray(t *testing.T) {
 }
 
 func TestPlanBasic(t *testing.T) {
-	f, _ := os.Open("fixtures/full.json")
+	f, _ := os.Open("testdata/full.json")
 	defer f.Close()
 	r := bufio.NewReader(f)
 	c, err := config.ReadConfig(r)
@@ -97,7 +97,7 @@ func TestPlanBasic(t *testing.T) {
 }
 
 func TestExtraVarsComposition(t *testing.T) {
-	f, _ := os.Open("fixtures/full.json")
+	f, _ := os.Open("testdata/full.json")
 	defer f.Close()
 	r := bufio.NewReader(f)
 	c, err := config.ReadConfig(r)
@@ -114,4 +114,61 @@ func TestExtraVarsComposition(t *testing.T) {
 	// component overwrite env
 	assert.Equal(t, "bar3", plan.Envs["staging"].Components["vpc"].ExtraVars["foo"])
 
+}
+
+func TestResolveTfLint(test *testing.T) {
+	a := assert.New(test)
+	t := true
+	f := false
+
+	data := []struct {
+		def    *bool
+		over   *bool
+		output bool
+	}{
+		{nil, nil, false},
+		{nil, &t, true},
+		{nil, &f, false},
+		{&t, nil, true},
+		{&t, &t, true},
+		{&t, &f, false},
+		{&f, nil, false},
+		{&f, &t, true},
+		{&f, &f, false},
+	}
+	for _, r := range data {
+		test.Run("", func(t *testing.T) {
+			def := &config.TfLint{Enabled: r.def}
+			over := &config.TfLint{Enabled: r.over}
+			result := resolveTfLint(def, over)
+			a.Equal(r.output, result.Enabled)
+		})
+	}
+}
+
+func TestResolveTfLintComponent(test *testing.T) {
+	a := assert.New(test)
+	t := true
+	f := false
+
+	data := []struct {
+		def    bool
+		over   *bool
+		output bool
+	}{
+		{t, nil, true},
+		{t, &t, true},
+		{t, &f, false},
+		{f, nil, false},
+		{f, &t, true},
+		{f, &f, false},
+	}
+	for _, r := range data {
+		test.Run("", func(t *testing.T) {
+			def := TfLint{Enabled: r.def}
+			over := &config.TfLint{Enabled: r.over}
+			result := resolveTfLintComponent(def, over)
+			a.Equal(r.output, result.Enabled)
+		})
+	}
 }
