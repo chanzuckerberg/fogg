@@ -295,7 +295,10 @@ func applyTemplate(sourceFile io.Reader, dest afero.Fs, path string, overrides i
 	if err != nil {
 		return errs.WrapUser(err, "unable to open file")
 	}
-	t := util.OpenTemplate(sourceFile)
+	t, e := util.OpenTemplate(sourceFile)
+	if e != nil {
+		return e
+	}
 	return t.Execute(writer, overrides)
 }
 
