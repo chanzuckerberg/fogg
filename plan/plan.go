@@ -7,7 +7,6 @@ import (
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/chanzuckerberg/fogg/util"
-	"github.com/pkg/errors"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -121,42 +120,24 @@ func Eval(config *config.Config, verbose bool) (*Plan, error) {
 	p.Plugins.SetCustomPluginsPlan(config.Plugins.CustomPlugins)
 	p.Plugins.SetTerraformProvidersPlan(config.Plugins.TerraformProviders)
 
-	accounts, err := buildAccounts(config)
-	if err != nil {
-		return nil, err
-	}
-	p.Accounts = accounts
+	p.Accounts = buildAccounts(config)
+	p.Envs = buildEnvs(config)
+	p.Global = buildGlobal(config)
+	p.Modules = buildModules(config)
 
-	envs, err := buildEnvs(config)
-	if err != nil {
-		return nil, err
-	}
-	p.Envs = envs
-
-	global, err := buildGlobal(config)
-	if err != nil {
-		return nil, err
-	}
-	p.Global = global
-
-	modules, err := buildModules(config)
-	if err != nil {
-		return nil, err
-	}
-	p.Modules = modules
 	return p, nil
 }
 
 func Print(p *Plan) error {
 	out, err := yaml.Marshal(p)
 	if err != nil {
-		return errors.Wrap(err, "yaml: could not marshal")
+		return errs.WrapInternal(err, "yaml: could not marshal")
 	}
 	fmt.Print(string(out))
 	return nil
 }
 
-func buildAccounts(c *config.Config) (map[string]account, error) {
+func buildAccounts(c *config.Config) map[string]account {
 	defaults := c.Defaults
 
 	accountPlans := make(map[string]account, len(c.Accounts))
@@ -187,10 +168,10 @@ func buildAccounts(c *config.Config) (map[string]account, error) {
 		accountPlans[name] = accountPlan
 	}
 
-	return accountPlans, nil
+	return accountPlans
 }
 
-func buildModules(c *config.Config) (map[string]Module, error) {
+func buildModules(c *config.Config) map[string]Module {
 	modulePlans := make(map[string]Module, len(c.Modules))
 	for name, conf := range c.Modules {
 		modulePlan := Module{}
@@ -200,7 +181,7 @@ func buildModules(c *config.Config) (map[string]Module, error) {
 		modulePlan.TerraformVersion = resolveRequired(c.Defaults.TerraformVersion, conf.TerraformVersion)
 		modulePlans[name] = modulePlan
 	}
-	return modulePlans, nil
+	return modulePlans
 }
 
 func newEnvPlan() Env {
@@ -209,7 +190,7 @@ func newEnvPlan() Env {
 	return ep
 }
 
-func buildGlobal(conf *config.Config) (Component, error) {
+func buildGlobal(conf *config.Config) Component {
 	// Global just uses defaults because that's the way sicc worked. We should make it directly configurable.
 	componentPlan := Component{}
 
@@ -235,10 +216,10 @@ func buildGlobal(conf *config.Config) (Component, error) {
 	componentPlan.TfLint = resolveTfLint(conf.Defaults.TfLint, nil)
 
 	componentPlan.Component = "global"
-	return componentPlan, nil
+	return componentPlan
 }
 
-func buildEnvs(conf *config.Config) (map[string]Env, error) {
+func buildEnvs(conf *config.Config) map[string]Env {
 	envPlans := make(map[string]Env, len(conf.Envs))
 	defaults := conf.Defaults
 
@@ -299,7 +280,7 @@ func buildEnvs(conf *config.Config) (map[string]Env, error) {
 
 		envPlans[envName] = envPlan
 	}
-	return envPlans, nil
+	return envPlans
 }
 
 func otherComponentNames(components map[string]*config.Component, thisComponent string) []string {

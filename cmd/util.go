@@ -7,7 +7,6 @@ import (
 
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/errs"
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	validator "gopkg.in/go-playground/validator.v9"
@@ -19,7 +18,6 @@ func openGitOrExit(pwd string) {
 	_, err := os.Stat(".git")
 	if err != nil {
 		// assuming this means no repository
-		log.Debug(errors.Wrap(err, "unable to open git index"))
 		log.Fatal("fogg must be run from the root of a git repo")
 		os.Exit(1)
 	}
