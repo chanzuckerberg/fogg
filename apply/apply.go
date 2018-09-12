@@ -30,9 +30,9 @@ const rootPath = "terraform"
 func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, upgrade bool) error {
 	if !upgrade {
 		toolVersion, _ := util.VersionString()
-		versionChange, _ := checkToolVersions(fs, toolVersion)
+		versionChange, repoVersion, _ := checkToolVersions(fs, toolVersion)
 		if versionChange {
-			return fmt.Errorf("fogg version (%s) is different than version used to manage repo. To upgrade add --upgrade.", toolVersion)
+			return fmt.Errorf("fogg version (%s) is different than version currently used to manage repo (%s). To upgrade add --upgrade.", toolVersion, repoVersion)
 		}
 	}
 	p, err := plan.Eval(conf, false)
@@ -64,21 +64,21 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, upgrade bool) err
 	return errors.Wrap(e, "unable to apply modules")
 }
 
-func checkToolVersions(fs afero.Fs, current string) (bool, error) {
+func checkToolVersions(fs afero.Fs, current string) (bool, string, error) {
 	f, e := fs.Open(".fogg-version")
 	if e != nil {
-		return false, errors.Wrap(e, "unable to open .fogg-version file")
+		return false, "", errors.Wrap(e, "unable to open .fogg-version file")
 	}
 	reader := io.ReadCloser(f)
 	defer reader.Close()
 
 	b, e := ioutil.ReadAll(reader)
 	if e != nil {
-		return false, errors.Wrap(e, "unable to read .fogg-version file")
+		return false, "", errors.Wrap(e, "unable to read .fogg-version file")
 	}
 	repoVersion := string(b)
 	changed, e := versionIsChanged(repoVersion, current)
-	return changed, e
+	return changed, repoVersion, e
 }
 
 func versionIsChanged(repo string, tool string) (bool, error) {

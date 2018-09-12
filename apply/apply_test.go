@@ -297,7 +297,7 @@ func TestCheckToolVersions(t *testing.T) {
 			fs := afero.NewMemMapFs()
 			writeFile(fs, ".fogg-version", tc.current)
 
-			v, e := checkToolVersions(fs, tc.tool)
+			v, _, e := checkToolVersions(fs, tc.tool)
 			a.NoError(e)
 			a.Equal(tc.result, v)
 		})
