@@ -158,7 +158,7 @@ func TestApplySmokeTest(t *testing.T) {
 	c, e := config.ReadConfig(ioutil.NopCloser(strings.NewReader(json)))
 	assert.Nil(t, e)
 
-	e = Apply(fs, c, templates.Templates)
+	e = Apply(fs, c, templates.Templates, false)
 	assert.Nil(t, e)
 }
 
@@ -270,6 +270,48 @@ func TestCalculateLocalPath(t *testing.T) {
 			p, e := calculateModuleAddressForSource(test.path, test.moduleAddress)
 			assert.Nil(t, e)
 			assert.Equal(t, test.expected, p)
+		})
+	}
+}
+
+var versionTests = []struct {
+	current string
+	tool    string
+	result  bool
+}{
+	{"0.0.0", "0.1.0", true},
+	{"0.1.0", "0.0.0", true},
+	{"0.1.0", "0.1.0", false},
+	{"0.1.0", "0.1.0-abcdef", true},
+	{"0.1.0", "0.1.0-abcdef-dirty", true},
+	{"0.1.0-abcdef-dirty", "0.1.0", true},
+	{"0.1.0-abc", "0.1.0-def", true},
+	{"0.1.0-abc", "0.1.0-abc", false},
+}
+
+func TestCheckToolVersions(t *testing.T) {
+	a := assert.New(t)
+
+	for _, tc := range versionTests {
+		t.Run("", func(t *testing.T) {
+			fs := afero.NewMemMapFs()
+			writeFile(fs, ".fogg-version", tc.current)
+
+			v, _, e := checkToolVersions(fs, tc.tool)
+			a.NoError(e)
+			a.Equal(tc.result, v)
+		})
+	}
+}
+
+func TestVersionIsChanged(t *testing.T) {
+	a := assert.New(t)
+
+	for _, test := range versionTests {
+		t.Run("", func(t *testing.T) {
+			b, e := versionIsChanged(test.current, test.tool)
+			a.NoError(e)
+			a.Equal(test.result, b)
 		})
 	}
 }
