@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/chanzuckerberg/fogg/config"
+	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
@@ -27,7 +28,7 @@ func openGitOrExit(pwd string) {
 func readAndValidateConfig(fs afero.Fs, configFile string, verbose bool) (*config.Config, error) {
 	config, err := config.FindAndReadConfig(fs, configFile)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to read config file")
+		return nil, errs.WrapUser(err, "unable to read config file")
 	}
 	if verbose {
 		log.Debug("CONFIG")

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/chanzuckerberg/fogg/config"
+	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/pkg/errors"
@@ -114,7 +115,7 @@ func Eval(config *config.Config, verbose bool) (*Plan, error) {
 	p := &Plan{}
 	v, e := util.VersionString()
 	if e != nil {
-		return nil, errors.Wrap(e, "unable to parse fogg version")
+		return nil, errs.WrapInternal(e, "unable to parse fogg version")
 	}
 	p.Version = v
 	p.Plugins.SetCustomPluginsPlan(config.Plugins.CustomPlugins)

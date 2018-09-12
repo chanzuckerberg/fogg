@@ -137,6 +137,14 @@
   version = "v1.7.0"
 
 [[projects]]
+  digest = "1:aacef5f5e45685f2aeda5534d0a750dee6859de7e9088cdd06192787bb01ae6d"
+  name = "github.com/go-errors/errors"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "a6af135bd4e28680facf08a3d206b454abc877a4"
+  version = "v1.0.1"
+
+[[projects]]
   digest = "1:fb46255681497314debedde38b64be32a75bae50bad107586c22f1662bf2d352"
   name = "github.com/go-ini/ini"
   packages = ["."]
@@ -608,6 +616,8 @@
   input-imports = [
     "github.com/Masterminds/sprig",
     "github.com/blang/semver",
+    "github.com/fatih/color",
+    "github.com/go-errors/errors",
     "github.com/gobuffalo/packr",
     "github.com/hashicorp/go-getter",
     "github.com/hashicorp/go-multierror",

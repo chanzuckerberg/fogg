@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/chanzuckerberg/fogg/config"
+	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plan"
 	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/chanzuckerberg/fogg/templates"
@@ -32,7 +33,7 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, upgrade bool) err
 		toolVersion, _ := util.VersionString()
 		versionChange, repoVersion, _ := checkToolVersions(fs, toolVersion)
 		if versionChange {
-			return fmt.Errorf("fogg version (%s) is different than version currently used to manage repo (%s). To upgrade add --upgrade.", toolVersion, repoVersion)
+			return errs.NewUser(fmt.Sprintf("The current `fogg version` (%s) is different than version currently used to manage repo (%s). To upgrade this repo run `fogg apply --upgrade`.", toolVersion, repoVersion))
 		}
 	}
 	p, err := plan.Eval(conf, false)

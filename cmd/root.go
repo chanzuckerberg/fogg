@@ -1,9 +1,11 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/chanzuckerberg/fogg/errs"
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
@@ -18,13 +20,24 @@ func init() {
 }
 
 var rootCmd = &cobra.Command{
-	Use:   "fogg",
-	Short: "",
+	Use:          "fogg",
+	Short:        "",
+	SilenceUsage: true,
 }
 
 func Execute() {
+	red := color.New(color.FgRed).SprintFunc()
+
 	if err := rootCmd.Execute(); err != nil {
-		log.Fatal(err)
-		os.Exit(1)
+		switch e := err.(type) {
+		case *errs.User:
+			fmt.Printf("%s: %s\n", red("ERROR"), e.Error())
+			os.Exit(1)
+		case *errs.Internal:
+			fmt.Printf("%s:\nThis may be a bug, please report it.\n\n %s", red("INTERNAL ERROR"), e.Error())
+		default:
+			fmt.Printf("%s: %s", red("UNKOWN ERROR"), err)
+			os.Exit(1)
+		}
 	}
 }
