@@ -21,7 +21,7 @@ var applyCmd = &cobra.Command{
 	Use:           "apply",
 	Short:         "Apply model defined in fogg.json to the current tree.",
 	Long:          "This command will take the model defined in fogg.json, build a plan and generate the appropriate files from templates.",
-	SilenceErrors: true,
+	SilenceErrors: true, // If we don't silence here, cobra will print them. But we want to do that in cmd/root.go
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logLevel := log.InfoLevel
 		if debug { // debug overrides quiet

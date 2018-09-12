@@ -27,7 +27,7 @@ func dict(in interface{}) map[string]interface{} {
 func OpenTemplate(source io.Reader) *template.Template {
 	s, err := ioutil.ReadAll(source)
 	if err != nil {
-		log.Panic(err)
+		log.Panic(err) // FIXME
 	}
 	funcs := sprig.TxtFuncMap()
 	funcs["dict"] = dict
