@@ -13,6 +13,7 @@ import (
 func init() {
 	applyCmd.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
 	applyCmd.Flags().BoolP("verbose", "v", false, "use this to turn on verbose output")
+	applyCmd.Flags().BoolP("upgrade", "u", false, "use this when running a new version of fogg")
 	rootCmd.AddCommand(applyCmd)
 }
 
@@ -47,6 +48,11 @@ var applyCmd = &cobra.Command{
 			log.Panic(e)
 		}
 
+		upgrade, e := cmd.Flags().GetBool("upgrade")
+		if e != nil {
+			log.Panic(e)
+		}
+
 		// check that we are at root of initialized git repo
 		openGitOrExit(pwd)
 
@@ -55,7 +61,7 @@ var applyCmd = &cobra.Command{
 		exitOnConfigErrors(err)
 
 		// apply
-		e = apply.Apply(fs, config, templates.Templates)
+		e = apply.Apply(fs, config, templates.Templates, upgrade)
 		if e != nil {
 			log.Panic(e)
 		}
