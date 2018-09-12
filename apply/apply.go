@@ -21,6 +21,7 @@ import (
 	"github.com/gobuffalo/packr"
 	getter "github.com/hashicorp/go-getter"
 	"github.com/hashicorp/hcl/hcl/printer"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
@@ -32,7 +33,7 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, upgrade bool) err
 		toolVersion, _ := util.VersionString()
 		versionChange, repoVersion, _ := checkToolVersions(fs, toolVersion)
 		if versionChange {
-			return errs.NewUser(fmt.Sprintf("The current `fogg version` (%s) is different than version currently used to manage repo (%s). To upgrade this repo run `fogg apply --upgrade`.", toolVersion, repoVersion))
+			return errs.NewUserf("fogg version (%s) is different than version currently used to manage repo (%s). To upgrade add --upgrade.", toolVersion, repoVersion)
 		}
 	}
 	p, err := plan.Eval(conf, false)
@@ -43,6 +44,11 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, upgrade bool) err
 	e := applyRepo(fs, p, &tmp.Repo)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply repo")
+	}
+
+	e = applyPlugins(fs, p)
+	if e != nil {
+		return errs.WrapUser(e, "unable to apply plugins")
 	}
 
 	e = applyAccounts(fs, p, &tmp.Account)
@@ -61,7 +67,7 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, upgrade bool) err
 	}
 
 	e = applyModules(fs, p.Modules, &tmp.Module)
-	return errs.WrapUser(e, "unable to apply modules")
+	return errors.Wrap(e, "unable to apply modules") // FIXME
 }
 
 func checkToolVersions(fs afero.Fs, current string) (bool, string, error) {
@@ -97,33 +103,29 @@ func versionIsChanged(repo string, tool string) (bool, error) {
 }
 
 func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates *packr.Box) error {
-	e := applyTree(fs, repoTemplates, "", p)
-	if e != nil {
-		return e
-	}
-	return applyPlugins(fs, p)
+	return applyTree(fs, repoTemplates, "", p)
 }
 
-func applyPlugins(fs afero.Fs, p *plan.Plan) (err error) {
+func applyPlugins(fs afero.Fs, p *plan.Plan) error {
 	apply := func(name string, plugin *plugins.CustomPlugin) error {
 		log.Infof("Applying plugin %s", name)
-		return errs.WrapUserf(plugin.Install(fs, name), "Error applying plugin %s", name)
+		return errors.Wrapf(plugin.Install(fs, name), "Error applying plugin %s", name) // FIXME
 	}
 
 	for pluginName, plugin := range p.Plugins.CustomPlugins {
-		err = apply(pluginName, plugin)
+		err := apply(pluginName, plugin)
 		if err != nil {
 			return err
 		}
 	}
 
 	for providerName, provider := range p.Plugins.TerraformProviders {
-		err = apply(providerName, provider)
+		err := apply(providerName, provider)
 		if err != nil {
 			return err
 		}
 	}
-	return
+	return nil
 }
 
 func applyGlobal(fs afero.Fs, p plan.Component, repoBox *packr.Box) error {

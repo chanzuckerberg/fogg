@@ -41,10 +41,10 @@ type CustomPlugin struct {
 // Install installs the custom plugin
 func (cp *CustomPlugin) Install(fs afero.Fs, pluginName string) error {
 	if cp == nil {
-		return errs.NewInternal("nil CustomPlugin")
+		return errs.NewUser("nil CustomPlugin")
 	}
 	if fs == nil {
-		return errs.NewInternal("nil fs")
+		return errs.NewUser("nil fs")
 	}
 
 	tmpPath, err := cp.fetch(pluginName)
@@ -64,17 +64,15 @@ func (cp *CustomPlugin) SetTargetPath(path string) {
 func (cp *CustomPlugin) fetch(pluginName string) (string, error) {
 	tmpFile, err := ioutil.TempFile("", fmt.Sprintf("%s-*.tmp", pluginName))
 	if err != nil {
-		return "", errs.WrapUser(err, "could not create temporary directory")
+		return "", errors.Wrap(err, "could not create temporary directory") //FIXME
 	}
 	resp, err := http.Get(cp.URL)
 	if err != nil {
-		return "", errs.WrapUserf(err, "could not get %s", cp.URL)
+		return "", errors.Wrapf(err, "could not get %s", cp.URL) // FIXME
 	}
 	defer resp.Body.Close()
 	_, err = io.Copy(tmpFile, resp.Body)
-	// FIXME this should be like so, but when I change it we get test failures that I have yet to figure out.
-	// return tmpFile.Name(), errs.WrapUser(err, "could not download file")
-	return tmpFile.Name(), errors.Wrap(err, "could not download file")
+	return tmpFile.Name(), errors.Wrap(err, "could not download file") //FIXME
 }
 
 // process the custom plugin
