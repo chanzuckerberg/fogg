@@ -11,6 +11,20 @@ type User struct {
 	e *errors.Error
 }
 
+// User is a user error
+// type User string
+
+// Error implements the error interface
+// func (u *User) Error() string {
+// 	return string(u)
+// }
+
+// type Internal string
+
+// func (i *Internal) Error() string {
+// 	return string(i)
+// }
+
 type Internal struct {
 	e *errors.Error
 }
@@ -26,19 +40,20 @@ func (u *Internal) Error() string {
 	return u.e.ErrorStack()
 }
 
-func NewUser(msg string) *User {
+// NewUser returns a new user error
+func NewUser(msg string) error {
 	return &User{
 		e: errors.New(msg),
 	}
 }
 
-func NewUserf(msg string, a ...interface{}) *User {
+func NewUserf(msg string, a ...interface{}) error {
 	return &User{
 		e: errors.New(fmt.Sprintf(msg, a...)),
 	}
 }
 
-func WrapUser(e error, msg string) *User {
+func WrapUser(e error, msg string) error {
 	if e == nil {
 		return nil
 	}
@@ -47,7 +62,7 @@ func WrapUser(e error, msg string) *User {
 	}
 }
 
-func WrapUserf(e error, msg string, a ...interface{}) *User {
+func WrapUserf(e error, msg string, a ...interface{}) error {
 	log.Debugf("wrapuser e: %#v", e)
 	if e == nil {
 		return nil
@@ -57,13 +72,13 @@ func WrapUserf(e error, msg string, a ...interface{}) *User {
 	}
 }
 
-func NewInternal(msg string) *Internal {
+func NewInternal(msg string) error {
 	return &Internal{
 		e: errors.New(msg),
 	}
 }
 
-func WrapInternal(e error, msg string) *User {
+func WrapInternal(e error, msg string) error {
 	if e == nil {
 		return nil
 	}

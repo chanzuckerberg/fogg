@@ -14,7 +14,6 @@ import (
 	"strings"
 
 	"github.com/chanzuckerberg/fogg/errs"
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
@@ -64,15 +63,15 @@ func (cp *CustomPlugin) SetTargetPath(path string) {
 func (cp *CustomPlugin) fetch(pluginName string) (string, error) {
 	tmpFile, err := ioutil.TempFile("", fmt.Sprintf("%s-*.tmp", pluginName))
 	if err != nil {
-		return "", errors.Wrap(err, "could not create temporary directory") //FIXME
+		return "", errs.WrapUser(err, "could not create temporary directory") //FIXME
 	}
 	resp, err := http.Get(cp.URL)
 	if err != nil {
-		return "", errors.Wrapf(err, "could not get %s", cp.URL) // FIXME
+		return "", errs.WrapUserf(err, "could not get %s", cp.URL) // FIXME
 	}
 	defer resp.Body.Close()
 	_, err = io.Copy(tmpFile, resp.Body)
-	return tmpFile.Name(), errors.Wrap(err, "could not download file") //FIXME
+	return tmpFile.Name(), errs.WrapUser(err, "could not download file") //FIXME
 }
 
 // process the custom plugin
