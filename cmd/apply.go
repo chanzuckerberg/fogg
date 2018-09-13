@@ -66,9 +66,7 @@ var applyCmd = &cobra.Command{
 
 		// apply
 		e = apply.Apply(fs, config, templates.Templates, upgrade)
-		if e != nil {
-			return e
-		}
-		return nil
+
+		return e
 	},
 }
