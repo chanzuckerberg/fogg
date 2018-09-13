@@ -105,24 +105,6 @@ type Config struct {
 	Plugins  Plugins            `json:"plugins"`
 }
 
-var allRegions = []string{
-	"ap-south-1",
-	"eu-west-3",
-	"eu-west-2",
-	"eu-west-1",
-	"ap-northeast-2",
-	"ap-northeast-1",
-	"sa-east-1",
-	"ca-central-1",
-	"ap-southeast-1",
-	"ap-southeast-2",
-	"eu-central-1",
-	"us-east-1",
-	"us-east-2",
-	"us-west-1",
-	"us-west-2",
-}
-
 func InitConfig(project, region, bucket, awsProfile, owner, awsProviderVersion string) *Config {
 	return &Config{
 		Defaults: defaults{
@@ -196,7 +178,6 @@ func (c *Config) validateExtraVars() error {
 				err = multierror.Append(err, fmt.Errorf("extra_var[%s] is a fogg reserved variable name", extraVar))
 			}
 		}
-		return
 	}
 	extraVars := []map[string]string{}
 	extraVars = append(extraVars, c.Defaults.ExtraVars)

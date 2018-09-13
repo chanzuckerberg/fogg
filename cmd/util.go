@@ -48,9 +48,8 @@ func mergeConfigValidationErrors(err error) error {
 				sb.WriteString(strings.Replace(msg, "Config.", "", 1))
 			}
 			return errs.NewUser(sb.String())
-		} else {
-			return err
 		}
+		return err
 	}
 	return nil
 }
