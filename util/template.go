@@ -25,6 +25,7 @@ func dict(in interface{}) map[string]interface{} {
 	return nil
 }
 
+// OpenTemplate will read `source` for a template, parse, configure and return a template.Template
 func OpenTemplate(source io.Reader) (*template.Template, error) {
 	s, err := ioutil.ReadAll(source)
 	if err != nil {
@@ -32,5 +33,5 @@ func OpenTemplate(source io.Reader) (*template.Template, error) {
 	}
 	funcs := sprig.TxtFuncMap()
 	funcs["dict"] = dict
-	return template.Must(template.New("tmpl").Funcs(funcs).Parse(string(s))), nil
+	return template.New("tmpl").Funcs(funcs).Parse(string(s))
 }
