@@ -59,7 +59,10 @@ var applyCmd = &cobra.Command{
 
 		config, err := readAndValidateConfig(fs, configFile, verbose)
 
-		exitOnConfigErrors(err)
+		e = mergeConfigValidationErrors(err)
+		if e != nil {
+			return e
+		}
 
 		// apply
 		e = apply.Apply(fs, config, templates.Templates, upgrade)
