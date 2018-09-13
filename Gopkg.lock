@@ -624,7 +624,6 @@
     "github.com/hashicorp/hcl/hcl/printer",
     "github.com/hashicorp/terraform/config",
     "github.com/mitchellh/go-homedir",
-    "github.com/pkg/errors",
     "github.com/segmentio/go-prompt",
     "github.com/sirupsen/logrus",
     "github.com/spf13/afero",
