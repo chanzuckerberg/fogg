@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/chanzuckerberg/fogg/config"
+	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plan"
 	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/chanzuckerberg/fogg/templates"
@@ -20,7 +21,6 @@ import (
 	"github.com/gobuffalo/packr"
 	getter "github.com/hashicorp/go-getter"
 	"github.com/hashicorp/hcl/hcl/printer"
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
@@ -32,49 +32,54 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, upgrade bool) err
 		toolVersion, _ := util.VersionString()
 		versionChange, repoVersion, _ := checkToolVersions(fs, toolVersion)
 		if versionChange {
-			return fmt.Errorf("fogg version (%s) is different than version currently used to manage repo (%s). To upgrade add --upgrade.", toolVersion, repoVersion)
+			return errs.NewUserf("fogg version (%s) is different than version currently used to manage repo (%s). To upgrade add --upgrade.", toolVersion, repoVersion)
 		}
 	}
 	p, err := plan.Eval(conf, false)
 	if err != nil {
-		return errors.Wrap(err, "unable to evaluate plan")
+		return errs.WrapUser(err, "unable to evaluate plan")
 	}
 
 	e := applyRepo(fs, p, &tmp.Repo)
 	if e != nil {
-		return errors.Wrap(e, "unable to apply repo")
+		return errs.WrapUser(e, "unable to apply repo")
+	}
+
+	e = applyPlugins(fs, p)
+	if e != nil {
+		return errs.WrapUser(e, "unable to apply plugins")
 	}
 
 	e = applyAccounts(fs, p, &tmp.Account)
 	if e != nil {
-		return errors.Wrap(e, "unable to apply accounts")
+		return errs.WrapUser(e, "unable to apply accounts")
 	}
 
 	e = applyEnvs(fs, p, &tmp.Env, &tmp.Component)
 	if e != nil {
-		return errors.Wrap(e, "unable to apply envs")
+		return errs.WrapUser(e, "unable to apply envs")
 	}
 
 	e = applyGlobal(fs, p.Global, &tmp.Global)
 	if e != nil {
-		return errors.Wrap(e, "unable to apply global")
+		return errs.WrapUser(e, "unable to apply global")
 	}
 
 	e = applyModules(fs, p.Modules, &tmp.Module)
-	return errors.Wrap(e, "unable to apply modules")
+	return errs.WrapUser(e, "unable to apply modules")
 }
 
 func checkToolVersions(fs afero.Fs, current string) (bool, string, error) {
 	f, e := fs.Open(".fogg-version")
 	if e != nil {
-		return false, "", errors.Wrap(e, "unable to open .fogg-version file")
+		return false, "", errs.WrapUser(e, "unable to open .fogg-version file")
 	}
 	reader := io.ReadCloser(f)
 	defer reader.Close()
 
 	b, e := ioutil.ReadAll(reader)
 	if e != nil {
-		return false, "", errors.Wrap(e, "unable to read .fogg-version file")
+		return false, "", errs.WrapUser(e, "unable to read .fogg-version file")
 	}
 	repoVersion := string(b)
 	changed, e := versionIsChanged(repoVersion, current)
@@ -97,40 +102,36 @@ func versionIsChanged(repo string, tool string) (bool, error) {
 }
 
 func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates *packr.Box) error {
-	e := applyTree(fs, repoTemplates, "", p)
-	if e != nil {
-		return e
-	}
-	return applyPlugins(fs, p)
+	return applyTree(fs, repoTemplates, "", p)
 }
 
-func applyPlugins(fs afero.Fs, p *plan.Plan) (err error) {
+func applyPlugins(fs afero.Fs, p *plan.Plan) error {
 	apply := func(name string, plugin *plugins.CustomPlugin) error {
 		log.Infof("Applying plugin %s", name)
-		return errors.Wrapf(plugin.Install(fs, name), "Error applying plugin %s", name)
+		return errs.WrapUserf(plugin.Install(fs, name), "Error applying plugin %s", name)
 	}
 
 	for pluginName, plugin := range p.Plugins.CustomPlugins {
-		err = apply(pluginName, plugin)
+		err := apply(pluginName, plugin)
 		if err != nil {
 			return err
 		}
 	}
 
 	for providerName, provider := range p.Plugins.TerraformProviders {
-		err = apply(providerName, provider)
+		err := apply(providerName, provider)
 		if err != nil {
 			return err
 		}
 	}
-	return
+	return nil
 }
 
 func applyGlobal(fs afero.Fs, p plan.Component, repoBox *packr.Box) error {
 	path := fmt.Sprintf("%s/global", rootPath)
 	e := fs.MkdirAll(path, 0755)
 	if e != nil {
-		return errors.Wrapf(e, "unable to make directory %s", path)
+		return errs.WrapUserf(e, "unable to make directory %s", path)
 	}
 	return applyTree(fs, repoBox, path, p)
 }
@@ -140,11 +141,11 @@ func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) (e error) {
 		path := fmt.Sprintf("%s/accounts/%s", rootPath, account)
 		e = fs.MkdirAll(path, 0755)
 		if e != nil {
-			return errors.Wrap(e, "unable to make directories for accounts")
+			return errs.WrapUser(e, "unable to make directories for accounts")
 		}
 		e = applyTree(fs, accountBox, path, accountPlan)
 		if e != nil {
-			return errors.Wrap(e, "unable to apply templates to account")
+			return errs.WrapUser(e, "unable to apply templates to account")
 		}
 	}
 	return nil
@@ -155,11 +156,11 @@ func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox *packr.Box) (
 		path := fmt.Sprintf("%s/modules/%s", rootPath, module)
 		e = fs.MkdirAll(path, 0755)
 		if e != nil {
-			return errors.Wrapf(e, "unable to make path %s", path)
+			return errs.WrapUserf(e, "unable to make path %s", path)
 		}
 		e = applyTree(fs, moduleBox, path, modulePlan)
 		if e != nil {
-			return errors.Wrap(e, "unable to apply tree")
+			return errs.WrapUser(e, "unable to apply tree")
 		}
 	}
 	return nil
@@ -170,27 +171,27 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 		path := fmt.Sprintf("%s/envs/%s", rootPath, env)
 		e = fs.MkdirAll(path, 0755)
 		if e != nil {
-			return errors.Wrapf(e, "unable to make directory %s", path)
+			return errs.WrapUserf(e, "unable to make directory %s", path)
 		}
 		e := applyTree(fs, envBox, path, envPlan)
 		if e != nil {
-			return errors.Wrap(e, "unable to apply templates to env")
+			return errs.WrapUser(e, "unable to apply templates to env")
 		}
 		for component, componentPlan := range envPlan.Components {
 			path = fmt.Sprintf("%s/envs/%s/%s", rootPath, env, component)
 			e = fs.MkdirAll(path, 0755)
 			if e != nil {
-				return errors.Wrap(e, "unable to make directories for component")
+				return errs.WrapUser(e, "unable to make directories for component")
 			}
 			e := applyTree(fs, componentBox, path, componentPlan)
 			if e != nil {
-				return errors.Wrap(e, "unable to apply templates for component")
+				return errs.WrapUser(e, "unable to apply templates for component")
 			}
 
 			if componentPlan.ModuleSource != nil {
 				e := applyModuleInvocation(fs, path, *componentPlan.ModuleSource, templates.Templates.ModuleInvocation)
 				if e != nil {
-					return errors.Wrap(e, "unable to apply module invocation")
+					return errs.WrapUser(e, "unable to apply module invocation")
 				}
 			}
 
@@ -208,28 +209,28 @@ func applyTree(dest afero.Fs, source *packr.Box, targetBasePath string, subst in
 		if extension == ".tmpl" {
 			e = applyTemplate(sourceFile, dest, target, subst)
 			if e != nil {
-				return errors.Wrap(e, "unable to apply template")
+				return errs.WrapUser(e, "unable to apply template")
 			}
 		} else if extension == ".touch" {
 			e = touchFile(dest, target)
 			if e != nil {
-				return errors.Wrapf(e, "unable to touch file %s", target)
+				return errs.WrapUserf(e, "unable to touch file %s", target)
 			}
 		} else if extension == ".create" {
 			e = createFile(dest, target, sourceFile)
 			if e != nil {
-				return errors.Wrapf(e, "unable to create file %s", target)
+				return errs.WrapUserf(e, "unable to create file %s", target)
 			}
 		} else if extension == ".rm" {
 			e = os.Remove(target)
 			if e != nil && !os.IsNotExist(e) {
-				return errors.Wrapf(e, "unable to remove %s", target)
+				return errs.WrapUserf(e, "unable to remove %s", target)
 			}
 			log.Infof("%s removed", target)
 		} else {
 			e = afero.WriteReader(dest, target, sourceFile)
 			if e != nil {
-				return errors.Wrap(e, "unable to copy file")
+				return errs.WrapUser(e, "unable to copy file")
 			}
 			log.Infof("%s copied", target)
 		}
@@ -237,7 +238,7 @@ func applyTree(dest afero.Fs, source *packr.Box, targetBasePath string, subst in
 		if targetExtension == ".tf" {
 			e = fmtHcl(dest, target)
 			if e != nil {
-				return errors.Wrap(e, "unable to format HCL")
+				return errs.WrapUser(e, "unable to format HCL")
 			}
 		}
 		return nil
@@ -247,11 +248,11 @@ func applyTree(dest afero.Fs, source *packr.Box, targetBasePath string, subst in
 func fmtHcl(fs afero.Fs, path string) error {
 	in, e := afero.ReadFile(fs, path)
 	if e != nil {
-		return errors.Wrapf(e, "unable to read file %s", path)
+		return errs.WrapUserf(e, "unable to read file %s", path)
 	}
 	out, e := printer.Format(in)
 	if e != nil {
-		return errors.Wrapf(e, "fmt hcl failed for %s", path)
+		return errs.WrapUserf(e, "fmt hcl failed for %s", path)
 	}
 	return afero.WriteReader(fs, path, bytes.NewReader(out))
 }
@@ -262,7 +263,7 @@ func touchFile(dest afero.Fs, path string) error {
 		log.Infof("%s touched", path)
 		_, err = dest.Create(path)
 		if err != nil {
-			return errors.Wrap(err, "unable to touch file")
+			return errs.WrapUser(err, "unable to touch file")
 		}
 	} else {
 		log.Infof("%s skipped touch", path)
@@ -276,7 +277,7 @@ func createFile(dest afero.Fs, path string, sourceFile io.Reader) error {
 		log.Infof("%s created", path)
 		err = afero.WriteReader(dest, path, sourceFile)
 		if err != nil {
-			return errors.Wrap(err, "unable to create file")
+			return errs.WrapUser(err, "unable to create file")
 		}
 	} else {
 		log.Infof("%s skipped", path)
@@ -292,9 +293,12 @@ func applyTemplate(sourceFile io.Reader, dest afero.Fs, path string, overrides i
 	log.Infof("%s templated", path)
 	writer, err := dest.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
-		return errors.Wrap(err, "unable to open file")
+		return errs.WrapUser(err, "unable to open file")
 	}
-	t := util.OpenTemplate(sourceFile)
+	t, e := util.OpenTemplate(sourceFile)
+	if e != nil {
+		return e
+	}
 	return t.Execute(writer, overrides)
 }
 
@@ -311,12 +315,12 @@ type moduleData struct {
 func applyModuleInvocation(fs afero.Fs, path, moduleAddress string, box packr.Box) error {
 	e := fs.MkdirAll(path, 0755)
 	if e != nil {
-		return errors.Wrapf(e, "couldn't create %s directory", path)
+		return errs.WrapUserf(e, "couldn't create %s directory", path)
 	}
 
 	moduleConfig, e := util.DownloadAndParseModule(moduleAddress)
 	if e != nil {
-		return errors.Wrap(e, "could not download or parse module")
+		return errs.WrapUser(e, "could not download or parse module")
 	}
 
 	// This should really be part of the plan stage, not apply. But going to
@@ -340,31 +344,31 @@ func applyModuleInvocation(fs afero.Fs, path, moduleAddress string, box packr.Bo
 	// MAIN
 	f, e := box.Open("main.tf.tmpl")
 	if e != nil {
-		return errors.Wrap(e, "could not open template file")
+		return errs.WrapUser(e, "could not open template file")
 	}
 	e = applyTemplate(f, fs, filepath.Join(path, "main.tf"), &moduleData{moduleName, moduleAddressForSource, variables, outputs})
 	if e != nil {
-		return errors.Wrap(e, "unable to apply template for main.tf")
+		return errs.WrapUser(e, "unable to apply template for main.tf")
 	}
 	e = fmtHcl(fs, filepath.Join(path, "main.tf"))
 	if e != nil {
-		return errors.Wrap(e, "unable to format main.tf")
+		return errs.WrapUser(e, "unable to format main.tf")
 	}
 
 	// OUTPUTS
 	f, e = box.Open("outputs.tf.tmpl")
 	if e != nil {
-		return errors.Wrap(e, "could not open template file")
+		return errs.WrapUser(e, "could not open template file")
 	}
 
 	e = applyTemplate(f, fs, filepath.Join(path, "outputs.tf"), &moduleData{moduleName, moduleAddressForSource, variables, outputs})
 	if e != nil {
-		return errors.Wrap(e, "unable to apply template for outputs.tf")
+		return errs.WrapUser(e, "unable to apply template for outputs.tf")
 	}
 
 	e = fmtHcl(fs, filepath.Join(path, "outputs.tf"))
 	if e != nil {
-		return errors.Wrap(e, "unable to format outputs.tf")
+		return errs.WrapUser(e, "unable to format outputs.tf")
 	}
 
 	return nil

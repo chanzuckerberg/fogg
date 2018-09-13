@@ -13,7 +13,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/pkg/errors"
+	"github.com/chanzuckerberg/fogg/errs"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
@@ -40,10 +40,10 @@ type CustomPlugin struct {
 // Install installs the custom plugin
 func (cp *CustomPlugin) Install(fs afero.Fs, pluginName string) error {
 	if cp == nil {
-		return errors.New("nil CustomPlugin")
+		return errs.NewUser("nil CustomPlugin")
 	}
 	if fs == nil {
-		return errors.New("nil fs")
+		return errs.NewUser("nil fs")
 	}
 
 	tmpPath, err := cp.fetch(pluginName)
@@ -63,15 +63,15 @@ func (cp *CustomPlugin) SetTargetPath(path string) {
 func (cp *CustomPlugin) fetch(pluginName string) (string, error) {
 	tmpFile, err := ioutil.TempFile("", fmt.Sprintf("%s-*.tmp", pluginName))
 	if err != nil {
-		return "", errors.Wrap(err, "could not create temporary directory")
+		return "", errs.WrapUser(err, "could not create temporary directory") //FIXME
 	}
 	resp, err := http.Get(cp.URL)
 	if err != nil {
-		return "", errors.Wrapf(err, "could not get %s", cp.URL)
+		return "", errs.WrapUserf(err, "could not get %s", cp.URL) // FIXME
 	}
 	defer resp.Body.Close()
 	_, err = io.Copy(tmpFile, resp.Body)
-	return tmpFile.Name(), errors.Wrap(err, "could not download file")
+	return tmpFile.Name(), errs.WrapUser(err, "could not download file") //FIXME
 }
 
 // process the custom plugin
@@ -84,46 +84,46 @@ func (cp *CustomPlugin) process(fs afero.Fs, pluginName string, path string) err
 	case TypePluginFormatBin:
 		return cp.processBin(fs, pluginName, path)
 	default:
-		return errors.Errorf("Unknown plugin format %s", cp.Format)
+		return errs.NewUserf("Unknown plugin format %s", cp.Format)
 	}
 }
 
 func (cp *CustomPlugin) processBin(fs afero.Fs, name string, downloadPath string) error {
 	err := fs.MkdirAll(cp.targetDir, 0755)
 	if err != nil {
-		return errors.Wrapf(err, "Could not create directory %s", cp.targetDir)
+		return errs.WrapUserf(err, "Could not create directory %s", cp.targetDir)
 	}
 	targetPath := path.Join(cp.targetDir, name)
 	src, err := os.Open(downloadPath)
 	if err != nil {
-		return errors.Wrapf(err, "Could not open downloaded file at %s", downloadPath)
+		return errs.WrapUserf(err, "Could not open downloaded file at %s", downloadPath)
 	}
 	dst, err := fs.Create(targetPath)
 	if err != nil {
-		return errors.Wrapf(err, "Could not open target file at %s", targetPath)
+		return errs.WrapUserf(err, "Could not open target file at %s", targetPath)
 	}
 	_, err = io.Copy(dst, src)
 	if err != nil {
-		return errors.Wrapf(err, "Could not move %s to %s", downloadPath, targetPath)
+		return errs.WrapUserf(err, "Could not move %s to %s", downloadPath, targetPath)
 	}
 	err = fs.Chmod(targetPath, os.FileMode(0755))
-	return errors.Wrapf(err, "Error making %s executable", targetPath)
+	return errs.WrapUserf(err, "Error making %s executable", targetPath)
 }
 
 // https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
 func (cp *CustomPlugin) processTar(fs afero.Fs, path string) error {
 	err := fs.MkdirAll(cp.targetDir, 0755)
 	if err != nil {
-		return errors.Wrapf(err, "Could not create directory %s", cp.targetDir)
+		return errs.WrapUserf(err, "Could not create directory %s", cp.targetDir)
 	}
 	f, err := os.Open(path)
 	if err != nil {
-		return errors.Wrap(err, "could not read staged custom plugin")
+		return errs.WrapUser(err, "could not read staged custom plugin")
 	}
 	defer f.Close()
 	gzr, err := gzip.NewReader(f)
 	if err != nil {
-		return errors.Wrap(err, "could not create gzip reader")
+		return errs.WrapUser(err, "could not create gzip reader")
 	}
 	defer gzr.Close()
 	tr := tar.NewReader(gzr)
@@ -133,10 +133,10 @@ func (cp *CustomPlugin) processTar(fs afero.Fs, path string) error {
 			break // no more files are found
 		}
 		if err != nil {
-			return errors.Wrap(err, "Error reading tar")
+			return errs.WrapUser(err, "Error reading tar")
 		}
 		if header == nil {
-			return errors.New("Nil tar file header")
+			return errs.NewUser("Nil tar file header")
 		}
 		// the target location where the dir/file should be created
 		target := filepath.Join(cp.targetDir, header.Name)
@@ -144,17 +144,17 @@ func (cp *CustomPlugin) processTar(fs afero.Fs, path string) error {
 		case tar.TypeDir: // if its a dir and it doesn't exist create it
 			err := fs.MkdirAll(target, 0755)
 			if err != nil {
-				return errors.Wrapf(err, "tar: could not create directory %s", target)
+				return errs.WrapUserf(err, "tar: could not create directory %s", target)
 			}
 		case tar.TypeReg: // if it is a file create it, preserving the file mode
 			destFile, err := fs.OpenFile(target, os.O_RDWR|os.O_CREATE|os.O_TRUNC, os.FileMode(header.Mode))
 			if err != nil {
-				return errors.Wrapf(err, "tar: could not open destination file for %s", target)
+				return errs.WrapUserf(err, "tar: could not open destination file for %s", target)
 			}
 			_, err = io.Copy(destFile, tr)
 			if err != nil {
 				destFile.Close()
-				return errors.Wrapf(err, "tar: could not copy file contents")
+				return errs.WrapUserf(err, "tar: could not copy file contents")
 			}
 			// Manually take care of closing file since defer will pile them up
 			destFile.Close()
@@ -169,12 +169,12 @@ func (cp *CustomPlugin) processTar(fs afero.Fs, path string) error {
 func (cp *CustomPlugin) processZip(fs afero.Fs, downloadPath string) error {
 	err := fs.MkdirAll(cp.targetDir, 0755)
 	if err != nil {
-		return errors.Wrapf(err, "Could not create directory %s", cp.targetDir)
+		return errs.WrapUserf(err, "Could not create directory %s", cp.targetDir)
 	}
 
 	r, err := zip.OpenReader(downloadPath)
 	if err != nil {
-		return errors.Wrap(err, "could not read staged custom plugin")
+		return errs.WrapUser(err, "could not read staged custom plugin")
 	}
 	defer r.Close()
 
@@ -183,30 +183,30 @@ func (cp *CustomPlugin) processZip(fs afero.Fs, downloadPath string) error {
 		err = func() error {
 			rc, err := f.Open()
 			if err != nil {
-				return errors.Wrapf(err, "error reading file from zip %s", f.Name)
+				return errs.WrapUserf(err, "error reading file from zip %s", f.Name)
 			}
 			defer rc.Close()
 			fpath := filepath.Join(cp.targetDir, f.Name)
 
 			// Check for ZipSlip. More Info: http://bit.ly/2MsjAWE
 			if !strings.HasPrefix(fpath, filepath.Clean(cp.targetDir)+string(os.PathSeparator)) {
-				return errors.Errorf("%s: illegal file path", fpath)
+				return errs.NewUserf("%s: illegal file path", fpath)
 			}
 
 			if f.FileInfo().IsDir() {
 				err = os.MkdirAll(fpath, os.ModePerm)
 				if err != nil {
-					return errors.Wrap(err, "zip: could not mkdirs")
+					return errs.WrapUser(err, "zip: could not mkdirs")
 				}
 			} else {
 				destFile, err := fs.OpenFile(fpath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, os.FileMode(f.Mode()))
 				if err != nil {
-					return errors.Wrapf(err, "zip: could not open destination file for %s", fpath)
+					return errs.WrapUserf(err, "zip: could not open destination file for %s", fpath)
 				}
 				defer destFile.Close()
 				_, err = io.Copy(destFile, rc)
 				if err != nil {
-					return errors.Wrapf(err, "zip: could not copy file contents")
+					return errs.WrapUserf(err, "zip: could not copy file contents")
 				}
 			}
 			return nil

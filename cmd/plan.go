@@ -3,6 +3,7 @@ package cmd
 import (
 	"os"
 
+	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plan"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
@@ -16,10 +17,11 @@ func init() {
 }
 
 var planCmd = &cobra.Command{
-	Use:   "plan",
-	Short: "Run a plan",
-	Long:  "plan will read fogg.json, use that to generate a plan and print that plan out. It will make no changes.",
-	Run: func(cmd *cobra.Command, args []string) {
+	Use:           "plan",
+	Short:         "Run a plan",
+	Long:          "plan will read fogg.json, use that to generate a plan and print that plan out. It will make no changes.",
+	SilenceErrors: true, // If we don't silence here, cobra will print them. But we want to do that in cmd/root.go
+	RunE: func(cmd *cobra.Command, args []string) error {
 		logLevel := log.InfoLevel
 		if debug { // debug overrides quiet
 			logLevel = log.DebugLevel
@@ -32,19 +34,19 @@ var planCmd = &cobra.Command{
 		// Set up fs
 		pwd, e := os.Getwd()
 		if e != nil {
-			log.Panic(e)
+			return errs.WrapUser(e, "can't get pwd")
 		}
 		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
 		// handle flags
 		verbose, e := cmd.Flags().GetBool("verbose")
 		if e != nil {
-			log.Panic(e)
+			return errs.WrapInternal(e, "couldn't parse verbose flag")
 		}
 
 		configFile, e := cmd.Flags().GetString("config")
 		if e != nil {
-			log.Panic(e)
+			return errs.WrapInternal(e, "couldn't parse config flag")
 		}
 
 		// check that we are at root of initialized git repo
@@ -52,15 +54,15 @@ var planCmd = &cobra.Command{
 
 		config, err := readAndValidateConfig(fs, configFile, verbose)
 
-		exitOnConfigErrors(err)
+		e = mergeConfigValidationErrors(err)
+		if e != nil {
+			return e
+		}
 
 		p, e := plan.Eval(config, verbose)
 		if e != nil {
-			log.Panic(e)
+			return e
 		}
-		e = plan.Print(p)
-		if e != nil {
-			log.Panic(e)
-		}
+		return plan.Print(p)
 	},
 }

@@ -8,9 +8,9 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/hashicorp/go-multierror"
-	"github.com/pkg/errors"
 	"github.com/spf13/afero"
 	"gopkg.in/go-playground/validator.v9"
 )
@@ -147,11 +147,11 @@ func ReadConfig(f io.Reader) (*Config, error) {
 	c := &Config{}
 	b, e := ioutil.ReadAll(f)
 	if e != nil {
-		return nil, errors.Wrap(e, "unable to read config")
+		return nil, errs.WrapUser(e, "unable to read config")
 	}
 	e = json.Unmarshal(b, c)
 	if e != nil {
-		return nil, errors.Wrap(e, "unable to parse json config file")
+		return nil, errs.WrapUser(e, "unable to parse json config file")
 	}
 	return c, nil
 }
@@ -159,7 +159,7 @@ func ReadConfig(f io.Reader) (*Config, error) {
 func FindAndReadConfig(fs afero.Fs, configFile string) (*Config, error) {
 	f, e := fs.Open(configFile)
 	if e != nil {
-		return nil, errors.Wrap(e, "unable to open config file")
+		return nil, errs.WrapUser(e, "unable to open config file")
 	}
 	reader := io.ReadCloser(f)
 	defer reader.Close()
@@ -210,5 +210,8 @@ func (c *Config) validateExtraVars() error {
 		validate(extraVar)
 	}
 
-	return errors.Wrap(err.ErrorOrNil(), "extra_vars contains reserved variable names")
+	if err.ErrorOrNil() != nil {
+		return errs.WrapUser(err.ErrorOrNil(), "extra_vars contains reserved variable names")
+	}
+	return nil
 }

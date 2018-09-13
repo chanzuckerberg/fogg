@@ -18,10 +18,11 @@ func init() {
 }
 
 var applyCmd = &cobra.Command{
-	Use:   "apply",
-	Short: "Apply model defined in fogg.json to the current tree.",
-	Long:  "This command will take the model defined in fogg.json, build a plan and generate the appropriate files from templates.",
-	Run: func(cmd *cobra.Command, args []string) {
+	Use:           "apply",
+	Short:         "Apply model defined in fogg.json to the current tree.",
+	Long:          "This command will take the model defined in fogg.json, build a plan and generate the appropriate files from templates.",
+	SilenceErrors: true, // If we don't silence here, cobra will print them. But we want to do that in cmd/root.go
+	RunE: func(cmd *cobra.Command, args []string) error {
 		logLevel := log.InfoLevel
 		if debug { // debug overrides quiet
 			logLevel = log.DebugLevel
@@ -34,23 +35,23 @@ var applyCmd = &cobra.Command{
 		// Set up fs
 		pwd, e := os.Getwd()
 		if e != nil {
-			log.Panic(e)
+			return e
 		}
 		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
 		// handle flags
 		verbose, e := cmd.Flags().GetBool("verbose")
 		if e != nil {
-			log.Panic(e)
+			return e
 		}
 		configFile, e := cmd.Flags().GetString("config")
 		if e != nil {
-			log.Panic(e)
+			return e
 		}
 
 		upgrade, e := cmd.Flags().GetBool("upgrade")
 		if e != nil {
-			log.Panic(e)
+			return e
 		}
 
 		// check that we are at root of initialized git repo
@@ -58,12 +59,16 @@ var applyCmd = &cobra.Command{
 
 		config, err := readAndValidateConfig(fs, configFile, verbose)
 
-		exitOnConfigErrors(err)
+		e = mergeConfigValidationErrors(err)
+		if e != nil {
+			return e
+		}
 
 		// apply
 		e = apply.Apply(fs, config, templates.Templates, upgrade)
 		if e != nil {
-			log.Panic(e)
+			return e
 		}
+		return nil
 	},
 }

@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/chanzuckerberg/fogg/config"
-	"github.com/pkg/errors"
+	"github.com/chanzuckerberg/fogg/errs"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	validator "gopkg.in/go-playground/validator.v9"
@@ -18,7 +18,6 @@ func openGitOrExit(pwd string) {
 	_, err := os.Stat(".git")
 	if err != nil {
 		// assuming this means no repository
-		log.Debug(errors.Wrap(err, "unable to open git index"))
 		log.Fatal("fogg must be run from the root of a git repo")
 		os.Exit(1)
 	}
@@ -27,7 +26,7 @@ func openGitOrExit(pwd string) {
 func readAndValidateConfig(fs afero.Fs, configFile string, verbose bool) (*config.Config, error) {
 	config, err := config.FindAndReadConfig(fs, configFile)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to read config file")
+		return nil, errs.WrapUser(err, "unable to read config file")
 	}
 	if verbose {
 		log.Debug("CONFIG")
@@ -38,18 +37,20 @@ func readAndValidateConfig(fs afero.Fs, configFile string, verbose bool) (*confi
 	return config, err
 }
 
-func exitOnConfigErrors(err error) {
+func mergeConfigValidationErrors(err error) error {
 	if err != nil {
 		fmt.Println("fogg.json has error(s):")
-		errs, ok := err.(validator.ValidationErrors)
+		validatonErrors, ok := err.(validator.ValidationErrors)
 		if ok {
-			for _, err := range errs {
-				msg := fmt.Sprintf("\t%s is a %s %s", err.Namespace(), err.Tag(), err.Kind())
-				fmt.Println(strings.Replace(msg, "Config.", "", 1))
+			var sb strings.Builder
+			for _, err := range validatonErrors {
+				msg := fmt.Sprintf("\t%s is a %s %s\n", err.Namespace(), err.Tag(), err.Kind())
+				sb.WriteString(strings.Replace(msg, "Config.", "", 1))
 			}
+			return errs.NewUser(sb.String())
 		} else {
-			log.Panic(err)
+			return err
 		}
-		os.Exit(1)
 	}
+	return nil
 }
