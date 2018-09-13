@@ -7,6 +7,7 @@ LDFLAGS=-ldflags "-w -s -X github.com/chanzuckerberg/fogg/util.GitSha=${SHA} -X 
 all: test install
 
 setup:
+	go get github.com/rakyll/gotest
 	go install github.com/rakyll/gotest
 
 lint: ## run the fast go linters
