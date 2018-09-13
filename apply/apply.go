@@ -27,9 +27,13 @@ import (
 
 const rootPath = "terraform"
 
+// Apply will run a plan and apply all the changes to the current repo.
 func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, upgrade bool) error {
 	if !upgrade {
-		toolVersion, _ := util.VersionString()
+		toolVersion, err := util.VersionString()
+		if err != nil {
+			return err
+		}
 		versionChange, repoVersion, _ := checkToolVersions(fs, toolVersion)
 		if versionChange {
 			return errs.NewUserf("fogg version (%s) is different than version currently used to manage repo (%s). To upgrade add --upgrade.", toolVersion, repoVersion)
@@ -382,6 +386,9 @@ func calculateModuleAddressForSource(path, moduleAddress string) (string, error)
 	// getter will kinda normalize the module address, but it will actually be
 	// wrong for local file paths, so we need to calculate that ourselves below
 	s, e := getter.Detect(moduleAddress, path, getter.Detectors)
+	if e != nil {
+		return "", e
+	}
 	u, e := url.Parse(s)
 	if e != nil || u.Scheme == "file" {
 		// This indicates that we have a local path to the module.
