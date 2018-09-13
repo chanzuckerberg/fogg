@@ -47,7 +47,7 @@ func exitOnConfigErrors(err error) {
 				fmt.Println(strings.Replace(msg, "Config.", "", 1))
 			}
 		} else {
-			log.Panic(err) // FIXME
+			log.Panic(err)
 		}
 		os.Exit(1)
 	}

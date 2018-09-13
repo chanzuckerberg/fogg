@@ -11,20 +11,6 @@ type User struct {
 	e *errors.Error
 }
 
-// User is a user error
-// type User string
-
-// Error implements the error interface
-// func (u *User) Error() string {
-// 	return string(u)
-// }
-
-// type Internal string
-
-// func (i *Internal) Error() string {
-// 	return string(i)
-// }
-
 type Internal struct {
 	e *errors.Error
 }
