@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/config"
+	"github.com/chanzuckerberg/fogg/plugins"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
@@ -67,7 +68,7 @@ func TestPlanBasic(t *testing.T) {
 	c, err := config.ReadConfig(r)
 	assert.Nil(t, err)
 
-	plan, e := Eval(c, true)
+	plan, e := Eval(c, true, false)
 	assert.Nil(t, e)
 	assert.NotNil(t, plan)
 	assert.NotNil(t, plan.Accounts)
@@ -94,6 +95,33 @@ func TestPlanBasic(t *testing.T) {
 
 	assert.NotNil(t, plan.Envs["staging"].Components["comp1"])
 	assert.Equal(t, "0.100.0", plan.Envs["staging"].Components["comp1"].TerraformVersion)
+
+	assert.NotNil(t, plan.Plugins.CustomPlugins)
+	assert.Len(t, plan.Plugins.CustomPlugins, 1)
+	assert.NotNil(t, plan.Plugins.CustomPlugins["custom"])
+	assert.Equal(t, plugins.TypePluginFormatZip, plan.Plugins.CustomPlugins["custom"].Format)
+	assert.Equal(t, "https://example.com/custom.zip", plan.Plugins.CustomPlugins["custom"].URL)
+
+	assert.NotNil(t, plan.Plugins.TerraformProviders)
+	assert.Len(t, plan.Plugins.TerraformProviders, 1)
+	assert.NotNil(t, plan.Plugins.TerraformProviders["provider"])
+	assert.Equal(t, plugins.TypePluginFormatTar, plan.Plugins.TerraformProviders["provider"].Format)
+	assert.Equal(t, "https://example.com/provider.tar.gz", plan.Plugins.TerraformProviders["provider"].URL)
+}
+
+func TestPlanNoPlugins(t *testing.T) {
+	f, _ := os.Open("testdata/full.json")
+	defer f.Close()
+	r := bufio.NewReader(f)
+	c, err := config.ReadConfig(r)
+	assert.Nil(t, err)
+
+	plan, e := Eval(c, true, true)
+	assert.Nil(t, e)
+	assert.NotNil(t, plan)
+
+	assert.Nil(t, plan.Plugins.CustomPlugins)
+	assert.Nil(t, plan.Plugins.TerraformProviders)
 }
 
 func TestExtraVarsComposition(t *testing.T) {
@@ -103,7 +131,7 @@ func TestExtraVarsComposition(t *testing.T) {
 	c, err := config.ReadConfig(r)
 	assert.Nil(t, err)
 
-	plan, e := Eval(c, true)
+	plan, e := Eval(c, true, false)
 	assert.Nil(t, e)
 	assert.NotNil(t, plan)
 

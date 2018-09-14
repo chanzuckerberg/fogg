@@ -119,15 +119,17 @@ type Plan struct {
 }
 
 // Eval evaluats a config
-func Eval(config *config.Config, verbose bool) (*Plan, error) {
+func Eval(config *config.Config, verbose bool, noPlugins bool) (*Plan, error) {
 	p := &Plan{}
 	v, e := util.VersionString()
 	if e != nil {
 		return nil, errs.WrapInternal(e, "unable to parse fogg version")
 	}
 	p.Version = v
-	p.Plugins.SetCustomPluginsPlan(config.Plugins.CustomPlugins)
-	p.Plugins.SetTerraformProvidersPlan(config.Plugins.TerraformProviders)
+	if !noPlugins {
+		p.Plugins.SetCustomPluginsPlan(config.Plugins.CustomPlugins)
+		p.Plugins.SetTerraformProvidersPlan(config.Plugins.TerraformProviders)
+	}
 
 	var err error
 	p.Accounts = p.buildAccounts(config)

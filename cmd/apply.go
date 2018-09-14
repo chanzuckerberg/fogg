@@ -14,6 +14,7 @@ func init() {
 	applyCmd.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
 	applyCmd.Flags().BoolP("verbose", "v", false, "use this to turn on verbose output")
 	applyCmd.Flags().BoolP("upgrade", "u", false, "use this when running a new version of fogg")
+	applyCmd.Flags().Bool("no-plugins", false, "do not apply fogg plugins; this may result in unexpected behavior.")
 	rootCmd.AddCommand(applyCmd)
 }
 
@@ -54,6 +55,11 @@ var applyCmd = &cobra.Command{
 			return e
 		}
 
+		noPlugins, e := cmd.Flags().GetBool("no-plugins")
+		if e != nil {
+			return e
+		}
+
 		// check that we are at root of initialized git repo
 		openGitOrExit(pwd)
 
@@ -65,7 +71,7 @@ var applyCmd = &cobra.Command{
 		}
 
 		// apply
-		e = apply.Apply(fs, config, templates.Templates, upgrade)
+		e = apply.Apply(fs, config, templates.Templates, upgrade, noPlugins)
 
 		return e
 	},

@@ -28,7 +28,7 @@
       },
       "components": {
         "vpc": {
-					"module_source": "github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0",
+          "module_source": "github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0",
           "extra_vars": {
             "foo": "bar3"
           }
@@ -38,5 +38,19 @@
       }
     },
     "prod": {}
+  },
+  "plugins": {
+    "terraform_providers": {
+      "provider": {
+        "url": "https://example.com/provider.tar.gz",
+        "format": "tar"
+      }
+    },
+    "custom_plugins": {
+      "custom": {
+        "url": "https://example.com/custom.zip",
+        "format": "zip"
+      }
+    }
   }
 }

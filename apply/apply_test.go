@@ -158,7 +158,7 @@ func TestApplySmokeTest(t *testing.T) {
 	c, e := config.ReadConfig(ioutil.NopCloser(strings.NewReader(json)))
 	assert.Nil(t, e)
 
-	e = Apply(fs, c, templates.Templates, false)
+	e = Apply(fs, c, templates.Templates, false, false)
 	assert.Nil(t, e)
 }
 

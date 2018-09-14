@@ -13,6 +13,7 @@ import (
 func init() {
 	planCmd.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
 	planCmd.Flags().BoolP("verbose", "v", false, "use this to turn on verbose output")
+	planCmd.Flags().Bool("no-plugins", false, "do not apply fogg plugins; this may result in unexpected behavior.")
 	rootCmd.AddCommand(planCmd)
 }
 
@@ -49,6 +50,11 @@ var planCmd = &cobra.Command{
 			return errs.WrapInternal(e, "couldn't parse config flag")
 		}
 
+		noPlugins, e := cmd.Flags().GetBool("no-plugins")
+		if e != nil {
+			return e
+		}
+
 		// check that we are at root of initialized git repo
 		openGitOrExit(pwd)
 
@@ -59,7 +65,7 @@ var planCmd = &cobra.Command{
 			return e
 		}
 
-		p, e := plan.Eval(config, verbose)
+		p, e := plan.Eval(config, verbose, noPlugins)
 		if e != nil {
 			return e
 		}
