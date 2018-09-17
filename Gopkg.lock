@@ -248,7 +248,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:a361611b8c8c75a1091f00027767f7779b29cb37c456a71b8f2604c88057ab40"
+  digest = "1:ae22a88db2b2ed901a45665953afeb80410413edd27557e15e535b21f48a3622"
   name = "github.com/hashicorp/hcl"
   packages = [
     ".",
@@ -263,7 +263,7 @@
     "json/token",
   ]
   pruneopts = "UT"
-  revision = "ef8a98b0bbce4a65b5aa4c368430a80ddc533168"
+  revision = "65a6292f0157eff210d03ed1bf6c59b190b8b906"
 
 [[projects]]
   branch = "master"
