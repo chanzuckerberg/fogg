@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/chanzuckerberg/fogg/util"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -15,11 +14,12 @@ func init() {
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print the version number of fogg",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		v, e := util.VersionString()
 		if e != nil {
-			log.Panic(e)
+			return e
 		}
 		fmt.Println(v)
+		return nil
 	},
 }

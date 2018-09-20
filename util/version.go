@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/blang/semver"
-	"github.com/pkg/errors"
+	"github.com/chanzuckerberg/fogg/errs"
 )
 
 var (
@@ -19,11 +19,11 @@ var (
 func VersionString() (string, error) {
 	release, e := strconv.ParseBool(Release)
 	if e != nil {
-		return "", errors.Wrapf(e, "unable to parse version release field %s", Release)
+		return "", errs.WrapInternal(e, fmt.Sprintf("unable to parse version release field %s", Release))
 	}
 	dirty, e := strconv.ParseBool(Dirty)
 	if e != nil {
-		return "", errors.Wrapf(e, "unable to parse version dirty field %s", Dirty)
+		return "", errs.WrapInternal(e, fmt.Sprintf("unable to parse version dirty field %s", Dirty))
 	}
 	return versionString(Version, GitSha, release, dirty), nil
 }

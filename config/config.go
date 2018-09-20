@@ -8,9 +8,9 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/hashicorp/go-multierror"
-	"github.com/pkg/errors"
 	"github.com/spf13/afero"
 	"gopkg.in/go-playground/validator.v9"
 )
@@ -105,24 +105,6 @@ type Config struct {
 	Plugins  Plugins            `json:"plugins"`
 }
 
-var allRegions = []string{
-	"ap-south-1",
-	"eu-west-3",
-	"eu-west-2",
-	"eu-west-1",
-	"ap-northeast-2",
-	"ap-northeast-1",
-	"sa-east-1",
-	"ca-central-1",
-	"ap-southeast-1",
-	"ap-southeast-2",
-	"eu-central-1",
-	"us-east-1",
-	"us-east-2",
-	"us-west-1",
-	"us-west-2",
-}
-
 func InitConfig(project, region, bucket, awsProfile, owner, awsProviderVersion string) *Config {
 	return &Config{
 		Defaults: defaults{
@@ -147,11 +129,11 @@ func ReadConfig(f io.Reader) (*Config, error) {
 	c := &Config{}
 	b, e := ioutil.ReadAll(f)
 	if e != nil {
-		return nil, errors.Wrap(e, "unable to read config")
+		return nil, errs.WrapUser(e, "unable to read config")
 	}
 	e = json.Unmarshal(b, c)
 	if e != nil {
-		return nil, errors.Wrap(e, "unable to parse json config file")
+		return nil, errs.WrapUser(e, "unable to parse json config file")
 	}
 	return c, nil
 }
@@ -159,7 +141,7 @@ func ReadConfig(f io.Reader) (*Config, error) {
 func FindAndReadConfig(fs afero.Fs, configFile string) (*Config, error) {
 	f, e := fs.Open(configFile)
 	if e != nil {
-		return nil, errors.Wrap(e, "unable to open config file")
+		return nil, errs.WrapUser(e, "unable to open config file")
 	}
 	reader := io.ReadCloser(f)
 	defer reader.Close()
@@ -196,7 +178,6 @@ func (c *Config) validateExtraVars() error {
 				err = multierror.Append(err, fmt.Errorf("extra_var[%s] is a fogg reserved variable name", extraVar))
 			}
 		}
-		return
 	}
 	extraVars := []map[string]string{}
 	extraVars = append(extraVars, c.Defaults.ExtraVars)
@@ -210,5 +191,8 @@ func (c *Config) validateExtraVars() error {
 		validate(extraVar)
 	}
 
-	return errors.Wrap(err.ErrorOrNil(), "extra_vars contains reserved variable names")
+	if err.ErrorOrNil() != nil {
+		return errs.WrapUser(err.ErrorOrNil(), "extra_vars contains reserved variable names")
+	}
+	return nil
 }

@@ -7,6 +7,7 @@ import (
 	"text/template"
 
 	"github.com/Masterminds/sprig"
+	"github.com/chanzuckerberg/fogg/errs"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -24,12 +25,13 @@ func dict(in interface{}) map[string]interface{} {
 	return nil
 }
 
-func OpenTemplate(source io.Reader) *template.Template {
+// OpenTemplate will read `source` for a template, parse, configure and return a template.Template
+func OpenTemplate(source io.Reader) (*template.Template, error) {
 	s, err := ioutil.ReadAll(source)
 	if err != nil {
-		log.Panic(err)
+		return nil, errs.WrapInternal(err, "could not read template")
 	}
 	funcs := sprig.TxtFuncMap()
 	funcs["dict"] = dict
-	return template.Must(template.New("tmpl").Funcs(funcs).Parse(string(s)))
+	return template.New("tmpl").Funcs(funcs).Parse(string(s))
 }

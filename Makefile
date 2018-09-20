@@ -6,6 +6,10 @@ LDFLAGS=-ldflags "-w -s -X github.com/chanzuckerberg/fogg/util.GitSha=${SHA} -X 
 
 all: test install
 
+setup:
+	go get github.com/rakyll/gotest
+	go install github.com/rakyll/gotest
+
 lint: ## run the fast go linters
 	gometalinter --vendor --fast ./...
 
@@ -25,7 +29,7 @@ coverage: ## run the go coverage tool, reading file coverage.out
 	go tool cover -html=coverage.out
 
 test: packr ## run the tests
-	go test -cover ./...
+	gotest -cover ./...
 
 install: packr ## install the fogg binary in $GOPATH/bin
 	go install ${LDFLAGS} .
