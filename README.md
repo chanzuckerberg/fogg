@@ -30,7 +30,7 @@ If you need help getting started with fogg, either open a github issue or join o
 You can use homebrew to install fogg –
 
 ```
-brew tap chanzuckerberg/homebrew-fogg
+brew tap chanzuckerberg/tap
 brew install fogg
 ```
 
