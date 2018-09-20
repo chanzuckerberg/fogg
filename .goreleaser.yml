@@ -24,6 +24,6 @@ brew:
   description: "Terraform without pain."
   github:
     owner: chanzuckerberg
-    name: homebrew-fogg
+    name: homebrew-tap
   homepage: "https://github.com/chanzuckerberg/fogg"
   test: system "#{bin}/fogg version"
