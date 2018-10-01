@@ -1,6 +1,6 @@
 [[constraint]]
   name = "github.com/Masterminds/sprig"
-  version = "2.15.0"
+  version = "2.16.0"
 
 [[constraint]]
   name = "github.com/gobuffalo/packr"
