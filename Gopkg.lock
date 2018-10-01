@@ -172,12 +172,12 @@
   version = "v0.16.0"
 
 [[projects]]
-  digest = "1:b793158861dda5660883cc91ed3ba69b9b4e3bccff97feb08c34a2fc11b93228"
+  digest = "1:c8ad4ba32ae8b71ef2bf5e1bad402aeb99ce77a1240f9b684db8b1ff5353e7ab"
   name = "github.com/gobuffalo/packr"
   packages = ["."]
   pruneopts = "UT"
-  revision = "ee1318b82b25993be2f7161d48315e1f14697528"
-  version = "v1.13.3"
+  revision = "5a2cbb54c4e7d482e3f518c56f1f86f133d5204f"
+  version = "v1.13.7"
 
 [[projects]]
   digest = "1:8f8811f9be822914c3a25c6a071e93beb4c805d7b026cbf298bc577bc1cc945b"
