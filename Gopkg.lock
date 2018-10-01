@@ -205,14 +205,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:49be3bd056300f2156364200a3dd871cdc548adf09242ea6d4353d512574834c"
+  digest = "1:724d270a4cac0945dedb8de6357625a9d976cb640d381d3dab3144cec295db26"
   name = "github.com/hashicorp/go-getter"
   packages = [
     ".",
     "helper/url",
   ]
   pruneopts = "UT"
-  revision = "3f60ec5cfbb2a39731571b9ddae54b303bb0a969"
+  revision = "4bda8fa99001c61db3cad96b421d4c12a81f256d"
 
 [[projects]]
   branch = "master"
