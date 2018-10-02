@@ -9,6 +9,8 @@ all: test install
 setup:
 	go get github.com/rakyll/gotest
 	go install github.com/rakyll/gotest
+	go get -u github.com/gobuffalo/packr/...
+	go install github.com/gobuffalo/packr/packr
 
 lint: ## run the fast go linters
 	gometalinter --vendor --fast ./...
