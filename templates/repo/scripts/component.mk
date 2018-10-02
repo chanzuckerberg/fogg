@@ -4,6 +4,7 @@
 TF_VARS := $(patsubst %,-e%,$(filter TF_VAR_%,$(.VARIABLES)))
 REPO_ROOT := $(shell git rev-parse --show-toplevel)
 REPO_RELATIVE_PATH := $(shell git rev-parse --show-prefix)
+AUTO_APPROVE := false
 # We need to do this because `terraform fmt` recurses into .terraform/modules
 # and wont' accept more than one file at a time.
 TF=$(wildcard *.tf)
@@ -48,7 +49,7 @@ plan: fmt get init ssh-forward
 
 apply: FOGG_DOCKER_FLAGS = -it
 apply: fmt get init ssh-forward
-	$(docker_terraform) apply -auto-approve=false
+	$(docker_terraform) apply -auto-approve=$(AUTO_APPROVE)
 
 docs:
 	@echo
