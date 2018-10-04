@@ -34,6 +34,13 @@ brew tap chanzuckerberg/tap
 brew install fogg
 ```
 
+Note– if you installed fogg from homebrew before version 0.15.0, the tap location has changed. Run this, then install as above–
+
+```
+brew uninstall fogg
+brew untap chanzuckerberg/fogg
+```
+
 ## Linux, Windows, etc.
 
 Binaries are available on the releases page. Download one for your architecture, put it in your path and make it executable.
