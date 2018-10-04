@@ -19,9 +19,10 @@ lint-slow: ## run all linters, even the slow ones
 	gometalinter --vendor --deadline 120s ./...
 
 packr: ## run the packr tool to generate our static files
-	packr
+	packr clean -v
+	packr build -v
 
-release: packr
+release: clean packr
 	goreleaser release --rm-dist
 
 build: packr ## build the binary
@@ -39,4 +40,10 @@ install: packr ## install the fogg binary in $GOPATH/bin
 help: ## display help for this makefile
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: build coverage test install lint lint-slow packr release help
+clean: ## clean the repo
+	rm fogg 2>/dev/null || true
+	go clean
+	rm -rf dist
+	packr clean
+
+.PHONY: build clean coverage test install lint lint-slow packr release help
