@@ -20,10 +20,13 @@ lint-slow: ## run all linters, even the slow ones
 
 packr: ## run the packr tool to generate our static files
 	packr clean -v
-	packr build -v
+	packr -v
 
-release: clean packr
+release: ## run a release
 	goreleaser release --rm-dist
+
+release-snapshot: ## run a release
+	goreleaser release --rm-dist --snapshot
 
 build: packr ## build the binary
 	go build ${LDFLAGS} .
