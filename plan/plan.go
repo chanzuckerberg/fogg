@@ -7,7 +7,6 @@ import (
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/chanzuckerberg/fogg/util"
-	"github.com/pkg/errors"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -267,7 +266,7 @@ func (p *Plan) buildEnvs(conf *config.Config) (map[string]Env, error) {
 			componentPlan := Component{}
 			// reference accounts for remote state
 			if _, dupe := p.Accounts[componentName]; dupe {
-				return nil, errors.Errorf("Component name %s clashes with account name", componentName)
+				return nil, errs.WrapUser(fmt.Errorf("Component %s can't have same name as account", componentName), "Invalid component name")
 			}
 			componentPlan.Accounts = p.Accounts
 
