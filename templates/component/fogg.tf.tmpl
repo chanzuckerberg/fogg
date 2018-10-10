@@ -110,3 +110,29 @@ data "terraform_remote_state" "{{ $component }}" {
   }
 }
 {{ end }}
+
+# remote state for accounts
+{{ range $accountName, $account := .Accounts }}
+data "terraform_remote_state" "{{ $accountName }}" {
+  backend = "s3"
+
+  config {
+    bucket = "{{ $account.InfraBucket }}"
+    key     = "terraform/{{ .Project }}/accounts/{{ $account.AccountName }}.tfstate"
+    region = "{{ $account.AWSRegionBackend }}"
+    {{ if $account.AWSProfileBackend }}profile = "{{ $account.AWSProfileBackend }}"{{ end }}
+  }
+}
+{{ end }}
+
+# map of aws_accounts
+variable "aws_accounts" {
+  type = "map"
+  default = {
+  {{ range $accountName, $account := .Accounts }}
+    {{ if $account.AccountID }}
+        {{ $accountName }} = {{ $account.AccountID }}
+    {{ end }}
+  {{ end }}
+  }
+}
