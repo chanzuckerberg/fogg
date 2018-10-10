@@ -15,6 +15,7 @@ const (
 	dockerImageVersion = "0.2.1"
 )
 
+// AWSConfiguration represents aws configuration
 type AWSConfiguration struct {
 	AccountID          *int64   `yaml:"account_id"`
 	AccountName        string   `yaml:"account_name"`
@@ -27,13 +28,15 @@ type AWSConfiguration struct {
 	InfraBucket        string   `yaml:"infra_bucket"`
 }
 
+// Common represents common fields
 type Common struct {
 	DockerImageVersion string `yaml:"docker_image_version"`
 	PathToRepoRoot     string `yaml:"path_to_repo_root"`
 	TerraformVersion   string `yaml:"terraform_version"`
 }
 
-type account struct {
+// Account is an account
+type Account struct {
 	AWSConfiguration `yaml:",inline"`
 	Common           `yaml:",inline"`
 
@@ -44,14 +47,17 @@ type account struct {
 	TfLint      TfLint
 }
 
+// Module is a module
 type Module struct {
 	Common `yaml:",inline"`
 }
 
+// Component is a component
 type Component struct {
 	AWSConfiguration `yaml:",inline"`
 	Common           `yaml:",inline"`
 
+	Accounts        map[string]Account // Reference accounts for remote state
 	Component       string
 	Env             string
 	ExtraVars       map[string]string `yaml:"extra_vars"`
@@ -62,6 +68,7 @@ type Component struct {
 	TfLint          TfLint
 }
 
+// Env is an env
 type Env struct {
 	AWSConfiguration `yaml:",inline"`
 	Common           `yaml:",inline"`
@@ -101,8 +108,9 @@ func (p *Plugins) SetTerraformProvidersPlan(terraformProviders map[string]*plugi
 	}
 }
 
+// Plan represents a set of actions to take
 type Plan struct {
-	Accounts map[string]account
+	Accounts map[string]Account
 	Envs     map[string]Env
 	Global   Component
 	Modules  map[string]Module
@@ -110,6 +118,7 @@ type Plan struct {
 	Version  string
 }
 
+// Eval evaluats a config
 func Eval(config *config.Config, verbose bool) (*Plan, error) {
 	p := &Plan{}
 	v, e := util.VersionString()
@@ -120,14 +129,15 @@ func Eval(config *config.Config, verbose bool) (*Plan, error) {
 	p.Plugins.SetCustomPluginsPlan(config.Plugins.CustomPlugins)
 	p.Plugins.SetTerraformProvidersPlan(config.Plugins.TerraformProviders)
 
-	p.Accounts = buildAccounts(config)
-	p.Envs = buildEnvs(config)
-	p.Global = buildGlobal(config)
-	p.Modules = buildModules(config)
+	p.Accounts = p.buildAccounts(config)
+	p.Envs = p.buildEnvs(config)
+	p.Global = p.buildGlobal(config)
+	p.Modules = p.buildModules(config)
 
 	return p, nil
 }
 
+// Print prints a plan
 func Print(p *Plan) error {
 	out, err := yaml.Marshal(p)
 	if err != nil {
@@ -137,12 +147,12 @@ func Print(p *Plan) error {
 	return nil
 }
 
-func buildAccounts(c *config.Config) map[string]account {
+func (p *Plan) buildAccounts(c *config.Config) map[string]Account {
 	defaults := c.Defaults
 
-	accountPlans := make(map[string]account, len(c.Accounts))
+	accountPlans := make(map[string]Account, len(c.Accounts))
 	for name, config := range c.Accounts {
-		accountPlan := account{}
+		accountPlan := Account{}
 		accountPlan.DockerImageVersion = dockerImageVersion
 
 		accountPlan.AccountName = name
@@ -171,7 +181,7 @@ func buildAccounts(c *config.Config) map[string]account {
 	return accountPlans
 }
 
-func buildModules(c *config.Config) map[string]Module {
+func (p *Plan) buildModules(c *config.Config) map[string]Module {
 	modulePlans := make(map[string]Module, len(c.Modules))
 	for name, conf := range c.Modules {
 		modulePlan := Module{}
@@ -190,7 +200,7 @@ func newEnvPlan() Env {
 	return ep
 }
 
-func buildGlobal(conf *config.Config) Component {
+func (p *Plan) buildGlobal(conf *config.Config) Component {
 	// Global just uses defaults because that's the way sicc worked. We should make it directly configurable.
 	componentPlan := Component{}
 
@@ -219,7 +229,7 @@ func buildGlobal(conf *config.Config) Component {
 	return componentPlan
 }
 
-func buildEnvs(conf *config.Config) map[string]Env {
+func (p *Plan) buildEnvs(conf *config.Config) map[string]Env {
 	envPlans := make(map[string]Env, len(conf.Envs))
 	defaults := conf.Defaults
 
@@ -249,6 +259,8 @@ func buildEnvs(conf *config.Config) map[string]Env {
 
 		for componentName, componentConf := range conf.Envs[envName].Components {
 			componentPlan := Component{}
+			// reference accounts for remote state
+			componentPlan.Accounts = p.Accounts
 
 			componentPlan.AccountID = resolveOptionalInt(envPlan.AccountID, componentConf.AccountID)
 			componentPlan.AWSRegionBackend = resolveRequired(envPlan.AWSRegionBackend, componentConf.AWSRegionBackend)
