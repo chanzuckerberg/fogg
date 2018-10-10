@@ -7,6 +7,7 @@ import (
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/chanzuckerberg/fogg/util"
+	"github.com/pkg/errors"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -129,8 +130,12 @@ func Eval(config *config.Config, verbose bool) (*Plan, error) {
 	p.Plugins.SetCustomPluginsPlan(config.Plugins.CustomPlugins)
 	p.Plugins.SetTerraformProvidersPlan(config.Plugins.TerraformProviders)
 
+	var err error
 	p.Accounts = p.buildAccounts(config)
-	p.Envs = p.buildEnvs(config)
+	p.Envs, err = p.buildEnvs(config)
+	if err != nil {
+		return nil, err
+	}
 	p.Global = p.buildGlobal(config)
 	p.Modules = p.buildModules(config)
 
@@ -229,7 +234,8 @@ func (p *Plan) buildGlobal(conf *config.Config) Component {
 	return componentPlan
 }
 
-func (p *Plan) buildEnvs(conf *config.Config) map[string]Env {
+// buildEnvs must be build after accounts
+func (p *Plan) buildEnvs(conf *config.Config) (map[string]Env, error) {
 	envPlans := make(map[string]Env, len(conf.Envs))
 	defaults := conf.Defaults
 
@@ -260,6 +266,9 @@ func (p *Plan) buildEnvs(conf *config.Config) map[string]Env {
 		for componentName, componentConf := range conf.Envs[envName].Components {
 			componentPlan := Component{}
 			// reference accounts for remote state
+			if _, dupe := p.Accounts[componentName]; dupe {
+				return nil, errors.Errorf("Component name %s clashes with account name", componentName)
+			}
 			componentPlan.Accounts = p.Accounts
 
 			componentPlan.AccountID = resolveOptionalInt(envPlan.AccountID, componentConf.AccountID)
@@ -292,7 +301,7 @@ func (p *Plan) buildEnvs(conf *config.Config) map[string]Env {
 
 		envPlans[envName] = envPlan
 	}
-	return envPlans
+	return envPlans, nil
 }
 
 func otherComponentNames(components map[string]*config.Component, thisComponent string) []string {

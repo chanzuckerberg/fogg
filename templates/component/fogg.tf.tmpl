@@ -113,7 +113,7 @@ data "terraform_remote_state" "{{ $component }}" {
 
 # remote state for accounts
 {{ range $accountName, $account := .Accounts }}
-data "terraform_remote_state" "account_{{ $accountName }}" {
+data "terraform_remote_state" "{{ $accountName }}" {
   backend = "s3"
 
   config {
