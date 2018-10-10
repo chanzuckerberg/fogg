@@ -111,6 +111,7 @@ data "terraform_remote_state" "{{ $component }}" {
 }
 {{ end }}
 
+# remote state for accoutns
 {{ range $accountName, $account := .Accounts }}
 data "terraform_remote_state" "account_{{ $accountName }}" {
   backend = "s3"
@@ -123,3 +124,15 @@ data "terraform_remote_state" "account_{{ $accountName }}" {
   }
 }
 {{ end }}
+
+# map of aws_accounts
+variable "aws_accounts" {
+  type = "map"
+  default = {
+  {{ range $accountName, $account := .Accounts }}
+    {{ if $account.AccountID }}
+        {{ $accountName }} = {{ $account.AccountID }}
+    {{ end }}
+  {{ end }}
+  }
+}
