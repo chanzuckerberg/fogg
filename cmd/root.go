@@ -28,7 +28,7 @@ var rootCmd = &cobra.Command{
 	SilenceUsage: true,
 }
 
-// Execute executes the commands
+// Execute executes the rootCmd
 func Execute() {
 	red := color.New(color.FgRed).SprintFunc()
 
