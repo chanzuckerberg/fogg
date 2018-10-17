@@ -1,0 +1,27 @@
+#compdef fogg
+
+case $state in
+  level1)
+    case $words[1] in
+      fogg)
+        _arguments '1: :(apply completion help init plan version)'
+      ;;
+      *)
+        _arguments '*: :_files'
+      ;;
+    esac
+  ;;
+  level2)
+    case $words[2] in
+      completion)
+        _arguments '2: :(bash zsh)'
+      ;;
+      *)
+        _arguments '*: :_files'
+      ;;
+    esac
+  ;;
+  *)
+    _arguments '*: :_files'
+  ;;
+esac
