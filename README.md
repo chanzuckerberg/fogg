@@ -79,11 +79,13 @@ fogg completion bash > $(brew --prefix)/etc/bash_completion.d/fogg
 ```
 
 #### zsh
-Edit the ~/.zshrc file and add the following code to enable autocompletion:
+Edit the `~/.zshrc` file and add the following code to enable autocompletion:
 
+```
 if [ $commands[fogg] ]; then
   source <(fogg completion zsh)
 fi
+```
 
 ## Design Principles
 
