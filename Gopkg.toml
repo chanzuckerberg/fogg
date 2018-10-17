@@ -31,10 +31,6 @@
   name = "github.com/hashicorp/hcl"
 
 [[constraint]]
-  name = "github.com/pkg/errors"
-  branch = "master"
-
-[[constraint]]
   name = "github.com/hashicorp/terraform"
   version = "0.11.7"
 
