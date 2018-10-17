@@ -27,7 +27,6 @@ var zshCmd = &cobra.Command{
 	Long:  "Generates zsh completion",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return rootCmd.GenZshCompletion(os.Stdout)
-		rootCmd.GenZshCompletionFile
 	},
 }
 
