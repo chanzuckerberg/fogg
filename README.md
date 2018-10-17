@@ -55,6 +55,36 @@ The basic workflow is –
 2. run `fogg apply` to code generate
 3. use the generated Makefiles to run your Terraform commands
 
+### Enabling shell autocompletion
+
+#### bash
+
+##### Linux
+```
+# Might need to install bash-completion on CentOS
+yum install bash-completion
+# install completion
+echo "source <(fogg completion bash)" >> ~/.bashrc
+```
+
+##### Mac
+```
+## If running Bash 3.2 included with macOS
+brew install bash-completion
+## or, if running Bash 4.1+
+brew install bash-completion@2
+
+# install completion
+fogg completion bash > $(brew --prefix)/etc/bash_completion.d/fogg
+```
+
+#### zsh
+Edit the ~/.zshrc file and add the following code to enable autocompletion:
+
+if [ $commands[fogg] ]; then
+  source <(fogg completion zsh)
+fi
+
 ## Design Principles
 
 ### Convention over Configuration
