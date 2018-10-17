@@ -267,13 +267,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:f87c2cc4dd38efb53201c8484544c8b3ab15fa96062896bc71b9288d7ddf0583"
+  digest = "1:b6a61c7fa63352b2baef6d919e37ab9b826a2a52753c6586cc18b30ff581d015"
   name = "github.com/hashicorp/hcl2"
   packages = [
     "gohcl",
     "hcl",
     "hcl/hclsyntax",
     "hcl/json",
+    "hcldec",
     "hclparse",
   ]
   pruneopts = "UT"
@@ -293,14 +294,26 @@
   revision = "fa9f258a92500514cc8e9c67020487709df92432"
 
 [[projects]]
-  digest = "1:7557123c3cbddc88549375ea944cf3698447818c63e03ad8d530327099b56a47"
+  digest = "1:e1c09d7af2cb6a6cebdd7ad3cbd4cba32c2a5c13d5939dbe9d1532768fcb07e8"
   name = "github.com/hashicorp/terraform"
   packages = [
     "config",
+    "config/configschema",
     "config/hcl2shim",
+    "config/module",
+    "dag",
+    "flatmap",
     "helper/hilmapstructure",
     "httpclient",
+    "moduledeps",
     "plugin/discovery",
+    "registry",
+    "registry/regsrc",
+    "registry/response",
+    "svchost",
+    "svchost/auth",
+    "svchost/disco",
+    "terraform",
     "tfdiags",
     "version",
   ]
@@ -559,11 +572,12 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:0516820422512741f45f4e72d4ade116c1d1bf3bb2d846001d42f6787ec00f22"
+  digest = "1:01a1534712e5e2bc7e44dbc4157cef89e55697845614d329b2b9f124efdb1365"
   name = "golang.org/x/net"
   packages = [
     "html",
     "html/atom",
+    "idna",
   ]
   pruneopts = "UT"
   revision = "4cb1c02c05b0e749b0365f61ae859a8e0cfceed9"
@@ -580,15 +594,23 @@
   revision = "7138fd3d9dc8335c567ca206f4333fb75eb05d56"
 
 [[projects]]
-  digest = "1:8029e9743749d4be5bc9f7d42ea1659471767860f0cdc34d37c3111bd308a295"
+  digest = "1:a2ab62866c75542dd18d2b069fec854577a20211d7c0ea6ae746072a1dccdd18"
   name = "golang.org/x/text"
   packages = [
+    "collate",
+    "collate/build",
+    "internal/colltab",
     "internal/gen",
+    "internal/tag",
     "internal/triegen",
     "internal/ucd",
+    "language",
+    "secure/bidirule",
     "transform",
+    "unicode/bidi",
     "unicode/cldr",
     "unicode/norm",
+    "unicode/rangetable",
   ]
   pruneopts = "UT"
   revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
@@ -623,7 +645,9 @@
     "github.com/hashicorp/go-multierror",
     "github.com/hashicorp/hcl/hcl/printer",
     "github.com/hashicorp/terraform/config",
+    "github.com/hashicorp/terraform/terraform",
     "github.com/mitchellh/go-homedir",
+    "github.com/pkg/errors",
     "github.com/segmentio/go-prompt",
     "github.com/sirupsen/logrus",
     "github.com/spf13/afero",
