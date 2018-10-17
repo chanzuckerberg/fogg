@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/chanzuckerberg/fogg/cmd/completion"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
@@ -18,7 +17,6 @@ var (
 func init() {
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "enable verbose output")
 	rootCmd.PersistentFlags().BoolVarP(&quiet, "quiet", "q", false, "do not output to console; use return code to determine success/failure")
-	rootCmd.AddCommand(completion.CompletionCmd)
 }
 
 var rootCmd = &cobra.Command{
