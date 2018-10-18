@@ -105,11 +105,10 @@ func parsePlan(planPath string) error {
 
 // Migrate migrates
 func Migrate(planPath string) error {
-	// defer os.Remove(planPath)
-	// err := generatePlan(planPath)
-	// if err != nil {
-	// return err
-	// }
-	err := parsePlan(planPath)
-	return err
+	defer os.Remove(planPath)
+	err := generatePlan(planPath)
+	if err != nil {
+		return err
+	}
+	return parsePlan(planPath)
 }

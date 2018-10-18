@@ -15,6 +15,6 @@ var migrateCmd = &cobra.Command{
 	Long: `This command aims to assist with terraform state migrations.
 	Particularly when there are module renames and such.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return migrate.Migrate("plan.tf")
+		return migrate.Migrate("plan.tfplan")
 	},
 }
