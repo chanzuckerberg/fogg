@@ -26,6 +26,14 @@
   version = "v1.2.1"
 
 [[projects]]
+  branch = "master"
+  digest = "1:98a49d9edf7d250fe280c04f903b4379710f340eda4e48fa6a5a13ab71531b8c"
+  name = "github.com/antzucaro/matchr"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "cbc221335f3c9d9eff15d1d9d5983ddf70b906b6"
+
+[[projects]]
   digest = "1:8f5416c7f59da8600725ae1ff00a99af1da8b04c211ae6f3c8f8bcab0164f650"
   name = "github.com/aokoli/goutils"
   packages = ["."]
@@ -269,13 +277,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:d0f6a3bfd34ac7bde9b20cab9553880c3d7d7e8fe01b8cb2a9f2bb5b931ee253"
+  digest = "1:3eec631be552c4b129491f8d4fd7997d6e907d0c3b29937e815b9203223420d1"
   name = "github.com/hashicorp/hcl2"
   packages = [
     "gohcl",
     "hcl",
     "hcl/hclsyntax",
     "hcl/json",
+    "hcldec",
     "hclparse",
   ]
   pruneopts = "UT"
@@ -295,14 +304,26 @@
   revision = "fa9f258a92500514cc8e9c67020487709df92432"
 
 [[projects]]
-  digest = "1:9db5b21600a2f3383f337928ce961a67635731361dcbb65005be7d7e95f72ac9"
+  digest = "1:def58031d717c2d4ddc6e5855513d6dbe965c2d62230004dd9e8b889ebea29c1"
   name = "github.com/hashicorp/terraform"
   packages = [
     "config",
+    "config/configschema",
     "config/hcl2shim",
+    "config/module",
+    "dag",
+    "flatmap",
     "helper/hilmapstructure",
     "httpclient",
+    "moduledeps",
     "plugin/discovery",
+    "registry",
+    "registry/regsrc",
+    "registry/response",
+    "svchost",
+    "svchost/auth",
+    "svchost/disco",
+    "terraform",
     "tfdiags",
     "version",
   ]
@@ -532,7 +553,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:ecc7fbde3d397eb26aa33028e133ca762f7da31f1c9a7ca86867761282913bbe"
+  digest = "1:e77fdd77613344e716e0ce6c7cc28d8f6ebf02d938fad00db4b5fa73cb3589fb"
   name = "github.com/zclconf/go-cty"
   packages = [
     "cty",
@@ -544,7 +565,7 @@
     "cty/set",
   ]
   pruneopts = "UT"
-  revision = "1f835aab79c29c842f2e8624541053e8ff618cd8"
+  revision = "01c5aba823a6c91fe3bc287fd6e493ca717a64b8"
 
 [[projects]]
   branch = "master"
@@ -569,11 +590,12 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:1a1ecfa7b54ca3f7a0115ab5c578d7d6a5d8b605839c549e80260468c42f8be7"
+  digest = "1:4077072bff941583c06e65a985314fdd02fe3d67c319d5f7b4fa06af6f16527e"
   name = "golang.org/x/net"
   packages = [
     "html",
     "html/atom",
+    "idna",
   ]
   pruneopts = "UT"
   revision = "04a2e542c03f1d053ab3e4d6e5abcd4b66e2be8e"
@@ -590,15 +612,23 @@
   revision = "fa43e7bc11baaae89f3f902b2b4d832b68234844"
 
 [[projects]]
-  digest = "1:8029e9743749d4be5bc9f7d42ea1659471767860f0cdc34d37c3111bd308a295"
+  digest = "1:a2ab62866c75542dd18d2b069fec854577a20211d7c0ea6ae746072a1dccdd18"
   name = "golang.org/x/text"
   packages = [
+    "collate",
+    "collate/build",
+    "internal/colltab",
     "internal/gen",
+    "internal/tag",
     "internal/triegen",
     "internal/ucd",
+    "language",
+    "secure/bidirule",
     "transform",
+    "unicode/bidi",
     "unicode/cldr",
     "unicode/norm",
+    "unicode/rangetable",
   ]
   pruneopts = "UT"
   revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
@@ -625,6 +655,7 @@
   analyzer-version = 1
   input-imports = [
     "github.com/Masterminds/sprig",
+    "github.com/antzucaro/matchr",
     "github.com/blang/semver",
     "github.com/fatih/color",
     "github.com/go-errors/errors",
@@ -633,7 +664,9 @@
     "github.com/hashicorp/go-multierror",
     "github.com/hashicorp/hcl/hcl/printer",
     "github.com/hashicorp/terraform/config",
+    "github.com/hashicorp/terraform/terraform",
     "github.com/mitchellh/go-homedir",
+    "github.com/pkg/errors",
     "github.com/segmentio/go-prompt",
     "github.com/sirupsen/logrus",
     "github.com/spf13/afero",
