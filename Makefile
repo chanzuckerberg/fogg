@@ -23,6 +23,8 @@ packr: ## run the packr tool to generate our static files
 	packr -v
 
 release: ## run a release
+	./release
+	git push
 	goreleaser release --rm-dist
 
 release-snapshot: ## run a release
