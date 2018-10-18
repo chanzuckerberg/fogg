@@ -55,7 +55,7 @@ func parsePlan(planPath string) error {
 	additions := map[string]bool{}
 
 	for _, module := range plan.Diff.Modules {
-		moduleName := strings.Join(module.Path, ".")
+		moduleName := strings.TrimPrefix(strings.Join(module.Path, "."), "root.")
 		for name, instance := range module.Resources {
 			fullName := fmt.Sprintf("%s.%s", moduleName, name)
 			if instance.Destroy {
