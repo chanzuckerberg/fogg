@@ -104,5 +104,3 @@ f.close()
 g.add('VERSION')
 g.commit("release version #{new_version.to_s}")
 g.add_tag("v#{new_version.to_s}")
-
-`make release`
