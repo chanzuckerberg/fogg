@@ -5,7 +5,6 @@ import (
 
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plan"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
@@ -23,13 +22,7 @@ var planCmd = &cobra.Command{
 	Long:          "plan will read fogg.json, use that to generate a plan and print that plan out. It will make no changes.",
 	SilenceErrors: true, // If we don't silence here, cobra will print them. But we want to do that in cmd/root.go
 	RunE: func(cmd *cobra.Command, args []string) error {
-		logLevel := log.InfoLevel
-		if debug { // debug overrides quiet
-			logLevel = log.DebugLevel
-		} else if quiet {
-			logLevel = log.FatalLevel
-		}
-		log.SetLevel(logLevel)
+		setupDebug(debug)
 
 		var e error
 		// Set up fs
