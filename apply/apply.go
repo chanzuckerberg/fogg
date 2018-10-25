@@ -110,6 +110,7 @@ func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates *packr.Box) error {
 }
 
 func applyPlugins(fs afero.Fs, p *plan.Plan) error {
+	log.Debug("applying plugins")
 	apply := func(name string, plugin *plugins.CustomPlugin) error {
 		log.Infof("Applying plugin %s", name)
 		return errs.WrapUserf(plugin.Install(fs, name), "Error applying plugin %s", name)
@@ -132,6 +133,7 @@ func applyPlugins(fs afero.Fs, p *plan.Plan) error {
 }
 
 func applyGlobal(fs afero.Fs, p plan.Component, repoBox *packr.Box) error {
+	log.Debug("applying global")
 	path := fmt.Sprintf("%s/global", rootPath)
 	e := fs.MkdirAll(path, 0755)
 	if e != nil {
@@ -171,7 +173,9 @@ func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox *packr.Box) (
 }
 
 func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr.Box) (e error) {
+	log.Debug("applying envs")
 	for env, envPlan := range p.Envs {
+		log.Debugf("applying %s", env)
 		path := fmt.Sprintf("%s/envs/%s", rootPath, env)
 		e = fs.MkdirAll(path, 0755)
 		if e != nil {

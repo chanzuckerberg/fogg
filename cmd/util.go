@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"net/http"
+	"net/http/pprof"
 	"os"
 	"strings"
 
@@ -52,4 +54,18 @@ func mergeConfigValidationErrors(err error) error {
 		return err
 	}
 	return nil
+}
+
+func setupDebug(debug bool) {
+	logLevel := log.InfoLevel
+	if debug { // debug overrides quiet
+		logLevel = log.DebugLevel
+		go func() {
+			log.Println(http.ListenAndServe("localhost:6060", nil))
+			http.HandleFunc("/", pprof.Index)
+		}()
+	} else if quiet {
+		logLevel = log.FatalLevel
+	}
+	log.SetLevel(logLevel)
 }
