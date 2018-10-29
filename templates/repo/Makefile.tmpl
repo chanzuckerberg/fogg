@@ -117,10 +117,6 @@ clean-global:
 	$(figlet_docker) "global"; \
 	$(MAKE) -C terraform/global clean || exit $$?
 
-install: install-terraform
-
-terraform-required
-
 .PHONY: all check check-docs check-plan check-plan-accounts clean docs docs-accounts docs-envs docs-modules fmt fmt-accounts fmt-envs fmt-modules lint lint-accounts lint-envs lint-modules lint-terraform setup test
 
 -include *.mk
