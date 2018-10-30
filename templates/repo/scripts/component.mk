@@ -10,46 +10,57 @@ AUTO_APPROVE := false
 TF=$(wildcard *.tf)
 IMAGE_VERSION=$(DOCKER_IMAGE_VERSION)_TF$(TERRAFORM_VERSION)
 
-docker_base = \
+# dependencies.mk helps with dependencies such as terraform
+include: ./dependencies.mk
+
+docker_base := \
 	docker run --rm -e HOME=/home -v $$HOME/.aws:/home/.aws -v $(REPO_ROOT):/repo \
 	-v $(REPO_ROOT)/.bin:/usr/local/bin -v $(REPO_ROOT)/terraform.d:/repo/$(REPO_RELATIVE_PATH)/terraform.d \
 	-e GIT_SSH_COMMAND='ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
 	-e RUN_USER_ID=$(shell id -u) -e RUN_GROUP_ID=$(shell id -g) \
 	-e TF_PLUGIN_CACHE_DIR="/repo/.terraform.d/plugin-cache" -e TF="$(TF)" \
 	-w /repo/$(REPO_RELATIVE_PATH) $(TF_VARS) $(FOGG_DOCKER_FLAGS) $$(sh $(REPO_ROOT)/scripts/docker-ssh-mount.sh)
-docker_terraform = $(docker_base) chanzuckerberg/terraform:$(IMAGE_VERSION)
-docker_sh = $(docker_base) --entrypoint='/bin/sh' chanzuckerberg/terraform:$(IMAGE_VERSION)
+docker_terraform := $(docker_base) chanzuckerberg/terraform:$(IMAGE_VERSION)
+docker_sh := $(docker_base) --entrypoint='/bin/sh' chanzuckerberg/terraform:$(IMAGE_VERSION)
+
+ifdef FOGG_DISABLE_DOCKER
+	sh_command ?= $(SHELL)
+	terraform_command ?= terraform
+else
+	sh_command ?= $(docker_sh)
+	terraform_command ?= $(docker_terraform)
+endif
 
 all:
 
 fmt:
-	@$(docker_sh) -c 'for f in $(TF); do printf .; terraform fmt $$f; done'; \
+	@$(sh_command) -c 'for f in $(TF); do printf .; terraform fmt $$f; done'; \
 	echo
 
 lint: terraform-validate lint-terraform-fmt lint-tflint
 
 lint-tflint: init
 	@if (( $$TFLINT_ENABLED )); then \
-    $(docker_sh) -c 'tflint' || exit $$?; \
+    $(sh_command) -c 'tflint' || exit $$?; \
 	else \
     echo "tflint not enabled"; \
 	fi \
 
 terraform-validate: init
-	@$(docker_sh) -c 'terraform validate -check-variables=true $$f || exit $$?'
+	@$(sh_command) -c 'terraform validate -check-variables=true $$f || exit $$?'
 
 lint-terraform-fmt:
-	@$(docker_sh) -c 'for f in $(TF); do printf .; terraform fmt --check=true --diff=true $$f || exit $$? ; done'
+	@$(sh_command) -c 'for f in $(TF); do printf .; terraform fmt --check=true --diff=true $$f || exit $$? ; done'
 
 get: ssh-forward
-	$(docker_terraform) get --update=true
+	$(terraform_command) get --update=true
 
 plan: fmt get init ssh-forward
-	$(docker_terraform) plan
+	$(terraform_command) plan
 
 apply: FOGG_DOCKER_FLAGS = -it
 apply: fmt get init ssh-forward
-	$(docker_terraform) apply -auto-approve=$(AUTO_APPROVE)
+	$(terraform_command) apply -auto-approve=$(AUTO_APPROVE)
 
 docs:
 	@echo
@@ -61,10 +72,10 @@ clean:
 test:
 
 init: ssh-forward
-	$(docker_terraform) init -input=false
+	$(terraform_command) init -input=false
 
 check-plan: init get ssh-forward
-	$(docker_terraform) plan -detailed-exitcode; \
+	$(terraform_command) plan -detailed-exitcode; \
 	ERR=$$?; \
 	if [ $$ERR -eq 0 ] ; then \
 		echo "Success"; \
@@ -76,10 +87,12 @@ check-plan: init get ssh-forward
 	fi
 
 ssh-forward:
+ifndef FOGG_DISABLE_DOCKER
 	bash $(REPO_ROOT)/scripts/docker-ssh-forward.sh
+endif
 
 run: FOGG_DOCKER_FLAGS = -it
 run:
-	$(docker_terraform) $(CMD)
+	$(terraform_command) $(CMD)
 
 .PHONY: all apply clean docs fmt get lint plan run ssh-forward test
