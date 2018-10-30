@@ -13,10 +13,15 @@ endif
 
 TF_PRESENT := $(shell command -v terraform 2> /dev/null)
 TF_CURRENT_VERSION := $(shell terraform version | head -n1 | sed 's/Terraform v//g')
-TF_VERSION := 0.11.8
+TF_VERSION := 0.11.8 # TODO: template this
 
 TFLINT_PRESENT := $(shell command -v tflint 2> /dev/null)
-TFLINT_VERSION :=
+TFENV_PRESENT := $(shell command -v tfenv 2> /dev/null)
+TFENV_DIR ?= ~/.tfenv
+
+###########
+# Required
+###########
 
 terraform-required:
 ifndef TF_PRESENT
@@ -26,19 +31,33 @@ ifneq (${TF_VERSION},${TF_VERSION})
 	$(error "Current Terraform version is ${TF_CURRENT_VERSION} but want ${TF_VERSION})
 endif
 
+tfenv-required:
+ifndef TFENV_PRESENT
+	$(error "tfenv is not installed")
+endif
+
 tflint-required:
 ifndef TFLINT_PRESENT
 	$(error "tflint is not installed")
 endif
 
-install: install-terraform install-tflint
+###########
+# Install
+###########
 
-install-terraform:
-	@echo "Installing Terraform ${TF_VERSION}"
-	@wget -q -O /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_${OS}_${ARCH}.zip
-	@sudo unzip -d /usr/local/bin /tmp/terraform.zip && rm /tmp/terraform.zip
+install: install-tfenv install-terraform install-tflint
+
+install-tfenv:
+	@if [ ! -d ${TFENV_DIR} ]; then \
+		(git clone https://github.com/kamatama41/tfenv.git ${TFENV_DIR});\
+	fi
+	sudo ln -fis ~/.tfenv/bin/* /usr/local/bin
+
+install-terraform: tfenv-required
+	@tfenv install ${TF_VERSION}
+	@tfenv use ${TF_VERSION}
 
 install-tflint:
 	@echo "Installing tflint ${TFLINT_VERSION}"
   @wget -q -O /tmp/tflint.zip https://github.com/wata727/tflint/releases/download/v${TFLINT_VERSION}/tflint_${OS}_${ARCH}.zip
-	@sudo unzip -d /usr/local/bin /tmp/tflint.zip && rm /tmp/tflint.zip
+	sudo unzip -d /usr/local/bin /tmp/tflint.zip && rm /tmp/tflint.zip
