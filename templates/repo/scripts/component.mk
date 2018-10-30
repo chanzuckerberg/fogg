@@ -10,7 +10,7 @@ AUTO_APPROVE := false
 TF=$(wildcard *.tf)
 IMAGE_VERSION=$(DOCKER_IMAGE_VERSION)_TF$(TERRAFORM_VERSION)
 
-include: ./common.mk
+include: ./dependencies.mk
 
 docker_base := \
 	docker run --rm -e HOME=/home -v $$HOME/.aws:/home/.aws -v $(REPO_ROOT):/repo \
