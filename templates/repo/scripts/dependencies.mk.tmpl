@@ -13,8 +13,7 @@ ifeq ($(shell uname -m),aarch64)
 endif
 
 TF_PRESENT := $(shell command -v terraform 2> /dev/null)
-TF_CURRENT_VERSION := $(shell terraform version | head -n1 | sed 's/Terraform v//g')
-TF_VERSION := 0.11.8 # TODO: template this
+TERRAFORM_CURRENT_VERSION := $(shell terraform version | head -n1 | sed 's/Terraform v//g')
 
 TFENV_PRESENT := $(shell command -v tfenv 2> /dev/null)
 TFENV_DIR ?= ~/.tfenv
@@ -27,8 +26,8 @@ terraform-required:
 ifndef TF_PRESENT
 	$(error "Terraform is not installed")
 endif
-ifneq (${TF_VERSION},${TF_VERSION})
-	$(error "Current Terraform version is ${TF_CURRENT_VERSION} but want ${TF_VERSION})
+ifneq (${TERRAFORM_CURRENT_VERSION},${TERRAFORM_VERSION})
+	$(error "Current Terraform version is ${TERRAFORM_CURRENT_VERSION} but want ${TERRAFORM_VERSION})
 endif
 
 tfenv-required:
@@ -50,5 +49,5 @@ install-tfenv:
 	sudo ln -fis ~/.tfenv/bin/* /usr/local/bin #TODO: should we just fail instead of -fi?
 
 install-terraform: tfenv-required
-	@tfenv install ${TF_VERSION}
-	@tfenv use ${TF_VERSION}
+	@tfenv install ${TERRAFORM_VERSION}
+	@tfenv use ${TERRAFORM_VERSION}
