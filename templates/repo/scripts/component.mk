@@ -27,8 +27,8 @@ ifdef FOGG_DISABLE_DOCKER
 	sh_command ?= bash
 	terraform_command ?= terraform
 else
-	sh_command ?= docker_sh
-	terraform_command ?= docker_terraform
+	sh_command ?= $(docker_sh)
+	terraform_command ?= $(docker_terraform)
 endif
 
 all:
