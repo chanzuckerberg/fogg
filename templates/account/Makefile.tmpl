@@ -4,5 +4,6 @@
 export DOCKER_IMAGE_VERSION :={{ .DockerImageVersion }}
 export TERRAFORM_VERSION := {{ .TerraformVersion }}
 export TFLINT_ENABLED := {{ if .TfLint.Enabled }}1{{ else }}0{{ end }}
+export TF_PLUGIN_CACHE_DIR := {{ .PathToRepoRoot }}/.terraform.d/plugin-cache
 
 include {{ .PathToRepoRoot }}/scripts/component.mk

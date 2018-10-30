@@ -16,8 +16,6 @@ TF_PRESENT := $(shell command -v terraform 2> /dev/null)
 TF_CURRENT_VERSION := $(shell terraform version | head -n1 | sed 's/Terraform v//g')
 TF_VERSION := 0.11.8 # TODO: template this
 
-TFLINT_PRESENT := $(shell command -v tflint 2> /dev/null)
-
 TFENV_PRESENT := $(shell command -v tfenv 2> /dev/null)
 TFENV_DIR ?= ~/.tfenv
 
@@ -38,16 +36,11 @@ ifndef TFENV_PRESENT
 	$(error "tfenv is not installed")
 endif
 
-tflint-required:
-ifndef TFLINT_PRESENT
-	$(error "tflint is not installed")
-endif
-
 ###########
 # Install
 ###########
 
-install: install-tfenv install-terraform install-tflint
+install: install-tfenv install-terraform
 
 install-tfenv:
 	@if [ ! -d ${TFENV_DIR} ]; then \
@@ -59,8 +52,3 @@ install-tfenv:
 install-terraform: tfenv-required
 	@tfenv install ${TF_VERSION}
 	@tfenv use ${TF_VERSION}
-
-install-tflint:
-	@echo "Installing tflint ${TFLINT_VERSION}"
-  @wget -q -O /tmp/tflint.zip https://github.com/wata727/tflint/releases/download/v${TFLINT_VERSION}/tflint_${OS}_${ARCH}.zip
-	sudo unzip -d /usr/local/bin /tmp/tflint.zip && rm /tmp/tflint.zip

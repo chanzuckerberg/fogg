@@ -10,6 +10,7 @@ AUTO_APPROVE := false
 TF=$(wildcard *.tf)
 IMAGE_VERSION=$(DOCKER_IMAGE_VERSION)_TF$(TERRAFORM_VERSION)
 
+# dependencies.mk helps with dependencies such as terraform
 include: ./dependencies.mk
 
 docker_base := \
