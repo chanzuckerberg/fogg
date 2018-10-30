@@ -24,10 +24,10 @@ docker_terraform := $(docker_base) chanzuckerberg/terraform:$(IMAGE_VERSION)
 docker_sh := $(docker_base) --entrypoint='/bin/sh' chanzuckerberg/terraform:$(IMAGE_VERSION)
 
 ifdef FOGG_DISABLE_DOCKER
-	sh_command ?= bash
+	sh_command ?= $(SHELL)
 	terraform_command ?= terraform
 else
-	sh_command ?= $(SHELL)
+	sh_command ?= $(docker_sh)
 	terraform_command ?= $(docker_terraform)
 endif
 
