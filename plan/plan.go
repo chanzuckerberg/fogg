@@ -96,7 +96,7 @@ type Plugins struct {
 func (p *Plugins) SetCustomPluginsPlan(customPlugins map[string]*plugins.CustomPlugin) {
 	p.CustomPlugins = customPlugins
 	for _, plugin := range p.CustomPlugins {
-		plugin.SetTargetPath(plugins.CustomPluginDir)
+		plugin.SetTargetPath(plugins.BinDir)
 	}
 }
 

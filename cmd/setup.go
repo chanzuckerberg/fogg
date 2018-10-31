@@ -1,13 +1,17 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
+	"os/exec"
+	"path"
+	"runtime"
 
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/errs"
+	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
-	git "gopkg.in/src-d/go-git.v4"
 )
 
 func init() {
@@ -69,13 +73,39 @@ var setupCmd = &cobra.Command{
 
 // is a namespace
 type setup struct {
+	pwd    string
 	config *config.Config
 	fs     afero.Fs
 }
 
+func (s *setup) getOsArchPathComponent() string {
+	return fmt.Sprintf("%s_%s", runtime.GOOS, runtime.GOARCH)
+}
+
+func (s *setup) getTfenvPath() string {
+	return path.Join(s.pwd, plugins.BinDir, s.getOsArchPathComponent(), ".tfenv")
+}
+
 // tfEnv installs tfEnv
 func (s *setup) tfEnv() error {
-	git.Clone(s.fs, nil, &git.CloneOptions{})
+	tfenvPath := s.getTfenvPath()
+	_, err := os.Stat(tfenvPath)
+	if err == nil {
+		// if no error, then presumably we're done here
+		return nil
+	}
+	if !os.IsNotExist(err) {
+		return errs.WrapInternal(err, "Could not stat tfenv dir")
+	}
+	// not exist error
+	cmd := exec.Command("git", "clone", "https://github.com/kamatama41/tfenv.git", tfenvPath)
+	cmd.Env = os.Environ()
+
+	err = cmd.Run()
+	if err != nil {
+		return errs.WrapInternal(err, "Could not clone tfenv")
+	}
+
 	return nil
 }
 

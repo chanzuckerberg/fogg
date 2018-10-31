@@ -9,6 +9,6 @@ const (
 	// We vendor providers here
 	// See https://www.terraform.io/docs/configuration/providers.html#third-party-plugins
 	TerraformCustomPluginCacheDir = "terraform.d/plugins/linux_amd64"
-	// CustomPluginDir where we place custom binaries
-	CustomPluginDir = ".bin"
+	// BinDir where we place custom binaries
+	BinDir = ".bin"
 )

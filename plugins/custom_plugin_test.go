@@ -40,7 +40,7 @@ func TestCustomPluginTar(t *testing.T) {
 		URL:    ts.URL,
 		Format: plugins.TypePluginFormatTar,
 	}
-	customPlugin.SetTargetPath(plugins.CustomPluginDir)
+	customPlugin.SetTargetPath(plugins.BinDir)
 	a.Nil(customPlugin.Install(fs, pluginName))
 
 	afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
@@ -49,7 +49,7 @@ func TestCustomPluginTar(t *testing.T) {
 	})
 
 	for _, file := range files {
-		filePath := path.Join(plugins.CustomPluginDir, file)
+		filePath := path.Join(plugins.BinDir, file)
 		fi, err := fs.Stat(filePath)
 		a.Nil(err)
 		a.False(fi.IsDir())
@@ -82,7 +82,7 @@ func TestCustomPluginZip(t *testing.T) {
 		URL:    ts.URL,
 		Format: plugins.TypePluginFormatZip,
 	}
-	customPlugin.SetTargetPath(plugins.CustomPluginDir)
+	customPlugin.SetTargetPath(plugins.BinDir)
 	a.Nil(customPlugin.Install(fs, pluginName))
 
 	afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
@@ -91,7 +91,7 @@ func TestCustomPluginZip(t *testing.T) {
 	})
 
 	for _, file := range files {
-		filePath := path.Join(plugins.CustomPluginDir, file)
+		filePath := path.Join(plugins.BinDir, file)
 		fi, err := fs.Stat(filePath)
 		a.Nil(err)
 		a.False(fi.IsDir())
@@ -120,7 +120,7 @@ func TestCustomPluginBin(t *testing.T) {
 		Format: plugins.TypePluginFormatBin,
 	}
 
-	customPlugin.SetTargetPath(plugins.CustomPluginDir)
+	customPlugin.SetTargetPath(plugins.BinDir)
 	a.Nil(customPlugin.Install(fs, pluginName))
 
 	afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
@@ -128,7 +128,7 @@ func TestCustomPluginBin(t *testing.T) {
 		return nil
 	})
 
-	customPluginPath := path.Join(plugins.CustomPluginDir, pluginName)
+	customPluginPath := path.Join(plugins.BinDir, pluginName)
 	f, err := fs.Open(customPluginPath)
 	a.Nil(err)
 
