@@ -57,7 +57,6 @@ var applyCmd = &cobra.Command{
 		openGitOrExit(pwd)
 
 		config, err := readAndValidateConfig(fs, configFile, verbose)
-
 		e = mergeConfigValidationErrors(err)
 		if e != nil {
 			return e
