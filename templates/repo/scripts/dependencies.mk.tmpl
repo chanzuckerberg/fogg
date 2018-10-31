@@ -12,6 +12,8 @@ ifeq ($(shell uname -m),aarch64)
   ARCH ?= "arm"
 endif
 
+export PATH := $(REPO_ROOT)/.bin/$(OS)_$(ARCH):$(PATH)
+
 TF_PRESENT := $(shell command -v terraform 2> /dev/null)
 TERRAFORM_CURRENT_VERSION := $(shell terraform version | head -n1 | sed 's/Terraform v//g')
 
