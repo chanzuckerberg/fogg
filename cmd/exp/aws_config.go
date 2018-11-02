@@ -30,23 +30,23 @@ var awsConfigCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		// Set up fs
-		pwd, e := os.Getwd()
-		if e != nil {
-			return errs.WrapUser(e, "can't get pwd")
+		pwd, err := os.Getwd()
+		if err != nil {
+			return errs.WrapUser(err, "can't get pwd")
 		}
 		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 		// handle flags
-		configFile, e := cmd.Flags().GetString("config")
-		if e != nil {
-			return errs.WrapInternal(e, "couldn't parse config flag")
+		configFile, err := cmd.Flags().GetString("config")
+		if err != nil {
+			return errs.WrapInternal(err, "couldn't parse config flag")
 		}
-		sourceProfile, e := cmd.Flags().GetString("source-profile")
-		if e != nil {
-			return errs.WrapInternal(e, "couldn't parse source-profile")
+		sourceProfile, err := cmd.Flags().GetString("source-profile")
+		if err != nil {
+			return errs.WrapInternal(err, "couldn't parse source-profile")
 		}
-		role, e := cmd.Flags().GetString("role")
-		if e != nil {
-			return errs.WrapInternal(e, "couldn't parse role")
+		role, err := cmd.Flags().GetString("role")
+		if err != nil {
+			return errs.WrapInternal(err, "couldn't parse role")
 		}
 
 		config, err := config.FindAndReadConfig(fs, configFile)
