@@ -123,22 +123,22 @@ output = json
 }
 
 func awsConfigure(name, roleARN, sourceProfile, region string) error {
-	cmd := exec.Command("aws", "configure", "set", fmt.Sprintf("profile.%s.role_arn", name), roleARN)
-	err := cmd.Run()
-	if err != nil {
-		return errors.Wrapf(err, "Error executing: %s %s", cmd.Path, strings.Join(cmd.Args, " "))
+	cmds := []struct {
+		property string
+		value    string
+	}{
+		{"role_arn", roleARN},
+		{"source_profile", sourceProfile},
+		{"region", region},
+		{"output", "json"},
 	}
-	cmd = exec.Command("aws", "configure", "set", fmt.Sprintf("profile.%s.source_profile", name), sourceProfile)
-	err = cmd.Run()
-	if err != nil {
-		return errors.Wrapf(err, "Error executing: %s %s", cmd.Path, strings.Join(cmd.Args, " "))
+
+	for _, params := range cmds {
+		cmd := exec.Command("aws", "configure", "set", fmt.Sprintf("profile.%s.%s", name, params.property), params.value)
+		err := cmd.Run()
+		if err != nil {
+			return errors.Wrapf(err, "Error executing: %s %s", cmd.Path, strings.Join(cmd.Args, " "))
+		}
 	}
-	cmd = exec.Command("aws", "configure", "set", fmt.Sprintf("profile.%s.region", name), region)
-	err = cmd.Run()
-	if err != nil {
-		return errors.Wrapf(err, "Error executing: %s %s", cmd.Path, strings.Join(cmd.Args, " "))
-	}
-	cmd = exec.Command("aws", "configure", "set", fmt.Sprintf("profile.%s.output", name), "json")
-	err = cmd.Run()
-	return errors.Wrapf(err, "Error executing: %s %s", cmd.Path, strings.Join(cmd.Args, " "))
+	return nil
 }
