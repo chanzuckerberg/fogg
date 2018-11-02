@@ -72,7 +72,6 @@ output = json
 			roleARN := arn.ARN{
 				Partition: "aws",
 				Service:   "iam",
-				Region:    region,
 				AccountID: strconv.Itoa(int(*account.AccountID)),
 				Resource:  fmt.Sprintf("role/%s", role),
 			}
