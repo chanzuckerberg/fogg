@@ -4,13 +4,16 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"os/exec"
 	"strconv"
+	"strings"
 	"text/template"
 
 	"github.com/aws/aws-sdk-go/aws/arn"
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/pkg/errors"
+	"github.com/segmentio/go-prompt"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
@@ -62,8 +65,12 @@ region = {{.region}}
 output = json
 `
 		awsConfig := bytes.NewBuffer(nil)
+		all := false
+		choices := []string{"yes", "no", "all"}
 
+	Loop:
 		for name, account := range config.Accounts {
+			fmt.Printf("Generating config for %s\n", name)
 			region := config.Defaults.AWSRegionProvider
 			if account.AWSRegionProvider != nil {
 				region = *account.AWSRegionProvider
@@ -92,9 +99,46 @@ output = json
 			if err != nil {
 				return errors.Wrap(err, "Could not templetize")
 			}
+
+			if !all {
+				fmt.Println(awsConfig.String())
+
+				choiceIdx := prompt.Choose("Add this config?", choices)
+				switch choices[choiceIdx] {
+				case "no":
+					continue Loop
+				case "all":
+					all = true
+				}
+			}
+
+			err = awsConfigure(name, roleARN.String(), sourceProfile, region)
+			if err != nil {
+				return err
+			}
+			awsConfig.Reset()
 		}
-		// print the config
-		fmt.Println(awsConfig.String())
 		return nil
 	},
+}
+
+func awsConfigure(name, roleARN, sourceProfile, region string) error {
+	cmd := exec.Command("aws", "configure", "set", fmt.Sprintf("profile.%s.role_arn", name), roleARN)
+	err := cmd.Run()
+	if err != nil {
+		return errors.Wrapf(err, "Error executing: %s %s", cmd.Path, strings.Join(cmd.Args, " "))
+	}
+	cmd = exec.Command("aws", "configure", "set", fmt.Sprintf("profile.%s.source_profile", name), sourceProfile)
+	err = cmd.Run()
+	if err != nil {
+		return errors.Wrapf(err, "Error executing: %s %s", cmd.Path, strings.Join(cmd.Args, " "))
+	}
+	cmd = exec.Command("aws", "configure", "set", fmt.Sprintf("profile.%s.region", name), region)
+	err = cmd.Run()
+	if err != nil {
+		return errors.Wrapf(err, "Error executing: %s %s", cmd.Path, strings.Join(cmd.Args, " "))
+	}
+	cmd = exec.Command("aws", "configure", "set", fmt.Sprintf("profile.%s.output", name), "json")
+	err = cmd.Run()
+	return errors.Wrapf(err, "Error executing: %s %s", cmd.Path, strings.Join(cmd.Args, " "))
 }
