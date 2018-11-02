@@ -1,8 +1,18 @@
 language: go
 go:
-- '1.11'
+  - '1.11'
 install:
-- curl -fSL --retry 5 https://github.com/gobuffalo/packr/releases/download/v1.13.2/packr_1.13.2_linux_amd64.tar.gz | sudo tar zx -C /usr/bin/
-- make setup
+  - npm install -g snyk
+  - make setup
+
 script:
-- make
+  - make
+
+jobs:
+  include:
+    - stage: check
+      script: make
+    - stage: check
+      script:
+        - snyk monitor --org=czi
+        - snyk test
