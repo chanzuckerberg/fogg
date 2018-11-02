@@ -66,10 +66,11 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:b75da992f409ab285c5c2d57869d3df50e1d6869d25bee46bb04571a81db53d9"
+  digest = "1:595e742c4771ee4839e785bd367afa70519b60309b9a89fcaeb3af1a87a60991"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
+    "aws/arn",
     "aws/awserr",
     "aws/awsutil",
     "aws/client",
@@ -656,6 +657,8 @@
   input-imports = [
     "github.com/Masterminds/sprig",
     "github.com/antzucaro/matchr",
+    "github.com/aws/aws-sdk-go/aws",
+    "github.com/aws/aws-sdk-go/aws/arn",
     "github.com/blang/semver",
     "github.com/fatih/color",
     "github.com/go-errors/errors",
