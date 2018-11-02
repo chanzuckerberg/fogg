@@ -8,10 +8,9 @@ import (
 	"text/template"
 
 	"github.com/aws/aws-sdk-go/aws/arn"
-	"github.com/pkg/errors"
-
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/errs"
+	"github.com/pkg/errors"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
