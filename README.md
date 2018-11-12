@@ -2,6 +2,10 @@
 
 [![Build Status](https://travis-ci.com/chanzuckerberg/fogg.svg?token=JNM9vNLfRsFzCcF1uEgc&branch=master)](https://travis-ci.com/chanzuckerberg/fogg) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/chanzuckerberg/fogg)
 
+**Please note**: If you believe you have found a security issue, _please responsibly disclose_ by contacting us at [security@chanzuckerberg.com](mailto:security@chanzuckerberg.com).
+
+----
+
 Fogg is an opinionated tool for managing infrastructure-as-code repositories using Terraform.
 
 Terraform is a powerful tool for managing infrastructure– great when things go right, but dangerous when they don't. Best practices are emerging for reducing this risk, but they require significant work and knowledge to apply consistently.
