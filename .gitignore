@@ -5,3 +5,5 @@ dist
 
 # Ignore -packr generated files
 **-packr.go
+
+coverage.txt
