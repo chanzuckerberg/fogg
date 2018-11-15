@@ -1,0 +1,32 @@
+language: minimal
+sudo: required
+services:
+  - docker
+install:
+  - pip install awscli --upgrade --user
+  - aws --version
+before_script:
+  - aws configure set aws_access_key_id     $AWS_ACCESS_KEY_ID     --profile {{ .AWSIDAccountName }}
+  - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile {{ .AWSIDAccountName }}
+  - aws --profile {{ .AWSIDAccountName }} sts get-caller-identity
+
+{{ range $profile := .AWSProfiles}}
+  - aws configure set profile.{{ $profile.Name }}.role_arn arn:aws:iam::{{ $profile.ID }}:role/{{ $profile.Role}}
+  - aws configure set profile.{{ $profile.Name }}.source_profile {{ $profile.HubAccountName }}
+  - aws --profile {{ $profile.Name }} sts get-caller-identity
+{{ end }}
+
+jobs:
+  include:
+    - stage: check
+      script: make lint
+    - stage: check
+      script: cd terraform/envs/dev && travis_retry make check-plan
+    - stage: check
+      script: cd terraform/envs/staging && travis_retry make check-plan
+    - stage: check
+      script: cd terraform/envs/prod && travis_retry make check-plan
+    - stage: check
+      script: travis_retry make check-plan-global
+    - stage: check
+      script: cd terraform/accounts/meta-2 && travis_retry make check-plan

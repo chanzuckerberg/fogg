@@ -36,7 +36,7 @@ build: packr ## build the binary
 coverage: ## run the go coverage tool, reading file coverage.out
 	go tool cover -html=coverage.out
 
-test: packr ## run the tests
+test: ## run the tests
 	gotest -cover ./...
 
 install: packr ## install the fogg binary in $GOPATH/bin

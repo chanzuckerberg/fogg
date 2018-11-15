@@ -97,12 +97,19 @@ type Module struct {
 	TerraformVersion *string `json:"terraform_version"`
 }
 
+type TravisCI struct {
+	Enabled        bool   `json:"enabled"`
+	AWSIAMRoleName string `json:"aws_iam_role_name"`
+	HubAccountName string `json:"hub_account_name"`
+}
+
 type Config struct {
 	Accounts map[string]Account `json:"accounts"`
 	Defaults defaults           `json:"defaults"`
 	Envs     map[string]Env     `json:"envs"`
 	Modules  map[string]Module  `json:"modules"`
 	Plugins  Plugins            `json:"plugins"`
+	TravisCI *TravisCI          `json:"travis_ci"`
 }
 
 func InitConfig(project, region, bucket, awsProfile, owner, awsProviderVersion string) *Config {

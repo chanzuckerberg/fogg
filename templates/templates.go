@@ -10,6 +10,7 @@ type T struct {
 	Module           packr.Box
 	ModuleInvocation packr.Box
 	Repo             packr.Box
+	TravisCI         packr.Box
 }
 
 var Templates = &T{
@@ -20,4 +21,5 @@ var Templates = &T{
 	Module:           packr.NewBox("module"),
 	ModuleInvocation: packr.NewBox("module-invocation"),
 	Repo:             packr.NewBox("repo"),
+	TravisCI:         packr.NewBox("travis-ci"),
 }

@@ -86,6 +86,19 @@ type TfLint struct {
 	Enabled bool
 }
 
+type AWSProfile struct {
+	Name           string
+	ID             int64
+	Role           string
+	HubAccountName string
+}
+
+type TravisCI struct {
+	Enabled          bool
+	AWSIDAccountName string
+	AWSProfiles      []AWSProfile
+}
+
 // Plugins contains a plan around plugins
 type Plugins struct {
 	CustomPlugins      map[string]*plugins.CustomPlugin
@@ -115,6 +128,7 @@ type Plan struct {
 	Global   Component
 	Modules  map[string]Module
 	Plugins  Plugins
+	TravisCI TravisCI
 	Version  string
 }
 
@@ -139,6 +153,10 @@ func Eval(config *config.Config, verbose bool, noPlugins bool) (*Plan, error) {
 	}
 	p.Global = p.buildGlobal(config)
 	p.Modules = p.buildModules(config)
+
+	if config.TravisCI != nil {
+		p.TravisCI = p.buildTravisCI(config)
+	}
 
 	return p, nil
 }
@@ -303,6 +321,27 @@ func (p *Plan) buildEnvs(conf *config.Config) (map[string]Env, error) {
 		envPlans[envName] = envPlan
 	}
 	return envPlans, nil
+}
+
+func (p *Plan) buildTravisCI(c *config.Config) TravisCI {
+	tr := TravisCI{
+		Enabled:          c.TravisCI.Enabled,
+		AWSIDAccountName: c.TravisCI.HubAccountName,
+	}
+	var profiles []AWSProfile
+	// TODO we should actually take the resolved values for these, not
+	//  raw config
+	for name, a := range c.Accounts {
+		profiles = append(profiles, AWSProfile{
+			Name:           name,
+			ID:             *a.AccountID,
+			Role:           c.TravisCI.AWSIAMRoleName,
+			HubAccountName: c.TravisCI.HubAccountName,
+		})
+	}
+	tr.AWSProfiles = profiles
+	return tr
+
 }
 
 func otherComponentNames(components map[string]*config.Component, thisComponent string) []string {
