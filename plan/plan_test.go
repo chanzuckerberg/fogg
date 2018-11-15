@@ -212,19 +212,7 @@ func Test_buildTravisCI(t *testing.T) {
 		p := &Plan{}
 		tr := p.buildTravisCI(c)
 		a.NotNil(tr)
-		a.False(p.TravisCI.Enabled)
-	}
-	// ----
-	{
-		c := &config.Config{
-			TravisCI: &config.TravisCI{
-				Enabled: false,
-			},
-		}
-		p := &Plan{}
-		tr := p.buildTravisCI(c)
-		a.NotNil(tr)
-		a.False(p.TravisCI.Enabled)
+		a.False(tr.Enabled)
 	}
 
 	// ----
