@@ -44,45 +44,29 @@ func (p *Plan) buildTravisCI(c *config.Config) TravisCI {
 		buckets = 1
 	}
 
-	TestBuckets := make([][]string, buckets)
-	jobs := make(chan string)
-	done := make(chan bool)
-
-	go func() {
-		var componentCount int
-
-		for {
-			j, more := <-jobs
-			if more {
-				bucket := componentCount % buckets
-				TestBuckets[bucket] = append(TestBuckets[bucket], j)
-				componentCount++
-			} else {
-				done <- true
-				return
-			}
-		}
-	}()
-
-	jobs <- path.Join("terraform", "global")
+	var testPaths []string
+	testPaths = append(testPaths, path.Join("terraform", "global"))
 
 	for _, name := range util.SortedMapKeys(c.Accounts) {
-		jobs <- path.Join("terraform", "accounts", name)
+		testPaths = append(testPaths, path.Join("terraform", "accounts", name))
 	}
 
 	for _, envName := range util.SortedMapKeys(c.Envs) {
 		for _, name := range util.SortedMapKeys(c.Envs[envName].Components) {
-			jobs <- path.Join("terraform", "envs", envName, name)
+			testPaths = append(testPaths, path.Join("terraform", "envs", envName, name))
 		}
 	}
 
 	for _, moduleName := range util.SortedMapKeys(c.Modules) {
-		jobs <- path.Join("terraform", "modules", moduleName)
+		testPaths = append(testPaths, path.Join("terraform", "modules", moduleName))
 	}
 
-	close(jobs)
-	<-done
+	TestBuckets := make([][]string, buckets)
+	for i, path := range testPaths {
+		bucket := i % buckets
+		TestBuckets[bucket] = append(TestBuckets[bucket], path)
+	}
+
 	tr.TestBuckets = TestBuckets
 	return tr
-
 }
