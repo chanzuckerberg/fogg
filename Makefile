@@ -37,7 +37,7 @@ coverage: ## run the go coverage tool, reading file coverage.out
 	go tool cover -html=coverage.out
 
 test: ## run the tests
-	gotest -cover ./...
+	gotest -race -coverprofile=coverage.txt -covermode=atomic ./...
 
 install: packr ## install the fogg binary in $GOPATH/bin
 	go install ${LDFLAGS} .

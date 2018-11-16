@@ -11,7 +11,9 @@ script:
 jobs:
   include:
     - stage: check
-      script: make
+      script:
+        - make
+        - bash <(curl -s https://codecov.io/bash)
     - stage: check
       script:
         - snyk monitor --org=czi
