@@ -74,5 +74,6 @@ func Test_buildTravisCI_TestShards(t *testing.T) {
 	p := &Plan{}
 	tr := p.buildTravisCI(c)
 	a.Len(tr.TestShards, 1)
-	a.Len(tr.TestShards[0], 2)
+	// 3 because there is always a global
+	a.Len(tr.TestShards[0], 3)
 }

@@ -43,6 +43,10 @@ func (p *Plan) buildTravisCI(c *config.Config) TravisCI {
 
 	var componentCount int
 
+	shard := componentCount % shards
+	testShards[shard] = append(testShards[shard], path.Join("terraform", "global"))
+	componentCount++
+
 	for _, name := range util.SortedMapKeys(c.Accounts) {
 		shard := componentCount % shards
 		testShards[shard] = append(testShards[shard], path.Join("terraform", "accounts", name))
@@ -57,7 +61,7 @@ func (p *Plan) buildTravisCI(c *config.Config) TravisCI {
 
 		}
 	}
-	// tr.ComponentPaths = componentPaths
+
 	tr.TestShards = testShards
 	return tr
 
