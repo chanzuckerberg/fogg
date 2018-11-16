@@ -17,17 +17,18 @@ type TravisCI struct {
 func (p *Plan) buildTravisCI(c *config.Config) TravisCI {
 	tr := TravisCI{
 		Enabled:          c.TravisCI.Enabled,
-		AWSIDAccountName: c.TravisCI.HubAccountName,
+		AWSIDAccountName: c.TravisCI.IDAccountName,
 	}
 	var profiles []AWSProfile
 	// TODO we should actually take the resolved values for these, not
 	//  raw config
+
 	for name, a := range c.Accounts {
 		profiles = append(profiles, AWSProfile{
-			Name:           name,
-			ID:             *a.AccountID,
-			Role:           c.TravisCI.AWSIAMRoleName,
-			HubAccountName: c.TravisCI.HubAccountName,
+			Name:          name,
+			ID:            *a.AccountID,
+			Role:          c.TravisCI.AWSIAMRoleName,
+			IDAccountName: c.TravisCI.IDAccountName,
 		})
 	}
 	tr.AWSProfiles = profiles

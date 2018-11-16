@@ -13,7 +13,7 @@ before_script:
 
 {{ range $profile := .AWSProfiles}}
   - aws configure set profile.{{ $profile.Name }}.role_arn arn:aws:iam::{{ $profile.ID }}:role/{{ $profile.Role}}
-  - aws configure set profile.{{ $profile.Name }}.source_profile {{ $profile.HubAccountName }}
+  - aws configure set profile.{{ $profile.Name }}.source_profile {{ $profile.IDAccountName }}
   - aws --profile {{ $profile.Name }} sts get-caller-identity
 {{ end }}
 
