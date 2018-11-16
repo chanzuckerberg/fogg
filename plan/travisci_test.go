@@ -23,6 +23,7 @@ func Test_buildTravisCI_Disabled(t *testing.T) {
 			},
 		}
 		p := &Plan{}
+		p.Accounts = p.buildAccounts(c)
 		tr := p.buildTravisCI(c)
 		a.NotNil(tr)
 		a.False(tr.Enabled)
@@ -44,6 +45,7 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 		},
 	}
 	p := &Plan{}
+	p.Accounts = p.buildAccounts(c)
 	tr := p.buildTravisCI(c)
 	a.Len(tr.AWSProfiles, 1)
 	a.Equal(tr.AWSProfiles[0].Name, "foo")
@@ -72,6 +74,7 @@ func Test_buildTravisCI_TestShards(t *testing.T) {
 	}
 
 	p := &Plan{}
+	p.Accounts = p.buildAccounts(c)
 	tr := p.buildTravisCI(c)
 	a.Len(tr.TestShards, 1)
 	// 3 because there is always a global

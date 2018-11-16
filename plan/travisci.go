@@ -15,17 +15,21 @@ type TravisCI struct {
 }
 
 func (p *Plan) buildTravisCI(c *config.Config) TravisCI {
+	if p.Accounts == nil {
+		panic("buildTravisCI must be run after buildAccounts")
+	}
+
 	tr := TravisCI{
 		Enabled:          c.TravisCI.Enabled,
 		AWSIDAccountName: c.TravisCI.IDAccountName,
 	}
 	var profiles []AWSProfile
-	// TODO we should actually take the resolved values for these, not
-	//  raw config
 
-	for name, a := range c.Accounts {
+	for name, a := range p.Accounts {
 		profiles = append(profiles, AWSProfile{
-			Name:          name,
+			Name: name,
+			// TODO since accountID is required here, that means we need
+			// to make it non-optional, either in defaults or post-plan.
 			ID:            *a.AccountID,
 			Role:          c.TravisCI.AWSIAMRoleName,
 			IDAccountName: c.TravisCI.IDAccountName,
