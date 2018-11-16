@@ -22,7 +22,8 @@ jobs:
 {{ range $testShard := .TestShards }}
     - stage: check
       script:
+        - set -ex
       {{- range $component := $testShard }}
-        - pushd {{ $component }}; make check; popd
+        - pushd {{ $component }} && travis_rety make check && popd
       {{- end -}}
 {{ end }}
