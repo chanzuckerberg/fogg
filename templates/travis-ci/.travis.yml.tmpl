@@ -23,6 +23,6 @@ jobs:
     - stage: check
       script:
       {{- range $component := $testShard }}
-        - cd {{ $component }} && make check
+        - pushd {{ $component }}; make check; popd
       {{- end -}}
 {{ end }}

@@ -40,28 +40,43 @@ func (p *Plan) buildTravisCI(c *config.Config) TravisCI {
 	}
 
 	testShards := make([][]string, shards)
+	jobs := make(chan string)
+	done := make(chan bool)
 
-	var componentCount int
+	go func() {
+		var componentCount int
 
-	shard := componentCount % shards
-	testShards[shard] = append(testShards[shard], path.Join("terraform", "global"))
-	componentCount++
+		for {
+			j, more := <-jobs
+			if more {
+				shard := componentCount % shards
+				testShards[shard] = append(testShards[shard], j)
+				componentCount++
+			} else {
+				done <- true
+				return
+			}
+		}
+	}()
+
+	jobs <- path.Join("terraform", "global")
 
 	for _, name := range util.SortedMapKeys(c.Accounts) {
-		shard := componentCount % shards
-		testShards[shard] = append(testShards[shard], path.Join("terraform", "accounts", name))
-		componentCount++
+		jobs <- path.Join("terraform", "accounts", name)
 	}
 
 	for _, envName := range util.SortedMapKeys(c.Envs) {
 		for _, name := range util.SortedMapKeys(c.Envs[envName].Components) {
-			shard := componentCount % shards
-			testShards[shard] = append(testShards[shard], path.Join("terraform", "envs", envName, name))
-			componentCount++
-
+			jobs <- path.Join("terraform", "envs", envName, name)
 		}
 	}
 
+	for _, moduleName := range util.SortedMapKeys(c.Modules) {
+		jobs <- path.Join("terraform", "modules", moduleName)
+	}
+
+	close(jobs)
+	<-done
 	tr.TestShards = testShards
 	return tr
 
