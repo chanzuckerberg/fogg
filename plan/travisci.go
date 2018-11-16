@@ -25,12 +25,12 @@ func (p *Plan) buildTravisCI(c *config.Config) TravisCI {
 	}
 	var profiles []AWSProfile
 
-	for name, a := range p.Accounts {
+	for _, name := range util.SortedMapKeys(p.Accounts) {
 		profiles = append(profiles, AWSProfile{
 			Name: name,
 			// TODO since accountID is required here, that means we need
 			// to make it non-optional, either in defaults or post-plan.
-			ID:            *a.AccountID,
+			ID:            *p.Accounts[name].AccountID,
 			Role:          c.TravisCI.AWSIAMRoleName,
 			IDAccountName: c.TravisCI.IDAccountName,
 		})
