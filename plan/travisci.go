@@ -61,12 +61,12 @@ func (p *Plan) buildTravisCI(c *config.Config) TravisCI {
 		testPaths = append(testPaths, path.Join("terraform", "modules", moduleName))
 	}
 
-	TestBuckets := make([][]string, buckets)
+	testBuckets := make([][]string, buckets)
 	for i, path := range testPaths {
 		bucket := i % buckets
-		TestBuckets[bucket] = append(TestBuckets[bucket], path)
+		testBuckets[bucket] = append(testBuckets[bucket], path)
 	}
 
-	tr.TestBuckets = TestBuckets
+	tr.TestBuckets = testBuckets
 	return tr
 }
