@@ -19,8 +19,10 @@ before_script:
 
 jobs:
   include:
-{{ range $component := .ComponentPaths }}
+{{ range $testShard := .TestShards }}
     - stage: check
-      name: check {{ $component }}
-      script: cd {{ $component }} && travis_retry make check
+      script:
+      {{- range $component := $testShard }}
+        - {{ $component }}
+      {{- end -}}
 {{ end }}

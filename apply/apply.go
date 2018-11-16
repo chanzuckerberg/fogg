@@ -50,7 +50,10 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, upgrade bool, noP
 	}
 
 	if p.TravisCI.Enabled {
-		applyTree(fs, &tmp.TravisCI, "", p.TravisCI)
+		e = applyTree(fs, &tmp.TravisCI, "", p.TravisCI)
+		if e != nil {
+			return errs.WrapUser(e, "unable to apply travis ci")
+		}
 	}
 
 	e = applyPlugins(fs, p)
