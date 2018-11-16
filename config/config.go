@@ -101,7 +101,7 @@ type TravisCI struct {
 	Enabled        bool   `json:"enabled"`
 	AWSIAMRoleName string `json:"aws_iam_role_name"`
 	IDAccountName  string `json:"id_account_name"`
-	TestShards     int    `json:"test_shards"`
+	TestBuckets    int    `json:"test_buckets"`
 }
 
 type Config struct {

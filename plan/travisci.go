@@ -11,7 +11,7 @@ type TravisCI struct {
 	Enabled          bool
 	AWSIDAccountName string
 	AWSProfiles      []AWSProfile
-	TestShards       [][]string
+	TestBuckets      [][]string
 }
 
 func (p *Plan) buildTravisCI(c *config.Config) TravisCI {
@@ -37,14 +37,14 @@ func (p *Plan) buildTravisCI(c *config.Config) TravisCI {
 	}
 	tr.AWSProfiles = profiles
 
-	var shards int
-	if c.TravisCI.TestShards > 0 {
-		shards = c.TravisCI.TestShards
+	var buckets int
+	if c.TravisCI.TestBuckets > 0 {
+		buckets = c.TravisCI.TestBuckets
 	} else {
-		shards = 1
+		buckets = 1
 	}
 
-	testShards := make([][]string, shards)
+	TestBuckets := make([][]string, buckets)
 	jobs := make(chan string)
 	done := make(chan bool)
 
@@ -54,8 +54,8 @@ func (p *Plan) buildTravisCI(c *config.Config) TravisCI {
 		for {
 			j, more := <-jobs
 			if more {
-				shard := componentCount % shards
-				testShards[shard] = append(testShards[shard], j)
+				bucket := componentCount % buckets
+				TestBuckets[bucket] = append(TestBuckets[bucket], j)
 				componentCount++
 			} else {
 				done <- true
@@ -82,7 +82,7 @@ func (p *Plan) buildTravisCI(c *config.Config) TravisCI {
 
 	close(jobs)
 	<-done
-	tr.TestShards = testShards
+	tr.TestBuckets = TestBuckets
 	return tr
 
 }

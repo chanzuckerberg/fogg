@@ -54,7 +54,7 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 	a.Equal(tr.AWSProfiles[0].IDAccountName, "hub")
 }
 
-func Test_buildTravisCI_TestShards(t *testing.T) {
+func Test_buildTravisCI_TestBuckets(t *testing.T) {
 	a := assert.New(t)
 
 	c := &config.Config{
@@ -76,7 +76,7 @@ func Test_buildTravisCI_TestShards(t *testing.T) {
 	p := &Plan{}
 	p.Accounts = p.buildAccounts(c)
 	tr := p.buildTravisCI(c)
-	a.Len(tr.TestShards, 1)
+	a.Len(tr.TestBuckets, 1)
 	// 3 because there is always a global
-	a.Len(tr.TestShards[0], 3)
+	a.Len(tr.TestBuckets[0], 3)
 }

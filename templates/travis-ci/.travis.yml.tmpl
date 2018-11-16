@@ -19,11 +19,11 @@ before_script:
 
 jobs:
   include:
-{{ range $testShard := .TestShards }}
+{{ range $testBucket := .TestBuckets }}
     - stage: check
       script:
         - set -e
-      {{- range $component := $testShard }}
+      {{- range $component := $testBucket }}
         - pushd {{ $component }} && travis_retry make check && popd
       {{- end -}}
 {{ end }}
