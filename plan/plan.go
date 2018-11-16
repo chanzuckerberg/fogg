@@ -2,7 +2,6 @@ package plan
 
 import (
 	"fmt"
-	"path"
 
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/errs"
@@ -92,13 +91,6 @@ type AWSProfile struct {
 	ID             int64
 	Role           string
 	HubAccountName string
-}
-
-type TravisCI struct {
-	Enabled          bool
-	AWSIDAccountName string
-	AWSProfiles      []AWSProfile
-	ComponentPaths   []string
 }
 
 // Plugins contains a plan around plugins
@@ -323,40 +315,6 @@ func (p *Plan) buildEnvs(conf *config.Config) (map[string]Env, error) {
 		envPlans[envName] = envPlan
 	}
 	return envPlans, nil
-}
-
-func (p *Plan) buildTravisCI(c *config.Config) TravisCI {
-	tr := TravisCI{
-		Enabled:          c.TravisCI.Enabled,
-		AWSIDAccountName: c.TravisCI.HubAccountName,
-	}
-	var profiles []AWSProfile
-	// TODO we should actually take the resolved values for these, not
-	//  raw config
-	for name, a := range c.Accounts {
-		profiles = append(profiles, AWSProfile{
-			Name:           name,
-			ID:             *a.AccountID,
-			Role:           c.TravisCI.AWSIAMRoleName,
-			HubAccountName: c.TravisCI.HubAccountName,
-		})
-	}
-	tr.AWSProfiles = profiles
-
-	var componentPaths []string
-
-	for _, name := range util.SortedMapKeys(c.Accounts) {
-		componentPaths = append(componentPaths, path.Join("terraform", "accounts", name))
-	}
-
-	for envName, env := range c.Envs {
-		for name := range env.Components {
-			componentPaths = append(componentPaths, path.Join("terraform", "envs", envName, name))
-		}
-	}
-	tr.ComponentPaths = componentPaths
-	return tr
-
 }
 
 func otherComponentNames(components map[string]*config.Component, thisComponent string) []string {
