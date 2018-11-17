@@ -133,6 +133,12 @@ func TestApplySmokeTest(t *testing.T) {
     "terraform_version": "0.100.0",
     "owner": "foo@example.com"
   },
+  "travis_ci": {
+	"enabled": true,
+	"aws_iam_role_name": "travis",
+        "id_account_name": "id",
+        "test_buckets": 7
+  },
   "accounts": {
     "foo": {
       "account_id": 123
