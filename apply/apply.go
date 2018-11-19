@@ -49,6 +49,13 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, upgrade bool, noP
 		return errs.WrapUser(e, "unable to apply repo")
 	}
 
+	if p.TravisCI.Enabled {
+		e = applyTree(fs, &tmp.TravisCI, "", p.TravisCI)
+		if e != nil {
+			return errs.WrapUser(e, "unable to apply travis ci")
+		}
+	}
+
 	e = applyPlugins(fs, p)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply plugins")

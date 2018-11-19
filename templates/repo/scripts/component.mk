@@ -33,6 +33,8 @@ endif
 
 all:
 
+check: lint check-plan
+
 fmt:
 	@$(sh_command) -c 'for f in $(TF); do printf .; terraform fmt $$f; done'; \
 	echo

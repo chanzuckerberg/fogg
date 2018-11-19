@@ -25,6 +25,9 @@ fmt:
 	@$(docker_sh) -c 'for f in $(TF); do printf .; terraform fmt $$f; done'; \
 	echo
 
+
+check: lint check-docs
+
 lint: lint-tf
 
 lint-tf:
