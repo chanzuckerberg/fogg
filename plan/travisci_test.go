@@ -41,7 +41,6 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 		TravisCI: &config.TravisCI{
 			Enabled:        true,
 			AWSIAMRoleName: "rollin",
-			IDAccountName:  "hub",
 		},
 	}
 	p := &Plan{}
@@ -51,7 +50,6 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 	a.Equal(tr.AWSProfiles[0].Name, "foo")
 	a.Equal(tr.AWSProfiles[0].ID, id1)
 	a.Equal(tr.AWSProfiles[0].Role, "rollin")
-	a.Equal(tr.AWSProfiles[0].IDAccountName, "hub")
 }
 
 func Test_buildTravisCI_TestBuckets(t *testing.T) {
@@ -69,7 +67,6 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 		TravisCI: &config.TravisCI{
 			Enabled:        true,
 			AWSIAMRoleName: "rollin",
-			IDAccountName:  "hub",
 		},
 	}
 

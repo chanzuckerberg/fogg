@@ -8,10 +8,9 @@ import (
 )
 
 type TravisCI struct {
-	Enabled          bool
-	AWSIDAccountName string
-	AWSProfiles      []AWSProfile
-	TestBuckets      [][]string
+	Enabled     bool
+	AWSProfiles []AWSProfile
+	TestBuckets [][]string
 }
 
 func (p *Plan) buildTravisCI(c *config.Config) TravisCI {
@@ -20,8 +19,7 @@ func (p *Plan) buildTravisCI(c *config.Config) TravisCI {
 	}
 
 	tr := TravisCI{
-		Enabled:          c.TravisCI.Enabled,
-		AWSIDAccountName: c.TravisCI.IDAccountName,
+		Enabled: c.TravisCI.Enabled,
 	}
 	var profiles []AWSProfile
 
@@ -30,9 +28,8 @@ func (p *Plan) buildTravisCI(c *config.Config) TravisCI {
 			Name: name,
 			// TODO since accountID is required here, that means we need
 			// to make it non-optional, either in defaults or post-plan.
-			ID:            *p.Accounts[name].AccountID,
-			Role:          c.TravisCI.AWSIAMRoleName,
-			IDAccountName: c.TravisCI.IDAccountName,
+			ID:   *p.Accounts[name].AccountID,
+			Role: c.TravisCI.AWSIAMRoleName,
 		})
 	}
 	tr.AWSProfiles = profiles

@@ -87,10 +87,9 @@ type TfLint struct {
 }
 
 type AWSProfile struct {
-	Name          string
-	ID            int64
-	Role          string
-	IDAccountName string
+	Name string
+	ID   int64
+	Role string
 }
 
 // Plugins contains a plan around plugins

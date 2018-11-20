@@ -9,13 +9,13 @@ install:
   - aws --version
 before_script:
   # TODO add note about why these need to be prefixed with HUB_
-  - aws configure set aws_access_key_id     $IDACCT_AWS_ACCESS_KEY_ID     --profile {{ .AWSIDAccountName }}
-  - aws configure set aws_secret_access_key $IDACCT_AWS_SECRET_ACCESS_KEY --profile {{ .AWSIDAccountName }}
-  - aws --profile {{ .AWSIDAccountName }} sts get-caller-identity
+  - aws configure set aws_access_key_id     $IDACCT_AWS_ACCESS_KEY_ID     --profile _idacct
+  - aws configure set aws_secret_access_key $IDACCT_AWS_SECRET_ACCESS_KEY --profile _idacct
+  - aws --profile _idacct sts get-caller-identity
 
 {{ range $profile := .AWSProfiles}}
   - aws configure set profile.{{ $profile.Name }}.role_arn arn:aws:iam::{{ $profile.ID }}:role/{{ $profile.Role}}
-  - aws configure set profile.{{ $profile.Name }}.source_profile {{ $profile.IDAccountName }}
+  - aws configure set profile.{{ $profile.Name }}.source_profile _idacct
   - aws --profile {{ $profile.Name }} sts get-caller-identity
 {{ end }}
 
