@@ -100,7 +100,6 @@ type Module struct {
 type TravisCI struct {
 	Enabled        bool   `json:"enabled"`
 	AWSIAMRoleName string `json:"aws_iam_role_name"`
-	IDAccountName  string `json:"id_account_name"`
 	TestBuckets    int    `json:"test_buckets"`
 }
 
