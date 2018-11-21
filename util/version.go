@@ -63,7 +63,7 @@ func versionString(version, sha string, release, dirty bool) string {
 		return version
 	}
 	if !dirty {
-		return fmt.Sprintf("%s-%s", version, sha)
+		return fmt.Sprintf("%s+%s", version, sha)
 	}
-	return fmt.Sprintf("%s-%s-dirty", version, sha)
+	return fmt.Sprintf("%s+%s-dirty", version, sha)
 }
