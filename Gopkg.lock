@@ -132,6 +132,14 @@
   version = "v3.5.1"
 
 [[projects]]
+  branch = "master"
+  digest = "1:c9cfc962df3983b4596879d0a7acb927b1867e38c7a49a5933e7675e3bb4f93c"
+  name = "github.com/chanzuckerberg/go-misc"
+  packages = ["github"]
+  pruneopts = "UT"
+  revision = "80891fcdcf65ad524c84bdbb798bffed85ed1037"
+
+[[projects]]
   digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
   name = "github.com/davecgh/go-spew"
   packages = ["spew"]
@@ -189,6 +197,22 @@
   pruneopts = "UT"
   revision = "5a2cbb54c4e7d482e3f518c56f1f86f133d5204f"
   version = "v1.13.7"
+
+[[projects]]
+  digest = "1:f4f203acd8b11b8747bdcd91696a01dbc95ccb9e2ca2db6abf81c3a4f5e950ce"
+  name = "github.com/google/go-github"
+  packages = ["github"]
+  pruneopts = "UT"
+  revision = "f55b50f38167644bb7e4be03d9a2bde71d435239"
+  version = "v18.2.0"
+
+[[projects]]
+  digest = "1:a63cff6b5d8b95638bfe300385d93b2a6d9d687734b863da8e09dc834510a690"
+  name = "github.com/google/go-querystring"
+  packages = ["query"]
+  pruneopts = "UT"
+  revision = "44c6ddd0a2342c386950e880b658017258da92fc"
+  version = "v1.0.0"
 
 [[projects]]
   digest = "1:3a26588bc48b96825977c1b3df964f8fd842cd6860cc26370588d3563433cf11"
@@ -497,12 +521,12 @@
   revision = "f0d19b6901ade831d5a3204edc0d6a7d6457fbb2"
 
 [[projects]]
-  digest = "1:3f53e9e4dfbb664cd62940c9c4b65a2171c66acd0b7621a1a6b8e78513525a52"
+  digest = "1:69b1cc331fca23d702bd72f860c6a647afd0aa9fcbc1d0659b1365e26546dd70"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
   pruneopts = "UT"
-  revision = "ad15b42461921f1fb3529b058c6786c6a45d5162"
-  version = "v1.1.1"
+  revision = "bcd833dfe83d3cebad139e4a29ed79cb2318bf95"
+  version = "v1.2.0"
 
 [[projects]]
   digest = "1:6a4a11ba764a56d2758899ec6f3848d24698d48442ebce85ee7a3f63284526cd"
@@ -660,6 +684,7 @@
     "github.com/aws/aws-sdk-go/aws",
     "github.com/aws/aws-sdk-go/aws/arn",
     "github.com/blang/semver",
+    "github.com/chanzuckerberg/go-misc/github",
     "github.com/fatih/color",
     "github.com/go-errors/errors",
     "github.com/gobuffalo/packr",
