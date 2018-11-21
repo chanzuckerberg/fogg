@@ -48,8 +48,8 @@ func ParseVersion(version string) (semver.Version, string, bool) {
 		dirty = true
 		v = strings.TrimSuffix(v, "-dirty")
 	}
-	if strings.Contains(v, "-") {
-		tmp := strings.Split(v, "-")
+	if strings.Contains(v, "+") {
+		tmp := strings.Split(v, "+")
 		v = tmp[0]
 		sha = tmp[1]
 	}
