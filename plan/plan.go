@@ -86,6 +86,12 @@ type TfLint struct {
 	Enabled bool
 }
 
+type AWSProfile struct {
+	Name string
+	ID   int64
+	Role string
+}
+
 // Plugins contains a plan around plugins
 type Plugins struct {
 	CustomPlugins      map[string]*plugins.CustomPlugin
@@ -115,6 +121,7 @@ type Plan struct {
 	Global   Component
 	Modules  map[string]Module
 	Plugins  Plugins
+	TravisCI TravisCI
 	Version  string
 }
 
@@ -139,6 +146,10 @@ func Eval(config *config.Config, verbose bool, noPlugins bool) (*Plan, error) {
 	}
 	p.Global = p.buildGlobal(config)
 	p.Modules = p.buildModules(config)
+
+	if config.TravisCI != nil {
+		p.TravisCI = p.buildTravisCI(config)
+	}
 
 	return p, nil
 }

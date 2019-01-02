@@ -5,6 +5,7 @@ provider "aws" {
   version = "~> {{ .AWSProviderVersion }}"
   region = "{{ .AWSRegionProvider }}"
   profile = "{{ .AWSProfileProvider }}"
+  {{ if .AccountID }}allowed_account_ids = [{{ .AccountID }}]{{ end }}
 }
 
 # Aliased Providers (for doing things in every region).
@@ -15,6 +16,7 @@ provider "aws" {
     version = "~> {{ $out.AWSProviderVersion }}"
     region = "{{ $region }}"
     profile = "{{ $out.AWSProfileProvider }}"
+    {{ if $out.AccountID }}allowed_account_ids = [{{ $out.AccountID }}]{{ end }}
   }
 {{ end }}
 

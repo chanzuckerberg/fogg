@@ -5,6 +5,8 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"math/rand"
+	"path/filepath"
 
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/templates"
@@ -20,6 +22,26 @@ func init() {
 	}
 	log.SetFormatter(formatter)
 }
+
+func randomString(n int) string {
+    var letter = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+
+    b := make([]rune, n)
+    for i := range b {
+        b[i] = letter[rand.Intn(len(letter))]
+    }
+    return string(b)
+}
+
+func getNonExistentDirectoryName() string {
+	nonexistentDir := "noexist-" + randomString(20)
+	for {
+		_, err := os.Stat(nonexistentDir)
+		if os.IsNotExist(err) { return nonexistentDir; }
+		nonexistentDir = "noexist-" + randomString(20)
+	}
+}
+
 func TestRemoveExtension(t *testing.T) {
 	x := removeExtension("foo")
 	assert.Equal(t, "foo", x)
@@ -43,6 +65,24 @@ func TestApplyTemplateBasic(t *testing.T) {
 	e := applyTemplate(sourceFile, dest, path, overrides)
 	assert.Nil(t, e)
 	f, e := dest.Open("bar")
+	assert.Nil(t, e)
+	r, e := ioutil.ReadAll(f)
+	assert.Nil(t, e)
+	assert.Equal(t, "foo", string(r))
+}
+
+func TestApplyTemplateBasicNewDirectory(t *testing.T) {
+	sourceFile := strings.NewReader("foo")
+	// Potential errors do not show up if using NewMemMapFs; needs real OS fs.
+	dest := afero.NewOsFs()
+	nonexistentDir := getNonExistentDirectoryName()
+	defer dest.RemoveAll(nonexistentDir)
+	path := filepath.Join(nonexistentDir, "bar")
+	overrides := struct{ Foo string }{"foo"}
+
+	e := applyTemplate(sourceFile, dest, path, overrides)
+	assert.Nil(t, e)
+	f, e := dest.Open(path)
 	assert.Nil(t, e)
 	r, e := ioutil.ReadAll(f)
 	assert.Nil(t, e)
@@ -89,6 +129,19 @@ func TestTouchFile(t *testing.T) {
 
 }
 
+func TestTouchFileNonExistentDirectory(t *testing.T) {
+	// Potential errors do not show up if using NewMemMapFs; needs real OS fs.
+	dest := afero.NewOsFs()
+	nonexistentDir := getNonExistentDirectoryName()
+	defer dest.RemoveAll(nonexistentDir)
+	e := touchFile(dest, filepath.Join(nonexistentDir, "foo"))
+	assert.Nil(t, e)
+	r, e := readFile(dest, filepath.Join(nonexistentDir, "foo"))
+	assert.Nil(t, e)
+	assert.Equal(t, "", r)
+	assert.Nil(t, e)
+}
+
 func TestCreateFile(t *testing.T) {
 	fs := afero.NewMemMapFs()
 
@@ -118,6 +171,19 @@ func TestCreateFile(t *testing.T) {
 	r, e = readFile(fs, "foo")
 	assert.Nil(t, e)
 	assert.Equal(t, "bar", r)
+}
+
+func TestCreateFileNonExistentDirectory(t *testing.T) {
+
+	// create new file in nonexistent directory
+	dest := afero.NewOsFs()
+
+	e := createFile(dest, "newdir/foo", strings.NewReader("bar"))
+	assert.Nil(t, e)
+
+	r, e := readFile(dest, "newdir/foo")
+	assert.Nil(t, e)
+	assert.Equal(t, "bar", r)
 
 }
 
@@ -132,6 +198,12 @@ func TestApplySmokeTest(t *testing.T) {
     "project": "proj",
     "terraform_version": "0.100.0",
     "owner": "foo@example.com"
+  },
+  "travis_ci": {
+	"enabled": true,
+	"aws_iam_role_name": "travis",
+        "id_account_name": "id",
+        "test_buckets": 7
   },
   "accounts": {
     "foo": {

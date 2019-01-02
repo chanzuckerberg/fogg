@@ -49,6 +49,13 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, upgrade bool, noP
 		return errs.WrapUser(e, "unable to apply repo")
 	}
 
+	if p.TravisCI.Enabled {
+		e = applyTree(fs, &tmp.TravisCI, "", p.TravisCI)
+		if e != nil {
+			return errs.WrapUser(e, "unable to apply travis ci")
+		}
+	}
+
 	e = applyPlugins(fs, p)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply plugins")
@@ -266,7 +273,14 @@ func fmtHcl(fs afero.Fs, path string) error {
 }
 
 func touchFile(dest afero.Fs, path string) error {
-	_, err := dest.Stat(path)
+	dir, _ := filepath.Split(path)
+	ospath := filepath.FromSlash(dir)
+	err := dest.MkdirAll(ospath, 0755)
+	if err != nil {
+		return errs.WrapUserf(err, "couldn't create %s directory", dir)
+	}
+
+	_, err = dest.Stat(path)
 	if err != nil { // TODO we might not want to do this for all errors
 		log.Infof("%s touched", path)
 		_, err = dest.Create(path)
@@ -298,6 +312,13 @@ func removeExtension(path string) string {
 }
 
 func applyTemplate(sourceFile io.Reader, dest afero.Fs, path string, overrides interface{}) error {
+	dir, _ := filepath.Split(path)
+	ospath := filepath.FromSlash(dir)
+	err := dest.MkdirAll(ospath, 0755)
+	if err != nil {
+		return errs.WrapUserf(err, "couldn't create %s directory", dir)
+	}
+
 	log.Infof("%s templated", path)
 	writer, err := dest.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {

@@ -16,7 +16,6 @@ import (
 
 func openGitOrExit(pwd string) {
 	log.Debugf("opening git at %s", pwd)
-	// g, err := git.PlainOpen(pwd)
 	_, err := os.Stat(".git")
 	if err != nil {
 		// assuming this means no repository
