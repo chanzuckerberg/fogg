@@ -6,11 +6,12 @@ LDFLAGS=-ldflags "-w -s -X github.com/chanzuckerberg/fogg/util.GitSha=${SHA} -X 
 
 all: test install
 
-setup:
+setup: ## setup development dependencies
 	go get github.com/rakyll/gotest
 	go install github.com/rakyll/gotest
 	go get -u github.com/gobuffalo/packr/...
 	go install github.com/gobuffalo/packr/packr
+	curl -L https://raw.githubusercontent.com/chanzuckerberg/bff/master/download.sh | sh
 
 lint: ## run the fast go linters
 	gometalinter --vendor --fast ./...
@@ -23,7 +24,7 @@ packr: ## run the packr tool to generate our static files
 	packr -v
 
 release: ## run a release
-	./release
+	./bin/bff bump
 	git push
 	goreleaser release --rm-dist
 

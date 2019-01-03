@@ -7,3 +7,5 @@ dist
 **-packr.go
 
 coverage.txt
+
+bin
