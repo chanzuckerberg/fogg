@@ -36,6 +36,7 @@ func TestParseDefaults(t *testing.T) {
 	assert.Equal(t, "the-bucket", c.Defaults.InfraBucket)
 	assert.Equal(t, "test-project", c.Defaults.Project)
 	assert.Equal(t, "0.11.0", c.Defaults.TerraformVersion)
+	assert.Equal(t, true, c.Docker)
 }
 
 func TestParse(t *testing.T) {
@@ -138,4 +139,5 @@ func TestInitConfig(t *testing.T) {
 	assert.Equal(t, "me@foo.example", c.Defaults.Owner)
 	assert.Equal(t, "proj", c.Defaults.Project)
 	assert.Equal(t, "0.11.7", c.Defaults.TerraformVersion)
+	assert.Equal(t, true, c.Docker)
 }
