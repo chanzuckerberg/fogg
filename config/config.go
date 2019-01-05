@@ -106,6 +106,7 @@ type TravisCI struct {
 type Config struct {
 	Accounts map[string]Account `json:"accounts"`
 	Defaults defaults           `json:"defaults"`
+	Docker   bool               `json:"docker"`
 	Envs     map[string]Env     `json:"envs"`
 	Modules  map[string]Module  `json:"modules"`
 	Plugins  Plugins            `json:"plugins"`
@@ -127,13 +128,16 @@ func InitConfig(project, region, bucket, awsProfile, owner, awsProviderVersion s
 			TerraformVersion:   "0.11.7",
 		},
 		Accounts: map[string]Account{},
+		Docker:   true,
 		Envs:     map[string]Env{},
 		Modules:  map[string]Module{},
 	}
 }
 
 func ReadConfig(f io.Reader) (*Config, error) {
-	c := &Config{}
+	c := &Config{
+		Docker: true,
+	}
 	b, e := ioutil.ReadAll(f)
 	if e != nil {
 		return nil, errs.WrapUser(e, "unable to read config")

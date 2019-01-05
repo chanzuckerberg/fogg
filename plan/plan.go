@@ -30,6 +30,7 @@ type AWSConfiguration struct {
 
 // Common represents common fields
 type Common struct {
+	Docker             bool   `yaml:"docker`
 	DockerImageVersion string `yaml:"docker_image_version"`
 	PathToRepoRoot     string `yaml:"path_to_repo_root"`
 	TerraformVersion   string `yaml:"terraform_version"`
@@ -125,7 +126,7 @@ type Plan struct {
 	Version  string
 }
 
-// Eval evaluats a config
+// Eval evaluates a config
 func Eval(config *config.Config, verbose bool, noPlugins bool) (*Plan, error) {
 	p := &Plan{}
 	v, e := util.VersionString()
@@ -133,6 +134,7 @@ func Eval(config *config.Config, verbose bool, noPlugins bool) (*Plan, error) {
 		return nil, errs.WrapInternal(e, "unable to parse fogg version")
 	}
 	p.Version = v
+
 	if !noPlugins {
 		p.Plugins.SetCustomPluginsPlan(config.Plugins.CustomPlugins)
 		p.Plugins.SetTerraformProvidersPlan(config.Plugins.TerraformProviders)
@@ -191,6 +193,7 @@ func (p *Plan) buildAccounts(c *config.Config) map[string]Account {
 		accountPlan.ExtraVars = resolveExtraVars(defaults.ExtraVars, config.ExtraVars)
 
 		accountPlan.TfLint = resolveTfLint(defaults.TfLint, config.TfLint)
+		accountPlan.Docker = c.Docker
 
 		accountPlans[name] = accountPlan
 	}
@@ -206,6 +209,7 @@ func (p *Plan) buildModules(c *config.Config) map[string]Module {
 		modulePlan.DockerImageVersion = dockerImageVersion
 		modulePlan.PathToRepoRoot = "../../../"
 		modulePlan.TerraformVersion = resolveRequired(c.Defaults.TerraformVersion, conf.TerraformVersion)
+		modulePlan.Docker = c.Docker
 		modulePlans[name] = modulePlan
 	}
 	return modulePlans
@@ -241,7 +245,7 @@ func (p *Plan) buildGlobal(conf *config.Config) Component {
 	componentPlan.Project = conf.Defaults.Project
 	componentPlan.ExtraVars = conf.Defaults.ExtraVars
 	componentPlan.TfLint = resolveTfLint(conf.Defaults.TfLint, nil)
-
+	componentPlan.Docker = conf.Docker
 	componentPlan.Component = "global"
 	return componentPlan
 }
@@ -274,6 +278,7 @@ func (p *Plan) buildEnvs(conf *config.Config) (map[string]Env, error) {
 		envPlan.Project = resolveRequired(defaults.Project, envConf.Project)
 		envPlan.ExtraVars = resolveExtraVars(defaultExtraVars, envConf.ExtraVars)
 		envPlan.TfLint = resolveTfLint(defaults.TfLint, envConf.TfLint)
+		envPlan.Docker = conf.Docker
 
 		for componentName, componentConf := range conf.Envs[envName].Components {
 			componentPlan := Component{}
@@ -307,6 +312,7 @@ func (p *Plan) buildEnvs(conf *config.Config) (map[string]Env, error) {
 			componentPlan.PathToRepoRoot = "../../../../"
 
 			componentPlan.TfLint = resolveTfLintComponent(envPlan.TfLint, componentConf.TfLint)
+			componentPlan.Docker = conf.Docker
 
 			envPlan.Components[componentName] = componentPlan
 		}
