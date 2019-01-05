@@ -4,5 +4,7 @@
 export DOCKER_IMAGE_VERSION :={{ .DockerImageVersion }}
 export TERRAFORM_VERSION := {{ .TerraformVersion }}
 export TF_PLUGIN_CACHE_DIR := {{ .PathToRepoRoot }}/.terraform.d/plugin-cache
+{{if .Docker}}export USE_DOCKER := 1{{end}}
+
 
 include {{ .PathToRepoRoot }}/scripts/module.mk
