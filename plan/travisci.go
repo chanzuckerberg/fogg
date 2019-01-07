@@ -8,8 +8,9 @@ import (
 )
 
 type TravisCI struct {
-	Enabled     bool
 	AWSProfiles []AWSProfile
+	Docker      bool
+	Enabled     bool
 	TestBuckets [][]string
 }
 
@@ -22,6 +23,8 @@ func (p *Plan) buildTravisCI(c *config.Config) TravisCI {
 		Enabled: c.TravisCI.Enabled,
 	}
 	var profiles []AWSProfile
+
+	tr.Docker = c.Docker
 
 	for _, name := range util.SortedMapKeys(p.Accounts) {
 		profiles = append(profiles, AWSProfile{
