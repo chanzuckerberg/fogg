@@ -2,8 +2,10 @@
 # Make improvements in fogg, so that everyone can benefit.
 language: minimal
 sudo: required
+{{ if .Docker }}
 services:
   - docker
+{{ end }}
 install:
   - pip install awscli --upgrade --user
   - aws --version
