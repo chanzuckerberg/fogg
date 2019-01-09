@@ -16,7 +16,7 @@ endif
 
 docker_base = \
 	docker run --rm -e HOME=/home -v $$HOME/.aws:/home/.aws -v $(REPO_ROOT):/repo \
-	-v $(REPO_ROOT)/.bin:/usr/local/bin -v $(REPO_ROOT)/terraform.d:/repo/$(REPO_RELATIVE_PATH)/terraform.d \
+	-v $(REPO_ROOT)/.fogg/bin:/usr/local/bin -v $(REPO_ROOT)/terraform.d:/repo/$(REPO_RELATIVE_PATH)/terraform.d \
 	-e GIT_SSH_COMMAND='ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
 	-e RUN_USER_ID=$(shell id -u) -e RUN_GROUP_ID=$(shell id -g) \
 	-e TF_PLUGIN_CACHE_DIR="/repo/.terraform.d/plugin-cache" -e TF="$(TF)" \
