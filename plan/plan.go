@@ -30,7 +30,7 @@ type AWSConfiguration struct {
 
 // Common represents common fields
 type Common struct {
-	Docker             bool   `yaml:"docker`
+	Docker             bool   `yaml:"docker"`
 	DockerImageVersion string `yaml:"docker_image_version"`
 	PathToRepoRoot     string `yaml:"path_to_repo_root"`
 	TerraformVersion   string `yaml:"terraform_version"`
