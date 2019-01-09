@@ -9,6 +9,8 @@ services:
 install:
   - pip install awscli --upgrade --user
   - aws --version
+  - curl -s https://raw.githubusercontent.com/chanzuckerberg/fogg/ryanking/godownloader/download.sh | bash -s v{{ .FoggVersion }}
+  - fogg setup
 before_script:
   # TODO add note about why these need to be prefixed with HUB_
   - aws configure set aws_access_key_id     $IDACCT_AWS_ACCESS_KEY_ID     --profile _idacct
