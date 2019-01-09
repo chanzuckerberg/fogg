@@ -49,7 +49,7 @@ var planCmd = &cobra.Command{
 		}
 
 		// check that we are at root of initialized git repo
-		openGitOrExit(pwd)
+		openGitOrExit(fs)
 
 		config, err := readAndValidateConfig(fs, configFile, verbose)
 

@@ -14,9 +14,8 @@ import (
 	validator "gopkg.in/go-playground/validator.v9"
 )
 
-func openGitOrExit(pwd string) {
-	log.Debugf("opening git at %s", pwd)
-	_, err := os.Stat(".git")
+func openGitOrExit(fs afero.Fs) {
+	_, err := fs.Stat(".git")
 	if err != nil {
 		// assuming this means no repository
 		log.Fatal("fogg must be run from the root of a git repo")
@@ -67,4 +66,13 @@ func setupDebug(debug bool) {
 		logLevel = log.FatalLevel
 	}
 	log.SetLevel(logLevel)
+}
+
+func openFs() (afero.Fs, error) {
+	pwd, e := os.Getwd()
+	if e != nil {
+		return nil, e
+	}
+	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
+	return fs, e
 }

@@ -1,11 +1,8 @@
 package cmd
 
 import (
-	"os"
-
 	"github.com/chanzuckerberg/fogg/apply"
 	"github.com/chanzuckerberg/fogg/templates"
-	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
 
@@ -26,12 +23,10 @@ var applyCmd = &cobra.Command{
 		setupDebug(debug)
 
 		var e error
-		// Set up fs
-		pwd, e := os.Getwd()
+		fs, e := openFs()
 		if e != nil {
 			return e
 		}
-		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
 		// handle flags
 		verbose, e := cmd.Flags().GetBool("verbose")
@@ -54,7 +49,7 @@ var applyCmd = &cobra.Command{
 		}
 
 		// check that we are at root of initialized git repo
-		openGitOrExit(pwd)
+		openGitOrExit(fs)
 
 		config, err := readAndValidateConfig(fs, configFile, verbose)
 
