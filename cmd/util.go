@@ -11,6 +11,7 @@ import (
 	"github.com/chanzuckerberg/fogg/errs"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
+	"github.com/spf13/cobra"
 	validator "gopkg.in/go-playground/validator.v9"
 )
 
@@ -75,4 +76,32 @@ func openFs() (afero.Fs, error) {
 	}
 	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 	return fs, e
+}
+
+func bootstrapCmd(cmd *cobra.Command, debug bool) (afero.Fs, *config.Config, error) {
+	setupDebug(debug)
+
+	fs, err := openFs()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	verbose, err := cmd.Flags().GetBool("verbose")
+	if err != nil {
+		return nil, nil, err
+	}
+
+	configFile, err := cmd.Flags().GetString("config")
+	if err != nil {
+		return nil, nil, err
+	}
+
+	config, err := readAndValidateConfig(fs, configFile, verbose)
+
+	err = mergeConfigValidationErrors(err)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return fs, config, nil
 }
