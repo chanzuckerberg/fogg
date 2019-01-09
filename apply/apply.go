@@ -15,7 +15,6 @@ import (
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plan"
-	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/gobuffalo/packr"
@@ -54,11 +53,6 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, upgrade bool, noP
 		if e != nil {
 			return errs.WrapUser(e, "unable to apply travis ci")
 		}
-	}
-
-	e = applyPlugins(fs, p)
-	if e != nil {
-		return errs.WrapUser(e, "unable to apply plugins")
 	}
 
 	e = applyAccounts(fs, p, &tmp.Account)
@@ -114,29 +108,6 @@ func versionIsChanged(repo string, tool string) (bool, error) {
 
 func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates *packr.Box) error {
 	return applyTree(fs, repoTemplates, "", p)
-}
-
-func applyPlugins(fs afero.Fs, p *plan.Plan) error {
-	log.Debug("applying plugins")
-	apply := func(name string, plugin *plugins.CustomPlugin) error {
-		log.Infof("Applying plugin %s", name)
-		return errs.WrapUserf(plugin.Install(fs, name), "Error applying plugin %s", name)
-	}
-
-	for pluginName, plugin := range p.Plugins.CustomPlugins {
-		err := apply(pluginName, plugin)
-		if err != nil {
-			return err
-		}
-	}
-
-	for providerName, provider := range p.Plugins.TerraformProviders {
-		err := apply(providerName, provider)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 func applyGlobal(fs afero.Fs, p plan.Component, repoBox *packr.Box) error {
