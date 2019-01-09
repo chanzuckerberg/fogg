@@ -5,7 +5,6 @@ import (
 
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/errs"
-	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/chanzuckerberg/fogg/util"
 	yaml "gopkg.in/yaml.v2"
 )
@@ -30,7 +29,7 @@ type AWSConfiguration struct {
 
 // Common represents common fields
 type Common struct {
-	Docker             bool   `yaml:"docker`
+	Docker             bool   `yaml:"docker"`
 	DockerImageVersion string `yaml:"docker_image_version"`
 	PathToRepoRoot     string `yaml:"path_to_repo_root"`
 	TerraformVersion   string `yaml:"terraform_version"`
@@ -93,52 +92,24 @@ type AWSProfile struct {
 	Role string
 }
 
-// Plugins contains a plan around plugins
-type Plugins struct {
-	CustomPlugins      map[string]*plugins.CustomPlugin
-	TerraformProviders map[string]*plugins.CustomPlugin
-}
-
-// SetCustomPluginsPlan determines the plan for customPlugins
-func (p *Plugins) SetCustomPluginsPlan(customPlugins map[string]*plugins.CustomPlugin) {
-	p.CustomPlugins = customPlugins
-	for _, plugin := range p.CustomPlugins {
-		plugin.SetTargetPath(plugins.CustomPluginDir)
-	}
-}
-
-// SetTerraformProvidersPlan determines the plan for customPlugins
-func (p *Plugins) SetTerraformProvidersPlan(terraformProviders map[string]*plugins.CustomPlugin) {
-	p.TerraformProviders = terraformProviders
-	for _, plugin := range p.TerraformProviders {
-		plugin.SetTargetPath(plugins.TerraformCustomPluginCacheDir)
-	}
-}
-
 // Plan represents a set of actions to take
 type Plan struct {
 	Accounts map[string]Account
 	Envs     map[string]Env
 	Global   Component
 	Modules  map[string]Module
-	Plugins  Plugins
 	TravisCI TravisCI
 	Version  string
 }
 
 // Eval evaluates a config
-func Eval(config *config.Config, verbose bool, noPlugins bool) (*Plan, error) {
+func Eval(config *config.Config, verbose bool) (*Plan, error) {
 	p := &Plan{}
 	v, e := util.VersionString()
 	if e != nil {
 		return nil, errs.WrapInternal(e, "unable to parse fogg version")
 	}
 	p.Version = v
-
-	if !noPlugins {
-		p.Plugins.SetCustomPluginsPlan(config.Plugins.CustomPlugins)
-		p.Plugins.SetTerraformProvidersPlan(config.Plugins.TerraformProviders)
-	}
 
 	var err error
 	p.Accounts = p.buildAccounts(config)

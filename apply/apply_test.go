@@ -2,11 +2,11 @@ package apply
 
 import (
 	"io/ioutil"
+	"math/rand"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
-	"math/rand"
-	"path/filepath"
 
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/templates"
@@ -24,20 +24,22 @@ func init() {
 }
 
 func randomString(n int) string {
-    var letter = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+	var letter = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 
-    b := make([]rune, n)
-    for i := range b {
-        b[i] = letter[rand.Intn(len(letter))]
-    }
-    return string(b)
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letter[rand.Intn(len(letter))]
+	}
+	return string(b)
 }
 
 func getNonExistentDirectoryName() string {
 	nonexistentDir := "noexist-" + randomString(20)
 	for {
 		_, err := os.Stat(nonexistentDir)
-		if os.IsNotExist(err) { return nonexistentDir; }
+		if os.IsNotExist(err) {
+			return nonexistentDir
+		}
 		nonexistentDir = "noexist-" + randomString(20)
 	}
 }
@@ -230,7 +232,7 @@ func TestApplySmokeTest(t *testing.T) {
 	c, e := config.ReadConfig(ioutil.NopCloser(strings.NewReader(json)))
 	assert.Nil(t, e)
 
-	e = Apply(fs, c, templates.Templates, false, false)
+	e = Apply(fs, c, templates.Templates, false)
 	assert.Nil(t, e)
 }
 
