@@ -6,8 +6,10 @@ import (
 )
 
 func init() {
-	applyCmd.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
-	applyCmd.Flags().BoolP("verbose", "v", false, "use this to turn on verbose output")
+	setupCmd.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
+	setupCmd.Flags().BoolP("verbose", "v", false, "use this to turn on verbose output")
+
+	rootCmd.AddCommand(setupCmd)
 }
 
 var setupCmd = &cobra.Command{
