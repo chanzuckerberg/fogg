@@ -39,7 +39,7 @@ release-prerelease: build
 	version=`./fogg version`; \
 	git tag v"$$version"; \
 	git push --tags
-	goreleaser release --debug --rm-dist
+	goreleaser release --debug
 
 release-snapshot: ## run a release
 	goreleaser release --snapshot
