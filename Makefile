@@ -29,11 +29,8 @@ release: ## run a release
 	goreleaser release --rm-dist
 
 release-prerelease: build
-	# version=`./fogg version`; \
-	# git tag v"$$version"; \
-	# git push --tags
-
-	git tag v0.17.1-rc10
+	version=`./fogg version`; \
+	git tag v"$$version"; \
 	git push --tags
 	goreleaser release --debug --rm-dist
 
