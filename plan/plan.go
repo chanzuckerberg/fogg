@@ -121,7 +121,7 @@ func Eval(config *config.Config, verbose bool) (*Plan, error) {
 	p.Modules = p.buildModules(config)
 
 	if config.TravisCI != nil {
-		p.TravisCI = p.buildTravisCI(config, util.VersionCacheKey())
+		p.TravisCI = p.buildTravisCI(config, v)
 	}
 
 	return p, nil
