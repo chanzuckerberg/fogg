@@ -30,7 +30,7 @@ release: ## run a release
 
 release-prerelease: build
 	version=`./fogg version`; \
-	git tag v"$$version" \
+	git tag v"$$version"; \
 	git push --tags
 	goreleaser release --rm-dist
 
