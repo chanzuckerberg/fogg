@@ -31,7 +31,7 @@ release: ## run a release
 release-prerelease: build
 	# version=`./fogg version`; \
 	# git tag v"$$version"
-	git tag v0.11.1-rc1
+	git tag v0.11.1-rc3
 	goreleaser release --rm-dist --skip-publish
 
 release-snapshot: ## run a release
