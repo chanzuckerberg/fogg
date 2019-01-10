@@ -3,6 +3,7 @@ package util
 import (
 	"testing"
 
+	masterminds_semver "github.com/Masterminds/semver"
 	"github.com/blang/semver"
 	"github.com/stretchr/testify/assert"
 )
@@ -10,12 +11,15 @@ import (
 func TestVersionString(t *testing.T) {
 	s := versionString("0.1.0", "abcdef", true, false)
 	assert.Equal(t, "0.1.0", s)
+	assert.Equal(t, "", masterminds_semver.MustParse(s).Prerelease())
 
 	s = versionString("0.1.0", "abcdef", false, false)
 	assert.Equal(t, "0.1.0-abcdef", s)
+	assert.Equal(t, "abcdef", masterminds_semver.MustParse(s).Prerelease())
 
 	s = versionString("0.1.0", "abcdef", false, true)
 	assert.Equal(t, "0.1.0-abcdef.dirty", s)
+	assert.Equal(t, "abcdef.dirty", masterminds_semver.MustParse(s).Prerelease())
 
 }
 
