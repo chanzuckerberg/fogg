@@ -9,7 +9,8 @@ services:
 install:
   - pip install awscli --upgrade --user
   - aws --version
-  - curl -s https://raw.githubusercontent.com/chanzuckerberg/fogg/ryanking/godownloader/download.sh | bash -s v{{ .FoggVersion }}
+  - curl -o download.sh -s https://raw.githubusercontent.com/chanzuckerberg/fogg/ryanking/godownloader/download.sh
+  - bash download.sh -b $HOME/bin v{{ .FoggVersion }}
   - fogg setup
 before_script:
   # TODO add note about why these need to be prefixed with HUB_
