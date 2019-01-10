@@ -26,10 +26,17 @@ packr: ## run the packr tool to generate our static files
 release: ## run a release
 	./bin/bff bump
 	git push
-	goreleaser release --rm-dist
+	goreleaser release
+
+release-prerelease: build ## release to github as a 'pre-release'
+	version=`./fogg version`; \
+	git tag v"$$version"; \
+	git push
+	git push --tags
+	goreleaser release -c .goreleaser.prerelease.yml --debug
 
 release-snapshot: ## run a release
-	goreleaser release --rm-dist --snapshot
+	goreleaser release --snapshot
 
 build: packr ## build the binary
 	go build ${LDFLAGS} .
