@@ -28,6 +28,11 @@ release: ## run a release
 	git push
 	goreleaser release --rm-dist
 
+release-prerelease: build
+	version=`./fogg version`; \
+	git tag v"$$version"
+	goreleaser release --rm-dist --skip-publish
+
 release-snapshot: ## run a release
 	goreleaser release --rm-dist --snapshot
 
