@@ -24,6 +24,7 @@ release:
   github:
     owner: chanzuckerberg
     name: fogg
+  prerelease: auto
 
 brew:
   description: "Terraform without pain."
