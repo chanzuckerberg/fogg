@@ -12,10 +12,10 @@ func TestVersionString(t *testing.T) {
 	assert.Equal(t, "0.1.0", s)
 
 	s = versionString("0.1.0", "abcdef", false, false)
-	assert.Equal(t, "0.1.0+abcdef", s)
+	assert.Equal(t, "0.1.0-abcdef", s)
 
 	s = versionString("0.1.0", "abcdef", false, true)
-	assert.Equal(t, "0.1.0+abcdef-dirty", s)
+	assert.Equal(t, "0.1.0-abcdef.dirty", s)
 
 }
 
@@ -29,8 +29,8 @@ func TestParse(t *testing.T) {
 		dirty   bool
 	}{
 		{"0.1.0", "0.1.0", "", false},
-		{"0.1.0+abcdef", "0.1.0", "abcdef", false},
-		{"0.1.0+abcdef-dirty", "0.1.0", "abcdef", true},
+		{"0.1.0-abcdef", "0.1.0", "abcdef", false},
+		{"0.1.0-abcdef.dirty", "0.1.0", "abcdef", true},
 	}
 	for _, tc := range testCases {
 		t.Run("", func(t *testing.T) {
