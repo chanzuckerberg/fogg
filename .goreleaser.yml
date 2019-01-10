@@ -21,9 +21,6 @@ archive:
   - none*
 
 release:
-  github:
-    owner: chanzuckerberg
-    name: fogg
   prerelease: true
 
 # brew:
