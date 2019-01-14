@@ -20,7 +20,6 @@ func TestVersionString(t *testing.T) {
 	s = versionString("0.1.0", "abcdef", false, true)
 	assert.Equal(t, "0.1.0-abcdef.dirty", s)
 	assert.Equal(t, "abcdef.dirty", masterminds_semver.MustParse(s).Prerelease())
-
 }
 
 func TestParse(t *testing.T) {

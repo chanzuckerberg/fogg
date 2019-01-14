@@ -188,10 +188,11 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 
 func applyTree(dest afero.Fs, source *packr.Box, targetBasePath string, subst interface{}) (e error) {
 	return source.Walk(func(path string, sourceFile packr.File) error {
+
 		extension := filepath.Ext(path)
 		target := getTargetPath(targetBasePath, path)
-
 		targetExtension := filepath.Ext(target)
+
 		if extension == ".tmpl" {
 			e = applyTemplate(sourceFile, dest, target, subst)
 			if e != nil {
@@ -213,6 +214,24 @@ func applyTree(dest afero.Fs, source *packr.Box, targetBasePath string, subst in
 				return errs.WrapUserf(e, "unable to remove %s", target)
 			}
 			log.Infof("%s removed", target)
+		} else if extension == ".ln" {
+
+			linkTargetBytes, err := ioutil.ReadAll(sourceFile)
+			if err != nil {
+				return errs.WrapUserf(err, "could not read source file %#v", sourceFile)
+			}
+
+			baseFs, ok := dest.(*afero.BasePathFs)
+			if !ok {
+				return errs.NewInternal("unable to type assert fs to basefs")
+			}
+			linkTarget := string(linkTargetBytes)
+
+			fullLinkTarget, err := baseFs.RealPath(linkTarget)
+			if err != nil {
+				return errs.WrapInternal(err, "unable to find real path for link target")
+			}
+			err = linkFile(target, fullLinkTarget)
 		} else {
 			e = afero.WriteReader(dest, target, sourceFile)
 			if e != nil {
@@ -399,9 +418,14 @@ func getTargetPath(basePath, path string) string {
 	target := filepath.Join(basePath, path)
 	extension := filepath.Ext(path)
 
-	if extension == ".tmpl" || extension == ".touch" || extension == ".create" || extension == ".rm" {
+	if extension == ".tmpl" || extension == ".touch" || extension == ".create" || extension == ".rm" || extension == ".ln" {
 		target = removeExtension(target)
 	}
 
 	return target
+}
+
+func linkFile(name, target string) error {
+	log.Debugf("linking %s to %s", name, target)
+	return os.Symlink(target, name)
 }

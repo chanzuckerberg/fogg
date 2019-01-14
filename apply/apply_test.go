@@ -190,7 +190,8 @@ func TestCreateFileNonExistentDirectory(t *testing.T) {
 }
 
 func TestApplySmokeTest(t *testing.T) {
-	fs := afero.NewMemMapFs()
+	// We have to use a BasePathFs so that we can calculate `RealPath` for symlinking. Afero doesn't support symlinks
+	fs := afero.NewBasePathFs(afero.NewMemMapFs(), "/")
 	json := `
 {
   "defaults": {
@@ -230,10 +231,10 @@ func TestApplySmokeTest(t *testing.T) {
 }
 `
 	c, e := config.ReadConfig(ioutil.NopCloser(strings.NewReader(json)))
-	assert.Nil(t, e)
+	assert.NoError(t, e)
 
 	e = Apply(fs, c, templates.Templates, false)
-	assert.Nil(t, e)
+	assert.NoError(t, e)
 }
 
 func TestApplyModuleInvocation(t *testing.T) {
