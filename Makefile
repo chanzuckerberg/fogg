@@ -35,12 +35,6 @@ release-prerelease: build ## release to github as a 'pre-release'
 	git push --tags
 	goreleaser release -f .goreleaser.prerelease.yml --debug
 
-release-prerelease: build
-	version=`./fogg version`; \
-	git tag v"$$version"; \
-	git push --tags
-	goreleaser release --debug
-
 release-snapshot: ## run a release
 	goreleaser release --snapshot
 
