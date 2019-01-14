@@ -192,3 +192,35 @@ func generateZip(t *testing.T, files []string) string {
 	}
 	return f.Name()
 }
+
+func TestTemplate(t *testing.T) {
+	type args struct {
+		url  string
+		arch string
+		os   string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    string
+		wantErr bool
+	}{
+		{"no-op", args{"foo", "bar", "bam"}, "foo", false},
+		{"os", args{"{{.OS}}", "bar", "bam"}, "bar", false},
+		{"arch", args{"{{.Arch}}", "bar", "bam"}, "bam", false},
+		{"os_arch", args{"{{.OS}}_{{.Arch}}", "bar", "bam"}, "bar_bam", false},
+		{"bad template", args{"{{.asdf", "bar", "bam"}, "", true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := plugins.Template(tt.args.url, tt.args.arch, tt.args.os)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Template() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("Template() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
