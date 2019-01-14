@@ -3,6 +3,7 @@ package plugins
 import (
 	"archive/tar"
 	"archive/zip"
+	"bytes"
 	"compress/gzip"
 	"fmt"
 	"io"
@@ -13,6 +14,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"text/template"
 
 	"github.com/chanzuckerberg/fogg/errs"
 	log "github.com/sirupsen/logrus"
@@ -40,7 +42,7 @@ type CustomPlugin struct {
 
 // Install installs the custom plugin
 func (cp *CustomPlugin) Install(fs afero.Fs, pluginName string) error {
-	return cp.install(fs, pluginName, cp.URL, runtime.GOARCH, runtime.GOOS)
+	return cp.install(fs, pluginName, cp.URL, runtime.GOOS, runtime.GOARCH)
 }
 
 // Install delegates to install
@@ -48,20 +50,45 @@ func (cp *CustomPlugin) install(
 	fs afero.Fs,
 	pluginName string,
 	url string,
+	pluginOS string,
 	pluginArch string,
-	pluginOS string) error {
+) error {
 	if cp == nil {
 		return errs.NewUser("nil CustomPlugin")
 	}
 	if fs == nil {
 		return errs.NewUser("nil fs")
 	}
-	tmpPath, err := cp.fetch(pluginName, url)
+
+	fullUrl, err := Template(url, pluginOS, pluginArch)
+	if err != nil {
+		return err
+	}
+	tmpPath, err := cp.fetch(pluginName, fullUrl)
 	defer os.Remove(tmpPath)
 	if err != nil {
 		return err
 	}
 	return cp.process(fs, pluginName, tmpPath, cp.targetDir)
+}
+
+func Template(url, os, arch string) (string, error) {
+	data := struct {
+		OS   string
+		Arch string
+	}{os, arch}
+
+	t, err := template.New("url").Parse(url)
+	if err != nil {
+		return "", errs.WrapUserf(err, "could not parse url template %s", url)
+	}
+	buf := bytes.NewBuffer(nil)
+	err = t.Execute(buf, data)
+	if err != nil {
+		return "", err
+	}
+	out := buf.String()
+	return out, nil
 }
 
 // SetTargetPath sets the target path for this plugin
@@ -75,6 +102,7 @@ func (cp *CustomPlugin) fetch(pluginName string, url string) (string, error) {
 	if err != nil {
 		return "", errs.WrapUser(err, "could not create temporary directory") //FIXME
 	}
+	log.Debugf("downloading %s to tempfile", url)
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", errs.WrapUserf(err, "could not get %s", url) // FIXME
@@ -99,29 +127,38 @@ func (cp *CustomPlugin) process(fs afero.Fs, pluginName string, path string, tar
 }
 
 func (cp *CustomPlugin) processBin(fs afero.Fs, name string, downloadPath string, targetDir string) error {
-	err := fs.MkdirAll(targetDir, 0755)
+	target, _ := Template(targetDir, runtime.GOOS, runtime.GOARCH)
+
+	err := fs.MkdirAll(target, 0755)
 	if err != nil {
-		return errs.WrapUserf(err, "Could not create directory %s", targetDir)
+		return errs.WrapUserf(err, "Could not create directory %s", target)
 	}
-	targetPath := path.Join(targetDir, name)
+
+	targetPath := path.Join(target, name)
 	src, err := os.Open(downloadPath)
 	if err != nil {
 		return errs.WrapUserf(err, "Could not open downloaded file at %s", downloadPath)
 	}
+
 	dst, err := fs.Create(targetPath)
 	if err != nil {
 		return errs.WrapUserf(err, "Could not open target file at %s", targetPath)
 	}
+
 	_, err = io.Copy(dst, src)
 	if err != nil {
 		return errs.WrapUserf(err, "Could not move %s to %s", downloadPath, targetPath)
 	}
+
 	err = fs.Chmod(targetPath, os.FileMode(0755))
 	return errs.WrapUserf(err, "Error making %s executable", targetPath)
 }
 
 // https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
 func (cp *CustomPlugin) processTar(fs afero.Fs, path string, targetDir string) error {
+	targetDir, _ = Template(targetDir, runtime.GOOS, runtime.GOARCH)
+	log.Debugf("untarring from %s to %s", path, targetDir)
+
 	err := fs.MkdirAll(targetDir, 0755)
 	if err != nil {
 		return errs.WrapUserf(err, "Could not create directory %s", targetDir)
@@ -177,6 +214,8 @@ func (cp *CustomPlugin) processTar(fs afero.Fs, path string, targetDir string) e
 
 // based on https://golangcode.com/create-zip-files-in-go/
 func (cp *CustomPlugin) processZip(fs afero.Fs, downloadPath string, targetDir string) error {
+	targetDir, _ = Template(targetDir, runtime.GOOS, runtime.GOARCH)
+
 	err := fs.MkdirAll(targetDir, 0755)
 	if err != nil {
 		return errs.WrapUserf(err, "Could not create directory %s", targetDir)

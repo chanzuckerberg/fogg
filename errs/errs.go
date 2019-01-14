@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/go-errors/errors"
-	log "github.com/sirupsen/logrus"
 )
 
 type User struct {
@@ -49,7 +48,6 @@ func WrapUser(e error, msg string) error {
 }
 
 func WrapUserf(e error, msg string, a ...interface{}) error {
-	log.Debugf("wrapuser e: %#v", e)
 	if e == nil {
 		return nil
 	}
