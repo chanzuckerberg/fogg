@@ -9,7 +9,6 @@
 
 # Module directory
 .terraform/
-terraform/**/terraform.d
 
 # Pycharm folder
 .idea
