@@ -221,17 +221,12 @@ func applyTree(dest afero.Fs, source *packr.Box, targetBasePath string, subst in
 				return errs.WrapUserf(err, "could not read source file %#v", sourceFile)
 			}
 
-			baseFs, ok := dest.(*afero.BasePathFs)
-			if !ok {
-				return errs.NewInternal("unable to type assert fs to basefs")
-			}
 			linkTarget := string(linkTargetBytes)
 
-			fullLinkTarget, err := baseFs.RealPath(linkTarget)
+			err = linkFile(target, linkTarget)
 			if err != nil {
-				return errs.WrapInternal(err, "unable to find real path for link target")
+				return errs.WrapInternal(err, "can't symlink file")
 			}
-			err = linkFile(target, fullLinkTarget)
 		} else {
 			e = afero.WriteReader(dest, target, sourceFile)
 			if e != nil {
@@ -408,7 +403,10 @@ func calculateModuleAddressForSource(path, moduleAddress string) (string, error)
 	if e != nil || u.Scheme == "file" {
 		// This indicates that we have a local path to the module.
 		// It is possible that this test is unreliable.
-		moduleAddressForSource, _ = filepath.Rel(path, moduleAddress)
+		moduleAddressForSource, e = filepath.Rel(path, moduleAddress)
+		if e != nil {
+			return "", e
+		}
 	} else {
 		moduleAddressForSource = moduleAddress
 	}
@@ -426,6 +424,19 @@ func getTargetPath(basePath, path string) string {
 }
 
 func linkFile(name, target string) error {
+	log.Debugf("removing link at %s", name)
+	os.Remove(name)
 	log.Debugf("linking %s to %s", name, target)
-	return os.Symlink(target, name)
+	relativePath, err := filepathRel(name, target)
+	log.Debugf("relative link %s err %#v", relativePath, err)
+	if err != nil {
+		return err
+	}
+	return os.Symlink(relativePath, name)
+}
+
+func filepathRel(path, name string) (string, error) {
+	dirs := strings.Count(path, "/")
+	fullPath := fmt.Sprintf("%s/%s", strings.Repeat("../", dirs), name)
+	return filepath.Clean(fullPath), nil
 }
