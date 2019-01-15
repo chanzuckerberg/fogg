@@ -127,9 +127,12 @@ func (cp *CustomPlugin) process(fs afero.Fs, pluginName string, path string, tar
 }
 
 func (cp *CustomPlugin) processBin(fs afero.Fs, name string, downloadPath string, targetDir string) error {
-	target, _ := Template(targetDir, runtime.GOOS, runtime.GOARCH)
+	target, err := Template(targetDir, runtime.GOOS, runtime.GOARCH)
+	if err != nil {
+		return errs.WrapUser(err, "unable to template url")
+	}
 
-	err := fs.MkdirAll(target, 0755)
+	err = fs.MkdirAll(target, 0755)
 	if err != nil {
 		return errs.WrapUserf(err, "Could not create directory %s", target)
 	}
@@ -156,10 +159,13 @@ func (cp *CustomPlugin) processBin(fs afero.Fs, name string, downloadPath string
 
 // https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
 func (cp *CustomPlugin) processTar(fs afero.Fs, path string, targetDir string) error {
-	targetDir, _ = Template(targetDir, runtime.GOOS, runtime.GOARCH)
+	targetDir, err := Template(targetDir, runtime.GOOS, runtime.GOARCH)
+	if err != nil {
+		return errs.WrapUser(err, "unable to template url for custom plugin")
+	}
 	log.Debugf("untarring from %s to %s", path, targetDir)
 
-	err := fs.MkdirAll(targetDir, 0755)
+	err = fs.MkdirAll(targetDir, 0755)
 	if err != nil {
 		return errs.WrapUserf(err, "Could not create directory %s", targetDir)
 	}
