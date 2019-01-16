@@ -1,12 +1,10 @@
 package util
 
 import (
-	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/blang/semver"
-	"github.com/chanzuckerberg/fogg/errs"
+	"github.com/chanzuckerberg/go-misc/ver"
 )
 
 var (
@@ -17,27 +15,11 @@ var (
 )
 
 func VersionString() (string, error) {
-	release, e := strconv.ParseBool(Release)
-	if e != nil {
-		return "", errs.WrapInternal(e, fmt.Sprintf("unable to parse version release field %s", Release))
-	}
-	dirty, e := strconv.ParseBool(Dirty)
-	if e != nil {
-		return "", errs.WrapInternal(e, fmt.Sprintf("unable to parse version dirty field %s", Dirty))
-	}
-	return versionString(Version, GitSha, release, dirty), nil
+	return ver.VersionString(Version, GitSha, Release, Dirty)
 }
 
 func VersionCacheKey() string {
-	versionString, e := VersionString()
-	if e != nil {
-		return ""
-	}
-	v, e := semver.Parse(versionString)
-	if e != nil {
-		return ""
-	}
-	return fmt.Sprintf("%d.%d.%d", v.Major, v.Minor, v.Patch)
+	return ver.VersionCacheKey(Version, GitSha, Release, Dirty)
 }
 
 func ParseVersion(version string) (semver.Version, string, bool) {
@@ -56,14 +38,4 @@ func ParseVersion(version string) (semver.Version, string, bool) {
 
 	semVersion, _ := semver.Parse(v)
 	return semVersion, sha, dirty
-}
-
-func versionString(version, sha string, release, dirty bool) string {
-	if release {
-		return version
-	}
-	if !dirty {
-		return fmt.Sprintf("%s-%s", version, sha)
-	}
-	return fmt.Sprintf("%s-%s.dirty", version, sha)
 }
