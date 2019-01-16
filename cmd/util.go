@@ -75,7 +75,7 @@ func openFs() (afero.Fs, error) {
 		return nil, e
 	}
 	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
-	return fs, e
+	return fs, nil
 }
 
 func bootstrapCmd(cmd *cobra.Command, debug bool) (afero.Fs, *config.Config, error) {

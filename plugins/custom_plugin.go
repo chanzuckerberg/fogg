@@ -220,9 +220,12 @@ func (cp *CustomPlugin) processTar(fs afero.Fs, path string, targetDir string) e
 
 // based on https://golangcode.com/create-zip-files-in-go/
 func (cp *CustomPlugin) processZip(fs afero.Fs, downloadPath string, targetDir string) error {
-	targetDir, _ = Template(targetDir, runtime.GOOS, runtime.GOARCH)
+	targetDir, err := Template(targetDir, runtime.GOOS, runtime.GOARCH)
+	if err != nil {
+		return errs.WrapUserf(err, "could not template targetDir")
+	}
 
-	err := fs.MkdirAll(targetDir, 0755)
+	err = fs.MkdirAll(targetDir, 0755)
 	if err != nil {
 		return errs.WrapUserf(err, "Could not create directory %s", targetDir)
 	}
