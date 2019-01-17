@@ -59,4 +59,4 @@ clean: ## clean the repo
 	rm -rf dist
 	packr clean
 
-.PHONY: build clean coverage test install lint lint-slow packr release help
+.PHONY: build clean coverage test install lint lint-slow packr release help setup

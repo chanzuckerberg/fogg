@@ -11,10 +11,11 @@ type TravisCI struct {
 	AWSProfiles []AWSProfile
 	Docker      bool
 	Enabled     bool
+	FoggVersion string
 	TestBuckets [][]string
 }
 
-func (p *Plan) buildTravisCI(c *config.Config) TravisCI {
+func (p *Plan) buildTravisCI(c *config.Config, version string) TravisCI {
 	if p.Accounts == nil {
 		panic("buildTravisCI must be run after buildAccounts")
 	}
@@ -25,6 +26,7 @@ func (p *Plan) buildTravisCI(c *config.Config) TravisCI {
 	var profiles []AWSProfile
 
 	tr.Docker = c.Docker
+	tr.FoggVersion = version
 
 	for _, name := range util.SortedMapKeys(p.Accounts) {
 		profiles = append(profiles, AWSProfile{

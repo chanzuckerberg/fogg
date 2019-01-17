@@ -11,12 +11,12 @@ import (
 	"github.com/chanzuckerberg/fogg/errs"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
+	"github.com/spf13/cobra"
 	validator "gopkg.in/go-playground/validator.v9"
 )
 
-func openGitOrExit(pwd string) {
-	log.Debugf("opening git at %s", pwd)
-	_, err := os.Stat(".git")
+func openGitOrExit(fs afero.Fs) {
+	_, err := fs.Stat(".git")
 	if err != nil {
 		// assuming this means no repository
 		log.Fatal("fogg must be run from the root of a git repo")
@@ -67,4 +67,41 @@ func setupDebug(debug bool) {
 		logLevel = log.FatalLevel
 	}
 	log.SetLevel(logLevel)
+}
+
+func openFs() (afero.Fs, error) {
+	pwd, e := os.Getwd()
+	if e != nil {
+		return nil, e
+	}
+	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
+	return fs, nil
+}
+
+func bootstrapCmd(cmd *cobra.Command, debug bool) (afero.Fs, *config.Config, error) {
+	setupDebug(debug)
+
+	fs, err := openFs()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	verbose, err := cmd.Flags().GetBool("verbose")
+	if err != nil {
+		return nil, nil, err
+	}
+
+	configFile, err := cmd.Flags().GetString("config")
+	if err != nil {
+		return nil, nil, err
+	}
+
+	config, err := readAndValidateConfig(fs, configFile, verbose)
+
+	err = mergeConfigValidationErrors(err)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return fs, config, nil
 }

@@ -1,11 +1,8 @@
 package cmd
 
 import (
-	"os"
-
 	"github.com/chanzuckerberg/fogg/apply"
 	"github.com/chanzuckerberg/fogg/templates"
-	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
 
@@ -13,7 +10,6 @@ func init() {
 	applyCmd.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
 	applyCmd.Flags().BoolP("verbose", "v", false, "use this to turn on verbose output")
 	applyCmd.Flags().BoolP("upgrade", "u", false, "use this when running a new version of fogg")
-	applyCmd.Flags().Bool("no-plugins", false, "do not apply fogg plugins; this may result in unexpected behavior.")
 	rootCmd.AddCommand(applyCmd)
 }
 
@@ -26,12 +22,10 @@ var applyCmd = &cobra.Command{
 		setupDebug(debug)
 
 		var e error
-		// Set up fs
-		pwd, e := os.Getwd()
+		fs, e := openFs()
 		if e != nil {
 			return e
 		}
-		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
 		// handle flags
 		verbose, e := cmd.Flags().GetBool("verbose")
@@ -48,13 +42,8 @@ var applyCmd = &cobra.Command{
 			return e
 		}
 
-		noPlugins, e := cmd.Flags().GetBool("no-plugins")
-		if e != nil {
-			return e
-		}
-
 		// check that we are at root of initialized git repo
-		openGitOrExit(pwd)
+		openGitOrExit(fs)
 
 		config, err := readAndValidateConfig(fs, configFile, verbose)
 
@@ -64,7 +53,7 @@ var applyCmd = &cobra.Command{
 		}
 
 		// apply
-		e = apply.Apply(fs, config, templates.Templates, upgrade, noPlugins)
+		e = apply.Apply(fs, config, templates.Templates, upgrade)
 
 		return e
 	},
