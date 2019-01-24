@@ -14,4 +14,4 @@
 .idea
 
 .fogg
-terraform.d
+/terraform.d
