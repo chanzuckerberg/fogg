@@ -25,7 +25,7 @@ ifdef USE_DOCKER
 	terraform_command ?= $(docker_terraform)
 else
 	TFENV_DIR ?= $(HOME)/.tfenv
-	export PATH :=$(TFENV_DIR)/versions/$(TERRAFORM_VERSION)/:$(PATH)
+	export PATH :=$(TFENV_DIR)/versions/$(TERRAFORM_VERSION)/:$(REPO_ROOT)/.fogg/bin:$(PATH)
 	export TF_PLUGIN_CACHE_DIR=$(REPO_ROOT)/.terraform.d/plugin-cache
 	sh_command ?= $(SHELL)
 	terraform_command ?= $(TFENV_DIR)/versions/$(TERRAFORM_VERSION)/terraform
