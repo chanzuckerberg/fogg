@@ -15,6 +15,11 @@ ifdef USE_DOCKER
 	docker_base = \
 		docker run --rm -e HOME=/home -v $$HOME/.aws:/home/.aws -v $(REPO_ROOT):/repo \
 		-v $(REPO_ROOT)/.fogg/bin:/usr/local/bin -v $(REPO_ROOT)/terraform.d:/repo/$(REPO_RELATIVE_PATH)/terraform.d \
+		-e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+    		-e AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
+	    	-e AWS_SECURITY_TOKEN=$(AWS_SECURITY_TOKEN) \
+    		-e AWS_SESSION_TOKEN=$(AWS_SESSION_TOKEN) \
+	    	-e AWS_REGION=$(AWS_REGION) \
 		-e GIT_SSH_COMMAND='ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
 		-e RUN_USER_ID=$(shell id -u) -e RUN_GROUP_ID=$(shell id -g) \
 		-e TF_PLUGIN_CACHE_DIR="/repo/.terraform.d/plugin-cache" -e TF="$(TF)" \
