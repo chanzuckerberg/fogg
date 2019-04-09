@@ -58,11 +58,12 @@ type Component struct {
 	AWSConfiguration `yaml:",inline"`
 	Common           `yaml:",inline"`
 	Component        string
+	EKS              *config.EKSConfig `yaml:"eks,omitempty"`
 	Env              string
-	ExtraVars        map[string]string `yaml:"extra_vars"`
-	Kind             *config.ComponentKind
-	ModuleSource     *string  `yaml:"module_source"`
-	OtherComponents  []string `yaml:"other_components"`
+	ExtraVars        map[string]string     `yaml:"extra_vars"`
+	Kind             *config.ComponentKind `yaml:"kind,omitempty"`
+	ModuleSource     *string               `yaml:"module_source"`
+	OtherComponents  []string              `yaml:"other_components"`
 	Owner            string
 	Project          string
 	TfLint           TfLint
@@ -75,6 +76,7 @@ type Env struct {
 
 	Components map[string]Component
 	Env        string
+	EKS        *config.EKSConfig
 	ExtraVars  map[string]string `yaml:"extra_vars"`
 	Owner      string
 	Project    string
@@ -259,6 +261,10 @@ func (p *Plan) buildEnvs(conf *config.Config) (map[string]Env, error) {
 			if _, dupe := p.Accounts[componentName]; dupe {
 				return nil, errs.WrapUser(fmt.Errorf("Component %s can't have same name as account", componentName), "Invalid component name")
 			}
+
+			if componentConf.Kind.GetOrDefault() == config.ComponentKindHelmTemplate {
+				componentPlan.EKS = resolveEKSConfig(envPlan.EKS, componentConf.EKS)
+			}
 			componentPlan.Accounts = p.Accounts
 
 			componentPlan.AccountID = resolveOptionalInt(envPlan.AccountID, componentConf.AccountID)
@@ -295,15 +301,29 @@ func (p *Plan) buildEnvs(conf *config.Config) (map[string]Env, error) {
 	return envPlans, nil
 }
 
-// TODO(el): Probably only want kind==tf components here
 func otherComponentNames(components map[string]*config.Component, thisComponent string) []string {
 	r := make([]string, 0)
-	for componentName := range components {
+	for componentName, componentConf := range components {
+		// Only set up remote state for terraform components
+		if componentConf.Kind.GetOrDefault() != config.ComponentKindTerraform {
+			continue
+		}
 		if componentName != thisComponent {
 			r = append(r, componentName)
 		}
 	}
 	return r
+}
+
+func resolveEKSConfig(def *config.EKSConfig, override *config.EKSConfig) *config.EKSConfig {
+	resolved := &config.EKSConfig{}
+	if def != nil {
+		resolved.ClusterName = def.ClusterName
+	}
+	if override != nil {
+		resolved.ClusterName = override.ClusterName
+	}
+	return resolved
 }
 
 func resolveExtraVars(def map[string]string, override map[string]string) map[string]string {

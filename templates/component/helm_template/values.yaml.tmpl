@@ -1,0 +1,24 @@
+env: {{ .Env }}
+project: {{ .Project }}
+region: {{ .AWSRegionProvider }}
+component: {{ .Component }}
+owner: {{ .Owner }}
+aws_profile: {{ .AWSProfileProvider }}
+tags:
+  env: {{ .Env }}
+  project: {{ .Project }}
+  region: {{ .AWSRegionProvider }}
+  component: {{ .Component }}
+  owner: {{ .Owner }}
+  managedBy: kubectl
+
+{{ range $key, $val := .ExtraVars -}}
+{{ $key }}: {{ $val }}
+{{ end }}
+
+aws_accounts:
+{{- range $accountName, $account := .Accounts -}}
+{{ if $account.AccountID }}
+  {{ $accountName }}: {{ $account.AccountID -}}
+{{ end -}}
+{{ end -}}

@@ -89,6 +89,11 @@ const (
 	ComponentKindHelmTemplate ComponentKind = "helm_template"
 )
 
+// EKSConfig is the configuration for an eks cluster
+type EKSConfig struct {
+	ClusterName string `json:"cluster_name"`
+}
+
 type Component struct {
 	AccountID          *int64            `json:"account_id"`
 	AWSProfileBackend  *string           `json:"aws_profile_backend"`
@@ -97,6 +102,7 @@ type Component struct {
 	AWSRegionBackend   *string           `json:"aws_region_backend"`
 	AWSRegionProvider  *string           `json:"aws_region_provider"`
 	AWSRegions         []string          `json:"aws_regions"`
+	EKS                *EKSConfig        `json:"eks,omitempty"`
 	ExtraVars          map[string]string `json:"extra_vars,omitempty"`
 	InfraBucket        *string           `json:"infra_s3_bucket"`
 	Kind               *ComponentKind    `json:"kind,omitempty"`
