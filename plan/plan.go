@@ -54,18 +54,18 @@ type Module struct {
 
 // Component is a component
 type Component struct {
+	Accounts         map[string]Account // Reference accounts for remote state
 	AWSConfiguration `yaml:",inline"`
 	Common           `yaml:",inline"`
-
-	Accounts        map[string]Account // Reference accounts for remote state
-	Component       string
-	Env             string
-	ExtraVars       map[string]string `yaml:"extra_vars"`
-	ModuleSource    *string           `yaml:"module_source"`
-	OtherComponents []string          `yaml:"other_components"`
-	Owner           string
-	Project         string
-	TfLint          TfLint
+	Component        string
+	Env              string
+	ExtraVars        map[string]string `yaml:"extra_vars"`
+	Kind             *config.ComponentKind
+	ModuleSource     *string  `yaml:"module_source"`
+	OtherComponents  []string `yaml:"other_components"`
+	Owner            string
+	Project          string
+	TfLint           TfLint
 }
 
 // Env is an env
@@ -252,7 +252,9 @@ func (p *Plan) buildEnvs(conf *config.Config) (map[string]Env, error) {
 		envPlan.Docker = conf.Docker
 
 		for componentName, componentConf := range conf.Envs[envName].Components {
-			componentPlan := Component{}
+			componentPlan := Component{
+				Kind: componentConf.Kind,
+			}
 			// reference accounts for remote state
 			if _, dupe := p.Accounts[componentName]; dupe {
 				return nil, errs.WrapUser(fmt.Errorf("Component %s can't have same name as account", componentName), "Invalid component name")
@@ -293,6 +295,7 @@ func (p *Plan) buildEnvs(conf *config.Config) (map[string]Env, error) {
 	return envPlans, nil
 }
 
+// TODO(el): Probably only want kind==tf components here
 func otherComponentNames(components map[string]*config.Component, thisComponent string) []string {
 	r := make([]string, 0)
 	for componentName := range components {

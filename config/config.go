@@ -69,6 +69,26 @@ type Env struct {
 	Components map[string]*Component `json:"components"`
 }
 
+// ComponentKind is the kind of this component
+type ComponentKind string
+
+// GetOrDefault gets the component kind or defaults
+func (ck *ComponentKind) GetOrDefault() ComponentKind {
+	if ck == nil {
+		return DefaultComponentKind
+	}
+	return *ck
+}
+
+const (
+	// DefaultComponentKind defaults to terraform component
+	DefaultComponentKind ComponentKind = "terraform"
+	// ComponentKindTerraform is a terraform component
+	ComponentKindTerraform = DefaultComponentKind
+	// ComponentKindHelmTemplate is a helm template component
+	ComponentKindHelmTemplate ComponentKind = "helm_template"
+)
+
 type Component struct {
 	AccountID          *int64            `json:"account_id"`
 	AWSProfileBackend  *string           `json:"aws_profile_backend"`
@@ -79,6 +99,7 @@ type Component struct {
 	AWSRegions         []string          `json:"aws_regions"`
 	ExtraVars          map[string]string `json:"extra_vars,omitempty"`
 	InfraBucket        *string           `json:"infra_s3_bucket"`
+	Kind               *ComponentKind    `json:"kind,omitempty"`
 	ModuleSource       *string           `json:"module_source"`
 	Owner              *string           `json:"owner"`
 	Project            *string           `json:"project"`
