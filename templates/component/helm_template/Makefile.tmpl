@@ -17,3 +17,6 @@ apply: plan
 
 set-eks-context:
 	@aws --region {{ .AWSRegionProvider }} --profile {{ .AWSProfileProvider }} eks update-kubeconfig --name {{ .EKS.ClusterName }} --alias {{ .EKS.ClusterName }}
+
+lint:
+	@helm lint .
