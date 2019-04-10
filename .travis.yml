@@ -1,6 +1,6 @@
 language: go
 go:
-  - '1.11'
+  - "1.11"
 install:
   - npm install -g snyk
   - make setup
@@ -18,3 +18,4 @@ jobs:
       script:
         - snyk monitor --org=czi
         - snyk test
+      if: env(SNYK_TOKEN) IS present
