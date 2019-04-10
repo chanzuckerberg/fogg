@@ -20,6 +20,7 @@ func TestParseDefaults(t *testing.T) {
 			"aws_profile_backend": "czi",
 			"aws_profile_provider": "czi",
 			"infra_s3_bucket": "the-bucket",
+			"infra_dynamo_db_table": "the-table",
 			"project": "test-project",
 			"terraform_version": "0.11.0"
 		}
@@ -34,6 +35,7 @@ func TestParseDefaults(t *testing.T) {
 	assert.Equal(t, "czi", c.Defaults.AWSProfileBackend)
 	assert.Equal(t, "czi", c.Defaults.AWSProfileProvider)
 	assert.Equal(t, "the-bucket", c.Defaults.InfraBucket)
+	assert.Equal(t, "the-table", c.Defaults.InfraDynamoTable)
 	assert.Equal(t, "test-project", c.Defaults.Project)
 	assert.Equal(t, "0.11.0", c.Defaults.TerraformVersion)
 	assert.Equal(t, true, c.Docker)
@@ -53,6 +55,7 @@ func TestParse(t *testing.T) {
 	assert.Equal(t, "czi", c.Defaults.AWSProfileBackend)
 	assert.Equal(t, "czi", c.Defaults.AWSProfileProvider)
 	assert.Equal(t, "the-bucket", c.Defaults.InfraBucket)
+	assert.Equal(t, "the-table", c.Defaults.InfraDynamoTable)
 	assert.Equal(t, "test-project", c.Defaults.Project)
 	assert.Equal(t, "0.11.0", c.Defaults.TerraformVersion)
 
@@ -96,7 +99,7 @@ func TestValidation(t *testing.T) {
 
 	err, ok := e.(validator.ValidationErrors)
 	assert.True(t, ok)
-	assert.Len(t, err, 9)
+	assert.Len(t, err, 10)
 }
 
 func TestExtraVarsValidation(t *testing.T) {
@@ -109,6 +112,7 @@ func TestExtraVarsValidation(t *testing.T) {
 			"aws_profile_provider": "czi",
 			"aws_provider_version": "czi",
 			"infra_s3_bucket": "the-bucket",
+			"infra_dynamo_db_table": "the-table",
 			"project": "test-project",
 			"owner": "test@test.com",
 			"terraform_version": "0.11.0"
@@ -129,13 +133,14 @@ func TestExtraVarsValidation(t *testing.T) {
 }
 
 func TestInitConfig(t *testing.T) {
-	c := InitConfig("proj", "reg", "buck", "prof", "me@foo.example", "0.99.0")
+	c := InitConfig("proj", "reg", "buck", "table", "prof", "me@foo.example", "0.99.0")
 	assert.Equal(t, "prof", c.Defaults.AWSProfileBackend)
 	assert.Equal(t, "prof", c.Defaults.AWSProfileProvider)
 	assert.Equal(t, "reg", c.Defaults.AWSRegionBackend)
 	assert.Equal(t, "reg", c.Defaults.AWSRegionProvider)
 	assert.Equal(t, "0.99.0", c.Defaults.AWSProviderVersion)
 	assert.Equal(t, "buck", c.Defaults.InfraBucket)
+	assert.Equal(t, "table", c.Defaults.InfraDynamoTable)
 	assert.Equal(t, "me@foo.example", c.Defaults.Owner)
 	assert.Equal(t, "proj", c.Defaults.Project)
 	assert.Equal(t, "0.11.7", c.Defaults.TerraformVersion)
