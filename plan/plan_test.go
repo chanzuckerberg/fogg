@@ -84,7 +84,7 @@ func TestPlanBasic(t *testing.T) {
 	assert.Equal(t, plan.Envs["staging"].TerraformVersion, "0.100.0")
 
 	assert.NotNil(t, plan.Envs["staging"].Components)
-	assert.Len(t, plan.Envs["staging"].Components, 3)
+	assert.Len(t, plan.Envs["staging"].Components, 4)
 
 	assert.NotNil(t, plan.Envs["staging"])
 	assert.NotNil(t, plan.Envs["staging"].Components["vpc"])
@@ -94,6 +94,9 @@ func TestPlanBasic(t *testing.T) {
 
 	assert.NotNil(t, plan.Envs["staging"].Components["comp1"])
 	assert.Equal(t, "0.100.0", plan.Envs["staging"].Components["comp1"].TerraformVersion)
+
+	assert.NotNil(t, plan.Envs["staging"].Components["comp_helm_template"])
+	assert.Equal(t, "k8s", plan.Envs["staging"].Components["comp_helm_template"].EKS.ClusterName)
 }
 
 func TestExtraVarsComposition(t *testing.T) {
@@ -171,4 +174,11 @@ func TestResolveTfLintComponent(test *testing.T) {
 			a.Equal(r.output, result.Enabled)
 		})
 	}
+}
+
+func TestResolveEKSConfig(t *testing.T) {
+	a := assert.New(t)
+	a.Equal("", resolveEKSConfig(nil, nil).ClusterName)
+	a.Equal("a", resolveEKSConfig(&config.EKSConfig{ClusterName: "a"}, nil).ClusterName)
+	a.Equal("b", resolveEKSConfig(&config.EKSConfig{ClusterName: "a"}, &config.EKSConfig{ClusterName: "b"}).ClusterName)
 }

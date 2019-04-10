@@ -74,7 +74,7 @@ type ComponentKind string
 
 // GetOrDefault gets the component kind or defaults
 func (ck *ComponentKind) GetOrDefault() ComponentKind {
-	if ck == nil {
+	if ck == nil || *ck == "" {
 		return DefaultComponentKind
 	}
 	return *ck
