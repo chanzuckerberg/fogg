@@ -26,7 +26,7 @@ terraform {
 
   backend "s3" {
     bucket         = "{{ .InfraBucket }}"
-    dynamodb_table = "{{ .InfraDynamoTable }}"
+    {{ if .InfraDynamoTable }}dynamodb_table = "{{ .InfraDynamoTable }}"{{ end }}
     key            = "terraform/{{ .Project }}/accounts/{{ .AccountName }}.tfstate"
     encrypt        = true
     region         = "{{ .AWSRegionBackend }}"
@@ -77,9 +77,9 @@ data "terraform_remote_state" "global" {
 
   config {
     bucket         = "{{ .InfraBucket }}"
-    dynamodb_table = "{{ .InfraDynamoTable }}"
+    {{ if .InfraDynamoTable }}dynamodb_table = "{{ .InfraDynamoTable }}"{{ end }}
     key            = "terraform/{{ .Project }}/global.tfstate"
     region         = "{{ .AWSRegionBackend }}"
-    {{ if .AWSProfileBackend }}profile = "{{ .AWSProfileBackend }}"{{ end }}
+    {{ if .AWSProfileBackend }}profile        = "{{ .AWSProfileBackend }}"{{ end }}
   }
 }

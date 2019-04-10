@@ -29,7 +29,7 @@ type defaults struct {
 	AWSRegions         []string          `json:"aws_regions,omitempty"`
 	ExtraVars          map[string]string `json:"extra_vars"`
 	InfraBucket        string            `json:"infra_s3_bucket" validate:"required"`
-	InfraDynamoTable   string            `json:"infra_dynamo_db_table" validate:"required"`
+	InfraDynamoTable   string            `json:"infra_dynamo_db_table"`
 	Owner              string            `json:"owner" validate:"required"`
 	Project            string            `json:"project" validate:"required"`
 	TerraformVersion   string            `json:"terraform_version" validate:"required"`

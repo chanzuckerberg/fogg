@@ -99,7 +99,7 @@ func TestValidation(t *testing.T) {
 
 	err, ok := e.(validator.ValidationErrors)
 	assert.True(t, ok)
-	assert.Len(t, err, 10)
+	assert.Len(t, err, 9)
 }
 
 func TestExtraVarsValidation(t *testing.T) {
