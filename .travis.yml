@@ -10,12 +10,16 @@ script:
 
 jobs:
   include:
-    - stage: check
+    - stage: test
       script:
         - make
         - bash <(curl -s https://codecov.io/bash)
-    - stage: check
+    - stage: snyk
       script:
         - snyk monitor --org=czi
         - snyk test
-      if: env(SNYK_TOKEN) IS present
+
+stages:
+  - test
+  - name: snyk
+    if: env(SNYK_TOKEN) IS present
