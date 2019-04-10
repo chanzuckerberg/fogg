@@ -15,7 +15,7 @@ func userPrompt() (string, string, string, string, string, string) {
 	project := prompt.StringRequired("project name?")
 	region := prompt.StringRequired("aws region?")
 	bucket := prompt.StringRequired("infra bucket name?")
-	table := prompt.StringRequired("infra dynamo table name?")
+	table := prompt.String("infra dynamo table name?")
 	profile := prompt.StringRequired("auth profile?")
 	owner := prompt.StringRequired("owner?")
 
