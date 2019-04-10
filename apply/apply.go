@@ -60,7 +60,7 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, upgrade bool) err
 		return errs.WrapUser(e, "unable to apply accounts")
 	}
 
-	e = applyEnvs(fs, p, &tmp.Env, tmp.Component)
+	e = applyEnvs(fs, p, &tmp.Env, tmp.Components)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply envs")
 	}

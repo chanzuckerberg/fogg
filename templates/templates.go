@@ -7,7 +7,7 @@ import (
 
 type T struct {
 	Account          packr.Box
-	Component        map[config.ComponentKind]packr.Box
+	Components       map[config.ComponentKind]packr.Box
 	Env              packr.Box
 	Global           packr.Box
 	Module           packr.Box
@@ -18,7 +18,7 @@ type T struct {
 
 var Templates = &T{
 	Account: packr.NewBox("account"),
-	Component: map[config.ComponentKind]packr.Box{
+	Components: map[config.ComponentKind]packr.Box{
 		config.ComponentKindTerraform:    packr.NewBox("component/terraform"),
 		config.ComponentKindHelmTemplate: packr.NewBox("component/helm_template"),
 	},
