@@ -112,6 +112,7 @@ func TestExtraVarsValidation(t *testing.T) {
 			"aws_profile_provider": "czi",
 			"aws_provider_version": "czi",
 			"infra_s3_bucket": "the-bucket",
+			"infra_dynamo_db_table": "the-table",
 			"project": "test-project",
 			"owner": "test@test.com",
 			"terraform_version": "0.11.0"
