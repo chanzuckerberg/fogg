@@ -141,3 +141,14 @@ func TestInitConfig(t *testing.T) {
 	assert.Equal(t, "0.11.7", c.Defaults.TerraformVersion)
 	assert.Equal(t, true, c.Docker)
 }
+
+func TestComponentKindGetOrDefault(t *testing.T) {
+	ck := ComponentKindHelmTemplate
+	assert.Equal(t, string(ck.GetOrDefault()), string(ComponentKindHelmTemplate))
+
+	var nck *ComponentKind
+	assert.Equal(t, string(nck.GetOrDefault()), string(ComponentKindTerraform))
+
+	var zck ComponentKind
+	assert.Equal(t, string(zck.GetOrDefault()), string(ComponentKindTerraform))
+}

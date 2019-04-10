@@ -60,7 +60,7 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, upgrade bool) err
 		return errs.WrapUser(e, "unable to apply accounts")
 	}
 
-	e = applyEnvs(fs, p, &tmp.Env, &tmp.Component)
+	e = applyEnvs(fs, p, &tmp.Env, tmp.Components)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply envs")
 	}
@@ -150,7 +150,7 @@ func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox *packr.Box) (
 	return nil
 }
 
-func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr.Box) (e error) {
+func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBoxes map[config.ComponentKind]packr.Box) (e error) {
 	log.Debug("applying envs")
 	for env, envPlan := range p.Envs {
 		log.Debugf("applying %s", env)
@@ -169,7 +169,8 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 			if e != nil {
 				return errs.WrapUser(e, "unable to make directories for component")
 			}
-			e := applyTree(fs, componentBox, path, componentPlan)
+			componentBox := componentBoxes[componentPlan.Kind.GetOrDefault()]
+			e := applyTree(fs, &componentBox, path, componentPlan)
 			if e != nil {
 				return errs.WrapUser(e, "unable to apply templates for component")
 			}
