@@ -41,7 +41,6 @@ func parsePlan(planPath string) error {
 	}
 	defer f.Close()
 	// TODO: also remove the plan?
-
 	plan, err := terraform.ReadPlan(f)
 	if err != nil {
 		return errors.Wrapf(err, "Terraform could not parse plan at %s", planPath)
