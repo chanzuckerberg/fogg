@@ -55,18 +55,19 @@ type Module struct {
 
 // Component is a component
 type Component struct {
+	Accounts         map[string]Account // Reference accounts for remote state
 	AWSConfiguration `yaml:",inline"`
 	Common           `yaml:",inline"`
-
-	Accounts        map[string]Account // Reference accounts for remote state
-	Component       string
-	Env             string
-	ExtraVars       map[string]string `yaml:"extra_vars"`
-	ModuleSource    *string           `yaml:"module_source"`
-	OtherComponents []string          `yaml:"other_components"`
-	Owner           string
-	Project         string
-	TfLint          TfLint
+	Component        string
+	EKS              *config.EKSConfig `yaml:"eks,omitempty"`
+	Env              string
+	ExtraVars        map[string]string     `yaml:"extra_vars"`
+	Kind             *config.ComponentKind `yaml:"kind,omitempty"`
+	ModuleSource     *string               `yaml:"module_source"`
+	OtherComponents  []string              `yaml:"other_components"`
+	Owner            string
+	Project          string
+	TfLint           TfLint
 }
 
 // Env is an env
@@ -76,6 +77,7 @@ type Env struct {
 
 	Components map[string]Component
 	Env        string
+	EKS        *config.EKSConfig
 	ExtraVars  map[string]string `yaml:"extra_vars"`
 	Owner      string
 	Project    string
@@ -256,10 +258,16 @@ func (p *Plan) buildEnvs(conf *config.Config) (map[string]Env, error) {
 		envPlan.Docker = conf.Docker
 
 		for componentName, componentConf := range conf.Envs[envName].Components {
-			componentPlan := Component{}
+			componentPlan := Component{
+				Kind: componentConf.Kind,
+			}
 			// reference accounts for remote state
 			if _, dupe := p.Accounts[componentName]; dupe {
 				return nil, errs.WrapUser(fmt.Errorf("Component %s can't have same name as account", componentName), "Invalid component name")
+			}
+
+			if componentConf.Kind.GetOrDefault() == config.ComponentKindHelmTemplate {
+				componentPlan.EKS = resolveEKSConfig(envPlan.EKS, componentConf.EKS)
 			}
 			componentPlan.Accounts = p.Accounts
 
@@ -300,12 +308,27 @@ func (p *Plan) buildEnvs(conf *config.Config) (map[string]Env, error) {
 
 func otherComponentNames(components map[string]*config.Component, thisComponent string) []string {
 	r := make([]string, 0)
-	for componentName := range components {
+	for componentName, componentConf := range components {
+		// Only set up remote state for terraform components
+		if componentConf.Kind.GetOrDefault() != config.ComponentKindTerraform {
+			continue
+		}
 		if componentName != thisComponent {
 			r = append(r, componentName)
 		}
 	}
 	return r
+}
+
+func resolveEKSConfig(def *config.EKSConfig, override *config.EKSConfig) *config.EKSConfig {
+	resolved := &config.EKSConfig{}
+	if def != nil {
+		resolved.ClusterName = def.ClusterName
+	}
+	if override != nil {
+		resolved.ClusterName = override.ClusterName
+	}
+	return resolved
 }
 
 func resolveExtraVars(def map[string]string, override map[string]string) map[string]string {

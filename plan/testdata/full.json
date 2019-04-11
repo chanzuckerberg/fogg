@@ -34,7 +34,13 @@
           }
         },
         "comp1": {},
-        "comp2": {}
+        "comp2": {},
+        "comp_helm_template": {
+          "kind": "helm_template",
+          "eks": {
+            "cluster_name": "k8s"
+          }
+        }
       }
     },
     "prod": {}
