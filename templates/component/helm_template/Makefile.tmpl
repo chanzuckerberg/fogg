@@ -12,8 +12,11 @@ plan: set-eks-context
 	@helm template -f variables.yaml . | kubectl --context='{{ .EKS.ClusterName }}' apply --dry-run $(KUBECTL_FLAGS) -f -
 
 apply: plan
-	@read -p "Continue (yes/no)? " choice && if [ "$${choice}" != "yes" ]; then echo "Apply cancelled, only yes accepted" && exit 0; fi
-	@helm template -f variables.yaml . | kubectl --context='{{ .EKS.ClusterName }}' apply $(KUBECTL_FLAGS) -f -
+	@read -p "Continue (yes/no)? " choice && if [ "$${choice}" != "yes" ]; then \
+		echo "Apply cancelled, only yes accepted"; \
+	else \
+		helm template -f variables.yaml . | kubectl --context='{{ .EKS.ClusterName }}' apply $(KUBECTL_FLAGS) -f -; \
+	fi
 
 set-eks-context:
 	@aws --region {{ .AWSRegionProvider }} --profile {{ .AWSProfileProvider }} eks update-kubeconfig --name {{ .EKS.ClusterName }} --alias {{ .EKS.ClusterName }}
