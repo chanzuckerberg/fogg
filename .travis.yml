@@ -18,4 +18,4 @@ jobs:
       script:
         - snyk monitor --org=czi
         - snyk test
-      if: env(SNYK_TOKEN) IS present
+      if: NOT env(SNYK_TOKEN) IS present
