@@ -16,6 +16,4 @@ jobs:
         - bash <(curl -s https://codecov.io/bash)
     - stage: check
       script:
-        - snyk monitor --org=czi
-        - snyk test
-      if: NOT env(SNYK_TOKEN) IS present
+        - if [[ -z "${SNYK_TOKEN}" ]]; then snyk monitor --org=czi; snyk test; fi
