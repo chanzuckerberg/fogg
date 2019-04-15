@@ -18,8 +18,10 @@ apply: plan
 		helm template -f variables.yaml . | kubectl --context='{{ .EKS.ClusterName }}' apply $(KUBECTL_FLAGS) -f -; \
 	fi
 
+check: lint plan
+
 set-eks-context:
 	@aws --region {{ .AWSRegionProvider }} --profile {{ .AWSProfileProvider }} eks update-kubeconfig --name {{ .EKS.ClusterName }} --alias {{ .EKS.ClusterName }}
 
 lint:
-	@helm lint .
+	@helm lint -f variables.yaml .
