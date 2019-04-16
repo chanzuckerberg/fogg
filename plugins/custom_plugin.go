@@ -198,16 +198,15 @@ func (cp *CustomPlugin) processTar(fs afero.Fs, path string, targetDir string) e
 			return errs.NewUser("Nil tar file header")
 		}
 		// the target location where the dir/file should be created
-		splitTarget := strings.Split(header.Name, string(os.PathSeparator))
-		fmt.Println(splitTarget)
-		fmt.Println(len(splitTarget))
+		splitTarget := strings.Split(
+			filepath.Clean(header.Name),
+			string(os.PathSeparator))
+		// remove components if we can, otherwise skip this
 		if len(splitTarget) <= cp.TarConfig.StripComponents {
 			continue
 		}
-		fmt.Println("HERE")
 		target := filepath.Join(targetDir,
 			filepath.Join(splitTarget[cp.TarConfig.StripComponents:]...))
-		fmt.Println(target)
 
 		switch header.Typeflag {
 		case tar.TypeDir: // if its a dir and it doesn't exist create it
