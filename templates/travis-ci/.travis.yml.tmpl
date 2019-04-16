@@ -2,14 +2,14 @@
 # Make improvements in fogg, so that everyone can benefit.
 language: minimal
 sudo: required
-python: 3.7
+python: 3.6
 
 {{ if .Docker }}
 services:
   - docker
 {{ end }}
 install:
-  - pip install awscli --upgrade --user
+  - pip install awscli --upgrade
   - aws --version
   - curl -o download.sh -s https://raw.githubusercontent.com/chanzuckerberg/fogg/master/download.sh
   - travis_retry bash download.sh -b $HOME/bin v{{ .FoggVersion }}
