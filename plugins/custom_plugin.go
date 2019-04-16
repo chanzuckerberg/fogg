@@ -37,7 +37,13 @@ const (
 type CustomPlugin struct {
 	URL       string           `json:"url" validate:"required"`
 	Format    TypePluginFormat `json:"format" validate:"required"`
+	TarConfig TarConfig        `json:"tar_config,omitempty"`
 	targetDir string
+}
+
+// TarConfig configures the tar unpacking
+type TarConfig struct {
+	StripComponents int `json:"strip_components"`
 }
 
 // Install installs the custom plugin
@@ -192,7 +198,17 @@ func (cp *CustomPlugin) processTar(fs afero.Fs, path string, targetDir string) e
 			return errs.NewUser("Nil tar file header")
 		}
 		// the target location where the dir/file should be created
-		target := filepath.Join(targetDir, header.Name)
+		splitTarget := strings.Split(header.Name, string(os.PathSeparator))
+		fmt.Println(splitTarget)
+		fmt.Println(len(splitTarget))
+		if len(splitTarget) <= cp.TarConfig.StripComponents {
+			continue
+		}
+		fmt.Println("HERE")
+		target := filepath.Join(targetDir,
+			filepath.Join(splitTarget[cp.TarConfig.StripComponents:]...))
+		fmt.Println(target)
+
 		switch header.Typeflag {
 		case tar.TypeDir: // if its a dir and it doesn't exist create it
 			err := fs.MkdirAll(target, 0755)

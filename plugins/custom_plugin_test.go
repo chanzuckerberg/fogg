@@ -25,7 +25,7 @@ func TestCustomPluginTar(t *testing.T) {
 	fs := afero.NewMemMapFs()
 
 	files := []string{"test.txt", "terraform-provider-testing"}
-	tarPath := generateTar(t, files)
+	tarPath := generateTar(t, files, nil)
 	defer os.Remove(tarPath)
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -61,6 +61,52 @@ func TestCustomPluginTar(t *testing.T) {
 	}
 }
 
+func TestCustomPluginTarStripComponents(t *testing.T) {
+	a := assert.New(t)
+	pluginName := "test-provider"
+	fs := afero.NewMemMapFs()
+
+	files := []string{"a/test.txt", "a/terraform-provider-testing"}
+	expected_files := []string{"test.txt", "terraform-provider-testing"}
+	dirs := []string{"a"}
+	tarPath := generateTar(t, files, dirs)
+	defer os.Remove(tarPath)
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		f, err := os.Open(tarPath)
+		a.Nil(err)
+		_, err = io.Copy(w, f)
+		a.Nil(err)
+	}))
+	defer ts.Close()
+
+	customPlugin := &plugins.CustomPlugin{
+		URL:    ts.URL,
+		Format: plugins.TypePluginFormatTar,
+		TarConfig: plugins.TarConfig{
+			StripComponents: 1,
+		},
+	}
+	customPlugin.SetTargetPath(plugins.CustomPluginDir)
+	a.Nil(customPlugin.Install(fs, pluginName))
+
+	afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
+		a.Nil(err)
+		return nil
+	})
+
+	for idx, file := range expected_files {
+		filePath := path.Join(plugins.CustomPluginDir, file)
+		fi, err := fs.Stat(filePath)
+		a.Nil(err)
+		a.False(fi.IsDir())
+		a.Equal(fi.Mode(), os.FileMode(0664))
+
+		bytes, err := afero.ReadFile(fs, filePath)
+		a.Nil(err)
+		a.Equal(bytes, []byte(files[idx])) // We wrote the filename as the contents as well
+	}
+}
 func TestCustomPluginZip(t *testing.T) {
 	a := assert.New(t)
 	pluginName := "test-provider"
@@ -142,7 +188,7 @@ func TestCustomPluginBin(t *testing.T) {
 	a.Equal(fi.Mode().Perm(), os.FileMode(0755))
 }
 
-func generateTar(t *testing.T, files []string) string {
+func generateTar(t *testing.T, files []string, dirs []string) string {
 	a := assert.New(t)
 
 	f, err := ioutil.TempFile("", "testing")
@@ -152,6 +198,16 @@ func generateTar(t *testing.T, files []string) string {
 	defer gw.Close()
 	tw := tar.NewWriter(gw)
 	defer tw.Close()
+
+	for _, dir := range dirs {
+		header := new(tar.Header)
+		header.Name = dir
+		header.Size = int64(0)
+		header.Mode = int64(0777)
+		header.Typeflag = tar.TypeDir
+
+		a.Nil(tw.WriteHeader(header))
+	}
 
 	for _, file := range files {
 		header := new(tar.Header)
