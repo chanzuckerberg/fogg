@@ -66,8 +66,8 @@ func TestCustomPluginTarStripComponents(t *testing.T) {
 	pluginName := "test-provider"
 	fs := afero.NewMemMapFs()
 
-	files := []string{"a/test.txt", "a/terraform-provider-testing"}
-	expected_files := []string{"test.txt", "terraform-provider-testing"}
+	files := []string{"a/test.txt", "terraform-provider-testing"}
+	expected_files := []string{"test.txt", ""}
 	dirs := []string{"a"}
 	tarPath := generateTar(t, files, dirs)
 	defer os.Remove(tarPath)
@@ -96,6 +96,14 @@ func TestCustomPluginTarStripComponents(t *testing.T) {
 	})
 
 	for idx, file := range expected_files {
+		// files we expect to skip
+		if file == "" {
+			filePath := path.Join(plugins.CustomPluginDir, files[idx])
+			_, err := fs.Stat(filePath)
+			a.NotNil(err)
+			a.True(os.IsNotExist(err))
+			continue
+		}
 		filePath := path.Join(plugins.CustomPluginDir, file)
 		fi, err := fs.Stat(filePath)
 		a.Nil(err)
