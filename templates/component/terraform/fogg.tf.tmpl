@@ -24,9 +24,10 @@ terraform {
   required_version = "~>{{ .TerraformVersion }}"
 
   backend "s3" {
-    bucket = "{{ .InfraBucket }}"
+    bucket         = "{{ .InfraBucket }}"
+    {{ if .InfraDynamoTable }}dynamodb_table = "{{ .InfraDynamoTable }}"{{ end }}
     {{/* {%- if env is defined and component_name is defined %} */}}
-    key    = "terraform/{{ .Project }}/envs/{{ .Env }}/components/{{ .Component }}.tfstate"
+    key            = "terraform/{{ .Project }}/envs/{{ .Env }}/components/{{ .Component }}.tfstate"
 
 {{/*
     {%- else %}
@@ -91,10 +92,11 @@ data "terraform_remote_state" "global" {
   backend = "s3"
 
   config {
-    bucket = "{{ $out.InfraBucket }}"
-    key    = "terraform/{{ .Project }}/global.tfstate"
-    region = "{{ $out.AWSRegionBackend }}"
-    {{ if $out.AWSProfileBackend }}profile = "{{ $out.AWSProfileBackend }}"{{ end }}
+    bucket         = "{{ $out.InfraBucket }}"
+    {{ if $out.InfraDynamoTable }}dynamodb_table = "{{ $out.InfraDynamoTable }}"{{ end }}
+    key            = "terraform/{{ .Project }}/global.tfstate"
+    region         = "{{ $out.AWSRegionBackend }}"
+    {{ if $out.AWSProfileBackend }}profile        = "{{ $out.AWSProfileBackend }}"{{ end }}
   }
 }
 
@@ -103,10 +105,11 @@ data "terraform_remote_state" "{{ $component }}" {
   backend = "s3"
 
   config {
-    bucket = "{{ $out.InfraBucket }}"
-    key    = "terraform/{{ $out.Project }}/envs/{{ $out.Env }}/components/{{ $component }}.tfstate"
-    region = "{{ $out.AWSRegionBackend }}"
-    {{ if $out.AWSProfileBackend }}profile = "{{ $out.AWSProfileBackend }}"{{ end }}
+    bucket         = "{{ $out.InfraBucket }}"
+    {{ if $out.InfraDynamoTable }}dynamodb_table = "{{ $out.InfraDynamoTable }}"{{ end }}
+    key            = "terraform/{{ $out.Project }}/envs/{{ $out.Env }}/components/{{ $component }}.tfstate"
+    region         = "{{ $out.AWSRegionBackend }}"
+    {{ if $out.AWSProfileBackend }}profile        = "{{ $out.AWSProfileBackend }}"{{ end }}
   }
 }
 {{ end }}
@@ -117,10 +120,11 @@ data "terraform_remote_state" "{{ $accountName }}" {
   backend = "s3"
 
   config {
-    bucket = "{{ $account.InfraBucket }}"
-    key     = "terraform/{{ .Project }}/accounts/{{ $account.AccountName }}.tfstate"
-    region = "{{ $account.AWSRegionBackend }}"
-    {{ if $account.AWSProfileBackend }}profile = "{{ $account.AWSProfileBackend }}"{{ end }}
+    bucket         = "{{ $account.InfraBucket }}"
+    {{ if $account.InfraDynamoTable }}dynamodb_table = "{{ $account.InfraDynamoTable }}"{{ end }}
+    key            = "terraform/{{ .Project }}/accounts/{{ $account.AccountName }}.tfstate"
+    region         = "{{ $account.AWSRegionBackend }}"
+    {{ if $account.AWSProfileBackend }}profile        = "{{ $account.AWSProfileBackend }}"{{ end }}
   }
 }
 {{ end }}

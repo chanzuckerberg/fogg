@@ -29,6 +29,7 @@ type defaults struct {
 	AWSRegions         []string          `json:"aws_regions,omitempty"`
 	ExtraVars          map[string]string `json:"extra_vars"`
 	InfraBucket        string            `json:"infra_s3_bucket" validate:"required"`
+	InfraDynamoTable   string            `json:"infra_dynamo_db_table"`
 	Owner              string            `json:"owner" validate:"required"`
 	Project            string            `json:"project" validate:"required"`
 	TerraformVersion   string            `json:"terraform_version" validate:"required"`
@@ -45,6 +46,7 @@ type Account struct {
 	AWSRegions         []string          `json:"aws_regions"`
 	ExtraVars          map[string]string `json:"extra_vars,omitempty"`
 	InfraBucket        *string           `json:"infra_s3_bucket"`
+	InfraDynamoTable   *string           `json:"infra_dynamo_db_table"`
 	Owner              *string           `json:"owner"`
 	Project            *string           `json:"project"`
 	TerraformVersion   *string           `json:"terraform_version"`
@@ -61,6 +63,7 @@ type Env struct {
 	AWSRegions         []string          `json:"aws_regions"`
 	ExtraVars          map[string]string `json:"extra_vars,omitempty"`
 	InfraBucket        *string           `json:"infra_s3_bucket"`
+	InfraDynamoTable   *string           `json:"infra_dynamo_db_table"`
 	Owner              *string           `json:"owner"`
 	Project            *string           `json:"project"`
 	TerraformVersion   *string           `json:"terraform_version"`
@@ -105,6 +108,7 @@ type Component struct {
 	EKS                *EKSConfig        `json:"eks,omitempty"`
 	ExtraVars          map[string]string `json:"extra_vars,omitempty"`
 	InfraBucket        *string           `json:"infra_s3_bucket"`
+	InfraDynamoTable   *string           `json:"infra_dynamo_db_table"`
 	Kind               *ComponentKind    `json:"kind,omitempty"`
 	ModuleSource       *string           `json:"module_source"`
 	Owner              *string           `json:"owner"`
@@ -140,7 +144,7 @@ type Config struct {
 	TravisCI *TravisCI          `json:"travis_ci"`
 }
 
-func InitConfig(project, region, bucket, awsProfile, owner, awsProviderVersion string) *Config {
+func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVersion string) *Config {
 	return &Config{
 		Defaults: defaults{
 			AWSProfileBackend:  awsProfile,
@@ -150,6 +154,7 @@ func InitConfig(project, region, bucket, awsProfile, owner, awsProviderVersion s
 			AWSRegionProvider:  region,
 			ExtraVars:          map[string]string{},
 			InfraBucket:        bucket,
+			InfraDynamoTable:   table,
 			Owner:              owner,
 			Project:            project,
 			TerraformVersion:   "0.11.7",

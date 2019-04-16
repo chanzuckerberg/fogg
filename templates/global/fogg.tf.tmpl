@@ -24,7 +24,8 @@ terraform {
   required_version = "~>{{ .TerraformVersion }}"
 
   backend "s3" {
-    bucket = "{{ .InfraBucket }}"
+    bucket         = "{{ .InfraBucket }}"
+    {{ if .InfraDynamoTable }}dynamodb_table = "{{ .InfraDynamoTable }}"{{ end }}
     {{/* {%- if env is defined and component_name is defined %} */}}
     key    = "terraform/{{ .Project }}/{{ .Component }}.tfstate"
 
@@ -92,10 +93,11 @@ data "terraform_remote_state" "{{ $component }}" {
   backend = "s3"
 
   config {
-    bucket = "{{ $out.InfraBucket }}"
-    key    = "terraform/{{ $out.Project }}/envs/{{ $out.Env }}/components/{{ $component }}.tfstate"
-    region = "{{ $out.AWSRegionBackend }}"
-    {{ if $out.AWSProfileBackend }}profile = "{{ $out.AWSProfileBackend }}"{{ end }}
+    bucket         = "{{ $out.InfraBucket }}"
+    {{ if .InfraDynamoTable }}dynamodb_table = "{{ .InfraDynamoTable }}"{{ end }}
+    key            = "terraform/{{ $out.Project }}/envs/{{ $out.Env }}/components/{{ $component }}.tfstate"
+    region         = "{{ $out.AWSRegionBackend }}"
+    {{ if $out.AWSProfileBackend }}profile        = "{{ $out.AWSProfileBackend }}"{{ end }}
   }
 }
 {{ end }}

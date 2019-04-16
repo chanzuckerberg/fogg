@@ -25,11 +25,12 @@ terraform {
   required_version = "={{ .TerraformVersion }}"
 
   backend "s3" {
-    bucket  = "{{ .InfraBucket }}"
-    key     = "terraform/{{ .Project }}/accounts/{{ .AccountName }}.tfstate"
-    encrypt = true
-    region  = "{{ .AWSRegionBackend }}"
-    profile = "{{ .AWSProfileBackend }}"
+    bucket         = "{{ .InfraBucket }}"
+    {{ if .InfraDynamoTable }}dynamodb_table = "{{ .InfraDynamoTable }}"{{ end }}
+    key            = "terraform/{{ .Project }}/accounts/{{ .AccountName }}.tfstate"
+    encrypt        = true
+    region         = "{{ .AWSRegionBackend }}"
+    profile        = "{{ .AWSProfileBackend }}"
   }
 }
 
@@ -75,9 +76,10 @@ data "terraform_remote_state" "global" {
   backend = "s3"
 
   config {
-    bucket = "{{ .InfraBucket }}"
-    key    = "terraform/{{ .Project }}/global.tfstate"
-    region = "{{ .AWSRegionBackend }}"
-    {{ if .AWSProfileBackend }}profile = "{{ .AWSProfileBackend }}"{{ end }}
+    bucket         = "{{ .InfraBucket }}"
+    {{ if .InfraDynamoTable }}dynamodb_table = "{{ .InfraDynamoTable }}"{{ end }}
+    key            = "terraform/{{ .Project }}/global.tfstate"
+    region         = "{{ .AWSRegionBackend }}"
+    {{ if .AWSProfileBackend }}profile        = "{{ .AWSProfileBackend }}"{{ end }}
   }
 }

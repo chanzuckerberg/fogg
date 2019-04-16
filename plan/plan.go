@@ -25,6 +25,7 @@ type AWSConfiguration struct {
 	AWSRegionProvider  string   `yaml:"aws_region_provider"`
 	AWSRegions         []string `yaml:"aws_regions"`
 	InfraBucket        string   `yaml:"infra_bucket"`
+	InfraDynamoTable   string   `yaml:"infra_dynamo_table"`
 }
 
 // Common represents common fields
@@ -160,6 +161,7 @@ func (p *Plan) buildAccounts(c *config.Config) map[string]Account {
 		accountPlan.AllAccounts = resolveAccounts(c.Accounts)
 		accountPlan.TerraformVersion = resolveRequired(defaults.TerraformVersion, config.TerraformVersion)
 		accountPlan.InfraBucket = resolveRequired(defaults.InfraBucket, config.InfraBucket)
+		accountPlan.InfraDynamoTable = resolveRequired(defaults.InfraDynamoTable, config.InfraDynamoTable)
 		accountPlan.Owner = resolveRequired(defaults.Owner, config.Owner)
 		accountPlan.PathToRepoRoot = "../../../"
 		accountPlan.Project = resolveRequired(defaults.Project, config.Project)
@@ -213,6 +215,7 @@ func (p *Plan) buildGlobal(conf *config.Config) Component {
 
 	componentPlan.TerraformVersion = conf.Defaults.TerraformVersion
 	componentPlan.InfraBucket = conf.Defaults.InfraBucket
+	componentPlan.InfraDynamoTable = conf.Defaults.InfraDynamoTable
 	componentPlan.Owner = conf.Defaults.Owner
 	componentPlan.PathToRepoRoot = "../../"
 	componentPlan.Project = conf.Defaults.Project
@@ -247,6 +250,7 @@ func (p *Plan) buildEnvs(conf *config.Config) (map[string]Env, error) {
 
 		envPlan.TerraformVersion = resolveRequired(defaults.TerraformVersion, envConf.TerraformVersion)
 		envPlan.InfraBucket = resolveRequired(defaults.InfraBucket, envConf.InfraBucket)
+		envPlan.InfraDynamoTable = resolveRequired(defaults.InfraDynamoTable, envConf.InfraDynamoTable)
 		envPlan.Owner = resolveRequired(defaults.Owner, envConf.Owner)
 		envPlan.Project = resolveRequired(defaults.Project, envConf.Project)
 		envPlan.ExtraVars = resolveExtraVars(defaultExtraVars, envConf.ExtraVars)
@@ -279,6 +283,7 @@ func (p *Plan) buildEnvs(conf *config.Config) (map[string]Env, error) {
 
 			componentPlan.TerraformVersion = resolveRequired(envPlan.TerraformVersion, componentConf.TerraformVersion)
 			componentPlan.InfraBucket = resolveRequired(envPlan.InfraBucket, componentConf.InfraBucket)
+			componentPlan.InfraDynamoTable = resolveRequired(envPlan.InfraDynamoTable, componentConf.InfraDynamoTable)
 			componentPlan.Owner = resolveRequired(envPlan.Owner, componentConf.Owner)
 			componentPlan.Project = resolveRequired(envPlan.Project, componentConf.Project)
 

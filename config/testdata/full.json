@@ -7,6 +7,7 @@
     "aws_region_provider": "us-west-1",
     "aws_provider_version": "0.1.0",
     "infra_s3_bucket": "the-bucket",
+    "infra_dynamo_db_table": "the-table",
     "owner": "default@example.com",
     "project": "test-project",
     "terraform_version": "0.11.0"
