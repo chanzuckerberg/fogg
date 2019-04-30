@@ -33,7 +33,7 @@ func (p *Plan) buildTravisCI(c *config.Config, version string) TravisCI {
 			Name: name,
 			// TODO since accountID is required here, that means we need
 			// to make it non-optional, either in defaults or post-plan.
-			ID:   *p.Accounts[name].AccountID,
+			ID:   p.Accounts[name].AccountID,
 			Role: c.TravisCI.AWSIAMRoleName,
 		})
 	}

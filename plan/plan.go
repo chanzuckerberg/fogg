@@ -16,7 +16,7 @@ const (
 
 // AWSConfiguration represents aws configuration
 type AWSConfiguration struct {
-	AccountID          *int64   `yaml:"account_id"`
+	AccountID          int64    `yaml:"account_id"`
 	AccountName        string   `yaml:"account_name"`
 	AWSProfileBackend  string   `yaml:"aws_profile_backend"`
 	AWSProfileProvider string   `yaml:"aws_profile_provider"`
@@ -149,7 +149,7 @@ func (p *Plan) buildAccounts(c *config.Config) map[string]Account {
 		accountPlan.DockerImageVersion = dockerImageVersion
 
 		accountPlan.AccountName = name
-		accountPlan.AccountID = resolveOptionalInt(c.Defaults.AccountID, config.AccountID)
+		accountPlan.AccountID = resolveRequiredInt(c.Defaults.AccountID, config.AccountID)
 
 		accountPlan.AWSRegionBackend = resolveRequired(defaults.AWSRegionBackend, config.AWSRegionBackend)
 		accountPlan.AWSRegionProvider = resolveRequired(defaults.AWSRegionProvider, config.AWSRegionProvider)
@@ -210,8 +210,6 @@ func (p *Plan) buildGlobal(conf *config.Config) Component {
 	componentPlan.AWSProfileBackend = conf.Defaults.AWSProfileBackend
 	componentPlan.AWSProfileProvider = conf.Defaults.AWSProfileProvider
 	componentPlan.AWSProviderVersion = conf.Defaults.AWSProviderVersion
-	// TODO add AccountID to defaults
-	// componentPlan.AccountID = conf.Defaults.AccountID
 
 	componentPlan.TerraformVersion = conf.Defaults.TerraformVersion
 	componentPlan.InfraBucket = conf.Defaults.InfraBucket
@@ -236,7 +234,7 @@ func (p *Plan) buildEnvs(conf *config.Config) (map[string]Env, error) {
 	for envName, envConf := range conf.Envs {
 		envPlan := newEnvPlan()
 
-		envPlan.AccountID = resolveOptionalInt(conf.Defaults.AccountID, envConf.AccountID)
+		envPlan.AccountID = resolveRequiredInt(conf.Defaults.AccountID, envConf.AccountID)
 		envPlan.Env = envName
 		envPlan.DockerImageVersion = dockerImageVersion
 
@@ -271,7 +269,7 @@ func (p *Plan) buildEnvs(conf *config.Config) (map[string]Env, error) {
 			}
 			componentPlan.Accounts = p.Accounts
 
-			componentPlan.AccountID = resolveOptionalInt(envPlan.AccountID, componentConf.AccountID)
+			componentPlan.AccountID = resolveRequiredInt(envPlan.AccountID, componentConf.AccountID)
 			componentPlan.AWSRegionBackend = resolveRequired(envPlan.AWSRegionBackend, componentConf.AWSRegionBackend)
 			componentPlan.AWSRegionProvider = resolveRequired(envPlan.AWSRegionProvider, componentConf.AWSRegionProvider)
 			componentPlan.AWSRegions = resolveStringArray(envPlan.AWSRegions, componentConf.AWSRegions)
@@ -279,7 +277,6 @@ func (p *Plan) buildEnvs(conf *config.Config) (map[string]Env, error) {
 			componentPlan.AWSProfileBackend = resolveRequired(envPlan.AWSProfileBackend, componentConf.AWSProfileBackend)
 			componentPlan.AWSProfileProvider = resolveRequired(envPlan.AWSProfileProvider, componentConf.AWSProfileProvider)
 			componentPlan.AWSProviderVersion = resolveRequired(envPlan.AWSProviderVersion, componentConf.AWSProviderVersion)
-			componentPlan.AccountID = resolveOptionalInt(envPlan.AccountID, componentConf.AccountID)
 
 			componentPlan.TerraformVersion = resolveRequired(envPlan.TerraformVersion, componentConf.TerraformVersion)
 			componentPlan.InfraBucket = resolveRequired(envPlan.InfraBucket, componentConf.InfraBucket)
@@ -350,6 +347,13 @@ func resolveStringArray(def []string, override []string) []string {
 }
 
 func resolveRequired(def string, override *string) string {
+	if override != nil {
+		return *override
+	}
+	return def
+}
+
+func resolveRequiredInt(def int64, override *int64) int64 {
 	if override != nil {
 		return *override
 	}

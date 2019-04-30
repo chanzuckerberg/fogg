@@ -20,7 +20,7 @@ type TfLint struct {
 }
 
 type defaults struct {
-	AccountID          *int64            `json:"account_id,omitempty"`
+	AccountID          int64             `json:"account_id,omitempty" validate:"required"`
 	AWSProfileBackend  string            `json:"aws_profile_backend" validate:"required"`
 	AWSProfileProvider string            `json:"aws_profile_provider" validate:"required"`
 	AWSProviderVersion string            `json:"aws_provider_version" validate:"required"`
