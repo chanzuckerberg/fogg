@@ -48,7 +48,7 @@ func TestParse(t *testing.T) {
 	c, e := ReadConfig(r)
 	assert.Nil(t, e)
 	assert.NotNil(t, c.Defaults)
-	assert.Equal(t, int64(1), *c.Defaults.AccountID)
+	assert.Equal(t, int64(1), c.Defaults.AccountID)
 	assert.Equal(t, "us-west-2", c.Defaults.AWSRegionBackend)
 	assert.Equal(t, "us-west-1", c.Defaults.AWSRegionProvider)
 	assert.Equal(t, "0.1.0", c.Defaults.AWSProviderVersion)
@@ -99,7 +99,7 @@ func TestValidation(t *testing.T) {
 
 	err, ok := e.(validator.ValidationErrors)
 	assert.True(t, ok)
-	assert.Len(t, err, 9)
+	assert.Len(t, err, 10)
 }
 
 func TestExtraVarsValidation(t *testing.T) {
@@ -107,6 +107,7 @@ func TestExtraVarsValidation(t *testing.T) {
 	{
 		"defaults": {
 			"aws_region_backend": "us-west-2",
+			"account_id": 123456789,
 			"aws_region_provider": "us-west-1",
 			"aws_profile_backend": "czi",
 			"aws_profile_provider": "czi",
