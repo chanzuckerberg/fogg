@@ -24,15 +24,13 @@ func openGitOrExit(fs afero.Fs) {
 	}
 }
 
-func readAndValidateConfig(fs afero.Fs, configFile string, verbose bool) (*config.Config, error) {
+func readAndValidateConfig(fs afero.Fs, configFile string) (*config.Config, error) {
 	config, err := config.FindAndReadConfig(fs, configFile)
 	if err != nil {
 		return nil, errs.WrapUser(err, "unable to read config file")
 	}
-	if verbose {
-		log.Debug("CONFIG")
-		log.Debugf("%#v\n=====", config)
-	}
+	log.Debug("CONFIG")
+	log.Debugf("%#v\n=====", config)
 
 	err = config.Validate()
 	return config, err
@@ -86,17 +84,12 @@ func bootstrapCmd(cmd *cobra.Command, debug bool) (afero.Fs, *config.Config, err
 		return nil, nil, err
 	}
 
-	verbose, err := cmd.Flags().GetBool("verbose")
-	if err != nil {
-		return nil, nil, err
-	}
-
 	configFile, err := cmd.Flags().GetString("config")
 	if err != nil {
 		return nil, nil, err
 	}
 
-	config, err := readAndValidateConfig(fs, configFile, verbose)
+	config, err := readAndValidateConfig(fs, configFile)
 
 	err = mergeConfigValidationErrors(err)
 	if err != nil {

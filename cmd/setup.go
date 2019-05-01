@@ -8,8 +8,6 @@ import (
 
 func init() {
 	setupCmd.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
-	setupCmd.Flags().BoolP("verbose", "v", false, "use this to turn on verbose output")
-
 	rootCmd.AddCommand(setupCmd)
 }
 
