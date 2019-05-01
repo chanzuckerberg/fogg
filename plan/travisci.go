@@ -3,7 +3,7 @@ package plan
 import (
 	"path"
 
-	"github.com/chanzuckerberg/fogg/config"
+	"github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/util"
 )
 
@@ -15,7 +15,7 @@ type TravisCI struct {
 	TestBuckets [][]string
 }
 
-func (p *Plan) buildTravisCI(c *config.Config, version string) TravisCI {
+func (p *Plan) buildTravisCI(c *v1.Config, version string) TravisCI {
 	if p.Accounts == nil {
 		panic("buildTravisCI must be run after buildAccounts")
 	}

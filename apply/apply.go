@@ -12,7 +12,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/chanzuckerberg/fogg/config"
+	"github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plan"
 	"github.com/chanzuckerberg/fogg/templates"
@@ -27,7 +27,7 @@ import (
 const rootPath = "terraform"
 
 // Apply will run a plan and apply all the changes to the current repo.
-func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, upgrade bool) error {
+func Apply(fs afero.Fs, conf *v1.Config, tmp *templates.T, upgrade bool) error {
 	if !upgrade {
 		toolVersion, err := util.VersionString()
 		if err != nil {
@@ -150,7 +150,7 @@ func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox *packr.Box) (
 	return nil
 }
 
-func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBoxes map[config.ComponentKind]packr.Box) (e error) {
+func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBoxes map[v1.ComponentKind]packr.Box) (e error) {
 	log.Debug("applying envs")
 	for env, envPlan := range p.Envs {
 		log.Debugf("applying %s", env)
