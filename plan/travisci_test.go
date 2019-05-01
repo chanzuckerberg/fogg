@@ -3,7 +3,7 @@ package plan
 import (
 	"testing"
 
-	"github.com/chanzuckerberg/fogg/config"
+	"github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,8 +17,8 @@ func init() {
 func Test_buildTravisCI_Disabled(t *testing.T) {
 	a := assert.New(t)
 	{
-		c := &config.Config{
-			TravisCI: &config.TravisCI{
+		c := &v1.Config{
+			TravisCI: &v1.TravisCI{
 				Enabled: false,
 			},
 		}
@@ -32,13 +32,13 @@ func Test_buildTravisCI_Disabled(t *testing.T) {
 func Test_buildTravisCI_Profiles(t *testing.T) {
 	a := assert.New(t)
 
-	c := &config.Config{
-		Accounts: map[string]config.Account{
-			"foo": config.Account{
+	c := &v1.Config{
+		Accounts: map[string]v1.Account{
+			"foo": v1.Account{
 				AccountID: &id1,
 			},
 		},
-		TravisCI: &config.TravisCI{
+		TravisCI: &v1.TravisCI{
 			Enabled:        true,
 			AWSIAMRoleName: "rollin",
 		},
@@ -55,16 +55,16 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 func Test_buildTravisCI_TestBuckets(t *testing.T) {
 	a := assert.New(t)
 
-	c := &config.Config{
-		Accounts: map[string]config.Account{
-			"foo": config.Account{
+	c := &v1.Config{
+		Accounts: map[string]v1.Account{
+			"foo": v1.Account{
 				AccountID: &id1,
 			},
-			"bar": config.Account{
+			"bar": v1.Account{
 				AccountID: &id2,
 			},
 		},
-		TravisCI: &config.TravisCI{
+		TravisCI: &v1.TravisCI{
 			Enabled:        true,
 			AWSIAMRoleName: "rollin",
 		},

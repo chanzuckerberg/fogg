@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/chanzuckerberg/fogg/config"
+	"github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/errs"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
@@ -24,7 +25,7 @@ func openGitOrExit(fs afero.Fs) {
 	}
 }
 
-func readAndValidateConfig(fs afero.Fs, configFile string) (*config.Config, error) {
+func readAndValidateConfig(fs afero.Fs, configFile string) (*v1.Config, error) {
 	config, err := config.FindAndReadConfig(fs, configFile)
 	if err != nil {
 		return nil, errs.WrapUser(err, "unable to read config file")
@@ -76,7 +77,7 @@ func openFs() (afero.Fs, error) {
 	return fs, nil
 }
 
-func bootstrapCmd(cmd *cobra.Command, debug bool) (afero.Fs, *config.Config, error) {
+func bootstrapCmd(cmd *cobra.Command, debug bool) (afero.Fs, *v1.Config, error) {
 	setupDebug(debug)
 
 	fs, err := openFs()

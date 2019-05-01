@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/chanzuckerberg/fogg/config"
+	"github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/errs"
 	prompt "github.com/segmentio/go-prompt"
 	"github.com/spf13/afero"
@@ -22,7 +23,7 @@ func userPrompt() (string, string, string, string, string, string) {
 	return project, region, bucket, table, profile, owner
 }
 
-func writeConfig(fs afero.Fs, config *config.Config) error {
+func writeConfig(fs afero.Fs, config *v1.Config) error {
 	json, e := json.MarshalIndent(config, "", "  ")
 	if e != nil {
 		return errs.WrapInternal(e, "unable to marshal json")

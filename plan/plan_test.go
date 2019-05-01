@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/config"
+	"github.com/chanzuckerberg/fogg/config/v1"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
@@ -29,7 +30,7 @@ func TestResolveRequired(t *testing.T) {
 func TestResolveAccounts(t *testing.T) {
 	foo, bar := int64(123), int64(456)
 
-	accounts := map[string]config.Account{
+	accounts := map[string]v1.Account{
 		"foo": {
 			AccountID: &foo,
 		},
@@ -141,8 +142,8 @@ func TestResolveTfLint(test *testing.T) {
 	}
 	for _, r := range data {
 		test.Run("", func(t *testing.T) {
-			def := &config.TfLint{Enabled: r.def}
-			over := &config.TfLint{Enabled: r.over}
+			def := &v1.TfLint{Enabled: r.def}
+			over := &v1.TfLint{Enabled: r.over}
 			result := resolveTfLint(def, over)
 			a.Equal(r.output, result.Enabled)
 		})
@@ -169,7 +170,7 @@ func TestResolveTfLintComponent(test *testing.T) {
 	for _, r := range data {
 		test.Run("", func(t *testing.T) {
 			def := TfLint{Enabled: r.def}
-			over := &config.TfLint{Enabled: r.over}
+			over := &v1.TfLint{Enabled: r.over}
 			result := resolveTfLintComponent(def, over)
 			a.Equal(r.output, result.Enabled)
 		})
@@ -179,6 +180,6 @@ func TestResolveTfLintComponent(test *testing.T) {
 func TestResolveEKSConfig(t *testing.T) {
 	a := assert.New(t)
 	a.Equal("", resolveEKSConfig(nil, nil).ClusterName)
-	a.Equal("a", resolveEKSConfig(&config.EKSConfig{ClusterName: "a"}, nil).ClusterName)
-	a.Equal("b", resolveEKSConfig(&config.EKSConfig{ClusterName: "a"}, &config.EKSConfig{ClusterName: "b"}).ClusterName)
+	a.Equal("a", resolveEKSConfig(&v1.EKSConfig{ClusterName: "a"}, nil).ClusterName)
+	a.Equal("b", resolveEKSConfig(&v1.EKSConfig{ClusterName: "a"}, &v1.EKSConfig{ClusterName: "b"}).ClusterName)
 }

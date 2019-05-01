@@ -1,4 +1,4 @@
-package config
+package v1
 
 var reservedVariableNames = map[string]bool{
 	"aws_accounts": true,

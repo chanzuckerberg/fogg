@@ -3,7 +3,7 @@ package plan
 import (
 	"fmt"
 
-	"github.com/chanzuckerberg/fogg/config"
+	"github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/util"
 	yaml "gopkg.in/yaml.v2"
@@ -59,12 +59,12 @@ type Component struct {
 	AWSConfiguration `yaml:",inline"`
 	Common           `yaml:",inline"`
 	Component        string
-	EKS              *config.EKSConfig `yaml:"eks,omitempty"`
+	EKS              *v1.EKSConfig `yaml:"eks,omitempty"`
 	Env              string
-	ExtraVars        map[string]string     `yaml:"extra_vars"`
-	Kind             *config.ComponentKind `yaml:"kind,omitempty"`
-	ModuleSource     *string               `yaml:"module_source"`
-	OtherComponents  []string              `yaml:"other_components"`
+	ExtraVars        map[string]string `yaml:"extra_vars"`
+	Kind             *v1.ComponentKind `yaml:"kind,omitempty"`
+	ModuleSource     *string           `yaml:"module_source"`
+	OtherComponents  []string          `yaml:"other_components"`
 	Owner            string
 	Project          string
 	TfLint           TfLint
@@ -77,7 +77,7 @@ type Env struct {
 
 	Components map[string]Component
 	Env        string
-	EKS        *config.EKSConfig
+	EKS        *v1.EKSConfig
 	ExtraVars  map[string]string `yaml:"extra_vars"`
 	Owner      string
 	Project    string
@@ -106,7 +106,7 @@ type Plan struct {
 }
 
 // Eval evaluates a config
-func Eval(config *config.Config) (*Plan, error) {
+func Eval(config *v1.Config) (*Plan, error) {
 	p := &Plan{}
 	v, e := util.VersionString()
 	if e != nil {
@@ -140,7 +140,7 @@ func Print(p *Plan) error {
 	return nil
 }
 
-func (p *Plan) buildAccounts(c *config.Config) map[string]Account {
+func (p *Plan) buildAccounts(c *v1.Config) map[string]Account {
 	defaults := c.Defaults
 
 	accountPlans := make(map[string]Account, len(c.Accounts))
@@ -176,7 +176,7 @@ func (p *Plan) buildAccounts(c *config.Config) map[string]Account {
 	return accountPlans
 }
 
-func (p *Plan) buildModules(c *config.Config) map[string]Module {
+func (p *Plan) buildModules(c *v1.Config) map[string]Module {
 	modulePlans := make(map[string]Module, len(c.Modules))
 	for name, conf := range c.Modules {
 		modulePlan := Module{}
@@ -196,7 +196,7 @@ func newEnvPlan() Env {
 	return ep
 }
 
-func (p *Plan) buildGlobal(conf *config.Config) Component {
+func (p *Plan) buildGlobal(conf *v1.Config) Component {
 	// Global just uses defaults because that's the way sicc worked. We should make it directly configurable.
 	componentPlan := Component{}
 
@@ -225,7 +225,7 @@ func (p *Plan) buildGlobal(conf *config.Config) Component {
 }
 
 // buildEnvs must be build after accounts
-func (p *Plan) buildEnvs(conf *config.Config) (map[string]Env, error) {
+func (p *Plan) buildEnvs(conf *v1.Config) (map[string]Env, error) {
 	envPlans := make(map[string]Env, len(conf.Envs))
 	defaults := conf.Defaults
 
@@ -264,7 +264,7 @@ func (p *Plan) buildEnvs(conf *config.Config) (map[string]Env, error) {
 				return nil, errs.WrapUser(fmt.Errorf("Component %s can't have same name as account", componentName), "Invalid component name")
 			}
 
-			if componentConf.Kind.GetOrDefault() == config.ComponentKindHelmTemplate {
+			if componentConf.Kind.GetOrDefault() == v1.ComponentKindHelmTemplate {
 				componentPlan.EKS = resolveEKSConfig(envPlan.EKS, componentConf.EKS)
 			}
 			componentPlan.Accounts = p.Accounts
@@ -303,11 +303,11 @@ func (p *Plan) buildEnvs(conf *config.Config) (map[string]Env, error) {
 	return envPlans, nil
 }
 
-func otherComponentNames(components map[string]*config.Component, thisComponent string) []string {
+func otherComponentNames(components map[string]*v1.Component, thisComponent string) []string {
 	r := make([]string, 0)
 	for componentName, componentConf := range components {
 		// Only set up remote state for terraform components
-		if componentConf.Kind.GetOrDefault() != config.ComponentKindTerraform {
+		if componentConf.Kind.GetOrDefault() != v1.ComponentKindTerraform {
 			continue
 		}
 		if componentName != thisComponent {
@@ -317,8 +317,8 @@ func otherComponentNames(components map[string]*config.Component, thisComponent 
 	return r
 }
 
-func resolveEKSConfig(def *config.EKSConfig, override *config.EKSConfig) *config.EKSConfig {
-	resolved := &config.EKSConfig{}
+func resolveEKSConfig(def *v1.EKSConfig, override *v1.EKSConfig) *v1.EKSConfig {
+	resolved := &v1.EKSConfig{}
 	if def != nil {
 		resolved.ClusterName = def.ClusterName
 	}
@@ -367,7 +367,7 @@ func resolveOptionalInt(def *int64, override *int64) *int64 {
 	return def
 }
 
-func resolveAccounts(accounts map[string]config.Account) map[string]int64 {
+func resolveAccounts(accounts map[string]v1.Account) map[string]int64 {
 	a := make(map[string]int64)
 	for name, account := range accounts {
 		if account.AccountID != nil {
@@ -377,7 +377,7 @@ func resolveAccounts(accounts map[string]config.Account) map[string]int64 {
 	return a
 }
 
-func resolveTfLint(def *config.TfLint, override *config.TfLint) TfLint {
+func resolveTfLint(def *v1.TfLint, override *v1.TfLint) TfLint {
 	enabled := false
 	if def != nil && def.Enabled != nil {
 		enabled = *def.Enabled
@@ -390,7 +390,7 @@ func resolveTfLint(def *config.TfLint, override *config.TfLint) TfLint {
 	}
 }
 
-func resolveTfLintComponent(def TfLint, override *config.TfLint) TfLint {
+func resolveTfLintComponent(def TfLint, override *v1.TfLint) TfLint {
 	enabled := def.Enabled
 	if override != nil && override.Enabled != nil {
 		enabled = *override.Enabled
