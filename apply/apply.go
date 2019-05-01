@@ -38,7 +38,7 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, upgrade bool) err
 			return errs.NewUserf("fogg version (%s) is different than version currently used to manage repo (%s). To upgrade add --upgrade.", toolVersion, repoVersion)
 		}
 	}
-	p, err := plan.Eval(conf, false)
+	p, err := plan.Eval(conf)
 	if err != nil {
 		return errs.WrapUser(err, "unable to evaluate plan")
 	}

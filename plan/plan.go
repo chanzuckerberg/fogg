@@ -106,7 +106,7 @@ type Plan struct {
 }
 
 // Eval evaluates a config
-func Eval(config *config.Config, verbose bool) (*Plan, error) {
+func Eval(config *config.Config) (*Plan, error) {
 	p := &Plan{}
 	v, e := util.VersionString()
 	if e != nil {
