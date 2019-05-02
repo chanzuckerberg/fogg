@@ -1,0 +1,15 @@
+{
+    "version": 2,
+    "defaults": {
+        "backend": {},
+        "providers": {
+            "aws": {
+                "account_id": 123,
+                "region": "us-west-2"
+            }
+        },
+        "project": "foo",
+        "owner": "foo@example.com",
+        "terraform_version": "1.1.1"
+    }
+}
