@@ -11,7 +11,8 @@ import (
 func TestReadConfig(t *testing.T) {
 	a := assert.New(t)
 
-	f, _ := os.Open("testdata/empty.json")
+	f, err := os.Open("../testdata/empty.json")
+	a.NoError(err)
 	defer f.Close()
 	r := bufio.NewReader(f)
 	c, e := ReadConfig(r)
@@ -21,7 +22,8 @@ func TestReadConfig(t *testing.T) {
 	e = c.Validate()
 	a.Error(e)
 
-	f2, _ := os.Open("testdata/minimal_valid.json")
+	f2, err := os.Open("../testdata/v2_minimal_valid.json")
+	a.NoError(err)
 	defer f2.Close()
 	r = bufio.NewReader(f2)
 	c, e = ReadConfig(r)
