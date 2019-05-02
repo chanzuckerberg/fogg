@@ -44,35 +44,35 @@ func nonEmptyString(s string) bool {
 }
 
 func (c *Config) validateOwners() *multierror.Error {
-	var getter = func(comm common) string {
+	var getter = func(comm Common) string {
 		return comm.Owner
 	}
 	return c.validateInheritedStringField("owner", getter, nonEmptyString)
 }
 
 func (c *Config) validateProjects() *multierror.Error {
-	var getter = func(comm common) string {
+	var getter = func(comm Common) string {
 		return comm.Project
 	}
 	return c.validateInheritedStringField("project", getter, nonEmptyString)
 }
 
 func (c *Config) validateTerraformVerion() *multierror.Error {
-	var getter = func(comm common) string {
+	var getter = func(comm Common) string {
 		return comm.TerraformVersion
 	}
 	return c.validateInheritedStringField("terraform version", getter, nonEmptyString)
 }
 
 func (c *Config) validateBackendBucket() *multierror.Error {
-	var getter = func(comm common) string {
+	var getter = func(comm Common) string {
 		return comm.Backend.Bucket
 	}
 	return c.validateInheritedStringField("backend bucket", getter, nonEmptyString)
 }
 
 func (c *Config) validateBackendRegion() *multierror.Error {
-	var getter = func(comm common) string {
+	var getter = func(comm Common) string {
 		return comm.Backend.Region
 	}
 	return c.validateInheritedStringField("backend region", getter, nonEmptyString)
@@ -81,12 +81,12 @@ func (c *Config) validateBackendRegion() *multierror.Error {
 // validateInheritedStringField will walk all accounts and components and ensure that a given field is valid at at least
 // one level of the inheritance hierarchy. We should eventually distinuish between not present and invalid because
 // if the value is present but invalid we should probably mark it as such, rather than papering over it.
-func (c *Config) validateInheritedStringField(fieldName string, getter func(common) string, validator func(string) bool) *multierror.Error {
+func (c *Config) validateInheritedStringField(fieldName string, getter func(Common) string, validator func(string) bool) *multierror.Error {
 	var err *multierror.Error
 
 	// For each account, we need the field to be valid in either the defaults or account
 	for acctName, acct := range c.Accounts {
-		if !(validator(getter(c.Defaults.common)) || validator(getter(acct.common))) {
+		if !(validator(getter(c.Defaults.Common)) || validator(getter(acct.Common))) {
 			err = multierror.Append(err, fmt.Errorf("account %s must have a valid %s set at either the account or defaults level", acctName, fieldName))
 		}
 	}
@@ -94,7 +94,7 @@ func (c *Config) validateInheritedStringField(fieldName string, getter func(comm
 	// For each component, we need the field to be valid at one of defaults, env or component
 	for envName, env := range c.Envs {
 		for componentName, component := range env.Components {
-			if !(validator(getter(c.Defaults.common)) || validator(getter(env.common)) || validator(getter(component.common))) {
+			if !(validator(getter(c.Defaults.Common)) || validator(getter(env.Common)) || validator(getter(component.Common))) {
 				err = multierror.Append(err, fmt.Errorf("componnent %s/%s must have a valid %s", envName, componentName, fieldName))
 			}
 		}

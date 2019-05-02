@@ -72,13 +72,13 @@ func TestValidateOwners(t *testing.T) {
 func confAcctOwner(def, acct string) Config {
 	return Config{
 		Defaults: Defaults{
-			common{
+			Common{
 				Owner: def,
 			},
 		},
 		Accounts: map[string]Account{
 			"foo": Account{
-				common{
+				Common{
 					Owner: acct,
 				},
 			},
@@ -89,18 +89,18 @@ func confAcctOwner(def, acct string) Config {
 func confComponentOwner(def, env, component string) Config {
 	return Config{
 		Defaults: Defaults{
-			common{
+			Common{
 				Owner: def,
 			},
 		},
 		Envs: map[string]Env{
 			"bar": Env{
-				common: common{
+				Common: Common{
 					Owner: env,
 				},
 				Components: map[string]Component{
 					"bam": Component{
-						common: common{
+						Common: Common{
 							Owner: component,
 						},
 					},
