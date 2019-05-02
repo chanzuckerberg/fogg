@@ -70,14 +70,15 @@ type Component struct {
 }
 
 type Providers struct {
-	AWS AWSProvider `json:"aws"`
+	AWS *AWSProvider `json:"aws"`
 }
 
 type AWSProvider struct {
-	AccountID         *int64   `json:"account_id"`
+	// the aws provider is optional (above) but if supplied you must set account id and region
+	AccountID         *int64   `json:"account_id" validate:"required"`
 	AdditionalRegions []string `json:"additional_regions"`
 	Profile           *string  `json:"profile"`
-	Region            *string  `json:"region"`
+	Region            *string  `json:"region" validate:"required"`
 	Version           *string  `json:"version,omitempty"`
 }
 
