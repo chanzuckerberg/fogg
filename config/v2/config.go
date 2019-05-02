@@ -34,12 +34,12 @@ type Config struct {
 }
 
 type common struct {
-	Backend          Backend           `json:"backend"`
+	Backend          Backend           `json:"backend,omitempty"`
 	ExtraVars        map[string]string `json:"extra_vars,omitempty"`
-	Owner            string            `json:"owner" `
-	Project          string            `json:"project" `
-	Providers        Providers         `json:"providers" `
-	TerraformVersion string            `json:"terraform_version"`
+	Owner            string            `json:"owner,omitempty" `
+	Project          string            `json:"project,omitempty" `
+	Providers        Providers         `json:"providers,omitempty" `
+	TerraformVersion string            `json:"terraform_version,omitempty"`
 }
 
 type Defaults struct {

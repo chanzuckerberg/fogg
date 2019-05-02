@@ -6,14 +6,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_validateOwner(t *testing.T) {
+func Test_nonEmptyString(t *testing.T) {
 	a := assert.New(t)
 
-	a.True(validOwner("foo"))
-	a.False(validOwner(""))
+	a.True(nonEmptyString("foo"))
+	a.False(nonEmptyString(""))
 }
 
 func TestValidateOwners(t *testing.T) {
+	// this will serve as a test for all the fuctions that use validateInheritedStringField, since they are equivalent
+
 	a := assert.New(t)
 	foo := "foo@example.com"
 

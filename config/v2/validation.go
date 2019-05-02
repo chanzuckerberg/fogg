@@ -40,36 +40,68 @@ func (c *Config) Validate() error {
 	return nil
 }
 
-func validOwner(owner string) bool {
-	return len(owner) > 0
+func nonEmptyString(s string) bool {
+	return len(s) > 0
 }
 
 func (c *Config) validateOwners() *multierror.Error {
+	var getter = func(comm common) string {
+		return comm.Owner
+	}
+	return c.validateInheritedStringField("owner", getter, nonEmptyString)
+}
+
+func (c *Config) validateProjects() *multierror.Error {
+	var getter = func(comm common) string {
+		return comm.Project
+	}
+	return c.validateInheritedStringField("project", getter, nonEmptyString)
+}
+
+func (c *Config) validateTerraformVerion() *multierror.Error {
+	var getter = func(comm common) string {
+		return comm.Project
+	}
+	return c.validateInheritedStringField("project", getter, nonEmptyString)
+}
+
+func (c *Config) validateBackendBucket() *multierror.Error {
+	var getter = func(comm common) string {
+		return comm.Backend.Bucket
+	}
+	return c.validateInheritedStringField("backend bucket", getter, nonEmptyString)
+}
+
+func (c *Config) validateBackendRegion() *multierror.Error {
+	var getter = func(comm common) string {
+		return comm.Backend.Region
+	}
+	return c.validateInheritedStringField("backend region", getter, nonEmptyString)
+}
+
+// TODO validateAWSProviders
+
+func (c *Config) validateInheritedStringField(fieldName string, getter func(common) string, validator func(string) bool) *multierror.Error {
 	var err *multierror.Error
 
 	// For each account, we need a valid owner to be set in either the defaults or account
 	for acctName, acct := range c.Accounts {
-		if !(validOwner(c.Defaults.Owner) || validOwner(acct.Owner)) {
-			err = multierror.Append(err, fmt.Errorf("account %s must have a valid owner set at either the account or defaults level", acctName))
+		if !(validator(getter(c.Defaults.common)) || validator(getter(acct.common))) {
+			err = multierror.Append(err, fmt.Errorf("account %s must have a valid %s set at either the account or defaults level", acctName, fieldName))
 		}
 	}
 
 	// For each component, we need a valid owner to be set at one of defaults, env or component
 	for envName, env := range c.Envs {
 		for componentName, component := range env.Components {
-			if !(validOwner(c.Defaults.Owner) || validOwner(env.Owner) || validOwner(component.Owner)) {
-				err = multierror.Append(err, fmt.Errorf("componnent %s/%s must have a valid owner", envName, componentName))
+			if !(validator(getter(c.Defaults.common)) || validator(getter(env.common)) || validator(getter(component.common))) {
+				err = multierror.Append(err, fmt.Errorf("componnent %s/%s must have a valid %s", envName, componentName, fieldName))
 			}
 		}
 	}
 
 	return err
 }
-
-// validateBackend
-// validateProject
-// validateTerraformVerion
-// validateAWSProviders
 
 // validateExtraVars make sure users don't specify reserved variables
 func (c *Config) validateExtraVars() error {
