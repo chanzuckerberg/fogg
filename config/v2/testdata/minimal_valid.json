@@ -1,0 +1,12 @@
+{
+    "version": 2,
+    "defaults": {
+        "backend": {},
+        "providers": {
+            "aws": {}
+        },
+        "project": "foo",
+        "owner": "foo@example.com",
+        "terraform_version": "1.1.1"
+    }
+}
