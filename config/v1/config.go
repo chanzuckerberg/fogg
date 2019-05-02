@@ -165,7 +165,7 @@ func (c *Config) validateExtraVars() error {
 	var err *multierror.Error
 	validate := func(extraVars map[string]string) {
 		for extraVar := range extraVars {
-			if _, ok := reservedVariableNames[extraVar]; ok {
+			if _, ok := ReservedVariableNames[extraVar]; ok {
 				err = multierror.Append(err, fmt.Errorf("extra_var[%s] is a fogg reserved variable name", extraVar))
 			}
 		}
