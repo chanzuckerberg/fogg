@@ -12,6 +12,7 @@ import (
 
 // Validate validates the config
 func (c *Config) Validate() error {
+	var errs *multierror.Error
 
 	v := validator.New()
 	// This func gives us the ability to get the full path for a field deeply
@@ -25,19 +26,16 @@ func (c *Config) Validate() error {
 		}
 		return name
 	})
-	err := v.Struct(c)
 
-	if err != nil {
-		return err
-	}
+	errs = multierror.Append(errs, v.Struct(c))
+	errs = multierror.Append(errs, c.validateExtraVars())
+	errs = multierror.Append(errs, c.validateOwners())
+	errs = multierror.Append(errs, c.validateProjects())
+	errs = multierror.Append(errs, c.validateTerraformVerion())
+	errs = multierror.Append(errs, c.validateBackendBucket())
+	errs = multierror.Append(errs, c.validateBackendRegion())
 
-	err = c.validateExtraVars()
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return errs.ErrorOrNil()
 }
 
 func nonEmptyString(s string) bool {
