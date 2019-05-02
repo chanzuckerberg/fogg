@@ -58,9 +58,9 @@ func (c *Config) validateProjects() *multierror.Error {
 
 func (c *Config) validateTerraformVerion() *multierror.Error {
 	var getter = func(comm common) string {
-		return comm.Project
+		return comm.TerraformVersion
 	}
-	return c.validateInheritedStringField("project", getter, nonEmptyString)
+	return c.validateInheritedStringField("terraform version", getter, nonEmptyString)
 }
 
 func (c *Config) validateBackendBucket() *multierror.Error {
@@ -77,19 +77,20 @@ func (c *Config) validateBackendRegion() *multierror.Error {
 	return c.validateInheritedStringField("backend region", getter, nonEmptyString)
 }
 
-// TODO validateAWSProviders
-
+// validateInheritedStringField will walk all accounts and components and ensure that a given field is valid at at least
+// one level of the inheritance hierarchy. We should eventually distinuish between not present and invalid because
+// if the value is present but invalid we should probably mark it as such, rather than papering over it.
 func (c *Config) validateInheritedStringField(fieldName string, getter func(common) string, validator func(string) bool) *multierror.Error {
 	var err *multierror.Error
 
-	// For each account, we need a valid owner to be set in either the defaults or account
+	// For each account, we need the field to be valid in either the defaults or account
 	for acctName, acct := range c.Accounts {
 		if !(validator(getter(c.Defaults.common)) || validator(getter(acct.common))) {
 			err = multierror.Append(err, fmt.Errorf("account %s must have a valid %s set at either the account or defaults level", acctName, fieldName))
 		}
 	}
 
-	// For each component, we need a valid owner to be set at one of defaults, env or component
+	// For each component, we need the field to be valid at one of defaults, env or component
 	for envName, env := range c.Envs {
 		for componentName, component := range env.Components {
 			if !(validator(getter(c.Defaults.common)) || validator(getter(env.common)) || validator(getter(component.common))) {
