@@ -33,7 +33,7 @@ type Config struct {
 	Version  int                  `json:"version" validate:"required,eq=2"`
 }
 
-type common struct {
+type Common struct {
 	Backend          Backend           `json:"backend,omitempty"`
 	ExtraVars        map[string]string `json:"extra_vars,omitempty"`
 	Owner            string            `json:"owner,omitempty" `
@@ -43,26 +43,26 @@ type common struct {
 }
 
 type Defaults struct {
-	common
+	Common
 }
 
 type Account struct {
-	common
+	Common
 }
 
 type Tools struct {
-	TravisCI v1.TravisCI `json:"travis_ci,omitempty"`
-	TfLint   v1.TfLint   `json:"tflint,omitempty"`
+	TravisCI *v1.TravisCI `json:"travis_ci,omitempty"`
+	TfLint   *v1.TfLint   `json:"tflint,omitempty"`
 }
 
 type Env struct {
-	common
+	Common
 
 	Components map[string]Component `json:"components"`
 }
 
 type Component struct {
-	common
+	Common
 
 	EKS          *v1.EKSConfig     `json:"eks,omitempty"`
 	Kind         *v1.ComponentKind `json:"kind,omitempty"`

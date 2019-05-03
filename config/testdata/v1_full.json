@@ -1,0 +1,139 @@
+{
+  "docker": false,
+  "defaults": {
+    "account_id": 1,
+    "aws_profile_backend": "czi",
+    "aws_profile_provider": "czi",
+    "aws_region_backend": "us-west-2",
+    "aws_region_provider": "us-west-1",
+    "aws_provider_version": "0.1.0",
+    "infra_s3_bucket": "the-bucket",
+    "infra_dynamo_db_table": "the-table",
+    "owner": "default@example.com",
+    "project": "test-project",
+    "terraform_version": "0.11.0",
+    "aws_regions": [
+      "us-east-1"
+    ],
+    "tflint": {
+      "enabled": true
+    },
+    "extra_vars": {
+      "foo": "bar"
+    }
+  },
+  "travis_ci": {
+    "enabled": true,
+    "aws_iam_role_name": "travis-role",
+    "test_buckets": 13
+  },
+  "accounts": {
+    "foo": {
+      "account_id": 2,
+      "aws_profile_backend": "czi-foo",
+      "aws_profile_provider": "czi-foo",
+      "aws_region_backend": "us-west-foo1",
+      "aws_region_provider": "us-west-foo1",
+      "aws_provider_version": "0.12.0",
+      "infra_s3_bucket": "foo-bucket",
+      "infra_dynamo_db_table": "foo-table",
+      "owner": "foo@example.com",
+      "project": "foo-project",
+      "terraform_version": "0.12.0",
+      "aws_regions": [
+        "us-east-foo2"
+      ],
+      "extra_vars": {
+        "foo": "foo"
+      }
+    },
+    "bar": {
+      "account_id": 3,
+      "aws_profile_backend": "czi-bar",
+      "aws_profile_provider": "czi-bar",
+      "aws_region_backend": "us-west-bar1",
+      "aws_region_provider": "us-west-bar1",
+      "aws_provider_version": "0.13.0",
+      "infra_s3_bucket": "bar-bucket",
+      "infra_dynamo_db_table": "bar-table",
+      "owner": "bar@example.com",
+      "project": "bar-project",
+      "terraform_version": "0.13.0",
+      "aws_regions": [
+        "us-east-bar2"
+      ],
+      "extra_vars": {
+        "foo": "bar"
+      }
+    }
+  },
+  "envs": {
+    "stage": {
+      "account_id": 4,
+      "aws_profile_backend": "czi-stage",
+      "aws_profile_provider": "czi-stage",
+      "aws_region_backend": "us-west-stage1",
+      "aws_region_provider": "us-west-stage1",
+      "aws_provider_version": "0.14.0",
+      "infra_s3_bucket": "stage-bucket",
+      "infra_dynamo_db_table": "stage-table",
+      "owner": "stage@example.com",
+      "project": "stage-project",
+      "terraform_version": "0.14.0",
+      "aws_regions": [
+        "us-east-stage2"
+      ],
+      "extra_vars": {
+        "foo": "stage"
+      },
+      "components": {
+        "env": {
+          "account_id": 5,
+          "aws_profile_backend": "czi-env",
+          "aws_profile_provider": "czi-env",
+          "aws_region_backend": "us-west-env1",
+          "aws_region_provider": "us-west-env1",
+          "aws_provider_version": "0.15.0",
+          "infra_s3_bucket": "env-bucket",
+          "infra_dynamo_db_table": "env-table",
+          "owner": "env@example.com",
+          "project": "env-project",
+          "terraform_version": "0.15.0",
+          "aws_regions": [
+            "us-east-env2"
+          ],
+          "extra_vars": {
+            "foo": "env"
+          },
+          "module_source": "github.com/foo/bar"
+        },
+        "helm": {}
+      }
+    }
+  },
+  "modules": {
+    "module1": {
+      "terraform_version": "0.15.0"
+    }
+  },
+  "plugins": {
+    "custom_plugins": {
+      "plugin": {
+        "url": "https://example.com/plugin.tgz",
+        "format": "tar",
+        "tar_config": {
+          "strip_components": 7
+        }
+      }
+    },
+    "terraform_providers": {
+      "provider": {
+        "url": "https://example.com/provider.tgz",
+        "format": "tar",
+        "tar_config": {
+          "strip_components": 7
+        }
+      }
+    }
+  }
+}
