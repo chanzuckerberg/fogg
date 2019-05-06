@@ -48,15 +48,22 @@ func ReadConfig(f io.Reader) (*v1.Config, error) {
 	return c, nil
 }
 
-func FindAndReadConfig(fs afero.Fs, configFile string) (*v1.Config, error) {
-	f, e := fs.Open(configFile)
-	if e != nil {
-		return nil, errs.WrapUser(e, "unable to open config file")
+func FindAndReadConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
+	f, err := fs.Open(configFile)
+	if err != nil {
+		return nil, errs.WrapUser(err, "unable to open config file")
 	}
 	reader := io.ReadCloser(f)
 	defer reader.Close()
-	c, err2 := ReadConfig(reader)
-	return c, err2
+
+	c, err := ReadConfig(reader)
+	if err != nil {
+		return nil, err
+	}
+
+	c2, err := UpgradeConfigVersion(c)
+
+	return c2, err
 }
 
 type ver struct {
@@ -75,12 +82,16 @@ func detectVersion(b []byte) (int, error) {
 	return v.Version, nil
 }
 
-// upgradeConfigVersion will convert a v1.Config to a v2.Config. Note that due to some semantic changes, this a lossy
+// UpgradeConfigVersion will convert a v1.Config to a v2.Config. Note that due to some semantic changes, this a lossy
 //  conversion
-func upgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
-	c2 := &v2.Config{}
+func UpgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
+	c2 := &v2.Config{
+		Version:  2,
+		Docker:   c1.Docker,
+		Accounts: map[string]v2.Account{},
+		Envs:     map[string]v2.Env{},
+	}
 
-	c2.Docker = c1.Docker
 	def1 := c1.Defaults
 	c2.Defaults = v2.Defaults{
 		Common: v2.Common{
@@ -97,7 +108,7 @@ func upgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 					AdditionalRegions: def1.AWSRegions,
 					Profile:           &def1.AWSProfileProvider,
 					Region:            &def1.AWSRegionProvider,
-					Version:           &def1.TerraformVersion,
+					Version:           &def1.AWSProviderVersion,
 				},
 			},
 			Owner:            def1.Owner,
@@ -114,8 +125,6 @@ func upgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 	if c1.TravisCI != nil {
 		c2.Tools.TravisCI = c1.TravisCI
 	}
-
-	c2.Accounts = map[string]v2.Account{}
 
 	var ptrstr = func(s *string) string {
 		if s == nil {
@@ -140,7 +149,7 @@ func upgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 						AdditionalRegions: acct.AWSRegions,
 						Profile:           acct.AWSProfileProvider,
 						Region:            acct.AWSRegionProvider,
-						Version:           acct.TerraformVersion,
+						Version:           acct.AWSProviderVersion,
 					},
 				},
 				Owner:            ptrstr(acct.Owner),
@@ -149,8 +158,6 @@ func upgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 			},
 		}
 	}
-
-	c2.Envs = map[string]v2.Env{}
 
 	for envName, env := range c1.Envs {
 		env2 := v2.Env{
@@ -168,7 +175,7 @@ func upgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 						AdditionalRegions: env.AWSRegions,
 						Profile:           env.AWSProfileProvider,
 						Region:            env.AWSRegionProvider,
-						Version:           env.TerraformVersion,
+						Version:           env.AWSProviderVersion,
 					},
 				},
 				Owner:            ptrstr(env.Owner),
@@ -187,12 +194,16 @@ func upgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 						Profile:     ptrstr(component.AWSProfileBackend),
 						Region:      ptrstr(component.AWSRegionBackend),
 					},
-					ExtraVars:        component.ExtraVars,
-					Providers:        v2.Providers{},
+					ExtraVars: component.ExtraVars,
+					Providers: v2.Providers{
+						// see below
+					},
 					Owner:            ptrstr(component.Owner),
 					Project:          ptrstr(component.Project),
 					TerraformVersion: ptrstr(component.TerraformVersion),
 				},
+				EKS:          component.EKS,
+				Kind:         component.Kind,
 				ModuleSource: component.ModuleSource,
 			}
 
@@ -202,7 +213,7 @@ func upgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 					AdditionalRegions: component.AWSRegions,
 					Profile:           component.AWSProfileProvider,
 					Region:            component.AWSRegionProvider,
-					Version:           component.TerraformVersion,
+					Version:           component.AWSProviderVersion,
 				}
 			}
 			env2.Components[componentName] = c2

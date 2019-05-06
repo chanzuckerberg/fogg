@@ -7,6 +7,8 @@ import (
 
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/config/v1"
+	"github.com/chanzuckerberg/fogg/config/v2"
+	"github.com/kr/pretty"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
@@ -30,12 +32,24 @@ func TestResolveRequired(t *testing.T) {
 func TestResolveAccounts(t *testing.T) {
 	foo, bar := int64(123), int64(456)
 
-	accounts := map[string]v1.Account{
+	accounts := map[string]v2.Account{
 		"foo": {
-			AccountID: &foo,
+			Common: v2.Common{
+				Providers: v2.Providers{
+					AWS: &v2.AWSProvider{
+						AccountID: &foo,
+					},
+				},
+			},
 		},
 		"bar": {
-			AccountID: &bar,
+			Common: v2.Common{
+				Providers: v2.Providers{
+					AWS: &v2.AWSProvider{
+						AccountID: &bar,
+					},
+				},
+			},
 		},
 		"baz": {},
 	}
@@ -61,14 +75,20 @@ func TestResolveStringArray(t *testing.T) {
 
 }
 
-func TestPlanBasic(t *testing.T) {
+func TestPlanBasicV1(t *testing.T) {
+	a := assert.New(t)
 	f, _ := os.Open("testdata/full.json")
 	defer f.Close()
 	r := bufio.NewReader(f)
 	c, err := config.ReadConfig(r)
 	assert.Nil(t, err)
 
-	plan, e := Eval(c)
+	c2, err := config.UpgradeConfigVersion(c)
+	a.NoError(err)
+
+	pretty.Print(c2)
+
+	plan, e := Eval(c2)
 	assert.Nil(t, e)
 	assert.NotNil(t, plan)
 	assert.NotNil(t, plan.Accounts)
@@ -82,7 +102,7 @@ func TestPlanBasic(t *testing.T) {
 	assert.Len(t, plan.Envs, 2)
 
 	assert.NotNil(t, plan.Envs["staging"])
-	assert.Equal(t, plan.Envs["staging"].TerraformVersion, "0.100.0")
+	assert.Equal(t, "0.100.0", plan.Envs["staging"].TerraformVersion)
 
 	assert.NotNil(t, plan.Envs["staging"].Components)
 	assert.Len(t, plan.Envs["staging"].Components, 4)
@@ -100,14 +120,18 @@ func TestPlanBasic(t *testing.T) {
 	assert.Equal(t, "k8s", plan.Envs["staging"].Components["comp_helm_template"].EKS.ClusterName)
 }
 
-func TestExtraVarsComposition(t *testing.T) {
+func TestExtraVarsCompositionV2(t *testing.T) {
+	a := assert.New(t)
 	f, _ := os.Open("testdata/full.json")
 	defer f.Close()
 	r := bufio.NewReader(f)
 	c, err := config.ReadConfig(r)
 	assert.Nil(t, err)
 
-	plan, e := Eval(c)
+	c2, err := config.UpgradeConfigVersion(c)
+	a.NoError(err)
+
+	plan, e := Eval(c2)
 	assert.Nil(t, e)
 	assert.NotNil(t, plan)
 

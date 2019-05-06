@@ -233,8 +233,10 @@ func TestApplySmokeTest(t *testing.T) {
 `
 	c, e := config.ReadConfig(ioutil.NopCloser(strings.NewReader(json)))
 	assert.NoError(t, e)
+	c2, e := config.UpgradeConfigVersion(c)
+	assert.NoError(t, e)
 
-	e = Apply(fs, c, templates.Templates, false)
+	e = Apply(fs, c2, templates.Templates, false)
 	assert.NoError(t, e)
 }
 

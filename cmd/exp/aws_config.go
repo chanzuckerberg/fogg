@@ -52,7 +52,7 @@ var awsConfigCmd = &cobra.Command{
 			return errs.WrapInternal(err, "couldn't parse role")
 		}
 
-		config, err := config.FindAndReadConfig(fs, configFile)
+		conf, err := config.FindAndReadConfig(fs, configFile)
 		if err != nil {
 			return err
 		}
@@ -69,17 +69,18 @@ output = json
 		choices := []string{"yes", "no", "all"}
 
 	Loop:
-		for name, account := range config.Accounts {
+		for name, account := range conf.Accounts {
 			fmt.Printf("Generating config for %s\n", name)
-			region := config.Defaults.AWSRegionProvider
-			if account.AWSRegionProvider != nil {
-				region = *account.AWSRegionProvider
+
+			region := conf.Defaults.Providers.AWS.Region
+			if account.Providers.AWS.Region != nil {
+				region = account.Providers.AWS.Region
 			}
 
 			roleARN := arn.ARN{
 				Partition: "aws",
 				Service:   "iam",
-				AccountID: strconv.Itoa(int(*account.AccountID)),
+				AccountID: strconv.Itoa(int(*account.Providers.AWS.AccountID)),
 				Resource:  fmt.Sprintf("role/%s", role),
 			}
 
@@ -112,7 +113,7 @@ output = json
 				}
 			}
 
-			err = awsConfigure(name, roleARN.String(), sourceProfile, region)
+			err = awsConfigure(name, roleARN.String(), sourceProfile, *region)
 			if err != nil {
 				return err
 			}

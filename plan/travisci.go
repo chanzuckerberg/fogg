@@ -3,7 +3,7 @@ package plan
 import (
 	"path"
 
-	"github.com/chanzuckerberg/fogg/config/v1"
+	"github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/util"
 )
 
@@ -15,13 +15,13 @@ type TravisCI struct {
 	TestBuckets [][]string
 }
 
-func (p *Plan) buildTravisCI(c *v1.Config, version string) TravisCI {
+func (p *Plan) buildTravisCI(c *v2.Config, version string) TravisCI {
 	if p.Accounts == nil {
 		panic("buildTravisCI must be run after buildAccounts")
 	}
 
 	tr := TravisCI{
-		Enabled: c.TravisCI.Enabled,
+		Enabled: c.Tools.TravisCI.Enabled,
 	}
 	var profiles []AWSProfile
 
@@ -34,14 +34,14 @@ func (p *Plan) buildTravisCI(c *v1.Config, version string) TravisCI {
 			// TODO since accountID is required here, that means we need
 			// to make it non-optional, either in defaults or post-plan.
 			ID:   p.Accounts[name].AccountID,
-			Role: c.TravisCI.AWSIAMRoleName,
+			Role: c.Tools.TravisCI.AWSIAMRoleName,
 		})
 	}
 	tr.AWSProfiles = profiles
 
 	var buckets int
-	if c.TravisCI.TestBuckets > 0 {
-		buckets = c.TravisCI.TestBuckets
+	if c.Tools.TravisCI.TestBuckets > 0 {
+		buckets = c.Tools.TravisCI.TestBuckets
 	} else {
 		buckets = 1
 	}

@@ -192,7 +192,7 @@ func boolptr(b bool) *bool {
 	return &b
 }
 
-func Test_upgradeConfigVersion(t *testing.T) {
+func TestUpgradeConfigVersion(t *testing.T) {
 	a := assert.New(t)
 	f, e := os.Open("testdata/v1_full.json")
 	a.NoError(e)
@@ -201,7 +201,8 @@ func Test_upgradeConfigVersion(t *testing.T) {
 	v1Full, e := ReadConfig(r)
 	a.NoError(e)
 	v2Full := &v2.Config{
-		Docker: false,
+		Version: 2,
+		Docker:  false,
 		Defaults: v2.Defaults{
 			Common: v2.Common{
 				Backend: v2.Backend{
@@ -216,7 +217,7 @@ func Test_upgradeConfigVersion(t *testing.T) {
 						AccountID:         intptr(1),
 						Profile:           strptr("czi"),
 						Region:            strptr("us-west-1"),
-						Version:           strptr("0.11.0"),
+						Version:           strptr("0.1.0"),
 						AdditionalRegions: []string{"us-east-1"},
 					},
 				},
@@ -380,9 +381,9 @@ func Test_upgradeConfigVersion(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := upgradeConfigVersion(tt.args.c1)
+			got, err := UpgradeConfigVersion(tt.args.c1)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("upgradeConfigVersion() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("UpgradeConfigVersion() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			a.Equal(tt.want, got)
