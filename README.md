@@ -112,6 +112,6 @@ If you would like to contribute some code, fork this repo and send a pull reques
 
 ## Copyright
 
-Copyright 2017-2018, Chan Zuckerberg Initiative, LLC
+Copyright 2017-2019, Chan Zuckerberg Initiative, LLC
 
 For license, see [LICENSE](LICENSE).
