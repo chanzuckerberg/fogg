@@ -38,7 +38,7 @@ release-prerelease: build ## release to github as a 'pre-release'
 release-snapshot: ## run a release
 	goreleaser release --snapshot
 
-build: packr ## build the binary
+build: dep packr ## build the binary
 	go build ${LDFLAGS} .
 
 coverage: ## run the go coverage tool, reading file coverage.out
@@ -58,5 +58,9 @@ clean: ## clean the repo
 	go clean
 	rm -rf dist
 	packr clean
+
+dep: ## ensure dependencies are vendored
+        dep ensure # this should be super-fast in the no-op case
+.PHONY: dep
 
 .PHONY: build clean coverage test install lint lint-slow packr release help setup
