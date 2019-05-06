@@ -237,19 +237,20 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 
 	for envName, envConf := range conf.Envs {
 		envPlan := newEnvPlan()
-
-		envPlan.AccountID = resolveRequiredInt(*conf.Defaults.Providers.AWS.AccountID, envConf.Providers.AWS.AccountID) // FIXME ptr
 		envPlan.Env = envName
-		envPlan.DockerImageVersion = dockerImageVersion
+
+		if envConf.Providers.AWS != nil {
+			envPlan.AccountID = resolveRequiredInt(*conf.Defaults.Providers.AWS.AccountID, envConf.Providers.AWS.AccountID)
+			envPlan.AWSRegionProvider = resolveRequired(*defaults.Providers.AWS.Region, envConf.Providers.AWS.Region) // FIXME ptr
+			envPlan.AWSRegions = resolveStringArray(defaults.Providers.AWS.AdditionalRegions, envConf.Providers.AWS.AdditionalRegions)
+			envPlan.AWSProfileProvider = resolveRequired(*defaults.Providers.AWS.Profile, envConf.Providers.AWS.Profile) // FIXME ptr
+			envPlan.AWSProviderVersion = resolveRequired(*defaults.Providers.AWS.Version, envConf.Providers.AWS.Version)
+		}
 
 		envPlan.AWSRegionBackend = resolveRequired(defaults.Backend.Region, &envConf.Backend.Region)
-		envPlan.AWSRegionProvider = resolveRequired(*defaults.Providers.AWS.Region, envConf.Providers.AWS.Region) // FIXME ptr
-		envPlan.AWSRegions = resolveStringArray(defaults.Providers.AWS.AdditionalRegions, envConf.Providers.AWS.AdditionalRegions)
+		envPlan.AWSProfileBackend = resolveRequired(defaults.Backend.Profile, &envConf.Backend.Profile) // FIXME ptr
 
-		envPlan.AWSProfileBackend = resolveRequired(defaults.Backend.Profile, &envConf.Backend.Profile)              // FIXME ptr
-		envPlan.AWSProfileProvider = resolveRequired(*defaults.Providers.AWS.Profile, envConf.Providers.AWS.Profile) // FIXME ptr
-		envPlan.AWSProviderVersion = resolveRequired(*defaults.Providers.AWS.Version, envConf.Providers.AWS.Version)
-
+		envPlan.DockerImageVersion = dockerImageVersion
 		envPlan.TerraformVersion = resolveRequired(defaults.TerraformVersion, &envConf.TerraformVersion)
 		envPlan.InfraBucket = resolveRequired(defaults.Backend.Bucket, &envConf.Backend.Bucket)
 		envPlan.InfraDynamoTable = resolveRequired(defaults.Backend.DynamoTable, &envConf.Backend.DynamoTable)
