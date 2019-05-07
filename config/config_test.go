@@ -1,13 +1,14 @@
 package config
 
 import (
-	"bufio"
+	"io/ioutil"
 	"os"
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/plugins"
+	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -69,11 +70,9 @@ func boolptr(b bool) *bool {
 
 func TestUpgradeConfigVersion(t *testing.T) {
 	a := assert.New(t)
-	f, e := os.Open("v1/testdata/v1_full.json")
+	b, e := ioutil.ReadFile("v1/testdata/v1_full.json")
 	a.NoError(e)
-	defer f.Close()
-	r := bufio.NewReader(f)
-	v1Full, e := v1.ReadConfig(r)
+	v1Full, e := v1.ReadConfig(b)
 	a.NoError(e)
 	v2Full := &v2.Config{
 		Version: 2,
@@ -264,4 +263,51 @@ func TestUpgradeConfigVersion(t *testing.T) {
 			a.Equal(tt.want, got)
 		})
 	}
+}
+
+func TestFindAndReadConfig(t *testing.T) {
+	a := assert.New(t)
+
+	fs := func(m map[string][]byte) (afero.Fs, error) {
+		fs := afero.NewMemMapFs()
+		for k, v := range m {
+			f, e := fs.OpenFile(k, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+			if e != nil {
+				return nil, e
+			}
+			_, e = f.Write(v)
+		}
+		return fs, nil
+	}
+
+	v1, e := ioutil.ReadFile("v1/testdata/v1_full.json")
+	a.NoError(e)
+
+	v2, e := ioutil.ReadFile("testdata/v2_minimal_valid.json")
+	a.NoError(e)
+
+	f1, e := fs(map[string][]byte{
+		"config.json": v1,
+	})
+	a.NoError(e)
+
+	f2, e := fs(map[string][]byte{
+		"config.json": v2,
+	})
+	a.NoError(e)
+
+	fErr, e := fs(map[string][]byte{
+		"config.json": []byte(`{"version": 7}`),
+	})
+	a.NoError(e)
+
+	_, e = FindAndReadConfig(f1, "config.json")
+	a.NoError(e)
+
+	_, e = FindAndReadConfig(f2, "config.json")
+	a.NoError(e)
+
+	_, e = FindAndReadConfig(fErr, "config.json")
+	a.Error(e)
+
 }

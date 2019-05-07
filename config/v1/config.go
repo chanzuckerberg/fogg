@@ -3,8 +3,6 @@ package v1
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"io/ioutil"
 	"reflect"
 	"strings"
 
@@ -143,15 +141,11 @@ type Config struct {
 	TravisCI *TravisCI          `json:"travis_ci"`
 }
 
-func ReadConfig(f io.Reader) (*Config, error) {
+func ReadConfig(b []byte) (*Config, error) {
 	c := &Config{
 		Docker: true,
 	}
-	b, e := ioutil.ReadAll(f)
-	if e != nil {
-		return nil, errs.WrapUser(e, "unable to read config")
-	}
-	e = json.Unmarshal(b, c)
+	e := json.Unmarshal(b, c)
 	if e != nil {
 		return nil, errs.WrapUser(e, "unable to parse json config file")
 	}

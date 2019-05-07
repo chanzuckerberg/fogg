@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/json"
 	"io"
+	"io/ioutil"
 
 	"github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/config/v2"
@@ -40,14 +41,31 @@ func FindAndReadConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
 	reader := io.ReadCloser(f)
 	defer reader.Close()
 
-	c, err := v1.ReadConfig(reader)
-	if err != nil {
-		return nil, err
+	b, e := ioutil.ReadAll(reader)
+	if e != nil {
+		return nil, errs.WrapUser(e, "unable to read config")
 	}
 
-	c2, err := UpgradeConfigVersion(c)
+	v, e := detectVersion(b)
 
-	return c2, err
+	switch v {
+	case 1:
+		c, err := v1.ReadConfig(b)
+		if err != nil {
+			return nil, err
+		}
+
+		c2, err := UpgradeConfigVersion(c)
+		return c2, err
+
+	case 2:
+
+		c2, err := v2.ReadConfig(b)
+		return c2, err
+	default:
+		return nil, errs.NewUser("could not figure out config file version")
+	}
+
 }
 
 type ver struct {

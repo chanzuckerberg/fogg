@@ -1,9 +1,7 @@
 package v1
 
 import (
-	"bufio"
 	"io/ioutil"
-	"os"
 	"strings"
 	"testing"
 
@@ -38,7 +36,7 @@ func TestParseDefaults(t *testing.T) {
 	}`
 	r := ioutil.NopCloser(strings.NewReader(json))
 	defer r.Close()
-	c, e := ReadConfig(r)
+	c, e := ReadConfig([]byte(json))
 	assert.NoError(t, e)
 	assert.NotNil(t, c.Defaults)
 	assert.Equal(t, "us-west-2", c.Defaults.AWSRegionBackend)
@@ -54,11 +52,9 @@ func TestParseDefaults(t *testing.T) {
 
 func TestParse(t *testing.T) {
 	a := assert.New(t)
-	f, e := os.Open("testdata/v1_full.json")
+	b, e := ioutil.ReadFile("testdata/v1_full.json")
 	a.NoError(e)
-	defer f.Close()
-	r := bufio.NewReader(f)
-	c, e := ReadConfig(r)
+	c, e := ReadConfig(b)
 	assert.Nil(t, e)
 	assert.NotNil(t, c.Defaults)
 	assert.Equal(t, int64(1), c.Defaults.AccountID)
@@ -90,7 +86,10 @@ func TestJsonFailure(t *testing.T) {
 	json := `foo`
 	r := ioutil.NopCloser(strings.NewReader(json))
 	defer r.Close()
-	c, e := ReadConfig(r)
+	b, e := ioutil.ReadAll(r)
+	assert.NoError(t, e)
+
+	c, e := ReadConfig(b)
 	assert.Nil(t, c)
 	assert.NotNil(t, e)
 }
@@ -99,7 +98,9 @@ func TestValidation(t *testing.T) {
 	json := `{}`
 	r := ioutil.NopCloser(strings.NewReader(json))
 	defer r.Close()
-	c, e := ReadConfig(r)
+	b, e := ioutil.ReadAll(r)
+	assert.NoError(t, e)
+	c, e := ReadConfig(b)
 
 	assert.NotNil(t, c)
 	assert.Nil(t, e)
@@ -134,7 +135,8 @@ func TestExtraVarsValidation(t *testing.T) {
 	}`
 	r := ioutil.NopCloser(strings.NewReader(json))
 	defer r.Close()
-	c, e := ReadConfig(r)
+
+	c, e := ReadConfig([]byte(json))
 	assert.Nil(t, e)
 
 	e = c.Validate()

@@ -232,7 +232,7 @@ func TestApplySmokeTest(t *testing.T) {
   }
 }
 `
-	c, e := v1.ReadConfig(ioutil.NopCloser(strings.NewReader(json)))
+	c, e := v1.ReadConfig([]byte(json))
 	assert.NoError(t, e)
 	c2, e := config.UpgradeConfigVersion(c)
 	assert.NoError(t, e)
