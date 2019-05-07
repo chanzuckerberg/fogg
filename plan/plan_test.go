@@ -80,7 +80,7 @@ func TestPlanBasicV1(t *testing.T) {
 	f, _ := os.Open("testdata/v1_full.json")
 	defer f.Close()
 	r := bufio.NewReader(f)
-	c, err := config.ReadConfig(r)
+	c, err := v1.ReadConfig(r)
 	assert.Nil(t, err)
 
 	c2, err := config.UpgradeConfigVersion(c)
@@ -166,7 +166,7 @@ func TestExtraVarsCompositionV2(t *testing.T) {
 	f, _ := os.Open("testdata/v1_full.json")
 	defer f.Close()
 	r := bufio.NewReader(f)
-	c, err := config.ReadConfig(r)
+	c, err := v1.ReadConfig(r)
 	assert.Nil(t, err)
 
 	c2, err := config.UpgradeConfigVersion(c)

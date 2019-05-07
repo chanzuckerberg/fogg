@@ -3,7 +3,6 @@ package config
 import (
 	"encoding/json"
 	"io"
-	"io/ioutil"
 
 	"github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/config/v2"
@@ -33,21 +32,6 @@ func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVe
 	}
 }
 
-func ReadConfig(f io.Reader) (*v1.Config, error) {
-	c := &v1.Config{
-		Docker: true,
-	}
-	b, e := ioutil.ReadAll(f)
-	if e != nil {
-		return nil, errs.WrapUser(e, "unable to read config")
-	}
-	e = json.Unmarshal(b, c)
-	if e != nil {
-		return nil, errs.WrapUser(e, "unable to parse json config file")
-	}
-	return c, nil
-}
-
 func FindAndReadConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
 	f, err := fs.Open(configFile)
 	if err != nil {
@@ -56,7 +40,7 @@ func FindAndReadConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
 	reader := io.ReadCloser(f)
 	defer reader.Close()
 
-	c, err := ReadConfig(reader)
+	c, err := v1.ReadConfig(reader)
 	if err != nil {
 		return nil, err
 	}
