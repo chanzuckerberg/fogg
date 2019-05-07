@@ -138,8 +138,6 @@ func (c *Config) validateInheritedStringField(fieldName string, getter func(Comm
 
 	// global
 	if !(validator(getter(c.Defaults.Common)) || validator(getter(c.Global.Common))) {
-		fmt.Println("global")
-		fmt.Printf("def %#v\n global %#v\n", c.Defaults, c.Global)
 		err = multierror.Append(err, fmt.Errorf("global must have a valid %s set at either the global or defaults level", fieldName))
 	}
 

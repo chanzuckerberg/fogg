@@ -31,7 +31,7 @@ func TestParseDefaults(t *testing.T) {
 	r := ioutil.NopCloser(strings.NewReader(json))
 	defer r.Close()
 	c, e := ReadConfig(r)
-	assert.Nil(t, e)
+	assert.NoError(t, e)
 	assert.NotNil(t, c.Defaults)
 	assert.Equal(t, "us-west-2", c.Defaults.AWSRegionBackend)
 	assert.Equal(t, "us-west-1", c.Defaults.AWSRegionProvider)
