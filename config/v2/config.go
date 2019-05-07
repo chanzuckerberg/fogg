@@ -77,7 +77,7 @@ type AWSProvider struct {
 	AdditionalRegions []string `json:"additional_regions"`
 	Profile           *string  `json:"profile"`
 	Region            *string  `json:"region" validate:"required"`
-	Version           *string  `json:"version,omitempty"`
+	Version           *string  `json:"version,omitempty" validate:"required"`
 }
 
 type Backend struct {
