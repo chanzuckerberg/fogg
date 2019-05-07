@@ -24,11 +24,11 @@ func TestValidateOwners(t *testing.T) {
 		c := confAcctOwner(foo, foo)
 
 		// Both defaults and acct are set
-		a.Nil(c.validateOwners())
+		a.NoError(c.validateOwners())
 
 		// defaults unset, still valid
 		c = confAcctOwner("", foo)
-		a.Nil(c.validateOwners())
+		a.NoError(c.validateOwners())
 
 		// both unset, no longer valid
 		c = confAcctOwner("", "")

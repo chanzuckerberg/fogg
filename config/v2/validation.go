@@ -138,7 +138,9 @@ func (c *Config) validateInheritedStringField(fieldName string, getter func(Comm
 
 	// global
 	if !(validator(getter(c.Defaults.Common)) || validator(getter(c.Global.Common))) {
-		err = multierror.Append(err, fmt.Errorf("global must have a valid %s set at either the account or defaults level", fieldName))
+		fmt.Println("global")
+		fmt.Printf("def %#v\n global %#v\n", c.Defaults, c.Global)
+		err = multierror.Append(err, fmt.Errorf("global must have a valid %s set at either the global or defaults level", fieldName))
 	}
 
 	// For each component, we need the field to be valid at one of defaults, env or component
