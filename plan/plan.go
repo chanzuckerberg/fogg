@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/chanzuckerberg/fogg/config/v1"
+	"github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/util"
 	yaml "gopkg.in/yaml.v2"
@@ -106,7 +107,7 @@ type Plan struct {
 }
 
 // Eval evaluates a config
-func Eval(config *v1.Config) (*Plan, error) {
+func Eval(config *v2.Config) (*Plan, error) {
 	p := &Plan{}
 	v, e := util.VersionString()
 	if e != nil {
@@ -123,7 +124,7 @@ func Eval(config *v1.Config) (*Plan, error) {
 	p.Global = p.buildGlobal(config)
 	p.Modules = p.buildModules(config)
 
-	if config.TravisCI != nil {
+	if config.Tools.TravisCI != nil {
 		p.TravisCI = p.buildTravisCI(config, v)
 	}
 
@@ -140,34 +141,36 @@ func Print(p *Plan) error {
 	return nil
 }
 
-func (p *Plan) buildAccounts(c *v1.Config) map[string]Account {
+func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 	defaults := c.Defaults
 
 	accountPlans := make(map[string]Account, len(c.Accounts))
-	for name, config := range c.Accounts {
+	for name, acct := range c.Accounts {
 		accountPlan := Account{}
 		accountPlan.DockerImageVersion = dockerImageVersion
 
 		accountPlan.AccountName = name
-		accountPlan.AccountID = resolveRequiredInt(c.Defaults.AccountID, config.AccountID)
+		if acct.Providers.AWS != nil {
+			accountPlan.AccountID = resolveRequiredInt(*defaults.Providers.AWS.AccountID, acct.Providers.AWS.AccountID)
+			accountPlan.AWSProfileProvider = resolveRequired(*defaults.Providers.AWS.Profile, acct.Providers.AWS.Profile)
+			accountPlan.AWSProviderVersion = resolveRequired(*defaults.Providers.AWS.Version, acct.Providers.AWS.Version)
+			accountPlan.AWSRegionProvider = resolveRequired(*defaults.Providers.AWS.Region, acct.Providers.AWS.Region)
+			accountPlan.AWSRegions = resolveStringArray(defaults.Providers.AWS.AdditionalRegions, acct.Providers.AWS.AdditionalRegions)
+		}
 
-		accountPlan.AWSRegionBackend = resolveRequired(defaults.AWSRegionBackend, config.AWSRegionBackend)
-		accountPlan.AWSRegionProvider = resolveRequired(defaults.AWSRegionProvider, config.AWSRegionProvider)
-		accountPlan.AWSRegions = resolveStringArray(defaults.AWSRegions, config.AWSRegions)
-
-		accountPlan.AWSProfileBackend = resolveRequired(defaults.AWSProfileBackend, config.AWSProfileBackend)
-		accountPlan.AWSProfileProvider = resolveRequired(defaults.AWSProfileProvider, config.AWSProfileProvider)
-		accountPlan.AWSProviderVersion = resolveRequired(defaults.AWSProviderVersion, config.AWSProviderVersion)
+		accountPlan.AWSRegionBackend = resolveRequired(defaults.Backend.Region, &acct.Backend.Region)
+		accountPlan.AWSProfileBackend = resolveRequired(defaults.Backend.Profile, &acct.Backend.Profile)
+		accountPlan.AWSRegionBackend = resolveRequired(defaults.Backend.Region, &acct.Backend.Region)
 		accountPlan.AllAccounts = resolveAccounts(c.Accounts)
-		accountPlan.TerraformVersion = resolveRequired(defaults.TerraformVersion, config.TerraformVersion)
-		accountPlan.InfraBucket = resolveRequired(defaults.InfraBucket, config.InfraBucket)
-		accountPlan.InfraDynamoTable = resolveRequired(defaults.InfraDynamoTable, config.InfraDynamoTable)
-		accountPlan.Owner = resolveRequired(defaults.Owner, config.Owner)
+		accountPlan.TerraformVersion = resolveRequired(defaults.TerraformVersion, &acct.TerraformVersion)
+		accountPlan.InfraBucket = resolveRequired(defaults.Backend.Bucket, &acct.Backend.Bucket)
+		accountPlan.InfraDynamoTable = resolveRequired(defaults.Backend.DynamoTable, &acct.Backend.DynamoTable)
+		accountPlan.Owner = resolveRequired(defaults.Owner, &acct.Owner)
 		accountPlan.PathToRepoRoot = "../../../"
-		accountPlan.Project = resolveRequired(defaults.Project, config.Project)
-		accountPlan.ExtraVars = resolveExtraVars(defaults.ExtraVars, config.ExtraVars)
+		accountPlan.Project = resolveRequired(defaults.Project, &acct.Project)
+		accountPlan.ExtraVars = resolveExtraVars(defaults.ExtraVars, acct.ExtraVars)
+		accountPlan.TfLint = resolveTfLint(c.Tools.TfLint, nil)
 
-		accountPlan.TfLint = resolveTfLint(defaults.TfLint, config.TfLint)
 		accountPlan.Docker = c.Docker
 
 		accountPlans[name] = accountPlan
@@ -176,7 +179,7 @@ func (p *Plan) buildAccounts(c *v1.Config) map[string]Account {
 	return accountPlans
 }
 
-func (p *Plan) buildModules(c *v1.Config) map[string]Module {
+func (p *Plan) buildModules(c *v2.Config) map[string]Module {
 	modulePlans := make(map[string]Module, len(c.Modules))
 	for name, conf := range c.Modules {
 		modulePlan := Module{}
@@ -196,36 +199,51 @@ func newEnvPlan() Env {
 	return ep
 }
 
-func (p *Plan) buildGlobal(conf *v1.Config) Component {
+func (p *Plan) buildGlobal(conf *v2.Config) Component {
 	// Global just uses defaults because that's the way sicc worked. We should make it directly configurable.
 	componentPlan := Component{}
+	componentPlan.Accounts = p.Accounts
 
-	componentPlan.DockerImageVersion = dockerImageVersion
-	componentPlan.AccountID = conf.Defaults.AccountID
+	if conf.Global.Providers.AWS != nil {
+		componentPlan.AccountID = resolveRequiredInt(*conf.Defaults.Providers.AWS.AccountID, conf.Global.Providers.AWS.AccountID)
+		componentPlan.AWSRegionProvider = resolveRequired(*conf.Defaults.Providers.AWS.Region, conf.Global.Providers.AWS.Region)
+		componentPlan.AWSRegions = resolveStringArray(conf.Defaults.Providers.AWS.AdditionalRegions, conf.Global.Providers.AWS.AdditionalRegions)
+		componentPlan.AWSProfileProvider = resolveRequired(*conf.Defaults.Providers.AWS.Profile, conf.Global.Providers.AWS.Profile)
+		componentPlan.AWSProviderVersion = resolveRequired(*conf.Defaults.Providers.AWS.Version, conf.Global.Providers.AWS.Version)
 
-	componentPlan.AWSRegionBackend = conf.Defaults.AWSRegionBackend
-	componentPlan.AWSRegionProvider = conf.Defaults.AWSRegionProvider
-	componentPlan.AWSRegions = conf.Defaults.AWSRegions
+	} else {
+		componentPlan.AccountID = *conf.Defaults.Providers.AWS.AccountID
+		componentPlan.AWSRegionProvider = *conf.Defaults.Providers.AWS.Region
+		componentPlan.AWSRegions = conf.Defaults.Providers.AWS.AdditionalRegions
+		componentPlan.AWSProfileProvider = *conf.Defaults.Providers.AWS.Profile
+		componentPlan.AWSProviderVersion = *conf.Defaults.Providers.AWS.Version
 
-	componentPlan.AWSProfileBackend = conf.Defaults.AWSProfileBackend
-	componentPlan.AWSProfileProvider = conf.Defaults.AWSProfileProvider
-	componentPlan.AWSProviderVersion = conf.Defaults.AWSProviderVersion
+	}
 
-	componentPlan.TerraformVersion = conf.Defaults.TerraformVersion
-	componentPlan.InfraBucket = conf.Defaults.InfraBucket
-	componentPlan.InfraDynamoTable = conf.Defaults.InfraDynamoTable
-	componentPlan.Owner = conf.Defaults.Owner
-	componentPlan.PathToRepoRoot = "../../"
-	componentPlan.Project = conf.Defaults.Project
-	componentPlan.ExtraVars = conf.Defaults.ExtraVars
-	componentPlan.TfLint = resolveTfLint(conf.Defaults.TfLint, nil)
-	componentPlan.Docker = conf.Docker
+	componentPlan.AWSRegionBackend = resolveRequired(conf.Defaults.Backend.Region, &conf.Global.Backend.Region)
+	componentPlan.AWSProfileBackend = resolveRequired(conf.Defaults.Backend.Profile, &conf.Global.Backend.Profile)
+	componentPlan.InfraBucket = resolveRequired(conf.Defaults.Backend.Bucket, &conf.Global.Backend.Bucket)
+	componentPlan.InfraDynamoTable = resolveRequired(conf.Defaults.Backend.DynamoTable, &conf.Global.Backend.DynamoTable)
+
+	componentPlan.TerraformVersion = resolveRequired(conf.Defaults.TerraformVersion, &conf.Global.TerraformVersion)
+	componentPlan.Owner = resolveRequired(conf.Defaults.Owner, &conf.Global.Owner)
+	componentPlan.Project = resolveRequired(conf.Defaults.Project, &conf.Global.Project)
+
 	componentPlan.Component = "global"
+	componentPlan.DockerImageVersion = dockerImageVersion
+	componentPlan.OtherComponents = []string{}
+	componentPlan.ExtraVars = resolveExtraVars(conf.Defaults.ExtraVars, conf.Global.ExtraVars)
+	componentPlan.PathToRepoRoot = "../../"
+
+	componentPlan.TfLint = resolveTfLint(conf.Tools.TfLint, nil)
+
+	componentPlan.Docker = conf.Docker
+
 	return componentPlan
 }
 
 // buildEnvs must be build after accounts
-func (p *Plan) buildEnvs(conf *v1.Config) (map[string]Env, error) {
+func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 	envPlans := make(map[string]Env, len(conf.Envs))
 	defaults := conf.Defaults
 
@@ -233,26 +251,27 @@ func (p *Plan) buildEnvs(conf *v1.Config) (map[string]Env, error) {
 
 	for envName, envConf := range conf.Envs {
 		envPlan := newEnvPlan()
-
-		envPlan.AccountID = resolveRequiredInt(conf.Defaults.AccountID, envConf.AccountID)
 		envPlan.Env = envName
+
+		if envConf.Providers.AWS != nil {
+			envPlan.AccountID = resolveRequiredInt(*conf.Defaults.Providers.AWS.AccountID, envConf.Providers.AWS.AccountID)
+			envPlan.AWSRegionProvider = resolveRequired(*defaults.Providers.AWS.Region, envConf.Providers.AWS.Region) // FIXME ptr
+			envPlan.AWSRegions = resolveStringArray(defaults.Providers.AWS.AdditionalRegions, envConf.Providers.AWS.AdditionalRegions)
+			envPlan.AWSProfileProvider = resolveRequired(*defaults.Providers.AWS.Profile, envConf.Providers.AWS.Profile) // FIXME ptr
+			envPlan.AWSProviderVersion = resolveRequired(*defaults.Providers.AWS.Version, envConf.Providers.AWS.Version)
+		}
+
+		envPlan.AWSRegionBackend = resolveRequired(defaults.Backend.Region, &envConf.Backend.Region)
+		envPlan.AWSProfileBackend = resolveRequired(defaults.Backend.Profile, &envConf.Backend.Profile) // FIXME ptr
+
 		envPlan.DockerImageVersion = dockerImageVersion
-
-		envPlan.AWSRegionBackend = resolveRequired(defaults.AWSRegionBackend, envConf.AWSRegionBackend)
-		envPlan.AWSRegionProvider = resolveRequired(defaults.AWSRegionProvider, envConf.AWSRegionProvider)
-		envPlan.AWSRegions = resolveStringArray(defaults.AWSRegions, envConf.AWSRegions)
-
-		envPlan.AWSProfileBackend = resolveRequired(defaults.AWSProfileBackend, envConf.AWSProfileBackend)
-		envPlan.AWSProfileProvider = resolveRequired(defaults.AWSProfileProvider, envConf.AWSProfileProvider)
-		envPlan.AWSProviderVersion = resolveRequired(defaults.AWSProviderVersion, envConf.AWSProviderVersion)
-
-		envPlan.TerraformVersion = resolveRequired(defaults.TerraformVersion, envConf.TerraformVersion)
-		envPlan.InfraBucket = resolveRequired(defaults.InfraBucket, envConf.InfraBucket)
-		envPlan.InfraDynamoTable = resolveRequired(defaults.InfraDynamoTable, envConf.InfraDynamoTable)
-		envPlan.Owner = resolveRequired(defaults.Owner, envConf.Owner)
-		envPlan.Project = resolveRequired(defaults.Project, envConf.Project)
+		envPlan.TerraformVersion = resolveRequired(defaults.TerraformVersion, &envConf.TerraformVersion)
+		envPlan.InfraBucket = resolveRequired(defaults.Backend.Bucket, &envConf.Backend.Bucket)
+		envPlan.InfraDynamoTable = resolveRequired(defaults.Backend.DynamoTable, &envConf.Backend.DynamoTable)
+		envPlan.Owner = resolveRequired(defaults.Owner, &envConf.Owner)
+		envPlan.Project = resolveRequired(defaults.Project, &envConf.Project)
 		envPlan.ExtraVars = resolveExtraVars(defaultExtraVars, envConf.ExtraVars)
-		envPlan.TfLint = resolveTfLint(defaults.TfLint, envConf.TfLint)
+		envPlan.TfLint = resolveTfLint(conf.Tools.TfLint, nil)
 		envPlan.Docker = conf.Docker
 
 		for componentName, componentConf := range conf.Envs[envName].Components {
@@ -269,20 +288,30 @@ func (p *Plan) buildEnvs(conf *v1.Config) (map[string]Env, error) {
 			}
 			componentPlan.Accounts = p.Accounts
 
-			componentPlan.AccountID = resolveRequiredInt(envPlan.AccountID, componentConf.AccountID)
-			componentPlan.AWSRegionBackend = resolveRequired(envPlan.AWSRegionBackend, componentConf.AWSRegionBackend)
-			componentPlan.AWSRegionProvider = resolveRequired(envPlan.AWSRegionProvider, componentConf.AWSRegionProvider)
-			componentPlan.AWSRegions = resolveStringArray(envPlan.AWSRegions, componentConf.AWSRegions)
+			if componentConf.Providers.AWS != nil {
+				componentPlan.AccountID = resolveRequiredInt(envPlan.AccountID, componentConf.Providers.AWS.AccountID)
+				componentPlan.AWSRegionProvider = resolveRequired(envPlan.AWSRegionProvider, componentConf.Providers.AWS.Region)
+				componentPlan.AWSRegions = resolveStringArray(envPlan.AWSRegions, componentConf.Providers.AWS.AdditionalRegions)
+				componentPlan.AWSProfileProvider = resolveRequired(envPlan.AWSProfileProvider, componentConf.Providers.AWS.Profile)
+				componentPlan.AWSProviderVersion = resolveRequired(envPlan.AWSProviderVersion, componentConf.Providers.AWS.Version)
 
-			componentPlan.AWSProfileBackend = resolveRequired(envPlan.AWSProfileBackend, componentConf.AWSProfileBackend)
-			componentPlan.AWSProfileProvider = resolveRequired(envPlan.AWSProfileProvider, componentConf.AWSProfileProvider)
-			componentPlan.AWSProviderVersion = resolveRequired(envPlan.AWSProviderVersion, componentConf.AWSProviderVersion)
+			} else {
+				componentPlan.AccountID = envPlan.AccountID
+				componentPlan.AWSRegionProvider = envPlan.AWSRegionProvider
+				componentPlan.AWSRegions = envPlan.AWSRegions
+				componentPlan.AWSProfileProvider = envPlan.AWSProfileProvider
+				componentPlan.AWSProviderVersion = envPlan.AWSProviderVersion
 
-			componentPlan.TerraformVersion = resolveRequired(envPlan.TerraformVersion, componentConf.TerraformVersion)
-			componentPlan.InfraBucket = resolveRequired(envPlan.InfraBucket, componentConf.InfraBucket)
-			componentPlan.InfraDynamoTable = resolveRequired(envPlan.InfraDynamoTable, componentConf.InfraDynamoTable)
-			componentPlan.Owner = resolveRequired(envPlan.Owner, componentConf.Owner)
-			componentPlan.Project = resolveRequired(envPlan.Project, componentConf.Project)
+			}
+
+			componentPlan.AWSRegionBackend = resolveRequired(envPlan.AWSRegionBackend, &componentConf.Backend.Region)
+			componentPlan.AWSProfileBackend = resolveRequired(envPlan.AWSProfileBackend, &componentConf.Backend.Profile)
+
+			componentPlan.TerraformVersion = resolveRequired(envPlan.TerraformVersion, &componentConf.TerraformVersion)
+			componentPlan.InfraBucket = resolveRequired(envPlan.InfraBucket, &componentConf.Backend.Bucket)
+			componentPlan.InfraDynamoTable = resolveRequired(envPlan.InfraDynamoTable, &componentConf.Backend.DynamoTable)
+			componentPlan.Owner = resolveRequired(envPlan.Owner, &componentConf.Owner)
+			componentPlan.Project = resolveRequired(envPlan.Project, &componentConf.Project)
 
 			componentPlan.Env = envName
 			componentPlan.Component = componentName
@@ -292,7 +321,7 @@ func (p *Plan) buildEnvs(conf *v1.Config) (map[string]Env, error) {
 			componentPlan.ExtraVars = resolveExtraVars(envPlan.ExtraVars, componentConf.ExtraVars)
 			componentPlan.PathToRepoRoot = "../../../../"
 
-			componentPlan.TfLint = resolveTfLintComponent(envPlan.TfLint, componentConf.TfLint)
+			componentPlan.TfLint = resolveTfLintComponent(envPlan.TfLint, nil)
 			componentPlan.Docker = conf.Docker
 
 			envPlan.Components[componentName] = componentPlan
@@ -303,7 +332,7 @@ func (p *Plan) buildEnvs(conf *v1.Config) (map[string]Env, error) {
 	return envPlans, nil
 }
 
-func otherComponentNames(components map[string]*v1.Component, thisComponent string) []string {
+func otherComponentNames(components map[string]v2.Component, thisComponent string) []string {
 	r := make([]string, 0)
 	for componentName, componentConf := range components {
 		// Only set up remote state for terraform components
@@ -347,7 +376,7 @@ func resolveStringArray(def []string, override []string) []string {
 }
 
 func resolveRequired(def string, override *string) string {
-	if override != nil {
+	if override != nil && *override != "" {
 		return *override
 	}
 	return def
@@ -367,11 +396,11 @@ func resolveOptionalInt(def *int64, override *int64) *int64 {
 	return def
 }
 
-func resolveAccounts(accounts map[string]v1.Account) map[string]int64 {
+func resolveAccounts(accounts map[string]v2.Account) map[string]int64 {
 	a := make(map[string]int64)
 	for name, account := range accounts {
-		if account.AccountID != nil {
-			a[name] = *account.AccountID
+		if account.Providers.AWS != nil && account.Providers.AWS.AccountID != nil {
+			a[name] = *account.Providers.AWS.AccountID
 		}
 	}
 	return a
@@ -391,6 +420,7 @@ func resolveTfLint(def *v1.TfLint, override *v1.TfLint) TfLint {
 }
 
 func resolveTfLintComponent(def TfLint, override *v1.TfLint) TfLint {
+
 	enabled := def.Enabled
 	if override != nil && override.Enabled != nil {
 		enabled = *override.Enabled

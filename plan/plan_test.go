@@ -7,6 +7,7 @@ import (
 
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/config/v1"
+	"github.com/chanzuckerberg/fogg/config/v2"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
@@ -18,6 +19,7 @@ func init() {
 	}
 	log.SetFormatter(formatter)
 }
+
 func TestResolveRequired(t *testing.T) {
 	resolved := resolveRequired("def", nil)
 	assert.Equal(t, "def", resolved)
@@ -30,12 +32,24 @@ func TestResolveRequired(t *testing.T) {
 func TestResolveAccounts(t *testing.T) {
 	foo, bar := int64(123), int64(456)
 
-	accounts := map[string]v1.Account{
+	accounts := map[string]v2.Account{
 		"foo": {
-			AccountID: &foo,
+			Common: v2.Common{
+				Providers: v2.Providers{
+					AWS: &v2.AWSProvider{
+						AccountID: &foo,
+					},
+				},
+			},
 		},
 		"bar": {
-			AccountID: &bar,
+			Common: v2.Common{
+				Providers: v2.Providers{
+					AWS: &v2.AWSProvider{
+						AccountID: &bar,
+					},
+				},
+			},
 		},
 		"baz": {},
 	}
@@ -61,14 +75,18 @@ func TestResolveStringArray(t *testing.T) {
 
 }
 
-func TestPlanBasic(t *testing.T) {
-	f, _ := os.Open("testdata/full.json")
+func TestPlanBasicV1(t *testing.T) {
+	a := assert.New(t)
+	f, _ := os.Open("testdata/v1_full.json")
 	defer f.Close()
 	r := bufio.NewReader(f)
 	c, err := config.ReadConfig(r)
 	assert.Nil(t, err)
 
-	plan, e := Eval(c)
+	c2, err := config.UpgradeConfigVersion(c)
+	a.NoError(err)
+
+	plan, e := Eval(c2)
 	assert.Nil(t, e)
 	assert.NotNil(t, plan)
 	assert.NotNil(t, plan.Accounts)
@@ -82,7 +100,7 @@ func TestPlanBasic(t *testing.T) {
 	assert.Len(t, plan.Envs, 2)
 
 	assert.NotNil(t, plan.Envs["staging"])
-	assert.Equal(t, plan.Envs["staging"].TerraformVersion, "0.100.0")
+	assert.Equal(t, "0.100.0", plan.Envs["staging"].TerraformVersion)
 
 	assert.NotNil(t, plan.Envs["staging"].Components)
 	assert.Len(t, plan.Envs["staging"].Components, 4)
@@ -100,14 +118,61 @@ func TestPlanBasic(t *testing.T) {
 	assert.Equal(t, "k8s", plan.Envs["staging"].Components["comp_helm_template"].EKS.ClusterName)
 }
 
-func TestExtraVarsComposition(t *testing.T) {
-	f, _ := os.Open("testdata/full.json")
+func TestPlanBasicV2(t *testing.T) {
+	a := assert.New(t)
+	f, _ := os.Open("testdata/v2_full.json")
+	defer f.Close()
+	r := bufio.NewReader(f)
+	c2, err := v2.ReadConfig(r)
+	assert.Nil(t, err)
+
+	err = c2.Validate()
+	a.NoError(err)
+
+	plan, e := Eval(c2)
+	assert.Nil(t, e)
+	assert.NotNil(t, plan)
+	assert.NotNil(t, plan.Accounts)
+	assert.Len(t, plan.Accounts, 2)
+
+	assert.NotNil(t, plan.Modules)
+	assert.Len(t, plan.Modules, 1)
+	assert.Equal(t, "0.100.0", plan.Modules["my_module"].TerraformVersion)
+
+	assert.NotNil(t, plan.Envs)
+	assert.Len(t, plan.Envs, 2)
+
+	assert.NotNil(t, plan.Envs["staging"])
+	assert.Equal(t, "0.100.0", plan.Envs["staging"].TerraformVersion)
+
+	assert.NotNil(t, plan.Envs["staging"].Components)
+	assert.Len(t, plan.Envs["staging"].Components, 4)
+
+	assert.NotNil(t, plan.Envs["staging"])
+	assert.NotNil(t, plan.Envs["staging"].Components["vpc"])
+	log.Debugf("%#v\n", plan.Envs["staging"].Components["vpc"].ModuleSource)
+	assert.NotNil(t, *plan.Envs["staging"].Components["vpc"].ModuleSource)
+	assert.Equal(t, "github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0", *plan.Envs["staging"].Components["vpc"].ModuleSource)
+
+	assert.NotNil(t, plan.Envs["staging"].Components["comp1"])
+	assert.Equal(t, "0.100.0", plan.Envs["staging"].Components["comp1"].TerraformVersion)
+
+	assert.NotNil(t, plan.Envs["staging"].Components["comp_helm_template"])
+	assert.Equal(t, "k8s", plan.Envs["staging"].Components["comp_helm_template"].EKS.ClusterName)
+}
+
+func TestExtraVarsCompositionV2(t *testing.T) {
+	a := assert.New(t)
+	f, _ := os.Open("testdata/v1_full.json")
 	defer f.Close()
 	r := bufio.NewReader(f)
 	c, err := config.ReadConfig(r)
 	assert.Nil(t, err)
 
-	plan, e := Eval(c)
+	c2, err := config.UpgradeConfigVersion(c)
+	a.NoError(err)
+
+	plan, e := Eval(c2)
 	assert.Nil(t, e)
 	assert.NotNil(t, plan)
 

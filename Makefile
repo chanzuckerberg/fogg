@@ -38,14 +38,19 @@ release-prerelease: build ## release to github as a 'pre-release'
 release-snapshot: ## run a release
 	goreleaser release --snapshot
 
-build: packr ## build the binary
+build: dep packr ## build the binary
 	go build ${LDFLAGS} .
 
 coverage: ## run the go coverage tool, reading file coverage.out
 	go tool cover -html=coverage.out
 
-test: ## run the tests
+test: 
 	gotest -race -coverprofile=coverage.txt -covermode=atomic ./...
+
+test-coverage: ## run the test with proper coverage reporting
+	goverage -race -coverprofile=coverage.out -covermode=atomic ./...
+	go tool cover -html=coverage.out
+.PHONY: test-coverage
 
 install: packr ## install the fogg binary in $GOPATH/bin
 	go install ${LDFLAGS} .
@@ -58,5 +63,10 @@ clean: ## clean the repo
 	go clean
 	rm -rf dist
 	packr clean
+	rm coverage.out
+
+dep: ## ensure dependencies are vendored
+	dep ensure # this should be super-fast in the no-op case
+.PHONY: dep
 
 .PHONY: build clean coverage test install lint lint-slow packr release help setup

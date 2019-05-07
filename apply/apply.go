@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/chanzuckerberg/fogg/config/v1"
+	"github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plan"
 	"github.com/chanzuckerberg/fogg/templates"
@@ -27,7 +28,7 @@ import (
 const rootPath = "terraform"
 
 // Apply will run a plan and apply all the changes to the current repo.
-func Apply(fs afero.Fs, conf *v1.Config, tmp *templates.T, upgrade bool) error {
+func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade bool) error {
 	if !upgrade {
 		toolVersion, err := util.VersionString()
 		if err != nil {

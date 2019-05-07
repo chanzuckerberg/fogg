@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/config/v1"
+	"github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,9 +18,11 @@ func init() {
 func Test_buildTravisCI_Disabled(t *testing.T) {
 	a := assert.New(t)
 	{
-		c := &v1.Config{
-			TravisCI: &v1.TravisCI{
-				Enabled: false,
+		c := &v2.Config{
+			Tools: v2.Tools{
+				TravisCI: &v1.TravisCI{
+					Enabled: false,
+				},
 			},
 		}
 		p := &Plan{}
@@ -29,46 +32,102 @@ func Test_buildTravisCI_Disabled(t *testing.T) {
 		a.False(tr.Enabled)
 	}
 }
+
+// TODO consolidate this somewhere
+func intptr(i int64) *int64 {
+	return &i
+}
+func strptr(s string) *string {
+	return &s
+}
+
 func Test_buildTravisCI_Profiles(t *testing.T) {
 	a := assert.New(t)
 
-	c := &v1.Config{
-		Accounts: map[string]v1.Account{
-			"foo": v1.Account{
-				AccountID: &id1,
+	c := &v2.Config{
+		Version: 2,
+		Defaults: v2.Defaults{
+			Common: v2.Common{
+				Project:          "foo",
+				Owner:            "bar",
+				TerraformVersion: "0.1.0",
+				Providers: v2.Providers{
+					AWS: &v2.AWSProvider{
+						AccountID: intptr(123),
+						Region:    strptr("us-west-2"),
+						Profile:   strptr("foo"),
+						Version:   strptr("0.12.0"),
+					},
+				},
+				Backend: v2.Backend{
+					Bucket: "bucket",
+					Region: "us-west-2",
+				},
 			},
 		},
-		TravisCI: &v1.TravisCI{
+		Accounts: map[string]v2.Account{
+			"foo": v2.Account{
+				Common: v2.Common{Providers: v2.Providers{AWS: &v2.AWSProvider{AccountID: &id1}}},
+			},
+		},
+		Tools: v2.Tools{TravisCI: &v1.TravisCI{
 			Enabled:        true,
 			AWSIAMRoleName: "rollin",
-		},
+		}},
 	}
+
+	err := c.Validate()
+	a.NoError(err)
+
 	p := &Plan{}
 	p.Accounts = p.buildAccounts(c)
 	tr := p.buildTravisCI(c, "0.1.0")
 	a.Len(tr.AWSProfiles, 1)
-	a.Equal(tr.AWSProfiles[0].Name, "foo")
-	a.Equal(tr.AWSProfiles[0].ID, id1)
-	a.Equal(tr.AWSProfiles[0].Role, "rollin")
+	a.Equal("foo", tr.AWSProfiles[0].Name)
+	a.Equal(id1, tr.AWSProfiles[0].ID)
+	a.Equal("rollin", tr.AWSProfiles[0].Role)
 }
 
 func Test_buildTravisCI_TestBuckets(t *testing.T) {
 	a := assert.New(t)
 
-	c := &v1.Config{
-		Accounts: map[string]v1.Account{
-			"foo": v1.Account{
-				AccountID: &id1,
-			},
-			"bar": v1.Account{
-				AccountID: &id2,
+	c := &v2.Config{
+		Version: 2,
+		Defaults: v2.Defaults{
+			Common: v2.Common{
+				Project:          "foo",
+				Owner:            "bar",
+				TerraformVersion: "0.1.0",
+				Providers: v2.Providers{
+					AWS: &v2.AWSProvider{
+						AccountID: intptr(123),
+						Region:    strptr("us-west-2"),
+						Profile:   strptr("foo"),
+						Version:   strptr("0.12.0"),
+					},
+				},
+				Backend: v2.Backend{
+					Bucket: "bucket",
+					Region: "us-west-2",
+				},
 			},
 		},
-		TravisCI: &v1.TravisCI{
+		Accounts: map[string]v2.Account{
+			"foo": v2.Account{
+				Common: v2.Common{Providers: v2.Providers{AWS: &v2.AWSProvider{AccountID: &id1}}},
+			},
+			"bar": v2.Account{
+				Common: v2.Common{Providers: v2.Providers{AWS: &v2.AWSProvider{AccountID: &id2}}},
+			},
+		},
+		Tools: v2.Tools{TravisCI: &v1.TravisCI{
 			Enabled:        true,
 			AWSIAMRoleName: "rollin",
-		},
+		}},
 	}
+
+	err := c.Validate()
+	a.NoError(err)
 
 	p := &Plan{}
 	p.Accounts = p.buildAccounts(c)

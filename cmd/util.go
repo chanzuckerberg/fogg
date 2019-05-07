@@ -8,8 +8,9 @@ import (
 	"strings"
 
 	"github.com/chanzuckerberg/fogg/config"
-	"github.com/chanzuckerberg/fogg/config/v1"
+	"github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
+	"github.com/kr/pretty"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
@@ -25,16 +26,15 @@ func openGitOrExit(fs afero.Fs) {
 	}
 }
 
-func readAndValidateConfig(fs afero.Fs, configFile string) (*v1.Config, error) {
-	config, err := config.FindAndReadConfig(fs, configFile)
+func readAndValidateConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
+	conf, err := config.FindAndReadConfig(fs, configFile)
 	if err != nil {
 		return nil, errs.WrapUser(err, "unable to read config file")
 	}
 	log.Debug("CONFIG")
-	log.Debugf("%#v\n=====", config)
+	log.Debugf("%s\n=====", pretty.Sprint(conf))
 
-	err = config.Validate()
-	return config, err
+	return conf, conf.Validate()
 }
 
 func mergeConfigValidationErrors(err error) error {
@@ -77,7 +77,7 @@ func openFs() (afero.Fs, error) {
 	return fs, nil
 }
 
-func bootstrapCmd(cmd *cobra.Command, debug bool) (afero.Fs, *v1.Config, error) {
+func bootstrapCmd(cmd *cobra.Command, debug bool) (afero.Fs, *v2.Config, error) {
 	setupDebug(debug)
 
 	fs, err := openFs()
