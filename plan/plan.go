@@ -202,33 +202,43 @@ func newEnvPlan() Env {
 func (p *Plan) buildGlobal(conf *v2.Config) Component {
 	// Global just uses defaults because that's the way sicc worked. We should make it directly configurable.
 	componentPlan := Component{}
+	componentPlan.Accounts = p.Accounts
 
-	componentPlan.DockerImageVersion = dockerImageVersion
+	if conf.Global.Providers.AWS != nil {
+		componentPlan.AccountID = resolveRequiredInt(*conf.Defaults.Providers.AWS.AccountID, conf.Global.Providers.AWS.AccountID)
+		componentPlan.AWSRegionProvider = resolveRequired(*conf.Defaults.Providers.AWS.Region, conf.Global.Providers.AWS.Region)
+		componentPlan.AWSRegions = resolveStringArray(conf.Defaults.Providers.AWS.AdditionalRegions, conf.Global.Providers.AWS.AdditionalRegions)
+		componentPlan.AWSProfileProvider = resolveRequired(*conf.Defaults.Providers.AWS.Profile, conf.Global.Providers.AWS.Profile)
+		componentPlan.AWSProviderVersion = resolveRequired(*conf.Defaults.Providers.AWS.Version, conf.Global.Providers.AWS.Version)
 
-	componentPlan.AccountID = *conf.Defaults.Providers.AWS.AccountID      // FIXME ptr
-	componentPlan.AWSRegionProvider = *conf.Defaults.Providers.AWS.Region // FIXME ptr
-	componentPlan.AWSRegions = conf.Defaults.Providers.AWS.AdditionalRegions
-	if conf.Defaults.Providers.AWS.Profile != nil {
+	} else {
+		componentPlan.AccountID = *conf.Defaults.Providers.AWS.AccountID
+		componentPlan.AWSRegionProvider = *conf.Defaults.Providers.AWS.Region
+		componentPlan.AWSRegions = conf.Defaults.Providers.AWS.AdditionalRegions
 		componentPlan.AWSProfileProvider = *conf.Defaults.Providers.AWS.Profile
+		componentPlan.AWSProviderVersion = *conf.Defaults.Providers.AWS.Version
+
 	}
 
-	if conf.Defaults.Providers.AWS.Version != nil {
-		componentPlan.AWSProviderVersion = *conf.Defaults.Providers.AWS.Version // FIXME ptr
-	}
+	componentPlan.AWSRegionBackend = resolveRequired(conf.Defaults.Backend.Region, &conf.Global.Backend.Region)
+	componentPlan.AWSProfileBackend = resolveRequired(conf.Defaults.Backend.Profile, &conf.Global.Backend.Profile)
+	componentPlan.InfraBucket = resolveRequired(conf.Defaults.Backend.Bucket, &conf.Global.Backend.Bucket)
+	componentPlan.InfraDynamoTable = resolveRequired(conf.Defaults.Backend.DynamoTable, &conf.Global.Backend.DynamoTable)
 
-	componentPlan.AWSRegionBackend = conf.Defaults.Backend.Region
-	componentPlan.AWSProfileBackend = conf.Defaults.Backend.Profile
+	componentPlan.TerraformVersion = resolveRequired(conf.Defaults.TerraformVersion, &conf.Global.TerraformVersion)
+	componentPlan.Owner = resolveRequired(conf.Defaults.Owner, &conf.Global.Owner)
+	componentPlan.Project = resolveRequired(conf.Defaults.Project, &conf.Global.Project)
 
-	componentPlan.TerraformVersion = conf.Defaults.TerraformVersion
-	componentPlan.InfraBucket = conf.Defaults.Backend.Bucket
-	componentPlan.InfraDynamoTable = conf.Defaults.Backend.DynamoTable
-	componentPlan.Owner = conf.Defaults.Owner
-	componentPlan.PathToRepoRoot = "../../"
-	componentPlan.Project = conf.Defaults.Project
-	componentPlan.ExtraVars = conf.Defaults.ExtraVars
-	componentPlan.TfLint = resolveTfLint(conf.Tools.TfLint, nil)
-	componentPlan.Docker = conf.Docker
 	componentPlan.Component = "global"
+	componentPlan.DockerImageVersion = dockerImageVersion
+	componentPlan.OtherComponents = []string{}
+	componentPlan.ExtraVars = resolveExtraVars(conf.Defaults.ExtraVars, conf.Global.ExtraVars)
+	componentPlan.PathToRepoRoot = "../../"
+
+	componentPlan.TfLint = resolveTfLint(conf.Tools.TfLint, nil)
+
+	componentPlan.Docker = conf.Docker
+
 	return componentPlan
 }
 
@@ -278,7 +288,6 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			}
 			componentPlan.Accounts = p.Accounts
 
-			// fixme
 			if componentConf.Providers.AWS != nil {
 				componentPlan.AccountID = resolveRequiredInt(envPlan.AccountID, componentConf.Providers.AWS.AccountID)
 				componentPlan.AWSRegionProvider = resolveRequired(envPlan.AWSRegionProvider, componentConf.Providers.AWS.Region)
