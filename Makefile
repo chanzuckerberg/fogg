@@ -60,7 +60,7 @@ clean: ## clean the repo
 	packr clean
 
 dep: ## ensure dependencies are vendored
-        dep ensure # this should be super-fast in the no-op case
+	dep ensure # this should be super-fast in the no-op case
 .PHONY: dep
 
 .PHONY: build clean coverage test install lint lint-slow packr release help setup

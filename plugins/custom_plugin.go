@@ -38,7 +38,7 @@ type CustomPlugin struct {
 	URL       string           `json:"url" validate:"required"`
 	Format    TypePluginFormat `json:"format" validate:"required"`
 	TarConfig TarConfig        `json:"tar_config,omitempty"`
-	targetDir string
+	TargetDir string
 }
 
 // TarConfig configures the tar unpacking
@@ -75,7 +75,7 @@ func (cp *CustomPlugin) install(
 	if err != nil {
 		return err
 	}
-	return cp.process(fs, pluginName, tmpPath, cp.targetDir)
+	return cp.process(fs, pluginName, tmpPath, cp.TargetDir)
 }
 
 func Template(url, os, arch string) (string, error) {
@@ -99,7 +99,7 @@ func Template(url, os, arch string) (string, error) {
 
 // SetTargetPath sets the target path for this plugin
 func (cp *CustomPlugin) SetTargetPath(path string) {
-	cp.targetDir = path
+	cp.TargetDir = path
 }
 
 // fetch fetches the custom plugin at URL

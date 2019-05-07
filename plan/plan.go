@@ -7,7 +7,6 @@ import (
 	"github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/util"
-	log "github.com/sirupsen/logrus"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -155,11 +154,11 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 			accountPlan.AccountID = resolveRequiredInt(*defaults.Providers.AWS.AccountID, acct.Providers.AWS.AccountID)
 			accountPlan.AWSProfileProvider = resolveRequired(*defaults.Providers.AWS.Profile, acct.Providers.AWS.Profile)
 			accountPlan.AWSProviderVersion = resolveRequired(*defaults.Providers.AWS.Version, acct.Providers.AWS.Version)
+			accountPlan.AWSRegionProvider = resolveRequired(*defaults.Providers.AWS.Region, acct.Providers.AWS.Region)
+			accountPlan.AWSRegions = resolveStringArray(defaults.Providers.AWS.AdditionalRegions, acct.Providers.AWS.AdditionalRegions)
 		}
 
 		accountPlan.AWSRegionBackend = resolveRequired(defaults.Backend.Region, &acct.Backend.Region)
-		accountPlan.AWSRegionProvider = resolveRequired(*defaults.Providers.AWS.Region, acct.Providers.AWS.Region)
-		accountPlan.AWSRegions = resolveStringArray(defaults.Providers.AWS.AdditionalRegions, acct.Providers.AWS.AdditionalRegions)
 		accountPlan.AWSProfileBackend = resolveRequired(defaults.Backend.Profile, &acct.Backend.Profile)
 		accountPlan.AWSRegionBackend = resolveRequired(defaults.Backend.Region, &acct.Backend.Region)
 		accountPlan.AllAccounts = resolveAccounts(c.Accounts)
@@ -205,15 +204,20 @@ func (p *Plan) buildGlobal(conf *v2.Config) Component {
 	componentPlan := Component{}
 
 	componentPlan.DockerImageVersion = dockerImageVersion
-	componentPlan.AccountID = *conf.Defaults.Providers.AWS.AccountID // FIXME ptr
 
-	componentPlan.AWSRegionBackend = conf.Defaults.Backend.Region
+	componentPlan.AccountID = *conf.Defaults.Providers.AWS.AccountID      // FIXME ptr
 	componentPlan.AWSRegionProvider = *conf.Defaults.Providers.AWS.Region // FIXME ptr
 	componentPlan.AWSRegions = conf.Defaults.Providers.AWS.AdditionalRegions
+	if conf.Defaults.Providers.AWS.Profile != nil {
+		componentPlan.AWSProfileProvider = *conf.Defaults.Providers.AWS.Profile
+	}
 
+	if conf.Defaults.Providers.AWS.Version != nil {
+		componentPlan.AWSProviderVersion = *conf.Defaults.Providers.AWS.Version // FIXME ptr
+	}
+
+	componentPlan.AWSRegionBackend = conf.Defaults.Backend.Region
 	componentPlan.AWSProfileBackend = conf.Defaults.Backend.Profile
-	componentPlan.AWSProfileProvider = *conf.Defaults.Providers.AWS.Profile // FIXME ptr
-	componentPlan.AWSProviderVersion = *conf.Defaults.Providers.AWS.Version // FIXME ptr
 
 	componentPlan.TerraformVersion = conf.Defaults.TerraformVersion
 	componentPlan.InfraBucket = conf.Defaults.Backend.Bucket
@@ -394,7 +398,6 @@ func resolveAccounts(accounts map[string]v2.Account) map[string]int64 {
 }
 
 func resolveTfLint(def *v1.TfLint, override *v1.TfLint) TfLint {
-	// log.Debugf("resolvetflint %#v %#v", def, override)
 	enabled := false
 	if def != nil && def.Enabled != nil {
 		enabled = *def.Enabled
@@ -408,7 +411,6 @@ func resolveTfLint(def *v1.TfLint, override *v1.TfLint) TfLint {
 }
 
 func resolveTfLintComponent(def TfLint, override *v1.TfLint) TfLint {
-	log.Debugf("resolveTfLintComponent %#v %#v", def, override)
 
 	enabled := def.Enabled
 	if override != nil && override.Enabled != nil {

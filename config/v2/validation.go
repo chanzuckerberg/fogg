@@ -13,6 +13,9 @@ import (
 
 // Validate validates the config
 func (c *Config) Validate() error {
+	if c == nil {
+		return errs.NewInternal("config is nil")
+	}
 	var errs *multierror.Error
 
 	v := validator.New()
@@ -35,6 +38,9 @@ func (c *Config) Validate() error {
 	errs = multierror.Append(errs, c.validateTerraformVerion())
 	errs = multierror.Append(errs, c.validateBackendBucket())
 	errs = multierror.Append(errs, c.validateBackendRegion())
+	errs = multierror.Append(errs, c.validateProviderRegion())
+	errs = multierror.Append(errs, c.validateProviderProfile())
+	errs = multierror.Append(errs, c.validateProviderVersion())
 
 	return errs.ErrorOrNil()
 }
@@ -78,6 +84,45 @@ func (c *Config) validateBackendRegion() *multierror.Error {
 	return c.validateInheritedStringField("backend region", getter, nonEmptyString)
 }
 
+func (c *Config) validateProviderRegion() *multierror.Error {
+	var getter = func(comm Common) string {
+		if comm.Providers.AWS != nil && comm.Providers.AWS.Region != nil {
+			return *comm.Providers.AWS.Region
+
+		}
+		// once we reconcile the use of nils across the v2 config this should get simpler
+		return ""
+
+	}
+	return c.validateInheritedStringField("provider region", getter, nonEmptyString)
+}
+
+func (c *Config) validateProviderProfile() *multierror.Error {
+	var getter = func(comm Common) string {
+		if comm.Providers.AWS != nil && comm.Providers.AWS.Profile != nil {
+			return *comm.Providers.AWS.Profile
+
+		}
+		// once we reconcile the use of nils across the v2 config this should get simpler
+		return ""
+
+	}
+	return c.validateInheritedStringField("provider profile", getter, nonEmptyString)
+}
+
+func (c *Config) validateProviderVersion() *multierror.Error {
+	var getter = func(comm Common) string {
+		if comm.Providers.AWS != nil && comm.Providers.AWS.Version != nil {
+			return *comm.Providers.AWS.Version
+
+		}
+		// once we reconcile the use of nils across the v2 config this should get simpler
+		return ""
+
+	}
+	return c.validateInheritedStringField("provider version", getter, nonEmptyString)
+}
+
 // validateInheritedStringField will walk all accounts and components and ensure that a given field is valid at at least
 // one level of the inheritance hierarchy. We should eventually distinuish between not present and invalid because
 // if the value is present but invalid we should probably mark it as such, rather than papering over it.
@@ -89,6 +134,11 @@ func (c *Config) validateInheritedStringField(fieldName string, getter func(Comm
 		if !(validator(getter(c.Defaults.Common)) || validator(getter(acct.Common))) {
 			err = multierror.Append(err, fmt.Errorf("account %s must have a valid %s set at either the account or defaults level", acctName, fieldName))
 		}
+	}
+
+	// global
+	if !(validator(getter(c.Defaults.Common)) || validator(getter(c.Global.Common))) {
+		err = multierror.Append(err, fmt.Errorf("global must have a valid %s set at either the account or defaults level", fieldName))
 	}
 
 	// For each component, we need the field to be valid at one of defaults, env or component
@@ -114,7 +164,9 @@ func (c *Config) validateExtraVars() error {
 		}
 	}
 	extraVars := []map[string]string{}
-	extraVars = append(extraVars, c.Defaults.ExtraVars)
+	if c.Defaults.ExtraVars != nil {
+		extraVars = append(extraVars, c.Defaults.ExtraVars)
+	}
 	for _, env := range c.Envs {
 		extraVars = append(extraVars, env.ExtraVars)
 		for _, component := range env.Components {
