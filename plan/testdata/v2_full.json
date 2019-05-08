@@ -1,8 +1,18 @@
 {
+  "version": 2,
   "defaults": {
-    "aws_region": "reg",
-    "aws_profile": "prof",
-    "infra_s3_bucket": "buck",
+    "backend": {
+      "bucket": "buck",
+      "region": "us-west-2"
+    },
+    "providers": {
+      "aws": {
+        "account_id": 456,
+        "region": "us-west-2",
+        "profile": "profile",
+        "version": "0.12.0"
+      }
+    },
     "project": "proj",
     "terraform_version": "0.100.0",
     "owner": "foo@example.com",
@@ -12,10 +22,18 @@
   },
   "accounts": {
     "foo": {
-      "account_id": 123
+      "providers": {
+        "aws": {
+          "account_id": 123
+        }
+      }
     },
     "bar": {
-      "account_id": 456
+      "providers": {
+        "aws": {
+          "account_id": 456
+        }
+      }
     }
   },
   "modules": {
@@ -34,7 +52,13 @@
           }
         },
         "comp1": {},
-        "comp2": {}
+        "comp2": {},
+        "comp_helm_template": {
+          "kind": "helm_template",
+          "eks": {
+            "cluster_name": "k8s"
+          }
+        }
       }
     },
     "prod": {}

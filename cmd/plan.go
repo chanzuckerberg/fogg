@@ -11,8 +11,6 @@ import (
 
 func init() {
 	planCmd.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
-	planCmd.Flags().BoolP("verbose", "v", false, "use this to turn on verbose output")
-	planCmd.Flags().Bool("no-plugins", false, "do not apply fogg plugins; this may result in unexpected behavior.")
 	rootCmd.AddCommand(planCmd)
 }
 
@@ -33,32 +31,22 @@ var planCmd = &cobra.Command{
 		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
 		// handle flags
-		verbose, e := cmd.Flags().GetBool("verbose")
-		if e != nil {
-			return errs.WrapInternal(e, "couldn't parse verbose flag")
-		}
-
 		configFile, e := cmd.Flags().GetString("config")
 		if e != nil {
 			return errs.WrapInternal(e, "couldn't parse config flag")
 		}
 
-		noPlugins, e := cmd.Flags().GetBool("no-plugins")
-		if e != nil {
-			return e
-		}
-
 		// check that we are at root of initialized git repo
-		openGitOrExit(pwd)
+		openGitOrExit(fs)
 
-		config, err := readAndValidateConfig(fs, configFile, verbose)
+		config, err := readAndValidateConfig(fs, configFile)
 
 		e = mergeConfigValidationErrors(err)
 		if e != nil {
 			return e
 		}
 
-		p, e := plan.Eval(config, verbose, noPlugins)
+		p, e := plan.Eval(config)
 		if e != nil {
 			return e
 		}

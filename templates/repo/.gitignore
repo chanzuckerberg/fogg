@@ -9,10 +9,20 @@
 
 # Module directory
 .terraform/
-terraform/**/terraform.d
-
-# legacy
-.rato_pass
 
 # Pycharm folder
 .idea
+
+# Editor Swap Files
+*.swp
+*.swo
+*.swn
+*.swm
+*.swl
+*.swk
+
+.fogg
+/terraform.d
+
+.DS_Store
+.vscode

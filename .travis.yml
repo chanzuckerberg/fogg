@@ -1,9 +1,10 @@
 language: go
 go:
-  - '1.11'
+  - "1.11"
 install:
   - npm install -g snyk
   - make setup
+  - go get -u github.com/haya14busa/goverage
 
 script:
   - make
@@ -12,9 +13,8 @@ jobs:
   include:
     - stage: check
       script:
-        - make
+        - make test-coverage
         - bash <(curl -s https://codecov.io/bash)
     - stage: check
       script:
-        - snyk monitor --org=czi
-        - snyk test
+        - if [[ ! -z "${SNYK_TOKEN}" ]]; then snyk monitor --org=czi; snyk test; fi

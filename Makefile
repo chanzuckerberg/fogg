@@ -44,8 +44,13 @@ build: dep packr ## build the binary
 coverage: ## run the go coverage tool, reading file coverage.out
 	go tool cover -html=coverage.out
 
-test: dep ## run the tests
-	gotest -race -coverprofile=coverage.txt -covermode=atomic ./...
+test: dep
+	gotest -race ./...
+
+test-coverage: ## run the test with proper coverage reporting
+	goverage -race -coverprofile=coverage.out -covermode=atomic ./...
+	go tool cover -html=coverage.out
+.PHONY: test-coverage
 
 install: packr ## install the fogg binary in $GOPATH/bin
 	go install ${LDFLAGS} .
@@ -58,9 +63,14 @@ clean: ## clean the repo
 	go clean
 	rm -rf dist
 	packr clean
+	rm coverage.out
+
+dep: ## ensure dependencies are vendored
+	dep ensure # this should be super-fast in the no-op case
+.PHONY: dep
 
 dep:
 	dep ensure
 .PHONY: dep
 
-.PHONY: build clean coverage test install lint lint-slow packr release help
+.PHONY: build clean coverage test install lint lint-slow packr release help setup

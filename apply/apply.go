@@ -12,10 +12,10 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/chanzuckerberg/fogg/config"
+	"github.com/chanzuckerberg/fogg/config/v1"
+	"github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plan"
-	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/gobuffalo/packr"
@@ -28,7 +28,7 @@ import (
 const rootPath = "terraform"
 
 // Apply will run a plan and apply all the changes to the current repo.
-func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, upgrade bool, noPlugins bool) error {
+func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade bool) error {
 	if !upgrade {
 		toolVersion, err := util.VersionString()
 		if err != nil {
@@ -39,7 +39,7 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, upgrade bool, noP
 			return errs.NewUserf("fogg version (%s) is different than version currently used to manage repo (%s). To upgrade add --upgrade.", toolVersion, repoVersion)
 		}
 	}
-	p, err := plan.Eval(conf, false, noPlugins)
+	p, err := plan.Eval(conf)
 	if err != nil {
 		return errs.WrapUser(err, "unable to evaluate plan")
 	}
@@ -56,17 +56,12 @@ func Apply(fs afero.Fs, conf *config.Config, tmp *templates.T, upgrade bool, noP
 		}
 	}
 
-	e = applyPlugins(fs, p)
-	if e != nil {
-		return errs.WrapUser(e, "unable to apply plugins")
-	}
-
 	e = applyAccounts(fs, p, &tmp.Account)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply accounts")
 	}
 
-	e = applyEnvs(fs, p, &tmp.Env, &tmp.Component)
+	e = applyEnvs(fs, p, &tmp.Env, tmp.Components)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply envs")
 	}
@@ -116,29 +111,6 @@ func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates *packr.Box) error {
 	return applyTree(fs, repoTemplates, "", p)
 }
 
-func applyPlugins(fs afero.Fs, p *plan.Plan) error {
-	log.Debug("applying plugins")
-	apply := func(name string, plugin *plugins.CustomPlugin) error {
-		log.Infof("Applying plugin %s", name)
-		return errs.WrapUserf(plugin.Install(fs, name), "Error applying plugin %s", name)
-	}
-
-	for pluginName, plugin := range p.Plugins.CustomPlugins {
-		err := apply(pluginName, plugin)
-		if err != nil {
-			return err
-		}
-	}
-
-	for providerName, provider := range p.Plugins.TerraformProviders {
-		err := apply(providerName, provider)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func applyGlobal(fs afero.Fs, p plan.Component, repoBox *packr.Box) error {
 	log.Debug("applying global")
 	path := fmt.Sprintf("%s/global", rootPath)
@@ -179,7 +151,7 @@ func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox *packr.Box) (
 	return nil
 }
 
-func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr.Box) (e error) {
+func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBoxes map[v1.ComponentKind]packr.Box) (e error) {
 	log.Debug("applying envs")
 	for env, envPlan := range p.Envs {
 		log.Debugf("applying %s", env)
@@ -198,7 +170,8 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBox *packr
 			if e != nil {
 				return errs.WrapUser(e, "unable to make directories for component")
 			}
-			e := applyTree(fs, componentBox, path, componentPlan)
+			componentBox := componentBoxes[componentPlan.Kind.GetOrDefault()]
+			e := applyTree(fs, &componentBox, path, componentPlan)
 			if e != nil {
 				return errs.WrapUser(e, "unable to apply templates for component")
 			}
@@ -250,17 +223,12 @@ func applyTree(dest afero.Fs, source *packr.Box, targetBasePath string, subst in
 				return errs.WrapUserf(err, "could not read source file %#v", sourceFile)
 			}
 
-			baseFs, ok := dest.(*afero.BasePathFs)
-			if !ok {
-				return errs.NewInternal("unable to type assert fs to basefs")
-			}
 			linkTarget := string(linkTargetBytes)
 
-			fullLinkTarget, err := baseFs.RealPath(linkTarget)
+			err = linkFile(target, linkTarget)
 			if err != nil {
-				return errs.WrapInternal(err, "unable to find real path for link target")
+				return errs.WrapInternal(err, "can't symlink file")
 			}
-			err = linkFile(target, fullLinkTarget)
 		} else {
 			e = afero.WriteReader(dest, target, sourceFile)
 			if e != nil {
@@ -437,7 +405,10 @@ func calculateModuleAddressForSource(path, moduleAddress string) (string, error)
 	if e != nil || u.Scheme == "file" {
 		// This indicates that we have a local path to the module.
 		// It is possible that this test is unreliable.
-		moduleAddressForSource, _ = filepath.Rel(path, moduleAddress)
+		moduleAddressForSource, e = filepath.Rel(path, moduleAddress)
+		if e != nil {
+			return "", e
+		}
 	} else {
 		moduleAddressForSource = moduleAddress
 	}
@@ -455,6 +426,19 @@ func getTargetPath(basePath, path string) string {
 }
 
 func linkFile(name, target string) error {
+	log.Debugf("removing link at %s", name)
+	os.Remove(name)
 	log.Debugf("linking %s to %s", name, target)
-	return os.Symlink(target, name)
+	relativePath, err := filepathRel(name, target)
+	log.Debugf("relative link %s err %#v", relativePath, err)
+	if err != nil {
+		return err
+	}
+	return os.Symlink(relativePath, name)
+}
+
+func filepathRel(path, name string) (string, error) {
+	dirs := strings.Count(path, "/")
+	fullPath := fmt.Sprintf("%s/%s", strings.Repeat("../", dirs), name)
+	return filepath.Clean(fullPath), nil
 }

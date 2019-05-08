@@ -21,7 +21,6 @@ lint-tflint: init
 	fi \
 
 terraform-validate: terraform init
-	$(sh_command) -c 'env'
 	$(sh_command) -c 'terraform validate -check-variables=true'
 
 lint-terraform-fmt: terraform

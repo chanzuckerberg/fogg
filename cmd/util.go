@@ -8,15 +8,17 @@ import (
 	"strings"
 
 	"github.com/chanzuckerberg/fogg/config"
+	"github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
+	"github.com/kr/pretty"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
+	"github.com/spf13/cobra"
 	validator "gopkg.in/go-playground/validator.v9"
 )
 
-func openGitOrExit(pwd string) {
-	log.Debugf("opening git at %s", pwd)
-	_, err := os.Stat(".git")
+func openGitOrExit(fs afero.Fs) {
+	_, err := fs.Stat(".git")
 	if err != nil {
 		// assuming this means no repository
 		log.Fatal("fogg must be run from the root of a git repo")
@@ -24,18 +26,15 @@ func openGitOrExit(pwd string) {
 	}
 }
 
-func readAndValidateConfig(fs afero.Fs, configFile string, verbose bool) (*config.Config, error) {
-	config, err := config.FindAndReadConfig(fs, configFile)
+func readAndValidateConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
+	conf, err := config.FindAndReadConfig(fs, configFile)
 	if err != nil {
 		return nil, errs.WrapUser(err, "unable to read config file")
 	}
-	if verbose {
-		log.Debug("CONFIG")
-		log.Debugf("%#v\n=====", config)
-	}
+	log.Debug("CONFIG")
+	log.Debugf("%s\n=====", pretty.Sprint(conf))
 
-	err = config.Validate()
-	return config, err
+	return conf, conf.Validate()
 }
 
 func mergeConfigValidationErrors(err error) error {
@@ -67,4 +66,36 @@ func setupDebug(debug bool) {
 		logLevel = log.FatalLevel
 	}
 	log.SetLevel(logLevel)
+}
+
+func openFs() (afero.Fs, error) {
+	pwd, e := os.Getwd()
+	if e != nil {
+		return nil, e
+	}
+	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
+	return fs, nil
+}
+
+func bootstrapCmd(cmd *cobra.Command, debug bool) (afero.Fs, *v2.Config, error) {
+	setupDebug(debug)
+
+	fs, err := openFs()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	configFile, err := cmd.Flags().GetString("config")
+	if err != nil {
+		return nil, nil, err
+	}
+
+	config, err := readAndValidateConfig(fs, configFile)
+
+	err = mergeConfigValidationErrors(err)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return fs, config, nil
 }

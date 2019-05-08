@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/chanzuckerberg/fogg/config"
+	"github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/errs"
 	prompt "github.com/segmentio/go-prompt"
 	"github.com/spf13/afero"
@@ -11,17 +12,18 @@ import (
 
 const AWSProviderVersion = "1.27.0"
 
-func userPrompt() (string, string, string, string, string) {
+func userPrompt() (string, string, string, string, string, string) {
 	project := prompt.StringRequired("project name?")
 	region := prompt.StringRequired("aws region?")
 	bucket := prompt.StringRequired("infra bucket name?")
+	table := prompt.String("infra dynamo table name?")
 	profile := prompt.StringRequired("auth profile?")
 	owner := prompt.StringRequired("owner?")
 
-	return project, region, bucket, profile, owner
+	return project, region, bucket, table, profile, owner
 }
 
-func writeConfig(fs afero.Fs, config *config.Config) error {
+func writeConfig(fs afero.Fs, config *v1.Config) error {
 	json, e := json.MarshalIndent(config, "", "  ")
 	if e != nil {
 		return errs.WrapInternal(e, "unable to marshal json")
@@ -35,8 +37,8 @@ func writeConfig(fs afero.Fs, config *config.Config) error {
 }
 
 func Init(fs afero.Fs) error {
-	project, region, bucket, profile, owner := userPrompt()
-	config := config.InitConfig(project, region, bucket, profile, owner, AWSProviderVersion)
+	project, region, bucket, table, profile, owner := userPrompt()
+	config := config.InitConfig(project, region, bucket, table, profile, owner, AWSProviderVersion)
 	e := writeConfig(fs, config)
 	return e
 }

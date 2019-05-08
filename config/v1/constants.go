@@ -1,6 +1,6 @@
-package config
+package v1
 
-var reservedVariableNames = map[string]bool{
+var ReservedVariableNames = map[string]bool{
 	"aws_accounts": true,
 	"aws_profile":  true,
 	"env":          true,
