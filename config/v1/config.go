@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
@@ -138,6 +139,17 @@ type Config struct {
 	Modules  map[string]Module  `json:"modules"`
 	Plugins  Plugins            `json:"plugins"`
 	TravisCI *TravisCI          `json:"travis_ci"`
+}
+
+func ReadConfig(b []byte) (*Config, error) {
+	c := &Config{
+		Docker: true,
+	}
+	e := json.Unmarshal(b, c)
+	if e != nil {
+		return nil, errs.WrapUser(e, "unable to parse json config file")
+	}
+	return c, nil
 }
 
 // Validate validates the config

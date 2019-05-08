@@ -1,8 +1,7 @@
 package plan
 
 import (
-	"bufio"
-	"os"
+	"io/ioutil"
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/config"
@@ -77,10 +76,9 @@ func TestResolveStringArray(t *testing.T) {
 
 func TestPlanBasicV1(t *testing.T) {
 	a := assert.New(t)
-	f, _ := os.Open("testdata/v1_full.json")
-	defer f.Close()
-	r := bufio.NewReader(f)
-	c, err := config.ReadConfig(r)
+	b, e := ioutil.ReadFile("testdata/v1_full.json")
+	a.NoError(e)
+	c, err := v1.ReadConfig(b)
 	assert.Nil(t, err)
 
 	c2, err := config.UpgradeConfigVersion(c)
@@ -120,10 +118,9 @@ func TestPlanBasicV1(t *testing.T) {
 
 func TestPlanBasicV2(t *testing.T) {
 	a := assert.New(t)
-	f, _ := os.Open("testdata/v2_full.json")
-	defer f.Close()
-	r := bufio.NewReader(f)
-	c2, err := v2.ReadConfig(r)
+	b, e := ioutil.ReadFile("testdata/v2_full.json")
+	assert.NoError(t, e)
+	c2, err := v2.ReadConfig(b)
 	assert.Nil(t, err)
 
 	err = c2.Validate()
@@ -163,10 +160,9 @@ func TestPlanBasicV2(t *testing.T) {
 
 func TestExtraVarsCompositionV2(t *testing.T) {
 	a := assert.New(t)
-	f, _ := os.Open("testdata/v1_full.json")
-	defer f.Close()
-	r := bufio.NewReader(f)
-	c, err := config.ReadConfig(r)
+	b, e := ioutil.ReadFile("testdata/v1_full.json")
+	a.NoError(e)
+	c, err := v1.ReadConfig(b)
 	assert.Nil(t, err)
 
 	c2, err := config.UpgradeConfigVersion(c)

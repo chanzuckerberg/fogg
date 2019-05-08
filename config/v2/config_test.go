@@ -1,8 +1,7 @@
 package v2
 
 import (
-	"bufio"
-	"os"
+	"io/ioutil"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -11,22 +10,18 @@ import (
 func TestReadConfig(t *testing.T) {
 	a := assert.New(t)
 
-	f, err := os.Open("../testdata/empty.json")
-	a.NoError(err)
-	defer f.Close()
-	r := bufio.NewReader(f)
-	c, e := ReadConfig(r)
+	b, e := ioutil.ReadFile("../testdata/empty.json")
+	a.NoError(e)
+	c, e := ReadConfig(b)
 
 	a.NoError(e)
 
 	e = c.Validate()
 	a.Error(e)
 
-	f2, err := os.Open("../testdata/v2_minimal_valid.json")
-	a.NoError(err)
-	defer f2.Close()
-	r = bufio.NewReader(f2)
-	c, e = ReadConfig(r)
+	b2, e := ioutil.ReadFile("../testdata/v2_minimal_valid.json")
+	a.NoError(e)
+	c, e = ReadConfig(b2)
 
 	a.NoError(e)
 

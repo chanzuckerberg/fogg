@@ -3,8 +3,6 @@ package v2
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"io/ioutil"
 	"math/rand"
 	"reflect"
 
@@ -12,15 +10,11 @@ import (
 	"github.com/chanzuckerberg/fogg/errs"
 )
 
-func ReadConfig(f io.Reader) (*Config, error) {
+func ReadConfig(b []byte) (*Config, error) {
 	c := &Config{
 		Docker: false,
 	}
-	b, e := ioutil.ReadAll(f)
-	if e != nil {
-		return nil, errs.WrapUser(e, "unable to read config")
-	}
-	e = json.Unmarshal(b, c)
+	e := json.Unmarshal(b, c)
 
 	return c, errs.WrapUser(e, "unable to parse config")
 }
@@ -83,7 +77,7 @@ type AWSProvider struct {
 	AdditionalRegions []string `json:"additional_regions"`
 	Profile           *string  `json:"profile"`
 	Region            *string  `json:"region" validate:"required"`
-	Version           *string  `json:"version,omitempty"`
+	Version           *string  `json:"version,omitempty" validate:"required"`
 }
 
 type Backend struct {

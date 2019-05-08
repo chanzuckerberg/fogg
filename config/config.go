@@ -8,6 +8,7 @@ import (
 	"github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
 
@@ -33,21 +34,6 @@ func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVe
 	}
 }
 
-func ReadConfig(f io.Reader) (*v1.Config, error) {
-	c := &v1.Config{
-		Docker: true,
-	}
-	b, e := ioutil.ReadAll(f)
-	if e != nil {
-		return nil, errs.WrapUser(e, "unable to read config")
-	}
-	e = json.Unmarshal(b, c)
-	if e != nil {
-		return nil, errs.WrapUser(e, "unable to parse json config file")
-	}
-	return c, nil
-}
-
 func FindAndReadConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
 	f, err := fs.Open(configFile)
 	if err != nil {
@@ -56,14 +42,35 @@ func FindAndReadConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
 	reader := io.ReadCloser(f)
 	defer reader.Close()
 
-	c, err := ReadConfig(reader)
+	b, e := ioutil.ReadAll(reader)
+	if e != nil {
+		return nil, errs.WrapUser(e, "unable to read config")
+	}
+
+	v, err := detectVersion(b)
 	if err != nil {
 		return nil, err
 	}
+	log.Debugf("config file version: %#v\n", v)
 
-	c2, err := UpgradeConfigVersion(c)
+	switch v {
+	case 1:
+		c, err := v1.ReadConfig(b)
+		if err != nil {
+			return nil, err
+		}
 
-	return c2, err
+		c2, err := UpgradeConfigVersion(c)
+		return c2, err
+
+	case 2:
+
+		c2, err := v2.ReadConfig(b)
+		return c2, err
+	default:
+		return nil, errs.NewUser("could not figure out config file version")
+	}
+
 }
 
 type ver struct {

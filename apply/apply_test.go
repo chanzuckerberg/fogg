@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/config"
+	"github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/templates"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
@@ -231,7 +232,7 @@ func TestApplySmokeTest(t *testing.T) {
   }
 }
 `
-	c, e := config.ReadConfig(ioutil.NopCloser(strings.NewReader(json)))
+	c, e := v1.ReadConfig([]byte(json))
 	assert.NoError(t, e)
 	c2, e := config.UpgradeConfigVersion(c)
 	assert.NoError(t, e)
