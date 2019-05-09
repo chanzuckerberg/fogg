@@ -11,7 +11,8 @@
         },
         "backend": {
             "bucket": "bucket",
-            "region": "region"
+            "region": "region",
+            "profile": "foo"
         },
         "project": "foo",
         "owner": "foo@example.com",

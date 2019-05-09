@@ -1,7 +1,9 @@
 {
   "defaults": {
-    "aws_region": "reg",
-    "aws_profile": "prof",
+    "aws_region_provider": "reg",
+    "aws_region_backend": "reg",
+    "aws_profile_provider": "prof",
+    "aws_profile_backend": "prof",
     "infra_s3_bucket": "buck",
     "project": "proj",
     "terraform_version": "0.100.0",

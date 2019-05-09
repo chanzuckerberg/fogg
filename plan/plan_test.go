@@ -19,14 +19,14 @@ func init() {
 	log.SetFormatter(formatter)
 }
 
-func TestResolveRequired(t *testing.T) {
-	resolved := resolveRequired("def", nil)
-	assert.Equal(t, "def", resolved)
+// func TestResolveRequired(t *testing.T) {
+// 	resolved := resolveRequired("def", nil)
+// 	assert.Equal(t, "def", resolved)
 
-	over := "over"
-	resolved = resolveRequired("def", &over)
-	assert.Equal(t, "over", resolved)
-}
+// 	over := "over"
+// 	resolved = resolveRequired("def", &over)
+// 	assert.Equal(t, "over", resolved)
+// }
 
 func TestResolveAccounts(t *testing.T) {
 	foo, bar := int64(123), int64(456)
@@ -34,7 +34,7 @@ func TestResolveAccounts(t *testing.T) {
 	accounts := map[string]v2.Account{
 		"foo": {
 			Common: v2.Common{
-				Providers: v2.Providers{
+				Providers: &v2.Providers{
 					AWS: &v2.AWSProvider{
 						AccountID: &foo,
 					},
@@ -43,7 +43,7 @@ func TestResolveAccounts(t *testing.T) {
 		},
 		"bar": {
 			Common: v2.Common{
-				Providers: v2.Providers{
+				Providers: &v2.Providers{
 					AWS: &v2.AWSProvider{
 						AccountID: &bar,
 					},
@@ -56,22 +56,6 @@ func TestResolveAccounts(t *testing.T) {
 	other := resolveAccounts(accounts)
 	assert.NotNil(t, other)
 	assert.Equal(t, map[string]int64{"bar": bar, "foo": foo}, other)
-}
-
-func TestResolveStringArray(t *testing.T) {
-	def := []string{"foo"}
-	override := []string{"bar"}
-
-	result := resolveStringArray(def, override)
-	assert.Len(t, result, 1)
-	assert.Equal(t, "bar", result[0])
-
-	override = nil
-
-	result2 := resolveStringArray(def, override)
-	assert.Len(t, result2, 1)
-	assert.Equal(t, "foo", result2[0])
-
 }
 
 func TestPlanBasicV1(t *testing.T) {

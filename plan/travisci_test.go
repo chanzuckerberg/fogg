@@ -5,6 +5,7 @@ import (
 
 	"github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/config/v2"
+	"github.com/chanzuckerberg/fogg/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -33,14 +34,6 @@ func Test_buildTravisCI_Disabled(t *testing.T) {
 	}
 }
 
-// TODO consolidate this somewhere
-func intptr(i int64) *int64 {
-	return &i
-}
-func strptr(s string) *string {
-	return &s
-}
-
 func Test_buildTravisCI_Profiles(t *testing.T) {
 	a := assert.New(t)
 
@@ -48,26 +41,27 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 		Version: 2,
 		Defaults: v2.Defaults{
 			Common: v2.Common{
-				Project:          "foo",
-				Owner:            "bar",
-				TerraformVersion: "0.1.0",
-				Providers: v2.Providers{
+				Project:          util.StrPtr("foo"),
+				Owner:            util.StrPtr("bar"),
+				TerraformVersion: util.StrPtr("0.1.0"),
+				Providers: &v2.Providers{
 					AWS: &v2.AWSProvider{
-						AccountID: intptr(123),
-						Region:    strptr("us-west-2"),
-						Profile:   strptr("foo"),
-						Version:   strptr("0.12.0"),
+						AccountID: util.Intptr(123),
+						Region:    util.StrPtr("us-west-2"),
+						Profile:   util.StrPtr("foo"),
+						Version:   util.StrPtr("0.12.0"),
 					},
 				},
-				Backend: v2.Backend{
-					Bucket: "bucket",
-					Region: "us-west-2",
+				Backend: &v2.Backend{
+					Bucket:  util.StrPtr("bucket"),
+					Region:  util.StrPtr("us-west-2"),
+					Profile: util.StrPtr("profile"),
 				},
 			},
 		},
 		Accounts: map[string]v2.Account{
 			"foo": v2.Account{
-				Common: v2.Common{Providers: v2.Providers{AWS: &v2.AWSProvider{AccountID: &id1}}},
+				Common: v2.Common{Providers: &v2.Providers{AWS: &v2.AWSProvider{AccountID: &id1}}},
 			},
 		},
 		Tools: v2.Tools{TravisCI: &v1.TravisCI{
@@ -95,29 +89,30 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 		Version: 2,
 		Defaults: v2.Defaults{
 			Common: v2.Common{
-				Project:          "foo",
-				Owner:            "bar",
-				TerraformVersion: "0.1.0",
-				Providers: v2.Providers{
+				Project:          util.StrPtr("foo"),
+				Owner:            util.StrPtr("bar"),
+				TerraformVersion: util.StrPtr("0.1.0"),
+				Providers: &v2.Providers{
 					AWS: &v2.AWSProvider{
-						AccountID: intptr(123),
-						Region:    strptr("us-west-2"),
-						Profile:   strptr("foo"),
-						Version:   strptr("0.12.0"),
+						AccountID: util.Intptr(123),
+						Region:    util.StrPtr("us-west-2"),
+						Profile:   util.StrPtr("foo"),
+						Version:   util.StrPtr("0.12.0"),
 					},
 				},
-				Backend: v2.Backend{
-					Bucket: "bucket",
-					Region: "us-west-2",
+				Backend: &v2.Backend{
+					Bucket:  util.StrPtr("bucket"),
+					Region:  util.StrPtr("us-west-2"),
+					Profile: util.StrPtr("profile"),
 				},
 			},
 		},
 		Accounts: map[string]v2.Account{
 			"foo": v2.Account{
-				Common: v2.Common{Providers: v2.Providers{AWS: &v2.AWSProvider{AccountID: &id1}}},
+				Common: v2.Common{Providers: &v2.Providers{AWS: &v2.AWSProvider{AccountID: &id1}}},
 			},
 			"bar": v2.Account{
-				Common: v2.Common{Providers: v2.Providers{AWS: &v2.AWSProvider{AccountID: &id2}}},
+				Common: v2.Common{Providers: &v2.Providers{AWS: &v2.AWSProvider{AccountID: &id2}}},
 			},
 		},
 		Tools: v2.Tools{TravisCI: &v1.TravisCI{
