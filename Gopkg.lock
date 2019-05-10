@@ -553,15 +553,16 @@
   version = "v1.2.0"
 
 [[projects]]
-  digest = "1:6a4a11ba764a56d2758899ec6f3848d24698d48442ebce85ee7a3f63284526cd"
+  branch = "symlinker"
+  digest = "1:e32116fb615093fbcdf5873416cbe347a8b31b4d6a621f926386526865880bad"
   name = "github.com/spf13/afero"
   packages = [
     ".",
     "mem",
   ]
   pruneopts = "UT"
-  revision = "d40851caa0d747393da1ffb28f7f9d8b4eeffebd"
-  version = "v1.1.2"
+  revision = "c0cb1e83da55d2abd040f6f7f2795663ca220a26"
+  source = "github.com/chanzuckerberg/afero"
 
 [[projects]]
   digest = "1:645cabccbb4fa8aab25a956cbcbdf6a6845ca736b2c64e197ca7cbb9d210b939"
