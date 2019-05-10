@@ -231,10 +231,17 @@ func applyTree(dest afero.Fs, source *packr.Box, targetBasePath string, subst in
 				return errs.NewInternal("can't cast to afero.SymLinker")
 			}
 
-			_, err = linker.SymlinkIfPossible(target, linkTarget)
-			if err != nil {
-				return errs.WrapInternal(err, "can't symlink file")
+			t, _, _ := linker.EvalSymlinksIfPossible(target)
+			log.Debugf("t: %#v", t)
+			log.Debugf("linkTarget: %#v", linkTarget)
+			if t != linkTarget {
+				dest.Remove(target)
+				_, err = linker.SymlinkIfPossible(target, linkTarget)
+				if err != nil {
+					return errs.WrapInternal(err, "can't symlink file")
+				}
 			}
+
 		} else {
 			e = afero.WriteReader(dest, target, sourceFile)
 			if e != nil {
