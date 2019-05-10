@@ -12,8 +12,7 @@
 
 [[constraint]]
   name = "github.com/spf13/afero"
-  source = "github.com/chanzuckerberg/afero"
-  branch = "symlinker"
+  version = "1.1.1"
 
 [[constraint]]
   name = "github.com/spf13/cobra"
@@ -54,4 +53,3 @@
 [[constraint]]
   name = "gopkg.in/yaml.v2"
   version = "2.2.1"
-

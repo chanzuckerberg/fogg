@@ -45,7 +45,7 @@ coverage: ## run the go coverage tool, reading file coverage.out
 	go tool cover -html=coverage.out
 
 test: dep ## run tests
-	gotest -race -cover ./...
+	gotest -race ./...
 
 test-coverage: ## run the test with proper coverage reporting
 	goverage -race -coverprofile=coverage.out -covermode=atomic ./...
@@ -67,6 +67,10 @@ clean: ## clean the repo
 
 dep: ## ensure dependencies are vendored
 	dep ensure # this should be super-fast in the no-op case
+.PHONY: dep
+
+dep:
+	dep ensure
 .PHONY: dep
 
 .PHONY: build clean coverage test install lint lint-slow packr release help setup

@@ -18,6 +18,3 @@ jobs:
     - stage: check
       script:
         - if [[ ! -z "${SNYK_TOKEN}" ]]; then snyk monitor --org=czi; snyk test; fi
-    - stage: check
-      script:
-        - curl --data-binary @codecov.yml https://codecov.io/validate
