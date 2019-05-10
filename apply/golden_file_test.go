@@ -21,7 +21,7 @@ func TestIntegration(t *testing.T) {
 	var testCases = []struct {
 		fileName string
 	}{
-		{"empty"},
+		{"v1_full"},
 	}
 
 	for _, tc := range testCases {
