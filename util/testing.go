@@ -17,10 +17,14 @@ func StrPtr(s string) *string {
 	return &s
 }
 
-func TestFile(name string) ([]byte, error) {
-	// calculate the path to repository's root
+func ProjectRoot() string {
 	_, b, _, _ := runtime.Caller(0)
 	basepath := filepath.Dir(b)
-	path := filepath.Join(basepath, "..", "testdata", name, "fogg.json")
+	return filepath.Join(basepath, "..")
+}
+
+func TestFile(name string) ([]byte, error) {
+	// calculate the path to repository's root
+	path := filepath.Join(ProjectRoot(), "testdata", name, "fogg.json")
 	return ioutil.ReadFile(path)
 }
