@@ -133,11 +133,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:c9cfc962df3983b4596879d0a7acb927b1867e38c7a49a5933e7675e3bb4f93c"
+  digest = "1:e751070c5714e68b97337b939357c33ee53e63aa1154278dfbf43086464e7d10"
   name = "github.com/chanzuckerberg/go-misc"
-  packages = ["github"]
+  packages = [
+    "github",
+    "ver",
+  ]
   pruneopts = "UT"
-  revision = "80891fcdcf65ad524c84bdbb798bffed85ed1037"
+  revision = "8b10b31bcd0078b701cd9f7e4be7abfeeea50ec8"
 
 [[projects]]
   digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
@@ -709,6 +712,7 @@
     "github.com/aws/aws-sdk-go/aws/arn",
     "github.com/blang/semver",
     "github.com/chanzuckerberg/go-misc/github",
+    "github.com/chanzuckerberg/go-misc/ver",
     "github.com/fatih/color",
     "github.com/go-errors/errors",
     "github.com/go-test/deep",
