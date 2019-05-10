@@ -13,7 +13,6 @@ func TestReadConfig(t *testing.T) {
 	b, e := util.TestFile("empty")
 	a.NoError(e)
 	c, e := ReadConfig(b)
-
 	a.NoError(e)
 
 	e = c.Validate()
