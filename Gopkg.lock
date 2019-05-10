@@ -194,6 +194,14 @@
   version = "v0.16.0"
 
 [[projects]]
+  digest = "1:7f89e0c888fb99c61055c646f5678aae645b0b0a1443d9b2dcd9964d850827ce"
+  name = "github.com/go-test/deep"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "6592d9cc0a499ad2d5f574fde80a2b5c5cc3b4f5"
+  version = "v1.0.1"
+
+[[projects]]
   digest = "1:c8ad4ba32ae8b71ef2bf5e1bad402aeb99ce77a1240f9b684db8b1ff5353e7ab"
   name = "github.com/gobuffalo/packr"
   packages = ["."]
@@ -707,6 +715,7 @@
     "github.com/chanzuckerberg/go-misc/ver",
     "github.com/fatih/color",
     "github.com/go-errors/errors",
+    "github.com/go-test/deep",
     "github.com/gobuffalo/packr",
     "github.com/hashicorp/go-getter",
     "github.com/hashicorp/go-multierror",

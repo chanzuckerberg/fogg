@@ -44,7 +44,7 @@ build: dep packr ## build the binary
 coverage: ## run the go coverage tool, reading file coverage.out
 	go tool cover -html=coverage.out
 
-test: dep
+test: dep ## run tests
 	gotest -race ./...
 
 test-coverage: ## run the test with proper coverage reporting
@@ -52,7 +52,7 @@ test-coverage: ## run the test with proper coverage reporting
 	go tool cover -html=coverage.out
 .PHONY: test-coverage
 
-install: packr ## install the fogg binary in $GOPATH/bin
+install: dep packr ## install the fogg binary in $GOPATH/bin
 	go install ${LDFLAGS} .
 
 help: ## display help for this makefile

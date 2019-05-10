@@ -3,6 +3,7 @@ package v2
 import (
 	"testing"
 
+	"github.com/chanzuckerberg/fogg/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,15 +25,15 @@ func TestValidateOwnersAccount(t *testing.T) {
 	c := confAcctOwner(foo, foo)
 
 	// Both defaults and acct are set
-	a.Nil(c.validateOwners().ErrorOrNil())
+	a.Nil(c.validateInheritedStringField("owner", OwnerGetter, nonEmptyString).ErrorOrNil())
 
 	// defaults unset, still valid
 	c = confAcctOwner("", foo)
-	a.NoError(c.validateOwners().ErrorOrNil())
+	a.NoError(c.validateInheritedStringField("owner", OwnerGetter, nonEmptyString).ErrorOrNil())
 
 	// both unset, no longer valid
 	c = confAcctOwner("", "")
-	a.Equal(2, c.validateOwners().Len())
+	a.Equal(2, c.validateInheritedStringField("owner", OwnerGetter, nonEmptyString).Len())
 }
 func TestValidateOwnersComponent(t *testing.T) {
 	foo := "foo@example.com"
@@ -58,7 +59,7 @@ func TestValidateOwnersComponent(t *testing.T) {
 		t.Run(tt.label, func(t *testing.T) {
 			a := assert.New(t)
 			c := confComponentOwner(tt.def, tt.env, tt.comp)
-			e := c.validateOwners()
+			e := c.validateInheritedStringField("owner", OwnerGetter, nonEmptyString)
 			if tt.errNil {
 				a.NoError(e.ErrorOrNil())
 			} else {
@@ -73,24 +74,24 @@ func confAcctOwner(def, acct string) Config {
 	return Config{
 		Defaults: Defaults{
 			Common{
-				Owner: def,
-				Backend: Backend{
-					Bucket:  "foo",
-					Region:  "foo",
-					Profile: "foo",
+				Owner: &def,
+				Backend: &Backend{
+					Bucket:  util.StrPtr("foo"),
+					Region:  util.StrPtr("foo"),
+					Profile: util.StrPtr("foo"),
 				},
 			},
 		},
 		Accounts: map[string]Account{
 			"foo": Account{
 				Common{
-					Owner: acct,
+					Owner: util.StrPtr(acct),
 				},
 			},
 		},
 		Global: Component{
 			Common: Common{
-				Owner: acct,
+				Owner: util.StrPtr(acct),
 			},
 		},
 	}
@@ -100,23 +101,23 @@ func confComponentOwner(def, env, component string) Config {
 	return Config{
 		Defaults: Defaults{
 			Common{
-				Owner: def,
-				Backend: Backend{
-					Bucket:  "foo",
-					Region:  "foo",
-					Profile: "foo",
+				Owner: util.StrPtr(def),
+				Backend: &Backend{
+					Bucket:  util.StrPtr("foo"),
+					Region:  util.StrPtr("foo"),
+					Profile: util.StrPtr("foo"),
 				},
 			},
 		},
 		Envs: map[string]Env{
 			"bar": Env{
 				Common: Common{
-					Owner: env,
+					Owner: util.StrPtr(env),
 				},
 				Components: map[string]Component{
 					"bam": Component{
 						Common: Common{
-							Owner: component,
+							Owner: util.StrPtr(component),
 						},
 					},
 				},
@@ -124,8 +125,24 @@ func confComponentOwner(def, env, component string) Config {
 		},
 		Global: Component{
 			Common: Common{
-				Owner: "foo",
+				Owner: util.StrPtr("foo"),
 			},
 		},
 	}
+}
+
+func TestResolveStringArray(t *testing.T) {
+	def := []string{"foo"}
+	override := []string{"bar"}
+
+	result := ResolveStringArray(def, override)
+	assert.Len(t, result, 1)
+	assert.Equal(t, "bar", result[0])
+
+	override = nil
+
+	result2 := ResolveStringArray(def, override)
+	assert.Len(t, result2, 1)
+	assert.Equal(t, "foo", result2[0])
+
 }
