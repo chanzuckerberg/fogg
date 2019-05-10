@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/chanzuckerberg/fogg/util"
 	"github.com/stretchr/testify/assert"
 	validator "gopkg.in/go-playground/validator.v9"
 )
@@ -52,7 +53,7 @@ func TestParseDefaults(t *testing.T) {
 
 func TestParse(t *testing.T) {
 	a := assert.New(t)
-	b, e := ioutil.ReadFile("testdata/v1_full.json")
+	b, e := util.TestFile("v1_full")
 	a.NoError(e)
 	c, e := ReadConfig(b)
 	assert.Nil(t, e)

@@ -1,12 +1,12 @@
 package plan
 
 import (
-	"io/ioutil"
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/config/v2"
+	"github.com/chanzuckerberg/fogg/util"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
@@ -60,7 +60,7 @@ func TestResolveAccounts(t *testing.T) {
 
 func TestPlanBasicV1(t *testing.T) {
 	a := assert.New(t)
-	b, e := ioutil.ReadFile("testdata/v1_full.json")
+	b, e := util.TestFile("v1_full_plan")
 	a.NoError(e)
 	c, err := v1.ReadConfig(b)
 	assert.Nil(t, err)
@@ -102,8 +102,10 @@ func TestPlanBasicV1(t *testing.T) {
 
 func TestPlanBasicV2(t *testing.T) {
 	a := assert.New(t)
-	b, e := ioutil.ReadFile("testdata/v2_full.json")
+
+	b, e := util.TestFile("v2_full")
 	assert.NoError(t, e)
+
 	c2, err := v2.ReadConfig(b)
 	assert.Nil(t, err)
 
@@ -144,7 +146,7 @@ func TestPlanBasicV2(t *testing.T) {
 
 func TestExtraVarsCompositionV2(t *testing.T) {
 	a := assert.New(t)
-	b, e := ioutil.ReadFile("testdata/v1_full.json")
+	b, e := util.TestFile("v1_full_plan")
 	a.NoError(e)
 	c, err := v1.ReadConfig(b)
 	assert.Nil(t, err)

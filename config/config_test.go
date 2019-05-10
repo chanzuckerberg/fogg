@@ -1,7 +1,6 @@
 package config
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -72,7 +71,7 @@ func boolptr(b bool) *bool {
 
 func TestUpgradeConfigVersion(t *testing.T) {
 	a := assert.New(t)
-	b, e := ioutil.ReadFile("v1/testdata/v1_full.json")
+	b, e := util.TestFile("v1_full")
 	a.NoError(e)
 	v1Full, e := v1.ReadConfig(b)
 	a.NoError(e)
@@ -285,10 +284,11 @@ func TestFindAndReadConfig(t *testing.T) {
 		return fs, nil
 	}
 
-	v1, e := ioutil.ReadFile("v1/testdata/v1_full.json")
+	v1, e := util.TestFile("v1_full")
 	a.NoError(e)
 
-	v2, e := ioutil.ReadFile("testdata/v2_minimal_valid.json")
+	v2, e := util.TestFile("v2_minimal_valid")
+
 	a.NoError(e)
 
 	f1, e := fs(map[string][]byte{
