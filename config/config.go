@@ -8,6 +8,7 @@ import (
 	"github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
+	"github.com/chanzuckerberg/fogg/util"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
@@ -102,14 +103,14 @@ func UpgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 	def1 := c1.Defaults
 	c2.Defaults = v2.Defaults{
 		Common: v2.Common{
-			Backend: v2.Backend{
-				Bucket:      def1.InfraBucket,
-				DynamoTable: def1.InfraDynamoTable,
-				Profile:     def1.AWSProfileBackend,
-				Region:      def1.AWSRegionBackend,
+			Backend: &v2.Backend{
+				Bucket:      util.StrPtr(def1.InfraBucket),
+				DynamoTable: util.StrPtr(def1.InfraDynamoTable),
+				Profile:     util.StrPtr(def1.AWSProfileBackend),
+				Region:      util.StrPtr(def1.AWSRegionBackend),
 			},
 			ExtraVars: def1.ExtraVars,
-			Providers: v2.Providers{
+			Providers: &v2.Providers{
 				AWS: &v2.AWSProvider{
 					AccountID:         &def1.AccountID,
 					AdditionalRegions: def1.AWSRegions,
@@ -118,9 +119,9 @@ func UpgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 					Version:           &def1.AWSProviderVersion,
 				},
 			},
-			Owner:            def1.Owner,
-			Project:          def1.Project,
-			TerraformVersion: def1.TerraformVersion,
+			Owner:            util.StrPtr(def1.Owner),
+			Project:          util.StrPtr(def1.Project),
+			TerraformVersion: util.StrPtr(def1.TerraformVersion),
 		},
 	}
 
@@ -133,24 +134,17 @@ func UpgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 		c2.Tools.TravisCI = c1.TravisCI
 	}
 
-	var ptrstr = func(s *string) string {
-		if s == nil {
-			return ""
-		}
-		return *s
-	}
-
 	for acctName, acct := range c1.Accounts {
 		c2.Accounts[acctName] = v2.Account{
 			Common: v2.Common{
-				Backend: v2.Backend{
-					Bucket:      ptrstr(acct.InfraBucket),
-					DynamoTable: ptrstr(acct.InfraDynamoTable),
-					Profile:     ptrstr(acct.AWSProfileBackend),
-					Region:      ptrstr(acct.AWSRegionBackend),
+				Backend: &v2.Backend{
+					Bucket:      acct.InfraBucket,
+					DynamoTable: acct.InfraDynamoTable,
+					Profile:     acct.AWSProfileBackend,
+					Region:      acct.AWSRegionBackend,
 				},
 				ExtraVars: acct.ExtraVars,
-				Providers: v2.Providers{
+				Providers: &v2.Providers{
 					AWS: &v2.AWSProvider{
 						AccountID:         acct.AccountID,
 						AdditionalRegions: acct.AWSRegions,
@@ -159,9 +153,9 @@ func UpgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 						Version:           acct.AWSProviderVersion,
 					},
 				},
-				Owner:            ptrstr(acct.Owner),
-				Project:          ptrstr(acct.Project),
-				TerraformVersion: ptrstr(acct.TerraformVersion),
+				Owner:            acct.Owner,
+				Project:          acct.Project,
+				TerraformVersion: acct.TerraformVersion,
 			},
 		}
 	}
@@ -169,14 +163,14 @@ func UpgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 	for envName, env := range c1.Envs {
 		env2 := v2.Env{
 			Common: v2.Common{
-				Backend: v2.Backend{
-					Bucket:      ptrstr(env.InfraBucket),
-					DynamoTable: ptrstr(env.InfraDynamoTable),
-					Profile:     ptrstr(env.AWSProfileBackend),
-					Region:      ptrstr(env.AWSRegionBackend),
+				Backend: &v2.Backend{
+					Bucket:      env.InfraBucket,
+					DynamoTable: env.InfraDynamoTable,
+					Profile:     env.AWSProfileBackend,
+					Region:      env.AWSRegionBackend,
 				},
 				ExtraVars: env.ExtraVars,
-				Providers: v2.Providers{
+				Providers: &v2.Providers{
 					AWS: &v2.AWSProvider{
 						AccountID:         env.AccountID,
 						AdditionalRegions: env.AWSRegions,
@@ -185,9 +179,9 @@ func UpgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 						Version:           env.AWSProviderVersion,
 					},
 				},
-				Owner:            ptrstr(env.Owner),
-				Project:          ptrstr(env.Project),
-				TerraformVersion: ptrstr(env.TerraformVersion),
+				Owner:            env.Owner,
+				Project:          env.Project,
+				TerraformVersion: env.TerraformVersion,
 			},
 		}
 		env2.Components = map[string]v2.Component{}
@@ -195,32 +189,35 @@ func UpgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 		for componentName, component := range env.Components {
 			c2 := v2.Component{
 				Common: v2.Common{
-					Backend: v2.Backend{
-						Bucket:      ptrstr(component.InfraBucket),
-						DynamoTable: ptrstr(component.InfraDynamoTable),
-						Profile:     ptrstr(component.AWSProfileBackend),
-						Region:      ptrstr(component.AWSRegionBackend),
-					},
-					ExtraVars: component.ExtraVars,
-					Providers: v2.Providers{
-						// see below
-					},
-					Owner:            ptrstr(component.Owner),
-					Project:          ptrstr(component.Project),
-					TerraformVersion: ptrstr(component.TerraformVersion),
+					ExtraVars:        component.ExtraVars,
+					Owner:            component.Owner,
+					Project:          component.Project,
+					TerraformVersion: component.TerraformVersion,
 				},
 				EKS:          component.EKS,
 				Kind:         component.Kind,
 				ModuleSource: component.ModuleSource,
 			}
 
+			if component.InfraBucket != nil || component.InfraDynamoTable != nil || component.AWSProfileBackend != nil || component.AWSRegionBackend != nil {
+				c2.Backend = &v2.Backend{
+					Bucket:      component.InfraBucket,
+					DynamoTable: component.InfraDynamoTable,
+					Profile:     component.AWSProfileBackend,
+					Region:      component.AWSRegionBackend,
+				}
+			}
+
 			if component.AccountID != nil || component.AWSRegions != nil || component.AWSProfileProvider != nil || component.AWSRegionProvider != nil || component.TerraformVersion != nil {
-				c2.Providers.AWS = &v2.AWSProvider{
-					AccountID:         component.AccountID,
-					AdditionalRegions: component.AWSRegions,
-					Profile:           component.AWSProfileProvider,
-					Region:            component.AWSRegionProvider,
-					Version:           component.AWSProviderVersion,
+
+				c2.Providers = &v2.Providers{
+					AWS: &v2.AWSProvider{
+						AccountID:         component.AccountID,
+						AdditionalRegions: component.AWSRegions,
+						Profile:           component.AWSProfileProvider,
+						Region:            component.AWSRegionProvider,
+						Version:           component.AWSProviderVersion,
+					},
 				}
 			}
 			env2.Components[componentName] = c2

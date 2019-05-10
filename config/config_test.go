@@ -8,6 +8,8 @@ import (
 	"github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/plugins"
+	"github.com/chanzuckerberg/fogg/util"
+	"github.com/go-test/deep"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 )
@@ -79,14 +81,14 @@ func TestUpgradeConfigVersion(t *testing.T) {
 		Docker:  false,
 		Defaults: v2.Defaults{
 			Common: v2.Common{
-				Backend: v2.Backend{
-					Bucket:      "the-bucket",
-					DynamoTable: "the-table",
-					Profile:     "czi",
-					Region:      "us-west-2",
+				Backend: &v2.Backend{
+					Bucket:      util.StrPtr("the-bucket"),
+					DynamoTable: util.StrPtr("the-table"),
+					Profile:     util.StrPtr("czi"),
+					Region:      util.StrPtr("us-west-2"),
 				},
 
-				Providers: v2.Providers{
+				Providers: &v2.Providers{
 					AWS: &v2.AWSProvider{
 						AccountID:         intptr(1),
 						Profile:           strptr("czi"),
@@ -95,10 +97,10 @@ func TestUpgradeConfigVersion(t *testing.T) {
 						AdditionalRegions: []string{"us-east-1"},
 					},
 				},
-				Owner:            "default@example.com",
-				Project:          "test-project",
+				Owner:            util.StrPtr("default@example.com"),
+				Project:          util.StrPtr("test-project"),
 				ExtraVars:        map[string]string{"foo": "bar"},
-				TerraformVersion: "0.11.0",
+				TerraformVersion: util.StrPtr("0.11.0"),
 			},
 		},
 		Tools: v2.Tools{
@@ -114,14 +116,14 @@ func TestUpgradeConfigVersion(t *testing.T) {
 		Accounts: map[string]v2.Account{
 			"foo": v2.Account{
 				Common: v2.Common{
-					Backend: v2.Backend{
-						Bucket:      "foo-bucket",
-						DynamoTable: "foo-table",
-						Profile:     "czi-foo",
-						Region:      "us-west-foo1",
+					Backend: &v2.Backend{
+						Bucket:      util.StrPtr("foo-bucket"),
+						DynamoTable: util.StrPtr("foo-table"),
+						Profile:     util.StrPtr("czi-foo"),
+						Region:      util.StrPtr("us-west-foo1"),
 					},
 
-					Providers: v2.Providers{
+					Providers: &v2.Providers{
 						AWS: &v2.AWSProvider{
 							AccountID:         intptr(2),
 							Profile:           strptr("czi-foo"),
@@ -130,22 +132,22 @@ func TestUpgradeConfigVersion(t *testing.T) {
 							AdditionalRegions: []string{"us-east-foo2"},
 						},
 					},
-					Owner:            "foo@example.com",
-					Project:          "foo-project",
+					Owner:            util.StrPtr("foo@example.com"),
+					Project:          util.StrPtr("foo-project"),
 					ExtraVars:        map[string]string{"foo": "foo"},
-					TerraformVersion: "0.12.0",
+					TerraformVersion: util.StrPtr("0.12.0"),
 				},
 			},
 			"bar": v2.Account{
 				Common: v2.Common{
-					Backend: v2.Backend{
-						Bucket:      "bar-bucket",
-						DynamoTable: "bar-table",
-						Profile:     "czi-bar",
-						Region:      "us-west-bar1",
+					Backend: &v2.Backend{
+						Bucket:      util.StrPtr("bar-bucket"),
+						DynamoTable: util.StrPtr("bar-table"),
+						Profile:     util.StrPtr("czi-bar"),
+						Region:      util.StrPtr("us-west-bar1"),
 					},
 
-					Providers: v2.Providers{
+					Providers: &v2.Providers{
 						AWS: &v2.AWSProvider{
 							AccountID:         intptr(3),
 							Profile:           strptr("czi-bar"),
@@ -154,10 +156,10 @@ func TestUpgradeConfigVersion(t *testing.T) {
 							AdditionalRegions: []string{"us-east-bar2"},
 						},
 					},
-					Owner:            "bar@example.com",
-					Project:          "bar-project",
+					Owner:            util.StrPtr("bar@example.com"),
+					Project:          util.StrPtr("bar-project"),
 					ExtraVars:        map[string]string{"foo": "bar"},
-					TerraformVersion: "0.13.0",
+					TerraformVersion: util.StrPtr("0.13.0"),
 				},
 			},
 		},
@@ -165,14 +167,14 @@ func TestUpgradeConfigVersion(t *testing.T) {
 		Envs: map[string]v2.Env{
 			"stage": v2.Env{
 				Common: v2.Common{
-					Backend: v2.Backend{
-						Bucket:      "stage-bucket",
-						DynamoTable: "stage-table",
-						Profile:     "czi-stage",
-						Region:      "us-west-stage1",
+					Backend: &v2.Backend{
+						Bucket:      util.StrPtr("stage-bucket"),
+						DynamoTable: util.StrPtr("stage-table"),
+						Profile:     util.StrPtr("czi-stage"),
+						Region:      util.StrPtr("us-west-stage1"),
 					},
 
-					Providers: v2.Providers{
+					Providers: &v2.Providers{
 						AWS: &v2.AWSProvider{
 							AccountID:         intptr(4),
 							Profile:           strptr("czi-stage"),
@@ -181,22 +183,22 @@ func TestUpgradeConfigVersion(t *testing.T) {
 							AdditionalRegions: []string{"us-east-stage2"},
 						},
 					},
-					Owner:            "stage@example.com",
-					Project:          "stage-project",
+					Owner:            util.StrPtr("stage@example.com"),
+					Project:          util.StrPtr("stage-project"),
+					TerraformVersion: util.StrPtr("0.14.0"),
 					ExtraVars:        map[string]string{"foo": "stage"},
-					TerraformVersion: "0.14.0",
 				},
 				Components: map[string]v2.Component{
 					"env": v2.Component{
 						Common: v2.Common{
-							Backend: v2.Backend{
-								Bucket:      "env-bucket",
-								DynamoTable: "env-table",
-								Profile:     "czi-env",
-								Region:      "us-west-env1",
+							Backend: &v2.Backend{
+								Bucket:      util.StrPtr("env-bucket"),
+								DynamoTable: util.StrPtr("env-table"),
+								Profile:     util.StrPtr("czi-env"),
+								Region:      util.StrPtr("us-west-env1"),
 							},
 
-							Providers: v2.Providers{
+							Providers: &v2.Providers{
 								AWS: &v2.AWSProvider{
 									AccountID:         intptr(5),
 									Profile:           strptr("czi-env"),
@@ -205,10 +207,10 @@ func TestUpgradeConfigVersion(t *testing.T) {
 									AdditionalRegions: []string{"us-east-env2"},
 								},
 							},
-							Owner:            "env@example.com",
-							Project:          "env-project",
+							Owner:            util.StrPtr("env@example.com"),
+							Project:          util.StrPtr("env-project"),
+							TerraformVersion: util.StrPtr("0.15.0"),
 							ExtraVars:        map[string]string{"foo": "env"},
-							TerraformVersion: "0.15.0",
 						},
 						ModuleSource: strptr("github.com/foo/bar"),
 					},
@@ -260,7 +262,10 @@ func TestUpgradeConfigVersion(t *testing.T) {
 				t.Errorf("UpgradeConfigVersion() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			a.Equal(tt.want, got)
+
+			if diff := deep.Equal(tt.want, got); diff != nil {
+				t.Error(diff)
+			}
 		})
 	}
 }

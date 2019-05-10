@@ -32,12 +32,12 @@ type Config struct {
 }
 
 type Common struct {
-	Backend          Backend           `json:"backend,omitempty"`
+	Backend          *Backend          `json:"backend,omitempty"`
 	ExtraVars        map[string]string `json:"extra_vars,omitempty"`
-	Owner            string            `json:"owner,omitempty" `
-	Project          string            `json:"project,omitempty" `
-	Providers        Providers         `json:"providers,omitempty" `
-	TerraformVersion string            `json:"terraform_version,omitempty"`
+	Owner            *string           `json:"owner,omitempty" `
+	Project          *string           `json:"project,omitempty" `
+	Providers        *Providers        `json:"providers,omitempty" `
+	TerraformVersion *string           `json:"terraform_version,omitempty"`
 }
 
 type Defaults struct {
@@ -81,10 +81,10 @@ type AWSProvider struct {
 }
 
 type Backend struct {
-	Bucket      string `json:"bucket,omitempty"`
-	DynamoTable string `json:"dynamodb_table,omitempty"`
-	Profile     string `json:"profile,omitempty"`
-	Region      string `json:"region,omitempty"`
+	Bucket      *string `json:"bucket,omitempty"`
+	DynamoTable *string `json:"dynamodb_table,omitempty"`
+	Profile     *string `json:"profile,omitempty"`
+	Region      *string `json:"region,omitempty"`
 }
 
 // Generate is used for test/quick integration. There are supposedly ways to do this without polluting the public
@@ -143,22 +143,17 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		}
 	}
 
-	// we treat these as opaque strings for now
-	randVersion := func(r *rand.Rand, s int) string {
-		return randString(r, s)
-	}
-
 	randCommon := func(r *rand.Rand, s int) Common {
 		c := Common{
-			Backend: Backend{
-				Bucket: randString(r, s),
-				Region: randString(r, s),
+			Backend: &Backend{
+				Bucket: randStringPtr(r, s),
+				Region: randStringPtr(r, s),
 			},
 			ExtraVars:        randStringMap(r, s),
-			Owner:            randString(r, s),
-			Project:          randString(r, s),
-			Providers:        Providers{AWS: randAWSProvider(r, s)},
-			TerraformVersion: randVersion(r, s),
+			Owner:            randStringPtr(r, s),
+			Project:          randStringPtr(r, s),
+			Providers:        &Providers{AWS: randAWSProvider(r, s)},
+			TerraformVersion: randStringPtr(r, s),
 		}
 		return c
 	}
