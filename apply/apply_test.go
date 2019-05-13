@@ -11,6 +11,7 @@ import (
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/templates"
+	"github.com/chanzuckerberg/fogg/util"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
@@ -60,120 +61,144 @@ func TestRemoveExtension(t *testing.T) {
 }
 
 func TestApplyTemplateBasic(t *testing.T) {
+	a := assert.New(t)
 	sourceFile := strings.NewReader("foo")
-	dest := afero.NewMemMapFs()
+	dest, d, err := util.TestFs()
+	a.NoError(err)
+	defer os.Remove(d)
+
 	path := "bar"
 	overrides := struct{ Foo string }{"foo"}
 
 	e := applyTemplate(sourceFile, dest, path, overrides)
-	assert.Nil(t, e)
+	a.Nil(e)
 	f, e := dest.Open("bar")
-	assert.Nil(t, e)
+	a.Nil(e)
 	r, e := ioutil.ReadAll(f)
-	assert.Nil(t, e)
-	assert.Equal(t, "foo", string(r))
+	a.Nil(e)
+	a.Equal("foo", string(r))
 }
 
 func TestApplyTemplateBasicNewDirectory(t *testing.T) {
+	a := assert.New(t)
 	sourceFile := strings.NewReader("foo")
-	// Potential errors do not show up if using NewMemMapFs; needs real OS fs.
-	dest := afero.NewOsFs()
+
+	dest, d, err := util.TestFs()
+	a.NoError(err)
+	defer os.RemoveAll(d)
+
 	nonexistentDir := getNonExistentDirectoryName()
 	defer dest.RemoveAll(nonexistentDir)
 	path := filepath.Join(nonexistentDir, "bar")
 	overrides := struct{ Foo string }{"foo"}
 
 	e := applyTemplate(sourceFile, dest, path, overrides)
-	assert.Nil(t, e)
+	a.Nil(e)
 	f, e := dest.Open(path)
-	assert.Nil(t, e)
+	a.Nil(e)
 	r, e := ioutil.ReadAll(f)
-	assert.Nil(t, e)
-	assert.Equal(t, "foo", string(r))
+	a.Nil(e)
+	a.Equal("foo", string(r))
 }
 
 func TestApplyTemplate(t *testing.T) {
+	a := assert.New(t)
 	sourceFile := strings.NewReader("Hello {{.Name}}")
-	dest := afero.NewMemMapFs()
+	dest, d, err := util.TestFs()
+	a.NoError(err)
+	defer os.RemoveAll(d)
+
 	path := "hello"
 	overrides := struct{ Name string }{"World"}
 
 	e := applyTemplate(sourceFile, dest, path, overrides)
-	assert.Nil(t, e)
+	a.Nil(e)
 	f, e := dest.Open("hello")
-	assert.Nil(t, e)
+	a.Nil(e)
 	r, e := ioutil.ReadAll(f)
-	assert.Nil(t, e)
-	assert.Equal(t, "Hello World", string(r))
+	a.Nil(e)
+	a.Equal("Hello World", string(r))
 }
 
 func TestTouchFile(t *testing.T) {
-	fs := afero.NewMemMapFs()
+	a := assert.New(t)
+	fs, d, err := util.TestFs()
+	a.NoError(err)
+	defer os.RemoveAll(d)
 
 	e := touchFile(fs, "foo")
-	assert.Nil(t, e)
+	a.Nil(e)
 	r, e := readFile(fs, "foo")
-	assert.Nil(t, e)
-	assert.Equal(t, "", r)
+	a.Nil(e)
+	a.Equal("", r)
 
-	fs = afero.NewMemMapFs()
+	fs, d2, err := util.TestFs()
+	a.NoError(err)
+	defer os.RemoveAll(d2)
 
 	writeFile(fs, "asdf", "jkl")
 
 	r, e = readFile(fs, "asdf")
-	assert.Nil(t, e)
-	assert.Equal(t, "jkl", r)
+	a.Nil(e)
+	a.Equal("jkl", r)
 
 	e = touchFile(fs, "asdf")
-	assert.Nil(t, e)
+	a.Nil(e)
 	r, e = readFile(fs, "asdf")
-	assert.Nil(t, e)
-	assert.Equal(t, "jkl", r)
-
+	a.Nil(e)
+	a.Equal("jkl", r)
 }
 
 func TestTouchFileNonExistentDirectory(t *testing.T) {
-	// Potential errors do not show up if using NewMemMapFs; needs real OS fs.
-	dest := afero.NewOsFs()
+	a := assert.New(t)
+	dest, d, err := util.TestFs()
+	a.NoError(err)
+	defer os.RemoveAll(d)
+
 	nonexistentDir := getNonExistentDirectoryName()
 	defer dest.RemoveAll(nonexistentDir)
 	e := touchFile(dest, filepath.Join(nonexistentDir, "foo"))
-	assert.Nil(t, e)
+	a.Nil(e)
 	r, e := readFile(dest, filepath.Join(nonexistentDir, "foo"))
-	assert.Nil(t, e)
-	assert.Equal(t, "", r)
-	assert.Nil(t, e)
+	a.Nil(e)
+	a.Equal("", r)
+	a.Nil(e)
 }
 
 func TestCreateFile(t *testing.T) {
-	fs := afero.NewMemMapFs()
+	a := assert.New(t)
+	fs, d, err := util.TestFs()
+	a.NoError(err)
+	defer os.RemoveAll(d)
 
 	// create new file
 
 	e := createFile(fs, "foo", strings.NewReader("bar"))
-	assert.Nil(t, e)
+	a.Nil(e)
 
 	r, e := readFile(fs, "foo")
-	assert.Nil(t, e)
-	assert.Equal(t, "bar", r)
+	a.Nil(e)
+	a.Equal("bar", r)
 
 	// not overwrite existing file
 
-	fs = afero.NewMemMapFs()
+	fs, d2, err := util.TestFs()
+	a.NoError(err)
+	defer os.RemoveAll(d2)
 
 	e = createFile(fs, "foo", strings.NewReader("bar"))
-	assert.Nil(t, e)
+	a.Nil(e)
 
 	r, e = readFile(fs, "foo")
-	assert.Nil(t, e)
-	assert.Equal(t, "bar", r)
+	a.Nil(e)
+	a.Equal("bar", r)
 
 	e = createFile(fs, "foo", strings.NewReader("BAM"))
-	assert.Nil(t, e)
+	a.Nil(e)
 
 	r, e = readFile(fs, "foo")
-	assert.Nil(t, e)
-	assert.Equal(t, "bar", r)
+	a.Nil(e)
+	a.Equal("bar", r)
 }
 
 func TestCreateFileNonExistentDirectory(t *testing.T) {
@@ -191,7 +216,11 @@ func TestCreateFileNonExistentDirectory(t *testing.T) {
 }
 
 func TestApplySmokeTest(t *testing.T) {
-	fs := afero.NewBasePathFs(afero.NewMemMapFs(), "/")
+	a := assert.New(t)
+	fs, _, err := util.TestFs()
+	a.NoError(err)
+	// defer os.RemoveAll(d)
+
 	json := `
 {
   "defaults": {
@@ -234,31 +263,34 @@ func TestApplySmokeTest(t *testing.T) {
 }
 `
 	c, e := v1.ReadConfig([]byte(json))
-	assert.NoError(t, e)
+	a.NoError(e)
 	c2, e := config.UpgradeConfigVersion(c)
-	assert.NoError(t, e)
+	a.NoError(e)
 
 	e = c2.Validate()
-	assert.NoError(t, e)
+	a.NoError(e)
 
 	e = Apply(fs, c2, templates.Templates, false)
-	assert.NoError(t, e)
+	a.NoError(e)
 }
 
 func TestApplyModuleInvocation(t *testing.T) {
-	fs := afero.NewMemMapFs()
+	a := assert.New(t)
+	fs, d, err := util.TestFs()
+	a.NoError(err)
+	defer os.RemoveAll(d)
 
 	e := applyModuleInvocation(fs, "mymodule", "../util/test-module", templates.Templates.ModuleInvocation)
-	assert.Nil(t, e)
+	a.Nil(e)
 
 	s, e := fs.Stat("mymodule")
-	assert.Nil(t, e)
-	assert.True(t, s.IsDir())
+	a.Nil(e)
+	a.True(s.IsDir())
 
 	_, e = fs.Stat("mymodule/main.tf")
-	assert.Nil(t, e)
+	a.Nil(e)
 	r, e := afero.ReadFile(fs, "mymodule/main.tf")
-	assert.Nil(t, e)
+	a.Nil(e)
 	expected := `# Auto-generated by fogg. Do not edit
 # Make improvements in fogg, so that everyone can benefit.
 
@@ -268,12 +300,12 @@ module "test-module" {
   foo    = "${local.foo}"
 }
 `
-	assert.Equal(t, expected, string(r))
+	a.Equal(expected, string(r))
 
 	_, e = fs.Stat("mymodule/outputs.tf")
-	assert.Nil(t, e)
+	a.Nil(e)
 	r, e = afero.ReadFile(fs, "mymodule/outputs.tf")
-	assert.Nil(t, e)
+	a.Nil(e)
 	expected = `# Auto-generated by fogg. Do not edit
 # Make improvements in fogg, so that everyone can benefit.
 
@@ -285,7 +317,7 @@ output "foo" {
   value = "${module.test-module.foo}"
 }
 `
-	assert.Equal(t, expected, string(r))
+	a.Equal(expected, string(r))
 }
 func TestGetTargetPath(t *testing.T) {
 	data := []struct {
@@ -311,22 +343,27 @@ func TestGetTargetPath(t *testing.T) {
 }
 
 func TestFmtHcl(t *testing.T) {
+	a := assert.New(t)
+
 	before := `foo { bar     = "bam"}`
 	after := `foo {
   bar = "bam"
 }
 `
-	fs := afero.NewMemMapFs()
+	fs, d, err := util.TestFs()
+	a.NoError(err)
+	defer os.RemoveAll(d)
+
 	in := strings.NewReader(before)
 	e := afero.WriteReader(fs, "foo.tf", in)
-	assert.Nil(t, e)
+	a.Nil(e)
 	e = fmtHcl(fs, "foo.tf")
-	assert.Nil(t, e)
+	a.Nil(e)
 	out, e := afero.ReadFile(fs, "foo.tf")
-	assert.Nil(t, e)
-	assert.NotNil(t, out)
+	a.Nil(e)
+	a.NotNil(out)
 	s := string(out)
-	assert.Equal(t, after, s)
+	a.Equal(after, s)
 }
 
 func TestCalculateLocalPath(t *testing.T) {
@@ -373,11 +410,13 @@ var versionTests = []struct {
 }
 
 func TestCheckToolVersions(t *testing.T) {
-	a := assert.New(t)
-
 	for _, tc := range versionTests {
 		t.Run("", func(t *testing.T) {
-			fs := afero.NewMemMapFs()
+			a := assert.New(t)
+			fs, d, err := util.TestFs()
+			a.NoError(err)
+			defer os.RemoveAll(d)
+
 			writeFile(fs, ".fogg-version", tc.current)
 
 			v, _, e := checkToolVersions(fs, tc.tool)
