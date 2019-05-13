@@ -202,16 +202,17 @@ func TestCreateFile(t *testing.T) {
 }
 
 func TestCreateFileNonExistentDirectory(t *testing.T) {
-
+	a := assert.New(t)
 	// create new file in nonexistent directory
-	dest := afero.NewOsFs()
+	dest, _, e := util.TestFs()
+	a.NoError(e)
 
-	e := createFile(dest, "newdir/foo", strings.NewReader("bar"))
-	assert.Nil(t, e)
+	e = createFile(dest, "newdir/foo", strings.NewReader("bar"))
+	a.NoError(e)
 
 	r, e := readFile(dest, "newdir/foo")
-	assert.Nil(t, e)
-	assert.Equal(t, "bar", r)
+	a.NoError(e)
+	a.Equal("bar", r)
 
 }
 

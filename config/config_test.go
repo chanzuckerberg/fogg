@@ -211,7 +211,7 @@ func TestUpgradeConfigVersion(t *testing.T) {
 							TerraformVersion: util.StrPtr("0.15.0"),
 							ExtraVars:        map[string]string{"foo": "env"},
 						},
-						ModuleSource: strptr("github.com/foo/bar"),
+						ModuleSource: strptr("test-module"),
 					},
 					"helm": {},
 				},

@@ -29,6 +29,9 @@ const rootPath = "terraform"
 
 // Apply will run a plan and apply all the changes to the current repo.
 func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade bool) error {
+
+	// TODO add ability to pass in pwd
+
 	if !upgrade {
 		toolVersion, err := util.VersionString()
 		if err != nil {

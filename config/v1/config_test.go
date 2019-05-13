@@ -78,7 +78,7 @@ func TestParse(t *testing.T) {
 	env := c.Envs["stage"].Components["env"]
 	assert.NotNil(t, env)
 	assert.NotNil(t, env.ModuleSource)
-	assert.Equal(t, "github.com/foo/bar", *env.ModuleSource)
+	assert.Equal(t, "test-module", *env.ModuleSource)
 
 	assert.NotNil(t, c.Modules)
 }

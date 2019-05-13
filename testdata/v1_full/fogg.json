@@ -105,7 +105,7 @@
           "extra_vars": {
             "foo": "env"
           },
-          "module_source": "github.com/foo/bar"
+          "module_source": "test-module"
         },
         "helm": {}
       }
