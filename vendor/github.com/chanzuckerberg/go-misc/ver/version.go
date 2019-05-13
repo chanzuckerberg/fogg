@@ -3,6 +3,7 @@ package ver
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/blang/semver"
 	"github.com/pkg/errors"
@@ -42,4 +43,26 @@ func versionString(version, sha string, release, dirty bool) string {
 		return fmt.Sprintf("%s+%s", version, sha)
 	}
 	return fmt.Sprintf("%s+%s+dirty", version, sha)
+}
+
+// ParseVersion will take a version string and parse it
+func ParseVersion(version string) (semver.Version, string, bool, error) {
+	var dirty bool
+	var sha string
+
+	if strings.HasSuffix(version, ".dirty") {
+		dirty = true
+		version = strings.TrimSuffix(version, ".dirty")
+	}
+	if strings.Contains(version, "-") {
+		tmp := strings.Split(version, "-")
+		version = tmp[0]
+		sha = tmp[1]
+	}
+
+	semVersion, err := semver.Parse(version)
+	if err != nil {
+		return semver.Version{}, "", false, err
+	}
+	return semVersion, sha, dirty, nil
 }
