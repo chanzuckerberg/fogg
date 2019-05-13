@@ -273,7 +273,9 @@ func TestFindAndReadConfig(t *testing.T) {
 	a := assert.New(t)
 
 	fs := func(m map[string][]byte) (afero.Fs, error) {
-		fs := afero.NewMemMapFs()
+		fs, _, err := util.TestFs()
+		a.NoError(err)
+
 		for k, v := range m {
 			f, e := fs.OpenFile(k, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 			if e != nil {
@@ -295,16 +297,19 @@ func TestFindAndReadConfig(t *testing.T) {
 		"config.json": v1,
 	})
 	a.NoError(e)
+	defer f1.RemoveAll(".")
 
 	f2, e := fs(map[string][]byte{
 		"config.json": v2,
 	})
 	a.NoError(e)
+	defer f2.RemoveAll(".")
 
 	fErr, e := fs(map[string][]byte{
 		"config.json": []byte(`{"version": 7}`),
 	})
 	a.NoError(e)
+	defer fErr.RemoveAll(".")
 
 	_, e = FindAndReadConfig(f1, "config.json")
 	a.NoError(e)

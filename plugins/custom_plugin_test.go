@@ -15,6 +15,7 @@ import (
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/plugins"
+	"github.com/chanzuckerberg/fogg/util"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 )
@@ -22,7 +23,9 @@ import (
 func TestCustomPluginTar(t *testing.T) {
 	a := assert.New(t)
 	pluginName := "test-provider"
-	fs := afero.NewMemMapFs()
+	fs, d, err := util.TestFs()
+	a.NoError(err)
+	defer os.RemoveAll(d)
 
 	files := []string{"test.txt", "terraform-provider-testing"}
 	tarPath := generateTar(t, files, nil)
@@ -53,7 +56,7 @@ func TestCustomPluginTar(t *testing.T) {
 		fi, err := fs.Stat(filePath)
 		a.Nil(err)
 		a.False(fi.IsDir())
-		a.Equal(fi.Mode(), os.FileMode(0664))
+		a.Equal(fi.Mode(), os.FileMode(0755))
 
 		bytes, err := afero.ReadFile(fs, filePath)
 		a.Nil(err)
@@ -64,7 +67,9 @@ func TestCustomPluginTar(t *testing.T) {
 func TestCustomPluginTarStripComponents(t *testing.T) {
 	a := assert.New(t)
 	pluginName := "test-provider"
-	fs := afero.NewMemMapFs()
+	fs, d, err := util.TestFs()
+	a.NoError(err)
+	defer os.RemoveAll(d)
 
 	files := []string{"a/test.txt", "terraform-provider-testing"}
 	expected_files := []string{"test.txt", ""}
@@ -108,7 +113,7 @@ func TestCustomPluginTarStripComponents(t *testing.T) {
 		fi, err := fs.Stat(filePath)
 		a.Nil(err)
 		a.False(fi.IsDir())
-		a.Equal(fi.Mode(), os.FileMode(0664))
+		a.Equal(fi.Mode(), os.FileMode(0755))
 
 		bytes, err := afero.ReadFile(fs, filePath)
 		a.Nil(err)
@@ -118,7 +123,9 @@ func TestCustomPluginTarStripComponents(t *testing.T) {
 func TestCustomPluginZip(t *testing.T) {
 	a := assert.New(t)
 	pluginName := "test-provider"
-	fs := afero.NewMemMapFs()
+	fs, d, err := util.TestFs()
+	a.NoError(err)
+	defer os.RemoveAll(d)
 
 	files := []string{"test.txt", "terraform-provider-testing"}
 	zipPath := generateZip(t, files)
@@ -149,7 +156,7 @@ func TestCustomPluginZip(t *testing.T) {
 		fi, err := fs.Stat(filePath)
 		a.Nil(err)
 		a.False(fi.IsDir())
-		a.Equal(fi.Mode(), os.FileMode(0664))
+		a.Equal(fi.Mode(), os.FileMode(0755))
 
 		bytes, err := afero.ReadFile(fs, filePath)
 		a.Nil(err)
@@ -160,7 +167,9 @@ func TestCustomPluginZip(t *testing.T) {
 func TestCustomPluginBin(t *testing.T) {
 	a := assert.New(t)
 	pluginName := "test-provider"
-	fs := afero.NewMemMapFs()
+	fs, d, err := util.TestFs()
+	a.NoError(err)
+	defer os.RemoveAll(d)
 	fileContents := "some contents"
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -193,7 +202,7 @@ func TestCustomPluginBin(t *testing.T) {
 	fi, err := fs.Stat(customPluginPath)
 	a.Nil(err)
 	a.False(fi.IsDir())
-	a.Equal(fi.Mode().Perm(), os.FileMode(0755))
+	a.Equal(os.FileMode(0755), fi.Mode().Perm())
 }
 
 func generateTar(t *testing.T, files []string, dirs []string) string {
@@ -221,7 +230,7 @@ func generateTar(t *testing.T, files []string, dirs []string) string {
 		header := new(tar.Header)
 		header.Name = file
 		header.Size = int64(len([]byte(file)))
-		header.Mode = int64(0664)
+		header.Mode = int64(0755)
 		header.Typeflag = tar.TypeReg
 
 		a.Nil(tw.WriteHeader(header))
@@ -248,7 +257,7 @@ func generateZip(t *testing.T, files []string) string {
 		header := &zip.FileHeader{
 			Name: file,
 		}
-		header.SetMode(os.FileMode(0664))
+		header.SetMode(os.FileMode(0755))
 		writer, err := zipWriter.CreateHeader(header)
 		a.Nil(err)
 		_, err = io.Copy(writer, strings.NewReader(file))
