@@ -105,7 +105,7 @@
           "extra_vars": {
             "foo": "env"
           },
-          "module_source": "test-module"
+          "module_source": "github.com/chanzuckerberg/fogg-test-module"
         },
         "helm": {}
       }
