@@ -69,4 +69,8 @@ dep: ## ensure dependencies are vendored
 	dep ensure # this should be super-fast in the no-op case
 .PHONY: dep
 
+update-golden-files: dep ## update the golden files in testdata
+	go test -v -run TestIntegration ./apply/ -update
+.PHONY: update-golden-files
+
 .PHONY: build clean coverage test install lint lint-slow packr release help setup
