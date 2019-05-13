@@ -434,13 +434,16 @@ func linkFile(fs afero.Fs, name, target string) error {
 		return errs.NewInternal("can't cast to afero.SymLinker")
 	}
 
-	log.Debugf("removing link at %s", name)
-	fs.Remove(name)
 	relativePath, err := filepathRel(name, target)
 	log.Debugf("relative link %s err %#v", relativePath, err)
 	if err != nil {
 		return err
 	}
+
+	log.Debugf("removing link at %s", name)
+	err = fs.Remove(name)
+	log.Debugf("error removing file %s (probably ok): %s", name, err)
+
 	_, err = linker.SymlinkIfPossible(target, name)
 	return err
 }
