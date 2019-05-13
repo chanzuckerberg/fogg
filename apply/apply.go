@@ -230,7 +230,6 @@ func applyTree(dest afero.Fs, source *packr.Box, targetBasePath string, subst in
 			if err != nil {
 				return errs.WrapInternal(err, "can't symlink file")
 			}
-
 		} else {
 			e = afero.WriteReader(dest, target, sourceFile)
 			if e != nil {
