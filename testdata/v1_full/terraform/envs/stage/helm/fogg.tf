@@ -92,13 +92,13 @@ data "terraform_remote_state" "global" {
   }
 }
 
-data "terraform_remote_state" "env" {
+data "terraform_remote_state" "cloud-env" {
   backend = "s3"
 
   config {
     bucket         = "stage-bucket"
     dynamodb_table = "stage-table"
-    key            = "terraform/stage-project/envs/stage/components/env.tfstate"
+    key            = "terraform/stage-project/envs/stage/components/cloud-env.tfstate"
     region         = "us-west-stage1"
     profile        = "czi-stage"
   }

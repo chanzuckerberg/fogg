@@ -75,7 +75,7 @@ func TestParse(t *testing.T) {
 	assert.NotNil(t, c.Envs)
 	assert.Len(t, c.Envs, 1)
 	assert.Len(t, c.Envs["stage"].Components, 2)
-	env := c.Envs["stage"].Components["env"]
+	env := c.Envs["stage"].Components["cloud-env"]
 	assert.NotNil(t, env)
 	assert.NotNil(t, env.ModuleSource)
 	assert.Equal(t, "test-module", *env.ModuleSource)

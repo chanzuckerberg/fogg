@@ -1,1 +1,0 @@
-/Users/rking/go/src/github.com/chanzuckerberg/fogg/testdata/v1_full/terraform.d

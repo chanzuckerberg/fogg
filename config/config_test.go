@@ -188,7 +188,7 @@ func TestUpgradeConfigVersion(t *testing.T) {
 					ExtraVars:        map[string]string{"foo": "stage"},
 				},
 				Components: map[string]v2.Component{
-					"env": v2.Component{
+					"cloud-env": v2.Component{
 						Common: v2.Common{
 							Backend: &v2.Backend{
 								Bucket:      util.StrPtr("env-bucket"),

@@ -33,6 +33,15 @@ func TestIntegration(t *testing.T) {
 			testdataFs := afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(util.ProjectRoot(), "testdata", tc.fileName))
 
 			if *updateGoldenFiles {
+				// delete all files except fogg.json
+				e := afero.Walk(testdataFs, ".", func(path string, info os.FileInfo, err error) error {
+					if !info.IsDir() && path != "fogg.json" {
+						return testdataFs.Remove(path)
+					}
+					return nil
+				})
+				a.NoError(e)
+
 				conf, e := config.FindAndReadConfig(testdataFs, "fogg.json")
 				a.NoError(e)
 				fmt.Printf("conf %#v\n", conf)

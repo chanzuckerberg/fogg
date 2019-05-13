@@ -45,7 +45,7 @@ jobs:
     - stage: check
       script:
         - set -e
-        - pushd terraform/envs/stage/env && travis_retry make check && popd
+        - pushd terraform/envs/stage/cloud-env && travis_retry make check && popd
     - stage: check
       script:
         - set -e

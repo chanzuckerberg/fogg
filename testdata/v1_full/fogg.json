@@ -87,7 +87,7 @@
         "foo": "stage"
       },
       "components": {
-        "env": {
+        "cloud-env": {
           "account_id": 5,
           "aws_profile_backend": "czi-env",
           "aws_profile_provider": "czi-env",
