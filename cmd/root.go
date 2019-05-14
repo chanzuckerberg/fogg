@@ -1,15 +1,12 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
 	"os"
 
 	"github.com/chanzuckerberg/fogg/cmd/exp"
 	"github.com/chanzuckerberg/fogg/errs"
-	"github.com/chanzuckerberg/fogg/util"
 	"github.com/fatih/color"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -26,14 +23,8 @@ func init() {
 }
 
 var rootCmd = &cobra.Command{
-	Use:   "fogg",
-	Short: "",
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		err := util.CheckLatestVersion(context.Background(), "chanzuckerberg", "fogg")
-		if err != nil {
-			logrus.WithError(err).Debug("Error checking for new fogg release")
-		}
-	},
+	Use:          "fogg",
+	Short:        "",
 	SilenceUsage: true,
 }
 
