@@ -87,9 +87,8 @@ func TestIntegration(t *testing.T) {
 						a.NoError(e2)
 						a.NotNil(i2)
 
-						// a.Equal(i1.Size(), i2.Size())
-						a.Equal(i1.Mode(),
-							i2.Mode())
+						a.Equalf(i1.Size(), i2.Size(), "file size: %s", path)
+						a.Equalf(i1.Mode(), i2.Mode(), "file mode: %s, %o vs %o", path, i1.Mode(), i1.Mode())
 
 						f1, e3 := afero.ReadFile(testdataFs, path)
 						a.NoError(e3)
