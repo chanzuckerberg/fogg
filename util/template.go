@@ -27,6 +27,7 @@ func dict(in interface{}) map[string]interface{} {
 
 // OpenTemplate will read `source` for a template, parse, configure and return a template.Template
 func OpenTemplate(source io.Reader) (*template.Template, error) {
+	// TODO we should probably cache these rather than open and parse them for every apply
 	s, err := ioutil.ReadAll(source)
 	if err != nil {
 		return nil, errs.WrapInternal(err, "could not read template")

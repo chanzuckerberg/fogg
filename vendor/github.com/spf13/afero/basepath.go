@@ -178,12 +178,13 @@ func (b *BasePathFs) LstatIfPossible(name string) (os.FileInfo, bool, error) {
 }
 
 func (b *BasePathFs) SymlinkIfPossible(oldname, newname string) (bool, error) {
-	oldname, err := b.RealPath(oldname)
-	if err != nil {
-		return false, &os.PathError{Op: "symlink", Path: oldname, Err: err}
-	}
+	// Commenting this out probably doesn't work in the general case, but it is what we need in fogg.
+	// oldname, err := b.RealPath(oldname)
+	// if err != nil {
+	// 	return false, &os.PathError{Op: "symlink", Path: oldname, Err: err}
+	// }
 
-	newname, err = b.RealPath(newname)
+	newname, err := b.RealPath(newname)
 	if err != nil {
 		return false, &os.PathError{Op: "symlink", Path: newname, Err: err}
 	}

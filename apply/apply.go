@@ -444,7 +444,7 @@ func linkFile(fs afero.Fs, name, target string) error {
 	err = fs.Remove(name)
 	log.Debugf("error removing file %s (probably ok): %s", name, err)
 
-	_, err = linker.SymlinkIfPossible(target, name)
+	_, err = linker.SymlinkIfPossible(relativePath, name)
 	return err
 }
 

@@ -2,21 +2,21 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 provider "aws" {
-  version = "~> {{ .AWSProviderVersion }}"
-  region = "{{ .AWSRegionProvider }}"
-  profile = "{{ .AWSProfileProvider }}"
-  {{ if .AccountID }}allowed_account_ids = [{{ .AccountID }}]{{ end }}
+  version = "~> {{ .Providers.AWS.Version }}"
+  region = "{{ .Providers.AWS.Region }}"
+  profile = "{{ .Providers.AWS.Profile }}"
+  {{ if .Providers.AWS.AccountID }}allowed_account_ids = [{{ .Providers.AWS.AccountID }}]{{ end }}
 }
 
 # Aliased Providers (for doing things in every region).
 {{ $out := . }}
-{{ range $region := .AWSRegions }}
+{{ range $region := .Providers.AWS.AdditionalRegions }}
   provider "aws" {
     alias = "{{ $region }}"
-    version = "~> {{ $out.AWSProviderVersion }}"
+    version = "~> {{ $out.Providers.AWS.Version }}"
     region = "{{ $region }}"
-    profile = "{{ $out.AWSProfileProvider }}"
-    {{ if $out.AccountID }}allowed_account_ids = [{{ $out.AccountID }}]{{ end }}
+    profile = "{{ $out.Providers.AWS.Profile }}"
+    {{ if $out.Providers.AWS.AccountID }}allowed_account_ids = [{{ $out.Providers.AWS.AccountID }}]{{ end }}
   }
 {{ end }}
 
@@ -24,8 +24,8 @@ terraform {
   required_version = "~>{{ .TerraformVersion }}"
 
   backend "s3" {
-    bucket         = "{{ .InfraBucket }}"
-    {{ if .InfraDynamoTable }}dynamodb_table = "{{ .InfraDynamoTable }}"{{ end }}
+    bucket         = "{{ .Backend.Bucket }}"
+    {{ if .Backend.DynamoTable }}dynamodb_table = "{{ .Backend.DynamoTable }}"{{ end }}
     {{/* {%- if env is defined and component_name is defined %} */}}
     key    = "terraform/{{ .Project }}/{{ .Component }}.tfstate"
 
@@ -35,8 +35,8 @@ terraform {
     {%- endif %}
 */}}
     encrypt = true
-    region = "{{ .AWSRegionBackend }}"
-    profile = "{{ .AWSProfileBackend }}"
+    region = "{{ .Backend.Region }}"
+    profile = "{{ .Backend.Profile }}"
   }
 }
 
@@ -52,7 +52,7 @@ variable "project" {
 
 variable "region" {
   type    = "string"
-  default = "{{ .AWSRegionProvider }}"
+  default = "{{ .Providers.AWS.Region }}"
 }
 
 variable "component" {
@@ -62,7 +62,7 @@ variable "component" {
 
 variable "aws_profile" {
   type = "string"
-  default =  "{{ .AWSProfileProvider }}"
+  default =  "{{ .Providers.AWS.Profile }}"
 }
 
 variable "owner" {
@@ -93,11 +93,11 @@ data "terraform_remote_state" "{{ $component }}" {
   backend = "s3"
 
   config {
-    bucket         = "{{ $out.InfraBucket }}"
-    {{ if .InfraDynamoTable }}dynamodb_table = "{{ .InfraDynamoTable }}"{{ end }}
+    bucket         = "{{ $out.Backend.Bucket }}"
+    {{ if .Backend.DynamoTable }}dynamodb_table = "{{ .Backend.DynamoTable }}"{{ end }}
     key            = "terraform/{{ $out.Project }}/envs/{{ $out.Env }}/components/{{ $component }}.tfstate"
-    region         = "{{ $out.AWSRegionBackend }}"
-    {{ if $out.AWSProfileBackend }}profile        = "{{ $out.AWSProfileBackend }}"{{ end }}
+    region         = "{{ $out.Backend.Region }}"
+    {{ if $out.Backend.Profile }}profile        = "{{ $out.Backend.Profile }}"{{ end }}
   }
 }
 {{ end }}

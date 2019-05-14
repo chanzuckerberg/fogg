@@ -16,6 +16,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var updateGoldenFiles = flag.Bool("update", false, "when set, rewrite the golden files")
@@ -31,6 +32,7 @@ func TestIntegration(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.fileName, func(t *testing.T) {
 			a := assert.New(t)
+			r := require.New(t)
 
 			testdataFs := afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(util.ProjectRoot(), "testdata", tc.fileName))
 
@@ -82,12 +84,12 @@ func TestIntegration(t *testing.T) {
 						log.Debug("dir or link")
 					} else {
 						i1, e1 := testdataFs.Stat(path)
-						a.NotNil(i1)
-						a.NoError(e1)
+						r.NotNil(i1)
+						r.NoError(e1)
 
 						i2, e2 := fs.Stat(path)
-						a.NoError(e2)
-						a.NotNil(i2)
+						r.NoError(e2)
+						r.NotNil(i2)
 
 						a.Equalf(i1.Size(), i2.Size(), "file size: %s", path)
 						// This (below) doesn't currently work for files created on a mac then tested on linux. :shrug:
