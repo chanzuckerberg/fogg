@@ -281,8 +281,8 @@ func TestApplyModuleInvocation(t *testing.T) {
 	a.NoError(err)
 	defer os.RemoveAll(d)
 
-	e := applyModuleInvocation(fs, "mymodule", "../util/test-module", templates.Templates.ModuleInvocation)
-	a.Nil(e)
+	e := applyModuleInvocation(fs, "mymodule", "github.com/chanzuckerberg/fogg-test-module", templates.Templates.ModuleInvocation)
+	a.NoError(e)
 
 	s, e := fs.Stat("mymodule")
 	a.Nil(e)
