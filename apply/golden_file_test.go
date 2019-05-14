@@ -1,3 +1,5 @@
+// +build !online
+
 package apply_test
 
 import (

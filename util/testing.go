@@ -2,6 +2,7 @@ package util
 
 import (
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"runtime"
 
@@ -40,4 +41,12 @@ func TestFs() (afero.Fs, string, error) {
 	fs := afero.NewBasePathFs(afero.NewOsFs(), d)
 
 	return fs, d, nil
+}
+
+func PwdFs() (afero.Fs, error) {
+	pwd, err := os.Getwd()
+	if err != nil {
+		return nil, err
+	}
+	return afero.NewBasePathFs(afero.NewOsFs(), pwd), nil
 }
