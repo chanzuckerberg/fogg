@@ -15,18 +15,14 @@ const (
 	dockerImageVersion = "0.2.1"
 )
 
-// AWSConfiguration represents aws configuration
-type AWSConfiguration struct {
-	AccountID          int64    `yaml:"account_id"`
-	AccountName        string   `yaml:"account_name"`
-	AWSProfileBackend  string   `yaml:"aws_profile_backend"`
-	AWSProfileProvider string   `yaml:"aws_profile_provider"`
-	AWSProviderVersion string   `yaml:"aws_provider_version"`
-	AWSRegionBackend   string   `yaml:"aws_region_backend"`
-	AWSRegionProvider  string   `yaml:"aws_region_provider"`
-	AWSRegions         []string `yaml:"aws_regions"`
-	InfraBucket        string   `yaml:"infra_bucket"`
-	InfraDynamoTable   *string  `yaml:"infra_dynamo_table"`
+// Plan represents a set of actions to take
+type Plan struct {
+	Accounts map[string]Account
+	Envs     map[string]Env
+	Global   Component
+	Modules  map[string]Module
+	TravisCI TravisCI
+	Version  string
 }
 
 // Common represents common fields
@@ -37,16 +33,36 @@ type Common struct {
 	TerraformVersion   string `yaml:"terraform_version"`
 }
 
-// Account is an account
-type Account struct {
-	AWSConfiguration `yaml:",inline"`
-	Common           `yaml:",inline"`
+type ComponentCommon struct {
+	Common `yaml:",inline"`
 
-	AllAccounts map[string]int64  `yaml:"all_accounts"`
-	ExtraVars   map[string]string `yaml:"extra_vars"`
-	Owner       string
-	Project     string
-	TfLint      TfLint
+	Backend   AWSBackend        `yaml:"backend"`
+	ExtraVars map[string]string `yaml:"extra_vars"`
+	Owner     string
+	Project   string
+	Providers Providers `yaml:"providers"`
+	TfLint    TfLint
+}
+
+type Providers struct {
+	AWS AWSProvider `yaml:"aws"`
+}
+
+type AWSProvider struct {
+	AccountID         int64    `yaml:"account_id"`
+	Profile           string   `yaml:"profile"`
+	Version           string   `yaml:"version"`
+	Region            string   `yaml:"region"`
+	AdditionalRegions []string `yaml:"additional_regions"`
+}
+
+// AWSConfiguration represents aws configuration
+type AWSBackend struct {
+	AccountName string  `yaml:"account_name"`
+	Profile     string  `yaml:"profile"`
+	Region      string  `yaml:"region"`
+	Bucket      string  `yaml:"bucket"`
+	DynamoTable *string `yaml:"dynamo_table"`
 }
 
 // Module is a module
@@ -54,56 +70,38 @@ type Module struct {
 	Common `yaml:",inline"`
 }
 
+// Account is an account
+type Account struct {
+	ComponentCommon `yaml:",inline"`
+
+	AllAccounts map[string]int64 `yaml:"all_accounts"`
+	AccountName string           `yaml:"account_name"`
+}
+
 // Component is a component
 type Component struct {
-	Accounts         map[string]Account // Reference accounts for remote state
-	AWSConfiguration `yaml:",inline"`
-	Common           `yaml:",inline"`
-	Component        string
-	EKS              *v1.EKSConfig `yaml:"eks,omitempty"`
-	Env              string
-	ExtraVars        map[string]string `yaml:"extra_vars"`
-	Kind             *v1.ComponentKind `yaml:"kind,omitempty"`
-	ModuleSource     *string           `yaml:"module_source"`
-	OtherComponents  []string          `yaml:"other_components"`
-	Owner            string
-	Project          string
-	TfLint           TfLint
+	ComponentCommon `yaml:",inline"`
+
+	Accounts  map[string]Account // Reference accounts for remote state
+	Component string
+	EKS       *v1.EKSConfig `yaml:"eks,omitempty"`
+	Env       string
+
+	Kind            *v1.ComponentKind `yaml:"kind,omitempty"`
+	ModuleSource    *string           `yaml:"module_source"`
+	OtherComponents []string          `yaml:"other_components"`
 }
 
 // Env is an env
 type Env struct {
-	AWSConfiguration `yaml:",inline"`
-	Common           `yaml:",inline"`
-
 	Components map[string]Component
 	Env        string
-	EKS        *v1.EKSConfig
-	ExtraVars  map[string]string `yaml:"extra_vars"`
-	Owner      string
-	Project    string
-	TfLint     TfLint
+	EKS        *v1.EKSConfig //TODO get rid of this
 }
 
 // TfLint containts a plan for running tflint
 type TfLint struct {
 	Enabled bool
-}
-
-type AWSProfile struct {
-	Name string
-	ID   int64
-	Role string
-}
-
-// Plan represents a set of actions to take
-type Plan struct {
-	Accounts map[string]Account
-	Envs     map[string]Env
-	Global   Component
-	Modules  map[string]Module
-	TravisCI TravisCI
-	Version  string
 }
 
 // Eval evaluates a config
@@ -147,34 +145,14 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 	accountPlans := make(map[string]Account, len(c.Accounts))
 	for name, acct := range c.Accounts {
 		accountPlan := Account{}
-		accountPlan.DockerImageVersion = dockerImageVersion
 
 		accountPlan.AccountName = name
-
-		accountPlan.AccountID = v2.ResolveRequiredInt64(v2.AWSProviderAccountIdGetter, defaults.Common, acct.Common)
-		accountPlan.AWSProfileProvider = v2.ResolveRequiredString(v2.AWSProviderProfileGetter, defaults.Common, acct.Common)
-		accountPlan.AWSProviderVersion = v2.ResolveRequiredString(v2.AWSProviderVersionGetter, defaults.Common, acct.Common)
-		accountPlan.AWSRegionProvider = v2.ResolveRequiredString(v2.AWSProviderRegionGetter, defaults.Common, acct.Common)
-
-		accountPlan.AWSRegions = v2.ResolveStringArray(defaults.Providers.AWS.AdditionalRegions, acct.Providers.AWS.AdditionalRegions)
-
-		accountPlan.AWSRegionBackend = v2.ResolveRequiredString(v2.BackendRegionGetter, defaults.Common, acct.Common)
-		accountPlan.AWSProfileBackend = v2.ResolveRequiredString(v2.BackendProfileGetter, defaults.Common, acct.Common)
-		accountPlan.InfraBucket = v2.ResolveRequiredString(v2.BackendBucketGetter, defaults.Common, acct.Common)
-		accountPlan.InfraDynamoTable = v2.ResolveOptionalString(v2.BackendDynamoTableGetter, defaults.Common, acct.Common)
-
-		accountPlan.AllAccounts = resolveAccounts(c.Accounts)
-
-		accountPlan.TerraformVersion = v2.ResolveRequiredString(v2.TerraformVersionGetter, defaults.Common, acct.Common)
-		accountPlan.Owner = v2.ResolveRequiredString(v2.OwnerGetter, defaults.Common, acct.Common)
-		accountPlan.Project = v2.ResolveRequiredString(v2.ProjectGetter, defaults.Common, acct.Common)
-
-		accountPlan.ExtraVars = resolveExtraVars(defaults.ExtraVars, acct.ExtraVars)
+		accountPlan.ComponentCommon = resolveComponentCommon(defaults.Common, acct.Common)
 		accountPlan.TfLint = resolveTfLint(c.Tools.TfLint, nil)
-
+		accountPlan.AllAccounts = resolveAccounts(c.Accounts)
 		accountPlan.PathToRepoRoot = "../../../"
-
 		accountPlan.Docker = c.Docker
+		accountPlan.DockerImageVersion = dockerImageVersion
 
 		accountPlans[name] = accountPlan
 	}
@@ -209,21 +187,7 @@ func (p *Plan) buildGlobal(conf *v2.Config) Component {
 	defaults := conf.Defaults
 	global := conf.Global
 
-	componentPlan.AccountID = v2.ResolveRequiredInt64(v2.AWSProviderAccountIdGetter, defaults.Common, global.Common)
-	componentPlan.AWSProfileProvider = v2.ResolveRequiredString(v2.AWSProviderProfileGetter, defaults.Common, global.Common)
-	componentPlan.AWSProviderVersion = v2.ResolveRequiredString(v2.AWSProviderVersionGetter, defaults.Common, global.Common)
-	componentPlan.AWSRegionProvider = v2.ResolveRequiredString(v2.AWSProviderRegionGetter, defaults.Common, global.Common)
-
-	componentPlan.AWSRegions = v2.ResolveOptionalStringSlice(v2.AWSProviderAdditionalRegionsGetter, defaults.Common, global.Common)
-
-	componentPlan.AWSRegionBackend = v2.ResolveRequiredString(v2.BackendRegionGetter, defaults.Common, global.Common)
-	componentPlan.AWSProfileBackend = v2.ResolveRequiredString(v2.BackendProfileGetter, defaults.Common, global.Common)
-	componentPlan.InfraBucket = v2.ResolveRequiredString(v2.BackendBucketGetter, defaults.Common, global.Common)
-	componentPlan.InfraDynamoTable = v2.ResolveOptionalString(v2.BackendDynamoTableGetter, defaults.Common, global.Common)
-
-	componentPlan.TerraformVersion = v2.ResolveRequiredString(v2.TerraformVersionGetter, defaults.Common, global.Common)
-	componentPlan.Owner = v2.ResolveRequiredString(v2.OwnerGetter, defaults.Common, global.Common)
-	componentPlan.Project = v2.ResolveRequiredString(v2.ProjectGetter, defaults.Common, global.Common)
+	componentPlan.ComponentCommon = resolveComponentCommon(defaults.Common, global.Common)
 
 	componentPlan.Component = "global"
 	componentPlan.DockerImageVersion = dockerImageVersion
@@ -247,26 +211,6 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 		envPlan := newEnvPlan()
 		envPlan.Env = envName
 
-		envPlan.AccountID = v2.ResolveRequiredInt64(v2.AWSProviderAccountIdGetter, defaults.Common, envConf.Common)
-		envPlan.AWSProfileProvider = v2.ResolveRequiredString(v2.AWSProviderProfileGetter, defaults.Common, envConf.Common)
-		envPlan.AWSProviderVersion = v2.ResolveRequiredString(v2.AWSProviderVersionGetter, defaults.Common, envConf.Common)
-		envPlan.AWSRegionProvider = v2.ResolveRequiredString(v2.AWSProviderRegionGetter, defaults.Common, envConf.Common)
-
-		envPlan.AWSRegions = v2.ResolveOptionalStringSlice(v2.AWSProviderAdditionalRegionsGetter, defaults.Common, envConf.Common)
-
-		envPlan.AWSRegionBackend = v2.ResolveRequiredString(v2.BackendRegionGetter, defaults.Common, envConf.Common)
-		envPlan.AWSProfileBackend = v2.ResolveRequiredString(v2.BackendProfileGetter, defaults.Common, envConf.Common)
-		envPlan.InfraBucket = v2.ResolveRequiredString(v2.BackendBucketGetter, defaults.Common, envConf.Common)
-		envPlan.InfraDynamoTable = v2.ResolveOptionalString(v2.BackendDynamoTableGetter, defaults.Common, envConf.Common)
-
-		envPlan.TerraformVersion = v2.ResolveRequiredString(v2.TerraformVersionGetter, defaults.Common, envConf.Common)
-		envPlan.Owner = v2.ResolveRequiredString(v2.OwnerGetter, defaults.Common, envConf.Common)
-		envPlan.Project = v2.ResolveRequiredString(v2.ProjectGetter, defaults.Common, envConf.Common)
-
-		envPlan.ExtraVars = resolveExtraVars(defaults.ExtraVars, envConf.ExtraVars)
-		envPlan.TfLint = resolveTfLint(conf.Tools.TfLint, nil)
-		envPlan.Docker = conf.Docker
-
 		for componentName, componentConf := range conf.Envs[envName].Components {
 			componentPlan := Component{
 				Kind: componentConf.Kind,
@@ -281,30 +225,16 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			}
 			componentPlan.Accounts = p.Accounts
 
-			componentPlan.AccountID = v2.ResolveRequiredInt64(v2.AWSProviderAccountIdGetter, defaults.Common, envConf.Common, componentConf.Common)
-			componentPlan.AWSRegionProvider = v2.ResolveRequiredString(v2.AWSProviderRegionGetter, defaults.Common, envConf.Common, componentConf.Common)
+			componentPlan.ComponentCommon = resolveComponentCommon(defaults.Common, envConf.Common, componentConf.Common)
 
-			componentPlan.AWSRegions = v2.ResolveOptionalStringSlice(v2.AWSProviderAdditionalRegionsGetter, defaults.Common, envConf.Common, componentConf.Common)
-			componentPlan.AWSProfileProvider = v2.ResolveRequiredString(v2.AWSProviderProfileGetter, defaults.Common, envConf.Common, componentConf.Common)
-			componentPlan.AWSProviderVersion = v2.ResolveRequiredString(v2.AWSProviderVersionGetter, defaults.Common, envConf.Common, componentConf.Common)
-
-			componentPlan.AWSRegionBackend = v2.ResolveRequiredString(v2.BackendRegionGetter, defaults.Common, envConf.Common, componentConf.Common)
-			componentPlan.AWSProfileBackend = v2.ResolveRequiredString(v2.BackendProfileGetter, defaults.Common, envConf.Common, componentConf.Common)
-			componentPlan.InfraBucket = v2.ResolveRequiredString(v2.BackendBucketGetter, defaults.Common, envConf.Common, componentConf.Common)
-			componentPlan.InfraDynamoTable = v2.ResolveOptionalString(v2.BackendDynamoTableGetter, defaults.Common, envConf.Common, componentConf.Common)
-
-			componentPlan.TerraformVersion = v2.ResolveRequiredString(v2.TerraformVersionGetter, defaults.Common, envConf.Common, componentConf.Common)
-			componentPlan.Owner = v2.ResolveRequiredString(v2.OwnerGetter, defaults.Common, envConf.Common, componentConf.Common)
-			componentPlan.Project = v2.ResolveRequiredString(v2.ProjectGetter, defaults.Common, envConf.Common, componentConf.Common)
 			componentPlan.Env = envName
 			componentPlan.Component = componentName
 			componentPlan.DockerImageVersion = dockerImageVersion
 			componentPlan.OtherComponents = otherComponentNames(conf.Envs[envName].Components, componentName)
 			componentPlan.ModuleSource = componentConf.ModuleSource
-			componentPlan.ExtraVars = resolveExtraVars(envPlan.ExtraVars, componentConf.ExtraVars)
 			componentPlan.PathToRepoRoot = "../../../../"
 
-			componentPlan.TfLint = resolveTfLintComponent(envPlan.TfLint, nil)
+			componentPlan.TfLint = resolveTfLint(conf.Tools.TfLint, nil)
 			componentPlan.Docker = conf.Docker
 
 			envPlan.Components[componentName] = componentPlan
@@ -313,6 +243,30 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 		envPlans[envName] = envPlan
 	}
 	return envPlans, nil
+}
+
+func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
+	return ComponentCommon{
+		Backend: AWSBackend{
+			Region:      v2.ResolveRequiredString(v2.BackendRegionGetter, commons...),
+			Profile:     v2.ResolveRequiredString(v2.BackendProfileGetter, commons...),
+			Bucket:      v2.ResolveRequiredString(v2.BackendBucketGetter, commons...),
+			DynamoTable: v2.ResolveOptionalString(v2.BackendDynamoTableGetter, commons...),
+		},
+		Providers: Providers{
+			AWS: AWSProvider{
+				AccountID:         v2.ResolveRequiredInt64(v2.AWSProviderAccountIdGetter, commons...),
+				Profile:           v2.ResolveRequiredString(v2.AWSProviderProfileGetter, commons...),
+				Version:           v2.ResolveRequiredString(v2.AWSProviderVersionGetter, commons...),
+				Region:            v2.ResolveRequiredString(v2.AWSProviderRegionGetter, commons...),
+				AdditionalRegions: v2.ResolveOptionalStringSlice(v2.AWSProviderAdditionalRegionsGetter, commons...),
+			},
+		},
+		ExtraVars: v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),
+		Owner:     v2.ResolveRequiredString(v2.OwnerGetter, commons...),
+		Project:   v2.ResolveRequiredString(v2.ProjectGetter, commons...),
+		Common:    Common{TerraformVersion: v2.ResolveRequiredString(v2.TerraformVersionGetter, commons...)},
+	}
 }
 
 func otherComponentNames(components map[string]v2.Component, thisComponent string) []string {
@@ -340,13 +294,13 @@ func resolveEKSConfig(def *v1.EKSConfig, override *v1.EKSConfig) *v1.EKSConfig {
 	return resolved
 }
 
-func resolveExtraVars(def map[string]string, override map[string]string) map[string]string {
+func resolveExtraVars(vars ...map[string]string) map[string]string {
 	resolved := map[string]string{}
-	for k, v := range def {
-		resolved[k] = v
-	}
-	for k, v := range override {
-		resolved[k] = v
+
+	for _, m := range vars {
+		for k, v := range m {
+			resolved[k] = v
+		}
 	}
 	return resolved
 }

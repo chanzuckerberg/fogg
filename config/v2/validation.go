@@ -130,6 +130,13 @@ func AWSProviderAdditionalRegionsGetter(comm Common) []string {
 	return nil
 }
 
+func ExtraVarsGetter(comm Common) map[string]string {
+	if comm.ExtraVars != nil {
+		return comm.ExtraVars
+	}
+	return map[string]string{}
+}
+
 func nonZeroInt64(i int64) bool {
 	return true
 }
@@ -193,6 +200,18 @@ func ResolveStringArray(def []string, override []string) []string {
 		return override
 	}
 	return def
+}
+
+func ResolveStringMap(getter func(Common) map[string]string, commons ...Common) map[string]string {
+	resolved := map[string]string{}
+
+	for _, c := range commons {
+		m := getter(c)
+		for k, v := range m {
+			resolved[k] = v
+		}
+	}
+	return resolved
 }
 
 // validateInheritedStringField will walk all accounts and components and ensure that a given field is valid at at least
