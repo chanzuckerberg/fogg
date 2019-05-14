@@ -169,11 +169,10 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:e491c2689065d23980420dbf0674e218044865dc0ab5c9e160f0d53387d8a14e"
+  digest = "1:73eb39e61b8b0c5cb0e95b85c5a7c6a2077c7fc7bf89358fd70387faf829079f"
   name = "github.com/chanzuckerberg/go-misc"
   packages = [
     "aws",
-    "github",
     "ver",
   ]
   pruneopts = "UT"
@@ -290,22 +289,6 @@
   pruneopts = "UT"
   revision = "6f77996f0c42f7b84e5a2b252227263f93432e9b"
   version = "v0.3.0"
-
-[[projects]]
-  digest = "1:8d12b0e8334cd6770e9b9b8b48c3340b9739b1469c2f448ced070b589adaa475"
-  name = "github.com/google/go-github"
-  packages = ["github"]
-  pruneopts = "UT"
-  revision = "901030391ab7f418a984389fd3f8f65e39e5c823"
-  version = "v25.0.4"
-
-[[projects]]
-  digest = "1:a63cff6b5d8b95638bfe300385d93b2a6d9d687734b863da8e09dc834510a690"
-  name = "github.com/google/go-querystring"
-  packages = ["query"]
-  pruneopts = "UT"
-  revision = "44c6ddd0a2342c386950e880b658017258da92fc"
-  version = "v1.0.0"
 
 [[projects]]
   digest = "1:582b704bebaa06b48c29b0cec224a6058a09c86883aaddabde889cd1a5f73e1b"
@@ -806,7 +789,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:de0a58bade112f55baf8cb6f3fe7a913de234e52683a78e4a4fe1abc25a2a25e"
+  digest = "1:94b8f2d823d2cd931bd4ca6c278f5382b18d8d59895665b2a6be899b776c588a"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -821,7 +804,7 @@
     "trace",
   ]
   pruneopts = "UT"
-  revision = "a4d6f7feada510cc50e69a37b484cb0fdc6b7876"
+  revision = "3ec19112720433827bbce8be9342797f5a6aaaf9"
 
 [[projects]]
   branch = "master"
@@ -839,14 +822,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:646036a04e163f383d101f40e36fd3354676c7dcccc226d825200a6b9509727a"
+  digest = "1:b0cf0a23da8288b6d1ec9187e87f95d6e957f50f41b62f06b4eefaa01d4e8d7a"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "a5b02f93d862f065920dd6a40dddc66b60d0dec4"
+  revision = "3a4b5fb9f71f5874b2374ae059bc0e0bcb52e145"
 
 [[projects]]
   digest = "1:8d8faad6b12a3a4c819a3f9618cb6ee1fa1cfc33253abeeea8b55336721e3405"
@@ -994,7 +977,6 @@
     "github.com/aws/aws-sdk-go/aws/session",
     "github.com/blang/semver",
     "github.com/chanzuckerberg/go-misc/aws",
-    "github.com/chanzuckerberg/go-misc/github",
     "github.com/chanzuckerberg/go-misc/ver",
     "github.com/fatih/color",
     "github.com/go-errors/errors",

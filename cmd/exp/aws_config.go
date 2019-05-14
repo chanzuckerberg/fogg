@@ -10,6 +10,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/arn"
 	"github.com/aws/aws-sdk-go/aws/credentials/stscreds"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -72,7 +73,9 @@ var awsConfigCmd = &cobra.Command{
 		if err != nil {
 			return errs.WrapUser(err, "Couldn't create an AWS session. Make sure your ~/.aws/credentials is configured properly")
 		}
-		awsClient := cziAWS.New(sess)
+
+		awsConfig := &aws.Config{Region: conf.Defaults.Providers.AWS.Region}
+		awsClient := cziAWS.New(sess).WithAllServices(awsConfig)
 		awsUser, err := awsClient.IAM.GetCurrentUser(context.Background())
 		if err != nil {
 			return errs.WrapUser(err, "Could not determine AWS user")
@@ -88,7 +91,7 @@ region = {{.region}}
 role_session_name = {{.roleSessionName}}
 output = json
 `
-		awsConfig := bytes.NewBuffer(nil)
+		awsConfigBlock := bytes.NewBuffer(nil)
 		all := false
 		choices := []string{"yes", "no", "all"}
 
@@ -109,11 +112,11 @@ output = json
 			}
 
 			data := map[string]interface{}{
-				"accountName":       name,
-				"roleARN":           roleARN.String(),
-				"sourceProfile":     sourceProfile,
-				"region":            region,
-				"role_session_name": roleSessionName,
+				"accountName":     name,
+				"roleARN":         roleARN.String(),
+				"sourceProfile":   sourceProfile,
+				"region":          region,
+				"roleSessionName": roleSessionName,
 			}
 
 			t, err := template.New("aws config").Parse(templateString)
@@ -121,13 +124,13 @@ output = json
 				return errors.Wrap(err, "Could not parse template")
 			}
 
-			err = t.Execute(awsConfig, data)
+			err = t.Execute(awsConfigBlock, data)
 			if err != nil {
 				return errors.Wrap(err, "Could not templetize")
 			}
 
 			if !all {
-				fmt.Println(awsConfig.String())
+				fmt.Println(awsConfigBlock.String())
 
 				choiceIdx := prompt.Choose("Add this config?", choices)
 				switch choices[choiceIdx] {
@@ -142,7 +145,7 @@ output = json
 			if err != nil {
 				return err
 			}
-			awsConfig.Reset()
+			awsConfigBlock.Reset()
 		}
 		return nil
 	},
