@@ -82,7 +82,6 @@ func TestPlanBasicV1(t *testing.T) {
 	assert.Len(t, plan.Envs, 2)
 
 	assert.NotNil(t, plan.Envs["staging"])
-	assert.Equal(t, "0.100.0", plan.Envs["staging"].TerraformVersion)
 
 	assert.NotNil(t, plan.Envs["staging"].Components)
 	assert.Len(t, plan.Envs["staging"].Components, 4)
@@ -126,7 +125,6 @@ func TestPlanBasicV2(t *testing.T) {
 	assert.Len(t, plan.Envs, 2)
 
 	assert.NotNil(t, plan.Envs["staging"])
-	assert.Equal(t, "0.100.0", plan.Envs["staging"].TerraformVersion)
 
 	assert.NotNil(t, plan.Envs["staging"].Components)
 	assert.Len(t, plan.Envs["staging"].Components, 4)

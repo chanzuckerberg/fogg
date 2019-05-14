@@ -7,6 +7,12 @@ import (
 	"github.com/chanzuckerberg/fogg/util"
 )
 
+type AWSProfile struct {
+	Name string
+	ID   int64
+	Role string
+}
+
 type TravisCI struct {
 	AWSProfiles []AWSProfile
 	Docker      bool
@@ -33,7 +39,7 @@ func (p *Plan) buildTravisCI(c *v2.Config, version string) TravisCI {
 			Name: name,
 			// TODO since accountID is required here, that means we need
 			// to make it non-optional, either in defaults or post-plan.
-			ID:   p.Accounts[name].AccountID,
+			ID:   p.Accounts[name].Providers.AWS.AccountID,
 			Role: c.Tools.TravisCI.AWSIAMRoleName,
 		})
 	}

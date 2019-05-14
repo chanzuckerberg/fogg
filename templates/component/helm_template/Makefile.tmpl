@@ -21,7 +21,7 @@ apply: plan
 check: lint plan
 
 set-eks-context:
-	@aws --region {{ .AWSRegionProvider }} --profile {{ .AWSProfileProvider }} eks update-kubeconfig --name {{ .EKS.ClusterName }} --alias {{ .EKS.ClusterName }}
+	@aws --region {{ .Providers.AWS.Region }} --profile {{ .Providers.AWS.Profile }} eks update-kubeconfig --name {{ .EKS.ClusterName }} --alias {{ .EKS.ClusterName }}
 
 lint:
 	@helm lint -f variables.yaml .

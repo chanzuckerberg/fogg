@@ -3,14 +3,14 @@
 
 env: {{ .Env }}
 project: {{ .Project }}
-region: {{ .AWSRegionProvider }}
+region: {{ .Providers.AWS.Region }}
 component: {{ .Component }}
 owner: {{ .Owner }}
-aws_profile: {{ .AWSProfileProvider }}
+aws_profile: {{ .Providers.AWS.Profile }}
 tags:
   env: {{ .Env }}
   project: {{ .Project }}
-  region: {{ .AWSRegionProvider }}
+  region: {{ .Providers.AWS.Region }}
   component: {{ .Component }}
   owner: {{ .Owner }}
   managedBy: kubectl
@@ -21,7 +21,7 @@ tags:
 
 aws_accounts:
 {{- range $accountName, $account := .Accounts -}}
-{{ if $account.AccountID }}
-  {{ $accountName }}: {{ $account.AccountID -}}
+{{ if $account.Providers.AWS.AccountID }}
+  {{ $accountName }}: {{ $account.Providers.AWS.AccountID -}}
 {{ end -}}
 {{ end }}
