@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/chanzuckerberg/fogg/util"
 	"github.com/stretchr/testify/assert"
 	validator "gopkg.in/go-playground/validator.v9"
 )
@@ -52,7 +53,7 @@ func TestParseDefaults(t *testing.T) {
 
 func TestParse(t *testing.T) {
 	a := assert.New(t)
-	b, e := ioutil.ReadFile("testdata/v1_full.json")
+	b, e := util.TestFile("v1_full")
 	a.NoError(e)
 	c, e := ReadConfig(b)
 	assert.Nil(t, e)
@@ -74,10 +75,10 @@ func TestParse(t *testing.T) {
 	assert.NotNil(t, c.Envs)
 	assert.Len(t, c.Envs, 1)
 	assert.Len(t, c.Envs["stage"].Components, 2)
-	env := c.Envs["stage"].Components["env"]
+	env := c.Envs["stage"].Components["cloud-env"]
 	assert.NotNil(t, env)
 	assert.NotNil(t, env.ModuleSource)
-	assert.Equal(t, "github.com/foo/bar", *env.ModuleSource)
+	assert.Equal(t, "github.com/chanzuckerberg/fogg-test-module", *env.ModuleSource)
 
 	assert.NotNil(t, c.Modules)
 }

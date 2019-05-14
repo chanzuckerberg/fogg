@@ -2,6 +2,8 @@ package util
 
 import (
 	"io/ioutil"
+	"path/filepath"
+	"runtime"
 
 	"github.com/spf13/afero"
 )
@@ -15,6 +17,18 @@ func StrPtr(s string) *string {
 		return nil
 	}
 	return &s
+}
+
+func ProjectRoot() string {
+	_, b, _, _ := runtime.Caller(0)
+	basepath := filepath.Dir(b)
+	return filepath.Join(basepath, "..")
+}
+
+func TestFile(name string) ([]byte, error) {
+	// calculate the path to repository's root
+	path := filepath.Join(ProjectRoot(), "testdata", name, "fogg.json")
+	return ioutil.ReadFile(path)
 }
 
 func TestFs() (afero.Fs, string, error) {

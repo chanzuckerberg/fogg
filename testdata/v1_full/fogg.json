@@ -87,7 +87,7 @@
         "foo": "stage"
       },
       "components": {
-        "env": {
+        "cloud-env": {
           "account_id": 5,
           "aws_profile_backend": "czi-env",
           "aws_profile_provider": "czi-env",
@@ -105,7 +105,7 @@
           "extra_vars": {
             "foo": "env"
           },
-          "module_source": "github.com/foo/bar"
+          "module_source": "github.com/chanzuckerberg/fogg-test-module"
         },
         "helm": {}
       }

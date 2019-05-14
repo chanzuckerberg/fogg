@@ -302,13 +302,13 @@ func removeExtension(path string) string {
 func applyTemplate(sourceFile io.Reader, dest afero.Fs, path string, overrides interface{}) error {
 	dir, _ := filepath.Split(path)
 	ospath := filepath.FromSlash(dir)
-	err := dest.MkdirAll(ospath, 0755)
+	err := dest.MkdirAll(ospath, 0775)
 	if err != nil {
 		return errs.WrapUserf(err, "couldn't create %s directory", dir)
 	}
 
 	log.Infof("%s templated", path)
-	writer, err := dest.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	writer, err := dest.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return errs.WrapUser(err, "unable to open file")
 	}
@@ -335,7 +335,7 @@ func applyModuleInvocation(fs afero.Fs, path, moduleAddress string, box packr.Bo
 		return errs.WrapUserf(e, "couldn't create %s directory", path)
 	}
 
-	moduleConfig, e := util.DownloadAndParseModule(moduleAddress)
+	moduleConfig, e := util.DownloadAndParseModule(fs, moduleAddress)
 	if e != nil {
 		return errs.WrapUser(e, "could not download or parse module")
 	}
