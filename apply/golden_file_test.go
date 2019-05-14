@@ -1,4 +1,4 @@
-// +build !online
+// +build !offline
 
 package apply_test
 
