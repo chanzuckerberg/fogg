@@ -2,7 +2,7 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 {{if .Providers.AWS}}
-# Default Provider
+  # Default Provider
   provider "aws" {
     version = "~> {{ .Providers.AWS.Version }}"
     region = "{{ .Providers.AWS.Region }}"
@@ -46,10 +46,12 @@ variable "region" {
   default = "{{ .Backend.Region }}"
 }
 
-variable "aws_profile" {
-  type = "string"
-  default =  "{{ .Providers.AWS.Profile }}"
-}
+{{if .Providers.AWS}}
+  variable "aws_profile" {
+    type = "string"
+    default =  "{{ .Providers.AWS.Profile }}"
+  }
+{{ end }}
 
 variable "owner" {
   type = "string"

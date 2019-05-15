@@ -135,12 +135,15 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 	}
 
 	randAWSProvider := func(r *rand.Rand, s int) *AWSProvider {
-		return &AWSProvider{
-			AccountID: randInt64Ptr(r, size),
-			Region:    randStringPtr(r, s),
-			Profile:   randStringPtr(r, s),
-			Version:   randStringPtr(r, s),
+		if r.Float32() < 0.5 {
+			return &AWSProvider{
+				AccountID: randInt64Ptr(r, size),
+				Region:    randStringPtr(r, s),
+				Profile:   randStringPtr(r, s),
+				Version:   randStringPtr(r, s),
+			}
 		}
+		return nil
 	}
 
 	randCommon := func(r *rand.Rand, s int) Common {

@@ -1,14 +1,7 @@
 {
     "version": 2,
     "defaults": {
-        "providers": {
-            "aws": {
-                "account_id": 123,
-                "region": "us-west-2",
-                "profile": "profile",
-                "version": "1.0"
-            }
-        },
+        "providers": {},
         "backend": {
             "bucket": "bucket",
             "region": "region",

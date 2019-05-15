@@ -1,6 +1,8 @@
 package v2
 
-import "github.com/chanzuckerberg/fogg/config/v1"
+import (
+	"github.com/chanzuckerberg/fogg/config/v1"
+)
 
 // lastNonNil, despite its name can return nil if all results are nil
 func lastNonNil(getter func(Common) *string, commons ...Common) *string {
@@ -90,8 +92,8 @@ func ResolveAWSProvider(commons ...Common) *AWSProvider {
 			Version: version,
 
 			// optional fields
-			AccountID: lastNonNilInt64(AWSProviderAccountIdGetter, commons...),
-			// AdditionalRegions: FIXME
+			AccountID:         lastNonNilInt64(AWSProviderAccountIdGetter, commons...),
+			AdditionalRegions: ResolveOptionalStringSlice(AWSProviderAdditionalRegionsGetter, commons...),
 		}
 	}
 	return nil

@@ -10,14 +10,14 @@
   }
 
   # Aliased Providers (for doing things in every region).
-  {{ $out := . }}
+  {{ $outter := . }}
   {{ range $region := .Providers.AWS.AdditionalRegions }}
     provider "aws" {
       alias = "{{ $region }}"
-      version = "~> {{ $out.Providers.AWS.Version }}"
+      version = "~> {{ $outter.Providers.AWS.Version }}"
       region = "{{ $region }}"
-      profile = "{{ $out.Providers.AWS.Profile }}"
-      allowed_account_ids = [{{ $out.Providers.AWS.AccountID }}]
+      profile = "{{ $outter.Providers.AWS.Profile }}"
+      allowed_account_ids = [{{ $outter.Providers.AWS.AccountID }}]
     }
   {{ end }}
 
@@ -53,20 +53,25 @@ variable "project" {
   default = "{{ .Project }}"
 }
 
-variable "region" {
-  type    = "string"
-  default = "{{ .Providers.AWS.Region }}"
-}
+{{if .Providers.AWS}}
+  variable "region" {
+    type    = "string"
+    default = "{{ .Providers.AWS.Region }}"
+  }
+{{ end }}
 
 variable "component" {
   type = "string"
   default = "{{ .Component }}"
 }
 
-variable "aws_profile" {
-  type = "string"
-  default =  "{{ .Providers.AWS.Profile }}"
-}
+{{if .Providers.AWS}}
+  variable "aws_profile" {
+    type = "string"
+    default =  "{{ .Providers.AWS.Profile }}"
+  }
+{{ end }}
+
 
 variable "owner" {
   type = "string"
@@ -103,17 +108,17 @@ data "terraform_remote_state" "global" {
   }
 }
 
-{{ $out := . }}
+{{ $outter := . }}
 {{ range $component := .OtherComponents | sortAlpha  }}
 data "terraform_remote_state" "{{ $component }}" {
   backend = "s3"
 
   config {
-    bucket         = "{{ $out.Backend.Bucket }}"
-    {{ if $out.Backend.DynamoTable }}dynamodb_table = "{{ $out.Backend.DynamoTable }}"{{ end }}
-    key            = "terraform/{{ $out.Project }}/envs/{{ $out.Env }}/components/{{ $component }}.tfstate"
-    region         = "{{ $out.Backend.Region }}"
-    {{ if $out.Backend.Profile }}profile        = "{{ $out.Backend.Profile }}"{{ end }}
+    bucket         = "{{ $outter.Backend.Bucket }}"
+    {{ if $outter.Backend.DynamoTable }}dynamodb_table = "{{ $outter.Backend.DynamoTable }}"{{ end }}
+    key            = "terraform/{{ $outter.Project }}/envs/{{ $outter.Env }}/components/{{ $component }}.tfstate"
+    region         = "{{ $outter.Backend.Region }}"
+    {{ if $outter.Backend.Profile }}profile        = "{{ $outter.Backend.Profile }}"{{ end }}
   }
 }
 {{ end }}
@@ -138,7 +143,7 @@ variable "aws_accounts" {
   type = "map"
   default = {
   {{ range $accountName, $account := .Accounts }}
-    {{ if $account.Providers.AWS.AccountID }}
+    {{ if $account.Providers.AWS }}
         {{ $accountName }} = {{ $account.Providers.AWS.AccountID }}
     {{ end }}
   {{ end }}
