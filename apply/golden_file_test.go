@@ -27,6 +27,7 @@ func TestIntegration(t *testing.T) {
 		fileName string
 	}{
 		{"v1_full"},
+		{"v2_full"},
 	}
 
 	for _, tc := range testCases {
