@@ -282,6 +282,9 @@ func TestFindAndReadConfig(t *testing.T) {
 				return nil, e
 			}
 			_, e = f.Write(v)
+			if e != nil {
+				return nil, e
+			}
 		}
 		return fs, nil
 	}
@@ -297,19 +300,19 @@ func TestFindAndReadConfig(t *testing.T) {
 		"config.json": v1,
 	})
 	a.NoError(e)
-	defer f1.RemoveAll(".")
+	defer f1.RemoveAll(".") //nolint
 
 	f2, e := fs(map[string][]byte{
 		"config.json": v2,
 	})
 	a.NoError(e)
-	defer f2.RemoveAll(".")
+	defer f2.RemoveAll(".") //nolint
 
 	fErr, e := fs(map[string][]byte{
 		"config.json": []byte(`{"version": 7}`),
 	})
 	a.NoError(e)
-	defer fErr.RemoveAll(".")
+	defer fErr.RemoveAll(".") //nolint
 
 	_, e = FindAndReadConfig(f1, "config.json")
 	a.NoError(e)

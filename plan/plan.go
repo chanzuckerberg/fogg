@@ -305,27 +305,6 @@ func resolveExtraVars(vars ...map[string]string) map[string]string {
 	return resolved
 }
 
-func resolveRequired(def *string, override *string) string {
-	if override != nil && *override != "" {
-		return *override
-	}
-	return *def
-}
-
-func resolveRequiredInt(def int64, override *int64) int64 {
-	if override != nil {
-		return *override
-	}
-	return def
-}
-
-func resolveOptionalInt(def *int64, override *int64) *int64 {
-	if override != nil {
-		return override
-	}
-	return def
-}
-
 func resolveAccounts(accounts map[string]v2.Account) map[string]int64 {
 	a := make(map[string]int64)
 	for name, account := range accounts {

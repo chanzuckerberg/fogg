@@ -21,7 +21,7 @@ func generatePlan(planPath string) error {
 	cmd.Stdout = os.Stdout
 	err := cmd.Run()
 	if err != nil {
-		errors.Wrap(err, "Could not run make init")
+		return errors.Wrap(err, "Could not run make init")
 	}
 
 	cmd = exec.Command("make", "run")

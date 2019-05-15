@@ -12,12 +12,11 @@ setup: ## setup development dependencies
 	go get -u github.com/gobuffalo/packr/...
 	go install github.com/gobuffalo/packr/packr
 	curl -L https://raw.githubusercontent.com/chanzuckerberg/bff/master/download.sh | sh
+	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh
 
 lint: ## run the fast go linters
-	gometalinter --vendor --fast ./...
-
-lint-slow: ## run all linters, even the slow ones
-	gometalinter --vendor --deadline 120s ./...
+	golangci-lint run
+.PHONY: lint
 
 packr: ## run the packr tool to generate our static files
 	packr clean -v
@@ -73,4 +72,4 @@ update-golden-files: dep ## update the golden files in testdata
 	go test -v -run TestIntegration ./apply/ -update
 .PHONY: update-golden-files
 
-.PHONY: build clean coverage test install lint lint-slow packr release help setup
+.PHONY: build clean coverage test install packr release help setup
