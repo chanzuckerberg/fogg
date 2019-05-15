@@ -88,7 +88,7 @@ func TestApplyTemplateBasicNewDirectory(t *testing.T) {
 	defer os.RemoveAll(d)
 
 	nonexistentDir := getNonExistentDirectoryName()
-	defer dest.RemoveAll(nonexistentDir)
+	defer dest.RemoveAll(nonexistentDir) //nolint
 	path := filepath.Join(nonexistentDir, "bar")
 	overrides := struct{ Foo string }{"foo"}
 
@@ -136,7 +136,8 @@ func TestTouchFile(t *testing.T) {
 	a.NoError(err)
 	defer os.RemoveAll(d2)
 
-	writeFile(fs, "asdf", "jkl")
+	err = writeFile(fs, "asdf", "jkl")
+	a.NoError(err)
 
 	r, e = readFile(fs, "asdf")
 	a.Nil(e)
@@ -156,7 +157,7 @@ func TestTouchFileNonExistentDirectory(t *testing.T) {
 	defer os.RemoveAll(d)
 
 	nonexistentDir := getNonExistentDirectoryName()
-	defer dest.RemoveAll(nonexistentDir)
+	defer dest.RemoveAll(nonexistentDir) //nolint
 	e := touchFile(dest, filepath.Join(nonexistentDir, "foo"))
 	a.Nil(e)
 	r, e := readFile(dest, filepath.Join(nonexistentDir, "foo"))
@@ -404,7 +405,8 @@ func TestCheckToolVersions(t *testing.T) {
 			a.NoError(err)
 			defer os.RemoveAll(d)
 
-			writeFile(fs, ".fogg-version", tc.current)
+			err = writeFile(fs, ".fogg-version", tc.current)
+			a.NoError(err)
 
 			v, _, e := checkToolVersions(fs, tc.tool)
 			a.NoError(e)

@@ -10,10 +10,6 @@ import (
 	"github.com/chanzuckerberg/fogg/plan"
 )
 
-func add(x, y int) int {
-	return x + y
-}
-
 func TestValidConfigNoPanic(t *testing.T) {
 
 	// return false if valid + panic
@@ -34,7 +30,10 @@ func TestValidConfigNoPanic(t *testing.T) {
 				return true
 			}()
 
-			plan.Eval(conf)
+			_, err = plan.Eval(conf)
+			if err != nil {
+				panic(err)
+			}
 
 		} else {
 			fmt.Println("invalid")

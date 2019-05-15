@@ -65,7 +65,7 @@ func TestIntegration(t *testing.T) {
 				a.NoError(e)
 				configMode, e := testdataFs.Stat("fogg.json")
 				a.NoError(e)
-				afero.WriteFile(fs, "fogg.json", configContents, configMode.Mode())
+				a.NoError(afero.WriteFile(fs, "fogg.json", configContents, configMode.Mode()))
 
 				conf, e := config.FindAndReadConfig(fs, "fogg.json")
 				a.NoError(e)
@@ -77,7 +77,7 @@ func TestIntegration(t *testing.T) {
 				e = apply.Apply(fs, conf, templates.Templates, true)
 				a.NoError(e)
 
-				afero.Walk(testdataFs, ".", func(path string, info os.FileInfo, err error) error {
+				a.NoError(afero.Walk(testdataFs, ".", func(path string, info os.FileInfo, err error) error {
 					log.Debug("================================================")
 					log.Debug(path)
 					if !info.Mode().IsRegular() {
@@ -106,7 +106,7 @@ func TestIntegration(t *testing.T) {
 						a.Equal(f1, f2)
 					}
 					return nil
-				})
+				}))
 			}
 		})
 	}

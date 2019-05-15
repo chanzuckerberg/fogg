@@ -46,10 +46,10 @@ func TestCustomPluginTar(t *testing.T) {
 	customPlugin.SetTargetPath(plugins.CustomPluginDir)
 	a.Nil(customPlugin.Install(fs, pluginName))
 
-	afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
+	a.NoError(afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
 		a.Nil(err)
 		return nil
-	})
+	}))
 
 	for _, file := range files {
 		filePath := path.Join(plugins.CustomPluginDir, file)
@@ -95,10 +95,10 @@ func TestCustomPluginTarStripComponents(t *testing.T) {
 	customPlugin.SetTargetPath(plugins.CustomPluginDir)
 	a.Nil(customPlugin.Install(fs, pluginName))
 
-	afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
+	a.NoError(afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
 		a.Nil(err)
 		return nil
-	})
+	}))
 
 	for idx, file := range expected_files {
 		// files we expect to skip
@@ -146,10 +146,10 @@ func TestCustomPluginZip(t *testing.T) {
 	customPlugin.SetTargetPath(plugins.CustomPluginDir)
 	a.Nil(customPlugin.Install(fs, pluginName))
 
-	afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
+	a.NoError(afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
 		a.Nil(err)
 		return nil
-	})
+	}))
 
 	for _, file := range files {
 		filePath := path.Join(plugins.CustomPluginDir, file)
@@ -186,10 +186,10 @@ func TestCustomPluginBin(t *testing.T) {
 	customPlugin.SetTargetPath(plugins.CustomPluginDir)
 	a.Nil(customPlugin.Install(fs, pluginName))
 
-	afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
+	a.NoError(afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
 		a.Nil(err)
 		return nil
-	})
+	}))
 
 	customPluginPath := path.Join(plugins.CustomPluginDir, pluginName)
 	f, err := fs.Open(customPluginPath)
