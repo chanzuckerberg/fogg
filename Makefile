@@ -46,6 +46,10 @@ coverage: ## run the go coverage tool, reading file coverage.out
 test: dep ## run tests
 	gotest -race -cover ./...
 
+test-offline: dep ## run only tests that don't require internet
+	gotest -tags=offline ./...
+.PHONY: test-offline
+
 test-coverage: ## run the test with proper coverage reporting
 	goverage -race -coverprofile=coverage.out -covermode=atomic ./...
 	go tool cover -html=coverage.out
