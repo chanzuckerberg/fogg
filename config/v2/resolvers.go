@@ -75,6 +75,28 @@ func ResolveStringMap(getter func(Common) map[string]string, commons ...Common) 
 	return resolved
 }
 
+// ResolveAWSProvider will return an AWSProvder iff one of the required fields is set somewhere in the set of Common
+// config objects passed in. Otherwise it will return nil.
+func ResolveAWSProvider(commons ...Common) *AWSProvider {
+
+	profile := lastNonNil(AWSProviderProfileGetter, commons...)
+	region := lastNonNil(AWSProviderRegionGetter, commons...)
+	version := lastNonNil(AWSProviderVersionGetter, commons...)
+
+	if profile != nil || region != nil || version != nil {
+		return &AWSProvider{
+			Profile: profile,
+			Region:  region,
+			Version: version,
+
+			// optional fields
+			AccountID: lastNonNilInt64(AWSProviderAccountIdGetter, commons...),
+			// AdditionalRegions: FIXME
+		}
+	}
+	return nil
+}
+
 func OwnerGetter(comm Common) *string {
 	return comm.Owner
 }
@@ -117,7 +139,6 @@ func BackendProfileGetter(comm Common) *string {
 func AWSProviderRegionGetter(comm Common) *string {
 	if comm.Providers != nil && comm.Providers.AWS != nil {
 		return comm.Providers.AWS.Region
-
 	}
 	return nil
 }

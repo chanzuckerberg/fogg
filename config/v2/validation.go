@@ -41,14 +41,69 @@ func (c *Config) Validate() error {
 	errs = multierror.Append(errs, c.validateInheritedStringField("backend region", BackendRegionGetter, nonEmptyString))
 	errs = multierror.Append(errs, c.validateInheritedStringField("backend profile", BackendProfileGetter, nonEmptyString))
 
-	errs = multierror.Append(errs, c.validateInheritedStringField("provider region", AWSProviderRegionGetter, nonEmptyString))
-	errs = multierror.Append(errs, c.validateInheritedStringField("provider profile", AWSProviderProfileGetter, nonEmptyString))
-	errs = multierror.Append(errs, c.validateInheritedStringField("provider version", AWSProviderVersionGetter, nonEmptyString))
-	errs = multierror.Append(errs, c.validateInheritedIntField("provider account id", AWSProviderAccountIdGetter, nonZeroInt64))
-
+	errs = multierror.Append(errs, c.ValidateAWSProviders())
 	errs = multierror.Append(errs, c.validateModules())
 
 	return errs.ErrorOrNil()
+}
+
+func (c *Config) ValidateAWSProviders() error {
+	var errs *multierror.Error
+
+	var validate = func(p AWSProvider, component string) error {
+		var errs *multierror.Error
+
+		if p.Region == nil {
+			errs = multierror.Append(errs, fmt.Errorf("provider region for %s", component))
+		}
+
+		if p.Profile == nil {
+			errs = multierror.Append(errs, fmt.Errorf("provider profile %s ", component))
+		}
+
+		if p.Version == nil {
+			errs = multierror.Append(errs, fmt.Errorf("provider version for %s ", component))
+		}
+
+		if p.AccountID == nil || *p.AccountID == 0 {
+			errs = multierror.Append(errs, fmt.Errorf("provider account id for %s", component))
+		}
+		return errs
+	}
+
+	// For each account, we need the field to be valid in either the defaults or account
+	for name, acct := range c.Accounts {
+		v := ResolveAWSProvider(c.Defaults.Common, acct.Common)
+		if v == nil {
+			// nothing to validate
+		} else if e := validate(*v, fmt.Sprintf("accounts/%s", name)); e != nil {
+			errs = multierror.Append(errs, e)
+		}
+	}
+
+	// global
+	v := ResolveAWSProvider(c.Defaults.Common, c.Global.Common)
+	if v == nil {
+		//nothing to do
+	} else if e := validate(*v, "global"); e != nil {
+		errs = multierror.Append(errs, e)
+	}
+
+	// For each component, we need the field to be valid at one of defaults, env or component
+	for envName, env := range c.Envs {
+		for componentName, component := range env.Components {
+			v := ResolveAWSProvider(c.Defaults.Common, env.Common, component.Common)
+
+			if v == nil {
+				// nothing to validate
+			} else if e := validate(*v, fmt.Sprintf("%s/%s", envName, componentName)); e != nil {
+				errs = multierror.Append(errs, e)
+			}
+		}
+	}
+
+	return errs.ErrorOrNil()
+
 }
 
 // validateInheritedStringField will walk all accounts and components and ensure that a given field is valid at at least
@@ -79,47 +134,6 @@ func (c *Config) validateInheritedStringField(fieldName string, getter func(Comm
 	for envName, env := range c.Envs {
 		for componentName, component := range env.Components {
 			v := lastNonNil(getter, c.Defaults.Common, env.Common, component.Common)
-
-			if v == nil {
-				err = multierror.Append(err, fmt.Errorf("componnent %s/%s must have a %s", envName, componentName, fieldName))
-			} else if !validator(*v) {
-				err = multierror.Append(err, fmt.Errorf("componnent %s/%s must have a valid %s", envName, componentName, fieldName))
-			}
-		}
-	}
-
-	return err
-}
-
-// validateInheritedIntField will walk all accounts and components and ensure that a given field is valid at at least
-// one level of the inheritance hierarchy. We should eventually distinuish between not present and invalid because
-// if the value is present but invalid we should probably mark it as such, rather than papering over it.
-func (c *Config) validateInheritedIntField(fieldName string, getter func(Common) *int64, validator func(int64) bool) *multierror.Error {
-	// TODO figure out how to refactor to consolidate with above func
-	var err *multierror.Error
-
-	// For each account, we need the field to be valid in either the defaults or account
-	for acctName, acct := range c.Accounts {
-		v := lastNonNilInt64(getter, c.Defaults.Common, acct.Common)
-		if v == nil {
-			err = multierror.Append(err, fmt.Errorf("account %s must have field %s at either the account or defaults level", acctName, fieldName))
-		} else if !validator(*v) {
-			err = multierror.Append(err, fmt.Errorf("account %s must have a valid %s set at either the account or defaults level", acctName, fieldName))
-		}
-	}
-
-	// global
-	v := lastNonNilInt64(getter, c.Defaults.Common, c.Global.Common)
-	if v == nil {
-		err = multierror.Append(err, fmt.Errorf("global must have a %s set at either the global or defaults level", fieldName))
-	} else if !validator(*v) {
-		err = multierror.Append(err, fmt.Errorf("global must have a valid %s set at either the global or defaults level", fieldName))
-	}
-
-	// For each component, we need the field to be valid at one of defaults, env or component
-	for envName, env := range c.Envs {
-		for componentName, component := range env.Components {
-			v := lastNonNilInt64(getter, c.Defaults.Common, env.Common, component.Common)
 
 			if v == nil {
 				err = multierror.Append(err, fmt.Errorf("componnent %s/%s must have a %s", envName, componentName, fieldName))
@@ -179,8 +193,4 @@ func (c *Config) validateModules() error {
 
 func nonEmptyString(s string) bool {
 	return len(s) > 0
-}
-
-func nonZeroInt64(i int64) bool {
-	return true
 }

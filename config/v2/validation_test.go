@@ -5,6 +5,7 @@ import (
 
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_nonEmptyString(t *testing.T) {
@@ -35,6 +36,7 @@ func TestValidateOwnersAccount(t *testing.T) {
 	c = confAcctOwner("", "")
 	a.Equal(2, c.validateInheritedStringField("owner", OwnerGetter, nonEmptyString).Len())
 }
+
 func TestValidateOwnersComponent(t *testing.T) {
 	foo := "foo@example.com"
 
@@ -144,5 +146,30 @@ func TestResolveStringArray(t *testing.T) {
 	result2 := ResolveStringArray(def, override)
 	assert.Len(t, result2, 1)
 	assert.Equal(t, "foo", result2[0])
+}
 
+func TestConfig_ValidateAWSProviders(t *testing.T) {
+
+	tests := []struct {
+		fileName string
+		wantErr  bool
+	}{
+		{"v2_full", false},
+		{"v2_minimal_valid", false},
+		{"v2_invalid_aws_provider", true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.fileName, func(t *testing.T) {
+			r := require.New(t)
+
+			b, e := util.TestFile(tt.fileName)
+			r.NoError(e)
+			c, e := ReadConfig(b)
+			r.NoError(e)
+
+			if err := c.ValidateAWSProviders(); (err != nil) != tt.wantErr {
+				t.Errorf("Config.ValidateAWSProviders() error = %v, wantErr %v (err != nil) %v", err, tt.wantErr, (err != nil))
+			}
+		})
+	}
 }
