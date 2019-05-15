@@ -6,7 +6,6 @@ import (
 	"github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/util"
-	"github.com/kr/pretty"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -122,7 +121,6 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 		}},
 	}
 
-	pretty.Print("c: ", c, "\n")
 	err := c.Validate()
 	a.NoError(err)
 

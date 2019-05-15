@@ -10,14 +10,14 @@
   }
 
   # Aliased Providers (for doing things in every region).
-  {{ $outter := . }}
+  {{ $outer := . }}
   {{ range $region := .Providers.AWS.AdditionalRegions }}
     provider "aws" {
       alias = "{{ $region }}"
-      version = "~> {{ $outter.Providers.AWS.Version }}"
+      version = "~> {{ $outer.Providers.AWS.Version }}"
       region = "{{ $region }}"
-      profile = "{{ $outter.Providers.AWS.Profile }}"
-      allowed_account_ids = [{{ $outter.Providers.AWS.AccountID }}]
+      profile = "{{ $outer.Providers.AWS.Profile }}"
+      allowed_account_ids = [{{ $outer.Providers.AWS.AccountID }}]
     }
   {{ end }}
 
@@ -108,17 +108,17 @@ data "terraform_remote_state" "global" {
   }
 }
 
-{{ $outter := . }}
+{{ $outer := . }}
 {{ range $component := .OtherComponents | sortAlpha  }}
 data "terraform_remote_state" "{{ $component }}" {
   backend = "s3"
 
   config {
-    bucket         = "{{ $outter.Backend.Bucket }}"
-    {{ if $outter.Backend.DynamoTable }}dynamodb_table = "{{ $outter.Backend.DynamoTable }}"{{ end }}
-    key            = "terraform/{{ $outter.Project }}/envs/{{ $outter.Env }}/components/{{ $component }}.tfstate"
-    region         = "{{ $outter.Backend.Region }}"
-    {{ if $outter.Backend.Profile }}profile        = "{{ $outter.Backend.Profile }}"{{ end }}
+    bucket         = "{{ $outer.Backend.Bucket }}"
+    {{ if $outer.Backend.DynamoTable }}dynamodb_table = "{{ $outer.Backend.DynamoTable }}"{{ end }}
+    key            = "terraform/{{ $outer.Project }}/envs/{{ $outer.Env }}/components/{{ $component }}.tfstate"
+    region         = "{{ $outer.Backend.Region }}"
+    {{ if $outer.Backend.Profile }}profile        = "{{ $outer.Backend.Profile }}"{{ end }}
   }
 }
 {{ end }}

@@ -94,17 +94,17 @@ variable "{{ $key }}" {
 }
 {{ end }}
 
-{{ $outter := . }}
+{{ $outer := . }}
 {{ range $component := .OtherComponents | sortAlpha  }}
 data "terraform_remote_state" "{{ $component }}" {
   backend = "s3"
 
   config {
-    bucket         = "{{ $outter.Backend.Bucket }}"
+    bucket         = "{{ $outer.Backend.Bucket }}"
     {{ if .Backend.DynamoTable }}dynamodb_table = "{{ .Backend.DynamoTable }}"{{ end }}
-    key            = "terraform/{{ $.Project }}/envs/{{ $outter.Env }}/components/{{ $component }}.tfstate"
-    region         = "{{ $outter.Backend.Region }}"
-    profile        = "{{ $outter.Backend.Profile }}"
+    key            = "terraform/{{ $.Project }}/envs/{{ $outer.Env }}/components/{{ $component }}.tfstate"
+    region         = "{{ $outer.Backend.Region }}"
+    profile        = "{{ $outer.Backend.Profile }}"
   }
 }
 {{ end }}
