@@ -1,3 +1,5 @@
+// +build !offline
+
 package util
 
 import (

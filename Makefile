@@ -65,7 +65,7 @@ clean: ## clean the repo
 	rm fogg 2>/dev/null || true
 	go clean 
 	rm -rf dist 2>/dev/null || true
-	packr clean 
+	packr clean
 	rm coverage.out 2>/dev/null || true
 
 dep: ## ensure dependencies are vendored
