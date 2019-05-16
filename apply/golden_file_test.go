@@ -27,6 +27,9 @@ func TestIntegration(t *testing.T) {
 		fileName string
 	}{
 		{"v1_full"},
+		{"v2_full"},
+		{"v2_minimal_valid"},
+		{"v2_no_aws_provider"},
 	}
 
 	for _, tc := range testCases {

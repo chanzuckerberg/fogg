@@ -15,6 +15,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func init() {
@@ -218,9 +219,9 @@ func TestCreateFileNonExistentDirectory(t *testing.T) {
 }
 
 func TestApplySmokeTest(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 	fs, _, err := util.TestFs()
-	a.NoError(err)
+	r.NoError(err)
 	// defer os.RemoveAll(d)
 
 	json := `
@@ -231,6 +232,7 @@ func TestApplySmokeTest(t *testing.T) {
     "aws_profile_provider": "prof",
     "aws_profile_backend": "prof",
     "aws_provider_version": "0.12.0",
+    "account_id": 789,
     "infra_s3_bucket": "buck",
     "project": "proj",
     "terraform_version": "0.100.0",
@@ -265,15 +267,15 @@ func TestApplySmokeTest(t *testing.T) {
 }
 `
 	c, e := v1.ReadConfig([]byte(json))
-	a.NoError(e)
+	r.NoError(e)
 	c2, e := config.UpgradeConfigVersion(c)
-	a.NoError(e)
+	r.NoError(e)
 
 	e = c2.Validate()
-	a.NoError(e)
+	r.NoError(e)
 
 	e = Apply(fs, c2, templates.Templates, false)
-	a.NoError(e)
+	r.NoError(e)
 }
 
 func TestApplyModuleInvocation(t *testing.T) {

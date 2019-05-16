@@ -1,0 +1,42 @@
+{
+  "version": 2,
+  "defaults": {
+    "backend": {
+      "bucket": "buck",
+      "region": "us-west-2",
+      "profile": "profile"
+    },
+    "providers": {},
+    "project": "proj",
+    "terraform_version": "0.100.0",
+    "owner": "foo@example.com",
+    "extra_vars": {
+      "foo": "bar1"
+    }
+  },
+  "accounts": {
+    "foo": {},
+    "bar": {}
+  },
+  "modules": {
+    "my_module": {}
+  },
+  "envs": {
+    "staging": {
+      "extra_vars": {
+        "foo": "bar2"
+      },
+      "components": {
+        "vpc": {
+          "module_source": "github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0",
+          "extra_vars": {
+            "foo": "bar3"
+          }
+        },
+        "comp1": {},
+        "comp2": {}
+      }
+    },
+    "prod": {}
+  }
+}

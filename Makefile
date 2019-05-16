@@ -64,15 +64,15 @@ help: ## display help for this makefile
 clean: ## clean the repo
 	rm fogg 2>/dev/null || true
 	go clean
-	rm -rf dist
+	rm -rf dist 2>/dev/null || true
 	packr clean
-	rm coverage.out
+	rm coverage.out 2>/dev/null || true
 
 dep: ## ensure dependencies are vendored
 	dep ensure # this should be super-fast in the no-op case
 .PHONY: dep
 
-update-golden-files: dep ## update the golden files in testdata
+update-golden-files: clean dep ## update the golden files in testdata
 	go test -v -run TestIntegration ./apply/ -update
 .PHONY: update-golden-files
 

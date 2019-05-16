@@ -1,6 +1,7 @@
 package plan
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/chanzuckerberg/fogg/config/v1"
@@ -45,7 +46,7 @@ type ComponentCommon struct {
 }
 
 type Providers struct {
-	AWS AWSProvider `yaml:"aws"`
+	AWS *AWSProvider `yaml:"aws"`
 }
 
 type AWSProvider struct {
@@ -105,7 +106,10 @@ type TfLint struct {
 }
 
 // Eval evaluates a config
-func Eval(config *v2.Config) (*Plan, error) {
+func Eval(c *v2.Config) (*Plan, error) {
+	if c == nil {
+		return nil, errors.New("config is nil")
+	}
 	p := &Plan{}
 	v, e := util.VersionString()
 	if e != nil {
@@ -114,16 +118,16 @@ func Eval(config *v2.Config) (*Plan, error) {
 	p.Version = v
 
 	var err error
-	p.Accounts = p.buildAccounts(config)
-	p.Envs, err = p.buildEnvs(config)
+	p.Accounts = p.buildAccounts(c)
+	p.Envs, err = p.buildEnvs(c)
 	if err != nil {
 		return nil, err
 	}
-	p.Global = p.buildGlobal(config)
-	p.Modules = p.buildModules(config)
+	p.Global = p.buildGlobal(c)
+	p.Modules = p.buildModules(c)
 
-	if config.Tools.TravisCI != nil {
-		p.TravisCI = p.buildTravisCI(config, v)
+	if c.Tools.TravisCI != nil {
+		p.TravisCI = p.buildTravisCI(c, v)
 	}
 
 	return p, nil
@@ -246,6 +250,19 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 }
 
 func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
+	var awsPlan *AWSProvider
+	awsConfig := v2.ResolveAWSProvider(commons...)
+
+	if awsConfig != nil {
+		awsPlan = &AWSProvider{
+			AccountID:         *awsConfig.AccountID,
+			Profile:           *awsConfig.Profile,
+			Version:           *awsConfig.Version,
+			Region:            *awsConfig.Region,
+			AdditionalRegions: awsConfig.AdditionalRegions,
+		}
+	}
+
 	return ComponentCommon{
 		Backend: AWSBackend{
 			Region:      v2.ResolveRequiredString(v2.BackendRegionGetter, commons...),
@@ -254,13 +271,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			DynamoTable: v2.ResolveOptionalString(v2.BackendDynamoTableGetter, commons...),
 		},
 		Providers: Providers{
-			AWS: AWSProvider{
-				AccountID:         v2.ResolveRequiredInt64(v2.AWSProviderAccountIdGetter, commons...),
-				Profile:           v2.ResolveRequiredString(v2.AWSProviderProfileGetter, commons...),
-				Version:           v2.ResolveRequiredString(v2.AWSProviderVersionGetter, commons...),
-				Region:            v2.ResolveRequiredString(v2.AWSProviderRegionGetter, commons...),
-				AdditionalRegions: v2.ResolveOptionalStringSlice(v2.AWSProviderAdditionalRegionsGetter, commons...),
-			},
+			AWS: awsPlan,
 		},
 		ExtraVars: v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),
 		Owner:     v2.ResolveRequiredString(v2.OwnerGetter, commons...),

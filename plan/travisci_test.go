@@ -13,7 +13,7 @@ var id1, id2 int64
 
 func init() {
 	id1 = int64(123456789)
-	id1 = int64(987654321)
+	id2 = int64(987654321)
 }
 
 func Test_buildTravisCI_Disabled(t *testing.T) {
@@ -127,6 +127,8 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 	p := &Plan{}
 	p.Accounts = p.buildAccounts(c)
 	tr := p.buildTravisCI(c, "0.1.0")
+	a.NotNil(p.Accounts["foo"].Providers.AWS)
+	a.Equal(id1, p.Accounts["foo"].Providers.AWS.AccountID)
 	a.Len(tr.TestBuckets, 1)
 	// 3 because there is always a global
 	a.Len(tr.TestBuckets[0], 3)
