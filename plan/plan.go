@@ -46,7 +46,8 @@ type ComponentCommon struct {
 }
 
 type Providers struct {
-	AWS *AWSProvider `yaml:"aws"`
+	AWS       *AWSProvider       `yaml:"aws"`
+	Snowflake *SnowflakeProvider `yaml:"snowflake"`
 }
 
 type AWSProvider struct {
@@ -55,6 +56,12 @@ type AWSProvider struct {
 	Version           string   `yaml:"version"`
 	Region            string   `yaml:"region"`
 	AdditionalRegions []string `yaml:"additional_regions"`
+}
+
+type SnowflakeProvider struct {
+	Account string `yaml:"account,omitempty"`
+	Role    string `yaml:"role,omitempty"`
+	Region  string `yaml:"region,omitempty"`
 }
 
 // AWSConfiguration represents aws configuration
@@ -263,6 +270,16 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
+	var snowflakePlan *SnowflakeProvider
+	snowflakeConfig := v2.ResolveSnowflakeProvider(commons...)
+	if snowflakeConfig != nil {
+		snowflakePlan = &SnowflakeProvider{
+			Account: *snowflakeConfig.Account,
+			Role:    *snowflakeConfig.Role,
+			Region:  *snowflakeConfig.Region,
+		}
+	}
+
 	return ComponentCommon{
 		Backend: AWSBackend{
 			Region:      v2.ResolveRequiredString(v2.BackendRegionGetter, commons...),
@@ -271,7 +288,8 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			DynamoTable: v2.ResolveOptionalString(v2.BackendDynamoTableGetter, commons...),
 		},
 		Providers: Providers{
-			AWS: awsPlan,
+			AWS:       awsPlan,
+			Snowflake: snowflakePlan,
 		},
 		ExtraVars: v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),
 		Owner:     v2.ResolveRequiredString(v2.OwnerGetter, commons...),

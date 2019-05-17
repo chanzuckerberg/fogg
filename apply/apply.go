@@ -44,34 +44,34 @@ func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade bool) error {
 		return errs.WrapUser(err, "unable to evaluate plan")
 	}
 
-	e := applyRepo(fs, p, &tmp.Repo)
+	e := applyRepo(fs, p, &tmp.Repo, &tmp.Common)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply repo")
 	}
 
 	if p.TravisCI.Enabled {
-		e = applyTree(fs, &tmp.TravisCI, "", p.TravisCI)
+		e = applyTree(fs, &tmp.TravisCI, &tmp.Common, "", p.TravisCI)
 		if e != nil {
 			return errs.WrapUser(e, "unable to apply travis ci")
 		}
 	}
 
-	e = applyAccounts(fs, p, &tmp.Account)
+	e = applyAccounts(fs, p, &tmp.Account, &tmp.Common)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply accounts")
 	}
 
-	e = applyEnvs(fs, p, &tmp.Env, tmp.Components)
+	e = applyEnvs(fs, p, &tmp.Env, tmp.Components, &tmp.Common)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply envs")
 	}
 
-	e = applyGlobal(fs, p.Global, &tmp.Global)
+	e = applyGlobal(fs, p.Global, &tmp.Global, &tmp.Common)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply global")
 	}
 
-	e = applyModules(fs, p.Modules, &tmp.Module)
+	e = applyModules(fs, p.Modules, &tmp.Module, &tmp.Common)
 	return errs.WrapUser(e, "unable to apply modules")
 }
 
@@ -107,28 +107,28 @@ func versionIsChanged(repo string, tool string) (bool, error) {
 	return toolVersion.NE(repoVersion), nil
 }
 
-func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates *packr.Box) error {
-	return applyTree(fs, repoTemplates, "", p)
+func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates, commonTemplates *packr.Box) error {
+	return applyTree(fs, repoTemplates, commonTemplates, "", p)
 }
 
-func applyGlobal(fs afero.Fs, p plan.Component, repoBox *packr.Box) error {
+func applyGlobal(fs afero.Fs, p plan.Component, repoBox, commonBox *packr.Box) error {
 	log.Debug("applying global")
 	path := fmt.Sprintf("%s/global", rootPath)
 	e := fs.MkdirAll(path, 0755)
 	if e != nil {
 		return errs.WrapUserf(e, "unable to make directory %s", path)
 	}
-	return applyTree(fs, repoBox, path, p)
+	return applyTree(fs, repoBox, commonBox, path, p)
 }
 
-func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) (e error) {
+func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox, commonBox *packr.Box) (e error) {
 	for account, accountPlan := range p.Accounts {
 		path := fmt.Sprintf("%s/accounts/%s", rootPath, account)
 		e = fs.MkdirAll(path, 0755)
 		if e != nil {
 			return errs.WrapUser(e, "unable to make directories for accounts")
 		}
-		e = applyTree(fs, accountBox, path, accountPlan)
+		e = applyTree(fs, accountBox, commonBox, path, accountPlan)
 		if e != nil {
 			return errs.WrapUser(e, "unable to apply templates to account")
 		}
@@ -136,14 +136,14 @@ func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox *packr.Box) (e error) {
 	return nil
 }
 
-func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox *packr.Box) (e error) {
+func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox, commonBox *packr.Box) (e error) {
 	for module, modulePlan := range p {
 		path := fmt.Sprintf("%s/modules/%s", rootPath, module)
 		e = fs.MkdirAll(path, 0755)
 		if e != nil {
 			return errs.WrapUserf(e, "unable to make path %s", path)
 		}
-		e = applyTree(fs, moduleBox, path, modulePlan)
+		e = applyTree(fs, moduleBox, commonBox, path, modulePlan)
 		if e != nil {
 			return errs.WrapUser(e, "unable to apply tree")
 		}
@@ -151,7 +151,7 @@ func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox *packr.Box) (
 	return nil
 }
 
-func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBoxes map[v1.ComponentKind]packr.Box) (e error) {
+func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBoxes map[v1.ComponentKind]packr.Box, commonBox *packr.Box) (e error) {
 	log.Debug("applying envs")
 	for env, envPlan := range p.Envs {
 		log.Debugf("applying %s", env)
@@ -160,7 +160,7 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBoxes map[
 		if e != nil {
 			return errs.WrapUserf(e, "unable to make directory %s", path)
 		}
-		e := applyTree(fs, envBox, path, envPlan)
+		e := applyTree(fs, envBox, commonBox, path, envPlan)
 		if e != nil {
 			return errs.WrapUser(e, "unable to apply templates to env")
 		}
@@ -171,13 +171,13 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBoxes map[
 				return errs.WrapUser(e, "unable to make directories for component")
 			}
 			componentBox := componentBoxes[componentPlan.Kind.GetOrDefault()]
-			e := applyTree(fs, &componentBox, path, componentPlan)
+			e := applyTree(fs, &componentBox, commonBox, path, componentPlan)
 			if e != nil {
 				return errs.WrapUser(e, "unable to apply templates for component")
 			}
 
 			if componentPlan.ModuleSource != nil {
-				e := applyModuleInvocation(fs, path, *componentPlan.ModuleSource, templates.Templates.ModuleInvocation)
+				e := applyModuleInvocation(fs, path, *componentPlan.ModuleSource, templates.Templates.ModuleInvocation, commonBox)
 				if e != nil {
 					return errs.WrapUser(e, "unable to apply module invocation")
 				}
@@ -188,7 +188,7 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBoxes map[
 	return nil
 }
 
-func applyTree(dest afero.Fs, source *packr.Box, targetBasePath string, subst interface{}) (e error) {
+func applyTree(dest afero.Fs, source *packr.Box, common *packr.Box, targetBasePath string, subst interface{}) (e error) {
 	return source.Walk(func(path string, sourceFile packr.File) error {
 
 		extension := filepath.Ext(path)
@@ -196,7 +196,7 @@ func applyTree(dest afero.Fs, source *packr.Box, targetBasePath string, subst in
 		targetExtension := filepath.Ext(target)
 
 		if extension == ".tmpl" {
-			e = applyTemplate(sourceFile, dest, target, subst)
+			e = applyTemplate(sourceFile, common, dest, target, subst)
 			if e != nil {
 				return errs.WrapUser(e, "unable to apply template")
 			}
@@ -299,7 +299,7 @@ func removeExtension(path string) string {
 	return strings.TrimSuffix(path, filepath.Ext(path))
 }
 
-func applyTemplate(sourceFile io.Reader, dest afero.Fs, path string, overrides interface{}) error {
+func applyTemplate(sourceFile io.Reader, commonTemplates *packr.Box, dest afero.Fs, path string, overrides interface{}) error {
 	dir, _ := filepath.Split(path)
 	ospath := filepath.FromSlash(dir)
 	err := dest.MkdirAll(ospath, 0775)
@@ -312,7 +312,7 @@ func applyTemplate(sourceFile io.Reader, dest afero.Fs, path string, overrides i
 	if err != nil {
 		return errs.WrapUser(err, "unable to open file")
 	}
-	t, e := util.OpenTemplate(sourceFile)
+	t, e := util.OpenTemplate(sourceFile, commonTemplates)
 	if e != nil {
 		return e
 	}
@@ -329,7 +329,7 @@ type moduleData struct {
 	Outputs      []string
 }
 
-func applyModuleInvocation(fs afero.Fs, path, moduleAddress string, box packr.Box) error {
+func applyModuleInvocation(fs afero.Fs, path, moduleAddress string, box packr.Box, commonBox *packr.Box) error {
 	e := fs.MkdirAll(path, 0755)
 	if e != nil {
 		return errs.WrapUserf(e, "couldn't create %s directory", path)
@@ -363,7 +363,7 @@ func applyModuleInvocation(fs afero.Fs, path, moduleAddress string, box packr.Bo
 	if e != nil {
 		return errs.WrapUser(e, "could not open template file")
 	}
-	e = applyTemplate(f, fs, filepath.Join(path, "main.tf"), &moduleData{moduleName, moduleAddressForSource, variables, outputs})
+	e = applyTemplate(f, commonBox, fs, filepath.Join(path, "main.tf"), &moduleData{moduleName, moduleAddressForSource, variables, outputs})
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply template for main.tf")
 	}
@@ -378,7 +378,7 @@ func applyModuleInvocation(fs afero.Fs, path, moduleAddress string, box packr.Bo
 		return errs.WrapUser(e, "could not open template file")
 	}
 
-	e = applyTemplate(f, fs, filepath.Join(path, "outputs.tf"), &moduleData{moduleName, moduleAddressForSource, variables, outputs})
+	e = applyTemplate(f, commonBox, fs, filepath.Join(path, "outputs.tf"), &moduleData{moduleName, moduleAddressForSource, variables, outputs})
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply template for outputs.tf")
 	}
