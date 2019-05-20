@@ -11,8 +11,11 @@ import (
 func Test_nonEmptyString(t *testing.T) {
 	a := assert.New(t)
 
-	a.True(nonEmptyString("foo"))
-	a.False(nonEmptyString(""))
+	empty := ""
+	nonEmpty := "foo"
+	a.True(nonEmptyString(&nonEmpty))
+	a.False(nonEmptyString(&empty))
+	a.False(nonEmptyString(nil))
 }
 
 func TestValidateOwnersAccount(t *testing.T) {
