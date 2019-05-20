@@ -71,7 +71,7 @@ func TestApplyTemplateBasic(t *testing.T) {
 	path := "bar"
 	overrides := struct{ Foo string }{"foo"}
 
-	e := applyTemplate(sourceFile, dest, path, overrides)
+	e := applyTemplate(sourceFile, &templates.Templates.Common, dest, path, overrides)
 	a.Nil(e)
 	f, e := dest.Open("bar")
 	a.Nil(e)
@@ -93,7 +93,7 @@ func TestApplyTemplateBasicNewDirectory(t *testing.T) {
 	path := filepath.Join(nonexistentDir, "bar")
 	overrides := struct{ Foo string }{"foo"}
 
-	e := applyTemplate(sourceFile, dest, path, overrides)
+	e := applyTemplate(sourceFile, &templates.Templates.Common, dest, path, overrides)
 	a.Nil(e)
 	f, e := dest.Open(path)
 	a.Nil(e)
@@ -112,7 +112,7 @@ func TestApplyTemplate(t *testing.T) {
 	path := "hello"
 	overrides := struct{ Name string }{"World"}
 
-	e := applyTemplate(sourceFile, dest, path, overrides)
+	e := applyTemplate(sourceFile, &templates.Templates.Common, dest, path, overrides)
 	a.Nil(e)
 	f, e := dest.Open("hello")
 	a.Nil(e)
@@ -288,7 +288,7 @@ func TestApplyModuleInvocation(t *testing.T) {
 
 	fs := afero.NewCopyOnWriteFs(pwdFs, testFs)
 
-	e := applyModuleInvocation(fs, "mymodule", "test-module", templates.Templates.ModuleInvocation)
+	e := applyModuleInvocation(fs, "mymodule", "test-module", templates.Templates.ModuleInvocation, &templates.Templates.Common)
 	a.NoError(e)
 
 	s, e := fs.Stat("mymodule")

@@ -68,7 +68,8 @@ type Component struct {
 }
 
 type Providers struct {
-	AWS *AWSProvider `json:"aws"`
+	AWS       *AWSProvider       `json:"aws"`
+	Snowflake *SnowflakeProvider `json:"snowflake"`
 }
 
 type AWSProvider struct {
@@ -78,6 +79,12 @@ type AWSProvider struct {
 	Profile           *string  `json:"profile,omitempty"`
 	Region            *string  `json:"region,omitempty"`
 	Version           *string  `json:"version,omitempty"`
+}
+
+type SnowflakeProvider struct {
+	Account *string `json:"account,omitempty"`
+	Role    *string `json:"role,omitempty"`
+	Region  *string `json:"region,omitempty"`
 }
 
 type Backend struct {
@@ -146,16 +153,30 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		return nil
 	}
 
+	randSnowflakeProvider := func(r *rand.Rand, s int) *SnowflakeProvider {
+		if r.Float32() < 0.5 {
+			return &SnowflakeProvider{
+				Account: randStringPtr(r, size),
+				Region:  randStringPtr(r, s),
+				Role:    randStringPtr(r, s),
+			}
+		}
+		return nil
+	}
+
 	randCommon := func(r *rand.Rand, s int) Common {
 		c := Common{
 			Backend: &Backend{
 				Bucket: randStringPtr(r, s),
 				Region: randStringPtr(r, s),
 			},
-			ExtraVars:        randStringMap(r, s),
-			Owner:            randStringPtr(r, s),
-			Project:          randStringPtr(r, s),
-			Providers:        &Providers{AWS: randAWSProvider(r, s)},
+			ExtraVars: randStringMap(r, s),
+			Owner:     randStringPtr(r, s),
+			Project:   randStringPtr(r, s),
+			Providers: &Providers{
+				AWS:       randAWSProvider(r, s),
+				Snowflake: randSnowflakeProvider(r, s),
+			},
 			TerraformVersion: randStringPtr(r, s),
 		}
 		return c

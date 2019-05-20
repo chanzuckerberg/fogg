@@ -1,0 +1,9 @@
+{{define "snowflake_provider"}}
+
+provider "snowflake" {
+  account = "{{ .Account }}"
+  role    = "{{ .Role }}"
+  region  = "{{ .Region }}"
+}
+
+{{ end }}

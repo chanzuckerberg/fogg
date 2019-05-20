@@ -8,6 +8,7 @@ import (
 
 	"github.com/Masterminds/sprig"
 	"github.com/chanzuckerberg/fogg/errs"
+	"github.com/gobuffalo/packr"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -26,13 +27,47 @@ func dict(in interface{}) map[string]interface{} {
 }
 
 // OpenTemplate will read `source` for a template, parse, configure and return a template.Template
-func OpenTemplate(source io.Reader) (*template.Template, error) {
+func OpenTemplate(source io.Reader, commonTemplates *packr.Box) (*template.Template, error) {
 	// TODO we should probably cache these rather than open and parse them for every apply
-	s, err := ioutil.ReadAll(source)
-	if err != nil {
-		return nil, errs.WrapInternal(err, "could not read template")
+
+	var readTemplate = func(source io.Reader) (string, error) {
+		s, err := ioutil.ReadAll(source)
+
+		if err != nil {
+			return "", errs.WrapInternal(err, "could not read template")
+		}
+		return string(s), nil
 	}
+
+	s, err := readTemplate(source)
+	if err != nil {
+		return nil, err
+	}
+
 	funcs := sprig.TxtFuncMap()
 	funcs["dict"] = dict
-	return template.New("tmpl").Funcs(funcs).Parse(string(s))
+
+	t, err := template.New("tmpl").Funcs(funcs).Parse(s)
+	if err != nil {
+		return nil, err
+	}
+
+	err = commonTemplates.Walk(func(path string, file packr.File) error {
+		log.Debugf("parsing common template %s", path)
+		s, err := readTemplate(file)
+		if err != nil {
+			return err
+		}
+
+		t, err = t.Parse(s)
+
+		return err
+
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return t, err
 }
