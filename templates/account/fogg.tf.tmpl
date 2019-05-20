@@ -23,6 +23,10 @@
   {{ end }}
 {{ end }}
 
+{{ if .Providers.Snowflake }}
+  {{ template "snowflake_provider" .Providers.Snowflake }}
+{{ end }}
+
 terraform {
   required_version = "={{ .TerraformVersion }}"
 

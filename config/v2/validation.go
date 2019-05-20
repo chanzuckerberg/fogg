@@ -42,68 +42,94 @@ func (c *Config) Validate() error {
 	errs = multierror.Append(errs, c.validateInheritedStringField("backend profile", BackendProfileGetter, nonEmptyString))
 
 	errs = multierror.Append(errs, c.ValidateAWSProviders())
+	errs = multierror.Append(errs, c.ValidateSnowflakeProviders())
 	errs = multierror.Append(errs, c.validateModules())
 
 	return errs.ErrorOrNil()
 }
 
+func ValidateAWSProvider(p AWSProvider, component string) error {
+	var errs *multierror.Error
+
+	if p.Region == nil {
+		errs = multierror.Append(errs, fmt.Errorf("aws provider region for %s", component))
+	}
+
+	if p.Profile == nil {
+		errs = multierror.Append(errs, fmt.Errorf("aws provider profile %s ", component))
+	}
+
+	if p.Version == nil {
+		errs = multierror.Append(errs, fmt.Errorf("aws provider version for %s ", component))
+	}
+
+	if p.AccountID == nil || *p.AccountID == 0 {
+		errs = multierror.Append(errs, fmt.Errorf("aws provider account id for %s", component))
+	}
+	return errs
+}
+
 func (c *Config) ValidateAWSProviders() error {
 	var errs *multierror.Error
 
-	var validate = func(p AWSProvider, component string) error {
-		var errs *multierror.Error
-
-		if p.Region == nil {
-			errs = multierror.Append(errs, fmt.Errorf("provider region for %s", component))
-		}
-
-		if p.Profile == nil {
-			errs = multierror.Append(errs, fmt.Errorf("provider profile %s ", component))
-		}
-
-		if p.Version == nil {
-			errs = multierror.Append(errs, fmt.Errorf("provider version for %s ", component))
-		}
-
-		if p.AccountID == nil || *p.AccountID == 0 {
-			errs = multierror.Append(errs, fmt.Errorf("provider account id for %s", component))
-		}
-		return errs
-	}
-
-	// For each account, we need the field to be valid in either the defaults or account
-	for name, acct := range c.Accounts {
-		v := ResolveAWSProvider(c.Defaults.Common, acct.Common)
+	c.WalkComponents(func(component string, comms ...Common) {
+		v := ResolveAWSProvider(comms...)
 		if v == nil {
 			// nothing to validate
-		} else if e := validate(*v, fmt.Sprintf("accounts/%s", name)); e != nil {
+		} else if e := ValidateAWSProvider(*v, component); e != nil {
 			errs = multierror.Append(errs, e)
 		}
-	}
-
-	// global
-	v := ResolveAWSProvider(c.Defaults.Common, c.Global.Common)
-	if v == nil {
-		//nothing to do
-	} else if e := validate(*v, "global"); e != nil {
-		errs = multierror.Append(errs, e)
-	}
-
-	// For each component, we need the field to be valid at one of defaults, env or component
-	for envName, env := range c.Envs {
-		for componentName, component := range env.Components {
-			v := ResolveAWSProvider(c.Defaults.Common, env.Common, component.Common)
-
-			if v == nil {
-				// nothing to validate
-			} else if e := validate(*v, fmt.Sprintf("%s/%s", envName, componentName)); e != nil {
-				errs = multierror.Append(errs, e)
-			}
-		}
-	}
+	})
 
 	return errs.ErrorOrNil()
+}
 
+func ValidateSnowflakeProvider(p SnowflakeProvider, component string) error {
+	var errs *multierror.Error
+
+	if p.Account == nil {
+		errs = multierror.Append(errs, fmt.Errorf("snowflake provider account must be set in %s", component))
+	}
+
+	if p.Role == nil {
+		errs = multierror.Append(errs, fmt.Errorf("snowflake provider role must be set in %s", component))
+	}
+
+	if p.Region == nil {
+		errs = multierror.Append(errs, fmt.Errorf("snowflake provider region must be set in %s", component))
+	}
+
+	return errs
+}
+
+func (c *Config) ValidateSnowflakeProviders() error {
+	var errs *multierror.Error
+
+	c.WalkComponents(func(component string, comms ...Common) {
+		v := ResolveSnowflakeProvider(comms...)
+		if v == nil {
+			// nothing to validate
+		} else if e := ValidateSnowflakeProvider(*v, component); e != nil {
+			errs = multierror.Append(errs, e)
+		}
+	})
+
+	return errs.ErrorOrNil()
+}
+
+func (c *Config) WalkComponents(f func(component string, commons ...Common)) {
+	for name, acct := range c.Accounts {
+		f(fmt.Sprintf("accounts/%s", name), c.Defaults.Common, acct.Common)
+
+	}
+
+	f("global", c.Defaults.Common, c.Global.Common)
+
+	for envName, env := range c.Envs {
+		for componentName, component := range env.Components {
+			f(fmt.Sprintf("%s/%s", envName, componentName), c.Defaults.Common, env.Common, component.Common)
+		}
+	}
 }
 
 // validateInheritedStringField will walk all accounts and components and ensure that a given field is valid at at least

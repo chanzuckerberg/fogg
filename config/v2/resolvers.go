@@ -81,6 +81,7 @@ func ResolveStringMap(getter func(Common) map[string]string, commons ...Common) 
 // config objects passed in. Otherwise it will return nil.
 func ResolveAWSProvider(commons ...Common) *AWSProvider {
 
+	// we may in the future want invert this implementation and walk the structs first
 	profile := lastNonNil(AWSProviderProfileGetter, commons...)
 	region := lastNonNil(AWSProviderRegionGetter, commons...)
 	version := lastNonNil(AWSProviderVersionGetter, commons...)
@@ -94,6 +95,21 @@ func ResolveAWSProvider(commons ...Common) *AWSProvider {
 			// optional fields
 			AccountID:         lastNonNilInt64(AWSProviderAccountIdGetter, commons...),
 			AdditionalRegions: ResolveOptionalStringSlice(AWSProviderAdditionalRegionsGetter, commons...),
+		}
+	}
+	return nil
+}
+
+func ResolveSnowflakeProvider(commons ...Common) *SnowflakeProvider {
+	account := lastNonNil(SnowflakeProviderAccountGetter, commons...)
+	role := lastNonNil(SnowflakeProviderRoleGetter, commons...)
+	region := lastNonNil(SnowflakeProviderRegionGetter, commons...)
+
+	if account != nil || role != nil || region != nil {
+		return &SnowflakeProvider{
+			Account: account,
+			Role:    role,
+			Region:  region,
 		}
 	}
 	return nil
@@ -185,4 +201,23 @@ func ResolveModuleTerraformVersion(def Defaults, module v1.Module) *string {
 		return module.TerraformVersion
 	}
 	return def.TerraformVersion
+}
+
+func SnowflakeProviderAccountGetter(comm Common) *string {
+	if comm.Providers != nil && comm.Providers.Snowflake != nil {
+		return comm.Providers.Snowflake.Account
+	}
+	return nil
+}
+func SnowflakeProviderRoleGetter(comm Common) *string {
+	if comm.Providers != nil && comm.Providers.Snowflake != nil {
+		return comm.Providers.Snowflake.Role
+	}
+	return nil
+}
+func SnowflakeProviderRegionGetter(comm Common) *string {
+	if comm.Providers != nil && comm.Providers.Snowflake != nil {
+		return comm.Providers.Snowflake.Region
+	}
+	return nil
 }
