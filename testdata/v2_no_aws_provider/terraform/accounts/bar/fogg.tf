@@ -19,11 +19,6 @@ variable "project" {
   default = "proj"
 }
 
-variable "region" {
-  type    = "string"
-  default = "us-west-2"
-}
-
 variable "owner" {
   type    = "string"
   default = "foo@example.com"

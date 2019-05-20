@@ -45,10 +45,12 @@ variable "project" {
   default = "{{ .Project }}"
 }
 
-variable "region" {
-  type    = "string"
-  default = "{{ .Backend.Region }}"
-}
+{{ if .Providers.AWS }}
+  variable "region" {
+    type    = "string"
+    default = "{{ .Providers.AWS.Region }}"
+  }
+{{ end }}
 
 {{if .Providers.AWS}}
   variable "aws_profile" {
