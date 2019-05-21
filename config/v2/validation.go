@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/chanzuckerberg/fogg/config/v1"
+	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/errs"
 	multierror "github.com/hashicorp/go-multierror"
 	validator "gopkg.in/go-playground/validator.v9"
@@ -48,8 +48,11 @@ func (c *Config) Validate() error {
 	return errs.ErrorOrNil()
 }
 
-func ValidateAWSProvider(p AWSProvider, component string) error {
+func ValidateAWSProvider(p *AWSProvider, component string) error {
 	var errs *multierror.Error
+	if p == nil {
+		return nil // nothing to validate
+	}
 
 	if p.Region == nil {
 		errs = multierror.Append(errs, fmt.Errorf("aws provider region for %s", component))
@@ -74,9 +77,7 @@ func (c *Config) ValidateAWSProviders() error {
 
 	c.WalkComponents(func(component string, comms ...Common) {
 		v := ResolveAWSProvider(comms...)
-		if v == nil {
-			// nothing to validate
-		} else if e := ValidateAWSProvider(*v, component); e != nil {
+		if e := ValidateAWSProvider(v, component); e != nil {
 			errs = multierror.Append(errs, e)
 		}
 	})
@@ -84,8 +85,11 @@ func (c *Config) ValidateAWSProviders() error {
 	return errs.ErrorOrNil()
 }
 
-func ValidateSnowflakeProvider(p SnowflakeProvider, component string) error {
+func ValidateSnowflakeProvider(p *SnowflakeProvider, component string) error {
 	var errs *multierror.Error
+	if p == nil {
+		return nil // nothing to do
+	}
 
 	if p.Account == nil {
 		errs = multierror.Append(errs, fmt.Errorf("snowflake provider account must be set in %s", component))
@@ -107,9 +111,7 @@ func (c *Config) ValidateSnowflakeProviders() error {
 
 	c.WalkComponents(func(component string, comms ...Common) {
 		v := ResolveSnowflakeProvider(comms...)
-		if v == nil {
-			// nothing to validate
-		} else if e := ValidateSnowflakeProvider(*v, component); e != nil {
+		if e := ValidateSnowflakeProvider(v, component); e != nil {
 			errs = multierror.Append(errs, e)
 		}
 	})
@@ -120,7 +122,6 @@ func (c *Config) ValidateSnowflakeProviders() error {
 func (c *Config) WalkComponents(f func(component string, commons ...Common)) {
 	for name, acct := range c.Accounts {
 		f(fmt.Sprintf("accounts/%s", name), c.Defaults.Common, acct.Common)
-
 	}
 
 	f("global", c.Defaults.Common, c.Global.Common)
@@ -135,24 +136,20 @@ func (c *Config) WalkComponents(f func(component string, commons ...Common)) {
 // validateInheritedStringField will walk all accounts and components and ensure that a given field is valid at at least
 // one level of the inheritance hierarchy. We should eventually distinuish between not present and invalid because
 // if the value is present but invalid we should probably mark it as such, rather than papering over it.
-func (c *Config) validateInheritedStringField(fieldName string, getter func(Common) *string, validator func(string) bool) *multierror.Error {
+func (c *Config) validateInheritedStringField(fieldName string, getter func(Common) *string, validator func(*string) bool) *multierror.Error {
 	var err *multierror.Error
 
 	// For each account, we need the field to be valid in either the defaults or account
 	for acctName, acct := range c.Accounts {
 		v := lastNonNil(getter, c.Defaults.Common, acct.Common)
-		if v == nil {
-			err = multierror.Append(err, fmt.Errorf("account %s must have field %s at either the account or defaults level", acctName, fieldName))
-		} else if !validator(*v) {
+		if !validator(v) {
 			err = multierror.Append(err, fmt.Errorf("account %s must have a valid %s set at either the account or defaults level", acctName, fieldName))
 		}
 	}
 
 	// global
 	v := lastNonNil(getter, c.Defaults.Common, c.Global.Common)
-	if v == nil {
-		err = multierror.Append(err, fmt.Errorf("global must have a %s set at either the global or defaults level", fieldName))
-	} else if !validator(*v) {
+	if !validator(v) {
 		err = multierror.Append(err, fmt.Errorf("global must have a valid %s set at either the global or defaults level", fieldName))
 	}
 
@@ -160,10 +157,7 @@ func (c *Config) validateInheritedStringField(fieldName string, getter func(Comm
 	for envName, env := range c.Envs {
 		for componentName, component := range env.Components {
 			v := lastNonNil(getter, c.Defaults.Common, env.Common, component.Common)
-
-			if v == nil {
-				err = multierror.Append(err, fmt.Errorf("componnent %s/%s must have a %s", envName, componentName, fieldName))
-			} else if !validator(*v) {
+			if !validator(v) {
 				err = multierror.Append(err, fmt.Errorf("componnent %s/%s must have a valid %s", envName, componentName, fieldName))
 			}
 		}
@@ -217,6 +211,6 @@ func (c *Config) validateModules() error {
 	return nil
 }
 
-func nonEmptyString(s string) bool {
-	return len(s) > 0
+func nonEmptyString(s *string) bool {
+	return s != nil && len(*s) > 0
 }
