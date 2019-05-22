@@ -29,7 +29,7 @@ func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVe
 			TerraformVersion:   "0.11.7",
 		},
 		Accounts: map[string]v1.Account{},
-		Docker:   true,
+		Docker:   false,
 		Envs:     map[string]v1.Env{},
 		Modules:  map[string]v1.Module{},
 	}

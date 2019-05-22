@@ -14,18 +14,19 @@ import (
 )
 
 func TestInitConfig(t *testing.T) {
+	a := assert.New(t)
 	c := InitConfig("proj", "reg", "buck", "table", "prof", "me@foo.example", "0.99.0")
-	assert.Equal(t, "prof", c.Defaults.AWSProfileBackend)
-	assert.Equal(t, "prof", c.Defaults.AWSProfileProvider)
-	assert.Equal(t, "reg", c.Defaults.AWSRegionBackend)
-	assert.Equal(t, "reg", c.Defaults.AWSRegionProvider)
-	assert.Equal(t, "0.99.0", c.Defaults.AWSProviderVersion)
-	assert.Equal(t, "buck", c.Defaults.InfraBucket)
-	assert.Equal(t, "table", c.Defaults.InfraDynamoTable)
-	assert.Equal(t, "me@foo.example", c.Defaults.Owner)
-	assert.Equal(t, "proj", c.Defaults.Project)
-	assert.Equal(t, "0.11.7", c.Defaults.TerraformVersion)
-	assert.Equal(t, true, c.Docker)
+	a.Equal("prof", c.Defaults.AWSProfileBackend)
+	a.Equal("prof", c.Defaults.AWSProfileProvider)
+	a.Equal("reg", c.Defaults.AWSRegionBackend)
+	a.Equal("reg", c.Defaults.AWSRegionProvider)
+	a.Equal("0.99.0", c.Defaults.AWSProviderVersion)
+	a.Equal("buck", c.Defaults.InfraBucket)
+	a.Equal("table", c.Defaults.InfraDynamoTable)
+	a.Equal("me@foo.example", c.Defaults.Owner)
+	a.Equal("proj", c.Defaults.Project)
+	a.Equal("0.11.7", c.Defaults.TerraformVersion)
+	a.Equal(false, c.Docker)
 }
 
 func Test_detectVersion(t *testing.T) {
