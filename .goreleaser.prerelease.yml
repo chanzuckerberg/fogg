@@ -16,9 +16,9 @@ builds:
     ldflags:
       - "-w -s -X github.com/chanzuckerberg/fogg/util.GitSha={{.Commit}} -X github.com/chanzuckerberg/fogg/util.Version={{.Version}} -X github.com/chanzuckerberg/fogg/util.Dirty=false -X github.com/chanzuckerberg/fogg/util.Release=true"
 
-archive:
-  files:
-  - none*
+archives:
+  - files:
+    - none*
 
 release:
   prerelease: true
