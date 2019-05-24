@@ -17,7 +17,7 @@ import (
 	"text/template"
 
 	"github.com/chanzuckerberg/fogg/errs"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
 
@@ -108,7 +108,7 @@ func (cp *CustomPlugin) fetch(pluginName string, url string) (string, error) {
 	if err != nil {
 		return "", errs.WrapUser(err, "could not create temporary directory") //FIXME
 	}
-	log.Debugf("downloading %s to tempfile", url)
+	logrus.Debugf("downloading %s to tempfile", url)
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", errs.WrapUserf(err, "could not get %s", url) // FIXME
@@ -169,7 +169,7 @@ func (cp *CustomPlugin) processTar(fs afero.Fs, path string, targetDir string) e
 	if err != nil {
 		return errs.WrapUser(err, "unable to template url for custom plugin")
 	}
-	log.Debugf("untarring from %s to %s", path, targetDir)
+	logrus.Debugf("untarring from %s to %s", path, targetDir)
 
 	err = fs.MkdirAll(targetDir, 0755)
 	if err != nil {
@@ -227,7 +227,7 @@ func (cp *CustomPlugin) processTar(fs afero.Fs, path string, targetDir string) e
 			// Manually take care of closing file since defer will pile them up
 			destFile.Close()
 		default:
-			log.Warnf("tar: unrecognized tar.Type %d", header.Typeflag)
+			logrus.Warnf("tar: unrecognized tar.Type %d", header.Typeflag)
 		}
 	}
 	return nil

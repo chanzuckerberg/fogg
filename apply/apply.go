@@ -21,7 +21,7 @@ import (
 	"github.com/gobuffalo/packr"
 	getter "github.com/hashicorp/go-getter"
 	"github.com/hashicorp/hcl/hcl/printer"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
 
@@ -112,7 +112,7 @@ func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates, commonTemplates *packr.
 }
 
 func applyGlobal(fs afero.Fs, p plan.Component, repoBox, commonBox *packr.Box) error {
-	log.Debug("applying global")
+	logrus.Debug("applying global")
 	path := fmt.Sprintf("%s/global", rootPath)
 	e := fs.MkdirAll(path, 0755)
 	if e != nil {
@@ -152,9 +152,9 @@ func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox, commonBox *p
 }
 
 func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBoxes map[v1.ComponentKind]packr.Box, commonBox *packr.Box) (e error) {
-	log.Debug("applying envs")
+	logrus.Debug("applying envs")
 	for env, envPlan := range p.Envs {
-		log.Debugf("applying %s", env)
+		logrus.Debugf("applying %s", env)
 		path := fmt.Sprintf("%s/envs/%s", rootPath, env)
 		e = fs.MkdirAll(path, 0755)
 		if e != nil {
@@ -215,7 +215,7 @@ func applyTree(dest afero.Fs, source *packr.Box, common *packr.Box, targetBasePa
 			if e != nil && !os.IsNotExist(e) {
 				return errs.WrapUserf(e, "unable to remove %s", target)
 			}
-			log.Infof("%s removed", target)
+			logrus.Infof("%s removed", target)
 		} else if extension == ".ln" {
 
 			linkTargetBytes, err := ioutil.ReadAll(sourceFile)
@@ -235,7 +235,7 @@ func applyTree(dest afero.Fs, source *packr.Box, common *packr.Box, targetBasePa
 			if e != nil {
 				return errs.WrapUser(e, "unable to copy file")
 			}
-			log.Infof("%s copied", target)
+			logrus.Infof("%s copied", target)
 		}
 
 		if targetExtension == ".tf" {
@@ -270,13 +270,13 @@ func touchFile(dest afero.Fs, path string) error {
 
 	_, err = dest.Stat(path)
 	if err != nil { // TODO we might not want to do this for all errors
-		log.Infof("%s touched", path)
+		logrus.Infof("%s touched", path)
 		_, err = dest.Create(path)
 		if err != nil {
 			return errs.WrapUser(err, "unable to touch file")
 		}
 	} else {
-		log.Infof("%s skipped touch", path)
+		logrus.Infof("%s skipped touch", path)
 	}
 	return nil
 }
@@ -284,13 +284,13 @@ func touchFile(dest afero.Fs, path string) error {
 func createFile(dest afero.Fs, path string, sourceFile io.Reader) error {
 	_, err := dest.Stat(path)
 	if err != nil { // TODO we might not want to do this for all errors
-		log.Infof("%s created", path)
+		logrus.Infof("%s created", path)
 		err = afero.WriteReader(dest, path, sourceFile)
 		if err != nil {
 			return errs.WrapUser(err, "unable to create file")
 		}
 	} else {
-		log.Infof("%s skipped", path)
+		logrus.Infof("%s skipped", path)
 	}
 	return nil
 }
@@ -307,7 +307,7 @@ func applyTemplate(sourceFile io.Reader, commonTemplates *packr.Box, dest afero.
 		return errs.WrapUserf(err, "couldn't create %s directory", dir)
 	}
 
-	log.Infof("%s templated", path)
+	logrus.Infof("%s templated", path)
 	writer, err := dest.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return errs.WrapUser(err, "unable to open file")
@@ -427,7 +427,7 @@ func getTargetPath(basePath, path string) string {
 }
 
 func linkFile(fs afero.Fs, name, target string) error {
-	log.Debugf("linking %s to %s", name, target)
+	logrus.Debugf("linking %s to %s", name, target)
 	linker, ok := fs.(afero.Symlinker)
 
 	if !ok {
@@ -435,14 +435,14 @@ func linkFile(fs afero.Fs, name, target string) error {
 	}
 
 	relativePath, err := filepathRel(name, target)
-	log.Debugf("relative link %s err %#v", relativePath, err)
+	logrus.Debugf("relative link %s err %#v", relativePath, err)
 	if err != nil {
 		return err
 	}
 
-	log.Debugf("removing link at %s", name)
+	logrus.Debugf("removing link at %s", name)
 	err = fs.Remove(name)
-	log.Debugf("error removing file %s (probably ok): %s", name, err)
+	logrus.Debugf("error removing file %s (probably ok): %s", name, err)
 
 	_, err = linker.SymlinkIfPossible(relativePath, name)
 	return err

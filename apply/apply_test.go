@@ -12,18 +12,18 @@ import (
 	"github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func init() {
-	log.SetLevel(log.DebugLevel)
-	formatter := &log.TextFormatter{
+	logrus.SetLevel(logrus.DebugLevel)
+	formatter := &logrus.TextFormatter{
 		DisableTimestamp: true,
 	}
-	log.SetFormatter(formatter)
+	logrus.SetFormatter(formatter)
 }
 
 func randomString(n int) string {
