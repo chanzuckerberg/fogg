@@ -4,14 +4,14 @@ import (
 	"github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plugins"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
 
 func Setup(fs afero.Fs, conf *v2.Config) error {
-	log.Debug("setting up plugins")
+	logrus.Debug("setting up plugins")
 	apply := func(name string, plugin *plugins.CustomPlugin) error {
-		log.Infof("Setting up plugin %s", name)
+		logrus.Infof("Setting up plugin %s", name)
 		return errs.WrapUserf(plugin.Install(fs, name), "Error applying plugin %s", name)
 	}
 

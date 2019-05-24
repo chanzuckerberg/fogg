@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/pkg/errors"
 	"github.com/segmentio/go-prompt"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 func generatePlan(planPath string) error {
@@ -46,7 +46,7 @@ func parsePlan(planPath string) error {
 		return errors.Wrapf(err, "Terraform could not parse plan at %s", planPath)
 	}
 	if plan.Diff == nil {
-		log.Debug("nil diff")
+		logrus.Debug("nil diff")
 		return nil
 	}
 
