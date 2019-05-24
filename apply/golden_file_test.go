@@ -54,8 +54,9 @@ func TestIntegration(t *testing.T) {
 				a.NoError(e)
 				fmt.Printf("conf %#v\n", conf)
 
-				e = conf.Validate()
+				w, e := conf.Validate()
 				a.NoError(e)
+				a.Len(w, 0)
 
 				e = apply.Apply(testdataFs, conf, templates.Templates, true)
 				a.NoError(e)
@@ -75,8 +76,9 @@ func TestIntegration(t *testing.T) {
 				a.NoError(e)
 				fmt.Printf("conf %#v\n", conf)
 
-				e = conf.Validate()
+				w, e := conf.Validate()
 				a.NoError(e)
+				a.Len(w, 0)
 
 				e = apply.Apply(fs, conf, templates.Templates, true)
 				a.NoError(e)

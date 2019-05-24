@@ -16,8 +16,9 @@ func TestReadConfig(t *testing.T) {
 	c, e := ReadConfig(b)
 	a.NoError(e)
 
-	e = c.Validate()
+	w, e := c.Validate()
 	a.Error(e)
+	a.Len(w, 0)
 
 	b2, e := util.TestFile("v2_minimal_valid")
 	a.NoError(e)
@@ -25,9 +26,9 @@ func TestReadConfig(t *testing.T) {
 	c, e = ReadConfig(b2)
 	a.NoError(e)
 
-	e = c.Validate()
+	w, e = c.Validate()
 	a.NoError(e)
-
+	a.Len(w, 0)
 }
 
 func TestReadSnowflakeProvider(t *testing.T) {
@@ -41,8 +42,9 @@ func TestReadSnowflakeProvider(t *testing.T) {
 	r.NoError(e)
 	r.NotNil(c)
 
-	e = c.Validate()
+	w, e := c.Validate()
 	r.NoError(e)
+	r.Len(w, 0)
 
 	r.NotNil(c.Defaults.Providers)
 	r.NotNil(c.Defaults.Providers.Snowflake)

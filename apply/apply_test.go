@@ -271,8 +271,9 @@ func TestApplySmokeTest(t *testing.T) {
 	c2, e := config.UpgradeConfigVersion(c)
 	r.NoError(e)
 
-	e = c2.Validate()
+	w, e := c2.Validate()
 	r.NoError(e)
+	r.Len(w, 1)
 
 	e = Apply(fs, c2, templates.Templates, false)
 	r.NoError(e)

@@ -12,11 +12,13 @@ import (
 )
 
 // Validate validates the config
-func (c *Config) Validate() error {
+func (c *Config) Validate() ([]string, error) {
 	if c == nil {
-		return errs.NewInternal("config is nil")
+		return nil, errs.NewInternal("config is nil")
 	}
+
 	var errs *multierror.Error
+	var warnings []string
 
 	v := validator.New()
 	// This func gives us the ability to get the full path for a field deeply
@@ -45,7 +47,11 @@ func (c *Config) Validate() error {
 	errs = multierror.Append(errs, c.ValidateSnowflakeProviders())
 	errs = multierror.Append(errs, c.validateModules())
 
-	return errs.ErrorOrNil()
+	if c.Docker {
+		warnings = append(warnings, "Docker support is deprecated and will be removed in a future version of fogg.")
+	}
+
+	return warnings, errs.ErrorOrNil()
 }
 
 func ValidateAWSProvider(p *AWSProvider, component string) error {
