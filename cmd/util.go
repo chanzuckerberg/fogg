@@ -11,7 +11,7 @@ import (
 	"github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/kr/pretty"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	validator "gopkg.in/go-playground/validator.v9"
@@ -21,7 +21,7 @@ func openGitOrExit(fs afero.Fs) {
 	_, err := fs.Stat(".git")
 	if err != nil {
 		// assuming this means no repository
-		log.Fatal("fogg must be run from the root of a git repo")
+		logrus.Fatal("fogg must be run from the root of a git repo")
 		os.Exit(1)
 	}
 }
@@ -31,8 +31,8 @@ func readAndValidateConfig(fs afero.Fs, configFile string) (*v2.Config, []string
 	if err != nil {
 		return nil, nil, errs.WrapUser(err, "unable to read config file")
 	}
-	log.Debug("CONFIG")
-	log.Debugf("%s\n=====", pretty.Sprint(conf))
+	logrus.Debug("CONFIG")
+	logrus.Debugf("%s\n=====", pretty.Sprint(conf))
 
 	warnings, e := conf.Validate()
 	return conf, warnings, e
@@ -56,17 +56,17 @@ func mergeConfigValidationErrors(err error) error {
 }
 
 func setupDebug(debug bool) {
-	logLevel := log.InfoLevel
+	logLevel := logrus.InfoLevel
 	if debug { // debug overrides quiet
-		logLevel = log.DebugLevel
+		logLevel = logrus.DebugLevel
 		go func() {
-			log.Println(http.ListenAndServe("localhost:6060", nil))
+			logrus.Println(http.ListenAndServe("localhost:6060", nil))
 			http.HandleFunc("/", pprof.Index)
 		}()
 	} else if quiet {
-		logLevel = log.FatalLevel
+		logLevel = logrus.FatalLevel
 	}
-	log.SetLevel(logLevel)
+	logrus.SetLevel(logLevel)
 }
 
 func openFs() (afero.Fs, error) {

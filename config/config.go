@@ -9,7 +9,7 @@ import (
 	"github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/util"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
 
@@ -52,7 +52,7 @@ func FindAndReadConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Debugf("config file version: %#v\n", v)
+	logrus.Debugf("config file version: %#v\n", v)
 
 	switch v {
 	case 1:

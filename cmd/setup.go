@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/chanzuckerberg/fogg/setup"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -24,7 +24,7 @@ var setupCmd = &cobra.Command{
 
 		// check that we are at root of initialized git repo
 		openGitOrExit(fs)
-		log.Debug("setup")
+		logrus.Debug("setup")
 		return setup.Setup(fs, config)
 	},
 }

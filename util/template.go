@@ -9,7 +9,7 @@ import (
 	"github.com/Masterminds/sprig"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/gobuffalo/packr"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 func dict(in interface{}) map[string]interface{} {
@@ -18,7 +18,7 @@ func dict(in interface{}) map[string]interface{} {
 		r := make(map[string]interface{})
 		for _, key := range v.MapKeys() {
 			strct := v.MapIndex(key)
-			log.Debug(key.Interface(), strct.Interface())
+			logrus.Debug(key.Interface(), strct.Interface())
 			r[key.String()] = strct.Interface()
 		}
 		return r
@@ -53,7 +53,7 @@ func OpenTemplate(source io.Reader, commonTemplates *packr.Box) (*template.Templ
 	}
 
 	err = commonTemplates.Walk(func(path string, file packr.File) error {
-		log.Debugf("parsing common template %s", path)
+		logrus.Debugf("parsing common template %s", path)
 		s, err := readTemplate(file)
 		if err != nil {
 			return err

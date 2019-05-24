@@ -7,16 +7,16 @@ import (
 	"github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/util"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
 func init() {
-	log.SetLevel(log.DebugLevel)
-	formatter := &log.TextFormatter{
+	logrus.SetLevel(logrus.DebugLevel)
+	formatter := &logrus.TextFormatter{
 		DisableTimestamp: true,
 	}
-	log.SetFormatter(formatter)
+	logrus.SetFormatter(formatter)
 }
 
 // func TestResolveRequired(t *testing.T) {
@@ -88,7 +88,7 @@ func TestPlanBasicV1(t *testing.T) {
 
 	assert.NotNil(t, plan.Envs["staging"])
 	assert.NotNil(t, plan.Envs["staging"].Components["vpc"])
-	log.Debugf("%#v\n", plan.Envs["staging"].Components["vpc"].ModuleSource)
+	logrus.Debugf("%#v\n", plan.Envs["staging"].Components["vpc"].ModuleSource)
 	assert.NotNil(t, *plan.Envs["staging"].Components["vpc"].ModuleSource)
 	assert.Equal(t, "github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0", *plan.Envs["staging"].Components["vpc"].ModuleSource)
 
@@ -132,7 +132,7 @@ func TestPlanBasicV2(t *testing.T) {
 
 	assert.NotNil(t, plan.Envs["staging"])
 	assert.NotNil(t, plan.Envs["staging"].Components["vpc"])
-	log.Debugf("%#v\n", plan.Envs["staging"].Components["vpc"].ModuleSource)
+	logrus.Debugf("%#v\n", plan.Envs["staging"].Components["vpc"].ModuleSource)
 	assert.NotNil(t, *plan.Envs["staging"].Components["vpc"].ModuleSource)
 	assert.Equal(t, "github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0", *plan.Envs["staging"].Components["vpc"].ModuleSource)
 

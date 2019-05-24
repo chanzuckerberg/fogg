@@ -13,7 +13,7 @@ import (
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -84,10 +84,10 @@ func TestIntegration(t *testing.T) {
 				a.NoError(e)
 
 				a.NoError(afero.Walk(testdataFs, ".", func(path string, info os.FileInfo, err error) error {
-					log.Debug("================================================")
-					log.Debug(path)
+					logrus.Debug("================================================")
+					logrus.Debug(path)
 					if !info.Mode().IsRegular() {
-						log.Debug("dir or link")
+						logrus.Debug("dir or link")
 					} else {
 						i1, e1 := testdataFs.Stat(path)
 						r.NotNil(i1)
@@ -106,8 +106,8 @@ func TestIntegration(t *testing.T) {
 						f2, e4 := afero.ReadFile(fs, path)
 						a.NoError(e4)
 
-						log.Debugf("f1:\n%s\n\n---- ", f1)
-						log.Debugf("f2:\n%s\n\n---- ", f2)
+						logrus.Debugf("f1:\n%s\n\n---- ", f1)
+						logrus.Debugf("f2:\n%s\n\n---- ", f2)
 
 						a.Equal(f1, f2)
 					}

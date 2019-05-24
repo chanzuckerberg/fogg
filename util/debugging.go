@@ -1,7 +1,7 @@
 package util
 
-import log "github.com/sirupsen/logrus"
+import "github.com/sirupsen/logrus"
 
 func Dump(foo interface{}) {
-	log.Debugf("%#v\n", foo)
+	logrus.Debugf("%#v\n", foo)
 }
