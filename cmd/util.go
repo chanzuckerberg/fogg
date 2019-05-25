@@ -26,15 +26,16 @@ func openGitOrExit(fs afero.Fs) {
 	}
 }
 
-func readAndValidateConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
+func readAndValidateConfig(fs afero.Fs, configFile string) (*v2.Config, []string, error) {
 	conf, err := config.FindAndReadConfig(fs, configFile)
 	if err != nil {
-		return nil, errs.WrapUser(err, "unable to read config file")
+		return nil, nil, errs.WrapUser(err, "unable to read config file")
 	}
 	logrus.Debug("CONFIG")
 	logrus.Debugf("%s\n=====", pretty.Sprint(conf))
 
-	return conf, conf.Validate()
+	warnings, e := conf.Validate()
+	return conf, warnings, e
 }
 
 func mergeConfigValidationErrors(err error) error {
@@ -90,7 +91,7 @@ func bootstrapCmd(cmd *cobra.Command, debug bool) (afero.Fs, *v2.Config, error) 
 		return nil, nil, err
 	}
 
-	config, err := readAndValidateConfig(fs, configFile)
+	config, _, err := readAndValidateConfig(fs, configFile)
 
 	err = mergeConfigValidationErrors(err)
 	if err != nil {
@@ -98,4 +99,10 @@ func bootstrapCmd(cmd *cobra.Command, debug bool) (afero.Fs, *v2.Config, error) 
 	}
 
 	return fs, config, nil
+}
+
+func printWarnings(warnings []string) {
+	for _, w := range warnings {
+		logrus.Warn(w)
+	}
 }

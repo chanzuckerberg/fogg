@@ -108,8 +108,9 @@ func TestPlanBasicV2(t *testing.T) {
 	c2, err := v2.ReadConfig(b)
 	assert.Nil(t, err)
 
-	err = c2.Validate()
+	w, err := c2.Validate()
 	a.NoError(err)
+	a.Len(w, 0)
 
 	plan, e := Eval(c2)
 	assert.Nil(t, e)

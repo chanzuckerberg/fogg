@@ -41,7 +41,8 @@ var applyCmd = &cobra.Command{
 		// check that we are at root of initialized git repo
 		openGitOrExit(fs)
 
-		config, err := readAndValidateConfig(fs, configFile)
+		config, warnings, err := readAndValidateConfig(fs, configFile)
+		printWarnings(warnings)
 
 		e = mergeConfigValidationErrors(err)
 		if e != nil {

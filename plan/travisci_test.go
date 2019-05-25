@@ -70,8 +70,9 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 		}},
 	}
 
-	err := c.Validate()
+	w, err := c.Validate()
 	a.NoError(err)
+	a.Len(w, 0)
 
 	p := &Plan{}
 	p.Accounts = p.buildAccounts(c)
@@ -121,8 +122,9 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 		}},
 	}
 
-	err := c.Validate()
+	w, err := c.Validate()
 	a.NoError(err)
+	a.Len(w, 0)
 
 	p := &Plan{}
 	p.Accounts = p.buildAccounts(c)

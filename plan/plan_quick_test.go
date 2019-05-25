@@ -16,7 +16,7 @@ func TestValidConfigNoPanic(t *testing.T) {
 	assertion := func(conf *v2.Config) bool {
 		// fmt.Printf("GOT %#v\n\n", pretty.Sprint(conf))
 		// validate our configuration
-		err := conf.Validate()
+		_, err := conf.Validate()
 
 		// if config is valid, there should be no panic
 		if err == nil {
