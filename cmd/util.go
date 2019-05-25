@@ -103,6 +103,6 @@ func bootstrapCmd(cmd *cobra.Command, debug bool) (afero.Fs, *v2.Config, error) 
 
 func printWarnings(warnings []string) {
 	for _, w := range warnings {
-		log.Warn(w)
+		logrus.Warn(w)
 	}
 }
