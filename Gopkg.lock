@@ -666,12 +666,12 @@
   version = "v1.3.0"
 
 [[projects]]
-  digest = "1:e72adbbaead420f680d3067133a3043c033e89e5a174400c7a5cb1e9af9e779a"
+  branch = "master"
+  digest = "1:4618466244d5f6dbca839b6c0151f76bc58b592d81c83fe909ea9a070269f324"
   name = "github.com/segmentio/go-prompt"
   packages = ["."]
   pruneopts = "UT"
-  revision = "0be3d6bb7dff1db1f7d4127e5861ce97772dd891"
-  version = "v1.2.0"
+  revision = "f0d19b6901ade831d5a3204edc0d6a7d6457fbb2"
 
 [[projects]]
   digest = "1:04457f9f6f3ffc5fea48e71d62f2ca256637dee0a04d710288e27e05c8b41976"

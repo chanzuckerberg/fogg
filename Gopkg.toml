@@ -64,7 +64,7 @@
 
 [[constraint]]
   name = "github.com/segmentio/go-prompt"
-  version = "1.2.0"
+  branch = "master"
 
 [[constraint]]
   name = "github.com/sirupsen/logrus"
