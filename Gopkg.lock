@@ -979,6 +979,7 @@
     "github.com/blang/semver",
     "github.com/chanzuckerberg/go-misc/aws",
     "github.com/chanzuckerberg/go-misc/ver",
+    "github.com/davecgh/go-spew/spew",
     "github.com/fatih/color",
     "github.com/go-errors/errors",
     "github.com/go-test/deep",

@@ -4,7 +4,7 @@ provider "bless" {
   {{ if .Version }}
   version = "~>{{ .Version }}"
   {{ end }}
-  region  = "{{ .Region }}"
+  region  = "{{ .AWSRegion }}"
   profile = "{{ .AWSProfile }}"
 }
 

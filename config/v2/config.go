@@ -78,7 +78,7 @@ type BlessProvider struct {
 	// the bless provider is optional (above) but if supplied you must set a region and aws_profile
 	AdditionalRegions []string `json:"additional_regions,omitempty"`
 	AWSProfile        *string  `json:"aws_profile,omitempty"`
-	Region            *string  `json:"region,omitempty"`
+	AWSRegion         *string  `json:"aws_region,omitempty"`
 	Version           *string  `json:"version,omitempty"`
 }
 
@@ -158,7 +158,7 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		}
 		return &BlessProvider{
 			Version:           randStringPtr(r, s),
-			Region:            randStringPtr(r, s),
+			AWSRegion:         randStringPtr(r, s),
 			AWSProfile:        randStringPtr(r, s),
 			AdditionalRegions: []string{randString(r, s)},
 		}

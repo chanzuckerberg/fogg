@@ -69,7 +69,7 @@ type SnowflakeProvider struct {
 type BlessProvider struct {
 	AdditionalRegions []string `yaml:"additional_regions,omitempty"`
 	AWSProfile        string   `yaml:"aws_profile,omitempty"`
-	Region            string   `yaml:"region,omitempty"`
+	AWSRegion         string   `yaml:"aws_region,omitempty"`
 	Version           *string  `yaml:"version,omitempty"`
 }
 
@@ -292,12 +292,13 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	var blessPlan *BlessProvider
 	blessConfig := v2.ResolveBlessProvider(commons...)
-	if blessConfig != nil {
+	if blessConfig != nil && blessConfig.AWSProfile != nil && blessConfig.AWSRegion != nil {
 		blessPlan = &BlessProvider{
-			AWSProfile: *blessConfig.AWSProfile,
-			Version:    blessConfig.Version,
+			AWSProfile:        *blessConfig.AWSProfile,
+			AWSRegion:         *blessConfig.AWSRegion,
+			AdditionalRegions: blessConfig.AdditionalRegions,
+			Version:           blessConfig.Version,
 		}
-
 	}
 
 	return ComponentCommon{

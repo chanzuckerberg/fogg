@@ -3,6 +3,8 @@ package v2
 import (
 	"testing"
 
+	"github.com/davecgh/go-spew/spew"
+
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -64,13 +66,15 @@ func TestReadBlessProvider(t *testing.T) {
 	r.NoError(e)
 	r.NotNil(c)
 
+	spew.Dump(c)
 	w, e := c.Validate()
 	r.NoError(e)
 	r.Len(w, 0)
 
 	r.NotNil(c.Defaults.Providers)
-	r.NotNil(c.Defaults.Providers.Snowflake)
-	r.Equal("foo", *c.Defaults.Providers.Snowflake.Account)
-	r.Equal("bar", *c.Defaults.Providers.Snowflake.Role)
-	r.Equal("us-west-2", *c.Defaults.Providers.Snowflake.Region)
+	r.NotNil(c.Defaults.Providers.Bless)
+	r.Equal("foofoofoo", *c.Defaults.Providers.Bless.AWSProfile)
+	r.Equal("bar", *c.Defaults.Providers.Bless.AWSRegion)
+	r.Equal("0.0.0", *c.Defaults.Providers.Bless.Version)
+	r.Equal([]string{"a", "b"}, c.Defaults.Providers.Bless.AdditionalRegions)
 }

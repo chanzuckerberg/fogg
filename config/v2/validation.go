@@ -7,7 +7,9 @@ import (
 
 	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/errs"
+	"github.com/davecgh/go-spew/spew"
 	multierror "github.com/hashicorp/go-multierror"
+	"github.com/sirupsen/logrus"
 	validator "gopkg.in/go-playground/validator.v9"
 )
 
@@ -128,6 +130,9 @@ func (c *Config) ValidateSnowflakeProviders() error {
 
 func ValidateBlessProvider(p *BlessProvider, component string) error {
 	var errs *multierror.Error
+	logrus.Error("*********")
+	spew.Dump(p)
+	logrus.Error("#########")
 	if p == nil {
 		return nil // nothing to do
 	}
@@ -135,8 +140,8 @@ func ValidateBlessProvider(p *BlessProvider, component string) error {
 	if p.AWSProfile == nil {
 		errs = multierror.Append(errs, fmt.Errorf("bless provider aws_profile required in %s", component))
 	}
-	if p.Region == nil {
-		errs = multierror.Append(errs, fmt.Errorf("bless provider region required in %s", component))
+	if p.AWSRegion == nil {
+		errs = multierror.Append(errs, fmt.Errorf("bless provider aws_region required in %s", component))
 	}
 	return errs
 }
@@ -146,6 +151,7 @@ func (c *Config) ValidateBlessProviders() error {
 	c.WalkComponents(func(component string, comms ...Common) {
 		v := ResolveBlessProvider(comms...)
 		if err := ValidateBlessProvider(v, component); err != nil {
+			logrus.Error(err)
 			errs = multierror.Append(errs, err)
 		}
 	})

@@ -2,7 +2,6 @@ package v2
 
 import (
 	v1 "github.com/chanzuckerberg/fogg/config/v1"
-	"github.com/sirupsen/logrus"
 )
 
 // lastNonNil, despite its name can return nil if all results are nil
@@ -127,9 +126,9 @@ func ResolveBlessProvider(commons ...Common) *BlessProvider {
 		return nil
 	}
 
-	logrus.Error("bless provider")
 	return &BlessProvider{
 		AWSProfile: profile,
+		AWSRegion:  region,
 
 		Version:           lastNonNil(BlessProviderVersionGetter, commons...),
 		AdditionalRegions: ResolveOptionalStringSlice(BlessProviderAdditionalRegionsGetter, commons...),
@@ -259,7 +258,7 @@ func BlessProviderRegionGetter(comm Common) *string {
 	if comm.Providers == nil || comm.Providers.Bless == nil {
 		return nil
 	}
-	return comm.Providers.Bless.Region
+	return comm.Providers.Bless.AWSRegion
 }
 func BlessProviderVersionGetter(comm Common) *string {
 	if comm.Providers == nil || comm.Providers.Bless == nil {
