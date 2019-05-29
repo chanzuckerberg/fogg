@@ -26,12 +26,12 @@
   version = "v1.1.0"
 
 [[projects]]
-  digest = "1:1aef569b177f49b2d7640cc438b987a320c7f31e8f1f92bbfc31ffe3ac127576"
+  digest = "1:55388fd080150b9a072912f97b1f5891eb0b50df43401f8b75fb4273d3fec9fc"
   name = "github.com/Masterminds/semver"
   packages = ["."]
   pruneopts = "UT"
-  revision = "59c29afe1a994eacb71c833025ca7acf874bb1da"
-  version = "v1.2.2"
+  revision = "c7af12943936e8c39859482e61f0574c2fd7fc75"
+  version = "v1.4.2"
 
 [[projects]]
   digest = "1:693e7ef1b6178cd312132c156fc6d6065c77a0d1f02cc73beecae8b080ec13d7"
@@ -293,12 +293,12 @@
   version = "v0.3.0"
 
 [[projects]]
-  digest = "1:8f8811f9be822914c3a25c6a071e93beb4c805d7b026cbf298bc577bc1cc945b"
+  digest = "1:582b704bebaa06b48c29b0cec224a6058a09c86883aaddabde889cd1a5f73e1b"
   name = "github.com/google/uuid"
   packages = ["."]
   pruneopts = "UT"
-  revision = "064e2069ce9c359c118179501254f67d7d37ba24"
-  version = "0.2"
+  revision = "0cd6bf5da1e1c83f8b45653022c74f71af0538a4"
+  version = "v1.1.1"
 
 [[projects]]
   digest = "1:f1f70abea1ab125d48396343b4c053f8fecfbdb943037bf3d29dc80c90fe60b3"
@@ -682,15 +682,16 @@
   version = "v1.4.2"
 
 [[projects]]
-  digest = "1:bb495ec276ab82d3dd08504bbc0594a65de8c3b22c6f2aaa92d05b73fbf3a82e"
+  branch = "symlinker"
+  digest = "1:36bcc7582b822a441f3f0107039d38e70c456f1fbc2c2c3f70308248b1fcc28f"
   name = "github.com/spf13/afero"
   packages = [
     ".",
     "mem",
   ]
   pruneopts = "UT"
-  revision = "588a75ec4f32903aa5e39a2619ba6a4631e28424"
-  version = "v1.2.2"
+  revision = "36a9495a9b51b0ed1dcc8944fca484a568559071"
+  source = "github.com/chanzuckerberg/afero"
 
 [[projects]]
   digest = "1:22799aea8fe96dd5693abdd1eaa14b1b29e3eafbdc7733fa155b3cb556c8a7ae"
