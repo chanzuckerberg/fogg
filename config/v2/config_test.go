@@ -3,8 +3,6 @@ package v2
 import (
 	"testing"
 
-	"github.com/davecgh/go-spew/spew"
-
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -66,7 +64,6 @@ func TestReadBlessProvider(t *testing.T) {
 	r.NoError(e)
 	r.NotNil(c)
 
-	spew.Dump(c)
 	w, e := c.Validate()
 	r.NoError(e)
 	r.Len(w, 0)

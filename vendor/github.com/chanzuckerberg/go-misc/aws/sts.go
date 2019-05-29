@@ -76,7 +76,6 @@ type UserTokenProvider struct {
 	cacheFile     string
 	m             sync.RWMutex
 	expireWindow  time.Duration
-	isLogin       bool
 	tokenProvider func() (string, error)
 }
 

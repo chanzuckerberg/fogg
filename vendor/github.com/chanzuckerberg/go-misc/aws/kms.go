@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/aws/client"
 	"github.com/aws/aws-sdk-go/service/kms"
 	"github.com/aws/aws-sdk-go/service/kms/kmsiface"
 	"github.com/pkg/errors"
@@ -17,7 +17,7 @@ type KMS struct {
 }
 
 // NewKMS returns a KMS client
-func NewKMS(s *session.Session, conf *aws.Config) *KMS {
+func NewKMS(s client.ConfigProvider, conf *aws.Config) *KMS {
 	return &KMS{kms.New(s, conf)}
 }
 

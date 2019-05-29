@@ -328,6 +328,10 @@ type EC2API interface {
 	CreateSnapshotWithContext(aws.Context, *ec2.CreateSnapshotInput, ...request.Option) (*ec2.Snapshot, error)
 	CreateSnapshotRequest(*ec2.CreateSnapshotInput) (*request.Request, *ec2.Snapshot)
 
+	CreateSnapshots(*ec2.CreateSnapshotsInput) (*ec2.CreateSnapshotsOutput, error)
+	CreateSnapshotsWithContext(aws.Context, *ec2.CreateSnapshotsInput, ...request.Option) (*ec2.CreateSnapshotsOutput, error)
+	CreateSnapshotsRequest(*ec2.CreateSnapshotsInput) (*request.Request, *ec2.CreateSnapshotsOutput)
+
 	CreateSpotDatafeedSubscription(*ec2.CreateSpotDatafeedSubscriptionInput) (*ec2.CreateSpotDatafeedSubscriptionOutput, error)
 	CreateSpotDatafeedSubscriptionWithContext(aws.Context, *ec2.CreateSpotDatafeedSubscriptionInput, ...request.Option) (*ec2.CreateSpotDatafeedSubscriptionOutput, error)
 	CreateSpotDatafeedSubscriptionRequest(*ec2.CreateSpotDatafeedSubscriptionInput) (*request.Request, *ec2.CreateSpotDatafeedSubscriptionOutput)
@@ -639,6 +643,9 @@ type EC2API interface {
 	DescribeDhcpOptions(*ec2.DescribeDhcpOptionsInput) (*ec2.DescribeDhcpOptionsOutput, error)
 	DescribeDhcpOptionsWithContext(aws.Context, *ec2.DescribeDhcpOptionsInput, ...request.Option) (*ec2.DescribeDhcpOptionsOutput, error)
 	DescribeDhcpOptionsRequest(*ec2.DescribeDhcpOptionsInput) (*request.Request, *ec2.DescribeDhcpOptionsOutput)
+
+	DescribeDhcpOptionsPages(*ec2.DescribeDhcpOptionsInput, func(*ec2.DescribeDhcpOptionsOutput, bool) bool) error
+	DescribeDhcpOptionsPagesWithContext(aws.Context, *ec2.DescribeDhcpOptionsInput, func(*ec2.DescribeDhcpOptionsOutput, bool) bool, ...request.Option) error
 
 	DescribeEgressOnlyInternetGateways(*ec2.DescribeEgressOnlyInternetGatewaysInput) (*ec2.DescribeEgressOnlyInternetGatewaysOutput, error)
 	DescribeEgressOnlyInternetGatewaysWithContext(aws.Context, *ec2.DescribeEgressOnlyInternetGatewaysInput, ...request.Option) (*ec2.DescribeEgressOnlyInternetGatewaysOutput, error)
@@ -973,6 +980,9 @@ type EC2API interface {
 	DescribeSubnetsWithContext(aws.Context, *ec2.DescribeSubnetsInput, ...request.Option) (*ec2.DescribeSubnetsOutput, error)
 	DescribeSubnetsRequest(*ec2.DescribeSubnetsInput) (*request.Request, *ec2.DescribeSubnetsOutput)
 
+	DescribeSubnetsPages(*ec2.DescribeSubnetsInput, func(*ec2.DescribeSubnetsOutput, bool) bool) error
+	DescribeSubnetsPagesWithContext(aws.Context, *ec2.DescribeSubnetsInput, func(*ec2.DescribeSubnetsOutput, bool) bool, ...request.Option) error
+
 	DescribeTags(*ec2.DescribeTagsInput) (*ec2.DescribeTagsOutput, error)
 	DescribeTagsWithContext(aws.Context, *ec2.DescribeTagsInput, ...request.Option) (*ec2.DescribeTagsOutput, error)
 	DescribeTagsRequest(*ec2.DescribeTagsInput) (*request.Request, *ec2.DescribeTagsOutput)
@@ -1129,6 +1139,10 @@ type EC2API interface {
 	DetachVpnGatewayWithContext(aws.Context, *ec2.DetachVpnGatewayInput, ...request.Option) (*ec2.DetachVpnGatewayOutput, error)
 	DetachVpnGatewayRequest(*ec2.DetachVpnGatewayInput) (*request.Request, *ec2.DetachVpnGatewayOutput)
 
+	DisableEbsEncryptionByDefault(*ec2.DisableEbsEncryptionByDefaultInput) (*ec2.DisableEbsEncryptionByDefaultOutput, error)
+	DisableEbsEncryptionByDefaultWithContext(aws.Context, *ec2.DisableEbsEncryptionByDefaultInput, ...request.Option) (*ec2.DisableEbsEncryptionByDefaultOutput, error)
+	DisableEbsEncryptionByDefaultRequest(*ec2.DisableEbsEncryptionByDefaultInput) (*request.Request, *ec2.DisableEbsEncryptionByDefaultOutput)
+
 	DisableTransitGatewayRouteTablePropagation(*ec2.DisableTransitGatewayRouteTablePropagationInput) (*ec2.DisableTransitGatewayRouteTablePropagationOutput, error)
 	DisableTransitGatewayRouteTablePropagationWithContext(aws.Context, *ec2.DisableTransitGatewayRouteTablePropagationInput, ...request.Option) (*ec2.DisableTransitGatewayRouteTablePropagationOutput, error)
 	DisableTransitGatewayRouteTablePropagationRequest(*ec2.DisableTransitGatewayRouteTablePropagationInput) (*request.Request, *ec2.DisableTransitGatewayRouteTablePropagationOutput)
@@ -1173,6 +1187,10 @@ type EC2API interface {
 	DisassociateVpcCidrBlockWithContext(aws.Context, *ec2.DisassociateVpcCidrBlockInput, ...request.Option) (*ec2.DisassociateVpcCidrBlockOutput, error)
 	DisassociateVpcCidrBlockRequest(*ec2.DisassociateVpcCidrBlockInput) (*request.Request, *ec2.DisassociateVpcCidrBlockOutput)
 
+	EnableEbsEncryptionByDefault(*ec2.EnableEbsEncryptionByDefaultInput) (*ec2.EnableEbsEncryptionByDefaultOutput, error)
+	EnableEbsEncryptionByDefaultWithContext(aws.Context, *ec2.EnableEbsEncryptionByDefaultInput, ...request.Option) (*ec2.EnableEbsEncryptionByDefaultOutput, error)
+	EnableEbsEncryptionByDefaultRequest(*ec2.EnableEbsEncryptionByDefaultInput) (*request.Request, *ec2.EnableEbsEncryptionByDefaultOutput)
+
 	EnableTransitGatewayRouteTablePropagation(*ec2.EnableTransitGatewayRouteTablePropagationInput) (*ec2.EnableTransitGatewayRouteTablePropagationOutput, error)
 	EnableTransitGatewayRouteTablePropagationWithContext(aws.Context, *ec2.EnableTransitGatewayRouteTablePropagationInput, ...request.Option) (*ec2.EnableTransitGatewayRouteTablePropagationOutput, error)
 	EnableTransitGatewayRouteTablePropagationRequest(*ec2.EnableTransitGatewayRouteTablePropagationInput) (*request.Request, *ec2.EnableTransitGatewayRouteTablePropagationOutput)
@@ -1212,6 +1230,14 @@ type EC2API interface {
 	GetConsoleScreenshot(*ec2.GetConsoleScreenshotInput) (*ec2.GetConsoleScreenshotOutput, error)
 	GetConsoleScreenshotWithContext(aws.Context, *ec2.GetConsoleScreenshotInput, ...request.Option) (*ec2.GetConsoleScreenshotOutput, error)
 	GetConsoleScreenshotRequest(*ec2.GetConsoleScreenshotInput) (*request.Request, *ec2.GetConsoleScreenshotOutput)
+
+	GetEbsDefaultKmsKeyId(*ec2.GetEbsDefaultKmsKeyIdInput) (*ec2.GetEbsDefaultKmsKeyIdOutput, error)
+	GetEbsDefaultKmsKeyIdWithContext(aws.Context, *ec2.GetEbsDefaultKmsKeyIdInput, ...request.Option) (*ec2.GetEbsDefaultKmsKeyIdOutput, error)
+	GetEbsDefaultKmsKeyIdRequest(*ec2.GetEbsDefaultKmsKeyIdInput) (*request.Request, *ec2.GetEbsDefaultKmsKeyIdOutput)
+
+	GetEbsEncryptionByDefault(*ec2.GetEbsEncryptionByDefaultInput) (*ec2.GetEbsEncryptionByDefaultOutput, error)
+	GetEbsEncryptionByDefaultWithContext(aws.Context, *ec2.GetEbsEncryptionByDefaultInput, ...request.Option) (*ec2.GetEbsEncryptionByDefaultOutput, error)
+	GetEbsEncryptionByDefaultRequest(*ec2.GetEbsEncryptionByDefaultInput) (*request.Request, *ec2.GetEbsEncryptionByDefaultOutput)
 
 	GetHostReservationPurchasePreview(*ec2.GetHostReservationPurchasePreviewInput) (*ec2.GetHostReservationPurchasePreviewOutput, error)
 	GetHostReservationPurchasePreviewWithContext(aws.Context, *ec2.GetHostReservationPurchasePreviewInput, ...request.Option) (*ec2.GetHostReservationPurchasePreviewOutput, error)
@@ -1281,6 +1307,10 @@ type EC2API interface {
 	ModifyClientVpnEndpoint(*ec2.ModifyClientVpnEndpointInput) (*ec2.ModifyClientVpnEndpointOutput, error)
 	ModifyClientVpnEndpointWithContext(aws.Context, *ec2.ModifyClientVpnEndpointInput, ...request.Option) (*ec2.ModifyClientVpnEndpointOutput, error)
 	ModifyClientVpnEndpointRequest(*ec2.ModifyClientVpnEndpointInput) (*request.Request, *ec2.ModifyClientVpnEndpointOutput)
+
+	ModifyEbsDefaultKmsKeyId(*ec2.ModifyEbsDefaultKmsKeyIdInput) (*ec2.ModifyEbsDefaultKmsKeyIdOutput, error)
+	ModifyEbsDefaultKmsKeyIdWithContext(aws.Context, *ec2.ModifyEbsDefaultKmsKeyIdInput, ...request.Option) (*ec2.ModifyEbsDefaultKmsKeyIdOutput, error)
+	ModifyEbsDefaultKmsKeyIdRequest(*ec2.ModifyEbsDefaultKmsKeyIdInput) (*request.Request, *ec2.ModifyEbsDefaultKmsKeyIdOutput)
 
 	ModifyFleet(*ec2.ModifyFleetInput) (*ec2.ModifyFleetOutput, error)
 	ModifyFleetWithContext(aws.Context, *ec2.ModifyFleetInput, ...request.Option) (*ec2.ModifyFleetOutput, error)
@@ -1481,6 +1511,10 @@ type EC2API interface {
 	RequestSpotInstances(*ec2.RequestSpotInstancesInput) (*ec2.RequestSpotInstancesOutput, error)
 	RequestSpotInstancesWithContext(aws.Context, *ec2.RequestSpotInstancesInput, ...request.Option) (*ec2.RequestSpotInstancesOutput, error)
 	RequestSpotInstancesRequest(*ec2.RequestSpotInstancesInput) (*request.Request, *ec2.RequestSpotInstancesOutput)
+
+	ResetEbsDefaultKmsKeyId(*ec2.ResetEbsDefaultKmsKeyIdInput) (*ec2.ResetEbsDefaultKmsKeyIdOutput, error)
+	ResetEbsDefaultKmsKeyIdWithContext(aws.Context, *ec2.ResetEbsDefaultKmsKeyIdInput, ...request.Option) (*ec2.ResetEbsDefaultKmsKeyIdOutput, error)
+	ResetEbsDefaultKmsKeyIdRequest(*ec2.ResetEbsDefaultKmsKeyIdInput) (*request.Request, *ec2.ResetEbsDefaultKmsKeyIdOutput)
 
 	ResetFpgaImageAttribute(*ec2.ResetFpgaImageAttributeInput) (*ec2.ResetFpgaImageAttributeOutput, error)
 	ResetFpgaImageAttributeWithContext(aws.Context, *ec2.ResetFpgaImageAttributeInput, ...request.Option) (*ec2.ResetFpgaImageAttributeOutput, error)
