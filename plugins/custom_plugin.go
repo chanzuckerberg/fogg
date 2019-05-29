@@ -37,13 +37,20 @@ const (
 type CustomPlugin struct {
 	URL       string           `json:"url" validate:"required"`
 	Format    TypePluginFormat `json:"format" validate:"required"`
-	TarConfig TarConfig        `json:"tar_config,omitempty"`
+	TarConfig *TarConfig       `json:"tar_config,omitempty"`
 	TargetDir string           `json:"target_dir,omitempty"`
 }
 
 // TarConfig configures the tar unpacking
 type TarConfig struct {
 	StripComponents int `json:"strip_components,omitempty"`
+}
+
+func (tc *TarConfig) getStripComponents() int {
+	if tc == nil {
+		return 0
+	}
+	return tc.StripComponents
 }
 
 // Install installs the custom plugin
@@ -202,11 +209,11 @@ func (cp *CustomPlugin) processTar(fs afero.Fs, path string, targetDir string) e
 			filepath.Clean(header.Name),
 			string(os.PathSeparator))
 		// remove components if we can, otherwise skip this
-		if len(splitTarget) <= cp.TarConfig.StripComponents {
+		if len(splitTarget) <= cp.TarConfig.getStripComponents() {
 			continue
 		}
 		target := filepath.Join(targetDir,
-			filepath.Join(splitTarget[cp.TarConfig.StripComponents:]...))
+			filepath.Join(splitTarget[cp.TarConfig.getStripComponents():]...))
 
 		switch header.Typeflag {
 		case tar.TypeDir: // if its a dir and it doesn't exist create it

@@ -88,7 +88,7 @@ func TestCustomPluginTarStripComponents(t *testing.T) {
 	customPlugin := &plugins.CustomPlugin{
 		URL:    ts.URL,
 		Format: plugins.TypePluginFormatTar,
-		TarConfig: plugins.TarConfig{
+		TarConfig: &plugins.TarConfig{
 			StripComponents: 1,
 		},
 	}
