@@ -1,6 +1,9 @@
 package v2
 
-import v1 "github.com/chanzuckerberg/fogg/config/v1"
+import (
+	v1 "github.com/chanzuckerberg/fogg/config/v1"
+	"github.com/sirupsen/logrus"
+)
 
 // lastNonNil, despite its name can return nil if all results are nil
 func lastNonNil(getter func(Common) *string, commons ...Common) *string {
@@ -117,11 +120,6 @@ func ResolveSnowflakeProvider(commons ...Common) *SnowflakeProvider {
 
 func ResolveBlessProvider(commons ...Common) *BlessProvider {
 	profile := lastNonNil(BlessProviderProfileGetter, commons...)
-	// if profile is not explicitly set
-	// we can attempt to inherit the aws provider profile
-	if profile == nil {
-		profile = lastNonNil(AWSProviderProfileGetter, commons...)
-	}
 	region := lastNonNil(BlessProviderRegionGetter, commons...)
 
 	// required fields
@@ -129,6 +127,7 @@ func ResolveBlessProvider(commons ...Common) *BlessProvider {
 		return nil
 	}
 
+	logrus.Error("bless provider")
 	return &BlessProvider{
 		AWSProfile: profile,
 
