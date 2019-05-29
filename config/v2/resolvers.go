@@ -1,8 +1,6 @@
 package v2
 
-import (
-	"github.com/chanzuckerberg/fogg/config/v1"
-)
+import v1 "github.com/chanzuckerberg/fogg/config/v1"
 
 // lastNonNil, despite its name can return nil if all results are nil
 func lastNonNil(getter func(Common) *string, commons ...Common) *string {
@@ -104,15 +102,39 @@ func ResolveSnowflakeProvider(commons ...Common) *SnowflakeProvider {
 	account := lastNonNil(SnowflakeProviderAccountGetter, commons...)
 	role := lastNonNil(SnowflakeProviderRoleGetter, commons...)
 	region := lastNonNil(SnowflakeProviderRegionGetter, commons...)
+	version := lastNonNil(SnowflakeProviderVersionGetter, commons...)
 
 	if account != nil || role != nil || region != nil {
 		return &SnowflakeProvider{
 			Account: account,
 			Role:    role,
 			Region:  region,
+			Version: version,
 		}
 	}
 	return nil
+}
+
+func ResolveBlessProvider(commons ...Common) *BlessProvider {
+	profile := lastNonNil(BlessProviderProfileGetter, commons...)
+	// if profile is not explicitly set
+	// we can attempt to inherit the aws provider profile
+	if profile == nil {
+		profile = lastNonNil(AWSProviderProfileGetter, commons...)
+	}
+	region := lastNonNil(BlessProviderRegionGetter, commons...)
+
+	// required fields
+	if profile == nil || region == nil {
+		return nil
+	}
+
+	return &BlessProvider{
+		AWSProfile: profile,
+
+		Version:           lastNonNil(BlessProviderVersionGetter, commons...),
+		AdditionalRegions: ResolveOptionalStringSlice(BlessProviderAdditionalRegionsGetter, commons...),
+	}
 }
 
 func OwnerGetter(comm Common) *string {
@@ -220,4 +242,35 @@ func SnowflakeProviderRegionGetter(comm Common) *string {
 		return comm.Providers.Snowflake.Region
 	}
 	return nil
+}
+func SnowflakeProviderVersionGetter(comm Common) *string {
+	if comm.Providers != nil && comm.Providers.Snowflake != nil {
+		return comm.Providers.Snowflake.Version
+	}
+	return nil
+}
+
+func BlessProviderProfileGetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.Bless == nil {
+		return nil
+	}
+	return comm.Providers.Bless.AWSProfile
+}
+func BlessProviderRegionGetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.Bless == nil {
+		return nil
+	}
+	return comm.Providers.Bless.Region
+}
+func BlessProviderVersionGetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.Bless == nil {
+		return nil
+	}
+	return comm.Providers.Bless.Version
+}
+func BlessProviderAdditionalRegionsGetter(comm Common) []string {
+	if comm.Providers == nil || comm.Providers.Bless == nil {
+		return nil
+	}
+	return comm.Providers.Bless.AdditionalRegions
 }
