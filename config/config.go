@@ -143,29 +143,31 @@ func UpgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 	}
 
 	for acctName, acct := range c1.Accounts {
-		c2.Accounts[acctName] = v2.Account{
-			Common: v2.Common{
-				ExtraVars: acct.ExtraVars,
-				Providers: &v2.Providers{
-					AWS: &v2.AWSProvider{
-						AccountID:         acct.AccountID,
-						AdditionalRegions: acct.AWSRegions,
-						Profile:           acct.AWSProfileProvider,
-						Region:            acct.AWSRegionProvider,
-						Version:           acct.AWSProviderVersion,
-					},
+		common := v2.Common{
+			ExtraVars: acct.ExtraVars,
+			Providers: &v2.Providers{
+				AWS: &v2.AWSProvider{
+					AccountID:         acct.AccountID,
+					AdditionalRegions: acct.AWSRegions,
+					Profile:           acct.AWSProfileProvider,
+					Region:            acct.AWSRegionProvider,
+					Version:           acct.AWSProviderVersion,
 				},
-				Owner:            acct.Owner,
-				Project:          acct.Project,
-				TerraformVersion: acct.TerraformVersion,
 			},
+			Owner:            acct.Owner,
+			Project:          acct.Project,
+			TerraformVersion: acct.TerraformVersion,
 		}
 		if acct.InfraBucket != nil || acct.InfraDynamoTable != nil || acct.AWSProfileBackend != nil || acct.AWSRegionBackend != nil {
-			backend := c2.Accounts[acctName].Common.Backend
-			backend.Bucket = acct.InfraBucket
-			backend.DynamoTable = acct.InfraDynamoTable
-			backend.Profile = acct.AWSProfileBackend
-			backend.Region = acct.AWSRegionBackend
+			common.Backend = &v2.Backend{
+				Bucket:      acct.InfraBucket,
+				DynamoTable: acct.InfraDynamoTable,
+				Profile:     acct.AWSProfileBackend,
+				Region:      acct.AWSRegionBackend,
+			}
+		}
+		c2.Accounts[acctName] = v2.Account{
+			Common: common,
 		}
 	}
 
