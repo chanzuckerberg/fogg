@@ -83,7 +83,7 @@ variable "foo" {
 data "terraform_remote_state" "global" {
   backend = "s3"
 
-  config {
+  config = {
     bucket         = "stage-bucket"
     dynamodb_table = "stage-table"
     key            = "terraform/stage-project/global.tfstate"
@@ -95,7 +95,7 @@ data "terraform_remote_state" "global" {
 data "terraform_remote_state" "cloud-env" {
   backend = "s3"
 
-  config {
+  config = {
     bucket         = "stage-bucket"
     dynamodb_table = "stage-table"
     key            = "terraform/stage-project/envs/stage/components/cloud-env.tfstate"
@@ -109,7 +109,7 @@ data "terraform_remote_state" "cloud-env" {
 data "terraform_remote_state" "bar" {
   backend = "s3"
 
-  config {
+  config = {
     bucket         = "bar-bucket"
     dynamodb_table = "bar-table"
     key            = "terraform/bar-project/accounts/bar.tfstate"
@@ -121,7 +121,7 @@ data "terraform_remote_state" "bar" {
 data "terraform_remote_state" "foo" {
   backend = "s3"
 
-  config {
+  config = {
     bucket         = "foo-bucket"
     dynamodb_table = "foo-table"
     key            = "terraform/foo-project/accounts/foo.tfstate"
