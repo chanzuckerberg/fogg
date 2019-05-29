@@ -1,0 +1,24 @@
+{{define "bless_provider"}}
+
+provider "bless" {
+  {{ if .Version }}
+  version = "~>{{ .Version }}"
+  {{ end }}
+  region  = "{{ .Region }}"
+  profile = "{{ .AWSProfile }}"
+}
+
+{{ $outer := . -}}
+{{ range $region := .AdditionalRegions }}
+provider "bless" {
+  alias = "{{ $region }}"
+  {{ if $outer.Version }}
+  version = "~>{{ $outer.Version }}"
+  {{ end }}
+  region = "{{ $region }}"
+  profile = "{{ $outer.AWSProfile }}"
+}
+{{ end }}
+{{ end }}
+
+{{ end }}

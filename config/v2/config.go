@@ -6,7 +6,7 @@ import (
 	"math/rand"
 	"reflect"
 
-	"github.com/chanzuckerberg/fogg/config/v1"
+	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/errs"
 )
 
@@ -70,6 +70,16 @@ type Component struct {
 type Providers struct {
 	AWS       *AWSProvider       `json:"aws"`
 	Snowflake *SnowflakeProvider `json:"snowflake"`
+	Bless     *BlessProvider     `json:"bless"`
+}
+
+// BlessProvider allows for terraform-provider-bless configuration
+type BlessProvider struct {
+	// the bless provider is optional (above) but if supplied you must set a region and aws_profile
+	AdditionalRegions []string `json:"additional_regions,omitempty"`
+	AWSProfile        *string  `json:"aws_profile,omitempty"`
+	Region            *string  `json:"region,omitempty"`
+	Version           *string  `json:"version,omitempty"`
 }
 
 type AWSProvider struct {
@@ -85,6 +95,7 @@ type SnowflakeProvider struct {
 	Account *string `json:"account,omitempty"`
 	Role    *string `json:"role,omitempty"`
 	Region  *string `json:"region,omitempty"`
+	Version *string `json:"version,omitempty"`
 }
 
 type Backend struct {
@@ -141,6 +152,18 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		}
 	}
 
+	randBlessProvider := func(r *rand.Rand, s int) *BlessProvider {
+		if r.Float32() < 0.5 {
+			return nil
+		}
+		return &BlessProvider{
+			Version:           randStringPtr(r, s),
+			Region:            randStringPtr(r, s),
+			AWSProfile:        randStringPtr(r, s),
+			AdditionalRegions: []string{randString(r, s)},
+		}
+	}
+
 	randAWSProvider := func(r *rand.Rand, s int) *AWSProvider {
 		if r.Float32() < 0.5 {
 			return &AWSProvider{
@@ -176,6 +199,7 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 			Providers: &Providers{
 				AWS:       randAWSProvider(r, s),
 				Snowflake: randSnowflakeProvider(r, s),
+				Bless:     randBlessProvider(r, s),
 			},
 			TerraformVersion: randStringPtr(r, s),
 		}

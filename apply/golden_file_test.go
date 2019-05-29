@@ -31,6 +31,7 @@ func TestIntegration(t *testing.T) {
 		{"v2_minimal_valid"},
 		{"v2_no_aws_provider"},
 		{"snowflake_provider"},
+		{"bless_provider"},
 	}
 
 	for _, tc := range testCases {
