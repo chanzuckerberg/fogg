@@ -3,11 +3,9 @@ package config
 import (
 	"testing"
 
-	"github.com/spf13/afero"
-
-	"github.com/stretchr/testify/require"
-
 	"github.com/chanzuckerberg/fogg/util"
+	"github.com/spf13/afero"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUpgradeV2(t *testing.T) {
