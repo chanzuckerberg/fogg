@@ -9,8 +9,8 @@ import (
 	"github.com/spf13/afero"
 )
 
-// UpgradeConfig applies in-place upgrades to a configFile
-func UpgradeConfig(fs afero.Fs, configFile string) error {
+// Upgrade applies in-place upgrades to a configFile
+func Upgrade(fs afero.Fs, configFile string) error {
 	bytes, version, err := FindConfig(fs, configFile)
 	if err != nil {
 		return err

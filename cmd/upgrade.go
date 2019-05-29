@@ -3,6 +3,7 @@ package cmd
 import (
 	"os"
 
+	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
@@ -19,7 +20,6 @@ var upgrade = &cobra.Command{
 	Long: `This command will upgrade a v1 config to a v2 config.
 	Note that this is a lossy transformation.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		var err error
 		// Set up fs
 		pwd, err := os.Getwd()
 		if err != nil {
@@ -35,6 +35,6 @@ var upgrade = &cobra.Command{
 
 		// check that we are at root of initialized git repo
 		openGitOrExit(fs)
-
+		return config.Upgrade(fs, configFile)
 	},
 }
