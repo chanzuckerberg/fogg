@@ -70,7 +70,7 @@ variable "foo" {
 data "terraform_remote_state" "global" {
   backend = "s3"
 
-  config {
+  config = {
     bucket         = "bar-bucket"
     dynamodb_table = "bar-table"
     key            = "terraform/bar-project/global.tfstate"

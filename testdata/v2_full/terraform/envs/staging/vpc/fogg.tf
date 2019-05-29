@@ -74,7 +74,7 @@ variable "foo" {
 data "terraform_remote_state" "global" {
   backend = "s3"
 
-  config {
+  config = {
     bucket = "buck"
 
     key     = "terraform/proj/global.tfstate"
@@ -86,7 +86,7 @@ data "terraform_remote_state" "global" {
 data "terraform_remote_state" "comp1" {
   backend = "s3"
 
-  config {
+  config = {
     bucket = "buck"
 
     key     = "terraform/proj/envs/staging/components/comp1.tfstate"
@@ -98,7 +98,7 @@ data "terraform_remote_state" "comp1" {
 data "terraform_remote_state" "comp2" {
   backend = "s3"
 
-  config {
+  config = {
     bucket = "buck"
 
     key     = "terraform/proj/envs/staging/components/comp2.tfstate"
@@ -112,7 +112,7 @@ data "terraform_remote_state" "comp2" {
 data "terraform_remote_state" "bar" {
   backend = "s3"
 
-  config {
+  config = {
     bucket = "buck"
 
     key     = "terraform/proj/accounts/bar.tfstate"
@@ -124,7 +124,7 @@ data "terraform_remote_state" "bar" {
 data "terraform_remote_state" "foo" {
   backend = "s3"
 
-  config {
+  config = {
     bucket = "buck"
 
     key     = "terraform/proj/accounts/foo.tfstate"

@@ -108,7 +108,7 @@ variable "{{ $key }}" {
 data "terraform_remote_state" "global" {
   backend = "s3"
 
-  config {
+  config = {
     bucket         = "{{ .Backend.Bucket }}"
     {{ if .Backend.DynamoTable }}dynamodb_table = "{{ .Backend.DynamoTable }}"{{ end }}
     key            = "terraform/{{ .Project }}/global.tfstate"
@@ -122,7 +122,7 @@ data "terraform_remote_state" "global" {
 data "terraform_remote_state" "{{ $component }}" {
   backend = "s3"
 
-  config {
+  config = {
     bucket         = "{{ $outer.Backend.Bucket }}"
     {{ if $outer.Backend.DynamoTable }}dynamodb_table = "{{ $outer.Backend.DynamoTable }}"{{ end }}
     key            = "terraform/{{ $outer.Project }}/envs/{{ $outer.Env }}/components/{{ $component }}.tfstate"
@@ -137,7 +137,7 @@ data "terraform_remote_state" "{{ $component }}" {
 data "terraform_remote_state" "{{ $accountName }}" {
   backend = "s3"
 
-  config {
+  config = {
     bucket         = "{{ $account.Backend.Bucket }}"
     {{ if $account.Backend.DynamoTable }}dynamodb_table = "{{ $account.Backend.DynamoTable }}"{{ end }}
     key            = "terraform/{{ .Project }}/accounts/{{ $account.AccountName }}.tfstate"
