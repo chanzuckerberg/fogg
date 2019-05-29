@@ -43,7 +43,7 @@ type CustomPlugin struct {
 
 // TarConfig configures the tar unpacking
 type TarConfig struct {
-	StripComponents int `json:"strip_components"`
+	StripComponents int `json:"strip_components,omitempty"`
 }
 
 // Install installs the custom plugin
