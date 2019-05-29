@@ -49,7 +49,7 @@ func FindConfig(fs afero.Fs, configFile string) ([]byte, int, error) {
 		return nil, 0, errs.WrapUser(e, "unable to read config")
 	}
 
-	v, err := DetectVersion(b)
+	v, err := detectVersion(b)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -85,8 +85,8 @@ type ver struct {
 	Version int `json:"version"`
 }
 
-// DetectVersion will detect the version of a config
-func DetectVersion(b []byte) (int, error) {
+// detectVersion will detect the version of a config
+func detectVersion(b []byte) (int, error) {
 	v := &ver{}
 	err := json.Unmarshal(b, v)
 	if err != nil {

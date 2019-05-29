@@ -38,7 +38,7 @@ type CustomPlugin struct {
 	URL       string           `json:"url" validate:"required"`
 	Format    TypePluginFormat `json:"format" validate:"required"`
 	TarConfig TarConfig        `json:"tar_config,omitempty"`
-	TargetDir string
+	TargetDir string           `json:"target_dir,omitempty"`
 }
 
 // TarConfig configures the tar unpacking
