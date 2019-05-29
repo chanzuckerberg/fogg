@@ -35,7 +35,7 @@ func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVe
 	}
 }
 
-// FindConfig loads a config into memory
+// FindConfig loads a config and its version into memory
 func FindConfig(fs afero.Fs, configFile string) ([]byte, int, error) {
 	f, err := fs.Open(configFile)
 	if err != nil {
