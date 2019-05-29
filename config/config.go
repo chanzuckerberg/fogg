@@ -145,12 +145,6 @@ func UpgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 	for acctName, acct := range c1.Accounts {
 		c2.Accounts[acctName] = v2.Account{
 			Common: v2.Common{
-				Backend: &v2.Backend{
-					Bucket:      acct.InfraBucket,
-					DynamoTable: acct.InfraDynamoTable,
-					Profile:     acct.AWSProfileBackend,
-					Region:      acct.AWSRegionBackend,
-				},
 				ExtraVars: acct.ExtraVars,
 				Providers: &v2.Providers{
 					AWS: &v2.AWSProvider{
@@ -166,17 +160,18 @@ func UpgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 				TerraformVersion: acct.TerraformVersion,
 			},
 		}
+		if acct.InfraBucket != nil || acct.InfraDynamoTable != nil || acct.AWSProfileBackend != nil || acct.AWSRegionBackend != nil {
+			backend := c2.Accounts[acctName].Common.Backend
+			backend.Bucket = acct.InfraBucket
+			backend.DynamoTable = acct.InfraDynamoTable
+			backend.Profile = acct.AWSProfileBackend
+			backend.Region = acct.AWSRegionBackend
+		}
 	}
 
 	for envName, env := range c1.Envs {
 		env2 := v2.Env{
 			Common: v2.Common{
-				Backend: &v2.Backend{
-					Bucket:      env.InfraBucket,
-					DynamoTable: env.InfraDynamoTable,
-					Profile:     env.AWSProfileBackend,
-					Region:      env.AWSRegionBackend,
-				},
 				ExtraVars: env.ExtraVars,
 				Providers: &v2.Providers{
 					AWS: &v2.AWSProvider{
@@ -192,6 +187,16 @@ func UpgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 				TerraformVersion: env.TerraformVersion,
 			},
 		}
+
+		if env.InfraBucket != nil || env.InfraDynamoTable != nil || env.AWSProfileBackend != nil || env.AWSRegionBackend != nil {
+			env2.Common.Backend = &v2.Backend{
+				Bucket:      env.InfraBucket,
+				DynamoTable: env.InfraDynamoTable,
+				Profile:     env.AWSProfileBackend,
+				Region:      env.AWSRegionBackend,
+			}
+		}
+
 		env2.Components = map[string]v2.Component{}
 
 		for componentName, component := range env.Components {
@@ -217,7 +222,6 @@ func UpgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 			}
 
 			if component.AccountID != nil || component.AWSRegions != nil || component.AWSProfileProvider != nil || component.AWSRegionProvider != nil || component.TerraformVersion != nil {
-
 				c2.Providers = &v2.Providers{
 					AWS: &v2.AWSProvider{
 						AccountID:         component.AccountID,
