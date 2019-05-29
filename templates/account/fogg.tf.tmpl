@@ -85,7 +85,7 @@ variable "{{ $key }}" {
 data "terraform_remote_state" "global" {
   backend = "s3"
 
-  config {
+  config = {
     bucket         = "{{ .Backend.Bucket }}"
     {{ if .Backend.DynamoTable }}dynamodb_table = "{{ .Backend.DynamoTable }}"{{ end }}
     key            = "terraform/{{ .Project }}/global.tfstate"

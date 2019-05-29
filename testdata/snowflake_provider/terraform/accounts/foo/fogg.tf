@@ -38,7 +38,7 @@ variable "aws_accounts" {
 data "terraform_remote_state" "global" {
   backend = "s3"
 
-  config {
+  config = {
     bucket = "bucket"
 
     key     = "terraform/foo/global.tfstate"
