@@ -15,10 +15,10 @@ func init() {
 }
 
 var upgrade = &cobra.Command{
-	Use:   "v2upgrade",
-	Short: "Upgrades a v1 config to a v2 config",
-	Long: `This command will upgrade a v1 config to a v2 config.
-	Note that this is a lossy transformation.`,
+	Use:   "upgrade",
+	Short: "Upgrades a fogg config",
+	Long: `This command will upgrade a fogg config.
+	Note that this might be a lossy transformation.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Set up fs
 		pwd, err := os.Getwd()
