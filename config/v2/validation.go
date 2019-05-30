@@ -45,6 +45,7 @@ func (c *Config) Validate() ([]string, error) {
 
 	errs = multierror.Append(errs, c.ValidateAWSProviders())
 	errs = multierror.Append(errs, c.ValidateSnowflakeProviders())
+	errs = multierror.Append(errs, c.ValidateBlessProviders())
 	errs = multierror.Append(errs, c.validateModules())
 
 	if c.Docker {
@@ -123,6 +124,32 @@ func (c *Config) ValidateSnowflakeProviders() error {
 	})
 
 	return errs.ErrorOrNil()
+}
+
+func ValidateBlessProvider(p *BlessProvider, component string) error {
+	var errs *multierror.Error
+	if p == nil {
+		return nil // nothing to do
+	}
+
+	if p.AWSProfile == nil {
+		errs = multierror.Append(errs, fmt.Errorf("bless provider aws_profile required in %s", component))
+	}
+	if p.AWSRegion == nil {
+		errs = multierror.Append(errs, fmt.Errorf("bless provider aws_region required in %s", component))
+	}
+	return errs
+}
+
+func (c *Config) ValidateBlessProviders() error {
+	var errs *multierror.Error
+	c.WalkComponents(func(component string, comms ...Common) {
+		v := ResolveBlessProvider(comms...)
+		if err := ValidateBlessProvider(v, component); err != nil {
+			errs = multierror.Append(errs, err)
+		}
+	})
+	return errs
 }
 
 func (c *Config) WalkComponents(f func(component string, commons ...Common)) {

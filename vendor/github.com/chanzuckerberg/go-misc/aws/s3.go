@@ -7,17 +7,22 @@ import (
 	"github.com/aws/aws-sdk-go/aws/client"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3iface"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager/s3manageriface"
 	"github.com/pkg/errors"
 )
 
 // S3 is an s3 client
 type S3 struct {
-	Svc s3iface.S3API
+	Svc        s3iface.S3API
+	Downloader s3manageriface.DownloaderAPI
 }
 
 // NewS3 returns an s3 client
 func NewS3(c client.ConfigProvider, config *aws.Config) *S3 {
-	return &S3{Svc: s3.New(c, config)}
+	client := s3.New(c, config)
+	downloder := s3manager.NewDownloaderWithClient(client)
+	return &S3{Svc: client, Downloader: downloder}
 }
 
 // ListBuckets lists buckets

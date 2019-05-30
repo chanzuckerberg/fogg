@@ -1,0 +1,34 @@
+{
+    "version": 2,
+    "defaults": {
+        "providers": {
+            "bless": {
+                "aws_profile": "foofoofoo",
+                "aws_region": "bar",
+                "version": "0.0.0",
+                "additional_regions": [
+                    "a",
+                    "b"
+                ]
+            }
+        },
+        "backend": {
+            "bucket": "bucket",
+            "region": "region",
+            "profile": "foofoo"
+        },
+        "project": "foofoo",
+        "owner": "foo@example.com",
+        "terraform_version": "1.1.1"
+    },
+    "accounts": {
+        "foo": {}
+    },
+    "envs": {
+        "bar": {
+            "components": {
+                "bam": {}
+            }
+        }
+    }
+}

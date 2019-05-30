@@ -52,3 +52,26 @@ func TestReadSnowflakeProvider(t *testing.T) {
 	r.Equal("bar", *c.Defaults.Providers.Snowflake.Role)
 	r.Equal("us-west-2", *c.Defaults.Providers.Snowflake.Region)
 }
+
+func TestReadBlessProvider(t *testing.T) {
+	r := require.New(t)
+
+	b, e := util.TestFile("bless_provider")
+	r.NoError(e)
+	r.NotNil(b)
+
+	c, e := ReadConfig(b)
+	r.NoError(e)
+	r.NotNil(c)
+
+	w, e := c.Validate()
+	r.NoError(e)
+	r.Len(w, 0)
+
+	r.NotNil(c.Defaults.Providers)
+	r.NotNil(c.Defaults.Providers.Bless)
+	r.Equal("foofoofoo", *c.Defaults.Providers.Bless.AWSProfile)
+	r.Equal("bar", *c.Defaults.Providers.Bless.AWSRegion)
+	r.Equal("0.0.0", *c.Defaults.Providers.Bless.Version)
+	r.Equal([]string{"a", "b"}, c.Defaults.Providers.Bless.AdditionalRegions)
+}

@@ -26,6 +26,10 @@
   {{ template "snowflake_provider" .Providers.Snowflake }}
 {{ end }}
 
+{{ if .Providers.Bless}}
+  {{ template "bless_provider" .Providers.Bless }}
+{{ end }}
+
 terraform {
   required_version = "~>{{ .TerraformVersion }}"
 
