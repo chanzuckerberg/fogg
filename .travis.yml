@@ -15,9 +15,10 @@ jobs:
       script:
         - make test-coverage
         - bash <(curl -s https://codecov.io/bash)
-    - stage: check
-      script:
-        - if [[ ! -z "${SNYK_TOKEN}" ]]; then snyk monitor --org=czi; snyk test; fi
+    # Disable snyk until https://github.com/snyk/snyk/issues/354 is resolved
+    # - stage: check
+    #   script:
+    #     - if [[ ! -z "${SNYK_TOKEN}" ]]; then snyk monitor --org=czi; snyk test; fi
     - stage: check
       script:
         - curl --data-binary @codecov.yml https://codecov.io/validate

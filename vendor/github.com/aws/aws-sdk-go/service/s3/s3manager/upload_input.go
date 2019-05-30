@@ -39,8 +39,7 @@ type UploadInput struct {
 	// The language the content is in.
 	ContentLanguage *string `location:"header" locationName:"Content-Language" type:"string"`
 
-	// The base64-encoded 128-bit MD5 digest of the part data. This parameter is
-	// auto-populated when using the command from the CLI
+	// The base64-encoded 128-bit MD5 digest of the part data.
 	ContentMD5 *string `location:"header" locationName:"Content-MD5" type:"string"`
 
 	// A standard MIME type describing the format of the object data.
@@ -92,7 +91,7 @@ type UploadInput struct {
 	// does not store the encryption key. The key must be appropriate for use with
 	// the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm
 	// header.
-	SSECustomerKey *string `marshal-as:"blob" location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
+	SSECustomerKey *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
 
 	// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
 	// Amazon S3 uses this header for a message integrity check to ensure the encryption

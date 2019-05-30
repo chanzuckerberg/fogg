@@ -37,16 +37,16 @@ release-prerelease: build ## release to github as a 'pre-release'
 release-snapshot: ## run a release
 	goreleaser release --snapshot
 
-build: dep packr ## build the binary
+build: packr ## build the binary
 	go build ${LDFLAGS} .
 
 coverage: ## run the go coverage tool, reading file coverage.out
 	go tool cover -html=coverage.out
 
-test: dep ## run tests
+test: ## run tests
 	gotest -cover ./...
 
-test-offline: dep ## run only tests that don't require internet
+test-offline: ## run only tests that don't require internet
 	gotest -tags=offline ./...
 .PHONY: test-offline
 
@@ -55,7 +55,7 @@ test-coverage: ## run the test with proper coverage reporting
 	go tool cover -html=coverage.out
 .PHONY: test-coverage
 
-install: dep packr ## install the fogg binary in $GOPATH/bin
+install: packr ## install the fogg binary in $GOPATH/bin
 	go install ${LDFLAGS} .
 
 help: ## display help for this makefile
@@ -68,11 +68,7 @@ clean: ## clean the repo
 	packr clean
 	rm coverage.out 2>/dev/null || true
 
-dep: ## ensure dependencies are vendored
-	dep ensure # this should be super-fast in the no-op case
-.PHONY: dep
-
-update-golden-files: clean dep ## update the golden files in testdata
+update-golden-files: clean ## update the golden files in testdata
 	go test -v -run TestIntegration ./apply/ -update
 .PHONY: update-golden-files
 
