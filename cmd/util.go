@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/chanzuckerberg/fogg/config"
-	"github.com/chanzuckerberg/fogg/config/v2"
+	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/kr/pretty"
 	"github.com/sirupsen/logrus"

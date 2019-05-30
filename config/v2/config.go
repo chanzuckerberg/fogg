@@ -56,7 +56,7 @@ type Tools struct {
 type Env struct {
 	Common
 
-	Components map[string]Component `json:"components"`
+	Components map[string]Component `json:"components,omitempty"`
 }
 
 type Component struct {
@@ -64,13 +64,13 @@ type Component struct {
 
 	EKS          *v1.EKSConfig     `json:"eks,omitempty"`
 	Kind         *v1.ComponentKind `json:"kind,omitempty"`
-	ModuleSource *string           `json:"module_source"`
+	ModuleSource *string           `json:"module_source,omitempty"`
 }
 
 type Providers struct {
-	AWS       *AWSProvider       `json:"aws"`
-	Snowflake *SnowflakeProvider `json:"snowflake"`
-	Bless     *BlessProvider     `json:"bless"`
+	AWS       *AWSProvider       `json:"aws,omitempty"`
+	Snowflake *SnowflakeProvider `json:"snowflake,omitempty"`
+	Bless     *BlessProvider     `json:"bless,omitempty"`
 }
 
 // BlessProvider allows for terraform-provider-bless configuration

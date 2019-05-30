@@ -4,8 +4,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/chanzuckerberg/fogg/config/v1"
-	"github.com/chanzuckerberg/fogg/config/v2"
+	v1 "github.com/chanzuckerberg/fogg/config/v1"
+	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/go-test/deep"
@@ -227,7 +227,7 @@ func TestUpgradeConfigVersion(t *testing.T) {
 				"plugin": &plugins.CustomPlugin{
 					URL:    "https://example.com/plugin.tgz",
 					Format: plugins.TypePluginFormatTar,
-					TarConfig: plugins.TarConfig{
+					TarConfig: &plugins.TarConfig{
 						StripComponents: 7,
 					},
 				},
@@ -236,7 +236,7 @@ func TestUpgradeConfigVersion(t *testing.T) {
 				"provider": &plugins.CustomPlugin{
 					URL:    "https://example.com/provider.tgz",
 					Format: plugins.TypePluginFormatTar,
-					TarConfig: plugins.TarConfig{
+					TarConfig: &plugins.TarConfig{
 						StripComponents: 7,
 					},
 				},
