@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/chanzuckerberg/fogg/config/v1"
-	"github.com/chanzuckerberg/fogg/config/v2"
+	v1 "github.com/chanzuckerberg/fogg/config/v1"
+	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/util"
 	yaml "gopkg.in/yaml.v2"
@@ -48,6 +48,7 @@ type ComponentCommon struct {
 type Providers struct {
 	AWS       *AWSProvider       `yaml:"aws"`
 	Snowflake *SnowflakeProvider `yaml:"snowflake"`
+	Bless     *BlessProvider     `yaml:"bless"`
 }
 
 type AWSProvider struct {
@@ -59,12 +60,20 @@ type AWSProvider struct {
 }
 
 type SnowflakeProvider struct {
-	Account string `yaml:"account,omitempty"`
-	Role    string `yaml:"role,omitempty"`
-	Region  string `yaml:"region,omitempty"`
+	Account string  `yaml:"account,omitempty"`
+	Role    string  `yaml:"role,omitempty"`
+	Region  string  `yaml:"region,omitempty"`
+	Version *string `yaml:"version,omitempty"`
 }
 
-// AWSConfiguration represents aws configuration
+type BlessProvider struct {
+	AdditionalRegions []string `yaml:"additional_regions,omitempty"`
+	AWSProfile        string   `yaml:"aws_profile,omitempty"`
+	AWSRegion         string   `yaml:"aws_region,omitempty"`
+	Version           *string  `yaml:"version,omitempty"`
+}
+
+// AWSBackend represents aws backend configuration
 type AWSBackend struct {
 	AccountName string  `yaml:"account_name"`
 	Profile     string  `yaml:"profile"`
@@ -277,6 +286,18 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Account: *snowflakeConfig.Account,
 			Role:    *snowflakeConfig.Role,
 			Region:  *snowflakeConfig.Region,
+			Version: snowflakeConfig.Version,
+		}
+	}
+
+	var blessPlan *BlessProvider
+	blessConfig := v2.ResolveBlessProvider(commons...)
+	if blessConfig != nil && blessConfig.AWSProfile != nil && blessConfig.AWSRegion != nil {
+		blessPlan = &BlessProvider{
+			AWSProfile:        *blessConfig.AWSProfile,
+			AWSRegion:         *blessConfig.AWSRegion,
+			AdditionalRegions: blessConfig.AdditionalRegions,
+			Version:           blessConfig.Version,
 		}
 	}
 
@@ -290,6 +311,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		Providers: Providers{
 			AWS:       awsPlan,
 			Snowflake: snowflakePlan,
+			Bless:     blessPlan,
 		},
 		ExtraVars: v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),
 		Owner:     v2.ResolveRequiredString(v2.OwnerGetter, commons...),

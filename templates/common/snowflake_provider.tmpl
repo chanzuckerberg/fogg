@@ -4,6 +4,9 @@ provider "snowflake" {
   account = "{{ .Account }}"
   role    = "{{ .Role }}"
   region  = "{{ .Region }}"
+  {{ if .Version -}}
+  version = "~>{{ .Version }}"
+  {{ end -}}
 }
 
 {{ end }}
