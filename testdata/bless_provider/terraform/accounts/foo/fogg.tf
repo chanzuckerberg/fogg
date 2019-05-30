@@ -3,25 +3,20 @@
 
 provider "bless" {
   version = "~>0.0.0"
-
   region  = "bar"
   profile = "foofoofoo"
 }
 
 provider "bless" {
-  alias = "a"
-
+  alias   = "a"
   version = "~>0.0.0"
-
   region  = "a"
   profile = "foofoofoo"
 }
 
 provider "bless" {
-  alias = "b"
-
+  alias   = "b"
   version = "~>0.0.0"
-
   region  = "b"
   profile = "foofoofoo"
 }
@@ -57,7 +52,7 @@ variable "aws_accounts" {
 data "terraform_remote_state" "global" {
   backend = "s3"
 
-  config {
+  config = {
     bucket = "bucket"
 
     key     = "terraform/foofoo/global.tfstate"

@@ -3,25 +3,20 @@
 
 provider "bless" {
   version = "~>0.0.0"
-
   region  = "bar"
   profile = "foofoofoo"
 }
 
 provider "bless" {
-  alias = "a"
-
+  alias   = "a"
   version = "~>0.0.0"
-
   region  = "a"
   profile = "foofoofoo"
 }
 
 provider "bless" {
-  alias = "b"
-
+  alias   = "b"
   version = "~>0.0.0"
-
   region  = "b"
   profile = "foofoofoo"
 }
