@@ -71,10 +71,10 @@ data "terraform_remote_state" "global" {
   backend = "s3"
 
   config = {
-    bucket         = "bar-bucket"
-    dynamodb_table = "bar-table"
-    key            = "terraform/bar-project/global.tfstate"
-    region         = "us-west-bar1"
-    profile        = "czi-bar"
+    bucket         = "the-bucket"
+    dynamodb_table = "the-table"
+    key            = "terraform/test-project/global.tfstate"
+    region         = "us-west-2"
+    profile        = "czi"
   }
 }

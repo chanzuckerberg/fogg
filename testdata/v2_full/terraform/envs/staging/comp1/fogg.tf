@@ -20,7 +20,7 @@ terraform {
 
     encrypt = true
     region  = "us-west-2"
-    profile = "profile"
+    profile = "comp1"
   }
 }
 
@@ -91,7 +91,7 @@ data "terraform_remote_state" "comp2" {
 
     key     = "terraform/proj/envs/staging/components/comp2.tfstate"
     region  = "us-west-2"
-    profile = "profile"
+    profile = "comp1"
   }
 }
 
@@ -103,7 +103,7 @@ data "terraform_remote_state" "vpc" {
 
     key     = "terraform/proj/envs/staging/components/vpc.tfstate"
     region  = "us-west-2"
-    profile = "profile"
+    profile = "comp1"
   }
 }
 

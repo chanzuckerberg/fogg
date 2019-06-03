@@ -93,6 +93,7 @@ type Account struct {
 
 	AllAccounts map[string]int64 `yaml:"all_accounts"`
 	AccountName string           `yaml:"account_name"`
+	Global      *Component
 }
 
 // Component is a component
@@ -107,6 +108,7 @@ type Component struct {
 	Kind            *v1.ComponentKind `yaml:"kind,omitempty"`
 	ModuleSource    *string           `yaml:"module_source"`
 	OtherComponents []string          `yaml:"other_components"`
+	Global          *Component
 }
 
 // Env is an env
@@ -134,12 +136,12 @@ func Eval(c *v2.Config) (*Plan, error) {
 	p.Version = v
 
 	var err error
+	p.Global = p.buildGlobal(c)
 	p.Accounts = p.buildAccounts(c)
 	p.Envs, err = p.buildEnvs(c)
 	if err != nil {
 		return nil, err
 	}
-	p.Global = p.buildGlobal(c)
 	p.Modules = p.buildModules(c)
 
 	if c.Tools.TravisCI != nil {
@@ -173,6 +175,7 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 		accountPlan.PathToRepoRoot = "../../../"
 		accountPlan.Docker = c.Docker
 		accountPlan.DockerImageVersion = dockerImageVersion
+		accountPlan.Global = &p.Global
 
 		accountPlans[name] = accountPlan
 	}
@@ -256,6 +259,7 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 
 			componentPlan.TfLint = resolveTfLint(conf.Tools.TfLint, nil)
 			componentPlan.Docker = conf.Docker
+			componentPlan.Global = &p.Global
 
 			envPlan.Components[componentName] = componentPlan
 		}
