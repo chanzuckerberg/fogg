@@ -52,7 +52,11 @@
             "foo": "bar3"
           }
         },
-        "comp1": {},
+        "comp1": {
+          "backend": {
+            "profile": "comp1"
+          }
+        },
         "comp2": {},
         "comp_helm_template": {
           "kind": "helm_template",

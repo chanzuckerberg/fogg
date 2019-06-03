@@ -109,11 +109,11 @@ data "terraform_remote_state" "global" {
   backend = "s3"
 
   config = {
-    bucket         = "{{ .Backend.Bucket }}"
-    {{ if .Backend.DynamoTable }}dynamodb_table = "{{ .Backend.DynamoTable }}"{{ end }}
-    key            = "terraform/{{ .Project }}/global.tfstate"
-    region         = "{{ .Backend.Region }}"
-    {{ if .Backend.Profile }}profile        = "{{ .Backend.Profile }}"{{ end }}
+    bucket         = "{{ .Global.Backend.Bucket }}"
+    {{ if .Backend.DynamoTable }}dynamodb_table = "{{ .Global.Backend.DynamoTable }}"{{ end }}
+    key            = "terraform/{{ .Global.Project }}/global.tfstate"
+    region         = "{{ .Global.Backend.Region }}"
+    {{ if .Global.Backend.Profile }}profile        = "{{ .Global.Backend.Profile }}"{{ end }}
   }
 }
 
