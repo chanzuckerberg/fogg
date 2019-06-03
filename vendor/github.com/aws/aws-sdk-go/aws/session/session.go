@@ -407,10 +407,7 @@ func loadCustomCABundle(s *Session, bundle io.Reader) error {
 		}
 	}
 	if t == nil {
-		// Nil transport implies `http.DefaultTransport` should be used. Since
-		// the SDK cannot modify, nor copy the `DefaultTransport` specifying
-		// the values the next closest behavior.
-		t = getCABundleTransport()
+		t = &http.Transport{}
 	}
 
 	p, err := loadCertPool(bundle)

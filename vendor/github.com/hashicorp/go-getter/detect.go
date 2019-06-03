@@ -23,10 +23,8 @@ var Detectors []Detector
 func init() {
 	Detectors = []Detector{
 		new(GitHubDetector),
-		new(GitDetector),
 		new(BitBucketDetector),
 		new(S3Detector),
-		new(GCSDetector),
 		new(FileDetector),
 	}
 }
