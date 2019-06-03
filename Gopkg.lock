@@ -82,7 +82,7 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:ef467deed117daf5af81d07d5e44ed83f392a4f92f6dc858c007df2b8f234516"
+  digest = "1:a5f76c99f2cf4e4e6caba809f870b178c98c57b9e5d78e3ada189a6d47eba6db"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -111,35 +111,16 @@
     "internal/sdkuri",
     "internal/shareddefaults",
     "private/protocol",
-    "private/protocol/ec2query",
     "private/protocol/eventstream",
     "private/protocol/eventstream/eventstreamapi",
     "private/protocol/json/jsonutil",
-    "private/protocol/jsonrpc",
     "private/protocol/query",
     "private/protocol/query/queryutil",
     "private/protocol/rest",
-    "private/protocol/restjson",
     "private/protocol/restxml",
     "private/protocol/xml/xmlutil",
-    "service/ec2",
-    "service/ec2/ec2iface",
-    "service/iam",
-    "service/iam/iamiface",
-    "service/kms",
-    "service/kms/kmsiface",
-    "service/lambda",
-    "service/lambda/lambdaiface",
     "service/s3",
-    "service/s3/s3iface",
-    "service/s3/s3manager",
-    "service/s3/s3manager/s3manageriface",
-    "service/secretsmanager",
-    "service/secretsmanager/secretsmanageriface",
     "service/sts",
-    "service/sts/stsiface",
-    "service/support",
-    "service/support/supportiface",
   ]
   pruneopts = "UT"
   revision = "1badbda38516ecb9e6157b85064bf7058ca9f0dc"
@@ -171,12 +152,9 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:cd5766337506f40fbadcfcc287cbc9cdea6487706ec196025fce1a363e767b7b"
+  digest = "1:f7b9cf4716dc8aba9f66eb60a02b3fbbff24aca45ed06dccfd777289d519804d"
   name = "github.com/chanzuckerberg/go-misc"
-  packages = [
-    "aws",
-    "ver",
-  ]
+  packages = ["ver"]
   pruneopts = "UT"
   revision = "7c0dfc0d970f94188289f64d16a02979763ebf0b"
 
@@ -710,19 +688,10 @@
   version = "v1.0.3"
 
 [[projects]]
-  digest = "1:ac83cf90d08b63ad5f7e020ef480d319ae890c208f8524622a2f3136e2686b02"
-  name = "github.com/stretchr/objx"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "477a77ecc69700c7cdeb1fa9e129548e1c1c393c"
-  version = "v0.1.1"
-
-[[projects]]
-  digest = "1:b762f96c1183763894e8dabbac5f8e8d5821754b6e2686a8c398a174b7a58ff5"
+  digest = "1:5da8ce674952566deae4dbc23d07c85caafc6cfa815b0b3e03e41979cedb8750"
   name = "github.com/stretchr/testify"
   packages = [
     "assert",
-    "mock",
     "require",
   ]
   pruneopts = "UT"
@@ -1003,10 +972,7 @@
     "github.com/antzucaro/matchr",
     "github.com/aws/aws-sdk-go/aws",
     "github.com/aws/aws-sdk-go/aws/arn",
-    "github.com/aws/aws-sdk-go/aws/credentials/stscreds",
-    "github.com/aws/aws-sdk-go/aws/session",
     "github.com/blang/semver",
-    "github.com/chanzuckerberg/go-misc/aws",
     "github.com/chanzuckerberg/go-misc/ver",
     "github.com/fatih/color",
     "github.com/go-errors/errors",
