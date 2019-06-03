@@ -84,11 +84,11 @@ data "terraform_remote_state" "global" {
   backend = "s3"
 
   config = {
-    bucket         = "stage-bucket"
-    dynamodb_table = "stage-table"
-    key            = "terraform/stage-project/global.tfstate"
-    region         = "us-west-stage1"
-    profile        = "czi-stage"
+    bucket         = "the-bucket"
+    dynamodb_table = "the-table"
+    key            = "terraform/test-project/global.tfstate"
+    region         = "us-west-2"
+    profile        = "czi"
   }
 }
 
