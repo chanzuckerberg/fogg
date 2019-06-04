@@ -55,24 +55,44 @@ func initials(s string) string {
 	return util.Initials(s)
 }
 
-func randAlphaNumeric(count int) string {
-	// It is not possible, it appears, to actually generate an error here.
+func cryptoRandAlphaNumeric(count int) string {
 	r, _ := util.CryptoRandomAlphaNumeric(count)
 	return r
 }
 
-func randAlpha(count int) string {
+func cryptoRandAlpha(count int) string {
 	r, _ := util.CryptoRandomAlphabetic(count)
 	return r
 }
 
-func randAscii(count int) string {
+func cryptoRandAscii(count int) string {
 	r, _ := util.CryptoRandomAscii(count)
 	return r
 }
 
-func randNumeric(count int) string {
+func cryptoRandNumeric(count int) string {
 	r, _ := util.CryptoRandomNumeric(count)
+	return r
+}
+
+func randAlphaNumeric(count int) string {
+	// It is not possible, it appears, to actually generate an error here.
+	r, _ := util.RandomAlphaNumeric(count)
+	return r
+}
+
+func randAlpha(count int) string {
+	r, _ := util.RandomAlphabetic(count)
+	return r
+}
+
+func randAscii(count int) string {
+	r, _ := util.RandomAscii(count)
+	return r
+}
+
+func randNumeric(count int) string {
+	r, _ := util.RandomNumeric(count)
 	return r
 }
 
@@ -219,14 +239,14 @@ func splitn(sep string, n int, orig string) map[string]string {
 //
 // If start is < 0, this calls string[:end].
 //
-// If start is >= 0 and end < 0 or end bigger than s length, this calls string[start:]
+// If start is >= 0 and end < 0, this calls string[start:]
 //
 // Otherwise, this calls string[start, end].
 func substring(start, end int, s string) string {
 	if start < 0 {
 		return s[:end]
 	}
-	if end < 0 || end > len(s) {
+	if end < 0 {
 		return s[start:]
 	}
 	return s[start:end]

@@ -1071,7 +1071,7 @@ func (c *S3) DeleteBucketReplicationRequest(input *DeleteBucketReplicationInput)
 // DeleteBucketReplication API operation for Amazon Simple Storage Service.
 //
 // Deletes the replication configuration from the bucket. For information about
-// replication configuration, see Cross-Region Replication (CRR) (https://docs.aws.amazon.com/AmazonS3/latest/dev/crr.html)
+// replication configuration, see Cross-Region Replication (CRR) ( https://docs.aws.amazon.com/AmazonS3/latest/dev/crr.html)
 // in the Amazon S3 Developer Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -2047,7 +2047,7 @@ func (c *S3) GetBucketLifecycleRequest(input *GetBucketLifecycleInput) (req *req
 
 // GetBucketLifecycle API operation for Amazon Simple Storage Service.
 //
-// No longer used, see the GetBucketLifecycleConfiguration operation.
+// Deprecated, see the GetBucketLifecycleConfiguration operation.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -2428,7 +2428,7 @@ func (c *S3) GetBucketNotificationRequest(input *GetBucketNotificationConfigurat
 
 // GetBucketNotification API operation for Amazon Simple Storage Service.
 //
-// No longer used, see the GetBucketNotificationConfiguration operation.
+// Deprecated, see the GetBucketNotificationConfiguration operation.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -4210,7 +4210,7 @@ func (c *S3) ListMultipartUploadsWithContext(ctx aws.Context, input *ListMultipa
 //    // Example iterating over at most 3 pages of a ListMultipartUploads operation.
 //    pageNum := 0
 //    err := client.ListMultipartUploadsPages(params,
-//        func(page *s3.ListMultipartUploadsOutput, lastPage bool) bool {
+//        func(page *ListMultipartUploadsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -4340,7 +4340,7 @@ func (c *S3) ListObjectVersionsWithContext(ctx aws.Context, input *ListObjectVer
 //    // Example iterating over at most 3 pages of a ListObjectVersions operation.
 //    pageNum := 0
 //    err := client.ListObjectVersionsPages(params,
-//        func(page *s3.ListObjectVersionsOutput, lastPage bool) bool {
+//        func(page *ListObjectVersionsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -4477,7 +4477,7 @@ func (c *S3) ListObjectsWithContext(ctx aws.Context, input *ListObjectsInput, op
 //    // Example iterating over at most 3 pages of a ListObjects operation.
 //    pageNum := 0
 //    err := client.ListObjectsPages(params,
-//        func(page *s3.ListObjectsOutput, lastPage bool) bool {
+//        func(page *ListObjectsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -4615,7 +4615,7 @@ func (c *S3) ListObjectsV2WithContext(ctx aws.Context, input *ListObjectsV2Input
 //    // Example iterating over at most 3 pages of a ListObjectsV2 operation.
 //    pageNum := 0
 //    err := client.ListObjectsV2Pages(params,
-//        func(page *s3.ListObjectsV2Output, lastPage bool) bool {
+//        func(page *ListObjectsV2Output, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -4745,7 +4745,7 @@ func (c *S3) ListPartsWithContext(ctx aws.Context, input *ListPartsInput, opts .
 //    // Example iterating over at most 3 pages of a ListParts operation.
 //    pageNum := 0
 //    err := client.ListPartsPages(params,
-//        func(page *s3.ListPartsOutput, lastPage bool) bool {
+//        func(page *ListPartsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -5287,7 +5287,7 @@ func (c *S3) PutBucketLifecycleRequest(input *PutBucketLifecycleInput) (req *req
 
 // PutBucketLifecycle API operation for Amazon Simple Storage Service.
 //
-// No longer used, see the PutBucketLifecycleConfiguration operation.
+// Deprecated, see the PutBucketLifecycleConfiguration operation.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -5600,7 +5600,7 @@ func (c *S3) PutBucketNotificationRequest(input *PutBucketNotificationInput) (re
 
 // PutBucketNotification API operation for Amazon Simple Storage Service.
 //
-// No longer used, see the PutBucketNotificationConfiguration operation.
+// Deprecated, see the PutBucketNotificationConfiguraiton operation.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -5831,7 +5831,7 @@ func (c *S3) PutBucketReplicationRequest(input *PutBucketReplicationInput) (req 
 // PutBucketReplication API operation for Amazon Simple Storage Service.
 //
 // Creates a replication configuration or replaces an existing one. For more
-// information, see Cross-Region Replication (CRR) (https://docs.aws.amazon.com/AmazonS3/latest/dev/crr.html)
+// information, see Cross-Region Replication (CRR) ( https://docs.aws.amazon.com/AmazonS3/latest/dev/crr.html)
 // in the Amazon S3 Developer Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -8409,7 +8409,7 @@ type CopyObjectInput struct {
 	// Specifies the customer-provided encryption key for Amazon S3 to use to decrypt
 	// the source object. The encryption key provided in this header must be one
 	// that was used when the source object was created.
-	CopySourceSSECustomerKey *string `marshal-as:"blob" location:"header" locationName:"x-amz-copy-source-server-side-encryption-customer-key" type:"string" sensitive:"true"`
+	CopySourceSSECustomerKey *string `location:"header" locationName:"x-amz-copy-source-server-side-encryption-customer-key" type:"string" sensitive:"true"`
 
 	// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
 	// Amazon S3 uses this header for a message integrity check to ensure the encryption
@@ -8464,7 +8464,7 @@ type CopyObjectInput struct {
 	// does not store the encryption key. The key must be appropriate for use with
 	// the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm
 	// header.
-	SSECustomerKey *string `marshal-as:"blob" location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
+	SSECustomerKey *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
 
 	// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
 	// Amazon S3 uses this header for a message integrity check to ensure the encryption
@@ -8937,7 +8937,7 @@ type CreateBucketConfiguration struct {
 	_ struct{} `type:"structure"`
 
 	// Specifies the region where the bucket will be created. If you don't specify
-	// a region, the bucket is created in US East (N. Virginia) Region (us-east-1).
+	// a region, the bucket will be created in US Standard.
 	LocationConstraint *string `type:"string" enum:"BucketLocationConstraint"`
 }
 
@@ -9167,7 +9167,7 @@ type CreateMultipartUploadInput struct {
 	// does not store the encryption key. The key must be appropriate for use with
 	// the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm
 	// header.
-	SSECustomerKey *string `marshal-as:"blob" location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
+	SSECustomerKey *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
 
 	// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
 	// Amazon S3 uses this header for a message integrity check to ensure the encryption
@@ -11215,7 +11215,7 @@ type FilterRule struct {
 	// The object key name prefix or suffix identifying one or more objects to which
 	// the filtering rule applies. The maximum prefix length is 1,024 characters.
 	// Overlapping prefixes and suffixes are not supported. For more information,
-	// see Configuring Event Notifications (https://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html)
+	// see Configuring Event Notifications (http://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html)
 	// in the Amazon Simple Storage Service Developer Guide.
 	Name *string `type:"string" enum:"FilterRuleName"`
 
@@ -12820,7 +12820,7 @@ type GetObjectInput struct {
 	// does not store the encryption key. The key must be appropriate for use with
 	// the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm
 	// header.
-	SSECustomerKey *string `marshal-as:"blob" location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
+	SSECustomerKey *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
 
 	// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
 	// Amazon S3 uses this header for a message integrity check to ensure the encryption
@@ -14136,7 +14136,7 @@ type HeadObjectInput struct {
 	// does not store the encryption key. The key must be appropriate for use with
 	// the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm
 	// header.
-	SSECustomerKey *string `marshal-as:"blob" location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
+	SSECustomerKey *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
 
 	// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
 	// Amazon S3 uses this header for a message integrity check to ensure the encryption
@@ -15149,7 +15149,7 @@ type LambdaFunctionConfiguration struct {
 	Events []*string `locationName:"Event" type:"list" flattened:"true" required:"true"`
 
 	// A container for object key name filtering rules. For information about key
-	// name filtering, see Configuring Event Notifications (https://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html)
+	// name filtering, see Configuring Event Notifications (http://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html)
 	// in the Amazon Simple Storage Service Developer Guide.
 	Filter *NotificationConfigurationFilter `type:"structure"`
 
@@ -15332,7 +15332,7 @@ type LifecycleRule struct {
 	NoncurrentVersionTransitions []*NoncurrentVersionTransition `locationName:"NoncurrentVersionTransition" type:"list" flattened:"true"`
 
 	// Prefix identifying one or more objects to which the rule applies. This is
-	// No longer used; use Filter instead.
+	// deprecated; use Filter instead.
 	//
 	// Deprecated: Prefix has been deprecated
 	Prefix *string `deprecated:"true" type:"string"`
@@ -17624,8 +17624,8 @@ type NoncurrentVersionExpiration struct {
 	// Specifies the number of days an object is noncurrent before Amazon S3 can
 	// perform the associated action. For information about the noncurrent days
 	// calculations, see How Amazon S3 Calculates When an Object Became Noncurrent
-	// (https://docs.aws.amazon.com/AmazonS3/latest/dev/intro-lifecycle-rules.html#non-current-days-calculations)
-	// in the Amazon Simple Storage Service Developer Guide.
+	// (http://docs.aws.amazon.com/AmazonS3/latest/dev/s3-access-control.html) in
+	// the Amazon Simple Storage Service Developer Guide.
 	NoncurrentDays *int64 `type:"integer"`
 }
 
@@ -17646,20 +17646,19 @@ func (s *NoncurrentVersionExpiration) SetNoncurrentDays(v int64) *NoncurrentVers
 }
 
 // Container for the transition rule that describes when noncurrent objects
-// transition to the STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING, GLACIER or
-// DEEP_ARCHIVE storage class. If your bucket is versioning-enabled (or versioning
-// is suspended), you can set this action to request that Amazon S3 transition
-// noncurrent object versions to the STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING,
-// GLACIER or DEEP_ARCHIVE storage class at a specific period in the object's
-// lifetime.
+// transition to the STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING or GLACIER
+// storage class. If your bucket is versioning-enabled (or versioning is suspended),
+// you can set this action to request that Amazon S3 transition noncurrent object
+// versions to the STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING or GLACIER storage
+// class at a specific period in the object's lifetime.
 type NoncurrentVersionTransition struct {
 	_ struct{} `type:"structure"`
 
 	// Specifies the number of days an object is noncurrent before Amazon S3 can
 	// perform the associated action. For information about the noncurrent days
 	// calculations, see How Amazon S3 Calculates When an Object Became Noncurrent
-	// (https://docs.aws.amazon.com/AmazonS3/latest/dev/s3-access-control.html)
-	// in the Amazon Simple Storage Service Developer Guide.
+	// (http://docs.aws.amazon.com/AmazonS3/latest/dev/s3-access-control.html) in
+	// the Amazon Simple Storage Service Developer Guide.
 	NoncurrentDays *int64 `type:"integer"`
 
 	// The class of storage used to store the object.
@@ -17807,7 +17806,7 @@ func (s *NotificationConfigurationDeprecated) SetTopicConfiguration(v *TopicConf
 }
 
 // A container for object key name filtering rules. For information about key
-// name filtering, see Configuring Event Notifications (https://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html)
+// name filtering, see Configuring Event Notifications (http://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html)
 // in the Amazon Simple Storage Service Developer Guide.
 type NotificationConfigurationFilter struct {
 	_ struct{} `type:"structure"`
@@ -19612,8 +19611,6 @@ type PutBucketReplicationInput struct {
 	//
 	// ReplicationConfiguration is a required field
 	ReplicationConfiguration *ReplicationConfiguration `locationName:"ReplicationConfiguration" type:"structure" required:"true" xmlURI:"http://s3.amazonaws.com/doc/2006-03-01/"`
-
-	Token *string `location:"header" locationName:"x-amz-bucket-object-lock-token" type:"string"`
 }
 
 // String returns the string representation
@@ -19666,12 +19663,6 @@ func (s *PutBucketReplicationInput) getBucket() (v string) {
 // SetReplicationConfiguration sets the ReplicationConfiguration field's value.
 func (s *PutBucketReplicationInput) SetReplicationConfiguration(v *ReplicationConfiguration) *PutBucketReplicationInput {
 	s.ReplicationConfiguration = v
-	return s
-}
-
-// SetToken sets the Token field's value.
-func (s *PutBucketReplicationInput) SetToken(v string) *PutBucketReplicationInput {
-	s.Token = &v
 	return s
 }
 
@@ -20208,8 +20199,7 @@ type PutObjectInput struct {
 	// body cannot be determined automatically.
 	ContentLength *int64 `location:"header" locationName:"Content-Length" type:"long"`
 
-	// The base64-encoded 128-bit MD5 digest of the part data. This parameter is
-	// auto-populated when using the command from the CLI
+	// The base64-encoded 128-bit MD5 digest of the part data.
 	ContentMD5 *string `location:"header" locationName:"Content-MD5" type:"string"`
 
 	// A standard MIME type describing the format of the object data.
@@ -20261,7 +20251,7 @@ type PutObjectInput struct {
 	// does not store the encryption key. The key must be appropriate for use with
 	// the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm
 	// header.
-	SSECustomerKey *string `marshal-as:"blob" location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
+	SSECustomerKey *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
 
 	// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
 	// Amazon S3 uses this header for a message integrity check to ensure the encryption
@@ -20648,7 +20638,6 @@ type PutObjectLockConfigurationInput struct {
 	// at http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html
 	RequestPayer *string `location:"header" locationName:"x-amz-request-payer" type:"string" enum:"RequestPayer"`
 
-	// A token to allow Object Lock to be enabled for an existing bucket.
 	Token *string `location:"header" locationName:"x-amz-bucket-object-lock-token" type:"string"`
 }
 
@@ -21157,7 +21146,7 @@ type QueueConfiguration struct {
 	Events []*string `locationName:"Event" type:"list" flattened:"true" required:"true"`
 
 	// A container for object key name filtering rules. For information about key
-	// name filtering, see Configuring Event Notifications (https://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html)
+	// name filtering, see Configuring Event Notifications (http://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html)
 	// in the Amazon Simple Storage Service Developer Guide.
 	Filter *NotificationConfigurationFilter `type:"structure"`
 
@@ -21530,7 +21519,7 @@ type ReplicationRule struct {
 	//    * Same object qualify tag based filter criteria specified in multiple
 	//    rules
 	//
-	// For more information, see Cross-Region Replication (CRR) (https://docs.aws.amazon.com/AmazonS3/latest/dev/crr.html)
+	// For more information, see Cross-Region Replication (CRR) ( https://docs.aws.amazon.com/AmazonS3/latest/dev/crr.html)
 	// in the Amazon S3 Developer Guide.
 	Priority *int64 `type:"integer"`
 
@@ -22131,12 +22120,11 @@ type Rule struct {
 	NoncurrentVersionExpiration *NoncurrentVersionExpiration `type:"structure"`
 
 	// Container for the transition rule that describes when noncurrent objects
-	// transition to the STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING, GLACIER or
-	// DEEP_ARCHIVE storage class. If your bucket is versioning-enabled (or versioning
-	// is suspended), you can set this action to request that Amazon S3 transition
-	// noncurrent object versions to the STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING,
-	// GLACIER or DEEP_ARCHIVE storage class at a specific period in the object's
-	// lifetime.
+	// transition to the STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING or GLACIER
+	// storage class. If your bucket is versioning-enabled (or versioning is suspended),
+	// you can set this action to request that Amazon S3 transition noncurrent object
+	// versions to the STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING or GLACIER storage
+	// class at a specific period in the object's lifetime.
 	NoncurrentVersionTransition *NoncurrentVersionTransition `type:"structure"`
 
 	// Prefix identifying one or more objects to which the rule applies.
@@ -22508,7 +22496,7 @@ func (r *readSelectObjectContentEventStream) unmarshalerForEventType(
 // Amazon S3 uses this to parse object data into records. It returns only records
 // that match the specified SQL expression. You must also specify the data serialization
 // format for the response. For more information, see S3Select API Documentation
-// (https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectSELECTContent.html).
+// (http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectSELECTContent.html).
 type SelectObjectContentInput struct {
 	_ struct{} `locationName:"SelectObjectContentRequest" type:"structure" xmlURI:"http://s3.amazonaws.com/doc/2006-03-01/"`
 
@@ -22545,16 +22533,16 @@ type SelectObjectContentInput struct {
 	// Specifies if periodic request progress information should be enabled.
 	RequestProgress *RequestProgress `type:"structure"`
 
-	// The SSE Algorithm used to encrypt the object. For more information, see Server-Side
-	// Encryption (Using Customer-Provided Encryption Keys (https://docs.aws.amazon.com/AmazonS3/latest/dev/ServerSideEncryptionCustomerKeys.html).
+	// The SSE Algorithm used to encrypt the object. For more information, see
+	// Server-Side Encryption (Using Customer-Provided Encryption Keys (http://docs.aws.amazon.com/AmazonS3/latest/dev/ServerSideEncryptionCustomerKeys.html).
 	SSECustomerAlgorithm *string `location:"header" locationName:"x-amz-server-side-encryption-customer-algorithm" type:"string"`
 
-	// The SSE Customer Key. For more information, see Server-Side Encryption (Using
-	// Customer-Provided Encryption Keys (https://docs.aws.amazon.com/AmazonS3/latest/dev/ServerSideEncryptionCustomerKeys.html).
-	SSECustomerKey *string `marshal-as:"blob" location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
+	// The SSE Customer Key. For more information, see  Server-Side Encryption (Using
+	// Customer-Provided Encryption Keys (http://docs.aws.amazon.com/AmazonS3/latest/dev/ServerSideEncryptionCustomerKeys.html).
+	SSECustomerKey *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
 
-	// The SSE Customer Key MD5. For more information, see Server-Side Encryption
-	// (Using Customer-Provided Encryption Keys (https://docs.aws.amazon.com/AmazonS3/latest/dev/ServerSideEncryptionCustomerKeys.html).
+	// The SSE Customer Key MD5. For more information, see  Server-Side Encryption
+	// (Using Customer-Provided Encryption Keys (http://docs.aws.amazon.com/AmazonS3/latest/dev/ServerSideEncryptionCustomerKeys.html).
 	SSECustomerKeyMD5 *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key-MD5" type:"string"`
 }
 
@@ -23359,7 +23347,7 @@ type TopicConfiguration struct {
 	Events []*string `locationName:"Event" type:"list" flattened:"true" required:"true"`
 
 	// A container for object key name filtering rules. For information about key
-	// name filtering, see Configuring Event Notifications (https://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html)
+	// name filtering, see Configuring Event Notifications (http://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html)
 	// in the Amazon Simple Storage Service Developer Guide.
 	Filter *NotificationConfigurationFilter `type:"structure"`
 
@@ -23549,7 +23537,7 @@ type UploadPartCopyInput struct {
 	// the form bytes=first-last, where the first and last are the zero-based byte
 	// offsets to copy. For example, bytes=0-9 indicates that you want to copy the
 	// first ten bytes of the source. You can copy a range only if the source object
-	// is greater than 5 MB.
+	// is greater than 5 GB.
 	CopySourceRange *string `location:"header" locationName:"x-amz-copy-source-range" type:"string"`
 
 	// Specifies the algorithm to use when decrypting the source object (e.g., AES256).
@@ -23558,7 +23546,7 @@ type UploadPartCopyInput struct {
 	// Specifies the customer-provided encryption key for Amazon S3 to use to decrypt
 	// the source object. The encryption key provided in this header must be one
 	// that was used when the source object was created.
-	CopySourceSSECustomerKey *string `marshal-as:"blob" location:"header" locationName:"x-amz-copy-source-server-side-encryption-customer-key" type:"string" sensitive:"true"`
+	CopySourceSSECustomerKey *string `location:"header" locationName:"x-amz-copy-source-server-side-encryption-customer-key" type:"string" sensitive:"true"`
 
 	// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
 	// Amazon S3 uses this header for a message integrity check to ensure the encryption
@@ -23589,7 +23577,7 @@ type UploadPartCopyInput struct {
 	// the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm
 	// header. This must be the same encryption key specified in the initiate multipart
 	// upload request.
-	SSECustomerKey *string `marshal-as:"blob" location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
+	SSECustomerKey *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
 
 	// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
 	// Amazon S3 uses this header for a message integrity check to ensure the encryption
@@ -23894,7 +23882,7 @@ type UploadPartInput struct {
 	// the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm
 	// header. This must be the same encryption key specified in the initiate multipart
 	// upload request.
-	SSECustomerKey *string `marshal-as:"blob" location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
+	SSECustomerKey *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
 
 	// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
 	// Amazon S3 uses this header for a message integrity check to ensure the encryption
@@ -24555,9 +24543,6 @@ const (
 
 	// ObjectStorageClassIntelligentTiering is a ObjectStorageClass enum value
 	ObjectStorageClassIntelligentTiering = "INTELLIGENT_TIERING"
-
-	// ObjectStorageClassDeepArchive is a ObjectStorageClass enum value
-	ObjectStorageClassDeepArchive = "DEEP_ARCHIVE"
 )
 
 const (
@@ -24688,9 +24673,6 @@ const (
 
 	// StorageClassGlacier is a StorageClass enum value
 	StorageClassGlacier = "GLACIER"
-
-	// StorageClassDeepArchive is a StorageClass enum value
-	StorageClassDeepArchive = "DEEP_ARCHIVE"
 )
 
 const (
@@ -24729,9 +24711,6 @@ const (
 
 	// TransitionStorageClassIntelligentTiering is a TransitionStorageClass enum value
 	TransitionStorageClassIntelligentTiering = "INTELLIGENT_TIERING"
-
-	// TransitionStorageClassDeepArchive is a TransitionStorageClass enum value
-	TransitionStorageClassDeepArchive = "DEEP_ARCHIVE"
 )
 
 const (

@@ -9,22 +9,17 @@ import (
 
 // This file is generated from scan_tokens.rl. DO NOT EDIT.
 %%{
-  # (except when you are actually in scan_tokens.rl here, so edit away!)
+  # (except you are actually in scan_tokens.rl here, so edit away!)
 
   machine hcltok;
   write data;
 }%%
 
 func scanTokens(data []byte, filename string, start hcl.Pos, mode scanMode) []Token {
-    stripData := stripUTF8BOM(data)
-    start.Byte += len(data) - len(stripData)
-    data = stripData
-
     f := &tokenAccum{
-        Filename:  filename,
-        Bytes:     data,
-        Pos:       start,
-        StartByte: start.Byte,
+        Filename: filename,
+        Bytes:    data,
+        Pos:      start,
     }
 
     %%{
@@ -44,7 +39,7 @@ func scanTokens(data []byte, filename string, start hcl.Pos, mode scanMode) []To
         Ident = (ID_Start | '_') (ID_Continue | '-')*;
 
         # Symbols that just represent themselves are handled as a single rule.
-        SelfToken = "[" | "]" | "(" | ")" | "." | "," | "*" | "/" | "%" | "+" | "-" | "=" | "<" | ">" | "!" | "?" | ":" | "\n" | "&" | "|" | "~" | "^" | ";" | "`" | "'";
+        SelfToken = "[" | "]" | "(" | ")" | "." | "," | "*" | "/" | "%" | "+" | "-" | "=" | "<" | ">" | "!" | "?" | ":" | "\n" | "&" | "|" | "~" | "^" | ";" | "`";
 
         EqualOp = "==";
         NotEqual = "!=";
@@ -63,17 +58,9 @@ func scanTokens(data []byte, filename string, start hcl.Pos, mode scanMode) []To
         BeginHeredocTmpl = '<<' ('-')? Ident Newline;
 
         Comment = (
-            # The :>> operator in these is a "finish-guarded concatenation",
-            # which terminates the sequence on its left when it completes
-            # the sequence on its right.
-            # In the single-line comment cases this is allowing us to make
-            # the trailing EndOfLine optional while still having the overall
-            # pattern terminate. In the multi-line case it ensures that
-            # the first comment in the file ends at the first */, rather than
-            # gobbling up all of the "any*" until the _final_ */ in the file.
-            ("#" (any - EndOfLine)* :>> EndOfLine?) |
-            ("//" (any - EndOfLine)* :>> EndOfLine?) |
-            ("/*" any* :>> "*/")
+            ("#" (any - EndOfLine)* EndOfLine) |
+            ("//" (any - EndOfLine)* EndOfLine) |
+            ("/*" any* "*/")
         );
 
         # Note: hclwrite assumes that only ASCII spaces appear between tokens,
@@ -226,35 +213,29 @@ func scanTokens(data []byte, filename string, start hcl.Pos, mode scanMode) []To
         TemplateInterp = "${" ("~")?;
         TemplateControl = "%{" ("~")?;
         EndStringTmpl = '"';
-        NewlineChars = ("\r"|"\n");
-        NewlineCharsSeq = NewlineChars+;
-        StringLiteralChars = (AnyUTF8 - NewlineChars);
-        TemplateIgnoredNonBrace = (^'{' %{ fhold; });
-        TemplateNotInterp = '$' (TemplateIgnoredNonBrace | TemplateInterp);
-        TemplateNotControl = '%' (TemplateIgnoredNonBrace | TemplateControl);
-        QuotedStringLiteralWithEsc = ('\\' StringLiteralChars) | (StringLiteralChars - ("$" | '%' | '"' | "\\"));
+        StringLiteralChars = (AnyUTF8 - ("\r"|"\n"));
         TemplateStringLiteral = (
-            (TemplateNotInterp) |
-            (TemplateNotControl) |
-            (QuotedStringLiteralWithEsc)+
-        );
+            ('$' ^'{' %{ fhold; }) |
+            ('%' ^'{' %{ fhold; }) |
+            ('\\' StringLiteralChars) |
+            (StringLiteralChars - ("$" | '%' | '"'))
+        )+;
         HeredocStringLiteral = (
-            (TemplateNotInterp) |
-            (TemplateNotControl) |
-            (StringLiteralChars - ("$" | '%'))*
-        );
+            ('$' ^'{' %{ fhold; }) |
+            ('%' ^'{' %{ fhold; }) |
+            (StringLiteralChars - ("$" | '%'))
+        )*;
         BareStringLiteral = (
-            (TemplateNotInterp) |
-            (TemplateNotControl) |
-            (StringLiteralChars - ("$" | '%'))*
-        ) Newline?;
+            ('$' ^'{') |
+            ('%' ^'{') |
+            (StringLiteralChars - ("$" | '%'))
+        )* Newline?;
 
         stringTemplate := |*
             TemplateInterp        => beginTemplateInterp;
             TemplateControl       => beginTemplateControl;
             EndStringTmpl         => endStringTemplate;
             TemplateStringLiteral => { token(TokenQuotedLit); };
-            NewlineCharsSeq       => { token(TokenQuotedNewline); };
             AnyUTF8               => { token(TokenInvalid); };
             BrokenUTF8            => { token(TokenBadUTF8); };
         *|;
