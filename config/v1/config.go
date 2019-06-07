@@ -132,13 +132,13 @@ type TravisCI struct {
 }
 
 type Config struct {
-	Accounts map[string]Account `json:"accounts"`
-	Defaults Defaults           `json:"defaults"`
-	Docker   bool               `json:"docker,omitempty"`
-	Envs     map[string]Env     `json:"envs"`
-	Modules  map[string]Module  `json:"modules"`
-	Plugins  Plugins            `json:"plugins,omitempty"`
-	TravisCI *TravisCI          `json:"travis_ci,omitempty"`
+	Accounts map[string]Account `json:"accounts" json:"accounts"`
+	Defaults Defaults           `json:"defaults" json:"defaults"`
+	Docker   bool               `json:"docker,omitempty" json:"docker,omitempty"`
+	Envs     map[string]Env     `json:"envs" json:"envs"`
+	Modules  map[string]Module  `json:"modules" json:"modules"`
+	Plugins  Plugins            `json:"plugins,omitempty" json:"plugins,omitempty"`
+	TravisCI *TravisCI          `json:"travis_ci,omitempty" json:"travis_ci,omitempty"`
 }
 
 func ReadConfig(b []byte) (*Config, error) {

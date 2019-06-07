@@ -35,6 +35,7 @@ func JSONtoYAML(jsonFileData []byte) ([]byte, error) {
 		return nil, err
 	}
 
+	// Convert generic json object into yml data
 	return yaml.Marshal(jsonObj)
 }
 
