@@ -98,7 +98,7 @@ type Component struct {
 	AccountID          *int64            `json:"account_id" yaml:"account_id"`
 	AWSProfileBackend  *string           `json:"aws_profile_backend" yaml:"aws_profile_backend"`
 	AWSProfileProvider *string           `json:"aws_profile_provider" yaml:"aws_profile_provider"`
-	AWSProviderVersion *string           `json:"aws_provider_version,omitempty" yaml:"acaws_provider_version,omitemptycount_id"`
+	AWSProviderVersion *string           `json:"aws_provider_version,omitempty" yaml:"aws_provider_version,omitempty"`
 	AWSRegionBackend   *string           `json:"aws_region_backend" yaml:"aws_region_backend"`
 	AWSRegionProvider  *string           `json:"aws_region_provider" yaml:"aws_region_provider"`
 	AWSRegions         []string          `json:"aws_regions" yaml:"aws_regions"`
@@ -137,7 +137,7 @@ type Config struct {
 	Docker   bool               `json:"docker,omitempty" yaml:"docker,omitempty"`
 	Envs     map[string]Env     `json:"envs" yaml:"envs"`
 	Modules  map[string]Module  `json:"modules" yaml:"modules"`
-	Plugins  Plugins            `json:"plugins,omitempty" yaml:"plugins"` //FIXME: JSON still appears even if it is omitted, checkout InitConfig (plugs is omitted)
+	Plugins  Plugins            `json:"plugins,omitempty" yaml:"plugins"` //FIXME: JSON still appears even if it is omitted, checkout InitConfig (plugs is omitted )
 	TravisCI *TravisCI          `json:"travis_ci,omitempty" yaml:"travis_ci,omitempty"`
 }
 
