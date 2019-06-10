@@ -14,6 +14,6 @@ var yamlMigrateCmd = &cobra.Command{
 	Short: "Converts fogg.json to fogg.yml",
 	Long:  "This command will convert the fogg.json to a fogg.yml file type.",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return yaml_migrate.JSONtoYML()
+		return yaml_migrate.ConvertToYaml()
 	},
 }

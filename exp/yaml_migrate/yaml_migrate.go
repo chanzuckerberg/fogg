@@ -1,32 +1,39 @@
 package yaml_migrate
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 
+	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 )
 
-//TODO: Better Error Handling
-//Converts fogg.json to fogg.yml
-func JSONtoYML() error {
+//ConvertToYaml method converts fogg.json to fogg.yml
+func ConvertToYaml() error {
 	jsonFile, err := os.Open("fogg.json")
-	check(err)
-	fmt.Println("Successfully Opened fogg.json")
+	if err != nil {
+		return err
+	}
+	logrus.Println("Successfully Opened fogg.json")
 	defer jsonFile.Close()
 
 	//Read the fogg.json file, convert it to yml format
-	byteValue, _ := ioutil.ReadAll(jsonFile)
-	ymlData, _ := JSONtoYAML(byteValue)
+	byteValue, readErr := ioutil.ReadAll(jsonFile)
+	ymlData, yamlErr := jsonToYaml(byteValue)
+
+	if readErr != nil {
+		return readErr
+	} else if yamlErr != nil {
+		return yamlErr
+	}
 
 	generateYMLFile(ymlData)
-	fmt.Println("Successfully created fogg.yml")
+	logrus.Println("Successfully created fogg.yml")
 	return nil
 }
 
-//Convert an existing json file into yml data
-func JSONtoYAML(jsonFileData []byte) ([]byte, error) {
+//Convert an existing json file into yml text
+func jsonToYaml(jsonFileData []byte) ([]byte, error) {
 	var jsonObj interface{}
 
 	//Convert jsonFileData into a generic interface representing json
@@ -39,19 +46,13 @@ func JSONtoYAML(jsonFileData []byte) ([]byte, error) {
 	return yaml.Marshal(jsonObj)
 }
 
-//TODO: Consider overwritteing yml file
 // Create YML file
-func generateYMLFile(ymlData []byte) {
-	file, createErr := os.Create("fogg.yml")
-	check(createErr)
-	defer file.Close()
+// If file does not exist one will be made, otherwise the current
+// yml file will be updated
+//TODO: See if write overwrites a yaml file or adds to yaml file
+func generateYMLFile(ymlData []byte) error {
 
-	writeErr := ioutil.WriteFile("fogg.yml", ymlData, 0644)
-	check(writeErr)
-}
-
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
+	//Write creates a new file if one does not exist
+	writeStatus := ioutil.WriteFile("fogg.yml", ymlData, 0644)
+	return writeStatus
 }
