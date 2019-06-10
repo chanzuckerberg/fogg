@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/config"
-	"github.com/chanzuckerberg/fogg/config/v1"
+	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/sirupsen/logrus"
@@ -218,6 +218,7 @@ func TestCreateFileNonExistentDirectory(t *testing.T) {
 
 }
 
+//TODO: Add YAML version of test
 func TestApplySmokeTest(t *testing.T) {
 	r := require.New(t)
 	fs, _, err := util.TestFs()

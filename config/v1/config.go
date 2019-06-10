@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
@@ -10,6 +9,7 @@ import (
 	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/hashicorp/go-multierror"
 	"gopkg.in/go-playground/validator.v9"
+	"gopkg.in/yaml.v2"
 )
 
 type TfLint struct {
@@ -145,9 +145,9 @@ func ReadConfig(b []byte) (*Config, error) {
 	c := &Config{
 		Docker: true,
 	}
-	e := json.Unmarshal(b, c)
+	e := yaml.Unmarshal(b, c)
 	if e != nil {
-		return nil, errs.WrapUser(e, "unable to parse json config file")
+		return nil, errs.WrapUser(e, "unable to parse yaml config file")
 	}
 	return c, nil
 }

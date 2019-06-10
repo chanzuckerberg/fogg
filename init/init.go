@@ -38,7 +38,7 @@ func writeConfig(fs afero.Fs, config *v1.Config) error {
 	return yamlStatus
 }
 
-//Init reads user console input and generates a fogg.yaml file
+//Init reads user console input and generates a fogg.yml file
 func Init(fs afero.Fs) error {
 	project, region, bucket, table, profile, owner := userPrompt()
 	config := config.InitConfig(project, region, bucket, table, profile, owner, AWSProviderVersion)

@@ -40,7 +40,7 @@ func readAndValidateConfig(fs afero.Fs, configFile string) (*v2.Config, []string
 
 func mergeConfigValidationErrors(err error) error {
 	if err != nil {
-		fmt.Println("fogg.json has error(s):")
+		fmt.Println("fogg.yml has error(s):")
 		validatonErrors, ok := err.(validator.ValidationErrors)
 		if ok {
 			var sb strings.Builder

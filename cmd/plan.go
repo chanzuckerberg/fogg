@@ -11,13 +11,14 @@ import (
 
 func init() {
 	planCmd.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
+	planCmd.Flags().StringP("config", "c", "fogg.yml", "Use this to override the fogg config file.")
 	rootCmd.AddCommand(planCmd)
 }
 
 var planCmd = &cobra.Command{
 	Use:           "plan",
 	Short:         "Run a plan",
-	Long:          "plan will read fogg.json, use that to generate a plan and print that plan out. It will make no changes.",
+	Long:          "plan will read fogg.yml or fogg.json, use that to generate a plan and print that plan out. It will make no changes.",
 	SilenceErrors: true, // If we don't silence here, cobra will print them. But we want to do that in cmd/root.go
 	RunE: func(cmd *cobra.Command, args []string) error {
 		setupDebug(debug)

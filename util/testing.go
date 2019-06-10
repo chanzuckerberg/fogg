@@ -32,6 +32,13 @@ func TestFile(name string) ([]byte, error) {
 	return ioutil.ReadFile(path)
 }
 
+//TestFileYml is created to support new yml file type
+func TestFileYml(name string) ([]byte, error) {
+	// calculate the path to repository's root
+	path := filepath.Join(ProjectRoot(), "testdata", name, "fogg.yml")
+	return ioutil.ReadFile(path)
+}
+
 func TestFs() (afero.Fs, string, error) {
 	d, err := ioutil.TempDir("", "fogg")
 	if err != nil {

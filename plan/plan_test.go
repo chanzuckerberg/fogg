@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/config"
-	"github.com/chanzuckerberg/fogg/config/v1"
-	"github.com/chanzuckerberg/fogg/config/v2"
+	v1 "github.com/chanzuckerberg/fogg/config/v1"
+	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"

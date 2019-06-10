@@ -18,10 +18,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
+//TODO: Potentially revert change
 func init() {
 	awsConfigCmd.Flags().StringP("source-profile", "p", "default", "Use this to override the base aws profile.")
 	awsConfigCmd.Flags().StringP("role", "r", "default", "Use this to override the default assume role.")
 	awsConfigCmd.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
+	awsConfigCmd.Flags().StringP("config", "c", "fogg.yml", "Use this to override the fogg config file.")
 	awsConfigCmd.Flags().BoolP("export", "e", false, "Export whole thing to stdout.")
 	awsConfigCmd.Flags().BoolP("all", "a", false, "All profiles. Only makes sense if export=true.")
 
@@ -30,8 +32,8 @@ func init() {
 
 var awsConfigCmd = &cobra.Command{
 	Use:   "aws-config",
-	Short: "Generates an ~/.aws/config from your fogg.json",
-	Long:  "This command will help generate a ~/.aws/config from your fogg.json.",
+	Short: "Generates an ~/.aws/config from your fogg.yml or fogg.json",
+	Long:  "This command will help generate a ~/.aws/config from your fogg.yml or fogg.json",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		// Set up fs
