@@ -3,6 +3,7 @@ sudo: false
 go:
   - "1.12"
 install:
+  - mkdir bin
   - curl -L -o bin/buildevents https://github.com/honeycombio/buildevents/releases/latest/download/buildevents
   - chmod 755 bin/buildevents
   - npm install -g snyk
