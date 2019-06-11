@@ -1,12 +1,13 @@
 language: go
+sudo: false
 go:
-  - "1.11"
+  - "1.12"
 install:
+  - curl -L -o bin/buildevents https://github.com/honeycombio/buildevents/releases/latest/download/buildevents
+  - chmod 755 bin/buildevents
   - npm install -g snyk
   - make setup
   - go get -u github.com/haya14busa/goverage
-  - curl -L -o bin/buildevents https://github.com/honeycombio/buildevents/releases/latest/download/buildevents
-  - chmod 755 bin/buildevents
 
 script:
   - make
