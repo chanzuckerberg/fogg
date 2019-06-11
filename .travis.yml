@@ -5,6 +5,8 @@ install:
   - npm install -g snyk
   - make setup
   - go get -u github.com/haya14busa/goverage
+  - curl -L -o bin/buildevents https://github.com/honeycombio/buildevents/releases/latest/download/buildevents
+  - chmod 755 bin/buildevents
 
 script:
   - make
