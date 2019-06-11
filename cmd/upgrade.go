@@ -10,7 +10,6 @@ import (
 )
 
 func init() {
-	upgrade.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
 	upgrade.Flags().StringP("config", "c", "fogg.yml", "Use this to override the fogg config file.")
 	rootCmd.AddCommand(upgrade)
 }

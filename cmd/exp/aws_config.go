@@ -18,11 +18,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//TODO: Potentially revert change
+//TODO: Enable aws_config.go to update yaml and json files
 func init() {
 	awsConfigCmd.Flags().StringP("source-profile", "p", "default", "Use this to override the base aws profile.")
 	awsConfigCmd.Flags().StringP("role", "r", "default", "Use this to override the default assume role.")
-	awsConfigCmd.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
 	awsConfigCmd.Flags().StringP("config", "c", "fogg.yml", "Use this to override the fogg config file.")
 	awsConfigCmd.Flags().BoolP("export", "e", false, "Export whole thing to stdout.")
 	awsConfigCmd.Flags().BoolP("all", "a", false, "All profiles. Only makes sense if export=true.")

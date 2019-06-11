@@ -219,6 +219,7 @@ func TestCreateFileNonExistentDirectory(t *testing.T) {
 }
 
 //TODO: Add YAML version of test
+//FIXME: Figure out why this is working
 func TestApplySmokeTest(t *testing.T) {
 	r := require.New(t)
 	fs, _, err := util.TestFs()

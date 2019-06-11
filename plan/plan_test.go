@@ -1,6 +1,7 @@
 package plan
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/config"
@@ -60,7 +61,7 @@ func TestResolveAccounts(t *testing.T) {
 
 func TestPlanBasicV1(t *testing.T) {
 	a := assert.New(t)
-	b, e := util.TestFile("v1_full_plan")
+	b, e := util.TestFileYml("v1_full_plan")
 	a.NoError(e)
 	c, err := v1.ReadConfig(b)
 	assert.Nil(t, err)
@@ -96,6 +97,7 @@ func TestPlanBasicV1(t *testing.T) {
 	assert.Equal(t, "0.100.0", plan.Envs["staging"].Components["comp1"].TerraformVersion)
 
 	assert.NotNil(t, plan.Envs["staging"].Components["comp_helm_template"])
+	fmt.Printf("'%v'", plan.Envs["staging"].Components["comp_helm_template"].EKS.ClusterName)
 	assert.Equal(t, "k8s", plan.Envs["staging"].Components["comp_helm_template"].EKS.ClusterName)
 }
 

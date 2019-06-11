@@ -13,14 +13,14 @@ import (
 )
 
 type TfLint struct {
-	Enabled *bool `json:"enabled,omitempty"`
+	Enabled *bool `json:"enabled,omitempty" yaml:"enabled,omitempty"`
 }
 
 type Defaults struct {
 	AccountID          int64             `json:"account_id,omitempty" yaml:"account_id,omitempty" validate:"required"`
 	AWSProfileBackend  string            `json:"aws_profile_backend" yaml:"aws_profile_backend" validate:"required"`
 	AWSProfileProvider string            `json:"aws_profile_provider" yaml:"aws_profile_provider" validate:"required"`
-	AWSProviderVersion string            `json:"aws_provider_version" yaml:"aaws_provider_version" validate:"required"`
+	AWSProviderVersion string            `json:"aws_provider_version" yaml:"aws_provider_version" validate:"required"`
 	AWSRegionBackend   string            `json:"aws_region_backend" yaml:"aws_region_backend" validate:"required"`
 	AWSRegionProvider  string            `json:"aws_region_provider" yaml:"aws_region_provider" validate:"required"`
 	AWSRegions         []string          `json:"aws_regions,omitempty" yaml:"aws_regions,omitempty" `
@@ -91,7 +91,7 @@ const (
 
 // EKSConfig is the configuration for an eks cluster
 type EKSConfig struct {
-	ClusterName string `json:"cluster_name"`
+	ClusterName string `json:"cluster_name" yaml:"cluster_name"`
 }
 
 type Component struct {
@@ -141,6 +141,7 @@ type Config struct {
 	TravisCI *TravisCI          `json:"travis_ci,omitempty" yaml:"travis_ci,omitempty"`
 }
 
+//FIXME: yaml.Unmarshal does not recognize aws_provider_version
 func ReadConfig(b []byte) (*Config, error) {
 	c := &Config{
 		Docker: true,

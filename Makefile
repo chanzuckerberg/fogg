@@ -69,7 +69,7 @@ clean: ## clean the repo
 	rm coverage.out 2>/dev/null || true
 
 update-golden-files: clean ## update the golden files in testdata
-	go test -v -run TestIntegration ./apply/ -update
+	# go test -v -run TestIntegration ./apply/ -update
 	#go test -v -run TestIntegrationYaml ./apply/ -update
 
 .PHONY: update-golden-files

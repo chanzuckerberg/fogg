@@ -22,8 +22,8 @@ func TestComponentKindGetOrDefault(t *testing.T) {
 }
 
 func TestParseDefaults(t *testing.T) {
-	json := `
-	{
+	json :=
+		`{
 		"defaults": {
 			"aws_region_backend": "us-west-2",
 			"aws_region_provider": "us-west-1",
@@ -35,10 +35,21 @@ func TestParseDefaults(t *testing.T) {
 			"terraform_version": "0.11.0"
 		}
 	}`
+
 	r := ioutil.NopCloser(strings.NewReader(json))
 	defer r.Close()
+
 	c, e := ReadConfig([]byte(json))
 	assert.NoError(t, e)
+
+	assert.Equal(t, "czi", c.Defaults.AWSProfileBackend)
+	assert.Equal(t, "czi", c.Defaults.AWSProfileProvider)
+	assert.Equal(t, "the-bucket", c.Defaults.InfraBucket)
+	assert.Equal(t, "the-table", c.Defaults.InfraDynamoTable)
+	assert.Equal(t, "test-project", c.Defaults.Project)
+	assert.Equal(t, "0.11.0", c.Defaults.TerraformVersion)
+	assert.Equal(t, true, c.Docker)
+
 	assert.NotNil(t, c.Defaults)
 	assert.Equal(t, "us-west-2", c.Defaults.AWSRegionBackend)
 	assert.Equal(t, "us-west-1", c.Defaults.AWSRegionProvider)
@@ -83,7 +94,7 @@ func TestParse(t *testing.T) {
 	assert.NotNil(t, c.Modules)
 }
 
-func TestJsonFailure(t *testing.T) {
+func TestYamlFailure(t *testing.T) {
 	json := `foo`
 	r := ioutil.NopCloser(strings.NewReader(json))
 	defer r.Close()
@@ -118,22 +129,22 @@ func TestValidation(t *testing.T) {
 }
 
 func TestExtraVarsValidation(t *testing.T) {
-	json := `
-	{
-		"defaults": {
-			"aws_region_backend": "us-west-2",
-			"account_id": 123456789,
-			"aws_region_provider": "us-west-1",
-			"aws_profile_backend": "czi",
-			"aws_profile_provider": "czi",
-			"aws_provider_version": "czi",
-			"infra_s3_bucket": "the-bucket",
-			"infra_dynamo_db_table": "the-table",
-			"project": "test-project",
-			"owner": "test@test.com",
-			"terraform_version": "0.11.0"
-		}
-	}`
+	json := `{
+			"defaults": {
+				"aws_region_backend": "us-west-2",
+				"account_id": 123456789,
+				"aws_region_provider": "us-west-1",
+				"aws_profile_backend": "czi",
+				"aws_profile_provider": "czi",
+				"aws_provider_version": "czi",
+				"infra_s3_bucket": "the-bucket",
+				"infra_dynamo_db_table": "the-table",
+				"project": "test-project",
+				"owner": "test@test.com",
+				"terraform_version": "0.11.0"
+			}
+		}`
+
 	r := ioutil.NopCloser(strings.NewReader(json))
 	defer r.Close()
 
