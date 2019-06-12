@@ -22,24 +22,23 @@ func TestComponentKindGetOrDefault(t *testing.T) {
 }
 
 func TestParseDefaults(t *testing.T) {
-	json :=
-		`{
-		"defaults": {
-			"aws_region_backend": "us-west-2",
-			"aws_region_provider": "us-west-1",
-			"aws_profile_backend": "czi",
-			"aws_profile_provider": "czi",
-			"infra_s3_bucket": "the-bucket",
-			"infra_dynamo_db_table": "the-table",
-			"project": "test-project",
-			"terraform_version": "0.11.0"
-		}
-	}`
+	yaml :=
+		`
+defaults:
+  aws_profile_backend: czi
+  aws_profile_provider: czi
+  aws_region_backend: us-west-2
+  aws_region_provider: us-west-1
+  infra_dynamo_db_table: the-table
+  infra_s3_bucket: the-bucket
+  project: test-project
+  terraform_version: 0.11.0
+`
 
-	r := ioutil.NopCloser(strings.NewReader(json))
+	r := ioutil.NopCloser(strings.NewReader(yaml))
 	defer r.Close()
 
-	c, e := ReadConfig([]byte(json))
+	c, e := ReadConfig([]byte(yaml))
 	assert.NoError(t, e)
 
 	assert.Equal(t, "czi", c.Defaults.AWSProfileBackend)
@@ -105,6 +104,17 @@ func TestYamlFailure(t *testing.T) {
 	assert.Nil(t, c)
 	assert.NotNil(t, e)
 }
+func TestJsonFailure(t *testing.T) {
+	yaml := `foo`
+	r := ioutil.NopCloser(strings.NewReader(yaml))
+	defer r.Close()
+	b, e := ioutil.ReadAll(r)
+	assert.NoError(t, e)
+
+	c, e := ReadJsonConfig(b)
+	assert.Nil(t, c)
+	assert.NotNil(t, e)
+}
 
 func TestValidation(t *testing.T) {
 	json := `{}`
@@ -129,26 +139,25 @@ func TestValidation(t *testing.T) {
 }
 
 func TestExtraVarsValidation(t *testing.T) {
-	json := `{
-			"defaults": {
-				"aws_region_backend": "us-west-2",
-				"account_id": 123456789,
-				"aws_region_provider": "us-west-1",
-				"aws_profile_backend": "czi",
-				"aws_profile_provider": "czi",
-				"aws_provider_version": "czi",
-				"infra_s3_bucket": "the-bucket",
-				"infra_dynamo_db_table": "the-table",
-				"project": "test-project",
-				"owner": "test@test.com",
-				"terraform_version": "0.11.0"
-			}
-		}`
+	yaml := `
+defaults:
+  account_id: 123456789
+  aws_profile_backend: czi
+  aws_profile_provider: czi
+  aws_provider_version: czi
+  aws_region_backend: us-west-2
+  aws_region_provider: us-west-1
+  infra_dynamo_db_table: the-table
+  infra_s3_bucket: the-bucket
+  owner: test@test.com
+  project: test-project
+  terraform_version: 0.11.0
+`
 
-	r := ioutil.NopCloser(strings.NewReader(json))
+	r := ioutil.NopCloser(strings.NewReader(yaml))
 	defer r.Close()
 
-	c, e := ReadConfig([]byte(json))
+	c, e := ReadConfig([]byte(yaml))
 	assert.Nil(t, e)
 
 	e = c.Validate()

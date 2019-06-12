@@ -17,7 +17,7 @@ func init() {
 var planCmd = &cobra.Command{
 	Use:           "plan",
 	Short:         "Run a plan",
-	Long:          "plan will read fogg.yml, use that to generate a plan and print that plan out. It will make no changes.",
+	Long:          "plan will read fogg.yml or fogg.json, use that to generate a plan and print that plan out. It will make no changes.",
 	SilenceErrors: true, // If we don't silence here, cobra will print them. But we want to do that in cmd/root.go
 	RunE: func(cmd *cobra.Command, args []string) error {
 		setupDebug(debug)
@@ -52,6 +52,7 @@ var planCmd = &cobra.Command{
 			return e
 		}
 
-		return plan.Print(p)
+		//Pass configFile name to print using the correct format
+		return plan.Print(p, configFile)
 	},
 }

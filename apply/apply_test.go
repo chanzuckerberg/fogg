@@ -1,7 +1,6 @@
 package apply
 
 import (
-	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"os"
@@ -256,7 +255,6 @@ travis_ci:
   id_account_name: id
   test_buckets: 7
 `
-	fmt.Println(yaml)
 	c, e := v1.ReadConfig([]byte(yaml))
 	r.NoError(e)
 	c2, e := config.UpgradeConfigVersion(c)

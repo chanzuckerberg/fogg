@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
@@ -152,6 +153,17 @@ func ReadConfig(b []byte) (*Config, error) {
 	return c, nil
 }
 
+func ReadJsonConfig(b []byte) (*Config, error) {
+	c := &Config{
+		Docker: true,
+	}
+	e := json.Unmarshal(b, c)
+	if e != nil {
+		return nil, errs.WrapUser(e, "unable to parse json config file")
+	}
+	return c, nil
+}
+
 // Validate validates the config
 func (c *Config) Validate() error {
 	err := c.validateExtraVars()
@@ -162,7 +174,7 @@ func (c *Config) Validate() error {
 	v := validator.New()
 	// https://github.com/go-playground/validator/issues/323#issuecomment-343670840
 	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
-		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+		name := strings.SplitN(fld.Tag.Get("yml"), ",", 2)[0]
 
 		if name == "-" {
 			return ""

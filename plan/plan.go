@@ -1,6 +1,7 @@
 package plan
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -18,96 +19,96 @@ const (
 
 // Plan represents a set of actions to take
 type Plan struct {
-	Accounts map[string]Account
-	Envs     map[string]Env
-	Global   Component
-	Modules  map[string]Module
-	TravisCI TravisCI
-	Version  string
+	Accounts map[string]Account `json:"account" yaml:"account"`
+	Envs     map[string]Env     `json:"envs" yaml:"envs"`
+	Global   Component          `json:"global" yaml:"global"`
+	Modules  map[string]Module  `json:"modules" yaml:"modules"`
+	TravisCI TravisCI           `json:"travis_ci" yaml:"travis_ci"`
+	Version  string             `json:"version" yaml:"version"`
 }
 
 // Common represents common fields
 type Common struct {
-	Docker             bool   `yaml:"docker"`
-	DockerImageVersion string `yaml:"docker_image_version"`
-	PathToRepoRoot     string `yaml:"path_to_repo_root"`
-	TerraformVersion   string `yaml:"terraform_version"`
+	Docker             bool   `json:"docker" yaml:"docker"`
+	DockerImageVersion string `json:"docker_image_version" yaml:"docker_image_version"`
+	PathToRepoRoot     string `json:"path_to_repo_root" yaml:"path_to_repo_root"`
+	TerraformVersion   string `json:"terraform_version" yaml:"terraform_version"`
 }
 
 type ComponentCommon struct {
-	Common `yaml:",inline"`
+	Common `json:",inline" yaml:",inline"`
 
-	Backend   AWSBackend        `yaml:"backend"`
-	ExtraVars map[string]string `yaml:"extra_vars"`
+	Backend   AWSBackend        `json:"backend" yaml:"backend"`
+	ExtraVars map[string]string `json:"extra_vars" yaml:"extra_vars"`
 	Owner     string
 	Project   string
-	Providers Providers `yaml:"providers"`
+	Providers Providers `json:"providers" yaml:"providers"`
 	TfLint    TfLint
 }
 
 type Providers struct {
-	AWS       *AWSProvider       `yaml:"aws"`
-	Snowflake *SnowflakeProvider `yaml:"snowflake"`
-	Bless     *BlessProvider     `yaml:"bless"`
+	AWS       *AWSProvider       `json:"aws" yaml:"aws"`
+	Snowflake *SnowflakeProvider `json:"snowflake" yaml:"snowflake"`
+	Bless     *BlessProvider     `json:"bless" yaml:"bless"`
 }
 
 type AWSProvider struct {
-	AccountID         int64    `yaml:"account_id"`
-	Profile           string   `yaml:"profile"`
-	Version           string   `yaml:"version"`
-	Region            string   `yaml:"region"`
-	AdditionalRegions []string `yaml:"additional_regions"`
+	AccountID         int64    `json:"account_id" yaml:"account_id"`
+	Profile           string   `json:"profile" yaml:"profile"`
+	Version           string   `json:"version" yaml:"version"`
+	Region            string   `json:"region" yaml:"region"`
+	AdditionalRegions []string `json:"additional_regions" yaml:"additional_regions"`
 }
 
 type SnowflakeProvider struct {
-	Account string  `yaml:"account,omitempty"`
-	Role    string  `yaml:"role,omitempty"`
-	Region  string  `yaml:"region,omitempty"`
-	Version *string `yaml:"version,omitempty"`
+	Account string  `json:"account,omitempty" yaml:"account,omitempty"`
+	Role    string  `json:"role,omitempty" yaml:"role,omitempty"`
+	Region  string  `json:"region,omitempty" yaml:"region,omitempty"`
+	Version *string `json:"version,omitempty" yaml:"version,omitempty"`
 }
 
 type BlessProvider struct {
-	AdditionalRegions []string `yaml:"additional_regions,omitempty"`
-	AWSProfile        string   `yaml:"aws_profile,omitempty"`
-	AWSRegion         string   `yaml:"aws_region,omitempty"`
-	Version           *string  `yaml:"version,omitempty"`
+	AdditionalRegions []string `json:"additional_regions,omitempty" yaml:"additional_regions,omitempty"`
+	AWSProfile        string   `json:"aws_profile,omitempty" yaml:"aws_profile,omitempty"`
+	AWSRegion         string   `json:"aws_region,omitempty" yaml:"aws_region,omitempty"`
+	Version           *string  `json:"version,omitempty" yaml:"version,omitempty"`
 }
 
 // AWSBackend represents aws backend configuration
 type AWSBackend struct {
-	AccountName string  `yaml:"account_name"`
-	Profile     string  `yaml:"profile"`
-	Region      string  `yaml:"region"`
-	Bucket      string  `yaml:"bucket"`
-	DynamoTable *string `yaml:"dynamo_table"`
+	AccountName string  `json:"account_name" yaml:"account_name"`
+	Profile     string  `json:"profile" yaml:"profile"`
+	Region      string  `json:"region" yaml:"region"`
+	Bucket      string  `json:"bucket" yaml:"bucket"`
+	DynamoTable *string `json:"dynamo_table" yaml:"dynamo_table"`
 }
 
 // Module is a module
 type Module struct {
-	Common `yaml:",inline"`
+	Common `json:",inline" yaml:",inline"`
 }
 
 // Account is an account
 type Account struct {
-	ComponentCommon `yaml:",inline"`
+	ComponentCommon `json:",inline" yaml:",inline"`
 
-	AllAccounts map[string]int64 `yaml:"all_accounts"`
-	AccountName string           `yaml:"account_name"`
+	AllAccounts map[string]int64 `json:"all_accounts" yaml:"all_accounts"`
+	AccountName string           `json:"account_name" yaml:"account_name"`
 	Global      *Component
 }
 
 // Component is a component
 type Component struct {
-	ComponentCommon `yaml:",inline"`
+	ComponentCommon `json:",inline" yaml:",inline"`
 
 	Accounts  map[string]Account // Reference accounts for remote state
 	Component string
-	EKS       *v1.EKSConfig `yaml:"eks,omitempty"`
+	EKS       *v1.EKSConfig `json:"eks,omitempty" yaml:"eks,omitempty"`
 	Env       string
 
-	Kind            *v1.ComponentKind `yaml:"kind,omitempty"`
-	ModuleSource    *string           `yaml:"module_source"`
-	OtherComponents []string          `yaml:"other_components"`
+	Kind            *v1.ComponentKind `json:"kind,omitempty" yaml:"kind,omitempty"`
+	ModuleSource    *string           `json:"module_source" yaml:"module_source"`
+	OtherComponents []string          `json:"other_components" yaml:"other_components"`
 	Global          *Component
 }
 
@@ -151,13 +152,22 @@ func Eval(c *v2.Config) (*Plan, error) {
 	return p, nil
 }
 
-// Print prints a plan
-func Print(p *Plan) error {
-	out, err := yaml.Marshal(p)
-	if err != nil {
-		return errs.WrapInternal(err, "yaml: could not marshal")
+// Print prints a plan based on fogg file type
+func Print(p *Plan, fileName string) error {
+	switch fileName {
+	case "fogg.json":
+		out, err := json.Marshal(p)
+		if err != nil {
+			return errs.WrapInternal(err, "json: could not marshal")
+		}
+		fmt.Print(string(out))
+	default: // When fogg file type is yml
+		out, err := yaml.Marshal(p)
+		if err != nil {
+			return errs.WrapInternal(err, "yaml: could not marshal")
+		}
+		fmt.Print(string(out))
 	}
-	fmt.Print(string(out))
 	return nil
 }
 

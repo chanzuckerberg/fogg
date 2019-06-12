@@ -31,7 +31,7 @@ func init() {
 var awsConfigCmd = &cobra.Command{
 	Use:   "aws-config",
 	Short: "Generates an ~/.aws/config from your fogg.yml",
-	Long:  "This command will help generate a ~/.aws/config from your fogg.yml or fogg.json",
+	Long:  "This command will help generate a ~/.aws/config from your fogg.yml",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		// Set up fs
