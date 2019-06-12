@@ -19,7 +19,7 @@ install:
 
 script:
   - STEP_START=$(date +%s)
-  - STEP_SPAN_ID=$(echo install | sum | cut -f 1 -d \ )
+  - STEP_SPAN_ID=$(echo script | sum | cut -f 1 -d \ )
   - buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID codecov-validate -- curl --data-binary @codecov.yml https://codecov.io/validate
   - buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID make-test-coverage -- make test-coverage
   # Disable snyk until https://github.com/snyk/snyk/issues/354 is resolved
@@ -28,7 +28,7 @@ script:
 
 after_failure:
   - STEP_START=$(date +%s)
-  - STEP_SPAN_ID=$(echo after_success | sum | cut -f 1 -d \ )
+  - STEP_SPAN_ID=$(echo after_failure | sum | cut -f 1 -d \ )
   - buildevents step $TRAVIS_BUILD_ID $STEP_SPAN_ID $STEP_START after_failure
   - buildevents travis-ci build $TRAVIS_BUILD_ID $BUILD_START failure
 
