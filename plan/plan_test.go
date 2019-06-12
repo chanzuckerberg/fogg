@@ -1,7 +1,6 @@
 package plan
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/config"
@@ -97,7 +96,6 @@ func TestPlanBasicV1(t *testing.T) {
 	assert.Equal(t, "0.100.0", plan.Envs["staging"].Components["comp1"].TerraformVersion)
 
 	assert.NotNil(t, plan.Envs["staging"].Components["comp_helm_template"])
-	fmt.Printf("'%v'", plan.Envs["staging"].Components["comp_helm_template"].EKS.ClusterName)
 	assert.Equal(t, "k8s", plan.Envs["staging"].Components["comp_helm_template"].EKS.ClusterName)
 }
 

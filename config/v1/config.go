@@ -137,11 +137,10 @@ type Config struct {
 	Docker   bool               `json:"docker,omitempty" yaml:"docker,omitempty"`
 	Envs     map[string]Env     `json:"envs" yaml:"envs"`
 	Modules  map[string]Module  `json:"modules" yaml:"modules"`
-	Plugins  Plugins            `json:"plugins,omitempty" yaml:"plugins"` //FIXME: JSON still appears even if it is omitted, checkout InitConfig (plugs is omitted )
+	Plugins  Plugins            `json:"plugins,omitempty" yaml:"plugins"`
 	TravisCI *TravisCI          `json:"travis_ci,omitempty" yaml:"travis_ci,omitempty"`
 }
 
-//FIXME: yaml.Unmarshal does not recognize aws_provider_version
 func ReadConfig(b []byte) (*Config, error) {
 	c := &Config{
 		Docker: true,
@@ -163,7 +162,7 @@ func (c *Config) Validate() error {
 	v := validator.New()
 	// https://github.com/go-playground/validator/issues/323#issuecomment-343670840
 	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
-		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0] //TODO: Explore what this does
+		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
 
 		if name == "-" {
 			return ""

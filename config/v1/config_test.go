@@ -95,8 +95,8 @@ func TestParse(t *testing.T) {
 }
 
 func TestYamlFailure(t *testing.T) {
-	json := `foo`
-	r := ioutil.NopCloser(strings.NewReader(json))
+	yaml := `foo`
+	r := ioutil.NopCloser(strings.NewReader(yaml))
 	defer r.Close()
 	b, e := ioutil.ReadAll(r)
 	assert.NoError(t, e)

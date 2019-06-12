@@ -394,7 +394,7 @@ func applyModuleInvocation(fs afero.Fs, path, moduleAddress string, box packr.Bo
 func calculateModuleAddressForSource(path, moduleAddress string) (string, error) {
 	// For cases where the module is a local path, we need to calculate the
 	// relative path from the component to the module.
-	// The module_source path in the fogg.yml and fogg.json is relative to the repo root.
+	// The module_source path in the fogg.yml is relative to the repo root.
 	var moduleAddressForSource string
 	// getter will kinda normalize the module address, but it will actually be
 	// wrong for local file paths, so we need to calculate that ourselves below

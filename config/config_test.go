@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -265,7 +264,6 @@ func TestUpgradeConfigVersion(t *testing.T) {
 			}
 
 			if diff := deep.Equal(tt.want, got); diff != nil {
-				fmt.Printf("'%v", diff)
 				t.Error(diff)
 			}
 		})
