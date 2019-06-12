@@ -1,6 +1,7 @@
 package apply
 
 import (
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"os"
@@ -224,49 +225,39 @@ func TestApplySmokeTest(t *testing.T) {
 	r.NoError(err)
 	// defer os.RemoveAll(d)
 
-	json := `
-{
-  "defaults": {
-    "aws_region_provider": "reg",
-    "aws_region_backend": "reg",
-    "aws_profile_provider": "prof",
-    "aws_profile_backend": "prof",
-    "aws_provider_version": "0.12.0",
-    "account_id": 789,
-    "infra_s3_bucket": "buck",
-    "project": "proj",
-    "terraform_version": "0.100.0",
-    "owner": "foo@example.com"
-  },
-  "travis_ci": {
-	"enabled": true,
-	"aws_iam_role_name": "travis",
-        "id_account_name": "id",
-        "test_buckets": 7
-  },
-  "accounts": {
-    "foo": {
-      "account_id": 123
-    },
-    "bar": {
-      "account_id": 456
-    }
-  },
-  "modules": {
-    "my_module": {}
-  },
-  "envs": {
-    "staging":{
-        "components": {
-            "comp1": {},
-            "comp2": {}
-        }
-    },
-    "prod": {}
-  }
-}
+	yaml := `
+accounts:
+  bar:
+    account_id: 456
+  foo:
+    account_id: 123
+defaults:
+  account_id: 789
+  aws_profile_backend: prof
+  aws_profile_provider: prof
+  aws_provider_version: 0.12.0
+  aws_region_backend: reg
+  aws_region_provider: reg
+  infra_s3_bucket: buck
+  owner: foo@example.com
+  project: proj
+  terraform_version: 0.100.0
+envs:
+  prod: {}
+  staging:
+    components:
+      comp1: {}
+      comp2: {}
+modules:
+  my_module: {}
+travis_ci:
+  aws_iam_role_name: travis
+  enabled: true
+  id_account_name: id
+  test_buckets: 7
 `
-	c, e := v1.ReadConfig([]byte(json))
+	fmt.Println(yaml)
+	c, e := v1.ReadConfig([]byte(yaml))
 	r.NoError(e)
 	c2, e := config.UpgradeConfigVersion(c)
 	r.NoError(e)
