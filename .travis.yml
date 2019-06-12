@@ -6,9 +6,9 @@ install:
   - mkdir bin # this is in theory supposed to exist already
   - curl -L -o bin/buildevents https://github.com/honeycombio/buildevents/releases/latest/download/buildevents
   - chmod 755 bin/buildevents
-  - ./buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID npm install -g snyk
-  - ./buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID make setup
-  - ./buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID go get -u github.com/haya14busa/goverage
+  - buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID npm install -g snyk
+  - buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID make setup
+  - buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID go get -u github.com/haya14busa/goverage
 
 script:
   - make
