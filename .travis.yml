@@ -3,11 +3,13 @@ sudo: false
 go:
   - "1.12"
 install:
+  - STEP_START=$(date +%s)
+  - STEP_SPAN_ID=$(echo install | sum | cut -f 1 -d \ )
   - mkdir bin # this is in theory supposed to exist already
   - curl -L -o bin/buildevents https://github.com/honeycombio/buildevents/releases/latest/download/buildevents
   - chmod 755 bin/buildevents
   - echo $PATH
-  # - ./bin/buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID npm-install -- npm install -g snyk
+  - ./bin/buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID npm-install -- npm install -g snyk
   - ./bin/buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID make_setup -- make setup
   - ./bin/buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID go_get -- go get -u github.com/haya14busa/goverage
 
