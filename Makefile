@@ -43,14 +43,14 @@ build: packr ## build the binary
 coverage: ## run the go coverage tool, reading file coverage.out
 	go tool cover -html=coverage.out
 
-test: ## run tests
+test: packr ## run tests
 	gotest -cover ./...
 
-test-offline: ## run only tests that don't require internet
+test-offline: packr  ## run only tests that don't require internet
 	gotest -tags=offline ./...
 .PHONY: test-offline
 
-test-coverage: ## run the test with proper coverage reporting
+test-coverage: packr  ## run the test with proper coverage reporting
 	goverage -coverprofile=coverage.out -covermode=atomic ./...
 	go tool cover -html=coverage.out
 .PHONY: test-coverage
