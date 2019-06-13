@@ -49,7 +49,7 @@ func (c *Config) Validate() ([]string, error) {
 	errs = multierror.Append(errs, c.validateModules())
 
 	if c.Docker {
-		warnings = append(warnings, "Docker support is deprecated and will be removed in a future version of fogg.")
+		warnings = append(warnings, "Docker support is no longer supported and the config entry is ignored.")
 	}
 
 	return warnings, errs.ErrorOrNil()

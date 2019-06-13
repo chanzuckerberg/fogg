@@ -26,7 +26,6 @@ func TestInitConfig(t *testing.T) {
 	a.Equal("me@foo.example", c.Defaults.Owner)
 	a.Equal("proj", c.Defaults.Project)
 	a.Equal("0.11.7", c.Defaults.TerraformVersion)
-	a.Equal(false, c.Docker)
 }
 
 func Test_detectVersion(t *testing.T) {
@@ -78,7 +77,6 @@ func TestUpgradeConfigVersion(t *testing.T) {
 	a.NoError(e)
 	v2Full := &v2.Config{
 		Version: 2,
-		Docker:  false,
 		Defaults: v2.Defaults{
 			Common: v2.Common{
 				Backend: &v2.Backend{

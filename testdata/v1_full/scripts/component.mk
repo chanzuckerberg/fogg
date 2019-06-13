@@ -32,7 +32,6 @@ get: ssh-forward terraform
 plan: terraform fmt get init ssh-forward
 	$(terraform_command) plan
 
-apply: FOGG_DOCKER_FLAGS = -it
 apply: terraform fmt get init ssh-forward
 	$(terraform_command) apply -auto-approve=$(AUTO_APPROVE)
 
@@ -60,12 +59,6 @@ check-plan: terraform init get ssh-forward
 		echo "Diff";  \
 	fi
 
-ssh-forward:
-ifdef USE_DOCKER
-	bash $(REPO_ROOT)/scripts/docker-ssh-forward.sh
-endif
-
-run: FOGG_DOCKER_FLAGS = -it
 run:
 	$(terraform_command) $(CMD)
 
