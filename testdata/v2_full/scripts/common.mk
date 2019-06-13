@@ -17,7 +17,7 @@ ifdef USE_DOCKER
 		-v $(REPO_ROOT)/.fogg/bin:/usr/local/bin -v $(REPO_ROOT)/terraform.d:/repo/$(REPO_RELATIVE_PATH)/terraform.d \
 		-e GIT_SSH_COMMAND='ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
 		-e RUN_USER_ID=$(shell id -u) -e RUN_GROUP_ID=$(shell id -g) \
-		-e TF_PLUGIN_CACHE_DIR="/repo/.terraform.d/plugin-cache" -e TF="$(TF)" \
+		-e TF_PLUGIN_CACHE_DIR="/repo/.terraform.d/plugin-cache" -e TF="$(TF)" -e TF_IN_AUTOMATION=1 \
 		-w /repo/$(REPO_RELATIVE_PATH) $(TF_VARS) $(FOGG_DOCKER_FLAGS) $$(sh $(REPO_ROOT)/scripts/docker-ssh-mount.sh)
 	docker_terraform = $(docker_base) chanzuckerberg/terraform:$(IMAGE_VERSION)
 	docker_sh = $(docker_base) --entrypoint='/bin/sh' chanzuckerberg/terraform:$(IMAGE_VERSION)
@@ -28,6 +28,7 @@ else
 	export PATH :=$(TFENV_DIR)/versions/$(TERRAFORM_VERSION)/:$(REPO_ROOT)/.fogg/bin:$(PATH)
 	export TF_PLUGIN_CACHE_DIR=$(REPO_ROOT)/.terraform.d/plugin-cache
 	sh_command ?= $(SHELL)
+	export TF_IN_AUTOMATION=1
 	terraform_command ?= $(TFENV_DIR)/versions/$(TERRAFORM_VERSION)/terraform
 endif
 
