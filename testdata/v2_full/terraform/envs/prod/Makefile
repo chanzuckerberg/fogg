@@ -2,7 +2,6 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 COMPONENTS=
-figlet_docker = docker run --rm mbentley/figlet
 
 all:
 
@@ -18,7 +17,6 @@ fmt:
 
 check-plan:
 	@for c in $(COMPONENTS); do \
-		$(figlet_docker) "envs/prod/$$c"; \
 		$(MAKE) -C $$c check-plan || exit $$? ; \
 	done
 
@@ -29,7 +27,6 @@ docs:
 
 clean:
 	@for c in $(COMPONENTS); do \
-		$(figlet_docker) "envs/prod/$$c"; \
 		$(MAKE) -C $$c clean || exit $$? ; \
 	done
 

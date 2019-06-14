@@ -11,11 +11,6 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-const (
-	// The version of the chanzuckerberg/terraform docker image to use
-	dockerImageVersion = "0.2.1"
-)
-
 // Plan represents a set of actions to take
 type Plan struct {
 	Accounts map[string]Account
@@ -28,10 +23,8 @@ type Plan struct {
 
 // Common represents common fields
 type Common struct {
-	Docker             bool   `yaml:"docker"`
-	DockerImageVersion string `yaml:"docker_image_version"`
-	PathToRepoRoot     string `yaml:"path_to_repo_root"`
-	TerraformVersion   string `yaml:"terraform_version"`
+	PathToRepoRoot   string `yaml:"path_to_repo_root"`
+	TerraformVersion string `yaml:"terraform_version"`
 }
 
 type ComponentCommon struct {
@@ -173,8 +166,6 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 		accountPlan.TfLint = resolveTfLint(c.Tools.TfLint, nil)
 		accountPlan.AllAccounts = resolveAccounts(c.Accounts)
 		accountPlan.PathToRepoRoot = "../../../"
-		accountPlan.Docker = c.Docker
-		accountPlan.DockerImageVersion = dockerImageVersion
 		accountPlan.Global = &p.Global
 
 		accountPlans[name] = accountPlan
@@ -188,10 +179,8 @@ func (p *Plan) buildModules(c *v2.Config) map[string]Module {
 	for name, conf := range c.Modules {
 		modulePlan := Module{}
 
-		modulePlan.DockerImageVersion = dockerImageVersion
 		modulePlan.PathToRepoRoot = "../../../"
 		modulePlan.TerraformVersion = *v2.ResolveModuleTerraformVersion(c.Defaults, conf)
-		modulePlan.Docker = c.Docker
 		modulePlans[name] = modulePlan
 	}
 	return modulePlans
@@ -213,14 +202,11 @@ func (p *Plan) buildGlobal(conf *v2.Config) Component {
 	componentPlan.ComponentCommon = resolveComponentCommon(defaults.Common, global.Common)
 
 	componentPlan.Component = "global"
-	componentPlan.DockerImageVersion = dockerImageVersion
 	componentPlan.OtherComponents = []string{}
 	componentPlan.ExtraVars = resolveExtraVars(defaults.ExtraVars, global.ExtraVars)
 	componentPlan.PathToRepoRoot = "../../"
 
 	componentPlan.TfLint = resolveTfLint(conf.Tools.TfLint, nil)
-
-	componentPlan.Docker = conf.Docker
 
 	return componentPlan
 }
@@ -252,13 +238,11 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 
 			componentPlan.Env = envName
 			componentPlan.Component = componentName
-			componentPlan.DockerImageVersion = dockerImageVersion
 			componentPlan.OtherComponents = otherComponentNames(conf.Envs[envName].Components, componentName)
 			componentPlan.ModuleSource = componentConf.ModuleSource
 			componentPlan.PathToRepoRoot = "../../../../"
 
 			componentPlan.TfLint = resolveTfLint(conf.Tools.TfLint, nil)
-			componentPlan.Docker = conf.Docker
 			componentPlan.Global = &p.Global
 
 			envPlan.Components[componentName] = componentPlan
