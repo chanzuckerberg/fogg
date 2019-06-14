@@ -137,9 +137,7 @@ func Eval(c *v2.Config) (*Plan, error) {
 	}
 	p.Modules = p.buildModules(c)
 
-	if c.Tools.TravisCI != nil {
-		p.TravisCI = p.buildTravisCI(c, v)
-	}
+	p.TravisCI = p.buildTravisCI(c, v)
 
 	return p, nil
 }
@@ -163,7 +161,6 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 
 		accountPlan.AccountName = name
 		accountPlan.ComponentCommon = resolveComponentCommon(defaults.Common, acct.Common)
-		accountPlan.TfLint = resolveTfLint(c.Tools.TfLint, nil)
 		accountPlan.AllAccounts = resolveAccounts(c.Accounts)
 		accountPlan.PathToRepoRoot = "../../../"
 		accountPlan.Global = &p.Global
@@ -206,8 +203,6 @@ func (p *Plan) buildGlobal(conf *v2.Config) Component {
 	componentPlan.ExtraVars = resolveExtraVars(defaults.ExtraVars, global.ExtraVars)
 	componentPlan.PathToRepoRoot = "../../"
 
-	componentPlan.TfLint = resolveTfLint(conf.Tools.TfLint, nil)
-
 	return componentPlan
 }
 
@@ -242,7 +237,6 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			componentPlan.ModuleSource = componentConf.ModuleSource
 			componentPlan.PathToRepoRoot = "../../../../"
 
-			componentPlan.TfLint = resolveTfLint(conf.Tools.TfLint, nil)
 			componentPlan.Global = &p.Global
 
 			envPlan.Components[componentName] = componentPlan
@@ -289,6 +283,12 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
+	tflintConfig := v2.ResolveTfLint(commons...)
+
+	tfLintPlan := TfLint{
+		Enabled: *tflintConfig.Enabled,
+	}
+
 	return ComponentCommon{
 		Backend: AWSBackend{
 			Region:      v2.ResolveRequiredString(v2.BackendRegionGetter, commons...),
@@ -301,6 +301,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Snowflake: snowflakePlan,
 			Bless:     blessPlan,
 		},
+		TfLint:    tfLintPlan,
 		ExtraVars: v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),
 		Owner:     v2.ResolveRequiredString(v2.OwnerGetter, commons...),
 		Project:   v2.ResolveRequiredString(v2.ProjectGetter, commons...),
@@ -352,28 +353,4 @@ func resolveAccounts(accounts map[string]v2.Account) map[string]int64 {
 		}
 	}
 	return a
-}
-
-func resolveTfLint(def *v1.TfLint, override *v1.TfLint) TfLint {
-	enabled := false
-	if def != nil && def.Enabled != nil {
-		enabled = *def.Enabled
-	}
-	if override != nil && override.Enabled != nil {
-		enabled = *override.Enabled
-	}
-	return TfLint{
-		Enabled: enabled,
-	}
-}
-
-func resolveTfLintComponent(def TfLint, override *v1.TfLint) TfLint {
-
-	enabled := def.Enabled
-	if override != nil && override.Enabled != nil {
-		enabled = *override.Enabled
-	}
-	return TfLint{
-		Enabled: enabled,
-	}
 }

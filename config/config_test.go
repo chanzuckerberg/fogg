@@ -99,18 +99,19 @@ func TestUpgradeConfigVersion(t *testing.T) {
 				Project:          util.StrPtr("test-project"),
 				ExtraVars:        map[string]string{"foo": "bar"},
 				TerraformVersion: util.StrPtr("0.11.0"),
+				Tools: v2.Tools{
+					TfLint: &v1.TfLint{
+						Enabled: boolptr(true),
+					},
+					TravisCI: &v1.TravisCI{
+						Enabled:        true,
+						AWSIAMRoleName: "travis-role",
+						TestBuckets:    13,
+					},
+				},
 			},
 		},
-		Tools: v2.Tools{
-			TfLint: &v1.TfLint{
-				Enabled: boolptr(true),
-			},
-			TravisCI: &v1.TravisCI{
-				Enabled:        true,
-				AWSIAMRoleName: "travis-role",
-				TestBuckets:    13,
-			},
-		},
+
 		Accounts: map[string]v2.Account{
 			"foo": v2.Account{
 				Common: v2.Common{

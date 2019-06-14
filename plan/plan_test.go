@@ -166,63 +166,6 @@ func TestExtraVarsCompositionV2(t *testing.T) {
 
 }
 
-func TestResolveTfLint(test *testing.T) {
-	a := assert.New(test)
-	t := true
-	f := false
-
-	data := []struct {
-		def    *bool
-		over   *bool
-		output bool
-	}{
-		{nil, nil, false},
-		{nil, &t, true},
-		{nil, &f, false},
-		{&t, nil, true},
-		{&t, &t, true},
-		{&t, &f, false},
-		{&f, nil, false},
-		{&f, &t, true},
-		{&f, &f, false},
-	}
-	for _, r := range data {
-		test.Run("", func(t *testing.T) {
-			def := &v1.TfLint{Enabled: r.def}
-			over := &v1.TfLint{Enabled: r.over}
-			result := resolveTfLint(def, over)
-			a.Equal(r.output, result.Enabled)
-		})
-	}
-}
-
-func TestResolveTfLintComponent(test *testing.T) {
-	a := assert.New(test)
-	t := true
-	f := false
-
-	data := []struct {
-		def    bool
-		over   *bool
-		output bool
-	}{
-		{t, nil, true},
-		{t, &t, true},
-		{t, &f, false},
-		{f, nil, false},
-		{f, &t, true},
-		{f, &f, false},
-	}
-	for _, r := range data {
-		test.Run("", func(t *testing.T) {
-			def := TfLint{Enabled: r.def}
-			over := &v1.TfLint{Enabled: r.over}
-			result := resolveTfLintComponent(def, over)
-			a.Equal(r.output, result.Enabled)
-		})
-	}
-}
-
 func TestResolveEKSConfig(t *testing.T) {
 	a := assert.New(t)
 	a.Equal("", resolveEKSConfig(nil, nil).ClusterName)

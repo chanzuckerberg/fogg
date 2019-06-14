@@ -135,6 +135,19 @@ func ResolveBlessProvider(commons ...Common) *BlessProvider {
 	}
 }
 
+func ResolveTfLint(commons ...Common) v1.TfLint {
+	enabled := false
+	for _, c := range commons {
+		if c.Tools.TfLint != nil && c.Tools.TfLint.Enabled != nil {
+			enabled = *c.Tools.TfLint.Enabled
+		}
+	}
+
+	return v1.TfLint{
+		Enabled: &enabled,
+	}
+}
+
 func OwnerGetter(comm Common) *string {
 	return comm.Owner
 }

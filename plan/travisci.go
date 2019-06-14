@@ -25,8 +25,12 @@ func (p *Plan) buildTravisCI(c *v2.Config, version string) TravisCI {
 		panic("buildTravisCI must be run after buildAccounts")
 	}
 
+	if c.Defaults.Tools.TravisCI == nil {
+		return TravisCI{}
+	}
+
 	tr := TravisCI{
-		Enabled: c.Tools.TravisCI.Enabled,
+		Enabled: c.Defaults.Tools.TravisCI.Enabled,
 	}
 	var profiles []AWSProfile
 
@@ -38,14 +42,14 @@ func (p *Plan) buildTravisCI(c *v2.Config, version string) TravisCI {
 			// TODO since accountID is required here, that means we need
 			// to make it non-optional, either in defaults or post-plan.
 			ID:   p.Accounts[name].Providers.AWS.AccountID,
-			Role: c.Tools.TravisCI.AWSIAMRoleName,
+			Role: c.Defaults.Tools.TravisCI.AWSIAMRoleName,
 		})
 	}
 	tr.AWSProfiles = profiles
 
 	var buckets int
-	if c.Tools.TravisCI.TestBuckets > 0 {
-		buckets = c.Tools.TravisCI.TestBuckets
+	if c.Defaults.Tools.TravisCI.TestBuckets > 0 {
+		buckets = c.Defaults.Tools.TravisCI.TestBuckets
 	} else {
 		buckets = 1
 	}
