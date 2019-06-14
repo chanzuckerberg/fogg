@@ -22,7 +22,6 @@ tfenv:
 		echo; \
 		git clone https://github.com/tfutils/tfenv.git $(TFENV_DIR); \
 	fi
-
 .PHONY: tfenv
 
 terraform: tfenv
