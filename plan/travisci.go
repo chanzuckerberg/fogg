@@ -25,7 +25,7 @@ func (p *Plan) buildTravisCI(c *v2.Config, version string) TravisCI {
 		panic("buildTravisCI must be run after buildAccounts")
 	}
 
-	if c.Defaults.Tools.TravisCI == nil {
+	if c.Defaults.Tools == nil || c.Defaults.Tools.TravisCI == nil {
 		return TravisCI{}
 	}
 

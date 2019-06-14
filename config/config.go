@@ -130,7 +130,7 @@ func UpgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 			Owner:            util.StrPtr(def1.Owner),
 			Project:          util.StrPtr(def1.Project),
 			TerraformVersion: util.StrPtr(def1.TerraformVersion),
-			Tools: v2.Tools{
+			Tools: &v2.Tools{
 				TfLint:   def1.TfLint,
 				TravisCI: c1.TravisCI,
 			},

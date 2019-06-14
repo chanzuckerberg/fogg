@@ -22,7 +22,7 @@ func Test_buildTravisCI_Disabled(t *testing.T) {
 		c := &v2.Config{
 			Defaults: v2.Defaults{
 				Common: v2.Common{
-					Tools: v2.Tools{
+					Tools: &v2.Tools{
 						TravisCI: &v1.TravisCI{
 							Enabled: false,
 						},
@@ -61,7 +61,7 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 					Region:  util.StrPtr("us-west-2"),
 					Profile: util.StrPtr("profile"),
 				},
-				Tools: v2.Tools{TravisCI: &v1.TravisCI{
+				Tools: &v2.Tools{TravisCI: &v1.TravisCI{
 					Enabled:        true,
 					AWSIAMRoleName: "rollin",
 				}},
@@ -110,7 +110,7 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 					Region:  util.StrPtr("us-west-2"),
 					Profile: util.StrPtr("profile"),
 				},
-				Tools: v2.Tools{TravisCI: &v1.TravisCI{
+				Tools: &v2.Tools{TravisCI: &v1.TravisCI{
 					Enabled:        true,
 					AWSIAMRoleName: "rollin",
 				}},

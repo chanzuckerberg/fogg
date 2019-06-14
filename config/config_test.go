@@ -99,7 +99,7 @@ func TestUpgradeConfigVersion(t *testing.T) {
 				Project:          util.StrPtr("test-project"),
 				ExtraVars:        map[string]string{"foo": "bar"},
 				TerraformVersion: util.StrPtr("0.11.0"),
-				Tools: v2.Tools{
+				Tools: &v2.Tools{
 					TfLint: &v1.TfLint{
 						Enabled: boolptr(true),
 					},

@@ -37,7 +37,7 @@ type Common struct {
 	Project          *string           `json:"project,omitempty" `
 	Providers        *Providers        `json:"providers,omitempty" `
 	TerraformVersion *string           `json:"terraform_version,omitempty"`
-	Tools            Tools             `json:"tools,omitempty"`
+	Tools            *Tools            `json:"tools,omitempty"`
 }
 
 type Defaults struct {
@@ -203,12 +203,20 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 			},
 			TerraformVersion: randStringPtr(r, s),
 		}
-		c.Tools = Tools{}
 
 		if r.Float32() < 0.5 {
-			c.Tools.TravisCI = &v1.TravisCI{
-				Enabled:     r.Float32() < 0.5,
-				TestBuckets: r.Intn(size),
+			c.Tools = &Tools{}
+			if r.Float32() < 0.5 {
+				c.Tools.TravisCI = &v1.TravisCI{
+					Enabled:     r.Float32() < 0.5,
+					TestBuckets: r.Intn(size),
+				}
+			}
+			if r.Float32() < 0.5 {
+				p := r.Float32() < 0.5
+				c.Tools.TfLint = &v1.TfLint{
+					Enabled: &p,
+				}
 			}
 		}
 

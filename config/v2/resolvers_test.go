@@ -30,8 +30,8 @@ func TestResolveTfLint(test *testing.T) {
 	}
 	for _, r := range data {
 		test.Run("", func(t *testing.T) {
-			def := v2.Common{Tools: v2.Tools{TfLint: &v1.TfLint{Enabled: r.def}}}
-			over := v2.Common{Tools: v2.Tools{TfLint: &v1.TfLint{Enabled: r.over}}}
+			def := v2.Common{Tools: &v2.Tools{TfLint: &v1.TfLint{Enabled: r.def}}}
+			over := v2.Common{Tools: &v2.Tools{TfLint: &v1.TfLint{Enabled: r.over}}}
 			result := v2.ResolveTfLint(def, over)
 			a.Equal(r.output, result.Enabled)
 		})
