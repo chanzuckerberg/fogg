@@ -23,7 +23,7 @@ func TestReadConfig(t *testing.T) {
 	b2, e := util.TestFile("v2_minimal_valid")
 	a.NoError(e)
 
-	c, e = ReadConfig(b2)
+	c, e = ReadJsonConfig(b2)
 	a.NoError(e)
 
 	w, e = c.Validate()

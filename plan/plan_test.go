@@ -60,7 +60,7 @@ func TestResolveAccounts(t *testing.T) {
 
 func TestPlanBasicV1(t *testing.T) {
 	a := assert.New(t)
-	b, e := util.TestFileYml("v1_full_plan")
+	b, e := util.TestFile("v1_full_plan")
 	a.NoError(e)
 	c, err := v1.ReadConfig(b)
 	assert.Nil(t, err)

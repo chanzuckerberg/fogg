@@ -11,6 +11,7 @@ import (
 
 	"github.com/chanzuckerberg/fogg/apply"
 	"github.com/chanzuckerberg/fogg/config"
+	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/sirupsen/logrus"
@@ -62,20 +63,38 @@ func TestIntegration(t *testing.T) {
 				e = apply.Apply(testdataFs, conf, templates.Templates, true)
 				a.NoError(e)
 			} else {
-
+				isYaml := true
+				//testdataFs => each directory in testdata
 				fs, _, e := util.TestFs()
 				a.NoError(e)
 
 				// copy fogg.json into the tmp test dir (so that it doesn't show up as a diff)
-				configContents, e := afero.ReadFile(testdataFs, "fogg.json")
+				configContents, e := afero.ReadFile(testdataFs, "fogg.yml")
+				if e != nil {
+					configContents, e = afero.ReadFile(testdataFs, "fogg.json")
+					isYaml = false
+				}
 				a.NoError(e)
-				configMode, e := testdataFs.Stat("fogg.json")
-				a.NoError(e)
-				a.NoError(afero.WriteFile(fs, "fogg.json", configContents, configMode.Mode()))
 
-				conf, e := config.FindAndReadConfig(fs, "fogg.json")
-				a.NoError(e)
-				fmt.Printf("conf %#v\n", conf)
+				var configMode os.FileInfo
+				var conf *v2.Config
+				if isYaml {
+					configMode, e = testdataFs.Stat("fogg.yml")
+					a.NoError(e)
+					a.NoError(afero.WriteFile(fs, "fogg.yml", configContents, configMode.Mode()))
+
+					conf, e = config.FindAndReadConfig(fs, "fogg.yml")
+					a.NoError(e)
+					fmt.Printf("conf %#v\n", conf)
+				} else {
+					configMode, e = testdataFs.Stat("fogg.json")
+					a.NoError(e)
+					a.NoError(afero.WriteFile(fs, "fogg.json", configContents, configMode.Mode()))
+
+					conf, e = config.FindAndReadConfig(fs, "fogg.json")
+					a.NoError(e)
+					fmt.Printf("conf %#v\n", conf)
+				}
 
 				w, e := conf.Validate()
 				a.NoError(e)
@@ -94,6 +113,7 @@ func TestIntegration(t *testing.T) {
 						r.NotNil(i1)
 						r.NoError(e1)
 
+						fmt.Println(path)
 						i2, e2 := fs.Stat(path)
 						r.NoError(e2)
 						r.NotNil(i2)

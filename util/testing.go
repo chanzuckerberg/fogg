@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/spf13/afero"
 )
@@ -28,15 +29,13 @@ func ProjectRoot() string {
 
 func TestFile(name string) ([]byte, error) {
 	// calculate the path to repository's root
-	path := filepath.Join(ProjectRoot(), "testdata", name, "fogg.json")
-	return ioutil.ReadFile(path)
-}
-
-//TestFileYml is created to support new yml file type
-func TestFileYml(name string) ([]byte, error) {
-	// calculate the path to repository's root
-	path := filepath.Join(ProjectRoot(), "testdata", name, "fogg.yml")
-	return ioutil.ReadFile(path)
+	if strings.Contains(name, "_yaml") {
+		path := filepath.Join(ProjectRoot(), "testdata", name, "fogg.yml")
+		return ioutil.ReadFile(path)
+	} else {
+		path := filepath.Join(ProjectRoot(), "testdata", name, "fogg.json")
+		return ioutil.ReadFile(path)
+	}
 }
 
 func TestFs() (afero.Fs, string, error) {
