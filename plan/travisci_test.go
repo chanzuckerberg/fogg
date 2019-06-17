@@ -20,9 +20,13 @@ func Test_buildTravisCI_Disabled(t *testing.T) {
 	a := assert.New(t)
 	{
 		c := &v2.Config{
-			Tools: v2.Tools{
-				TravisCI: &v1.TravisCI{
-					Enabled: false,
+			Defaults: v2.Defaults{
+				Common: v2.Common{
+					Tools: &v2.Tools{
+						TravisCI: &v1.TravisCI{
+							Enabled: false,
+						},
+					},
 				},
 			},
 		}
@@ -57,6 +61,10 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 					Region:  util.StrPtr("us-west-2"),
 					Profile: util.StrPtr("profile"),
 				},
+				Tools: &v2.Tools{TravisCI: &v1.TravisCI{
+					Enabled:        true,
+					AWSIAMRoleName: "rollin",
+				}},
 			},
 		},
 		Accounts: map[string]v2.Account{
@@ -64,10 +72,6 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 				Common: v2.Common{Providers: &v2.Providers{AWS: &v2.AWSProvider{AccountID: &id1}}},
 			},
 		},
-		Tools: v2.Tools{TravisCI: &v1.TravisCI{
-			Enabled:        true,
-			AWSIAMRoleName: "rollin",
-		}},
 	}
 
 	w, err := c.Validate()
@@ -106,6 +110,10 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 					Region:  util.StrPtr("us-west-2"),
 					Profile: util.StrPtr("profile"),
 				},
+				Tools: &v2.Tools{TravisCI: &v1.TravisCI{
+					Enabled:        true,
+					AWSIAMRoleName: "rollin",
+				}},
 			},
 		},
 		Accounts: map[string]v2.Account{
@@ -116,10 +124,6 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 				Common: v2.Common{Providers: &v2.Providers{AWS: &v2.AWSProvider{AccountID: &id2}}},
 			},
 		},
-		Tools: v2.Tools{TravisCI: &v1.TravisCI{
-			Enabled:        true,
-			AWSIAMRoleName: "rollin",
-		}},
 	}
 
 	w, err := c.Validate()

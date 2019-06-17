@@ -130,16 +130,11 @@ func UpgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 			Owner:            util.StrPtr(def1.Owner),
 			Project:          util.StrPtr(def1.Project),
 			TerraformVersion: util.StrPtr(def1.TerraformVersion),
+			Tools: &v2.Tools{
+				TfLint:   def1.TfLint,
+				TravisCI: c1.TravisCI,
+			},
 		},
-	}
-
-	c2.Tools = v2.Tools{}
-	if def1.TfLint != nil {
-		c2.Tools.TfLint = def1.TfLint
-	}
-
-	if c1.TravisCI != nil {
-		c2.Tools.TravisCI = c1.TravisCI
 	}
 
 	for acctName, acct := range c1.Accounts {
