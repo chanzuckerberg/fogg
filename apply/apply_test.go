@@ -10,6 +10,7 @@ import (
 
 	"github.com/chanzuckerberg/fogg/config"
 	v1 "github.com/chanzuckerberg/fogg/config/v1"
+	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/sirupsen/logrus"
@@ -218,7 +219,6 @@ func TestCreateFileNonExistentDirectory(t *testing.T) {
 
 }
 
-//TODO: Fix Upgrade, should default to v2 readconfig
 func TestApplySmokeTest(t *testing.T) {
 	r := require.New(t)
 	fs, _, err := util.TestFs()
@@ -226,48 +226,24 @@ func TestApplySmokeTest(t *testing.T) {
 	// defer os.RemoveAll(d)
 
 	yaml := `
-accounts:
-  bar:
-    account_id: 456
-  foo:
-    account_id: 123
 defaults:
-  account_id: 789
-  aws_profile_backend: prof
-  aws_profile_provider: prof
-  aws_provider_version: 0.12.0
-  aws_region_backend: reg
-  aws_region_provider: reg
-  infra_s3_bucket: buck
-  owner: foo@example.com
-  project: proj
-  terraform_version: 0.100.0
-envs:
-  prod: {}
-  staging:
-    components:
-      comp1: {}
-      comp2: {}
-modules:
-  my_module: {}
-travis_ci:
-  aws_iam_role_name: travis
-  enabled: true
-  id_account_name: id
-  test_buckets: 7
+  owner: foo
+  project: bar
+  terraform_version: 0
+  backend:
+    bucket: baz
+    region: qux
+    profile: quux
 version: 2
 `
-	c, e := v1.ReadConfig([]byte(yaml))
+	c, e := v2.ReadConfig([]byte(yaml))
 	r.NoError(e)
 
-	c2, e := config.UpgradeConfigVersion(c)
+	w, e := c.Validate()
 	r.NoError(e)
+	r.Len(w, 0)
 
-	w, e := c2.Validate()
-	r.NoError(e)
-	r.Len(w, 1)
-
-	e = Apply(fs, c2, templates.Templates, false)
+	e = Apply(fs, c, templates.Templates, false)
 	r.NoError(e)
 }
 
