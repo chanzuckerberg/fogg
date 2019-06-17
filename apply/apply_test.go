@@ -10,7 +10,6 @@ import (
 
 	"github.com/chanzuckerberg/fogg/config"
 	v1 "github.com/chanzuckerberg/fogg/config/v1"
-	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/sirupsen/logrus"
@@ -219,6 +218,7 @@ func TestCreateFileNonExistentDirectory(t *testing.T) {
 
 }
 
+//TODO: Fix Upgrade, should default to v2 readconfig
 func TestApplySmokeTest(t *testing.T) {
 	r := require.New(t)
 	fs, _, err := util.TestFs()
@@ -255,15 +255,19 @@ travis_ci:
   enabled: true
   id_account_name: id
   test_buckets: 7
+version: 2
 `
-	c, e := v2.ReadConfig([]byte(yaml))
+	c, e := v1.ReadConfig([]byte(yaml))
 	r.NoError(e)
 
-	w, e := c.Validate()
+	c2, e := config.UpgradeConfigVersion(c)
+	r.NoError(e)
+
+	w, e := c2.Validate()
 	r.NoError(e)
 	r.Len(w, 1)
 
-	e = Apply(fs, c, templates.Templates, false)
+	e = Apply(fs, c2, templates.Templates, false)
 	r.NoError(e)
 }
 

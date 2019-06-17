@@ -157,6 +157,9 @@ func ReadConfig(b []byte) (*Config, error) {
 	} else {
 		e = yaml.Unmarshal(b, c)
 	}
+	if e != nil {
+		return nil, errs.WrapUser(e, "unable to parse config file")
+	}
 
 	return c, errs.WrapUser(e, "unable to parse yaml config file")
 }

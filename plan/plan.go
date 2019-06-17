@@ -1,7 +1,6 @@
 package plan
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -9,7 +8,7 @@ import (
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/util"
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 )
 
 const (
@@ -154,20 +153,11 @@ func Eval(c *v2.Config) (*Plan, error) {
 
 // Print prints a plan based on fogg file type
 func Print(p *Plan, fileName string) error {
-	switch fileName {
-	case "fogg.json":
-		out, err := json.Marshal(p)
-		if err != nil {
-			return errs.WrapInternal(err, "json: could not marshal")
-		}
-		fmt.Print(string(out))
-	default: // When fogg file type is yml
-		out, err := yaml.Marshal(p)
-		if err != nil {
-			return errs.WrapInternal(err, "yaml: could not marshal")
-		}
-		fmt.Print(string(out))
+	out, err := yaml.Marshal(p)
+	if err != nil {
+		return errs.WrapInternal(err, "json: could not marshal")
 	}
+	fmt.Print(string(out))
 	return nil
 }
 

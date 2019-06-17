@@ -5,28 +5,31 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/afero"
 	"gopkg.in/yaml.v2"
 )
 
 //ConvertToYaml method converts fogg.json to fogg.yml
-func ConvertToYaml() error {
-	jsonFile, err := os.Open("fogg.json")
+func ConvertToYaml(fs afero.Fs, configFile string) error {
+	jsonFile, err := fs.Open(configFile)
 	if err != nil {
-		return err
+		return errs.WrapUser(err, "unable to open config file")
 	}
+
 	logrus.Debug("Successfully Opened fogg.json")
 	defer jsonFile.Close()
 
 	//Read the fogg.json file, convert it to yml format
 	byteValue, err := ioutil.ReadAll(jsonFile)
 	if err != nil {
-		return err
+		return errs.WrapUser(err, "unable to read config file")
 	}
 
 	ymlData, err := jsonByteToYaml(byteValue)
 	if err != nil {
-		return err
+		return errs.WrapUser(err, "unable to convert json to yaml")
 	}
 
 	return generateYMLFile(ymlData)
@@ -55,4 +58,13 @@ func generateYMLFile(ymlData []byte) error {
 	err := ioutil.WriteFile("fogg.yml", ymlData, 0644)
 
 	return err
+}
+
+func OpenGitOrExit(fs afero.Fs) {
+	_, err := fs.Stat(".git")
+	if err != nil {
+		// assuming this means no repository
+		logrus.Fatal("fogg must be run from the root of a git repo")
+		os.Exit(1)
+	}
 }

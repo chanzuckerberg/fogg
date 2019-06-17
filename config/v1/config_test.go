@@ -111,7 +111,7 @@ func TestJsonFailure(t *testing.T) {
 	b, e := ioutil.ReadAll(r)
 	assert.NoError(t, e)
 
-	c, e := ReadJsonConfig(b)
+	c, e := ReadConfig(b)
 	assert.Nil(t, c)
 	assert.NotNil(t, e)
 }
