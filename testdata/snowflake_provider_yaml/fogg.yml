@@ -1,0 +1,20 @@
+accounts:
+  foo: {}
+defaults:
+  backend:
+    bucket: bucket
+    profile: foo
+    region: region
+  owner: foo@example.com
+  project: foo
+  providers:
+    snowflake:
+      account: foo
+      region: us-west-2
+      role: bar
+  terraform_version: 1.1.1
+envs:
+  bar:
+    components:
+      bam: {}
+version: 2
