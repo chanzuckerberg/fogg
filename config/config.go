@@ -1,9 +1,8 @@
 package config
 
 import (
-	"io"
+	"encoding/json"
 	"io/ioutil"
-	"strings"
 
 	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
@@ -38,38 +37,6 @@ func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVe
 
 // FindConfig loads a config and its version into memory
 func FindConfig(fs afero.Fs, configFile string) ([]byte, int, error) {
-	switch configFile {
-	case "fogg.json":
-		return findJSON(fs, configFile)
-	default:
-		return findConfig(fs, configFile)
-	}
-}
-
-func findJSON(fs afero.Fs, configFile string) ([]byte, int, error) {
-
-	f, err := fs.Open(configFile)
-	if err != nil {
-		return nil, 0, errs.WrapUser(err, "unable to open config file")
-	}
-
-	reader := io.ReadCloser(f)
-	defer reader.Close()
-
-	b, e := ioutil.ReadAll(reader)
-	if e != nil {
-		return nil, 0, errs.WrapUser(e, "unable to read config")
-	}
-
-	v, err := detectVersion(b)
-	if err != nil {
-		return nil, 0, err
-	}
-	logrus.Debugf("config file version: %#v\n", v)
-	return b, v, nil
-}
-
-func findConfig(fs afero.Fs, configFile string) ([]byte, int, error) {
 	f, err := fs.Open(configFile)
 	if err != nil {
 		return nil, 0, errs.WrapUser(err, "unable to open config file")
@@ -94,41 +61,27 @@ func FindAndReadConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
 		return nil, err
 	}
 
+	var c2 *v2.Config
 	switch v {
 	case 1: //Upgrade the config version
-		if strings.Compare(configFile, "fogg.json") == 0 {
-			c, err := v1.ReadJsonConfig(b)
-			if err != nil {
-				return nil, err
-			}
-			c2, err := UpgradeConfigVersion(c)
-			return c2, err
-		} else {
-			c, err := v1.ReadConfig(b)
-			if err != nil {
-				return nil, err
-			}
-			c2, err := UpgradeConfigVersion(c)
-			return c2, err
+
+		c, err := v1.ReadConfig(b)
+		if err != nil {
+			return nil, err
 		}
+
+		c2, err = UpgradeConfigVersion(c)
 	case 2:
 
-		if strings.Compare(configFile, "fogg.json") == 0 {
-			c2, err := v2.ReadJsonConfig(b)
-			if err != nil {
-				return nil, err
-			}
-			return c2, err
-		} else {
-			c2, err := v2.ReadConfig(b)
-			if err != nil {
-				return nil, err
-			}
-			return c2, err
+		c2, err = v2.ReadConfig(b)
+		if err != nil {
+			return nil, err
 		}
 	default:
 		return nil, errs.NewUser("could not figure out config file version")
 	}
+
+	return c2, err
 }
 
 type ver struct {
@@ -138,7 +91,14 @@ type ver struct {
 // detectVersion will detect the version of a config
 func detectVersion(b []byte) (int, error) {
 	v := &ver{}
-	err := yaml.Unmarshal(b, v)
+	var err error
+
+	if v1.IsJSON(b) {
+		err = json.Unmarshal(b, v)
+	} else {
+		err = yaml.Unmarshal(b, v)
+	}
+
 	if err != nil {
 		return 0, err
 	}

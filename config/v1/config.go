@@ -1,14 +1,17 @@
 package v1
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
+	"unicode"
 
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/hashicorp/go-multierror"
+	"github.com/sirupsen/logrus"
 	"gopkg.in/go-playground/validator.v9"
 	"gopkg.in/yaml.v2"
 )
@@ -143,25 +146,26 @@ type Config struct {
 }
 
 func ReadConfig(b []byte) (*Config, error) {
+	var e error
 	c := &Config{
 		Docker: true,
 	}
-	e := yaml.Unmarshal(b, c)
-	if e != nil {
-		return nil, errs.WrapUser(e, "unable to parse yaml config file")
+
+	if IsJSON(b) {
+		e = json.Unmarshal(b, c)
+		logrus.Warn("JSON is deprecated, consider migrating to yaml")
+	} else {
+		e = yaml.Unmarshal(b, c)
 	}
-	return c, nil
+
+	return c, errs.WrapUser(e, "unable to parse yaml config file")
 }
 
-func ReadJsonConfig(b []byte) (*Config, error) {
-	c := &Config{
-		Docker: true,
-	}
-	e := json.Unmarshal(b, c)
-	if e != nil {
-		return nil, errs.WrapUser(e, "unable to parse json config file")
-	}
-	return c, nil
+func IsJSON(b []byte) bool {
+	jsonPrefix := []byte("{")
+	trimmed := bytes.TrimLeftFunc(b, unicode.IsSpace)
+
+	return bytes.HasPrefix(trimmed, jsonPrefix)
 }
 
 // Validate validates the config

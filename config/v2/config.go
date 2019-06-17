@@ -12,26 +12,18 @@ import (
 )
 
 func ReadConfig(b []byte) (*Config, error) {
+	var e error
 	c := &Config{
 		Docker: false,
 	}
-	e := yaml.Unmarshal(b, c)
-	fmt.Println(string(b))
-	if e != nil {
-		return nil, errs.WrapUser(e, "unable to parse yaml config file")
-	}
-	return c, nil
-}
 
-func ReadJsonConfig(b []byte) (*Config, error) {
-	c := &Config{
-		Docker: false,
+	if v1.IsJSON(b) {
+		e = json.Unmarshal(b, c)
+	} else {
+		e = yaml.Unmarshal(b, c)
 	}
-	e := json.Unmarshal(b, c)
-	if e != nil {
-		return nil, errs.WrapUser(e, "unable to parse json config file")
-	}
-	return c, nil
+
+	return c, errs.WrapUser(e, "unable to parse yaml config file")
 }
 
 type Config struct {

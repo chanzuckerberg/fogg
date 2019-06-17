@@ -23,19 +23,19 @@ func userPrompt() (string, string, string, string, string, string) {
 }
 
 func writeConfig(fs afero.Fs, config *v1.Config) error {
-	yaml, yamlErr := yaml.Marshal(config)
+	yaml, err := yaml.Marshal(config)
 
-	if yamlErr != nil {
-		return errs.WrapInternal(yamlErr, "unable to marshal yaml")
+	if err != nil {
+		return errs.WrapInternal(err, "unable to marshal yaml")
 	}
 
-	yamlConfigFile, yamlErr := fs.Create("fogg.yml")
-	if yamlErr != nil {
-		return errs.WrapInternal(yamlErr, "unable to create config file fogg.yml")
+	yamlConfigFile, err := fs.Create("fogg.yml")
+	if err != nil {
+		return errs.WrapInternal(err, "unable to create config file fogg.yml")
 	}
-	_, yamlStatus := yamlConfigFile.Write(yaml)
+	_, err = yamlConfigFile.Write(yaml)
 
-	return yamlStatus
+	return err
 }
 
 //Init reads user console input and generates a fogg.yml file
