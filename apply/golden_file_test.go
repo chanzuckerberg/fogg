@@ -70,7 +70,7 @@ func TestIntegration(t *testing.T) {
 
 				// copy fogg.json into the tmp test dir (so that it doesn't show up as a diff)
 				configContents, e := afero.ReadFile(testdataFs, "fogg.yml")
-				if e != nil {
+				if os.IsNotExist(e) {
 					configContents, e = afero.ReadFile(testdataFs, "fogg.json")
 					isYaml = false
 				}

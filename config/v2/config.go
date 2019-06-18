@@ -11,6 +11,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+//ReadConfig take a byte array as input and outputs a json or yaml config file
 func ReadConfig(b []byte) (*Config, error) {
 	var e error
 	c := &Config{
