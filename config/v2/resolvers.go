@@ -148,6 +148,19 @@ func ResolveTfLint(commons ...Common) v1.TfLint {
 	}
 }
 
+func ResolveAtlantis(commons ...Common) Atlantis {
+	enabled := false
+	for _, c := range commons {
+		if c.Tools != nil && c.Tools.Atlantis != nil && c.Tools.Atlantis.Enabled != nil {
+			enabled = *c.Tools.Atlantis.Enabled
+		}
+	}
+
+	return Atlantis{
+		Enabled: &enabled,
+	}
+}
+
 func OwnerGetter(comm Common) *string {
 	return comm.Owner
 }

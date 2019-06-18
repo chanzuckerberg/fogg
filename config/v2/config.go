@@ -49,8 +49,13 @@ type Account struct {
 }
 
 type Tools struct {
+	Atlantis *Atlantis    `json:"atlantis,omitempty"`
 	TravisCI *v1.TravisCI `json:"travis_ci,omitempty"`
 	TfLint   *v1.TfLint   `json:"tflint,omitempty"`
+}
+
+type Atlantis struct {
+	Enabled *bool `json:"enabled,omitempty"`
 }
 
 type Env struct {

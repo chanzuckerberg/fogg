@@ -14,6 +14,7 @@ import (
 // Plan represents a set of actions to take
 type Plan struct {
 	Accounts map[string]Account
+	Atlantis Atlantis
 	Envs     map[string]Env
 	Global   Component
 	Modules  map[string]Module
@@ -30,12 +31,13 @@ type Common struct {
 type ComponentCommon struct {
 	Common `yaml:",inline"`
 
-	Backend   AWSBackend        `yaml:"backend"`
-	ExtraVars map[string]string `yaml:"extra_vars"`
-	Owner     string
-	Project   string
-	Providers Providers `yaml:"providers"`
-	TfLint    TfLint
+	AtlantisEnabled bool              `yaml:"atlantis_enabled"`
+	Backend         AWSBackend        `yaml:"backend"`
+	ExtraVars       map[string]string `yaml:"extra_vars"`
+	Owner           string
+	Project         string
+	Providers       Providers `yaml:"providers"`
+	TfLint          TfLint
 }
 
 type Providers struct {
@@ -135,9 +137,10 @@ func Eval(c *v2.Config) (*Plan, error) {
 	if err != nil {
 		return nil, err
 	}
-	p.Modules = p.buildModules(c)
 
+	p.Modules = p.buildModules(c)
 	p.TravisCI = p.buildTravisCI(c, v)
+	p.Atlantis = p.buildAtlantis()
 
 	return p, nil
 }
@@ -289,7 +292,10 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		Enabled: *tflintConfig.Enabled,
 	}
 
+	atlantisConfig := v2.ResolveAtlantis(commons...)
+
 	return ComponentCommon{
+		AtlantisEnabled: *atlantisConfig.Enabled,
 		Backend: AWSBackend{
 			Region:      v2.ResolveRequiredString(v2.BackendRegionGetter, commons...),
 			Profile:     v2.ResolveRequiredString(v2.BackendProfileGetter, commons...),
