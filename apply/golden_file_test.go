@@ -64,7 +64,6 @@ func TestIntegration(t *testing.T) {
 				a.NoError(e)
 			} else {
 				isYaml := true
-				//testdataFs => each directory in testdata
 				fs, _, e := util.TestFs()
 				a.NoError(e)
 
@@ -113,7 +112,6 @@ func TestIntegration(t *testing.T) {
 						r.NotNil(i1)
 						r.NoError(e1)
 
-						fmt.Println(path)
 						i2, e2 := fs.Stat(path)
 						r.NoError(e2)
 						r.NotNil(i2)

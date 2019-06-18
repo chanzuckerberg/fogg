@@ -39,10 +39,10 @@ type ComponentCommon struct {
 
 	Backend   AWSBackend        `json:"backend" yaml:"backend"`
 	ExtraVars map[string]string `json:"extra_vars" yaml:"extra_vars"`
-	Owner     string
-	Project   string
-	Providers Providers `json:"providers" yaml:"providers"`
-	TfLint    TfLint
+	Owner     string            `json:"owner" yaml:"owner"`
+	Project   string            `json:"project" yaml:"project"`
+	Providers Providers         `json:"providers" yaml:"providers"`
+	TfLint    TfLint            `json:"tf_lint" yaml:"tf_lint"`
 }
 
 type Providers struct {
