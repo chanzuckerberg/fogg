@@ -99,3 +99,20 @@ data "terraform_remote_state" "global" {
     {{ if .Global.Backend.Profile }}profile        = "{{ .Global.Backend.Profile }}"{{ end }}
   }
 }
+
+{{ $outer := . }}
+{{ range $accountName, $accountID := .AllAccounts}}
+{{ if ne $accountName $outer.AccountName }}
+data "terraform_remote_state" "{{ $accountName }}" {
+  backend = "s3"
+
+  config = {
+    bucket = "{{ $outer.Backend.Bucket }}"
+    {{ if $outer.Backend.DynamoTable }}dynamodb_table = "{{ $outer.Backend.DynamoTable }}"{{ end -}}
+    key            = "terraform/{{ $outer.Project }}/accounts/{{ $accountName }}.tfstate"
+    region         = "{{ $outer.Backend.Region }}"
+    {{ if $outer.Backend.Profile }}profile        = "{{ $outer.Backend.Profile }}"{{ end }}
+  }
+}
+{{ end }}
+{{ end }}

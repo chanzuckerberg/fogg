@@ -78,3 +78,16 @@ data "terraform_remote_state" "global" {
     profile        = "czi"
   }
 }
+
+data "terraform_remote_state" "foo" {
+  backend = "s3"
+
+  config = {
+    bucket         = "bar-bucket"
+    dynamodb_table = "bar-table"
+
+    key     = "terraform/bar-project/accounts/foo.tfstate"
+    region  = "us-west-bar1"
+    profile = "czi-bar"
+  }
+}
