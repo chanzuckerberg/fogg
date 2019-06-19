@@ -41,9 +41,9 @@ func FindConfig(fs afero.Fs, configFile string) ([]byte, int, error) {
 	if err != nil {
 		return nil, 0, errs.WrapUser(err, "unable to open config file")
 	}
+	defer f.Close()
 
 	b, e := ioutil.ReadAll(f)
-	defer f.Close()
 
 	if e != nil {
 		return nil, 0, errs.WrapUser(e, "unable to read config")
