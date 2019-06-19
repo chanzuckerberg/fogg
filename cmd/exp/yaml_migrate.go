@@ -10,7 +10,6 @@ import (
 )
 
 func init() {
-	yamlMigrateCmd.Flags().StringP("config", "c", "fogg.yml", "Use this to override the fogg config file.")
 	ExpCmd.AddCommand(yamlMigrateCmd)
 }
 

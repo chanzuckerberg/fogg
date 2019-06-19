@@ -32,7 +32,7 @@ func ConvertToYaml(fs afero.Fs, configFile string) error {
 		return errs.WrapUser(err, "unable to convert json to yaml")
 	}
 
-	return generateYMLFile(ymlData)
+	return ioutil.WriteFile("fogg.yml", ymlData, 0644)
 }
 
 //Convert an existing json file into yml text
@@ -47,17 +47,6 @@ func jsonByteToYaml(jsonFileData []byte) ([]byte, error) {
 
 	// Converts generic struct to yaml output
 	return yaml.Marshal(jsonObj)
-}
-
-// Create YML file
-// If file does not exist one will be made, otherwise the current
-// yml file will be updated
-func generateYMLFile(ymlData []byte) error {
-
-	//Write creates a new file if one does not exist
-	err := ioutil.WriteFile("fogg.yml", ymlData, 0644)
-
-	return err
 }
 
 func OpenGitOrExit(fs afero.Fs) {
