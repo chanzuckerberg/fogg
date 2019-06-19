@@ -92,11 +92,11 @@ type BlessProvider struct {
 
 type AWSProvider struct {
 	// the aws provider is optional (above) but if supplied you must set account id and region
-	AccountID         *int64   `json:"account_id,omitempty"`
-	AdditionalRegions []string `json:"additional_regions,omitempty"`
-	Profile           *string  `json:"profile,omitempty"`
-	Region            *string  `json:"region,omitempty"`
-	Version           *string  `json:"version,omitempty"`
+	AccountID         *json.Number `json:"account_id,omitempty"`
+	AdditionalRegions []string     `json:"additional_regions,omitempty"`
+	Profile           *string      `json:"profile,omitempty"`
+	Region            *string      `json:"region,omitempty"`
+	Version           *string      `json:"version,omitempty"`
 }
 
 type SnowflakeProvider struct {
@@ -150,16 +150,6 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		return map[string]string{}
 	}
 
-	randInt64Ptr := func(r *rand.Rand, s int) *int64 {
-		if r.Float32() < 0.5 {
-			i := r.Int63n(int64(size))
-			return &i
-		} else {
-			var i *int64
-			return i
-		}
-	}
-
 	randOktaProvider := func(r *rand.Rand, s int) *OktaProvider {
 		if r.Float32() < 0.5 {
 			return nil
@@ -184,8 +174,9 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 
 	randAWSProvider := func(r *rand.Rand, s int) *AWSProvider {
 		if r.Float32() < 0.5 {
+			accountID := json.Number(randString(r, s))
 			return &AWSProvider{
-				AccountID: randInt64Ptr(r, size),
+				AccountID: &accountID,
 				Region:    randStringPtr(r, s),
 				Profile:   randStringPtr(r, s),
 				Version:   randStringPtr(r, s),

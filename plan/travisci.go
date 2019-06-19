@@ -1,15 +1,16 @@
 package plan
 
 import (
+	"encoding/json"
 	"path"
 
-	"github.com/chanzuckerberg/fogg/config/v2"
+	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/util"
 )
 
 type AWSProfile struct {
 	Name string
-	ID   int64
+	ID   json.Number
 	Role string
 }
 

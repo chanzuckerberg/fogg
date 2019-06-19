@@ -1,6 +1,7 @@
 package plan
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -46,11 +47,11 @@ type Providers struct {
 }
 
 type AWSProvider struct {
-	AccountID         int64    `yaml:"account_id"`
-	Profile           string   `yaml:"profile"`
-	Version           string   `yaml:"version"`
-	Region            string   `yaml:"region"`
-	AdditionalRegions []string `yaml:"additional_regions"`
+	AccountID         json.Number `yaml:"account_id"`
+	Profile           string      `yaml:"profile"`
+	Version           string      `yaml:"version"`
+	Region            string      `yaml:"region"`
+	AdditionalRegions []string    `yaml:"additional_regions"`
 }
 
 type SnowflakeProvider struct {
@@ -90,8 +91,8 @@ type Module struct {
 type Account struct {
 	ComponentCommon `yaml:",inline"`
 
-	AllAccounts map[string]int64 `yaml:"all_accounts"`
-	AccountName string           `yaml:"account_name"`
+	AllAccounts map[string]json.Number `yaml:"all_accounts"`
+	AccountName string                 `yaml:"account_name"`
 	Global      *Component
 }
 
@@ -361,8 +362,8 @@ func resolveExtraVars(vars ...map[string]string) map[string]string {
 	return resolved
 }
 
-func resolveAccounts(accounts map[string]v2.Account) map[string]int64 {
-	a := make(map[string]int64)
+func resolveAccounts(accounts map[string]v2.Account) map[string]json.Number {
+	a := make(map[string]json.Number)
 	for name, account := range accounts {
 		if account.Providers != nil && account.Providers.AWS != nil && account.Providers.AWS.AccountID != nil {
 			a[name] = *account.Providers.AWS.AccountID

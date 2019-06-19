@@ -1,6 +1,8 @@
 package v2
 
 import (
+	"encoding/json"
+
 	v1 "github.com/chanzuckerberg/fogg/config/v1"
 )
 
@@ -26,6 +28,18 @@ func lastNonNilInt64(getter func(Common) *int64, commons ...Common) *int64 {
 		}
 	}
 	return s
+}
+
+// lastNonNilJsonNumber, despite its name can return nil if all results are nil
+func lastNonNilJsonNumber(getter func(Common) *json.Number, commons ...Common) *json.Number {
+	var jsonNumber *json.Number
+	for _, c := range commons {
+		j := getter(c)
+		if j != nil {
+			jsonNumber = j
+		}
+	}
+	return jsonNumber
 }
 
 // lastNonNilStringSlice, despite its name can return nil if all results are nil
@@ -93,7 +107,7 @@ func ResolveAWSProvider(commons ...Common) *AWSProvider {
 			Version: version,
 
 			// optional fields
-			AccountID:         lastNonNilInt64(AWSProviderAccountIdGetter, commons...),
+			AccountID:         lastNonNilJsonNumber(AWSProviderAccountIdGetter, commons...),
 			AdditionalRegions: ResolveOptionalStringSlice(AWSProviderAdditionalRegionsGetter, commons...),
 		}
 	}
@@ -221,7 +235,7 @@ func AWSProviderProfileGetter(comm Common) *string {
 	return nil
 }
 
-func AWSProviderAccountIdGetter(comm Common) *int64 {
+func AWSProviderAccountIdGetter(comm Common) *json.Number {
 	if comm.Providers != nil && comm.Providers.AWS != nil {
 		return comm.Providers.AWS.AccountID
 	}
