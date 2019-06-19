@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"strings"
 	"testing"
@@ -67,7 +68,7 @@ func TestParse(t *testing.T) {
 	c, e := ReadConfig(b)
 	assert.Nil(t, e)
 	assert.NotNil(t, c.Defaults)
-	assert.Equal(t, int64(1), c.Defaults.AccountID)
+	assert.Equal(t, json.Number("1"), c.Defaults.AccountID)
 	assert.Equal(t, "us-west-2", c.Defaults.AWSRegionBackend)
 	assert.Equal(t, "us-west-1", c.Defaults.AWSRegionProvider)
 	assert.Equal(t, "0.1.0", c.Defaults.AWSProviderVersion)

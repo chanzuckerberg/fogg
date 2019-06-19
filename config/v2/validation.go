@@ -46,6 +46,7 @@ func (c *Config) Validate() ([]string, error) {
 	errs = multierror.Append(errs, c.ValidateAWSProviders())
 	errs = multierror.Append(errs, c.ValidateSnowflakeProviders())
 	errs = multierror.Append(errs, c.ValidateBlessProviders())
+	errs = multierror.Append(errs, c.ValidateOktaProviders())
 	errs = multierror.Append(errs, c.validateModules())
 
 	// refactor to make it easier to manage these
@@ -85,7 +86,7 @@ func ValidateAWSProvider(p *AWSProvider, component string) error {
 		errs = multierror.Append(errs, fmt.Errorf("aws provider version for %s ", component))
 	}
 
-	if p.AccountID == nil || *p.AccountID == 0 {
+	if p.AccountID == nil || *p.AccountID == "" {
 		errs = multierror.Append(errs, fmt.Errorf("aws provider account id for %s", component))
 	}
 	return errs
@@ -104,7 +105,21 @@ func (c *Config) ValidateAWSProviders() error {
 	return errs.ErrorOrNil()
 }
 
-func ValidateSnowflakeProvider(p *SnowflakeProvider, component string) error {
+func (p *BlessProvider) Validate(component string) error {
+	var errs *multierror.Error
+	if p == nil {
+		return nil // nothing to do
+	}
+	if p.AWSProfile == nil {
+		errs = multierror.Append(errs, fmt.Errorf("bless provider aws_profile required in %s", component))
+	}
+	if p.AWSRegion == nil {
+		errs = multierror.Append(errs, fmt.Errorf("bless provider aws_region required in %s", component))
+	}
+	return errs
+}
+
+func (p *SnowflakeProvider) Validate(component string) error {
 	var errs *multierror.Error
 	if p == nil {
 		return nil // nothing to do
@@ -125,39 +140,44 @@ func ValidateSnowflakeProvider(p *SnowflakeProvider, component string) error {
 	return errs
 }
 
+func (o *OktaProvider) Validate(component string) error {
+	var errs *multierror.Error
+	if o == nil {
+		return nil
+	}
+	if o.OrgName == nil {
+		errs = multierror.Append(errs, fmt.Errorf("okta provider org_name required in %s", component))
+	}
+	return errs
+}
+
 func (c *Config) ValidateSnowflakeProviders() error {
 	var errs *multierror.Error
-
 	c.WalkComponents(func(component string, comms ...Common) {
-		v := ResolveSnowflakeProvider(comms...)
-		if e := ValidateSnowflakeProvider(v, component); e != nil {
+		p := ResolveSnowflakeProvider(comms...)
+		if e := p.Validate(component); e != nil {
 			errs = multierror.Append(errs, e)
 		}
 	})
-
 	return errs.ErrorOrNil()
 }
 
-func ValidateBlessProvider(p *BlessProvider, component string) error {
+func (c *Config) ValidateOktaProviders() error {
 	var errs *multierror.Error
-	if p == nil {
-		return nil // nothing to do
-	}
-
-	if p.AWSProfile == nil {
-		errs = multierror.Append(errs, fmt.Errorf("bless provider aws_profile required in %s", component))
-	}
-	if p.AWSRegion == nil {
-		errs = multierror.Append(errs, fmt.Errorf("bless provider aws_region required in %s", component))
-	}
+	c.WalkComponents(func(component string, comms ...Common) {
+		p := ResolveOktaProvider(comms...)
+		if err := p.Validate(component); err != nil {
+			errs = multierror.Append(errs, err)
+		}
+	})
 	return errs
 }
 
 func (c *Config) ValidateBlessProviders() error {
 	var errs *multierror.Error
 	c.WalkComponents(func(component string, comms ...Common) {
-		v := ResolveBlessProvider(comms...)
-		if err := ValidateBlessProvider(v, component); err != nil {
+		p := ResolveBlessProvider(comms...)
+		if err := p.Validate(component); err != nil {
 			errs = multierror.Append(errs, err)
 		}
 	})

@@ -1,6 +1,7 @@
 package plan
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/config"
@@ -29,7 +30,7 @@ func init() {
 // }
 
 func TestResolveAccounts(t *testing.T) {
-	foo, bar := int64(123), int64(456)
+	foo, bar := json.Number("123"), json.Number("456")
 
 	accounts := map[string]v2.Account{
 		"foo": {
@@ -55,7 +56,7 @@ func TestResolveAccounts(t *testing.T) {
 
 	other := resolveAccounts(accounts)
 	assert.NotNil(t, other)
-	assert.Equal(t, map[string]int64{"bar": bar, "foo": foo}, other)
+	assert.Equal(t, map[string]json.Number{"bar": bar, "foo": foo}, other)
 }
 
 func TestPlanBasicV1(t *testing.T) {

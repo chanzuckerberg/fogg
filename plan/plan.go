@@ -1,6 +1,7 @@
 package plan
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -39,17 +40,18 @@ type ComponentCommon struct {
 }
 
 type Providers struct {
-	AWS       *AWSProvider       `json:"aws" yaml:"aws"`
-	Snowflake *SnowflakeProvider `json:"snowflake" yaml:"snowflake"`
-	Bless     *BlessProvider     `json:"bless" yaml:"bless"`
+	AWS       *AWSProvider       `yaml:"aws"`
+	Snowflake *SnowflakeProvider `yaml:"snowflake"`
+	Bless     *BlessProvider     `yaml:"bless"`
+	Okta      *OktaProvider      `yaml:"okta"`
 }
 
 type AWSProvider struct {
-	AccountID         int64    `json:"account_id" yaml:"account_id"`
-	Profile           string   `json:"profile" yaml:"profile"`
-	Version           string   `json:"version" yaml:"version"`
-	Region            string   `json:"region" yaml:"region"`
-	AdditionalRegions []string `json:"additional_regions" yaml:"additional_regions"`
+	AccountID         json.Number `yaml:"account_id"`
+	Profile           string      `yaml:"profile"`
+	Version           string      `yaml:"version"`
+	Region            string      `yaml:"region"`
+	AdditionalRegions []string    `yaml:"additional_regions"`
 }
 
 type SnowflakeProvider struct {
@@ -57,6 +59,11 @@ type SnowflakeProvider struct {
 	Role    string  `json:"role,omitempty" yaml:"role,omitempty"`
 	Region  string  `json:"region,omitempty" yaml:"region,omitempty"`
 	Version *string `json:"version,omitempty" yaml:"version,omitempty"`
+}
+
+type OktaProvider struct {
+	OrgName string  `json:"org_name,omitempty"`
+	Version *string `json:"version,omitempty"`
 }
 
 type BlessProvider struct {
@@ -84,9 +91,9 @@ type Module struct {
 type Account struct {
 	ComponentCommon `json:",inline" yaml:",inline"`
 
-	AllAccounts map[string]int64 `json:"all_accounts" yaml:"all_accounts"`
-	AccountName string           `json:"account_name" yaml:"account_name"`
-	Global      *Component       `json: "global" yaml:"global"`
+	AllAccounts map[string]json.Number `yaml:"all_accounts"`
+	AccountName string                 `yaml:"account_name"`
+	Global      *Component             `yaml:global`
 }
 
 // Component is a component
@@ -272,6 +279,15 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
+	var oktaPlan *OktaProvider
+	oktaConfig := v2.ResolveOktaProvider(commons...)
+	if oktaConfig != nil {
+		oktaPlan = &OktaProvider{
+			OrgName: *oktaConfig.OrgName,
+			Version: oktaConfig.Version,
+		}
+	}
+
 	var blessPlan *BlessProvider
 	blessConfig := v2.ResolveBlessProvider(commons...)
 	if blessConfig != nil && blessConfig.AWSProfile != nil && blessConfig.AWSRegion != nil {
@@ -300,6 +316,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			AWS:       awsPlan,
 			Snowflake: snowflakePlan,
 			Bless:     blessPlan,
+			Okta:      oktaPlan,
 		},
 		TfLint:    tfLintPlan,
 		ExtraVars: v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),
@@ -345,8 +362,8 @@ func resolveExtraVars(vars ...map[string]string) map[string]string {
 	return resolved
 }
 
-func resolveAccounts(accounts map[string]v2.Account) map[string]int64 {
-	a := make(map[string]int64)
+func resolveAccounts(accounts map[string]v2.Account) map[string]json.Number {
+	a := make(map[string]json.Number)
 	for name, account := range accounts {
 		if account.Providers != nil && account.Providers.AWS != nil && account.Providers.AWS.AccountID != nil {
 			a[name] = *account.Providers.AWS.AccountID

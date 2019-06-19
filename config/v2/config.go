@@ -82,6 +82,14 @@ type Providers struct {
 	AWS       *AWSProvider       `json:"aws,omitempty" yaml:"aws,omitempty"`
 	Snowflake *SnowflakeProvider `json:"snowflake,omitempty" yaml:"snowflake,omitempty"`
 	Bless     *BlessProvider     `json:"bless,omitempty" yaml:"bless,omitempty"`
+	Okta      *OktaProvider      `json:"okta,omitempty" yaml:"okta,omitempty"`
+}
+
+// OktaProvider is an okta provider
+type OktaProvider struct {
+	// the okta provider is optional (above) but if supplied you must set an OrgName
+	OrgName *string `json:"org_name,omitempty" yaml:"org_name,omitempty"`
+	Version *string `json:"version,omitempty" yaml:"version,omitempty"`
 }
 
 // BlessProvider allows for terraform-provider-bless configuration
@@ -95,11 +103,11 @@ type BlessProvider struct {
 
 type AWSProvider struct {
 	// the aws provider is optional (above) but if supplied you must set account id and region
-	AccountID         *int64   `json:"account_id,omitempty" yaml:"account_id,omitempty"`
-	AdditionalRegions []string `json:"additional_regions,omitempty" yaml:"additional_regions,omitempty"`
-	Profile           *string  `json:"profile,omitempty" yaml:"profile,omitempty"`
-	Region            *string  `json:"region,omitempty" yaml:"region,omitempty"`
-	Version           *string  `json:"version,omitempty" yaml:"version,omitempty"`
+	AccountID         *json.Number `json:"account_id,omitempty" yaml:"account_id,omitempty"`
+	AdditionalRegions []string     `json:"additional_regions,omitempty" yaml:"additional_regions,omitempty"`
+	Profile           *string      `json:"profile,omitempty" yaml:"profile,omitempty"`
+	Region            *string      `json:"region,omitempty" yaml:"region,omitempty"`
+	Version           *string      `json:"version,omitempty" yaml:"version,omitempty"`
 }
 
 type SnowflakeProvider struct {
@@ -153,13 +161,13 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		return map[string]string{}
 	}
 
-	randInt64Ptr := func(r *rand.Rand, s int) *int64 {
+	randOktaProvider := func(r *rand.Rand, s int) *OktaProvider {
 		if r.Float32() < 0.5 {
-			i := r.Int63n(int64(size))
-			return &i
-		} else {
-			var i *int64
-			return i
+			return nil
+		}
+		return &OktaProvider{
+			Version: randStringPtr(r, s),
+			OrgName: randStringPtr(r, s),
 		}
 	}
 
@@ -177,8 +185,9 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 
 	randAWSProvider := func(r *rand.Rand, s int) *AWSProvider {
 		if r.Float32() < 0.5 {
+			accountID := json.Number(randString(r, s))
 			return &AWSProvider{
-				AccountID: randInt64Ptr(r, size),
+				AccountID: &accountID,
 				Region:    randStringPtr(r, s),
 				Profile:   randStringPtr(r, s),
 				Version:   randStringPtr(r, s),
@@ -210,6 +219,7 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 			Providers: &Providers{
 				AWS:       randAWSProvider(r, s),
 				Snowflake: randSnowflakeProvider(r, s),
+				Okta:      randOktaProvider(r, s),
 				Bless:     randBlessProvider(r, s),
 			},
 			TerraformVersion: randStringPtr(r, s),

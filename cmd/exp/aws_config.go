@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"strconv"
 	"strings"
 	"text/template"
 
@@ -87,7 +86,7 @@ output = json
 			roleARN := arn.ARN{
 				Partition: "aws",
 				Service:   "iam",
-				AccountID: strconv.Itoa(int(*account.Providers.AWS.AccountID)),
+				AccountID: account.Providers.AWS.AccountID.String(),
 				Resource:  fmt.Sprintf("role/%s", role),
 			}
 

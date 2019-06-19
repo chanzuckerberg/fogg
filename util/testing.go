@@ -1,10 +1,12 @@
 package util
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 
 	"github.com/spf13/afero"
@@ -12,6 +14,11 @@ import (
 
 func Intptr(i int64) *int64 {
 	return &i
+}
+
+func JsonNumberPtr(i int) *json.Number {
+	j := json.Number(strconv.Itoa(i))
+	return &j
 }
 
 func StrPtr(s string) *string {
