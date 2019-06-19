@@ -93,34 +93,34 @@ type Account struct {
 
 	AllAccounts map[string]int64 `json:"all_accounts" yaml:"all_accounts"`
 	AccountName string           `json:"account_name" yaml:"account_name"`
-	Global      *Component
+	Global      *Component       `json: "global" yaml:"global"`
 }
 
 // Component is a component
 type Component struct {
 	ComponentCommon `json:",inline" yaml:",inline"`
 
-	Accounts  map[string]Account // Reference accounts for remote state
-	Component string
-	EKS       *v1.EKSConfig `json:"eks,omitempty" yaml:"eks,omitempty"`
+	Accounts  map[string]Account `json:"accounts" yaml:"accounts"` // Reference accounts for remote state
+	Component string             `json:"component" yaml:"component"`
+	EKS       *v1.EKSConfig      `json:"eks,omitempty" yaml:"eks,omitempty"`
 	Env       string
 
 	Kind            *v1.ComponentKind `json:"kind,omitempty" yaml:"kind,omitempty"`
 	ModuleSource    *string           `json:"module_source" yaml:"module_source"`
 	OtherComponents []string          `json:"other_components" yaml:"other_components"`
-	Global          *Component
+	Global          *Component        `json:"global" yaml:"global"`
 }
 
 // Env is an env
 type Env struct {
-	Components map[string]Component
-	Env        string
-	EKS        *v1.EKSConfig //TODO get rid of this
+	Components map[string]Component `json:"components" yaml:"components"`
+	Env        string               `json:"env" yaml:"env"`
+	EKS        *v1.EKSConfig        `json:"eks" yaml:"eks"` //TODO get rid of this
 }
 
 // TfLint containts a plan for running tflint
 type TfLint struct {
-	Enabled bool
+	Enabled bool `json:"enabled" yaml:"enabled"`
 }
 
 // Eval evaluates a config
@@ -155,7 +155,7 @@ func Eval(c *v2.Config) (*Plan, error) {
 func Print(p *Plan, fileName string) error {
 	out, err := yaml.Marshal(p)
 	if err != nil {
-		return errs.WrapInternal(err, "json: could not marshal")
+		return errs.WrapInternal(err, "yaml: could not marshal")
 	}
 	fmt.Print(string(out))
 	return nil

@@ -223,7 +223,6 @@ func TestApplySmokeTest(t *testing.T) {
 	r := require.New(t)
 	fs, _, err := util.TestFs()
 	r.NoError(err)
-	// defer os.RemoveAll(d)
 
 	yaml := `
 defaults:

@@ -10,7 +10,6 @@ import (
 )
 
 func init() {
-	//Defaults to fogg.yml but fogg.json can be used as an argument instead
 	upgrade.Flags().StringP("config", "c", "fogg.yml", "Use this to override the fogg config file.")
 	rootCmd.AddCommand(upgrade)
 }

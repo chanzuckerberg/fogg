@@ -63,37 +63,28 @@ func TestIntegration(t *testing.T) {
 				e = apply.Apply(testdataFs, conf, templates.Templates, true)
 				a.NoError(e)
 			} else {
-				isYaml := true
+				fileName := "fogg.yml"
 				fs, _, e := util.TestFs()
 				a.NoError(e)
 
 				// copy fogg.json into the tmp test dir (so that it doesn't show up as a diff)
 				configContents, e := afero.ReadFile(testdataFs, "fogg.yml")
-				if os.IsNotExist(e) {
+				if os.IsNotExist(e) { //If the error is related to the file being non-existent
 					configContents, e = afero.ReadFile(testdataFs, "fogg.json")
-					isYaml = false
+					fileName = "fogg.json"
 				}
 				a.NoError(e)
 
 				var configMode os.FileInfo
 				var conf *v2.Config
-				if isYaml {
-					configMode, e = testdataFs.Stat("fogg.yml")
-					a.NoError(e)
-					a.NoError(afero.WriteFile(fs, "fogg.yml", configContents, configMode.Mode()))
 
-					conf, e = config.FindAndReadConfig(fs, "fogg.yml")
-					a.NoError(e)
-					fmt.Printf("conf %#v\n", conf)
-				} else {
-					configMode, e = testdataFs.Stat("fogg.json")
-					a.NoError(e)
-					a.NoError(afero.WriteFile(fs, "fogg.json", configContents, configMode.Mode()))
+				configMode, e = testdataFs.Stat(fileName)
+				a.NoError(e)
+				a.NoError(afero.WriteFile(fs, fileName, configContents, configMode.Mode()))
 
-					conf, e = config.FindAndReadConfig(fs, "fogg.json")
-					a.NoError(e)
-					fmt.Printf("conf %#v\n", conf)
-				}
+				conf, e = config.FindAndReadConfig(fs, fileName)
+				a.NoError(e)
+				fmt.Printf("conf %#v\n", conf)
 
 				w, e := conf.Validate()
 				a.NoError(e)
