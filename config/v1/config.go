@@ -21,7 +21,7 @@ type TfLint struct {
 }
 
 type Defaults struct {
-	AccountID          int64             `json:"account_id,omitempty" yaml:"account_id,omitempty" validate:"required"`
+	AccountID          json.Number       `json:"account_id,omitempty" yaml:"account_id,omitempty" validate:"required"`
 	AWSProfileBackend  string            `json:"aws_profile_backend" yaml:"aws_profile_backend" validate:"required"`
 	AWSProfileProvider string            `json:"aws_profile_provider" yaml:"aws_profile_provider" validate:"required"`
 	AWSProviderVersion string            `json:"aws_provider_version" yaml:"aws_provider_version" validate:"required"`
@@ -38,7 +38,7 @@ type Defaults struct {
 }
 
 type Account struct {
-	AccountID          *int64            `json:"account_id" yaml:"account_id"`
+	AccountID          *json.Number      `json:"account_id" yaml:"account_id"`
 	AWSProfileBackend  *string           `json:"aws_profile_backend" yaml:"aws_profile_backend"`
 	AWSProfileProvider *string           `json:"aws_profile_provider" yaml:"aws_profile_provider"`
 	AWSProviderVersion *string           `json:"aws_provider_version,omitempty" yaml:"aws_provider_version,omitempty"`
@@ -55,7 +55,7 @@ type Account struct {
 }
 
 type Env struct {
-	AccountID          *int64            `json:"account_id" yaml:"account_id"`
+	AccountID          *json.Number      `json:"account_id" yaml:"account_id"`
 	AWSProfileBackend  *string           `json:"aws_profile_backend" yaml:"aws_profile_backend"`
 	AWSProfileProvider *string           `json:"aws_profile_provider" yaml:"aws_profile_provider"`
 	AWSProviderVersion *string           `json:"aws_provider_version,omitempty" yaml:"aws_provider_version,omitempty"`
@@ -99,7 +99,7 @@ type EKSConfig struct {
 }
 
 type Component struct {
-	AccountID          *int64            `json:"account_id" yaml:"account_id"`
+	AccountID          *json.Number      `json:"account_id" yaml:"account_id"`
 	AWSProfileBackend  *string           `json:"aws_profile_backend" yaml:"aws_profile_backend"`
 	AWSProfileProvider *string           `json:"aws_profile_provider" yaml:"aws_profile_provider"`
 	AWSProviderVersion *string           `json:"aws_provider_version,omitempty" yaml:"aws_provider_version,omitempty"`
