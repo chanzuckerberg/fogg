@@ -33,15 +33,15 @@ lint-terraform-fmt: terraform
 	$(sh_command) -c 'for f in $(TF); do printf .; terraform fmt --check=true --diff=true $$f || exit $$? ; done'
 .PHONY: lint-terraform-fmt
 
-get: ssh-forward terraform
+get: terraform
 	$(terraform_command) get --update=true
 .PHONY: get
 
-plan: terraform fmt get init ssh-forward
+plan: terraform fmt get init
 	$(terraform_command) plan
 .PHONY: plan
 
-apply: terraform fmt get init ssh-forward
+apply: terraform fmt get init
 	$(terraform_command) apply -auto-approve=$(AUTO_APPROVE)
 .PHONY: apply
 
@@ -57,11 +57,11 @@ clean:
 test:
 .PHONY: test
 
-init: terraform ssh-forward
+init: terraform
 	$(terraform_command) init -input=false
 .PHONY: init
 
-check-plan: terraform init get ssh-forward
+check-plan: terraform init get
 	$(terraform_command) plan -detailed-exitcode; \
 	ERR=$$?; \
 	if [ $$ERR -eq 0 ] ; then \
