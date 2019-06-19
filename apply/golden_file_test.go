@@ -9,7 +9,6 @@ import (
 
 	"github.com/chanzuckerberg/fogg/apply"
 	"github.com/chanzuckerberg/fogg/config"
-	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/sirupsen/logrus"
@@ -66,21 +65,18 @@ func TestIntegration(t *testing.T) {
 				a.NoError(e)
 
 				// copy fogg.json into the tmp test dir (so that it doesn't show up as a diff)
-				configContents, e := afero.ReadFile(testdataFs, "fogg.yml")
+				configContents, e := afero.ReadFile(testdataFs, fileName)
 				if os.IsNotExist(e) { //If the error is related to the file being non-existent
-					configContents, e = afero.ReadFile(testdataFs, "fogg.json")
 					fileName = "fogg.json"
+					configContents, e = afero.ReadFile(testdataFs, fileName)
 				}
 				a.NoError(e)
 
-				var configMode os.FileInfo
-				var conf *v2.Config
-
-				configMode, e = testdataFs.Stat(fileName)
+				configMode, e := testdataFs.Stat(fileName)
 				a.NoError(e)
 				a.NoError(afero.WriteFile(fs, fileName, configContents, configMode.Mode()))
 
-				conf, e = config.FindAndReadConfig(fs, fileName)
+				conf, e := config.FindAndReadConfig(fs, fileName)
 				a.NoError(e)
 				fmt.Printf("conf %#v\n", conf)
 

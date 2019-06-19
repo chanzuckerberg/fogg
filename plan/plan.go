@@ -143,7 +143,7 @@ func Eval(c *v2.Config) (*Plan, error) {
 }
 
 // Print prints a plan based on fogg file type
-func Print(p *Plan, fileName string) error {
+func Print(p *Plan) error {
 	out, err := yaml.Marshal(p)
 	if err != nil {
 		return errs.WrapInternal(err, "yaml: could not marshal")
