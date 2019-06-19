@@ -96,3 +96,25 @@ func TestReadOktaProvider(t *testing.T) {
 	r.Equal("aversion", *c.Defaults.Providers.Okta.Version)
 	r.Equal("orgname", *c.Defaults.Providers.Okta.OrgName)
 }
+
+func TestReadAtlantis(t *testing.T) {
+	r := require.New(t)
+
+	b, e := util.TestFile("v2_full")
+	r.NoError(e)
+	r.NotNil(b)
+
+	c, e := ReadConfig(b)
+	r.NoError(e)
+	r.NotNil(c)
+
+	w, e := c.Validate()
+	r.NoError(e)
+	r.Len(w, 0)
+
+	r.NotNil(c.Defaults.Tools)
+	r.NotNil(c.Defaults.Tools.Atlantis)
+	r.True(*c.Defaults.Tools.Atlantis.Enabled)
+	r.Equal("foo", *c.Defaults.Tools.Atlantis.RolePath)
+	r.Equal("bar", *c.Defaults.Tools.Atlantis.RoleName)
+}

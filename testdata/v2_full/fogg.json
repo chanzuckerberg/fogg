@@ -2,6 +2,7 @@
   "version": 2,
   "defaults": {
     "backend": {
+      "account_id": "1234",
       "bucket": "buck",
       "region": "us-west-2",
       "profile": "profile"
@@ -22,7 +23,9 @@
     },
     "tools": {
       "atlantis": {
-        "enabled": true
+        "enabled": true,
+        "role_name": "bar",
+        "role_path": "foo"
       }
     }
   },

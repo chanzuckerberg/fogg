@@ -16,6 +16,11 @@ projects:
     terraform_version: 0.100.0
     workflow: fogg
 
+  - name: global
+    dir: terraform/global
+    terraform_version: 0.100.0
+    workflow: fogg
+
   - name: staging/comp1
     dir: terraform/envs/staging/comp1
     terraform_version: 0.100.0
@@ -41,7 +46,7 @@ workflows:
   fogg:
     plan:
       steps:
-        - run: TF_IN_AUTOMATION=1 AWS_CONFIG_FILE=`git rev-parse --show-toplevel`/tmp/atlantis-aws-config /usr/local/bin/tf/versions/0.11.14/terraform init -input=false -no-color > /tmp/out.txt 2>&1 || (a=$?; echo $a && cat /tmp/out.txt; exit a)
+        - run: TF_IN_AUTOMATION=1 AWS_CONFIG_FILE=`git rev-parse --show-toplevel`/tmp/atlantis-aws-config /usr/local/bin/tf/versions/0.11.14/terraform init -input=false -no-color > /tmp/out.txt 2>&1 || (a=$?; echo $a && cat /tmp/out.txt; exit $a)
         - run: TF_IN_AUTOMATION=1 AWS_CONFIG_FILE=`git rev-parse --show-toplevel`/tmp/atlantis-aws-config /usr/local/bin/tf/versions/0.11.14/terraform plan -input=false -no-color | scenery
     apply:
       steps:

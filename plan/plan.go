@@ -31,13 +31,19 @@ type Common struct {
 type ComponentCommon struct {
 	Common `yaml:",inline"`
 
-	AtlantisEnabled bool              `yaml:"atlantis_enabled"`
-	Backend         AWSBackend        `yaml:"backend"`
-	ExtraVars       map[string]string `yaml:"extra_vars"`
-	Owner           string
-	Project         string
-	Providers       Providers `yaml:"providers"`
-	TfLint          TfLint
+	Atlantis  AtlantisComponent `yaml:"atlantis"`
+	Backend   AWSBackend        `yaml:"backend"`
+	ExtraVars map[string]string `yaml:"extra_vars"`
+	Owner     string
+	Project   string
+	Providers Providers `yaml:"providers"`
+	TfLint    TfLint
+}
+
+type AtlantisComponent struct {
+	Enabled  bool   `yaml:"enabled"`
+	RoleName string `yaml:"role_name"`
+	RolePath string `yaml:"role_path"`
 }
 
 type Providers struct {
@@ -76,6 +82,7 @@ type BlessProvider struct {
 
 // AWSBackend represents aws backend configuration
 type AWSBackend struct {
+	AccountID   *string `yaml:"account_id,omitempty"`
 	AccountName string  `yaml:"account_name"`
 	Profile     string  `yaml:"profile"`
 	Region      string  `yaml:"region"`
@@ -309,9 +316,19 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	atlantisConfig := v2.ResolveAtlantis(commons...)
 
+	atlantisPlan := AtlantisComponent{
+		Enabled: *atlantisConfig.Enabled,
+	}
+	if atlantisPlan.Enabled {
+		atlantisPlan.RoleName = *atlantisConfig.RoleName
+		atlantisPlan.RolePath = *atlantisConfig.RolePath
+
+	}
+
 	return ComponentCommon{
-		AtlantisEnabled: *atlantisConfig.Enabled,
+		Atlantis: atlantisPlan,
 		Backend: AWSBackend{
+			AccountID:   v2.ResolveOptionalString(v2.BackendAccountIdGetter, commons...),
 			Region:      v2.ResolveRequiredString(v2.BackendRegionGetter, commons...),
 			Profile:     v2.ResolveRequiredString(v2.BackendProfileGetter, commons...),
 			Bucket:      v2.ResolveRequiredString(v2.BackendBucketGetter, commons...),
