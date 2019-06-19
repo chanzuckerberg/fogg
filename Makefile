@@ -64,6 +64,7 @@ help: ## display help for this makefile
 clean: ## clean the repo
 	rm fogg 2>/dev/null || true
 	go clean
+	go clean -testcache
 	rm -rf dist 2>/dev/null || true
 	packr clean
 	rm coverage.out 2>/dev/null || true

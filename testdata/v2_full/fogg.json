@@ -19,6 +19,11 @@
     "owner": "foo@example.com",
     "extra_vars": {
       "foo": "bar1"
+    },
+    "tools": {
+      "atlantis": {
+        "enabled": true
+      }
     }
   },
   "accounts": {

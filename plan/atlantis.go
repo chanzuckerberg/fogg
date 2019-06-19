@@ -1,6 +1,9 @@
 package plan
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+)
 
 type Atlantis struct {
 	Enabled  bool
@@ -43,6 +46,11 @@ func (p *Plan) buildAtlantis() Atlantis {
 			}
 		}
 	}
+
+	// sort so that we get stable output
+	sort.SliceStable(projects, func(i, j int) bool {
+		return projects[i].Name < projects[j].Name
+	})
 
 	return Atlantis{
 		Enabled:  enabled,
