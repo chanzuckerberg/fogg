@@ -117,6 +117,19 @@ func ResolveSnowflakeProvider(commons ...Common) *SnowflakeProvider {
 	return nil
 }
 
+func ResolveOktaProvider(commons ...Common) *OktaProvider {
+	orgName := lastNonNil(OktaProviderOrgNameGetter, commons...)
+
+	// required fields
+	if orgName == nil {
+		return nil
+	}
+
+	return &OktaProvider{
+		OrgName: orgName,
+		Version: lastNonNil(OktaProviderVersionGetter, commons...),
+	}
+}
 func ResolveBlessProvider(commons ...Common) *BlessProvider {
 	profile := lastNonNil(BlessProviderProfileGetter, commons...)
 	region := lastNonNil(BlessProviderRegionGetter, commons...)
@@ -297,4 +310,18 @@ func BlessProviderAdditionalRegionsGetter(comm Common) []string {
 		return nil
 	}
 	return comm.Providers.Bless.AdditionalRegions
+}
+
+func OktaProviderVersionGetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.Okta == nil {
+		return nil
+	}
+	return comm.Providers.Okta.Version
+}
+
+func OktaProviderOrgNameGetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.Okta == nil {
+		return nil
+	}
+	return comm.Providers.Okta.OrgName
 }
