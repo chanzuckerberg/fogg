@@ -38,7 +38,6 @@ type Config struct {
 	Global   Component            `json:"global,omitempty" yaml:"global,omitempty"`
 	Modules  map[string]v1.Module `json:"modules,omitempty" yaml:"modules,omitempty"`
 	Plugins  v1.Plugins           `json:"plugins,omitempty" yaml:"plugins,omitempty"`
-	Tools    Tools                `json:"tools,omitempty" yaml:"tools,omitempty"`
 	Version  int                  `json:"version" yaml:"version" validate:"required,eq=2"`
 }
 
@@ -49,6 +48,7 @@ type Common struct {
 	Project          *string           `json:"project,omitempty"  yaml:"project,omitempty"`
 	Providers        *Providers        `json:"providers,omitempty" yaml:"providers,omitempty" `
 	TerraformVersion *string           `json:"terraform_version,omitempty" yaml:"terraform_version,omitempty"`
+	Tools            *Tools            `json:"tools,omitempty" yaml:"tools,omitempty"`
 }
 
 type Defaults struct {
@@ -214,6 +214,23 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 			},
 			TerraformVersion: randStringPtr(r, s),
 		}
+
+		if r.Float32() < 0.5 {
+			c.Tools = &Tools{}
+			if r.Float32() < 0.5 {
+				c.Tools.TravisCI = &v1.TravisCI{
+					Enabled:     r.Float32() < 0.5,
+					TestBuckets: r.Intn(size),
+				}
+			}
+			if r.Float32() < 0.5 {
+				p := r.Float32() < 0.5
+				c.Tools.TfLint = &v1.TfLint{
+					Enabled: &p,
+				}
+			}
+		}
+
 		return c
 	}
 
@@ -224,15 +241,6 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 	}
 
 	// tools
-
-	conf.Tools = Tools{}
-
-	if r.Float32() < 0.5 {
-		conf.Tools.TravisCI = &v1.TravisCI{
-			Enabled:     r.Float32() < 0.5,
-			TestBuckets: r.Intn(size),
-		}
-	}
 
 	conf.Accounts = map[string]Account{}
 	acctN := r.Intn(size)

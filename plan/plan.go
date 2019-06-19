@@ -11,11 +11,6 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-const (
-	// The version of the chanzuckerberg/terraform docker image to use
-	dockerImageVersion = "0.2.1"
-)
-
 // Plan represents a set of actions to take
 type Plan struct {
 	Accounts map[string]Account `json:"account" yaml:"account"`
@@ -28,10 +23,8 @@ type Plan struct {
 
 // Common represents common fields
 type Common struct {
-	Docker             bool   `json:"docker" yaml:"docker"`
-	DockerImageVersion string `json:"docker_image_version" yaml:"docker_image_version"`
-	PathToRepoRoot     string `json:"path_to_repo_root" yaml:"path_to_repo_root"`
-	TerraformVersion   string `json:"terraform_version" yaml:"terraform_version"`
+	PathToRepoRoot   string `yaml:"path_to_repo_root"`
+	TerraformVersion string `yaml:"terraform_version"`
 }
 
 type ComponentCommon struct {
@@ -144,9 +137,7 @@ func Eval(c *v2.Config) (*Plan, error) {
 	}
 	p.Modules = p.buildModules(c)
 
-	if c.Tools.TravisCI != nil {
-		p.TravisCI = p.buildTravisCI(c, v)
-	}
+	p.TravisCI = p.buildTravisCI(c, v)
 
 	return p, nil
 }
@@ -170,11 +161,8 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 
 		accountPlan.AccountName = name
 		accountPlan.ComponentCommon = resolveComponentCommon(defaults.Common, acct.Common)
-		accountPlan.TfLint = resolveTfLint(c.Tools.TfLint, nil)
 		accountPlan.AllAccounts = resolveAccounts(c.Accounts)
 		accountPlan.PathToRepoRoot = "../../../"
-		accountPlan.Docker = c.Docker
-		accountPlan.DockerImageVersion = dockerImageVersion
 		accountPlan.Global = &p.Global
 
 		accountPlans[name] = accountPlan
@@ -188,10 +176,8 @@ func (p *Plan) buildModules(c *v2.Config) map[string]Module {
 	for name, conf := range c.Modules {
 		modulePlan := Module{}
 
-		modulePlan.DockerImageVersion = dockerImageVersion
 		modulePlan.PathToRepoRoot = "../../../"
 		modulePlan.TerraformVersion = *v2.ResolveModuleTerraformVersion(c.Defaults, conf)
-		modulePlan.Docker = c.Docker
 		modulePlans[name] = modulePlan
 	}
 	return modulePlans
@@ -213,14 +199,9 @@ func (p *Plan) buildGlobal(conf *v2.Config) Component {
 	componentPlan.ComponentCommon = resolveComponentCommon(defaults.Common, global.Common)
 
 	componentPlan.Component = "global"
-	componentPlan.DockerImageVersion = dockerImageVersion
 	componentPlan.OtherComponents = []string{}
 	componentPlan.ExtraVars = resolveExtraVars(defaults.ExtraVars, global.ExtraVars)
 	componentPlan.PathToRepoRoot = "../../"
-
-	componentPlan.TfLint = resolveTfLint(conf.Tools.TfLint, nil)
-
-	componentPlan.Docker = conf.Docker
 
 	return componentPlan
 }
@@ -252,13 +233,10 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 
 			componentPlan.Env = envName
 			componentPlan.Component = componentName
-			componentPlan.DockerImageVersion = dockerImageVersion
 			componentPlan.OtherComponents = otherComponentNames(conf.Envs[envName].Components, componentName)
 			componentPlan.ModuleSource = componentConf.ModuleSource
 			componentPlan.PathToRepoRoot = "../../../../"
 
-			componentPlan.TfLint = resolveTfLint(conf.Tools.TfLint, nil)
-			componentPlan.Docker = conf.Docker
 			componentPlan.Global = &p.Global
 
 			envPlan.Components[componentName] = componentPlan
@@ -305,6 +283,12 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
+	tflintConfig := v2.ResolveTfLint(commons...)
+
+	tfLintPlan := TfLint{
+		Enabled: *tflintConfig.Enabled,
+	}
+
 	return ComponentCommon{
 		Backend: AWSBackend{
 			Region:      v2.ResolveRequiredString(v2.BackendRegionGetter, commons...),
@@ -317,6 +301,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Snowflake: snowflakePlan,
 			Bless:     blessPlan,
 		},
+		TfLint:    tfLintPlan,
 		ExtraVars: v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),
 		Owner:     v2.ResolveRequiredString(v2.OwnerGetter, commons...),
 		Project:   v2.ResolveRequiredString(v2.ProjectGetter, commons...),
@@ -368,28 +353,4 @@ func resolveAccounts(accounts map[string]v2.Account) map[string]int64 {
 		}
 	}
 	return a
-}
-
-func resolveTfLint(def *v1.TfLint, override *v1.TfLint) TfLint {
-	enabled := false
-	if def != nil && def.Enabled != nil {
-		enabled = *def.Enabled
-	}
-	if override != nil && override.Enabled != nil {
-		enabled = *override.Enabled
-	}
-	return TfLint{
-		Enabled: enabled,
-	}
-}
-
-func resolveTfLintComponent(def TfLint, override *v1.TfLint) TfLint {
-
-	enabled := def.Enabled
-	if override != nil && override.Enabled != nil {
-		enabled = *override.Enabled
-	}
-	return TfLint{
-		Enabled: enabled,
-	}
 }

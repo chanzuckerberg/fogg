@@ -26,7 +26,6 @@ func TestInitConfig(t *testing.T) {
 	a.Equal("me@foo.example", c.Defaults.Owner)
 	a.Equal("proj", c.Defaults.Project)
 	a.Equal("0.11.7", c.Defaults.TerraformVersion)
-	a.Equal(false, c.Docker)
 }
 
 func Test_detectVersion(t *testing.T) {
@@ -78,7 +77,6 @@ func TestUpgradeConfigVersion(t *testing.T) {
 	a.NoError(e)
 	v2Full := &v2.Config{
 		Version: 2,
-		Docker:  false,
 		Defaults: v2.Defaults{
 			Common: v2.Common{
 				Backend: &v2.Backend{
@@ -101,18 +99,19 @@ func TestUpgradeConfigVersion(t *testing.T) {
 				Project:          util.StrPtr("test-project"),
 				ExtraVars:        map[string]string{"foo": "bar"},
 				TerraformVersion: util.StrPtr("0.11.0"),
+				Tools: &v2.Tools{
+					TfLint: &v1.TfLint{
+						Enabled: boolptr(true),
+					},
+					TravisCI: &v1.TravisCI{
+						Enabled:        true,
+						AWSIAMRoleName: "travis-role",
+						TestBuckets:    13,
+					},
+				},
 			},
 		},
-		Tools: v2.Tools{
-			TfLint: &v1.TfLint{
-				Enabled: boolptr(true),
-			},
-			TravisCI: &v1.TravisCI{
-				Enabled:        true,
-				AWSIAMRoleName: "travis-role",
-				TestBuckets:    13,
-			},
-		},
+
 		Accounts: map[string]v2.Account{
 			"foo": v2.Account{
 				Common: v2.Common{

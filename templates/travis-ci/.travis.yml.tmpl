@@ -4,10 +4,6 @@ language: python
 sudo: required
 python: 3.6
 
-{{ if .Docker }}
-services:
-  - docker
-{{ end }}
 install:
   - pip install awscli --upgrade
   - aws --version

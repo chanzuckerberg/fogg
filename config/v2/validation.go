@@ -48,11 +48,23 @@ func (c *Config) Validate() ([]string, error) {
 	errs = multierror.Append(errs, c.ValidateBlessProviders())
 	errs = multierror.Append(errs, c.validateModules())
 
+	// refactor to make it easier to manage these
+	w, e := c.ValidateToolsTravis()
+	warnings = append(warnings, w...)
+	errs = multierror.Append(errs, e)
+	w, e = c.ValidateToolsTfLint()
+	warnings = append(warnings, w...)
+	errs = multierror.Append(errs, e)
+
 	if c.Docker {
-		warnings = append(warnings, "Docker support is deprecated and will be removed in a future version of fogg.")
+		warnings = append(warnings, "Docker support is no longer supported and the config entry is ignored.")
 	}
 
 	return warnings, errs.ErrorOrNil()
+}
+
+func merge(warnings []string, err *multierror.Error, w []string, e error) ([]string, *multierror.Error) {
+	return append(warnings, w...), multierror.Append(err, e)
 }
 
 func ValidateAWSProvider(p *AWSProvider, component string) error {
@@ -152,6 +164,31 @@ func (c *Config) ValidateBlessProviders() error {
 	return errs
 }
 
+func (c *Config) ValidateToolsTravis() ([]string, error) {
+	var warns []string
+	var errs *multierror.Error
+	c.WalkComponents(func(component string, comms ...Common) {
+		c := comms[len(comms)-1]
+		if c.Tools != nil && c.Tools.TravisCI != nil {
+			warns = append(warns, fmt.Sprintf("per-component travisci config is not implemented, ignoring config in %s", component))
+		}
+	})
+
+	return warns, errs
+}
+
+func (c *Config) ValidateToolsTfLint() ([]string, error) {
+	var warns []string
+	var errs *multierror.Error
+	c.WalkComponents(func(component string, comms ...Common) {
+		c := comms[len(comms)-1]
+		if c.Tools != nil && c.Tools.TfLint != nil {
+			warns = append(warns, fmt.Sprintf("per-component tflint config is not implemented, ignoring config in %s", component))
+		}
+	})
+
+	return warns, errs
+}
 func (c *Config) WalkComponents(f func(component string, commons ...Common)) {
 	for name, acct := range c.Accounts {
 		f(fmt.Sprintf("accounts/%s", name), c.Defaults.Common, acct.Common)

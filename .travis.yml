@@ -1,24 +1,40 @@
 language: go
+sudo: false
 go:
-  - "1.11"
+  - "1.12"
+env:
+  global:
+    - BUILD_START=$(date +%s)
+
 install:
-  - npm install -g snyk
-  - make setup
-  - go get -u github.com/haya14busa/goverage
+  - STEP_START=$(date +%s)
+  - STEP_SPAN_ID=$(echo install | sum | cut -f 1 -d \ )
+  - mkdir bin # this is in theory supposed to exist already
+  - curl -L -o $HOME/bin/buildevents https://github.com/honeycombio/buildevents/releases/latest/download/buildevents
+  - chmod 755 $HOME/bin/buildevents
+  - buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID npm-install -- npm install -g snyk
+  - buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID make-setup -- make setup
+  - buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID go-get -- go get -u github.com/haya14busa/goverage
+  - buildevents step $TRAVIS_BUILD_ID $STEP_SPAN_ID $STEP_START install
 
 script:
-  - make
+  - STEP_START=$(date +%s)
+  - STEP_SPAN_ID=$(echo script | sum | cut -f 1 -d \ )
+  - buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID codecov-validate -- curl --data-binary @codecov.yml https://codecov.io/validate
+  - buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID make-test-coverage -- make test-coverage
+  # Disable snyk until https://github.com/snyk/snyk/issues/354 is resolved
+  # - if [[ ! -z "${SNYK_TOKEN}" ]]; then snyk monitor --org=czi; snyk test; fi
+  - buildevents step $TRAVIS_BUILD_ID $STEP_SPAN_ID $STEP_START script
 
-jobs:
-  include:
-    - stage: check
-      script:
-        - make test-coverage
-        - bash <(curl -s https://codecov.io/bash)
-    # Disable snyk until https://github.com/snyk/snyk/issues/354 is resolved
-    # - stage: check
-    #   script:
-    #     - if [[ ! -z "${SNYK_TOKEN}" ]]; then snyk monitor --org=czi; snyk test; fi
-    - stage: check
-      script:
-        - curl --data-binary @codecov.yml https://codecov.io/validate
+after_failure:
+  - STEP_START=$(date +%s)
+  - STEP_SPAN_ID=$(echo after_failure | sum | cut -f 1 -d \ )
+  - buildevents step $TRAVIS_BUILD_ID $STEP_SPAN_ID $STEP_START after_failure
+  - buildevents travis-ci build $TRAVIS_BUILD_ID $BUILD_START failure
+
+after_success:
+  - STEP_START=$(date +%s)
+  - STEP_SPAN_ID=$(echo after_success | sum | cut -f 1 -d \ )
+  - buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID codecov-upload -- bash <(curl -s https://codecov.io/bash)
+  - buildevents step $TRAVIS_BUILD_ID $STEP_SPAN_ID $STEP_START after_success
+  - buildevents build $TRAVIS_BUILD_ID $BUILD_START success

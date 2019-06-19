@@ -58,7 +58,6 @@ defaults:
 	assert.Equal(t, "the-table", c.Defaults.InfraDynamoTable)
 	assert.Equal(t, "test-project", c.Defaults.Project)
 	assert.Equal(t, "0.11.0", c.Defaults.TerraformVersion)
-	assert.Equal(t, true, c.Docker)
 }
 
 func TestParse(t *testing.T) {
