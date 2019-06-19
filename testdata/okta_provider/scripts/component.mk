@@ -6,48 +6,62 @@ SELF_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 include $(SELF_DIR)/common.mk
 
 all:
+.PHONY: all
 
 check: lint check-plan
+.PHONY: check
 
 fmt: terraform
 	$(sh_command) -c 'for f in $(TF); do printf .; terraform fmt $$f; done'; \
 	echo
+.PHONY: fmt
 
 lint: terraform-validate lint-terraform-fmt lint-tflint
+.PHONY: lint
 
 lint-tflint: init
 	if (( $$TFLINT_ENABLED )); then \
     $(sh_command) -c 'tflint' || exit $$?; \
-	fi \
+	fi
+.PHONY: lint-tflint
 
 terraform-validate: terraform init
 	$(sh_command) -c 'terraform validate -check-variables=true'
+.PHONY: terraform-validate
 
 lint-terraform-fmt: terraform
 	$(sh_command) -c 'for f in $(TF); do printf .; terraform fmt --check=true --diff=true $$f || exit $$? ; done'
+.PHONY: lint-terraform-fmt
 
-get: ssh-forward terraform
+get: terraform
 	$(terraform_command) get --update=true
+.PHONY: get
 
-plan: terraform fmt get init ssh-forward
+plan: terraform fmt get init
 	$(terraform_command) plan
+.PHONY: plan
 
-apply: terraform fmt get init ssh-forward
+apply: terraform fmt get init
 	$(terraform_command) apply -auto-approve=$(AUTO_APPROVE)
+.PHONY: apply
 
 docs:
 	echo
+.PHONY: docs
 
 clean:
 	-rm -rfv .terraform/modules
 	-rm -rfv .terraform/plugins
+.PHONY: clean
 
 test:
+.PHONY: test
 
-init: terraform ssh-forward
+init: terraform
 	$(terraform_command) init -input=false
+.PHONY: init
 
-check-plan: terraform init get ssh-forward
+check-plan: terraform init get
 	$(terraform_command) plan -detailed-exitcode; \
 	ERR=$$?; \
 	if [ $$ERR -eq 0 ] ; then \
@@ -58,8 +72,8 @@ check-plan: terraform init get ssh-forward
 	elif [ $$ERR -eq 2 ] ; then \
 		echo "Diff";  \
 	fi
+.PHONY: check-plan
 
 run:
 	$(terraform_command) $(CMD)
-
-.PHONY: all apply clean docs fmt get lint plan run ssh-forward test
+.PHONY: run
