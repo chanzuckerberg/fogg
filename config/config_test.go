@@ -1,7 +1,9 @@
 package config
 
 import (
+	"encoding/json"
 	"os"
+	"strconv"
 	"testing"
 
 	v1 "github.com/chanzuckerberg/fogg/config/v1"
@@ -61,6 +63,11 @@ func intptr(i int64) *int64 {
 	return &i
 }
 
+func jsonNumberPtr(i int) *json.Number {
+	j := json.Number(strconv.Itoa(i))
+	return &j
+}
+
 func strptr(s string) *string {
 	return &s
 }
@@ -88,7 +95,7 @@ func TestUpgradeConfigVersion(t *testing.T) {
 
 				Providers: &v2.Providers{
 					AWS: &v2.AWSProvider{
-						AccountID:         intptr(1),
+						AccountID:         jsonNumberPtr(1),
 						Profile:           strptr("czi"),
 						Region:            strptr("us-west-1"),
 						Version:           strptr("0.1.0"),
@@ -124,7 +131,7 @@ func TestUpgradeConfigVersion(t *testing.T) {
 
 					Providers: &v2.Providers{
 						AWS: &v2.AWSProvider{
-							AccountID:         intptr(2),
+							AccountID:         jsonNumberPtr(2),
 							Profile:           strptr("czi-foo"),
 							Region:            strptr("us-west-foo1"),
 							Version:           strptr("0.12.0"),
@@ -148,7 +155,7 @@ func TestUpgradeConfigVersion(t *testing.T) {
 
 					Providers: &v2.Providers{
 						AWS: &v2.AWSProvider{
-							AccountID:         intptr(3),
+							AccountID:         jsonNumberPtr(3),
 							Profile:           strptr("czi-bar"),
 							Region:            strptr("us-west-bar1"),
 							Version:           strptr("0.13.0"),
@@ -175,7 +182,7 @@ func TestUpgradeConfigVersion(t *testing.T) {
 
 					Providers: &v2.Providers{
 						AWS: &v2.AWSProvider{
-							AccountID:         intptr(4),
+							AccountID:         jsonNumberPtr(4),
 							Profile:           strptr("czi-stage"),
 							Region:            strptr("us-west-stage1"),
 							Version:           strptr("0.14.0"),
@@ -199,7 +206,7 @@ func TestUpgradeConfigVersion(t *testing.T) {
 
 							Providers: &v2.Providers{
 								AWS: &v2.AWSProvider{
-									AccountID:         intptr(5),
+									AccountID:         jsonNumberPtr(5),
 									Profile:           strptr("czi-env"),
 									Region:            strptr("us-west-env1"),
 									Version:           strptr("0.15.0"),

@@ -86,7 +86,7 @@ func ValidateAWSProvider(p *AWSProvider, component string) error {
 		errs = multierror.Append(errs, fmt.Errorf("aws provider version for %s ", component))
 	}
 
-	if p.AccountID == nil || *p.AccountID == 0 {
+	if p.AccountID == nil || *p.AccountID == "" {
 		errs = multierror.Append(errs, fmt.Errorf("aws provider account id for %s", component))
 	}
 	return errs
