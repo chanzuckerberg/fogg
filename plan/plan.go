@@ -42,6 +42,7 @@ type Providers struct {
 	AWS       *AWSProvider       `yaml:"aws"`
 	Snowflake *SnowflakeProvider `yaml:"snowflake"`
 	Bless     *BlessProvider     `yaml:"bless"`
+	Okta      *OktaProvider      `yaml:"okta"`
 }
 
 type AWSProvider struct {
@@ -57,6 +58,11 @@ type SnowflakeProvider struct {
 	Role    string  `yaml:"role,omitempty"`
 	Region  string  `yaml:"region,omitempty"`
 	Version *string `yaml:"version,omitempty"`
+}
+
+type OktaProvider struct {
+	OrgName string  `json:"org_name,omitempty"`
+	Version *string `json:"version,omitempty"`
 }
 
 type BlessProvider struct {
@@ -272,6 +278,15 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
+	var oktaPlan *OktaProvider
+	oktaConfig := v2.ResolveOktaProvider(commons...)
+	if oktaConfig != nil {
+		oktaPlan = &OktaProvider{
+			OrgName: *oktaConfig.OrgName,
+			Version: oktaConfig.Version,
+		}
+	}
+
 	var blessPlan *BlessProvider
 	blessConfig := v2.ResolveBlessProvider(commons...)
 	if blessConfig != nil && blessConfig.AWSProfile != nil && blessConfig.AWSRegion != nil {
@@ -300,6 +315,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			AWS:       awsPlan,
 			Snowflake: snowflakePlan,
 			Bless:     blessPlan,
+			Okta:      oktaPlan,
 		},
 		TfLint:    tfLintPlan,
 		ExtraVars: v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),

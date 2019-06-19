@@ -75,3 +75,24 @@ func TestReadBlessProvider(t *testing.T) {
 	r.Equal("0.0.0", *c.Defaults.Providers.Bless.Version)
 	r.Equal([]string{"a", "b"}, c.Defaults.Providers.Bless.AdditionalRegions)
 }
+
+func TestReadOktaProvider(t *testing.T) {
+	r := require.New(t)
+
+	b, e := util.TestFile("okta_provider")
+	r.NoError(e)
+	r.NotNil(b)
+
+	c, e := ReadConfig(b)
+	r.NoError(e)
+	r.NotNil(c)
+
+	w, e := c.Validate()
+	r.NoError(e)
+	r.Len(w, 0)
+
+	r.NotNil(c.Defaults.Providers)
+	r.NotNil(c.Defaults.Providers.Okta)
+	r.Equal("aversion", *c.Defaults.Providers.Okta.Version)
+	r.Equal("orgname", *c.Defaults.Providers.Okta.OrgName)
+}

@@ -71,6 +71,14 @@ type Providers struct {
 	AWS       *AWSProvider       `json:"aws,omitempty"`
 	Snowflake *SnowflakeProvider `json:"snowflake,omitempty"`
 	Bless     *BlessProvider     `json:"bless,omitempty"`
+	Okta      *OktaProvider      `json:"okta,omitempty"`
+}
+
+// OktaProvider is an okta provider
+type OktaProvider struct {
+	// the okta provider is optional (above) but if supplied you must set an OrgName
+	OrgName *string `json:"org_name,omitempty"`
+	Version *string `json:"version,omitempty"`
 }
 
 // BlessProvider allows for terraform-provider-bless configuration
@@ -152,6 +160,16 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		}
 	}
 
+	randOktaProvider := func(r *rand.Rand, s int) *OktaProvider {
+		if r.Float32() < 0.5 {
+			return nil
+		}
+		return &OktaProvider{
+			Version: randStringPtr(r, s),
+			OrgName: randStringPtr(r, s),
+		}
+	}
+
 	randBlessProvider := func(r *rand.Rand, s int) *BlessProvider {
 		if r.Float32() < 0.5 {
 			return nil
@@ -199,6 +217,7 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 			Providers: &Providers{
 				AWS:       randAWSProvider(r, s),
 				Snowflake: randSnowflakeProvider(r, s),
+				Okta:      randOktaProvider(r, s),
 				Bless:     randBlessProvider(r, s),
 			},
 			TerraformVersion: randStringPtr(r, s),
