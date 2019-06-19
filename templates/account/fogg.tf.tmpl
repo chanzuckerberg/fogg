@@ -31,7 +31,9 @@
   {{ template "bless_provider" .Providers.Bless }}
 {{ end }}
 
-
+{{ if .Providers.Okta}}
+  {{ template "okta_provider" .Providers.Okta}}
+{{ end }}
 
 terraform {
   required_version = "={{ .TerraformVersion }}"

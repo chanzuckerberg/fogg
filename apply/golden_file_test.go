@@ -30,6 +30,7 @@ func TestIntegration(t *testing.T) {
 		{"v2_no_aws_provider"},
 		{"snowflake_provider"},
 		{"bless_provider"},
+		{"okta_provider"},
 	}
 
 	for _, tc := range testCases {
@@ -42,6 +43,7 @@ func TestIntegration(t *testing.T) {
 			if *updateGoldenFiles {
 				// delete all files except fogg.json
 				e := afero.Walk(testdataFs, ".", func(path string, info os.FileInfo, err error) error {
+					fmt.Printf("\n\n HERE:%s \n\n", path)
 					if !info.IsDir() && path != "fogg.json" {
 						return testdataFs.Remove(path)
 					}
@@ -52,6 +54,7 @@ func TestIntegration(t *testing.T) {
 				conf, e := config.FindAndReadConfig(testdataFs, "fogg.json")
 				a.NoError(e)
 				fmt.Printf("conf %#v\n", conf)
+				fmt.Println("READ CONFIG")
 
 				w, e := conf.Validate()
 				a.NoError(e)
