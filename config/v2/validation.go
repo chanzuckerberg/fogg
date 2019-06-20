@@ -174,9 +174,7 @@ func (c *Config) ValidateAtlantis() error {
 	var errs *multierror.Error
 	c.WalkComponents(func(component string, comms ...Common) {
 		a := ResolveAtlantis(comms...)
-		// TODO refactor to a ResolveBackend method
 
-		// a can no longer be nil
 		if a.Enabled != nil && *a.Enabled {
 			if a.RoleName == nil || *a.RoleName == "" {
 				errs = multierror.Append(errs, fmt.Errorf("if atlantis is enabled, role name must be specified (currently %#v in %s)", a.RoleName, component))

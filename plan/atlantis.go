@@ -9,7 +9,7 @@ type Atlantis struct {
 	Enabled  bool
 	Projects []AtlantisProject
 
-	// Profiles is a map of profile name -> role infro
+	// Profiles is a map of profile name -> role info
 	Profiles map[string]AWSRole
 }
 
