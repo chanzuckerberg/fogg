@@ -8,37 +8,30 @@ projects:
 
   - name: accounts/bar
     dir: terraform/accounts/bar
-    terraform_version: 0.100.0
     workflow: fogg
 
   - name: accounts/foo
     dir: terraform/accounts/foo
-    terraform_version: 0.100.0
     workflow: fogg
 
   - name: global
     dir: terraform/global
-    terraform_version: 0.100.0
     workflow: fogg
 
   - name: staging/comp1
     dir: terraform/envs/staging/comp1
-    terraform_version: 0.100.0
     workflow: fogg
 
   - name: staging/comp2
     dir: terraform/envs/staging/comp2
-    terraform_version: 0.100.0
     workflow: fogg
 
   - name: staging/comp_helm_template
     dir: terraform/envs/staging/comp_helm_template
-    terraform_version: 0.100.0
     workflow: fogg
 
   - name: staging/vpc
     dir: terraform/envs/staging/vpc
-    terraform_version: 0.100.0
     workflow: fogg
 
 
@@ -46,8 +39,8 @@ workflows:
   fogg:
     plan:
       steps:
-        - run: TF_IN_AUTOMATION=1 AWS_CONFIG_FILE=`git rev-parse --show-toplevel`/config/atlantis-aws-config terraform init -input=false -no-color > /tmp/out.txt 2>&1 || (a=$?; echo $a && cat /tmp/out.txt; exit $a)
-        - run: TF_IN_AUTOMATION=1 AWS_CONFIG_FILE=`git rev-parse --show-toplevel`/config/atlantis-aws-config terraform plan -input=false -no-color | scenery
+        # TODO: - run: make lint MODE=atlantis
+        - run: make plan MODE=atlantis
     apply:
       steps:
-        - run: false # running in plan-only mode for now
+        - run: make apply MODE=atlantis

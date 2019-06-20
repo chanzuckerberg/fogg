@@ -9,21 +9,24 @@ AUTO_APPROVE := false
 # and wont' accept more than one file at a time.
 TF=$(wildcard *.tf)
 
-TFENV_DIR ?= $(HOME)/.tfenv
+TFENV_DIR ?= $(REPO_ROOT)/.fogg/tfenv
 export PATH :=$(TFENV_DIR)/versions/$(TERRAFORM_VERSION)/:$(REPO_ROOT)/.fogg/bin:$(PATH)
 export TF_PLUGIN_CACHE_DIR=$(REPO_ROOT)/.terraform.d/plugin-cache
-sh_command ?= $(SHELL)
 export TF_IN_AUTOMATION=1
 terraform_command ?= $(TFENV_DIR)/versions/$(TERRAFORM_VERSION)/terraform
+MODE ?= local
+
+ifeq ($(MODE),atlantis)
+	export AWS_CONFIG_FILE=$(REPO_ROOT)/config/atlantis-aws-config
+endif
 
 
 tfenv:
-	if [ ! -d ${TFENV_DIR} ]; then \
-		echo; \
-		git clone https://github.com/tfutils/tfenv.git $(TFENV_DIR); \
+	@if [ ! -d ${TFENV_DIR} ]; then \
+		git clone -q https://github.com/tfutils/tfenv.git $(TFENV_DIR); \
 	fi
 .PHONY: tfenv
 
 terraform: tfenv
-	${TFENV_DIR}/bin/tfenv install $(TERRAFORM_VERSION)
+	@${TFENV_DIR}/bin/tfenv install $(TERRAFORM_VERSION) > /tmp/tfenv-install-out.txt 2>&1 || (a=$?; echo $a && cat /tmp/tfenv-install-out.txt; exit $a)
 .PHONY: terraform

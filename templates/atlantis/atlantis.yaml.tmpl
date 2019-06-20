@@ -5,7 +5,6 @@ projects:
 {{ range $project := .Projects }}
   - name: {{ $project.Name }}
     dir: {{ $project.Dir }}
-    terraform_version: {{ $project.TerraformVersion }}
     workflow: fogg
 {{ end }}
 
@@ -13,8 +12,8 @@ workflows:
   fogg:
     plan:
       steps:
-        - run: TF_IN_AUTOMATION=1 AWS_CONFIG_FILE=`git rev-parse --show-toplevel`/config/atlantis-aws-config /usr/local/bin/tf/versions/{{ .TerraformVersion }}/terraform init -input=false -no-color > /tmp/out.txt 2>&1 || (a=$?; echo $a && cat /tmp/out.txt; exit $a)
-        - run: TF_IN_AUTOMATION=1 AWS_CONFIG_FILE=`git rev-parse --show-toplevel`/config/atlantis-aws-config /usr/local/bin/tf/versions/{{ .TerraformVersion }}/terraform plan -input=false -no-color | scenery
+        - run: make setup
+        - run: make plan MODE=atlantis
     apply:
       steps:
-        - run: false # running in plan-only mode for now
+        - run: make apply MODE=atlantis
