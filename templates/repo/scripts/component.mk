@@ -86,7 +86,7 @@ init: terraform
 ifeq ($(MODE),local)
 	@terraform init -input=false
 else ifeq ($(MODE),atlantis)
-	@terraform init -input=false -no-color > /tmp/out.txt 2>&1 || (a=$?; echo $a && cat /tmp/out.txt; exit $a)
+	@t=mkttemp; terraform init -input=false -no-color > $t 2>&1 || (a=$?; echo $a && cat $t; exit $a)
 else
 	@echo "Unknown MODE: $(MODE)" \
 	@exit -1
