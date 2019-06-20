@@ -1,4 +1,4 @@
-{{ range $name, $profile := .Profiles }}
+{{ range $name, $profile := .AWSProfiles }}
 [profile {{ $name }}]
 role_arn = arn:aws:iam::{{ $profile.AccountID }}:role/{{ list $profile.RolePath $profile.RoleName | join "/" }}
 credential_source = Ec2InstanceMetadata
