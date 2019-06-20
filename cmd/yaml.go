@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/chanzuckerberg/fogg/errs"
-	"github.com/chanzuckerberg/fogg/util/yaml"
+	"github.com/chanzuckerberg/fogg/util"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
@@ -33,6 +33,6 @@ var yamlMigrateCmd = &cobra.Command{
 
 		openGitOrExit(fs)
 
-		return yaml.ConvertToYaml(fs, configFile)
+		return util.ConvertToYaml(fs, configFile)
 	},
 }
