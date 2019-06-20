@@ -52,7 +52,6 @@ var planCmd = &cobra.Command{
 			return e
 		}
 
-		//Pass configFile name to print using the correct format
 		return plan.Print(p)
 	},
 }
