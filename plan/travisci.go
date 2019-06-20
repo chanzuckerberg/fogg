@@ -8,12 +8,14 @@ import (
 	"github.com/chanzuckerberg/fogg/util"
 )
 
+//AWSProfile represents Travis CI's AWS profile
 type AWSProfile struct {
 	Name string
 	ID   json.Number
 	Role string
 }
 
+//TravisCI represents the travis ci configuration
 type TravisCI struct {
 	AWSProfiles []AWSProfile
 	Enabled     bool

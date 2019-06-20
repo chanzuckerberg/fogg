@@ -1,4 +1,4 @@
-package exp
+package cmd
 
 import (
 	"os"
@@ -10,7 +10,7 @@ import (
 )
 
 func init() {
-	ExpCmd.AddCommand(yamlMigrateCmd)
+	rootCmd.AddCommand(yamlMigrateCmd)
 }
 
 var yamlMigrateCmd = &cobra.Command{

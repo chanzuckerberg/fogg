@@ -99,7 +99,7 @@ type Account struct {
 
 	AllAccounts map[string]json.Number `yaml:"all_accounts"`
 	AccountName string                 `yaml:"account_name"`
-	Global      *Component             `yaml:global`
+	Global      *Component
 }
 
 // Component is a component
