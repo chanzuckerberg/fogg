@@ -161,7 +161,7 @@ func ReadConfig(b []byte) (*Config, error) {
 		return nil, errs.WrapUser(e, "unable to parse config file")
 	}
 
-	return c, errs.WrapUser(e, "unable to parse yaml config file")
+	return c, nil
 }
 
 func IsJSON(b []byte) bool {
