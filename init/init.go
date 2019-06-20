@@ -24,7 +24,6 @@ func userPrompt() (string, string, string, string, string, string) {
 
 func writeConfig(fs afero.Fs, config *v1.Config) error {
 	yaml, err := yaml.Marshal(config)
-
 	if err != nil {
 		return errs.WrapInternal(err, "unable to marshal yaml")
 	}
@@ -34,7 +33,6 @@ func writeConfig(fs afero.Fs, config *v1.Config) error {
 		return errs.WrapInternal(err, "unable to create config file fogg.yml")
 	}
 	_, err = yamlConfigFile.Write(yaml)
-
 	return err
 }
 

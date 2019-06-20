@@ -17,9 +17,9 @@ func ConvertToYaml(fs afero.Fs, configFile string) error {
 	if err != nil {
 		return errs.WrapUser(err, "unable to open config file")
 	}
+	defer jsonFile.Close()
 
 	logrus.Debug("Successfully Opened fogg.json")
-	defer jsonFile.Close()
 
 	//Read the fogg.json file, convert it to yml format
 	byteValue, err := ioutil.ReadAll(jsonFile)
@@ -31,7 +31,6 @@ func ConvertToYaml(fs afero.Fs, configFile string) error {
 	if err != nil {
 		return errs.WrapUser(err, "unable to convert json to yaml")
 	}
-
 	return ioutil.WriteFile("fogg.yml", ymlData, 0644)
 }
 
