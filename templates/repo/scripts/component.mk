@@ -36,7 +36,7 @@ terraform-validate: terraform init
 lint-terraform-fmt: terraform
 	@for f in $(TF); do \
 		printf . \
-		terraform fmt --check=true --diff=true $$f || exit $$? ; \
+		$(terraform_command) fmt --check=true --diff=true $$f || exit $$? ; \
 	done
 .PHONY: lint-terraform-fmt
 
@@ -60,10 +60,10 @@ ifneq ($(FORCE),1)
 	exit -1
 endif
 endif
-	terraform apply -auto-approve=$(AUTO_APPROVE)
+	$(terraform_command) apply -auto-approve=$(AUTO_APPROVE)
 else ifeq ($(MODE),atlantis)
 apply:
-	terraform apply -auto-approve=true $PLANFILE
+	$(terraform_command) apply -auto-approve=true $PLANFILE
 else
 	echo "Unknown mode: $(MODE)"
 	exit -1
@@ -86,7 +86,8 @@ init: terraform
 ifeq ($(MODE),local)
 	@$(terraform_command) init -input=false
 else ifeq ($(MODE),atlantis)
-	@t=mktemp \
+	@t=`mktemp $(REPO_ROOT)/.fogg/tmp/init.XXXX` && \
+	echo $$t && \
 	$(terraform_command) init -input=false -no-color > $$t 2>&1 || (a=$$?; echo $$a && cat $$t; exit $$a)
 else
 	@echo "Unknown MODE: $(MODE)" \
