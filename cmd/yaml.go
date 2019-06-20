@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/chanzuckerberg/fogg/errs"
-	"github.com/chanzuckerberg/fogg/exp/yaml_migrate"
+	"github.com/chanzuckerberg/fogg/util/yaml"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
@@ -31,8 +31,8 @@ var yamlMigrateCmd = &cobra.Command{
 			return errs.WrapInternal(err, "couldn't parse config flag")
 		}
 
-		yaml_migrate.OpenGitOrExit(fs)
+		openGitOrExit(fs)
 
-		return yaml_migrate.ConvertToYaml(fs, configFile)
+		return yaml.ConvertToYaml(fs, configFile)
 	},
 }

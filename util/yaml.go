@@ -1,9 +1,8 @@
-package yaml_migrate
+package util
 
 import (
 	"encoding/json"
 	"io/ioutil"
-	"os"
 
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/sirupsen/logrus"
@@ -46,13 +45,4 @@ func jsonByteToYaml(jsonFileData []byte) ([]byte, error) {
 
 	// Converts generic struct to yaml output
 	return yaml.Marshal(jsonObj)
-}
-
-func OpenGitOrExit(fs afero.Fs) {
-	_, err := fs.Stat(".git")
-	if err != nil {
-		// assuming this means no repository
-		logrus.Fatal("fogg must be run from the root of a git repo")
-		os.Exit(1)
-	}
 }
