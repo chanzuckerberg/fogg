@@ -28,6 +28,7 @@ type Common struct {
 	TerraformVersion string `yaml:"terraform_version"`
 }
 
+//ComponentCommon represents common componenet fields
 type ComponentCommon struct {
 	Common `json:",inline" yaml:",inline"`
 
@@ -39,6 +40,7 @@ type ComponentCommon struct {
 	TfLint    TfLint            `json:"tf_lint" yaml:"tf_lint"`
 }
 
+//Providers represents available providers
 type Providers struct {
 	AWS       *AWSProvider       `yaml:"aws"`
 	Snowflake *SnowflakeProvider `yaml:"snowflake"`
@@ -46,6 +48,7 @@ type Providers struct {
 	Okta      *OktaProvider      `yaml:"okta"`
 }
 
+//AWSProvider represents AWS provider configuration
 type AWSProvider struct {
 	AccountID         json.Number `yaml:"account_id"`
 	Profile           string      `yaml:"profile"`
@@ -54,6 +57,7 @@ type AWSProvider struct {
 	AdditionalRegions []string    `yaml:"additional_regions"`
 }
 
+//SnowflakeProvider represents Snowflake DB provider configuration
 type SnowflakeProvider struct {
 	Account string  `json:"account,omitempty" yaml:"account,omitempty"`
 	Role    string  `json:"role,omitempty" yaml:"role,omitempty"`
@@ -61,11 +65,13 @@ type SnowflakeProvider struct {
 	Version *string `json:"version,omitempty" yaml:"version,omitempty"`
 }
 
+//OktaProvider represents Okta configuration
 type OktaProvider struct {
 	OrgName string  `json:"org_name,omitempty"`
 	Version *string `json:"version,omitempty"`
 }
 
+//BlessProvider represents Bless ssh provider configuration
 type BlessProvider struct {
 	AdditionalRegions []string `json:"additional_regions,omitempty" yaml:"additional_regions,omitempty"`
 	AWSProfile        string   `json:"aws_profile,omitempty" yaml:"aws_profile,omitempty"`
