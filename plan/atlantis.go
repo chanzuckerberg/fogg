@@ -17,6 +17,7 @@ type AtlantisProject struct {
 	Name             string `yaml:"name"`
 	Dir              string `yaml:"dir"`
 	TerraformVersion string `yaml:"terraform_version"`
+	PathToRepoRoot   string `yaml:"path_to_repo_root"`
 }
 
 type AWSRole struct {
@@ -37,6 +38,7 @@ func (p *Plan) buildAtlantis() Atlantis {
 		proj := AtlantisProject{
 			Name:             "global",
 			Dir:              "terraform/global",
+			PathToRepoRoot:   p.Global.PathToRepoRoot,
 			TerraformVersion: p.Global.TerraformVersion,
 		}
 
@@ -64,6 +66,7 @@ func (p *Plan) buildAtlantis() Atlantis {
 			proj := AtlantisProject{
 				Name:             fmt.Sprintf("accounts/%s", name),
 				Dir:              fmt.Sprintf("terraform/accounts/%s", name),
+				PathToRepoRoot:   acct.PathToRepoRoot,
 				TerraformVersion: acct.TerraformVersion,
 			}
 			projects = append(projects, proj)
@@ -92,6 +95,7 @@ func (p *Plan) buildAtlantis() Atlantis {
 				p := AtlantisProject{
 					Name:             fmt.Sprintf("%s/%s", envName, cName),
 					Dir:              fmt.Sprintf("terraform/envs/%s/%s", envName, cName),
+					PathToRepoRoot:   c.PathToRepoRoot,
 					TerraformVersion: c.TerraformVersion,
 				}
 				projects = append(projects, p)
