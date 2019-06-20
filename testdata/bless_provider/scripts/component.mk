@@ -50,6 +50,13 @@ endif
 
 ifeq ($(MODE),local)
 apply: init
+ifeq ($(ATLANTIS_ENABLED),1)
+ifneq ($(FORCE),1)
+	@echo "`tput bold`This component is configured to be used with atlantis. If you want to override and apply locally, add FORCE=1.`tput sgr0`"
+	exit -1
+endif
+endif
+
 	terraform apply -auto-approve=$(AUTO_APPROVE)
 else ifeq ($(MODE),atlantis)
 apply:
