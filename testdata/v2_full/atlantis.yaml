@@ -39,7 +39,7 @@ workflows:
   fogg:
     plan:
       steps:
-        # TODO: - run: make lint MODE=atlantis
+        - run: make setup
         - run: make plan MODE=atlantis
     apply:
       steps:

@@ -8,6 +8,9 @@ include $(SELF_DIR)/common.mk
 all:
 .PHONY: all
 
+setup:
+	$(MAKE) -C $(REPO_ROOT) setup
+
 check: lint check-plan
 .PHONY: check
 
