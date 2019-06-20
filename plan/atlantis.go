@@ -51,7 +51,7 @@ func (p *Plan) buildAtlantis() Atlantis {
 		if p.Global.Providers.AWS != nil {
 			a := *p.Global.Providers.AWS
 			profiles[a.Profile] = AWSRole{
-				AccountID: fmt.Sprintf("%d", p.Global.Backend.AccountID), //FIXME on merge
+				AccountID: *p.Global.Backend.AccountID,
 				RoleName:  p.Global.Atlantis.RoleName,
 				RolePath:  p.Global.Atlantis.RolePath,
 			}
@@ -77,7 +77,7 @@ func (p *Plan) buildAtlantis() Atlantis {
 			if acct.Providers.AWS != nil {
 				a := *acct.Providers.AWS
 				profiles[a.Profile] = AWSRole{
-					AccountID: fmt.Sprintf("%d", a.AccountID), //FIXME on merge
+					AccountID: a.AccountID.String(),
 					RoleName:  acct.Atlantis.RoleName,
 					RolePath:  acct.Atlantis.RolePath,
 				}
@@ -105,7 +105,7 @@ func (p *Plan) buildAtlantis() Atlantis {
 				if c.Providers.AWS != nil {
 					a := *c.Providers.AWS
 					profiles[a.Profile] = AWSRole{
-						AccountID: fmt.Sprintf("%d", a.AccountID), //FIXME on merge
+						AccountID: a.AccountID.String(),
 						RoleName:  c.Atlantis.RoleName,
 						RolePath:  c.Atlantis.RolePath,
 					}
