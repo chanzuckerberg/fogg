@@ -30,7 +30,7 @@ lint-tflint: init
 .PHONY: lint-tflint
 
 terraform-validate: terraform init
-	@terraform validate -check-variables=true
+	@$(terraform_command) validate -check-variables=true
 .PHONY: terraform-validate
 
 lint-terraform-fmt: terraform
@@ -42,10 +42,10 @@ lint-terraform-fmt: terraform
 
 ifeq ($(MODE),local)
 plan: init fmt
-	@terraform plan
+	@$(terraform_command) plan
 else ifeq ($(MODE),atlantis)
 plan: init lint
-	@terraform plan -input=false -no-color -out $PLANFILE | scenery
+	@$(terraform_command) plan -input=false -no-color -out $PLANFILE | scenery
 else
 	@echo "Unknown MODE: $(MODE)"
 	@exit -1
@@ -84,9 +84,10 @@ test:
 
 init: terraform
 ifeq ($(MODE),local)
-	@terraform init -input=false
+	@$(terraform_command) init -input=false
 else ifeq ($(MODE),atlantis)
-	@t=mkttemp; terraform init -input=false -no-color > $t 2>&1 || (a=$?; echo $a && cat $t; exit $a)
+	@t=mktemp \
+	$(terraform_command) init -input=false -no-color > $t 2>&1 || (a=$?; echo $a && cat $t; exit $a)
 else
 	@echo "Unknown MODE: $(MODE)" \
 	@exit -1
@@ -94,7 +95,7 @@ endif
 .PHONY: init
 
 check-plan: init
-	@terraform plan -detailed-exitcode; \
+	@$(terraform_command) plan -detailed-exitcode; \
 	ERR=$$?; \
 	if [ $$ERR -eq 0 ] ; then \
 		echo "Success"; \
