@@ -176,7 +176,7 @@ func ResolveTfLint(commons ...Common) v1.TfLint {
 	}
 }
 
-func ResolveAtlantis(commons ...Common) Atlantis {
+func ResolveAtlantis(commons ...Common) *Atlantis {
 	enabled := false
 	for _, c := range commons {
 		if c.Tools != nil && c.Tools.Atlantis != nil && c.Tools.Atlantis.Enabled != nil {
@@ -187,7 +187,7 @@ func ResolveAtlantis(commons ...Common) Atlantis {
 	roleName := lastNonNil(AtlantisRoleNameGetter, commons...)
 	rolePath := lastNonNil(AtlantisRolePathGetter, commons...)
 
-	return Atlantis{
+	return &Atlantis{
 		Enabled:  &enabled,
 		RoleName: roleName,
 		RolePath: rolePath,

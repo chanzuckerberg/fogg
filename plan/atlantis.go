@@ -9,8 +9,9 @@ type Atlantis struct {
 	Enabled  bool
 	Projects []AtlantisProject
 
-	// Profiles is a map of profile name -> role info
-	Profiles map[string]AWSRole
+	// AWSProfiles is a map of profile name -> role info
+	// TODO de-dupe this with AWSProfile in the travis-ci plan
+	AWSProfiles map[string]AWSRole
 }
 
 type AtlantisProject struct {
@@ -124,8 +125,8 @@ func (p *Plan) buildAtlantis() Atlantis {
 	})
 
 	return Atlantis{
-		Enabled:  enabled,
-		Projects: projects,
-		Profiles: profiles,
+		Enabled:     enabled,
+		Projects:    projects,
+		AWSProfiles: profiles,
 	}
 }

@@ -15,7 +15,8 @@ check: lint check-plan
 .PHONY: check
 
 fmt: terraform
-	@$(SHELL) -c 'printf "running fmt: "; for f in $(TF); do printf .; terraform fmt $$f; done';
+	@printf "running fmt: ";
+	@for f in $(TF); do printf .; terraform fmt $$f; done
 	@echo
 .PHONY: fmt
 
@@ -24,16 +25,19 @@ lint: terraform-validate lint-terraform-fmt lint-tflint
 
 lint-tflint: init
 	@if (( $$TFLINT_ENABLED )); then \
-    $(SHELL) -c 'tflint' || exit $$?; \
+    	tflint || exit $$?;
 	fi
 .PHONY: lint-tflint
 
 terraform-validate: terraform init
-	@$(SHELL) -c 'terraform validate -check-variables=true'
+	@terraform validate -check-variables=true
 .PHONY: terraform-validate
 
 lint-terraform-fmt: terraform
-	@$(SHELL) -c 'for f in $(TF); do printf .; terraform fmt --check=true --diff=true $$f || exit $$? ; done'
+	@for f in $(TF); do \
+		printf . \
+		terraform fmt --check=true --diff=true $$f || exit $$? ; \
+	done
 .PHONY: lint-terraform-fmt
 
 ifeq ($(MODE),local)
@@ -43,7 +47,7 @@ else ifeq ($(MODE),atlantis)
 plan: init lint
 	@terraform plan -input=false -no-color -out $PLANFILE | scenery
 else
-	@echo "Unknown MODE: $(MODE)" \
+	@echo "Unknown MODE: $(MODE)"
 	@exit -1
 endif
 .PHONY: plan
@@ -56,7 +60,6 @@ ifneq ($(FORCE),1)
 	exit -1
 endif
 endif
-
 	terraform apply -auto-approve=$(AUTO_APPROVE)
 else ifeq ($(MODE),atlantis)
 apply:
@@ -83,7 +86,7 @@ init: terraform
 ifeq ($(MODE),local)
 	@terraform init -input=false
 else ifeq ($(MODE),atlantis)
-	@terraform init -input=false -no-color > /tmp/out.txt 2>&1 || (a=$?; echo $a && cat /tmp/out.txt; exit $a)
+	@t=mkttemp; terraform init -input=false -no-color > $t 2>&1 || (a=$?; echo $a && cat $t; exit $a)
 else
 	@echo "Unknown MODE: $(MODE)" \
 	@exit -1
