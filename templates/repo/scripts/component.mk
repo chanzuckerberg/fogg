@@ -25,7 +25,7 @@ lint: terraform-validate lint-terraform-fmt lint-tflint
 
 lint-tflint: init
 	@if (( $$TFLINT_ENABLED )); then \
-    	tflint || exit $$?;
+		tflint || exit $$?; \
 	fi
 .PHONY: lint-tflint
 
@@ -87,7 +87,7 @@ ifeq ($(MODE),local)
 	@$(terraform_command) init -input=false
 else ifeq ($(MODE),atlantis)
 	@t=mktemp \
-	$(terraform_command) init -input=false -no-color > $t 2>&1 || (a=$?; echo $a && cat $t; exit $a)
+	$(terraform_command) init -input=false -no-color > $$t 2>&1 || (a=$$?; echo $$a && cat $$t; exit $$a)
 else
 	@echo "Unknown MODE: $(MODE)" \
 	@exit -1
