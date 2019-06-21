@@ -6,6 +6,9 @@ projects:
   - name: {{ $project.Name }}
     dir: {{ $project.Dir }}
     workflow: fogg
+    autoplan:
+      when_modified: [{{ .PathToRepoRoot }}modules/**/*.tf", "*.tf*"]
+      enabled: true
 {{ end }}
 
 workflows:

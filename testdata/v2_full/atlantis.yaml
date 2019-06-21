@@ -9,30 +9,51 @@ projects:
   - name: accounts/bar
     dir: terraform/accounts/bar
     workflow: fogg
+    autoplan:
+      when_modified: [../../../modules/**/*.tf", "*.tf*"]
+      enabled: true
 
   - name: accounts/foo
     dir: terraform/accounts/foo
     workflow: fogg
+    autoplan:
+      when_modified: [../../../modules/**/*.tf", "*.tf*"]
+      enabled: true
 
   - name: global
     dir: terraform/global
     workflow: fogg
+    autoplan:
+      when_modified: [../../modules/**/*.tf", "*.tf*"]
+      enabled: true
 
   - name: staging/comp1
     dir: terraform/envs/staging/comp1
     workflow: fogg
+    autoplan:
+      when_modified: [../../../../modules/**/*.tf", "*.tf*"]
+      enabled: true
 
   - name: staging/comp2
     dir: terraform/envs/staging/comp2
     workflow: fogg
+    autoplan:
+      when_modified: [../../../../modules/**/*.tf", "*.tf*"]
+      enabled: true
 
   - name: staging/comp_helm_template
     dir: terraform/envs/staging/comp_helm_template
     workflow: fogg
+    autoplan:
+      when_modified: [../../../../modules/**/*.tf", "*.tf*"]
+      enabled: true
 
   - name: staging/vpc
     dir: terraform/envs/staging/vpc
     workflow: fogg
+    autoplan:
+      when_modified: [../../../../modules/**/*.tf", "*.tf*"]
+      enabled: true
 
 
 workflows:
