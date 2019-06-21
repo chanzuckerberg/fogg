@@ -28,5 +28,5 @@ tfenv:
 .PHONY: tfenv
 
 terraform: tfenv
-	@$(SHELL $(SELF_DIR)/failed_output_only ${TFENV_DIR}/bin/tfenv install $(TERRAFORM_VERSION))
+	${TFENV_DIR}/bin/tfenv install $(TERRAFORM_VERSION)
 .PHONY: terraform

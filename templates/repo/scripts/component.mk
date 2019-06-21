@@ -86,7 +86,7 @@ init: terraform
 ifeq ($(MODE),local)
 	@$(terraform_command) init -input=false
 else ifeq ($(MODE),atlantis)
-	@$(SHELL $(SELF_DIR)/failed_output_only $(terraform_command) init -input=false -no-color)
+	$(terraform_command) init -input=false -no-color
 else
 	@echo "Unknown MODE: $(MODE)" \
 	@exit -1
