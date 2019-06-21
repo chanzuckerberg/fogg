@@ -86,9 +86,8 @@ init: terraform
 ifeq ($(MODE),local)
 	@$(terraform_command) init -input=false
 else ifeq ($(MODE),atlantis)
-	@t=`mktemp $(REPO_ROOT)/.fogg/tmp/init.XXXX` && \
-	echo $$t && \
-	$(terraform_command) init -input=false -no-color > $$t 2>&1 || (a=$$?; echo $$a && cat $$t; exit $$a)
+	@t=`mktemp` && \
+	$(terraform_command) init -input=false -no-color > $$t 2>&1 || (a=$$?; echo $$a && cat $$t; rm $$t; exit $$a)
 else
 	@echo "Unknown MODE: $(MODE)" \
 	@exit -1
