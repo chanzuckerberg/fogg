@@ -10,13 +10,14 @@ all:
 
 setup:
 	$(MAKE) -C $(REPO_ROOT) setup
+.PHONY: setup
 
 check: lint check-plan
 .PHONY: check
 
 fmt: terraform
 	@printf "fmt: ";
-	@for f in $(TF); do printf .; terraform fmt $$f; done
+	@for f in $(TF); do printf .; $(terraform_command) fmt $$f; done
 	@echo
 .PHONY: fmt
 
@@ -65,10 +66,10 @@ ifneq ($(FORCE),1)
 	exit -1
 endif
 endif
-	$(terraform_command) apply -auto-approve=$(AUTO_APPROVE)
+	@$(terraform_command) apply -auto-approve=$(AUTO_APPROVE)
 else ifeq ($(MODE),atlantis)
 apply:
-	$(terraform_command) apply -auto-approve=true $(PLANFILE)
+	@$(terraform_command) apply -auto-approve=true $(PLANFILE)
 else
 	echo "Unknown mode: $(MODE)"
 	exit -1
@@ -91,9 +92,9 @@ init: terraform
 ifeq ($(MODE),local)
 	@$(terraform_command) init -input=false
 else ifeq ($(MODE),atlantis)
-	$(terraform_command) init -input=false -no-color
+	@$(terraform_command) init -input=false -no-color
 else
-	@echo "Unknown MODE: $(MODE)" \
+	@echo "Unknown MODE: $(MODE)"
 	@exit -1
 endif
 .PHONY: init
@@ -112,5 +113,5 @@ check-plan: init
 .PHONY: check-plan
 
 run:
-	terraform $(CMD)
+	@$(terraform_command) $(CMD)
 .PHONY: run
