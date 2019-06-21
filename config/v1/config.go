@@ -17,56 +17,56 @@ type TfLint struct {
 }
 
 type Defaults struct {
-	AccountID          json.Number       `json:"account_id,omitempty" yaml:"account_id,omitempty" validate:"required"`
-	AWSProfileBackend  string            `json:"aws_profile_backend" yaml:"aws_profile_backend" validate:"required"`
-	AWSProfileProvider string            `json:"aws_profile_provider" yaml:"aws_profile_provider" validate:"required"`
-	AWSProviderVersion string            `json:"aws_provider_version" yaml:"aws_provider_version" validate:"required"`
-	AWSRegionBackend   string            `json:"aws_region_backend" yaml:"aws_region_backend" validate:"required"`
-	AWSRegionProvider  string            `json:"aws_region_provider" yaml:"aws_region_provider" validate:"required"`
-	AWSRegions         []string          `json:"aws_regions,omitempty" yaml:"aws_regions,omitempty" `
-	ExtraVars          map[string]string `json:"extra_vars" yaml:"extra_vars" `
-	InfraBucket        string            `json:"infra_s3_bucket" yaml:"infra_s3_bucket" validate:"required"`
-	InfraDynamoTable   string            `json:"infra_dynamo_db_table" yaml:"infra_dynamo_db_table" `
-	Owner              string            `json:"owner" yaml:"owner" validate:"required"`
-	Project            string            `json:"project" yaml:"project" validate:"required"`
-	TerraformVersion   string            `json:"terraform_version" yaml:"terraform_version" validate:"required"`
-	TfLint             *TfLint           `json:"tflint,omitempty" yaml:"tflint,omitempty"`
+	AccountID          json.Number       `json:"account_id,omitempty" validate:"required"`
+	AWSProfileBackend  string            `json:"aws_profile_backend" validate:"required"`
+	AWSProfileProvider string            `json:"aws_profile_provider" validate:"required"`
+	AWSProviderVersion string            `json:"aws_provider_version" validate:"required"`
+	AWSRegionBackend   string            `json:"aws_region_backend" validate:"required"`
+	AWSRegionProvider  string            `json:"aws_region_provider" validate:"required"`
+	AWSRegions         []string          `json:"aws_regions,omitempty" `
+	ExtraVars          map[string]string `json:"extra_vars" `
+	InfraBucket        string            `json:"infra_s3_bucket" validate:"required"`
+	InfraDynamoTable   string            `json:"infra_dynamo_db_table" `
+	Owner              string            `json:"owner" validate:"required"`
+	Project            string            `json:"project" validate:"required"`
+	TerraformVersion   string            `json:"terraform_version" validate:"required"`
+	TfLint             *TfLint           `json:"tflint,omitempty"`
 }
 
 type Account struct {
-	AccountID          *json.Number      `json:"account_id" yaml:"account_id"`
-	AWSProfileBackend  *string           `json:"aws_profile_backend" yaml:"aws_profile_backend"`
-	AWSProfileProvider *string           `json:"aws_profile_provider" yaml:"aws_profile_provider"`
-	AWSProviderVersion *string           `json:"aws_provider_version,omitempty" yaml:"aws_provider_version,omitempty"`
-	AWSRegionBackend   *string           `json:"aws_region_backend" yaml:"aws_region_backend"`
-	AWSRegionProvider  *string           `json:"aws_region_provider" yaml:"aws_region_provider"`
-	AWSRegions         []string          `json:"aws_regions" yaml:"aws_regions"`
-	ExtraVars          map[string]string `json:"extra_vars,omitempty" yaml:"extra_vars,omitempty"`
-	InfraBucket        *string           `json:"infra_s3_bucket" yaml:"infra_s3_bucket"`
-	InfraDynamoTable   *string           `json:"infra_dynamo_db_table" yaml:"infra_dynamo_db_table"`
-	Owner              *string           `json:"owner" yaml:"owner"`
-	Project            *string           `json:"project" yaml:"project"`
-	TerraformVersion   *string           `json:"terraform_version" yaml:"terraform_version"`
-	TfLint             *TfLint           `json:"tflint,omitempty" yaml:"tflint,omitempty"`
+	AccountID          *json.Number      `json:"account_id"`
+	AWSProfileBackend  *string           `json:"aws_profile_backend"`
+	AWSProfileProvider *string           `json:"aws_profile_provider"`
+	AWSProviderVersion *string           `json:"aws_provider_version,omitempty"`
+	AWSRegionBackend   *string           `json:"aws_region_backend"`
+	AWSRegionProvider  *string           `json:"aws_region_provider"`
+	AWSRegions         []string          `json:"aws_regions"`
+	ExtraVars          map[string]string `json:"extra_vars,omitempty"`
+	InfraBucket        *string           `json:"infra_s3_bucket"`
+	InfraDynamoTable   *string           `json:"infra_dynamo_db_table"`
+	Owner              *string           `json:"owner"`
+	Project            *string           `json:"project"`
+	TerraformVersion   *string           `json:"terraform_version"`
+	TfLint             *TfLint           `json:"tflint,omitempty"`
 }
 
 type Env struct {
-	AccountID          *json.Number      `json:"account_id" yaml:"account_id"`
-	AWSProfileBackend  *string           `json:"aws_profile_backend" yaml:"aws_profile_backend"`
-	AWSProfileProvider *string           `json:"aws_profile_provider" yaml:"aws_profile_provider"`
-	AWSProviderVersion *string           `json:"aws_provider_version,omitempty" yaml:"aws_provider_version,omitempty"`
-	AWSRegionBackend   *string           `json:"aws_region_backend" yaml:"aws_region_backend"`
-	AWSRegionProvider  *string           `json:"aws_region_provider" yaml:"aws_region_provider"`
-	AWSRegions         []string          `json:"aws_regions" yaml:"aws_regions"`
-	ExtraVars          map[string]string `json:"extra_vars,omitempty" yaml:"extra_vars,omitempty"`
-	InfraBucket        *string           `json:"infra_s3_bucket" yaml:"infra_s3_bucket"`
-	InfraDynamoTable   *string           `json:"infra_dynamo_db_table" yaml:"infra_dynamo_db_table"`
-	Owner              *string           `json:"owner" yaml:"owner"`
-	Project            *string           `json:"project" yaml:"project"`
-	TerraformVersion   *string           `json:"terraform_version" yaml:"terraform_version"`
-	TfLint             *TfLint           `json:"tflint,omitempty" yaml:"tflint,omitempty"`
+	AccountID          *json.Number      `json:"account_id"`
+	AWSProfileBackend  *string           `json:"aws_profile_backend"`
+	AWSProfileProvider *string           `json:"aws_profile_provider" `
+	AWSProviderVersion *string           `json:"aws_provider_version,omitempty"`
+	AWSRegionBackend   *string           `json:"aws_region_backend"`
+	AWSRegionProvider  *string           `json:"aws_region_provider"`
+	AWSRegions         []string          `json:"aws_regions" `
+	ExtraVars          map[string]string `json:"extra_vars,omitempty" `
+	InfraBucket        *string           `json:"infra_s3_bucket" `
+	InfraDynamoTable   *string           `json:"infra_dynamo_db_table"`
+	Owner              *string           `json:"owner"`
+	Project            *string           `json:"project`
+	TerraformVersion   *string           `json:"terraform_version"`
+	TfLint             *TfLint           `json:"tflint,omitempty"`
 
-	Components map[string]*Component `json:"components" yaml:"components"`
+	Components map[string]*Component `json:"components"`
 }
 
 // ComponentKind is the kind of this component
@@ -95,34 +95,34 @@ type EKSConfig struct {
 }
 
 type Component struct {
-	AccountID          *json.Number      `json:"account_id" yaml:"account_id"`
-	AWSProfileBackend  *string           `json:"aws_profile_backend" yaml:"aws_profile_backend"`
-	AWSProfileProvider *string           `json:"aws_profile_provider" yaml:"aws_profile_provider"`
-	AWSProviderVersion *string           `json:"aws_provider_version,omitempty" yaml:"aws_provider_version,omitempty"`
-	AWSRegionBackend   *string           `json:"aws_region_backend" yaml:"aws_region_backend"`
-	AWSRegionProvider  *string           `json:"aws_region_provider" yaml:"aws_region_provider"`
-	AWSRegions         []string          `json:"aws_regions" yaml:"aws_regions"`
-	EKS                *EKSConfig        `json:"eks,omitempty" yaml:"eks,omitempty"`
-	ExtraVars          map[string]string `json:"extra_vars,omitempty" yaml:"extra_vars,omitempty"`
-	InfraBucket        *string           `json:"infra_s3_bucket" yaml:"infra_s3_bucket"`
-	InfraDynamoTable   *string           `json:"infra_dynamo_db_table" yaml:"infra_dynamo_db_table"`
-	Kind               *ComponentKind    `json:"kind,omitempty" yaml:"kind,omitempty"`
-	ModuleSource       *string           `json:"module_source" yaml:"module_source"`
-	Owner              *string           `json:"owner" yaml:"owner"`
-	Project            *string           `json:"project" yaml:"project"`
-	TerraformVersion   *string           `json:"terraform_version" yaml:"terraform_version"`
-	TfLint             *TfLint           `json:"tflint,omitempty" yaml:"tflint,omitempty"`
+	AccountID          *json.Number      `json:"account_id"`
+	AWSProfileBackend  *string           `json:"aws_profile_backend"`
+	AWSProfileProvider *string           `json:"aws_profile_provider"`
+	AWSProviderVersion *string           `json:"aws_provider_version,omitempty"`
+	AWSRegionBackend   *string           `json:"aws_region_backend"`
+	AWSRegionProvider  *string           `json:"aws_region_provider" `
+	AWSRegions         []string          `json:"aws_regions"`
+	EKS                *EKSConfig        `json:"eks,omitempty"`
+	ExtraVars          map[string]string `json:"extra_vars,omitempty"`
+	InfraBucket        *string           `json:"infra_s3_bucket" `
+	InfraDynamoTable   *string           `json:"infra_dynamo_db_table" `
+	Kind               *ComponentKind    `json:"kind,omitempty" `
+	ModuleSource       *string           `json:"module_source"`
+	Owner              *string           `json:"owner"`
+	Project            *string           `json:"project"`
+	TerraformVersion   *string           `json:"terraform_version"`
+	TfLint             *TfLint           `json:"tflint,omitempty"`
 }
 
 // Plugins contains configuration around plugins
 type Plugins struct {
-	CustomPlugins      map[string]*plugins.CustomPlugin `json:"custom_plugins,omitempty" yaml:"custom_plugins,omitempty"`
-	TerraformProviders map[string]*plugins.CustomPlugin `json:"terraform_providers,omitempty" yaml:"terraform_providers,omitempty"`
+	CustomPlugins      map[string]*plugins.CustomPlugin `json:"custom_plugins,omitempty"`
+	TerraformProviders map[string]*plugins.CustomPlugin `json:"terraform_providers,omitempty"`
 }
 
 // Module is a module
 type Module struct {
-	TerraformVersion *string `json:"terraform_version,omitempty" yaml:"terraform_version,omitempty"`
+	TerraformVersion *string `json:"terraform_version,omitempty"`
 }
 
 type TravisCI struct {
@@ -132,13 +132,13 @@ type TravisCI struct {
 }
 
 type Config struct {
-	Accounts map[string]Account `json:"accounts" yaml:"accounts"`
-	Defaults Defaults           `json:"defaults" yaml:"defaults"`
-	Docker   bool               `json:"docker,omitempty" yaml:"docker,omitempty"`
-	Envs     map[string]Env     `json:"envs" yaml:"envs"`
-	Modules  map[string]Module  `json:"modules" yaml:"modules"`
-	Plugins  Plugins            `json:"plugins,omitempty" yaml:"plugins"`
-	TravisCI *TravisCI          `json:"travis_ci,omitempty" yaml:"travis_ci,omitempty"`
+	Accounts map[string]Account `json:"accounts"`
+	Defaults Defaults           `json:"defaults" `
+	Docker   bool               `json:"docker,omitempty"`
+	Envs     map[string]Env     `json:"envs"`
+	Modules  map[string]Module  `json:"modules"`
+	Plugins  Plugins            `json:"plugins,omitempty"`
+	TravisCI *TravisCI          `json:"travis_ci,omitempty"`
 }
 
 func ReadConfig(b []byte) (*Config, error) {
@@ -165,7 +165,7 @@ func (c *Config) Validate() error {
 	v := validator.New()
 	// https://github.com/go-playground/validator/issues/323#issuecomment-343670840
 	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
-		name := strings.SplitN(fld.Tag.Get("yml"), ",", 2)[0]
+		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
 
 		if name == "-" {
 			return ""
