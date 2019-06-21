@@ -7,7 +7,7 @@ projects:
     dir: {{ $project.Dir }}
     workflow: fogg
     autoplan:
-      when_modified: [{{ .PathToRepoRoot }}terraform/modules/*/*.tf", "*.tf*"]
+      when_modified: ["{{ .PathToRepoRoot }}terraform/modules/*/*.tf", "*.tf*"]
       enabled: true
 {{ end }}
 
