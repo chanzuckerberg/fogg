@@ -3,8 +3,8 @@ package v2
 import (
 	"testing"
 
-	"github.com/spf13/afero"
 	"github.com/chanzuckerberg/fogg/util"
+	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -184,4 +184,24 @@ func TestReadBlessProviderYaml(t *testing.T) {
 	r.Equal("bar", *c.Defaults.Providers.Bless.AWSRegion)
 	r.Equal("0.0.0", *c.Defaults.Providers.Bless.Version)
 	r.Equal([]string{"a", "b"}, c.Defaults.Providers.Bless.AdditionalRegions)
+}
+
+func TestReadAtlantis(t *testing.T) {
+	r := require.New(t)
+
+	b, e := util.TestFile("v2_full")
+	r.NoError(e)
+	r.NotNil(b)
+
+	fs, _, e := util.TestFs()
+	r.NoError(e)
+	e = afero.WriteFile(fs, "fogg.json", b, 0644)
+	r.NoError(e)
+	c, e := ReadConfig(b, fs, "fogg.json")
+
+	r.NotNil(c.Defaults.Tools)
+	r.NotNil(c.Defaults.Tools.Atlantis)
+	r.True(*c.Defaults.Tools.Atlantis.Enabled)
+	r.Equal("foo", *c.Defaults.Tools.Atlantis.RolePath)
+	r.Equal("bar", *c.Defaults.Tools.Atlantis.RoleName)
 }

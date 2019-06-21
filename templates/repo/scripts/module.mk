@@ -6,31 +6,40 @@ SELF_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 include $(SELF_DIR)/common.mk
 
 all: fmt lint doc
+.PHONY: all
 
 fmt: terraform
 	$(sh_command) -c 'for f in $(TF); do printf .; terraform fmt $$f; done'; \
 	echo
+.PHONY: fmt
 
 check: lint check-docs
+.PHONY: check
 
 lint: lint-tf
+.PHONY: lint
 
 lint-tf: terraform
 	@$(sh_command) -c 'for f in $(TF); do printf .; terraform fmt --check=true --diff=true $$f || exit $$? ; done'
+.PHONY: lint-tf
 
 readme:
 	bash $(REPO_ROOT)/scripts/update-readme.sh update
+.PHONY: readme
 
 docs: readme
+.PHONY: docs
 
 check-docs:
 	@bash $(REPO_ROOT)/scripts/update-readme.sh check; \
 	if [ ! $$? -eq 0 ];  then \
 		echo "Docs are out of date, run \`make docs\`"; \
 	fi
+.PHONY: check-docs
 
 clean:
+.PHONY: clean
 
 test:
+.PHONY: test
 
-.PHONY: all check-doc clean docs fmt lint lint-tf readme test

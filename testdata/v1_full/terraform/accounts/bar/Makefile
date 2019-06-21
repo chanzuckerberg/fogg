@@ -4,6 +4,6 @@
 export TERRAFORM_VERSION := 0.13.0
 export TFLINT_ENABLED := 1
 export TF_PLUGIN_CACHE_DIR := ../../..//.terraform.d/plugin-cache
-
+export ATLANTIS_ENABLED := 0
 
 include ../../..//scripts/component.mk

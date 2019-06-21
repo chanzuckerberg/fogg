@@ -2,6 +2,7 @@
   "version": 2,
   "defaults": {
     "backend": {
+      "account_id": "1234",
       "bucket": "buck",
       "region": "us-west-2",
       "profile": "profile"
@@ -19,6 +20,13 @@
     "owner": "foo@example.com",
     "extra_vars": {
       "foo": "bar1"
+    },
+    "tools": {
+      "atlantis": {
+        "enabled": true,
+        "role_name": "bar",
+        "role_path": "foo"
+      }
     }
   },
   "accounts": {

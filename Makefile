@@ -18,9 +18,13 @@ lint: ## run the fast go linters
 	golangci-lint run
 .PHONY: lint
 
-packr: ## run the packr tool to generate our static files
+TEMPLATES := $(shell find templates -not -name "*.go")
+
+templates/a_templates-packr.go: $(TEMPLATES)
 	packr clean -v
 	packr -v
+
+packr: templates/a_templates-packr.go ## run the packr tool to generate our static files
 
 release: ## run a release
 	./bin/bff bump
@@ -64,6 +68,7 @@ help: ## display help for this makefile
 clean: ## clean the repo
 	rm fogg 2>/dev/null || true
 	go clean
+	go clean -testcache
 	rm -rf dist 2>/dev/null || true
 	packr clean
 	rm coverage.out 2>/dev/null || true
