@@ -50,7 +50,7 @@ plan: init fmt
 	@$(terraform_command) plan
 else ifeq ($(MODE),atlantis)
 plan: init lint
-	@$(terraform_command) plan -input=false -no-color -out $PLANFILE | scenery
+	@$(terraform_command) plan -input=false -no-color -out $(PLANFILE) | scenery
 else
 	@echo "Unknown MODE: $(MODE)"
 	@exit -1
@@ -68,7 +68,7 @@ endif
 	$(terraform_command) apply -auto-approve=$(AUTO_APPROVE)
 else ifeq ($(MODE),atlantis)
 apply:
-	$(terraform_command) apply -auto-approve=true $PLANFILE
+	$(terraform_command) apply -auto-approve=true $(PLANFILE)
 else
 	echo "Unknown mode: $(MODE)"
 	exit -1
