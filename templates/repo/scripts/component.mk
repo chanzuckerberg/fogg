@@ -26,6 +26,8 @@ lint: terraform-validate lint-terraform-fmt lint-tflint
 lint-tflint: init
 	@if (( $$TFLINT_ENABLED )); then \
 		tflint || exit $$?; \
+	else \
+		echo "tflint disabled"; \
 	fi
 .PHONY: lint-tflint
 
