@@ -90,7 +90,7 @@ func detectVersion(b []byte) (int, error) {
 	v := &ver{}
 	var err error
 
-	if v1.IsJSON(b) {
+	if v2.IsJSON(b) {
 		err = json.Unmarshal(b, v)
 	} else {
 		err = yaml.Unmarshal(b, v)

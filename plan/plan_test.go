@@ -211,29 +211,6 @@ func TestExtraVarsCompositionV2(t *testing.T) {
 
 }
 
-func TestExtraVarsCompositionV2Yaml(t *testing.T) {
-	a := assert.New(t)
-	b, e := util.TestFile("v2_full_plan_yaml")
-	a.NoError(e)
-	c, err := v1.ReadConfig(b)
-	assert.Nil(t, err)
-
-	c2, err := config.UpgradeConfigVersion(c)
-	a.NoError(err)
-
-	plan, e := Eval(c2)
-	assert.Nil(t, e)
-	assert.NotNil(t, plan)
-
-	// accts inherit defaults
-	assert.Equal(t, "bar1", plan.Accounts["foo"].ExtraVars["foo"])
-	// envs overwrite defaults
-	assert.Equal(t, "bar2", plan.Envs["staging"].Components["comp1"].ExtraVars["foo"])
-	// component overwrite env
-	assert.Equal(t, "bar3", plan.Envs["staging"].Components["vpc"].ExtraVars["foo"])
-
-}
-
 func TestResolveEKSConfig(t *testing.T) {
 	a := assert.New(t)
 	a.Equal("", resolveEKSConfig(nil, nil).ClusterName)

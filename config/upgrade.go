@@ -26,6 +26,7 @@ func Upgrade(fs afero.Fs, configFile string) error {
 			return err
 		}
 
+		//Should this marshal it to v2?
 		marshalled, err := json.MarshalIndent(c2, "", "  ")
 		if err != nil {
 			return errs.WrapInternal(err, "Could not serialize config to json.")

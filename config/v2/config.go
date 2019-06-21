@@ -1,10 +1,12 @@
 package v2
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"math/rand"
 	"reflect"
+	"unicode"
 
 	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/errs"
@@ -18,7 +20,7 @@ func ReadConfig(b []byte) (*Config, error) {
 		Docker: false,
 	}
 
-	if v1.IsJSON(b) {
+	if IsJSON(b) {
 		e = json.Unmarshal(b, c)
 	} else {
 		e = yaml.Unmarshal(b, c)
@@ -28,6 +30,14 @@ func ReadConfig(b []byte) (*Config, error) {
 	}
 
 	return c, nil
+}
+
+//IsJSON determines if an array of bytes represent a json object
+func IsJSON(b []byte) bool {
+	jsonPrefix := []byte("{")
+	trimmed := bytes.TrimLeftFunc(b, unicode.IsSpace)
+
+	return bytes.HasPrefix(trimmed, jsonPrefix)
 }
 
 type Config struct {
