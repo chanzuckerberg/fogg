@@ -15,7 +15,7 @@ check: lint check-plan
 .PHONY: check
 
 fmt: terraform
-	@printf "running fmt: ";
+	@printf "fmt: ";
 	@for f in $(TF); do printf .; terraform fmt $$f; done
 	@echo
 .PHONY: fmt
@@ -24,10 +24,11 @@ lint: terraform-validate lint-terraform-fmt lint-tflint
 .PHONY: lint
 
 lint-tflint: init
+	@printf "tflint: "
 ifeq ($(TFLINT_ENABLED),1)
 	@tflint || exit $$?;
 else
-	@echo "tflint disabled"
+	@echo "disabled"
 endif
 .PHONY: lint-tflint
 
@@ -36,10 +37,12 @@ terraform-validate: terraform init
 .PHONY: terraform-validate
 
 lint-terraform-fmt: terraform
+	@printf "fmt check: "
 	@for f in $(TF); do \
 		printf . \
 		$(terraform_command) fmt --check=true --diff=true $$f || exit $$? ; \
 	done
+	@echo
 .PHONY: lint-terraform-fmt
 
 ifeq ($(MODE),local)

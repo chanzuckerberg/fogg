@@ -28,5 +28,5 @@ tfenv:
 .PHONY: tfenv
 
 terraform: tfenv
-	@t=mktemp; ${TFENV_DIR}/bin/tfenv install $(TERRAFORM_VERSION) > $t 2>&1 || (a=$?; echo $a && cat $t; exit $a)
+	${TFENV_DIR}/bin/tfenv install $(TERRAFORM_VERSION)
 .PHONY: terraform

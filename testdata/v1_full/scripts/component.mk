@@ -15,7 +15,7 @@ check: lint check-plan
 .PHONY: check
 
 fmt: terraform
-	@printf "running fmt: ";
+	@printf "fmt: ";
 	@for f in $(TF); do printf .; terraform fmt $$f; done
 	@echo
 .PHONY: fmt
@@ -24,28 +24,33 @@ lint: terraform-validate lint-terraform-fmt lint-tflint
 .PHONY: lint
 
 lint-tflint: init
-	@if (( $$TFLINT_ENABLED )); then \
-    	tflint || exit $$?;
-	fi
+	@printf "tflint: "
+ifeq ($(TFLINT_ENABLED),1)
+	@tflint || exit $$?;
+else
+	@echo "disabled"
+endif
 .PHONY: lint-tflint
 
 terraform-validate: terraform init
-	@terraform validate -check-variables=true
+	@$(terraform_command) validate -check-variables=true
 .PHONY: terraform-validate
 
 lint-terraform-fmt: terraform
+	@printf "fmt check: "
 	@for f in $(TF); do \
 		printf . \
-		terraform fmt --check=true --diff=true $$f || exit $$? ; \
+		$(terraform_command) fmt --check=true --diff=true $$f || exit $$? ; \
 	done
+	@echo
 .PHONY: lint-terraform-fmt
 
 ifeq ($(MODE),local)
 plan: init fmt
-	@terraform plan
+	@$(terraform_command) plan
 else ifeq ($(MODE),atlantis)
 plan: init lint
-	@terraform plan -input=false -no-color -out $PLANFILE | scenery
+	@$(terraform_command) plan -input=false -no-color -out $PLANFILE | scenery
 else
 	@echo "Unknown MODE: $(MODE)"
 	@exit -1
@@ -60,10 +65,10 @@ ifneq ($(FORCE),1)
 	exit -1
 endif
 endif
-	terraform apply -auto-approve=$(AUTO_APPROVE)
+	$(terraform_command) apply -auto-approve=$(AUTO_APPROVE)
 else ifeq ($(MODE),atlantis)
 apply:
-	terraform apply -auto-approve=true $PLANFILE
+	$(terraform_command) apply -auto-approve=true $PLANFILE
 else
 	echo "Unknown mode: $(MODE)"
 	exit -1
@@ -84,9 +89,9 @@ test:
 
 init: terraform
 ifeq ($(MODE),local)
-	@terraform init -input=false
+	@$(terraform_command) init -input=false
 else ifeq ($(MODE),atlantis)
-	@t=mkttemp; terraform init -input=false -no-color > $t 2>&1 || (a=$?; echo $a && cat $t; exit $a)
+	$(terraform_command) init -input=false -no-color
 else
 	@echo "Unknown MODE: $(MODE)" \
 	@exit -1
@@ -94,7 +99,7 @@ endif
 .PHONY: init
 
 check-plan: init
-	@terraform plan -detailed-exitcode; \
+	@$(terraform_command) plan -detailed-exitcode; \
 	ERR=$$?; \
 	if [ $$ERR -eq 0 ] ; then \
 		echo "Success"; \

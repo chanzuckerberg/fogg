@@ -10,7 +10,7 @@ ACCOUNTS=
 all: check
 
 setup:
-	curl https://raw.githubusercontent.com/chanzuckerberg/fogg/master/download.sh | bash -s -- -b .fogg/bin
+	curl -s https://raw.githubusercontent.com/chanzuckerberg/fogg/master/download.sh | bash -s -- -b .fogg/bin
 	fogg setup
 .PHONY: setup
 
