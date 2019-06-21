@@ -15,6 +15,7 @@ import (
 // Plan represents a set of actions to take
 type Plan struct {
 	Accounts map[string]Account
+	Atlantis Atlantis
 	Envs     map[string]Env
 	Global   Component
 	Modules  map[string]Module
@@ -31,12 +32,19 @@ type Common struct {
 type ComponentCommon struct {
 	Common `yaml:",inline"`
 
+	Atlantis  AtlantisComponent `yaml:"atlantis"`
 	Backend   AWSBackend        `yaml:"backend"`
 	ExtraVars map[string]string `yaml:"extra_vars"`
 	Owner     string
 	Project   string
 	Providers Providers `yaml:"providers"`
 	TfLint    TfLint
+}
+
+type AtlantisComponent struct {
+	Enabled  bool   `yaml:"enabled"`
+	RoleName string `yaml:"role_name"`
+	RolePath string `yaml:"role_path"`
 }
 
 type Providers struct {
@@ -75,6 +83,7 @@ type BlessProvider struct {
 
 // AWSBackend represents aws backend configuration
 type AWSBackend struct {
+	AccountID   *string `yaml:"account_id,omitempty"`
 	AccountName string  `yaml:"account_name"`
 	Profile     string  `yaml:"profile"`
 	Region      string  `yaml:"region"`
@@ -142,9 +151,10 @@ func Eval(c *v2.Config) (*Plan, error) {
 	if err != nil {
 		return nil, err
 	}
-	p.Modules = p.buildModules(c)
 
+	p.Modules = p.buildModules(c)
 	p.TravisCI = p.buildTravisCI(c, v)
+	p.Atlantis = p.buildAtlantis()
 
 	return p, nil
 }
@@ -305,8 +315,21 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		Enabled: *tflintConfig.Enabled,
 	}
 
+	atlantisConfig := v2.ResolveAtlantis(commons...)
+
+	atlantisPlan := AtlantisComponent{
+		Enabled: *atlantisConfig.Enabled,
+	}
+	if atlantisPlan.Enabled {
+		atlantisPlan.RoleName = *atlantisConfig.RoleName
+		atlantisPlan.RolePath = *atlantisConfig.RolePath
+
+	}
+
 	return ComponentCommon{
+		Atlantis: atlantisPlan,
 		Backend: AWSBackend{
+			AccountID:   v2.ResolveOptionalString(v2.BackendAccountIdGetter, commons...),
 			Region:      v2.ResolveRequiredString(v2.BackendRegionGetter, commons...),
 			Profile:     v2.ResolveRequiredString(v2.BackendProfileGetter, commons...),
 			Bucket:      v2.ResolveRequiredString(v2.BackendBucketGetter, commons...),

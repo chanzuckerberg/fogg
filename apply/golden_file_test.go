@@ -112,7 +112,7 @@ func TestIntegration(t *testing.T) {
 						logrus.Debugf("f1:\n%s\n\n---- ", f1)
 						logrus.Debugf("f2:\n%s\n\n---- ", f2)
 
-						r.Equal(f1, f2)
+						r.Equal(f1, f2, path)
 					}
 					return nil
 				}))

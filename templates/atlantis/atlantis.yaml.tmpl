@@ -1,0 +1,19 @@
+{{ template "fogg_header" }}
+---
+version: 3
+projects:
+{{ range $project := .Projects }}
+  - name: {{ $project.Name }}
+    dir: {{ $project.Dir }}
+    workflow: fogg
+{{ end }}
+
+workflows:
+  fogg:
+    plan:
+      steps:
+        - run: make setup
+        - run: make plan MODE=atlantis
+    apply:
+      steps:
+        - run: make apply MODE=atlantis

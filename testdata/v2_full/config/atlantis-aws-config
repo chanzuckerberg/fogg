@@ -1,0 +1,8 @@
+
+[profile comp1]
+role_arn = arn:aws:iam::1234:role/foo/bar
+credential_source = Ec2InstanceMetadata
+
+[profile profile]
+role_arn = arn:aws:iam::456:role/foo/bar
+credential_source = Ec2InstanceMetadata

@@ -144,6 +144,7 @@ func ResolveOktaProvider(commons ...Common) *OktaProvider {
 		Version: lastNonNil(OktaProviderVersionGetter, commons...),
 	}
 }
+
 func ResolveBlessProvider(commons ...Common) *BlessProvider {
 	profile := lastNonNil(BlessProviderProfileGetter, commons...)
 	region := lastNonNil(BlessProviderRegionGetter, commons...)
@@ -175,6 +176,24 @@ func ResolveTfLint(commons ...Common) v1.TfLint {
 	}
 }
 
+func ResolveAtlantis(commons ...Common) *Atlantis {
+	enabled := false
+	for _, c := range commons {
+		if c.Tools != nil && c.Tools.Atlantis != nil && c.Tools.Atlantis.Enabled != nil {
+			enabled = *c.Tools.Atlantis.Enabled
+		}
+	}
+
+	roleName := lastNonNil(AtlantisRoleNameGetter, commons...)
+	rolePath := lastNonNil(AtlantisRolePathGetter, commons...)
+
+	return &Atlantis{
+		Enabled:  &enabled,
+		RoleName: roleName,
+		RolePath: rolePath,
+	}
+}
+
 func OwnerGetter(comm Common) *string {
 	return comm.Owner
 }
@@ -193,6 +212,14 @@ func BackendBucketGetter(comm Common) *string {
 	}
 	return nil
 }
+
+func BackendAccountIdGetter(comm Common) *string {
+	if comm.Backend != nil {
+		return comm.Backend.AccountID
+	}
+	return nil
+}
+
 func BackendRegionGetter(comm Common) *string {
 	if comm.Backend != nil {
 		return comm.Backend.Region
@@ -325,4 +352,18 @@ func OktaProviderOrgNameGetter(comm Common) *string {
 		return nil
 	}
 	return comm.Providers.Okta.OrgName
+}
+
+func AtlantisRolePathGetter(comm Common) *string {
+	if comm.Tools == nil || comm.Tools.Atlantis == nil {
+		return nil
+	}
+	return comm.Tools.Atlantis.RolePath
+}
+
+func AtlantisRoleNameGetter(comm Common) *string {
+	if comm.Tools == nil || comm.Tools.Atlantis == nil {
+		return nil
+	}
+	return comm.Tools.Atlantis.RoleName
 }

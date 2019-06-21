@@ -8,41 +8,72 @@ include $(SELF_DIR)/common.mk
 all:
 .PHONY: all
 
+setup:
+	$(MAKE) -C $(REPO_ROOT) setup
+.PHONY: setup
+
 check: lint check-plan
 .PHONY: check
 
 fmt: terraform
-	$(sh_command) -c 'for f in $(TF); do printf .; terraform fmt $$f; done'; \
-	echo
+	@printf "fmt: ";
+	@for f in $(TF); do printf .; $(terraform_command) fmt $$f; done
+	@echo
 .PHONY: fmt
 
 lint: terraform-validate lint-terraform-fmt lint-tflint
 .PHONY: lint
 
 lint-tflint: init
-	if (( $$TFLINT_ENABLED )); then \
-    $(sh_command) -c 'tflint' || exit $$?; \
-	fi
+	@printf "tflint: "
+ifeq ($(TFLINT_ENABLED),1)
+	@tflint || exit $$?;
+else
+	@echo "disabled"
+endif
 .PHONY: lint-tflint
 
 terraform-validate: terraform init
-	$(sh_command) -c 'terraform validate -check-variables=true'
+	@$(terraform_command) validate -check-variables=true
 .PHONY: terraform-validate
 
 lint-terraform-fmt: terraform
-	$(sh_command) -c 'for f in $(TF); do printf .; terraform fmt --check=true --diff=true $$f || exit $$? ; done'
+	@printf "fmt check: "
+	@for f in $(TF); do \
+		printf . \
+		$(terraform_command) fmt --check=true --diff=true $$f || exit $$? ; \
+	done
+	@echo
 .PHONY: lint-terraform-fmt
 
-get: terraform
-	$(terraform_command) get --update=true
-.PHONY: get
-
-plan: terraform fmt get init
-	$(terraform_command) plan
+ifeq ($(MODE),local)
+plan: init fmt
+	@$(terraform_command) plan
+else ifeq ($(MODE),atlantis)
+plan: init lint
+	@$(terraform_command) plan -input=false -no-color -out $(PLANFILE) | scenery
+else
+	@echo "Unknown MODE: $(MODE)"
+	@exit -1
+endif
 .PHONY: plan
 
-apply: terraform fmt get init
-	$(terraform_command) apply -auto-approve=$(AUTO_APPROVE)
+ifeq ($(MODE),local)
+apply: init
+ifeq ($(ATLANTIS_ENABLED),1)
+ifneq ($(FORCE),1)
+	@echo "`tput bold`This component is configured to be used with atlantis. If you want to override and apply locally, add FORCE=1.`tput sgr0`"
+	exit -1
+endif
+endif
+	@$(terraform_command) apply -auto-approve=$(AUTO_APPROVE)
+else ifeq ($(MODE),atlantis)
+apply:
+	@$(terraform_command) apply -auto-approve=true $(PLANFILE)
+else
+	echo "Unknown mode: $(MODE)"
+	exit -1
+endif
 .PHONY: apply
 
 docs:
@@ -58,11 +89,18 @@ test:
 .PHONY: test
 
 init: terraform
-	$(terraform_command) init -input=false
+ifeq ($(MODE),local)
+	@$(terraform_command) init -input=false
+else ifeq ($(MODE),atlantis)
+	@$(terraform_command) init -input=false -no-color
+else
+	@echo "Unknown MODE: $(MODE)"
+	@exit -1
+endif
 .PHONY: init
 
-check-plan: terraform init get
-	$(terraform_command) plan -detailed-exitcode; \
+check-plan: init
+	@$(terraform_command) plan -detailed-exitcode; \
 	ERR=$$?; \
 	if [ $$ERR -eq 0 ] ; then \
 		echo "Success"; \
@@ -75,5 +113,5 @@ check-plan: terraform init get
 .PHONY: check-plan
 
 run:
-	$(terraform_command) $(CMD)
+	@$(terraform_command) $(CMD)
 .PHONY: run

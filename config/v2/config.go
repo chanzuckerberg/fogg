@@ -49,8 +49,15 @@ type Account struct {
 }
 
 type Tools struct {
+	Atlantis *Atlantis    `json:"atlantis,omitempty"`
 	TravisCI *v1.TravisCI `json:"travis_ci,omitempty"`
 	TfLint   *v1.TfLint   `json:"tflint,omitempty"`
+}
+
+type Atlantis struct {
+	Enabled  *bool   `json:"enabled,omitempty"`
+	RoleName *string `json:"role_name,omitempty"`
+	RolePath *string `json:"role_path,omitempty"`
 }
 
 type Env struct {
@@ -107,6 +114,7 @@ type SnowflakeProvider struct {
 }
 
 type Backend struct {
+	AccountID   *string `json:"account_id,omitempty"`
 	Bucket      *string `json:"bucket,omitempty"`
 	DynamoTable *string `json:"dynamodb_table,omitempty"`
 	Profile     *string `json:"profile,omitempty"`
@@ -226,6 +234,14 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 				p := r.Float32() < 0.5
 				c.Tools.TfLint = &v1.TfLint{
 					Enabled: &p,
+				}
+			}
+			if r.Float32() < 0.5 {
+				t := true
+				c.Tools.Atlantis = &Atlantis{
+					Enabled:  &t,
+					RolePath: randStringPtr(r, s),
+					RoleName: randStringPtr(r, s),
 				}
 			}
 		}

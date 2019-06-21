@@ -32,7 +32,7 @@ func TestOpenTemplate(t *testing.T) {
 		wantErr bool
 	}{
 		// TODO: Add test cases.
-		{"foo", args{temps.Account, "Makefile.tmpl"}, 4, false},
+		{"foo", args{temps.Account, "Makefile.tmpl"}, 5, false},
 	}
 
 	for _, tt := range tests {
