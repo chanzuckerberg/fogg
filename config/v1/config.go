@@ -126,9 +126,10 @@ type Module struct {
 }
 
 type TravisCI struct {
-	Enabled        bool   `json:"enabled,omitempty"`
-	AWSIAMRoleName string `json:"aws_iam_role_name"`
-	TestBuckets    int    `json:"test_buckets"`
+	Enabled        *bool   `json:"enabled,omitempty"`
+	AWSIAMRoleName *string `json:"aws_iam_role_name"`
+	TestBuckets    *int    `json:"test_buckets"`
+	Command        *string `json:"command"`
 }
 
 type Config struct {

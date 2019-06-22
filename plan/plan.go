@@ -39,12 +39,21 @@ type ComponentCommon struct {
 	Project   string
 	Providers Providers `yaml:"providers"`
 	TfLint    TfLint
+	TravisCI  TravisComponent
 }
 
 type AtlantisComponent struct {
 	Enabled  bool   `yaml:"enabled"`
 	RoleName string `yaml:"role_name"`
 	RolePath string `yaml:"role_path"`
+}
+
+type TravisComponent struct {
+	Enabled        bool `yaml:"enabled"`
+	AWSProfileName string
+	AWSRoleName    string
+	AWSAccountID   string
+	Command        string
 }
 
 type Providers struct {
@@ -153,8 +162,8 @@ func Eval(c *v2.Config) (*Plan, error) {
 	}
 
 	p.Modules = p.buildModules(c)
-	p.TravisCI = p.buildTravisCI(c, v)
 	p.Atlantis = p.buildAtlantis()
+	p.TravisCI = p.buildTravisCI(c, v)
 
 	return p, nil
 }
@@ -323,7 +332,15 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	if atlantisPlan.Enabled {
 		atlantisPlan.RoleName = *atlantisConfig.RoleName
 		atlantisPlan.RolePath = *atlantisConfig.RolePath
+	}
 
+	travisConfig := v2.ResolveTravis(commons...)
+	travisPlan := TravisComponent{
+		Enabled: *travisConfig.Enabled,
+	}
+	if travisPlan.Enabled {
+		travisPlan.AWSRoleName = *travisConfig.AWSIAMRoleName
+		travisPlan.Command = *travisConfig.Command
 	}
 
 	return ComponentCommon{
@@ -346,6 +363,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		Owner:     v2.ResolveRequiredString(v2.OwnerGetter, commons...),
 		Project:   v2.ResolveRequiredString(v2.ProjectGetter, commons...),
 		Common:    Common{TerraformVersion: v2.ResolveRequiredString(v2.TerraformVersionGetter, commons...)},
+		TravisCI:  travisPlan,
 	}
 }
 

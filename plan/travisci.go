@@ -1,83 +1,108 @@
 package plan
 
 import (
-	"encoding/json"
-	"path"
+	"fmt"
+	"sort"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
-	"github.com/chanzuckerberg/fogg/util"
 )
 
-type AWSProfile struct {
-	Name string
-	ID   json.Number
-	Role string
+type TravisProject struct {
+	Name    string
+	Dir     string
+	Command string
 }
-
 type TravisCI struct {
-	AWSProfiles []AWSProfile
 	Enabled     bool
 	FoggVersion string
-	TestBuckets [][]string
+	TestBuckets [][]TravisProject
+	AWSProfiles map[string]AWSRole
 }
 
-func (p *Plan) buildTravisCI(c *v2.Config, version string) TravisCI {
-	if p.Accounts == nil {
-		panic("buildTravisCI must be run after buildAccounts")
+func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
+	enabled := false
+	projects := []TravisProject{}
+	awsProfiles := map[string]AWSRole{}
+
+	if p.Global.TravisCI.Enabled {
+		enabled = true
+		proj := TravisProject{
+			Name:    "global",
+			Dir:     "terraform/global",
+			Command: p.Global.TravisCI.Command,
+		}
+		projects = append(projects, proj)
 	}
 
-	if c.Defaults.Tools == nil || c.Defaults.Tools.TravisCI == nil {
-		return TravisCI{}
+	for name, acct := range p.Accounts {
+		if acct.TravisCI.Enabled {
+			enabled = true
+			proj := TravisProject{
+				Name:    fmt.Sprintf("accounts/%s", name),
+				Dir:     fmt.Sprintf("terraform/accounts/%s", name),
+				Command: acct.TravisCI.Command,
+			}
+
+			projects = append(projects, proj)
+
+			// Grab all profiles from accounts
+			awsProfiles[acct.Providers.AWS.Profile] = AWSRole{
+				AccountID: acct.Providers.AWS.AccountID.String(),
+				RoleName:  acct.TravisCI.AWSRoleName,
+			}
+		}
 	}
 
-	tr := TravisCI{
-		Enabled: c.Defaults.Tools.TravisCI.Enabled,
-	}
-	var profiles []AWSProfile
+	for envName, env := range p.Envs {
+		for cName, c := range env.Components {
+			if c.TravisCI.Enabled {
+				enabled = true
+				proj := TravisProject{
+					Name:    fmt.Sprintf("%s/%s", envName, cName),
+					Dir:     fmt.Sprintf("terraform/envs/%s/%s", envName, cName),
+					Command: "check",
+				}
 
-	tr.FoggVersion = version
-
-	for _, name := range util.SortedMapKeys(p.Accounts) {
-		profiles = append(profiles, AWSProfile{
-			Name: name,
-			// TODO since accountID is required here, that means we need
-			// to make it non-optional, either in defaults or post-plan.
-			ID:   p.Accounts[name].Providers.AWS.AccountID,
-			Role: c.Defaults.Tools.TravisCI.AWSIAMRoleName,
-		})
+				projects = append(projects, proj)
+			}
+		}
 	}
-	tr.AWSProfiles = profiles
+
+	for moduleName := range p.Modules {
+		proj := TravisProject{
+			Name:    fmt.Sprintf("modules/%s", moduleName),
+			Dir:     fmt.Sprintf("terraform/modules/%s", moduleName),
+			Command: "check",
+		}
+		projects = append(projects, proj)
+	}
 
 	var buckets int
-	if c.Defaults.Tools.TravisCI.TestBuckets > 0 {
-		buckets = c.Defaults.Tools.TravisCI.TestBuckets
+	if c.Defaults.Tools != nil &&
+		c.Defaults.Tools.TravisCI != nil &&
+		c.Defaults.Tools.TravisCI.TestBuckets != nil &&
+		*c.Defaults.Tools.TravisCI.TestBuckets > 0 {
+
+		buckets = *c.Defaults.Tools.TravisCI.TestBuckets
 	} else {
 		buckets = 1
 	}
 
-	var testPaths []string
-	testPaths = append(testPaths, path.Join("terraform", "global"))
+	sort.SliceStable(projects, func(i, j int) bool {
+		return projects[i].Name < projects[j].Name
+	})
 
-	for _, name := range util.SortedMapKeys(c.Accounts) {
-		testPaths = append(testPaths, path.Join("terraform", "accounts", name))
-	}
-
-	for _, envName := range util.SortedMapKeys(c.Envs) {
-		for _, name := range util.SortedMapKeys(c.Envs[envName].Components) {
-			testPaths = append(testPaths, path.Join("terraform", "envs", envName, name))
-		}
-	}
-
-	for _, moduleName := range util.SortedMapKeys(c.Modules) {
-		testPaths = append(testPaths, path.Join("terraform", "modules", moduleName))
-	}
-
-	testBuckets := make([][]string, buckets)
-	for i, path := range testPaths {
+	testBuckets := make([][]TravisProject, buckets)
+	for i, proj := range projects {
 		bucket := i % buckets
-		testBuckets[bucket] = append(testBuckets[bucket], path)
+		testBuckets[bucket] = append(testBuckets[bucket], proj)
 	}
 
-	tr.TestBuckets = testBuckets
+	tr := TravisCI{
+		Enabled:     enabled,
+		FoggVersion: foggVersion,
+		TestBuckets: testBuckets,
+		AWSProfiles: awsProfiles,
+	}
 	return tr
 }

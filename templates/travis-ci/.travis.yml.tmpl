@@ -16,10 +16,10 @@ before_script:
   - aws configure set aws_secret_access_key $IDACCT_AWS_SECRET_ACCESS_KEY --profile _idacct
   - aws --profile _idacct sts get-caller-identity
 
-{{ range $profile := .AWSProfiles}}
-  - aws configure set profile.{{ $profile.Name }}.role_arn arn:aws:iam::{{ $profile.ID }}:role/{{ $profile.Role}}
-  - aws configure set profile.{{ $profile.Name }}.source_profile _idacct
-  - aws --profile {{ $profile.Name }} sts get-caller-identity
+{{ range $profileName, $profile:= .AWSProfiles}}
+  - aws configure set profile.{{ $profileName }}.role_arn arn:aws:iam::{{ $profile.AccountID }}:role/{{ $profile.RoleName}}
+  - aws configure set profile.{{ $profileName }}.source_profile _idacct
+  - aws --profile {{ $profileName }} sts get-caller-identity
 {{ end }}
 
 jobs:
@@ -29,6 +29,6 @@ jobs:
       script:
         - set -e
       {{- range $component := $testBucket }}
-        - pushd {{ $component }} && travis_retry make check && popd
+        - pushd {{ $component.Dir }} && travis_retry make {{ $component.Command }} && popd
       {{- end -}}
 {{ end }}

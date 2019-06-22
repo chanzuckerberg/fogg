@@ -17,22 +17,18 @@ before_script:
   - aws --profile _idacct sts get-caller-identity
 
 
-  - aws configure set profile.bar.role_arn arn:aws:iam::3:role/travis-role
-  - aws configure set profile.bar.source_profile _idacct
-  - aws --profile bar sts get-caller-identity
+  - aws configure set profile.czi-bar.role_arn arn:aws:iam::3:role/travis-role
+  - aws configure set profile.czi-bar.source_profile _idacct
+  - aws --profile czi-bar sts get-caller-identity
 
-  - aws configure set profile.foo.role_arn arn:aws:iam::2:role/travis-role
-  - aws configure set profile.foo.source_profile _idacct
-  - aws --profile foo sts get-caller-identity
+  - aws configure set profile.czi-foo.role_arn arn:aws:iam::2:role/travis-role
+  - aws configure set profile.czi-foo.source_profile _idacct
+  - aws --profile czi-foo sts get-caller-identity
 
 
 jobs:
   include:
 
-    - stage: check
-      script:
-        - set -e
-        - pushd terraform/global && travis_retry make check && popd
     - stage: check
       script:
         - set -e
@@ -44,15 +40,19 @@ jobs:
     - stage: check
       script:
         - set -e
+        - pushd terraform/global && travis_retry make check && popd
+    - stage: check
+      script:
+        - set -e
+        - pushd terraform/modules/module1 && travis_retry make check && popd
+    - stage: check
+      script:
+        - set -e
         - pushd terraform/envs/stage/cloud-env && travis_retry make check && popd
     - stage: check
       script:
         - set -e
         - pushd terraform/envs/stage/helm && travis_retry make check && popd
-    - stage: check
-      script:
-        - set -e
-        - pushd terraform/modules/module1 && travis_retry make check && popd
     - stage: check
       script:
         - set -e
