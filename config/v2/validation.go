@@ -11,6 +11,11 @@ import (
 	validator "gopkg.in/go-playground/validator.v9"
 )
 
+var validTravisCommands = map[string]struct{}{
+	"check": struct{}{},
+	"lint":  struct{}{},
+}
+
 // Validate validates the config
 func (c *Config) Validate() ([]string, error) {
 	if c == nil {
@@ -49,7 +54,7 @@ func (c *Config) Validate() ([]string, error) {
 	errs = multierror.Append(errs, c.ValidateOktaProviders())
 	errs = multierror.Append(errs, c.validateModules())
 	errs = multierror.Append(errs, c.ValidateAtlantis())
-	errs = multierror.Append(errs, c.ValidateToolsTravis())
+	errs = multierror.Append(errs, c.ValidateTravis())
 
 	// refactor to make it easier to manage these
 	w, e := c.ValidateToolsTfLint()
@@ -198,7 +203,7 @@ func (c *Config) ValidateBlessProviders() error {
 	return errs
 }
 
-func (c *Config) ValidateToolsTravis() error {
+func (c *Config) ValidateTravis() error {
 	var errs *multierror.Error
 	c.WalkComponents(func(component string, comms ...Common) {
 		t := ResolveTravis(comms...)
@@ -208,6 +213,13 @@ func (c *Config) ValidateToolsTravis() error {
 
 		if t.AWSIAMRoleName == nil || *t.AWSIAMRoleName == "" {
 			errs = multierror.Append(errs, fmt.Errorf("if travis is enabled, aws_role_name must be set"))
+		}
+
+		if t.Command != nil {
+			_, ok := validTravisCommands[*t.Command]
+			if !ok {
+				errs = multierror.Append(errs, fmt.Errorf("unrecognized travisci command %s (%s)", *t.Command, component))
+			}
 		}
 	})
 
