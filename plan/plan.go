@@ -49,7 +49,7 @@ type AtlantisComponent struct {
 }
 
 type TravisComponent struct {
-	Enabled        bool `yaml:"enabled"`
+	Enabled        bool
 	AWSProfileName string
 	AWSRoleName    string
 	AWSAccountID   string
