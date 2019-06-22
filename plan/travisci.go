@@ -19,6 +19,7 @@ type TravisCI struct {
 	AWSProfiles map[string]AWSRole
 }
 
+// TODO(el): mostly a duplicate of buildAtlantis(). refactor later
 func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
 	enabled := false
 	projects := []TravisProject{}
