@@ -18,6 +18,7 @@ MODE ?= local
 
 ifeq ($(MODE),atlantis)
 	export AWS_CONFIG_FILE=$(REPO_ROOT)/config/atlantis-aws-config
+	TF_ARGS ?= -no-color
 endif
 
 

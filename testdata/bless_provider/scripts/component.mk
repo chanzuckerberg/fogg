@@ -17,7 +17,7 @@ check: lint check-plan
 
 fmt: terraform
 	@printf "fmt: ";
-	@for f in $(TF); do printf .; $(terraform_command) fmt $$f; done
+	@for f in $(TF); do printf .; $(terraform_command) fmt $(TF_ARGS) $$f; done
 	@echo
 .PHONY: fmt
 
@@ -34,24 +34,24 @@ endif
 .PHONY: lint-tflint
 
 terraform-validate: terraform init
-	@$(terraform_command) validate -check-variables=true
+	@$(terraform_command) validate $(TF_ARGS) -check-variables=true
 .PHONY: terraform-validate
 
 lint-terraform-fmt: terraform
 	@printf "fmt check: "
 	@for f in $(TF); do \
 		printf . \
-		$(terraform_command) fmt --check=true --diff=true $$f || exit $$? ; \
+		$(terraform_command) fmt $(TF_ARGS) --check=true --diff=true $$f || exit $$? ; \
 	done
 	@echo
 .PHONY: lint-terraform-fmt
 
 ifeq ($(MODE),local)
 plan: init fmt
-	@$(terraform_command) plan
+	@$(terraform_command) plan $(TF_ARGS) -input=false
 else ifeq ($(MODE),atlantis)
 plan: init lint
-	@$(terraform_command) plan -input=false -no-color -out $(PLANFILE) | scenery
+	@$(terraform_command) plan $(TF_ARGS) -input=false -out $(PLANFILE) | scenery
 else
 	@echo "Unknown MODE: $(MODE)"
 	@exit -1
@@ -66,10 +66,10 @@ ifneq ($(FORCE),1)
 	exit -1
 endif
 endif
-	@$(terraform_command) apply -auto-approve=$(AUTO_APPROVE)
+	@$(terraform_command) apply $(TF_ARGS) -auto-approve=$(AUTO_APPROVE)
 else ifeq ($(MODE),atlantis)
 apply:
-	@$(terraform_command) apply -auto-approve=true $(PLANFILE)
+	@$(terraform_command) apply $(TF_ARGS) -auto-approve=true $(PLANFILE)
 else
 	echo "Unknown mode: $(MODE)"
 	exit -1
@@ -92,7 +92,7 @@ init: terraform
 ifeq ($(MODE),local)
 	@$(terraform_command) init -input=false
 else ifeq ($(MODE),atlantis)
-	@$(terraform_command) init -input=false -no-color
+	@$(terraform_command) init $(TF_ARGS) -input=false
 else
 	@echo "Unknown MODE: $(MODE)"
 	@exit -1
@@ -100,7 +100,7 @@ endif
 .PHONY: init
 
 check-plan: init
-	@$(terraform_command) plan -detailed-exitcode; \
+	@$(terraform_command) plan $(TF_ARGS) -detailed-exitcode; \
 	ERR=$$?; \
 	if [ $$ERR -eq 0 ] ; then \
 		echo "Success"; \
