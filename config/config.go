@@ -93,7 +93,7 @@ func detectVersion(b []byte, fs afero.Fs, configFile string) (int, error) {
 
 	info, err := fs.Stat(configFile)
 	if err != nil {
-		return 0, errs.WrapUser(err, "unable to find file")
+		return 0, errs.WrapUser(err, "unable to stat %s", configFile)
 	}
 
 	//Unmarshals based on file extension
