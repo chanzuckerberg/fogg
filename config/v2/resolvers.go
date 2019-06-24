@@ -194,6 +194,28 @@ func ResolveAtlantis(commons ...Common) *Atlantis {
 	}
 }
 
+func ResolveTravis(commons ...Common) *v1.TravisCI {
+	enabled := false
+	testCommand := "check"
+	for _, c := range commons {
+		if c.Tools != nil && c.Tools.TravisCI != nil && c.Tools.TravisCI.Enabled != nil {
+			enabled = *c.Tools.TravisCI.Enabled
+		}
+
+		if c.Tools != nil && c.Tools.TravisCI != nil && c.Tools.TravisCI.Command != nil {
+			testCommand = *c.Tools.TravisCI.Command
+		}
+	}
+
+	roleName := lastNonNil(TravisRoleNameGetter, commons...)
+
+	return &v1.TravisCI{
+		Enabled:        &enabled,
+		AWSIAMRoleName: roleName,
+		Command:        &testCommand,
+	}
+}
+
 func OwnerGetter(comm Common) *string {
 	return comm.Owner
 }
@@ -366,4 +388,18 @@ func AtlantisRoleNameGetter(comm Common) *string {
 		return nil
 	}
 	return comm.Tools.Atlantis.RoleName
+}
+
+func TravisRoleNameGetter(comm Common) *string {
+	if comm.Tools == nil || comm.Tools.TravisCI == nil {
+		return nil
+	}
+	return comm.Tools.TravisCI.AWSIAMRoleName
+}
+
+func TravisTestCommandGetter(comm Common) *string {
+	if comm.Tools == nil || comm.Tools.TravisCI == nil {
+		return nil
+	}
+	return comm.Tools.TravisCI.Command
 }

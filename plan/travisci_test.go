@@ -12,9 +12,14 @@ import (
 
 var id1, id2 json.Number
 
+var f, tr bool
+
 func init() {
 	id1 = json.Number("123456789")
 	id2 = json.Number("987654321")
+
+	f = false
+	tr = true
 }
 
 func Test_buildTravisCI_Disabled(t *testing.T) {
@@ -25,7 +30,7 @@ func Test_buildTravisCI_Disabled(t *testing.T) {
 				Common: v2.Common{
 					Tools: &v2.Tools{
 						TravisCI: &v1.TravisCI{
-							Enabled: false,
+							Enabled: &f,
 						},
 					},
 				},
@@ -58,14 +63,16 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 					},
 				},
 				Backend: &v2.Backend{
-					Bucket:  util.StrPtr("bucket"),
-					Region:  util.StrPtr("us-west-2"),
-					Profile: util.StrPtr("profile"),
+					Bucket:    util.StrPtr("bucket"),
+					Region:    util.StrPtr("us-west-2"),
+					Profile:   util.StrPtr("profile"),
+					AccountID: util.StrPtr("some account id"),
 				},
-				Tools: &v2.Tools{TravisCI: &v1.TravisCI{
-					Enabled:        true,
-					AWSIAMRoleName: "rollin",
-				}},
+				Tools: &v2.Tools{
+					TravisCI: &v1.TravisCI{
+						Enabled:        &tr,
+						AWSIAMRoleName: util.StrPtr("rollin"),
+					}},
 			},
 		},
 		Accounts: map[string]v2.Account{
@@ -82,10 +89,11 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 	p := &Plan{}
 	p.Accounts = p.buildAccounts(c)
 	tr := p.buildTravisCI(c, "0.1.0")
-	a.Len(tr.AWSProfiles, 1)
-	a.Equal("foo", tr.AWSProfiles[0].Name)
-	a.Equal(id1, tr.AWSProfiles[0].ID)
-	a.Equal("rollin", tr.AWSProfiles[0].Role)
+	a.Len(tr.AWSProfiles, 2)
+	a.Contains(tr.AWSProfiles, "profile")
+	a.Contains(tr.AWSProfiles, "foo")
+	a.Equal(id1.String(), tr.AWSProfiles["foo"].AccountID)
+	a.Equal("rollin", tr.AWSProfiles["foo"].RoleName)
 }
 
 func Test_buildTravisCI_TestBuckets(t *testing.T) {
@@ -107,13 +115,14 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 					},
 				},
 				Backend: &v2.Backend{
-					Bucket:  util.StrPtr("bucket"),
-					Region:  util.StrPtr("us-west-2"),
-					Profile: util.StrPtr("profile"),
+					Bucket:    util.StrPtr("bucket"),
+					Region:    util.StrPtr("us-west-2"),
+					Profile:   util.StrPtr("profile"),
+					AccountID: util.StrPtr("some account id"),
 				},
 				Tools: &v2.Tools{TravisCI: &v1.TravisCI{
-					Enabled:        true,
-					AWSIAMRoleName: "rollin",
+					Enabled:        &tr,
+					AWSIAMRoleName: util.StrPtr("rollin"),
 				}},
 			},
 		},
@@ -137,6 +146,5 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 	a.NotNil(p.Accounts["foo"].Providers.AWS)
 	a.Equal(id1, p.Accounts["foo"].Providers.AWS.AccountID)
 	a.Len(tr.TestBuckets, 1)
-	// 3 because there is always a global
-	a.Len(tr.TestBuckets[0], 3)
+	a.Len(tr.TestBuckets[0], 2)
 }

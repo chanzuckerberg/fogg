@@ -11,6 +11,11 @@ import (
 	validator "gopkg.in/go-playground/validator.v9"
 )
 
+var validTravisCommands = map[string]struct{}{
+	"check": struct{}{},
+	"lint":  struct{}{},
+}
+
 // Validate validates the config
 func (c *Config) Validate() ([]string, error) {
 	if c == nil {
@@ -49,12 +54,10 @@ func (c *Config) Validate() ([]string, error) {
 	errs = multierror.Append(errs, c.ValidateOktaProviders())
 	errs = multierror.Append(errs, c.validateModules())
 	errs = multierror.Append(errs, c.ValidateAtlantis())
+	errs = multierror.Append(errs, c.ValidateTravis())
 
 	// refactor to make it easier to manage these
-	w, e := c.ValidateToolsTravis()
-	warnings = append(warnings, w...)
-	errs = multierror.Append(errs, e)
-	w, e = c.ValidateToolsTfLint()
+	w, e := c.ValidateToolsTfLint()
 	warnings = append(warnings, w...)
 	errs = multierror.Append(errs, e)
 
@@ -200,17 +203,27 @@ func (c *Config) ValidateBlessProviders() error {
 	return errs
 }
 
-func (c *Config) ValidateToolsTravis() ([]string, error) {
-	var warns []string
+func (c *Config) ValidateTravis() error {
 	var errs *multierror.Error
 	c.WalkComponents(func(component string, comms ...Common) {
-		c := comms[len(comms)-1]
-		if c.Tools != nil && c.Tools.TravisCI != nil {
-			warns = append(warns, fmt.Sprintf("per-component travisci config is not implemented, ignoring config in %s", component))
+		t := ResolveTravis(comms...)
+		if t.Enabled == nil || *t.Enabled == false {
+			return // nothing to do
+		}
+
+		if t.AWSIAMRoleName == nil || *t.AWSIAMRoleName == "" {
+			errs = multierror.Append(errs, fmt.Errorf("if travis is enabled, aws_role_name must be set"))
+		}
+
+		if t.Command != nil {
+			_, ok := validTravisCommands[*t.Command]
+			if !ok {
+				errs = multierror.Append(errs, fmt.Errorf("unrecognized travisci command %s (%s)", *t.Command, component))
+			}
 		}
 	})
 
-	return warns, errs
+	return errs
 }
 
 func (c *Config) ValidateToolsTfLint() ([]string, error) {
