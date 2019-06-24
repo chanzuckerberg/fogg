@@ -14,20 +14,20 @@ import (
 )
 
 //ReadConfig take a byte array as input and outputs a json or yaml config file
-func ReadConfig(b []byte, fs afero.Fs, configFile string) (*Config, error) {
+func ReadConfig(fs afero.Fs, b []byte, configFile string) (*Config, error) {
 	var e error
 	c := &Config{
 		Docker: false,
 	}
 
-	info, err := fs.Stat(configFile)
-	if err != nil {
-		return nil, errs.WrapUser(err, "unable to find file")
+	info, e := fs.Stat(configFile)
+	if e != nil {
+		return nil, errs.WrapUser(e, "unable to find file")
 	}
 
 	//Determines the extension of the file
 	switch filepath.Ext(info.Name()) {
-	case ".yml":
+	case ".yml", ".yaml":
 		e = yaml.Unmarshal(b, c)
 	case ".json":
 		e = json.Unmarshal(b, c)

@@ -17,7 +17,10 @@ func ConvertToYaml(fs afero.Fs, configFile string) error {
 	if err != nil {
 		return err
 	}
-	afero.WriteFile(fs, "fogg.yml", yml, 0644)
 
+	err = afero.WriteFile(fs, "fogg.yml", yml, 0644)
+	if err != nil {
+		return err
+	}
 	return nil
 }

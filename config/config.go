@@ -75,7 +75,7 @@ func FindAndReadConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
 		return UpgradeConfigVersion(c)
 	case 2:
 
-		return v2.ReadConfig(b, fs, configFile)
+		return v2.ReadConfig(fs, b, configFile)
 	default:
 		return nil, errs.NewUser("could not figure out config file version")
 	}

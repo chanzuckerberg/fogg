@@ -173,7 +173,7 @@ func TestConfig_ValidateAWSProviders(t *testing.T) {
 			e = afero.WriteFile(fs, "fogg.json", b, 0644)
 			r.NoError(e)
 
-			c, e := ReadConfig(b, fs, "fogg.json")
+			c, e := ReadConfig(fs, b, "fogg.json")
 			r.NoError(e)
 			r.NotNil(c)
 
@@ -202,7 +202,7 @@ func TestConfig_ValidateTravis(t *testing.T) {
 			e = afero.WriteFile(fs, "fogg.json", b, 0644)
 			r.NoError(e)
 
-			c, e := ReadConfig(b, fs, "fogg.json")
+			c, e := ReadConfig(fs, b, "fogg.json")
 			r.NoError(e)
 
 			if err := c.ValidateTravis(); (err != nil) != tt.wantErr {

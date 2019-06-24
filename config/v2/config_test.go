@@ -19,7 +19,7 @@ func TestReadConfig(t *testing.T) {
 	a.NoError(e)
 	e = afero.WriteFile(fs, "fogg.json", b, 0644)
 	a.NoError(e)
-	c, e := ReadConfig(b, fs, "fogg.json")
+	c, e := ReadConfig(fs, b, "fogg.json")
 	a.NoError(e)
 
 	w, e := c.Validate()
@@ -29,7 +29,7 @@ func TestReadConfig(t *testing.T) {
 	b2, e := util.TestFile("v2_minimal_valid")
 	a.NoError(e)
 
-	c, e = ReadConfig(b2, fs, "fogg.json")
+	c, e = ReadConfig(fs, b2, "fogg.json")
 	a.NoError(e)
 
 	w, e = c.Validate()
@@ -47,7 +47,7 @@ func TestReadConfigYaml(t *testing.T) {
 	a.NoError(e)
 	e = afero.WriteFile(fs, "fogg.yml", b2, 0644)
 	a.NoError(e)
-	c, e := ReadConfig(b2, fs, "fogg.yml")
+	c, e := ReadConfig(fs, b2, "fogg.yml")
 	a.NoError(e)
 
 	w, e := c.Validate()
@@ -66,7 +66,7 @@ func TestReadSnowflakeProvider(t *testing.T) {
 	r.NoError(e)
 	e = afero.WriteFile(fs, "fogg.json", b, 0644)
 	r.NoError(e)
-	c, e := ReadConfig(b, fs, "fogg.json")
+	c, e := ReadConfig(fs, b, "fogg.json")
 	r.NoError(e)
 	r.NotNil(c)
 
@@ -92,7 +92,7 @@ func TestReadSnowflakeProviderYaml(t *testing.T) {
 	r.NoError(e)
 	e = afero.WriteFile(fs, "fogg.yml", b, 0644)
 	r.NoError(e)
-	c, e := ReadConfig(b, fs, "fogg.yml")
+	c, e := ReadConfig(fs, b, "fogg.yml")
 	r.NoError(e)
 	r.NotNil(c)
 
@@ -118,7 +118,7 @@ func TestReadBlessProvider(t *testing.T) {
 	r.NoError(e)
 	e = afero.WriteFile(fs, "fogg.json", b, 0644)
 	r.NoError(e)
-	c, e := ReadConfig(b, fs, "fogg.json")
+	c, e := ReadConfig(fs, b, "fogg.json")
 	r.NoError(e)
 	r.NotNil(c)
 
@@ -145,7 +145,7 @@ func TestReadOktaProvider(t *testing.T) {
 	r.NoError(e)
 	e = afero.WriteFile(fs, "fogg.json", b, 0644)
 	r.NoError(e)
-	c, e := ReadConfig(b, fs, "fogg.json")
+	c, e := ReadConfig(fs, b, "fogg.json")
 	r.NoError(e)
 	r.NotNil(c)
 
@@ -170,7 +170,7 @@ func TestReadBlessProviderYaml(t *testing.T) {
 	r.NoError(e)
 	e = afero.WriteFile(fs, "fogg.yml", b, 0644)
 	r.NoError(e)
-	c, e := ReadConfig(b, fs, "fogg.yml")
+	c, e := ReadConfig(fs, b, "fogg.yml")
 	r.NoError(e)
 	r.NotNil(c)
 
@@ -197,7 +197,7 @@ func TestReadAtlantis(t *testing.T) {
 	r.NoError(e)
 	e = afero.WriteFile(fs, "fogg.json", b, 0644)
 	r.NoError(e)
-	c, e := ReadConfig(b, fs, "fogg.json")
+	c, e := ReadConfig(fs, b, "fogg.json")
 
 	r.NotNil(c.Defaults.Tools)
 	r.NotNil(c.Defaults.Tools.Atlantis)
