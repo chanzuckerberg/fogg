@@ -182,3 +182,26 @@ func TestConfig_ValidateAWSProviders(t *testing.T) {
 		})
 	}
 }
+
+func TestConfig_ValidateTravis(t *testing.T) {
+	tests := []struct {
+		fileName string
+		wantErr  bool
+	}{
+		{"v2_invalid_travis_command", true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.fileName, func(t *testing.T) {
+			r := require.New(t)
+
+			b, e := util.TestFile(tt.fileName)
+			r.NoError(e)
+			c, e := ReadConfig(b)
+			r.NoError(e)
+
+			if err := c.ValidateTravis(); (err != nil) != tt.wantErr {
+				t.Errorf("Config.ValidateTravis() error = %v, wantErr %v (err != nil) %v", err, tt.wantErr, (err != nil))
+			}
+		})
+	}
+}

@@ -74,7 +74,7 @@ func Test_detectVersion(t *testing.T) {
 	}
 }
 
-func intptr(i int64) *int64 {
+func intptr(i int) *int {
 	return &i
 }
 
@@ -126,9 +126,9 @@ func TestUpgradeConfigVersion(t *testing.T) {
 						Enabled: boolptr(true),
 					},
 					TravisCI: &v1.TravisCI{
-						Enabled:        true,
-						AWSIAMRoleName: "travis-role",
-						TestBuckets:    13,
+						Enabled:        boolptr(true),
+						AWSIAMRoleName: util.StrPtr("travis-role"),
+						TestBuckets:    intptr(13),
 					},
 				},
 			},

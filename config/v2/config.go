@@ -166,6 +166,15 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		return &str
 	}
 
+	randBoolPtr := func(r *rand.Rand, s int) *bool {
+		b := r.Float32() > 0.5
+		return &b
+	}
+	randIntPtr := func(r *rand.Rand, s int) *int {
+		i := r.Intn(s)
+		return &i
+	}
+
 	randStringMap := func(r *rand.Rand, s int) map[string]string {
 		m := map[string]string{}
 
@@ -244,8 +253,8 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 			c.Tools = &Tools{}
 			if r.Float32() < 0.5 {
 				c.Tools.TravisCI = &v1.TravisCI{
-					Enabled:     r.Float32() < 0.5,
-					TestBuckets: r.Intn(size),
+					Enabled:     randBoolPtr(r, s),
+					TestBuckets: randIntPtr(r, s),
 				}
 			}
 			if r.Float32() < 0.5 {
