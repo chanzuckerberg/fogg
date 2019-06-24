@@ -21,7 +21,7 @@
         "okta-czi-duo": {
             "providers": {
                 "okta": {
-                    "org_name": "czi-duo",
+                    "org_name": "testo",
                     "version": "v3.0.1"
                 }
             },
