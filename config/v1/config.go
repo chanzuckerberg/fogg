@@ -143,7 +143,6 @@ type Config struct {
 }
 
 func ReadConfig(b []byte) (*Config, error) {
-	var e error
 	c := &Config{
 		Docker: true,
 	}
