@@ -98,7 +98,7 @@ func detectVersion(b []byte, fs afero.Fs, configFile string) (int, error) {
 
 	//Unmarshals based on file extension
 	switch filepath.Ext(info.Name()) {
-	case ".yml":
+	case ".yml", ".yaml":
 		err = yaml.Unmarshal(b, v)
 	case ".json":
 		err = json.Unmarshal(b, v)
