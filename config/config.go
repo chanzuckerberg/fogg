@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/json"
 	"io/ioutil"
+	"path/filepath"
 
 	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
@@ -49,7 +50,7 @@ func FindConfig(fs afero.Fs, configFile string) ([]byte, int, error) {
 		return nil, 0, errs.WrapUser(e, "unable to read config")
 	}
 
-	v, err := detectVersion(b)
+	v, err := detectVersion(b, fs, configFile)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -74,7 +75,7 @@ func FindAndReadConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
 		return UpgradeConfigVersion(c)
 	case 2:
 
-		return v2.ReadConfig(b)
+		return v2.ReadConfig(b, fs, configFile)
 	default:
 		return nil, errs.NewUser("could not figure out config file version")
 	}
@@ -82,18 +83,27 @@ func FindAndReadConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
 }
 
 type ver struct {
-	Version int `json:"version"`
+	Version int `json:"version" yaml:"version"`
 }
 
 // detectVersion will detect the version of a config
-func detectVersion(b []byte) (int, error) {
+func detectVersion(b []byte, fs afero.Fs, configFile string) (int, error) {
 	v := &ver{}
 	var err error
 
-	if v2.IsJSON(b) {
-		err = json.Unmarshal(b, v)
-	} else {
+	info, err := fs.Stat(configFile)
+	if err != nil {
+		return 0, errs.WrapUser(err, "unable to find file")
+	}
+
+	//Unmarshals based on file extension
+	switch filepath.Ext(info.Name()) {
+	case ".yml":
 		err = yaml.Unmarshal(b, v)
+	case ".json":
+		err = json.Unmarshal(b, v)
+	default:
+		return 0, errs.NewUser("File type is not supported")
 	}
 
 	if err != nil {

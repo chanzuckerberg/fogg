@@ -3,6 +3,7 @@ package v2
 import (
 	"testing"
 
+	"github.com/spf13/afero"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -13,7 +14,12 @@ func TestReadConfig(t *testing.T) {
 
 	b, e := util.TestFile("empty")
 	a.NoError(e)
-	c, e := ReadConfig(b)
+
+	fs, _, e := util.TestFs()
+	a.NoError(e)
+	e = afero.WriteFile(fs, "fogg.json", b, 0644)
+	a.NoError(e)
+	c, e := ReadConfig(b, fs, "fogg.json")
 	a.NoError(e)
 
 	w, e := c.Validate()
@@ -23,7 +29,7 @@ func TestReadConfig(t *testing.T) {
 	b2, e := util.TestFile("v2_minimal_valid")
 	a.NoError(e)
 
-	c, e = ReadConfig(b2)
+	c, e = ReadConfig(b2, fs, "fogg.json")
 	a.NoError(e)
 
 	w, e = c.Validate()
@@ -34,22 +40,17 @@ func TestReadConfig(t *testing.T) {
 func TestReadConfigYaml(t *testing.T) {
 	a := assert.New(t)
 
-	b, e := util.TestFile("empty")
-	a.NoError(e)
-	c, e := ReadConfig(b)
-	a.NoError(e)
-
-	w, e := c.Validate()
-	a.Error(e)
-	a.Len(w, 0)
-
 	b2, e := util.TestFile("v2_minimal_valid_yaml")
 	a.NoError(e)
 
-	c, e = ReadConfig(b2)
+	fs, _, e := util.TestFs()
+	a.NoError(e)
+	e = afero.WriteFile(fs, "fogg.yml", b2, 0644)
+	a.NoError(e)
+	c, e := ReadConfig(b2, fs, "fogg.yml")
 	a.NoError(e)
 
-	w, e = c.Validate()
+	w, e := c.Validate()
 	a.NoError(e)
 	a.Len(w, 0)
 }
@@ -61,7 +62,11 @@ func TestReadSnowflakeProvider(t *testing.T) {
 	r.NoError(e)
 	r.NotNil(b)
 
-	c, e := ReadConfig(b)
+	fs, _, e := util.TestFs()
+	r.NoError(e)
+	e = afero.WriteFile(fs, "fogg.json", b, 0644)
+	r.NoError(e)
+	c, e := ReadConfig(b, fs, "fogg.json")
 	r.NoError(e)
 	r.NotNil(c)
 
@@ -83,7 +88,11 @@ func TestReadSnowflakeProviderYaml(t *testing.T) {
 	r.NoError(e)
 	r.NotNil(b)
 
-	c, e := ReadConfig(b)
+	fs, _, e := util.TestFs()
+	r.NoError(e)
+	e = afero.WriteFile(fs, "fogg.yml", b, 0644)
+	r.NoError(e)
+	c, e := ReadConfig(b, fs, "fogg.yml")
 	r.NoError(e)
 	r.NotNil(c)
 
@@ -105,7 +114,11 @@ func TestReadBlessProvider(t *testing.T) {
 	r.NoError(e)
 	r.NotNil(b)
 
-	c, e := ReadConfig(b)
+	fs, _, e := util.TestFs()
+	r.NoError(e)
+	e = afero.WriteFile(fs, "fogg.json", b, 0644)
+	r.NoError(e)
+	c, e := ReadConfig(b, fs, "fogg.json")
 	r.NoError(e)
 	r.NotNil(c)
 
@@ -128,7 +141,11 @@ func TestReadOktaProvider(t *testing.T) {
 	r.NoError(e)
 	r.NotNil(b)
 
-	c, e := ReadConfig(b)
+	fs, _, e := util.TestFs()
+	r.NoError(e)
+	e = afero.WriteFile(fs, "fogg.json", b, 0644)
+	r.NoError(e)
+	c, e := ReadConfig(b, fs, "fogg.json")
 	r.NoError(e)
 	r.NotNil(c)
 
@@ -149,7 +166,11 @@ func TestReadBlessProviderYaml(t *testing.T) {
 	r.NoError(e)
 	r.NotNil(b)
 
-	c, e := ReadConfig(b)
+	fs, _, e := util.TestFs()
+	r.NoError(e)
+	e = afero.WriteFile(fs, "fogg.yml", b, 0644)
+	r.NoError(e)
+	c, e := ReadConfig(b, fs, "fogg.yml")
 	r.NoError(e)
 	r.NotNil(c)
 

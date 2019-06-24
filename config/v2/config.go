@@ -1,43 +1,40 @@
 package v2
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"math/rand"
+	"path/filepath"
 	"reflect"
-	"unicode"
 
 	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/errs"
+	"github.com/spf13/afero"
 	"gopkg.in/yaml.v2"
 )
 
 //ReadConfig take a byte array as input and outputs a json or yaml config file
-func ReadConfig(b []byte) (*Config, error) {
+func ReadConfig(b []byte, fs afero.Fs, configFile string) (*Config, error) {
 	var e error
 	c := &Config{
 		Docker: false,
 	}
 
-	if IsJSON(b) {
-		e = json.Unmarshal(b, c)
-	} else {
+	info, err := fs.Stat(configFile)
+	if err != nil {
+		return nil, errs.WrapUser(err, "unable to find file")
+	}
+
+	//Determines the extension of the file
+	switch filepath.Ext(info.Name()) {
+	case ".yml":
 		e = yaml.Unmarshal(b, c)
+	case ".json":
+		e = json.Unmarshal(b, c)
+	default:
+		return nil, errs.NewUser("File type is not supported")
 	}
-	if e != nil {
-		return nil, errs.WrapUser(e, "unable to parse config file")
-	}
-
-	return c, nil
-}
-
-//IsJSON determines if an array of bytes represent a json object
-func IsJSON(b []byte) bool {
-	jsonPrefix := []byte("{")
-	trimmed := bytes.TrimLeftFunc(b, unicode.IsSpace)
-
-	return bytes.HasPrefix(trimmed, jsonPrefix)
+	return c, e
 }
 
 type Config struct {

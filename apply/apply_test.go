@@ -17,6 +17,7 @@ import (
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gopkg.in/yaml.v2"
 )
 
 func init() {
@@ -224,7 +225,7 @@ func TestApplySmokeTest(t *testing.T) {
 	fs, _, err := util.TestFs()
 	r.NoError(err)
 
-	yaml := `
+	yml := `
 defaults:
   owner: foo
   project: bar
@@ -235,7 +236,11 @@ defaults:
     profile: quux
 version: 2
 `
-	c, e := v2.ReadConfig([]byte(yaml))
+	b, e := yaml.Marshal(yml)
+	r.NoError(e)
+	e = afero.WriteFile(fs, "fogg.yml", b, 0644)
+	r.NoError(e)
+	c, e := v2.ReadConfig([]byte(yml), fs, "fogg.yml")
 	r.NoError(e)
 
 	w, e := c.Validate()

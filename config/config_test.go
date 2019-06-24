@@ -45,9 +45,24 @@ func Test_detectVersion(t *testing.T) {
 		{"explicit 2", args{[]byte(`{"version": 2}`)}, 2, false},
 		{"err", args{[]byte(`{`)}, 0, true},
 	}
+	a := assert.New(t)
+	fs, _, err:= util.TestFs()
+	a.NoError(err)
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := detectVersion(tt.args.b)
+			var got int
+			var err error
+			switch tt.want{
+			case 1:
+				afero.WriteFile(fs, "fogg.json", tt.args.b, 0644)
+				got, err = detectVersion(tt.args.b, fs, "fogg.json")
+			case 2:
+				afero.WriteFile(fs, "fogg.yml", tt.args.b, 0644)
+				got, err = detectVersion(tt.args.b, fs, "fogg.yml")
+			default:
+				got, err = detectVersion(tt.args.b, fs, "fogg.yml")
+			}
+			
 			if (err != nil) != tt.wantErr {
 				t.Errorf("detectVersion() error = %v, wantErr %v", err, tt.wantErr)
 				return

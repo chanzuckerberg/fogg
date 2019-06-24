@@ -10,6 +10,7 @@ import (
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"github.com/spf13/afero"
 )
 
 func init() {
@@ -106,7 +107,11 @@ func TestPlanBasicV2(t *testing.T) {
 	b, e := util.TestFile("v2_full")
 	assert.NoError(t, e)
 
-	c2, err := v2.ReadConfig(b)
+	fs, _, err := util.TestFs()
+	err = afero.WriteFile(fs, "fogg.json", b, 0644)
+	a.NoError(err)
+
+	c2, err := v2.ReadConfig(b, fs, "fogg.json")
 	assert.Nil(t, err)
 
 	w, err := c2.Validate()
@@ -150,7 +155,11 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 	b, e := util.TestFile("v2_full_yaml")
 	assert.NoError(t, e)
 
-	c2, err := v2.ReadConfig(b)
+	fs, _, err := util.TestFs()
+	a.NoError(err)
+	err = afero.WriteFile(fs, "fogg.yml", b, 0644)
+	a.NoError(err)
+	c2, err := v2.ReadConfig(b, fs, "fogg.yml" )
 	assert.Nil(t, err)
 
 	w, err := c2.Validate()
