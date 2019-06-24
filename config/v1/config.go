@@ -148,7 +148,7 @@ func ReadConfig(b []byte) (*Config, error) {
 		Docker: true,
 	}
 
-	e = json.Unmarshal(b, c)
+	e := json.Unmarshal(b, c)
 	if e != nil {
 		return nil, errs.WrapUser(e, "unable to parse config file")
 	}
