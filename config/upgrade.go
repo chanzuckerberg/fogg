@@ -25,7 +25,6 @@ func Upgrade(fs afero.Fs, configFile string) error {
 			return err
 		}
 
-		//Should this marshal it to v2?
 		marshalled, err := yaml.Marshal(c2)
 		if err != nil {
 			return errs.WrapInternal(err, "Could not serialize config to yaml.")

@@ -240,7 +240,7 @@ version: 2
 	r.NoError(e)
 	e = afero.WriteFile(fs, "fogg.yml", b, 0644)
 	r.NoError(e)
-	c, e := v2.ReadConfig([]byte(yml), fs, "fogg.yml")
+	c, e := v2.ReadConfig(fs, []byte(yml), "fogg.yml")
 	r.NoError(e)
 
 	w, e := c.Validate()

@@ -111,7 +111,7 @@ func TestPlanBasicV2(t *testing.T) {
 	err = afero.WriteFile(fs, "fogg.json", b, 0644)
 	a.NoError(err)
 
-	c2, err := v2.ReadConfig(b, fs, "fogg.json")
+	c2, err := v2.ReadConfig(fs, b, "fogg.json")
 	assert.Nil(t, err)
 
 	w, err := c2.Validate()
@@ -159,7 +159,7 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 	a.NoError(err)
 	err = afero.WriteFile(fs, "fogg.yml", b, 0644)
 	a.NoError(err)
-	c2, err := v2.ReadConfig(b, fs, "fogg.yml" )
+	c2, err := v2.ReadConfig(fs, b, "fogg.yml" )
 	assert.Nil(t, err)
 
 	w, err := c2.Validate()
