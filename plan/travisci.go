@@ -33,6 +33,18 @@ func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
 			Command: p.Global.TravisCI.Command,
 		}
 		projects = append(projects, proj)
+
+		awsProfiles[p.Global.Backend.Profile] = AWSRole{
+			AccountID: *p.Global.Backend.AccountID,
+			RoleName:  p.Global.TravisCI.AWSRoleName,
+		}
+		if p.Global.Providers.AWS != nil {
+			a := *p.Global.Providers.AWS
+			awsProfiles[a.Profile] = AWSRole{
+				AccountID: *p.Global.Backend.AccountID,
+				RoleName:  p.Global.TravisCI.AWSRoleName,
+			}
+		}
 	}
 
 	for name, acct := range p.Accounts {
@@ -47,9 +59,15 @@ func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
 			projects = append(projects, proj)
 
 			// Grab all profiles from accounts
-			awsProfiles[acct.Providers.AWS.Profile] = AWSRole{
-				AccountID: acct.Providers.AWS.AccountID.String(),
+			awsProfiles[acct.Backend.Profile] = AWSRole{
+				AccountID: *acct.Backend.AccountID,
 				RoleName:  acct.TravisCI.AWSRoleName,
+			}
+			if acct.Providers.AWS != nil {
+				awsProfiles[acct.Providers.AWS.Profile] = AWSRole{
+					AccountID: acct.Providers.AWS.AccountID.String(),
+					RoleName:  acct.TravisCI.AWSRoleName,
+				}
 			}
 		}
 	}
@@ -65,6 +83,19 @@ func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
 				}
 
 				projects = append(projects, proj)
+
+				awsProfiles[c.Backend.Profile] = AWSRole{
+					AccountID: *c.Backend.AccountID,
+					RoleName:  c.TravisCI.AWSRoleName,
+				}
+
+				if c.Providers.AWS != nil {
+					a := *c.Providers.AWS
+					awsProfiles[a.Profile] = AWSRole{
+						AccountID: a.AccountID.String(),
+						RoleName:  c.TravisCI.AWSRoleName,
+					}
+				}
 			}
 		}
 	}
