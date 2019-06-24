@@ -63,14 +63,16 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 					},
 				},
 				Backend: &v2.Backend{
-					Bucket:  util.StrPtr("bucket"),
-					Region:  util.StrPtr("us-west-2"),
-					Profile: util.StrPtr("profile"),
+					Bucket:    util.StrPtr("bucket"),
+					Region:    util.StrPtr("us-west-2"),
+					Profile:   util.StrPtr("profile"),
+					AccountID: util.StrPtr("some account id"),
 				},
-				Tools: &v2.Tools{TravisCI: &v1.TravisCI{
-					Enabled:        &tr,
-					AWSIAMRoleName: util.StrPtr("rollin"),
-				}},
+				Tools: &v2.Tools{
+					TravisCI: &v1.TravisCI{
+						Enabled:        &tr,
+						AWSIAMRoleName: util.StrPtr("rollin"),
+					}},
 			},
 		},
 		Accounts: map[string]v2.Account{
@@ -87,7 +89,8 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 	p := &Plan{}
 	p.Accounts = p.buildAccounts(c)
 	tr := p.buildTravisCI(c, "0.1.0")
-	a.Len(tr.AWSProfiles, 1)
+	a.Len(tr.AWSProfiles, 2)
+	a.Contains(tr.AWSProfiles, "profile")
 	a.Contains(tr.AWSProfiles, "foo")
 	a.Equal(id1.String(), tr.AWSProfiles["foo"].AccountID)
 	a.Equal("rollin", tr.AWSProfiles["foo"].RoleName)
@@ -112,9 +115,10 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 					},
 				},
 				Backend: &v2.Backend{
-					Bucket:  util.StrPtr("bucket"),
-					Region:  util.StrPtr("us-west-2"),
-					Profile: util.StrPtr("profile"),
+					Bucket:    util.StrPtr("bucket"),
+					Region:    util.StrPtr("us-west-2"),
+					Profile:   util.StrPtr("profile"),
+					AccountID: util.StrPtr("some account id"),
 				},
 				Tools: &v2.Tools{TravisCI: &v1.TravisCI{
 					Enabled:        &tr,

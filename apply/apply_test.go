@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/config"
-	"github.com/chanzuckerberg/fogg/config/v1"
+	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/sirupsen/logrus"
@@ -236,13 +236,15 @@ func TestApplySmokeTest(t *testing.T) {
     "infra_s3_bucket": "buck",
     "project": "proj",
     "terraform_version": "0.100.0",
-    "owner": "foo@example.com"
-  },
-  "travis_ci": {
-	"enabled": true,
-	"aws_iam_role_name": "travis",
-        "id_account_name": "id",
-        "test_buckets": 7
+		"owner": "foo@example.com",
+		"tools": {
+			  "travis_ci": {
+						"enabled": true,
+						"aws_iam_role_name": "travis",
+						"id_account_name": "id",
+						"test_buckets": 7
+			  }
+		}
   },
   "accounts": {
     "foo": {

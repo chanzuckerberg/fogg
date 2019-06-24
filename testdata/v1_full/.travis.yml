@@ -21,9 +21,17 @@ before_script:
   - aws configure set profile.czi-bar.source_profile _idacct
   - aws --profile czi-bar sts get-caller-identity
 
+  - aws configure set profile.czi-env.role_arn arn:aws:iam::5:role/travis-role
+  - aws configure set profile.czi-env.source_profile _idacct
+  - aws --profile czi-env sts get-caller-identity
+
   - aws configure set profile.czi-foo.role_arn arn:aws:iam::2:role/travis-role
   - aws configure set profile.czi-foo.source_profile _idacct
   - aws --profile czi-foo sts get-caller-identity
+
+  - aws configure set profile.czi-stage.role_arn arn:aws:iam::4:role/travis-role
+  - aws configure set profile.czi-stage.source_profile _idacct
+  - aws --profile czi-stage sts get-caller-identity
 
 
 jobs:

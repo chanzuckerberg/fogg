@@ -34,15 +34,17 @@ func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
 		}
 		projects = append(projects, proj)
 
-		awsProfiles[p.Global.Backend.Profile] = AWSRole{
-			AccountID: *p.Global.Backend.AccountID,
-			RoleName:  p.Global.TravisCI.AWSRoleName,
-		}
-		if p.Global.Providers.AWS != nil {
-			a := *p.Global.Providers.AWS
-			awsProfiles[a.Profile] = AWSRole{
+		if p.Global.Backend.AccountID != nil {
+			awsProfiles[p.Global.Backend.Profile] = AWSRole{
 				AccountID: *p.Global.Backend.AccountID,
 				RoleName:  p.Global.TravisCI.AWSRoleName,
+			}
+			if p.Global.Providers.AWS != nil {
+				a := *p.Global.Providers.AWS
+				awsProfiles[a.Profile] = AWSRole{
+					AccountID: *p.Global.Backend.AccountID,
+					RoleName:  p.Global.TravisCI.AWSRoleName,
+				}
 			}
 		}
 	}
@@ -59,9 +61,11 @@ func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
 			projects = append(projects, proj)
 
 			// Grab all profiles from accounts
-			awsProfiles[acct.Backend.Profile] = AWSRole{
-				AccountID: *acct.Backend.AccountID,
-				RoleName:  acct.TravisCI.AWSRoleName,
+			if acct.Backend.AccountID != nil {
+				awsProfiles[acct.Backend.Profile] = AWSRole{
+					AccountID: *acct.Backend.AccountID,
+					RoleName:  acct.TravisCI.AWSRoleName,
+				}
 			}
 			if acct.Providers.AWS != nil {
 				awsProfiles[acct.Providers.AWS.Profile] = AWSRole{
@@ -84,9 +88,11 @@ func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
 
 				projects = append(projects, proj)
 
-				awsProfiles[c.Backend.Profile] = AWSRole{
-					AccountID: *c.Backend.AccountID,
-					RoleName:  c.TravisCI.AWSRoleName,
+				if c.Backend.AccountID != nil {
+					awsProfiles[c.Backend.Profile] = AWSRole{
+						AccountID: *c.Backend.AccountID,
+						RoleName:  c.TravisCI.AWSRoleName,
+					}
 				}
 
 				if c.Providers.AWS != nil {
