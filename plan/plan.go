@@ -173,7 +173,7 @@ func Eval(c *v2.Config) (*Plan, error) {
 	return p, nil
 }
 
-// Print prints a plan based on fogg file type
+// Print prints a plan
 func Print(p *Plan) error {
 	out, err := yaml.Marshal(p)
 	if err != nil {
