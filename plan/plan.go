@@ -15,7 +15,7 @@ import (
 // Plan represents a set of actions to take
 type Plan struct {
 	Accounts map[string]Account `json:"account" yaml:"account"`
-	Atlantis Atlantis           `json:"account" yaml:"account"`
+	Atlantis Atlantis           `json:"atlantis" yaml:"atlantis"`
 	Envs     map[string]Env     `json:"envs" yaml:"envs"`
 	Global   Component          `json:"global" yaml:"global"`
 	Modules  map[string]Module  `json:"modules" yaml:"modules"`
