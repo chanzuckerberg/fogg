@@ -9,8 +9,9 @@ all: fmt lint doc
 .PHONY: all
 
 fmt: terraform
-	$(sh_command) -c 'for f in $(TF); do printf .; terraform fmt $$f; done'; \
-	echo
+	@printf "fmt: ";
+	@for f in $(TF); do printf .; $(terraform_command) fmt $(TF_ARGS) $$f; done
+	@echo
 .PHONY: fmt
 
 check: lint check-docs
@@ -20,7 +21,11 @@ lint: lint-tf
 .PHONY: lint
 
 lint-tf: terraform
-	@$(sh_command) -c 'for f in $(TF); do printf .; terraform fmt --check=true --diff=true $$f || exit $$? ; done'
+	@printf "fmt: ";
+	@for f in $(TF); do \
+	  printf .; $(terraform_command) fmt $(TF_ARGS) --check=true --diff=true || exit $$? ; \
+	done
+	@echo
 .PHONY: lint-tf
 
 readme:
@@ -42,4 +47,3 @@ clean:
 
 test:
 .PHONY: test
-
