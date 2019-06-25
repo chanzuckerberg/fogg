@@ -29,7 +29,7 @@ type Common struct {
 	TerraformVersion string `yaml:"terraform_version"`
 }
 
-//ComponentCommon represents common componenet fields
+//ComponentCommon represents common fields for components
 type ComponentCommon struct {
 	Common `yaml:",inline"`
 
