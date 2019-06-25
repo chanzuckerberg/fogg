@@ -45,7 +45,6 @@ func FindConfig(fs afero.Fs, configFile string) ([]byte, int, error) {
 	defer f.Close()
 
 	b, e := ioutil.ReadAll(f)
-
 	if e != nil {
 		return nil, 0, errs.WrapUser(e, "unable to read config")
 	}
@@ -66,15 +65,12 @@ func FindAndReadConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
 
 	switch v {
 	case 1: //Upgrade the config version
-
 		c, err := v1.ReadConfig(b)
 		if err != nil {
 			return nil, err
 		}
-
 		return UpgradeConfigVersion(c)
 	case 2:
-
 		return v2.ReadConfig(fs, b, configFile)
 	default:
 		return nil, errs.NewUser("could not figure out config file version")
