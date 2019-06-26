@@ -21,7 +21,7 @@ fmt: terraform
 	@echo
 .PHONY: fmt
 
-lint: terraform-validate lint-terraform-fmt lint-tflint
+lint: lint-terraform-fmt lint-tflint
 .PHONY: lint
 
 lint-tflint: init
@@ -32,10 +32,6 @@ else
 	@echo "disabled"
 endif
 .PHONY: lint-tflint
-
-terraform-validate: terraform init
-	@$(terraform_command) validate $(TF_ARGS) -check-variables=true
-.PHONY: terraform-validate
 
 lint-terraform-fmt: terraform
 	@printf "fmt check: "
