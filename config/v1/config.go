@@ -24,9 +24,9 @@ type Defaults struct {
 	AWSRegionBackend   string            `json:"aws_region_backend" validate:"required"`
 	AWSRegionProvider  string            `json:"aws_region_provider" validate:"required"`
 	AWSRegions         []string          `json:"aws_regions,omitempty"`
-	ExtraVars          map[string]string `json:"extra_vars" `
+	ExtraVars          map[string]string `json:"extra_vars"`
 	InfraBucket        string            `json:"infra_s3_bucket" validate:"required"`
-	InfraDynamoTable   string            `json:"infra_dynamo_db_table" `
+	InfraDynamoTable   string            `json:"infra_dynamo_db_table"`
 	Owner              string            `json:"owner" validate:"required"`
 	Project            string            `json:"project" validate:"required"`
 	TerraformVersion   string            `json:"terraform_version" validate:"required"`
@@ -53,13 +53,13 @@ type Account struct {
 type Env struct {
 	AccountID          *json.Number      `json:"account_id"`
 	AWSProfileBackend  *string           `json:"aws_profile_backend"`
-	AWSProfileProvider *string           `json:"aws_profile_provider" `
+	AWSProfileProvider *string           `json:"aws_profile_provider"`
 	AWSProviderVersion *string           `json:"aws_provider_version,omitempty"`
 	AWSRegionBackend   *string           `json:"aws_region_backend"`
 	AWSRegionProvider  *string           `json:"aws_region_provider"`
-	AWSRegions         []string          `json:"aws_regions" `
-	ExtraVars          map[string]string `json:"extra_vars,omitempty" `
-	InfraBucket        *string           `json:"infra_s3_bucket" `
+	AWSRegions         []string          `json:"aws_regions"`
+	ExtraVars          map[string]string `json:"extra_vars,omitempty"`
+	InfraBucket        *string           `json:"infra_s3_bucket"`
 	InfraDynamoTable   *string           `json:"infra_dynamo_db_table"`
 	Owner              *string           `json:"owner"`
 	Project            *string           `json:"project`
@@ -100,13 +100,13 @@ type Component struct {
 	AWSProfileProvider *string           `json:"aws_profile_provider"`
 	AWSProviderVersion *string           `json:"aws_provider_version,omitempty"`
 	AWSRegionBackend   *string           `json:"aws_region_backend"`
-	AWSRegionProvider  *string           `json:"aws_region_provider" `
+	AWSRegionProvider  *string           `json:"aws_region_provider"`
 	AWSRegions         []string          `json:"aws_regions"`
 	EKS                *EKSConfig        `json:"eks,omitempty"`
 	ExtraVars          map[string]string `json:"extra_vars,omitempty"`
-	InfraBucket        *string           `json:"infra_s3_bucket" `
-	InfraDynamoTable   *string           `json:"infra_dynamo_db_table" `
-	Kind               *ComponentKind    `json:"kind,omitempty" `
+	InfraBucket        *string           `json:"infra_s3_bucket"`
+	InfraDynamoTable   *string           `json:"infra_dynamo_db_table"`
+	Kind               *ComponentKind    `json:"kind,omitempty"`
 	ModuleSource       *string           `json:"module_source"`
 	Owner              *string           `json:"owner"`
 	Project            *string           `json:"project"`
@@ -134,7 +134,7 @@ type TravisCI struct {
 
 type Config struct {
 	Accounts map[string]Account `json:"accounts"`
-	Defaults Defaults           `json:"defaults" `
+	Defaults Defaults           `json:"defaults"`
 	Docker   bool               `json:"docker,omitempty"`
 	Envs     map[string]Env     `json:"envs"`
 	Modules  map[string]Module  `json:"modules"`
