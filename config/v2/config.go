@@ -13,7 +13,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-//ReadConfig take a byte array as input and outputs a json or yaml config file
+//ReadConfig take a byte array as input and outputs a json or yaml config struct
 func ReadConfig(fs afero.Fs, b []byte, configFile string) (*Config, error) {
 	var e error
 	c := &Config{

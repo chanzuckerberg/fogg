@@ -94,7 +94,7 @@ func TestParse(t *testing.T) {
 	assert.NotNil(t, c.Modules)
 }
 
-func TestJsonFailure(t *testing.T) {
+func TestYamlFailure(t *testing.T) {
 	yaml := `foo`
 	r := ioutil.NopCloser(strings.NewReader(yaml))
 	defer r.Close()
