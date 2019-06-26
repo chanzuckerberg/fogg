@@ -33,10 +33,6 @@ else
 endif
 .PHONY: lint-tflint
 
-terraform-validate: terraform init
-	@$(terraform_command) validate $(TF_ARGS) -check-variables=true
-.PHONY: terraform-validate
-
 lint-terraform-fmt: terraform
 	@printf "fmt check: "
 	@for f in $(TF); do \
@@ -47,10 +43,10 @@ lint-terraform-fmt: terraform
 .PHONY: lint-terraform-fmt
 
 ifeq ($(MODE),local)
-plan: terraform-validate init fmt
+plan: init fmt
 	@$(terraform_command) plan $(TF_ARGS) -input=false
 else ifeq ($(MODE),atlantis)
-plan: terraform-validate init lint
+plan: init lint
 	@$(terraform_command) plan $(TF_ARGS) -input=false -out $(PLANFILE) | scenery
 else
 	@echo "Unknown MODE: $(MODE)"
