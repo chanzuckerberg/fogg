@@ -15,9 +15,9 @@ import (
 )
 
 //InitConfig initializes the config file using user input
-
 func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVersion string) *v2.Config {
 	terraformVersion := "0.11.7"
+
 	return &v2.Config{
 		Defaults: v2.Defaults{
 			Common: v2.Common{
@@ -67,6 +67,7 @@ func FindConfig(fs afero.Fs, configFile string) ([]byte, int, error) {
 	return b, v, nil
 }
 
+//FindAndReadConfig locates config file and reads it based on the version
 func FindAndReadConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
 	b, v, err := FindConfig(fs, configFile)
 	if err != nil {
