@@ -14,24 +14,32 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVersion string) *v1.Config {
-	return &v1.Config{
-		Defaults: v1.Defaults{
-			AWSProfileBackend:  awsProfile,
-			AWSProfileProvider: awsProfile,
-			AWSProviderVersion: awsProviderVersion,
-			AWSRegionBackend:   region,
-			AWSRegionProvider:  region,
-			ExtraVars:          map[string]string{},
-			InfraBucket:        bucket,
-			InfraDynamoTable:   table,
-			Owner:              owner,
-			Project:            project,
-			TerraformVersion:   "0.11.7",
+//InitConfig InitConfig initializes the config file using user input
+func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVersion string) *v2.Config {
+	terraformVersion := "0.11.7"
+	return &v2.Config{
+		Defaults: v2.Defaults{
+			Common: v2.Common{
+				Backend: &v2.Backend{
+					Bucket:  &bucket,
+					Profile: &awsProfile,
+					Region:  &region,
+				},
+				Owner:   &owner,
+				Project: &project,
+				Providers: &v2.Providers{
+					AWS: &v2.AWSProvider{
+						Profile: &awsProfile,
+						Region:  &region,
+						Version: &awsProviderVersion,
+					},
+				},
+				TerraformVersion: &terraformVersion,
+			},
 		},
-		Accounts: map[string]v1.Account{},
+		Accounts: map[string]v2.Account{},
 		Docker:   false,
-		Envs:     map[string]v1.Env{},
+		Envs:     map[string]v2.Env{},
 		Modules:  map[string]v1.Module{},
 	}
 }

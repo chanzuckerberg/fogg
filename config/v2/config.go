@@ -25,14 +25,14 @@ func ReadConfig(fs afero.Fs, b []byte, configFile string) (*Config, error) {
 		return nil, errs.WrapUser(e, "unable to find file")
 	}
 
-//Determines the file type based on the extension of the file
+	//Determines the file type based on the extension of the file
 	switch filepath.Ext(info.Name()) {
 	case ".yml", ".yaml":
 		e = yaml.Unmarshal(b, c)
 	case ".json":
 		e = json.Unmarshal(b, c)
 	default:
-		return nil, errs.NewUser("File type is not supported")
+		return nil, errs.NewUserf("File type %s is not supported", ext)
 	}
 	return c, e
 }

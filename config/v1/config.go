@@ -23,7 +23,7 @@ type Defaults struct {
 	AWSProviderVersion string            `json:"aws_provider_version" validate:"required"`
 	AWSRegionBackend   string            `json:"aws_region_backend" validate:"required"`
 	AWSRegionProvider  string            `json:"aws_region_provider" validate:"required"`
-	AWSRegions         []string          `json:"aws_regions,omitempty" `
+	AWSRegions         []string          `json:"aws_regions,omitempty"`
 	ExtraVars          map[string]string `json:"extra_vars" `
 	InfraBucket        string            `json:"infra_s3_bucket" validate:"required"`
 	InfraDynamoTable   string            `json:"infra_dynamo_db_table" `
