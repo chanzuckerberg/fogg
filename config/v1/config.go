@@ -62,7 +62,7 @@ type Env struct {
 	InfraBucket        *string           `json:"infra_s3_bucket"`
 	InfraDynamoTable   *string           `json:"infra_dynamo_db_table"`
 	Owner              *string           `json:"owner"`
-	Project            *string           `json:"project`
+	Project            *string           `json:"project"`
 	TerraformVersion   *string           `json:"terraform_version"`
 	TfLint             *TfLint           `json:"tflint,omitempty"`
 
