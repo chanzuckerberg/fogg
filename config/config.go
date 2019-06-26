@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"path/filepath"
 
@@ -21,9 +22,10 @@ func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVe
 		Defaults: v2.Defaults{
 			Common: v2.Common{
 				Backend: &v2.Backend{
-					Bucket:  &bucket,
-					Profile: &awsProfile,
-					Region:  &region,
+					Bucket:      &bucket,
+					Profile:     &awsProfile,
+					Region:      &region,
+					DynamoTable: &table,
 				},
 				Owner:   &owner,
 				Project: &project,
@@ -71,6 +73,7 @@ func FindAndReadConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
 		return nil, err
 	}
 
+	fmt.Println(v)
 	switch v {
 	case 1: //Upgrade the config version
 		c, err := v1.ReadConfig(b)
