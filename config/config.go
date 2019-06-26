@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"path/filepath"
 
@@ -73,7 +72,6 @@ func FindAndReadConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
 		return nil, err
 	}
 
-	fmt.Println(v)
 	switch v {
 	case 1: //Upgrade the config version
 		c, err := v1.ReadConfig(b)
