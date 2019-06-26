@@ -14,7 +14,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-//InitConfig InitConfig initializes the config file using user input
+//InitConfig initializes the config file using user input
+
 func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVersion string) *v2.Config {
 	terraformVersion := "0.11.7"
 	return &v2.Config{
