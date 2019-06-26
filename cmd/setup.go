@@ -7,7 +7,7 @@ import (
 )
 
 func init() {
-	setupCmd.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
+	setupCmd.Flags().StringP("config", "c", "fogg.yml", "Use this to override the fogg config file.")
 	rootCmd.AddCommand(setupCmd)
 }
 

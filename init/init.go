@@ -1,13 +1,12 @@
 package init
 
 import (
-	"encoding/json"
-
 	"github.com/chanzuckerberg/fogg/config"
-	"github.com/chanzuckerberg/fogg/config/v1"
+	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	prompt "github.com/segmentio/go-prompt"
 	"github.com/spf13/afero"
+	"gopkg.in/yaml.v2"
 )
 
 const AWSProviderVersion = "1.27.0"
@@ -23,19 +22,21 @@ func userPrompt() (string, string, string, string, string, string) {
 	return project, region, bucket, table, profile, owner
 }
 
-func writeConfig(fs afero.Fs, config *v1.Config) error {
-	json, e := json.MarshalIndent(config, "", "  ")
-	if e != nil {
-		return errs.WrapInternal(e, "unable to marshal json")
+func writeConfig(fs afero.Fs, config *v2.Config) error {
+	yaml, err := yaml.Marshal(config)
+	if err != nil {
+		return errs.WrapInternal(err, "unable to marshal yaml")
 	}
-	configFile, e := fs.Create("fogg.json")
-	if e != nil {
-		return errs.WrapInternal(e, "unable to create config file fogg.json")
+
+	yamlConfigFile, err := fs.Create("fogg.yml")
+	if err != nil {
+		return errs.WrapInternal(err, "unable to create config file fogg.yml")
 	}
-	_, e3 := configFile.Write(json)
-	return e3
+	_, err = yamlConfigFile.Write(yaml)
+	return err
 }
 
+//Init reads user console input and generates a fogg.yml file
 func Init(fs afero.Fs) error {
 	project, region, bucket, table, profile, owner := userPrompt()
 	config := config.InitConfig(project, region, bucket, table, profile, owner, AWSProviderVersion)

@@ -63,18 +63,23 @@ func TestIntegration(t *testing.T) {
 				e = apply.Apply(testdataFs, conf, templates.Templates, true)
 				a.NoError(e)
 			} else {
-
+				fileName := "fogg.yml"
 				fs, _, e := util.TestFs()
 				a.NoError(e)
 
 				// copy fogg.json into the tmp test dir (so that it doesn't show up as a diff)
-				configContents, e := afero.ReadFile(testdataFs, "fogg.json")
+				configContents, e := afero.ReadFile(testdataFs, fileName)
+				if os.IsNotExist(e) { //If the error is related to the file being non-existent
+					fileName = "fogg.json"
+					configContents, e = afero.ReadFile(testdataFs, fileName)
+				}
 				a.NoError(e)
-				configMode, e := testdataFs.Stat("fogg.json")
-				a.NoError(e)
-				a.NoError(afero.WriteFile(fs, "fogg.json", configContents, configMode.Mode()))
 
-				conf, e := config.FindAndReadConfig(fs, "fogg.json")
+				configMode, e := testdataFs.Stat(fileName)
+				a.NoError(e)
+				a.NoError(afero.WriteFile(fs, fileName, configContents, configMode.Mode()))
+
+				conf, e := config.FindAndReadConfig(fs, fileName)
 				a.NoError(e)
 				fmt.Printf("conf %#v\n", conf)
 

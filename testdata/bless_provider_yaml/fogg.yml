@@ -1,0 +1,29 @@
+accounts:
+  foo: {}
+defaults:
+  backend:
+    bucket: bucket
+    profile: foofoo
+    region: region
+  owner: foo@example.com
+  project: foofoo
+  providers:
+    bless:
+      additional_regions:
+      - a
+      - b
+      aws_profile: foofoofoo
+      aws_region: bar
+      version: 0.0.0
+  terraform_version: 1.1.1
+envs:
+  bar:
+    components:
+      bam: 
+        eks: 
+          cluster_name: foo
+          kind: bar
+modules:
+  foo: 
+    terraform_version: 1.1.1
+version: 2

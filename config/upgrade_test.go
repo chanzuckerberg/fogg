@@ -10,7 +10,7 @@ import (
 
 func TestUpgradeV2(t *testing.T) {
 	r := require.New(t)
-	confPath := "config"
+	confPath := "fogg.yml"
 	conf := []byte(`{"version": 1}`)
 	fs, _, err := util.TestFs()
 	r.Nil(err)
@@ -34,7 +34,7 @@ func TestUpgradeUnknownVersion(t *testing.T) {
 
 func TestUpgradeV1(t *testing.T) {
 	r := require.New(t)
-	confPath := "config"
+	confPath := "fogg.yml"
 	fs, _, err := util.TestFs()
 	r.Nil(err)
 

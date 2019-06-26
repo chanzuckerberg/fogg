@@ -24,7 +24,6 @@ var initCmd = &cobra.Command{
 			return errs.WrapUser(e, "can't get pwd")
 		}
 		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
-
 		// check that we are at root of initialized git repo
 		openGitOrExit(fs)
 
