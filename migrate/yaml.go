@@ -25,11 +25,11 @@ func ConvertToYaml(fs afero.Fs, configFile string) error {
 	}
 	logrus.Info("Created fogg.yml config file")
 
-	// err = fs.Remove(configFile)
-	// if err != nil {
-	// 	return err
-	// }
-	// logrus.Infof("Removed %s config file", configFile)
+	err = fs.Remove(configFile)
+	if err != nil {
+		return err
+	}
+	logrus.Infof("Removed %s config file", configFile)
 
 	return nil
 }
