@@ -21,7 +21,7 @@ fmt: terraform
 	@echo
 .PHONY: fmt
 
-lint: terraform-validate lint-terraform-fmt lint-tflint
+lint: lint-terraform-fmt lint-tflint
 .PHONY: lint
 
 lint-tflint: init
@@ -47,10 +47,10 @@ lint-terraform-fmt: terraform
 .PHONY: lint-terraform-fmt
 
 ifeq ($(MODE),local)
-plan: init fmt
+plan: terraform-validate init fmt
 	@$(terraform_command) plan $(TF_ARGS) -input=false
 else ifeq ($(MODE),atlantis)
-plan: init lint
+plan: terraform-validate init lint
 	@$(terraform_command) plan $(TF_ARGS) -input=false -out $(PLANFILE) | scenery
 else
 	@echo "Unknown MODE: $(MODE)"
