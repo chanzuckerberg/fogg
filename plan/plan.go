@@ -138,7 +138,7 @@ type Component struct {
 type Env struct {
 	Components map[string]Component `json:"components" yaml:"components"`
 	Env        string               `json:"env" yaml:"env"`
-	EKS        *v1.EKSConfig        `json:"eks" yaml:"eks"` //TODO get rid of this
+	EKS        *v1.EKSConfig        `json:"eks" yaml:"eks"`
 }
 
 // TfLint containts a plan for running tflint
