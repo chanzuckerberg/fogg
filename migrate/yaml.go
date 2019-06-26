@@ -29,7 +29,7 @@ func ConvertToYaml(fs afero.Fs, configFile string) error {
 	if err != nil {
 		return err
 	}
-	logrus.Infof("Removed %s\n config file", configFile)
+	logrus.Infof("Removed %s config file", configFile)
 
 	return nil
 }
