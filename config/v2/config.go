@@ -40,7 +40,7 @@ func ReadConfig(fs afero.Fs, b []byte, configFile string) (*Config, error) {
 
 type Config struct {
 	Accounts map[string]Account   `json:"accounts,omitempty" yaml:"accounts,omitempty"`
-	Defaults Defaults             `json:"defaults"  yaml:"defaults" validate:"required"`
+	Defaults Defaults             `json:"defaults" yaml:"defaults" validate:"required"`
 	Docker   bool                 `json:"docker,omitempty" yaml:"docker,omitempty"`
 	Envs     map[string]Env       `json:"envs,omitempty" yaml:"envs,omitempty"`
 	Global   Component            `json:"global,omitempty" yaml:"global,omitempty"`
@@ -52,9 +52,9 @@ type Config struct {
 type Common struct {
 	Backend          *Backend          `json:"backend,omitempty" yaml:"backend,omitempty"`
 	ExtraVars        map[string]string `json:"extra_vars,omitempty" yaml:"extra_vars,omitempty"`
-	Owner            *string           `json:"owner,omitempty" yaml:"owner,omitempty" `
-	Project          *string           `json:"project,omitempty"  yaml:"project,omitempty"`
-	Providers        *Providers        `json:"providers,omitempty" yaml:"providers,omitempty" `
+	Owner            *string           `json:"owner,omitempty" yaml:"owner,omitempty"`
+	Project          *string           `json:"project,omitempty" yaml:"project,omitempty"`
+	Providers        *Providers        `json:"providers,omitempty" yaml:"providers,omitempty"`
 	TerraformVersion *string           `json:"terraform_version,omitempty" yaml:"terraform_version,omitempty"`
 	Tools            *Tools            `json:"tools,omitempty" yaml:"tools,omitempty"`
 }
