@@ -2,7 +2,7 @@ package init
 
 import (
 	"github.com/chanzuckerberg/fogg/config"
-	v1 "github.com/chanzuckerberg/fogg/config/v1"
+	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	prompt "github.com/segmentio/go-prompt"
 	"github.com/spf13/afero"
@@ -22,7 +22,7 @@ func userPrompt() (string, string, string, string, string, string) {
 	return project, region, bucket, table, profile, owner
 }
 
-func writeConfig(fs afero.Fs, config *v1.Config) error {
+func writeConfig(fs afero.Fs, config *v2.Config) error {
 	yaml, err := yaml.Marshal(config)
 	if err != nil {
 		return errs.WrapInternal(err, "unable to marshal yaml")
