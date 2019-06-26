@@ -18,16 +18,16 @@ import (
 func TestInitConfig(t *testing.T) {
 	a := assert.New(t)
 	c := InitConfig("proj", "reg", "buck", "table", "prof", "me@foo.example", "0.99.0")
-	a.Equal("prof", c.Defaults.AWSProfileBackend)
-	a.Equal("prof", c.Defaults.AWSProfileProvider)
-	a.Equal("reg", c.Defaults.AWSRegionBackend)
-	a.Equal("reg", c.Defaults.AWSRegionProvider)
-	a.Equal("0.99.0", c.Defaults.AWSProviderVersion)
-	a.Equal("buck", c.Defaults.InfraBucket)
-	a.Equal("table", c.Defaults.InfraDynamoTable)
-	a.Equal("me@foo.example", c.Defaults.Owner)
-	a.Equal("proj", c.Defaults.Project)
-	a.Equal("0.11.7", c.Defaults.TerraformVersion)
+	a.Equal("prof", *c.Defaults.Common.Backend.Profile)
+	a.Equal("prof", *c.Defaults.Providers.AWS.Profile)
+	a.Equal("reg", *c.Defaults.Providers.AWS.Region)
+	a.Equal("reg", *c.Defaults.Providers.AWS.Region)
+	a.Equal("0.99.0", *c.Defaults.Providers.AWS.Version)
+	a.Equal("buck", *c.Defaults.Common.Backend.Bucket)
+	a.Equal("table", *c.Defaults.Common.Backend.DynamoTable)
+	a.Equal("me@foo.example", *c.Defaults.Owner)
+	a.Equal("proj", *c.Defaults.Project)
+	a.Equal("0.11.7", *c.Defaults.TerraformVersion)
 }
 
 func Test_detectVersion(t *testing.T) {
@@ -46,13 +46,13 @@ func Test_detectVersion(t *testing.T) {
 		{"err", args{[]byte(`{`)}, 0, true},
 	}
 	a := assert.New(t)
-	fs, _, err:= util.TestFs()
+	fs, _, err := util.TestFs()
 	a.NoError(err)
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var got int
 			var err error
-			switch tt.want{
+			switch tt.want {
 			case 1:
 				afero.WriteFile(fs, "fogg.json", tt.args.b, 0644)
 				got, err = detectVersion(tt.args.b, fs, "fogg.json")
@@ -62,7 +62,7 @@ func Test_detectVersion(t *testing.T) {
 			default:
 				got, err = detectVersion(tt.args.b, fs, "fogg.yml")
 			}
-			
+
 			if (err != nil) != tt.wantErr {
 				t.Errorf("detectVersion() error = %v, wantErr %v", err, tt.wantErr)
 				return
