@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/util"
+	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -164,11 +165,17 @@ func TestConfig_ValidateAWSProviders(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.fileName, func(t *testing.T) {
 			r := require.New(t)
+			fs, _, e := util.TestFs()
+			r.NoError(e)
 
 			b, e := util.TestFile(tt.fileName)
 			r.NoError(e)
-			c, e := ReadConfig(b)
+			e = afero.WriteFile(fs, "fogg.json", b, 0644)
 			r.NoError(e)
+
+			c, e := ReadConfig(fs, b, "fogg.json")
+			r.NoError(e)
+			r.NotNil(c)
 
 			if err := c.ValidateAWSProviders(); (err != nil) != tt.wantErr {
 				t.Errorf("Config.ValidateAWSProviders() error = %v, wantErr %v (err != nil) %v", err, tt.wantErr, (err != nil))
@@ -187,10 +194,15 @@ func TestConfig_ValidateTravis(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.fileName, func(t *testing.T) {
 			r := require.New(t)
+			fs, _, e := util.TestFs()
+			r.NoError(e)
 
 			b, e := util.TestFile(tt.fileName)
 			r.NoError(e)
-			c, e := ReadConfig(b)
+			e = afero.WriteFile(fs, "fogg.json", b, 0644)
+			r.NoError(e)
+
+			c, e := ReadConfig(fs, b, "fogg.json")
 			r.NoError(e)
 
 			if err := c.ValidateTravis(); (err != nil) != tt.wantErr {

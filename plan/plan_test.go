@@ -10,6 +10,7 @@ import (
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"github.com/spf13/afero"
 )
 
 func init() {
@@ -106,7 +107,59 @@ func TestPlanBasicV2(t *testing.T) {
 	b, e := util.TestFile("v2_full")
 	assert.NoError(t, e)
 
-	c2, err := v2.ReadConfig(b)
+	fs, _, err := util.TestFs()
+	err = afero.WriteFile(fs, "fogg.json", b, 0644)
+	a.NoError(err)
+
+	c2, err := v2.ReadConfig(fs, b, "fogg.json")
+	assert.Nil(t, err)
+
+	w, err := c2.Validate()
+	a.NoError(err)
+	a.Len(w, 0)
+
+	plan, e := Eval(c2)
+	assert.Nil(t, e)
+	assert.NotNil(t, plan)
+	assert.NotNil(t, plan.Accounts)
+	assert.Len(t, plan.Accounts, 2)
+
+	assert.NotNil(t, plan.Modules)
+	assert.Len(t, plan.Modules, 1)
+	assert.Equal(t, "0.100.0", plan.Modules["my_module"].TerraformVersion)
+
+	assert.NotNil(t, plan.Envs)
+	assert.Len(t, plan.Envs, 2)
+
+	assert.NotNil(t, plan.Envs["staging"])
+
+	assert.NotNil(t, plan.Envs["staging"].Components)
+	assert.Len(t, plan.Envs["staging"].Components, 4)
+
+	assert.NotNil(t, plan.Envs["staging"])
+	assert.NotNil(t, plan.Envs["staging"].Components["vpc"])
+	logrus.Debugf("%#v\n", plan.Envs["staging"].Components["vpc"].ModuleSource)
+	assert.NotNil(t, *plan.Envs["staging"].Components["vpc"].ModuleSource)
+	assert.Equal(t, "github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0", *plan.Envs["staging"].Components["vpc"].ModuleSource)
+
+	assert.NotNil(t, plan.Envs["staging"].Components["comp1"])
+	assert.Equal(t, "0.100.0", plan.Envs["staging"].Components["comp1"].TerraformVersion)
+
+	assert.NotNil(t, plan.Envs["staging"].Components["comp_helm_template"])
+	assert.Equal(t, "k8s", plan.Envs["staging"].Components["comp_helm_template"].EKS.ClusterName)
+}
+
+func TestPlanBasicV2Yaml(t *testing.T) {
+	a := assert.New(t)
+
+	b, e := util.TestFile("v2_full_yaml")
+	assert.NoError(t, e)
+
+	fs, _, err := util.TestFs()
+	a.NoError(err)
+	err = afero.WriteFile(fs, "fogg.yml", b, 0644)
+	a.NoError(err)
+	c2, err := v2.ReadConfig(fs, b, "fogg.yml" )
 	assert.Nil(t, err)
 
 	w, err := c2.Validate()

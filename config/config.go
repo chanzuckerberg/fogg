@@ -2,8 +2,8 @@ package config
 
 import (
 	"encoding/json"
-	"io"
 	"io/ioutil"
+	"path/filepath"
 
 	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
@@ -11,26 +11,37 @@ import (
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
+	"gopkg.in/yaml.v2"
 )
 
-func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVersion string) *v1.Config {
-	return &v1.Config{
-		Defaults: v1.Defaults{
-			AWSProfileBackend:  awsProfile,
-			AWSProfileProvider: awsProfile,
-			AWSProviderVersion: awsProviderVersion,
-			AWSRegionBackend:   region,
-			AWSRegionProvider:  region,
-			ExtraVars:          map[string]string{},
-			InfraBucket:        bucket,
-			InfraDynamoTable:   table,
-			Owner:              owner,
-			Project:            project,
-			TerraformVersion:   "0.11.7",
+//InitConfig initializes the config file using user input
+func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVersion string) *v2.Config {
+	terraformVersion := "0.11.7"
+
+	return &v2.Config{
+		Defaults: v2.Defaults{
+			Common: v2.Common{
+				Backend: &v2.Backend{
+					Bucket:      &bucket,
+					Profile:     &awsProfile,
+					Region:      &region,
+					DynamoTable: &table,
+				},
+				Owner:   &owner,
+				Project: &project,
+				Providers: &v2.Providers{
+					AWS: &v2.AWSProvider{
+						Profile: &awsProfile,
+						Region:  &region,
+						Version: &awsProviderVersion,
+					},
+				},
+				TerraformVersion: &terraformVersion,
+			},
 		},
-		Accounts: map[string]v1.Account{},
+		Accounts: map[string]v2.Account{},
 		Docker:   false,
-		Envs:     map[string]v1.Env{},
+		Envs:     map[string]v2.Env{},
 		Modules:  map[string]v1.Module{},
 	}
 }
@@ -41,15 +52,14 @@ func FindConfig(fs afero.Fs, configFile string) ([]byte, int, error) {
 	if err != nil {
 		return nil, 0, errs.WrapUser(err, "unable to open config file")
 	}
-	reader := io.ReadCloser(f)
-	defer reader.Close()
+	defer f.Close()
 
-	b, e := ioutil.ReadAll(reader)
+	b, e := ioutil.ReadAll(f)
 	if e != nil {
 		return nil, 0, errs.WrapUser(e, "unable to read config")
 	}
 
-	v, err := detectVersion(b)
+	v, err := detectVersion(b, fs, configFile)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -57,38 +67,52 @@ func FindConfig(fs afero.Fs, configFile string) ([]byte, int, error) {
 	return b, v, nil
 }
 
+//FindAndReadConfig locates config file and reads it based on the version
 func FindAndReadConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
 	b, v, err := FindConfig(fs, configFile)
 	if err != nil {
 		return nil, err
 	}
+
 	switch v {
-	case 1:
+	case 1: //Upgrade the config version
 		c, err := v1.ReadConfig(b)
 		if err != nil {
 			return nil, err
 		}
-
-		c2, err := UpgradeConfigVersion(c)
-		return c2, err
-
+		return UpgradeConfigVersion(c)
 	case 2:
-
-		c2, err := v2.ReadConfig(b)
-		return c2, err
+		return v2.ReadConfig(fs, b, configFile)
 	default:
 		return nil, errs.NewUser("could not figure out config file version")
 	}
+
 }
 
 type ver struct {
-	Version int `json:"version"`
+	Version int `json:"version" yaml:"version"`
 }
 
 // detectVersion will detect the version of a config
-func detectVersion(b []byte) (int, error) {
+func detectVersion(b []byte, fs afero.Fs, configFile string) (int, error) {
 	v := &ver{}
-	err := json.Unmarshal(b, v)
+	var err error
+
+	info, err := fs.Stat(configFile)
+	if err != nil {
+		return 0, errs.WrapUserf(err, "unable to stat %s", configFile)
+	}
+
+	//Unmarshals based on file extension
+	switch filepath.Ext(info.Name()) {
+	case ".yml", ".yaml":
+		err = yaml.Unmarshal(b, v)
+	case ".json":
+		err = json.Unmarshal(b, v)
+	default:
+		return 0, errs.NewUser("File type is not supported")
+	}
+
 	if err != nil {
 		return 0, err
 	}

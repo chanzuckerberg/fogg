@@ -7,15 +7,15 @@ import (
 )
 
 func init() {
-	applyCmd.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
+	applyCmd.Flags().StringP("config", "c", "fogg.yml", "Use this to override the fogg config file.")
 	applyCmd.Flags().BoolP("upgrade", "u", false, "use this when running a new version of fogg")
 	rootCmd.AddCommand(applyCmd)
 }
 
 var applyCmd = &cobra.Command{
 	Use:           "apply",
-	Short:         "Apply model defined in fogg.json to the current tree.",
-	Long:          "This command will take the model defined in fogg.json, build a plan and generate the appropriate files from templates.",
+	Short:         "Apply model defined in fogg.yml to the current tree.",
+	Long:          "This command will take the model defined in fogg.yml, build a plan and generate the appropriate files from templates.",
 	SilenceErrors: true, // If we don't silence here, cobra will print them. But we want to do that in cmd/root.go
 	RunE: func(cmd *cobra.Command, args []string) error {
 		setupDebug(debug)

@@ -1,0 +1,29 @@
+accounts:
+  bar: 
+  foo: 
+defaults:
+  backend:
+    bucket: buck
+    profile: profile
+    region: us-west-2
+  extra_vars:
+    foo: bar1
+  owner: foo@example.com
+  project: proj
+  providers: 
+  terraform_version: 0.100.0
+envs:
+  prod: 
+  staging:
+    components:
+      comp1: 
+      comp2: 
+      vpc:
+        extra_vars:
+          foo: bar3
+        module_source: github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0
+    extra_vars:
+      foo: bar2
+modules:
+  my_module: 
+version: 2

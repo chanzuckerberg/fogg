@@ -13,7 +13,7 @@ import (
 )
 
 type TfLint struct {
-	Enabled *bool `json:"enabled,omitempty"`
+	Enabled *bool `json:"enabled,omitempty" yaml:"enabled,omitempty"`
 }
 
 type Defaults struct {
@@ -91,7 +91,7 @@ const (
 
 // EKSConfig is the configuration for an eks cluster
 type EKSConfig struct {
-	ClusterName string `json:"cluster_name"`
+	ClusterName string `json:"cluster_name" yaml:"cluster_name"`
 }
 
 type Component struct {
@@ -126,9 +126,9 @@ type Module struct {
 }
 
 type TravisCI struct {
-	Enabled        *bool   `json:"enabled,omitempty"`
-	AWSIAMRoleName *string `json:"aws_iam_role_name,omitempty"`
-	TestBuckets    *int    `json:"test_buckets,omitempty"`
+	Enabled        *bool   `json:"enabled,omitempty" yaml:"enabled,omitempty"`
+	AWSIAMRoleName *string `json:"aws_iam_role_name" yaml:"aws_iam_role_name"`
+	TestBuckets    *int    `json:"test_buckets" yaml:"test_buckets"`
 	Command        *string `json:"command,omitempty"`
 }
 
@@ -146,9 +146,10 @@ func ReadConfig(b []byte) (*Config, error) {
 	c := &Config{
 		Docker: true,
 	}
+
 	e := json.Unmarshal(b, c)
 	if e != nil {
-		return nil, errs.WrapUser(e, "unable to parse json config file")
+		return nil, errs.WrapUser(e, "unable to parse config file")
 	}
 	return c, nil
 }

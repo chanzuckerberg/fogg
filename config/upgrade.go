@@ -1,12 +1,11 @@
 package config
 
 import (
-	"encoding/json"
-
 	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
+	"gopkg.in/yaml.v2"
 )
 
 // Upgrade applies in-place upgrades to a configFile
@@ -26,9 +25,9 @@ func Upgrade(fs afero.Fs, configFile string) error {
 			return err
 		}
 
-		marshalled, err := json.MarshalIndent(c2, "", "  ")
+		marshalled, err := yaml.Marshal(c2)
 		if err != nil {
-			return errs.WrapInternal(err, "Could not serialize config to json.")
+			return errs.WrapInternal(err, "Could not serialize config to yaml.")
 		}
 		err = afero.WriteFile(fs, configFile, marshalled, 0644)
 		return errs.WrapInternal(err, "Could not write config to disk")

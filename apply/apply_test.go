@@ -10,12 +10,14 @@ import (
 
 	"github.com/chanzuckerberg/fogg/config"
 	v1 "github.com/chanzuckerberg/fogg/config/v1"
+	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gopkg.in/yaml.v2"
 )
 
 func init() {
@@ -222,52 +224,80 @@ func TestApplySmokeTest(t *testing.T) {
 	r := require.New(t)
 	fs, _, err := util.TestFs()
 	r.NoError(err)
-	// defer os.RemoveAll(d)
+
+	yml := `
+defaults:
+  owner: foo
+  project: bar
+  terraform_version: 0
+  backend:
+    bucket: baz
+    region: qux
+    profile: quux
+version: 2
+`
+	b, e := yaml.Marshal(yml)
+	r.NoError(e)
+	e = afero.WriteFile(fs, "fogg.yml", b, 0644)
+	r.NoError(e)
+	c, e := v2.ReadConfig(fs, []byte(yml), "fogg.yml")
+	r.NoError(e)
+
+	w, e := c.Validate()
+	r.NoError(e)
+	r.Len(w, 0)
+
+	e = Apply(fs, c, templates.Templates, false)
+	r.NoError(e)
+}
+
+func TestApplySmokeTestJSON(t *testing.T) {
+	r := require.New(t)
+	fs, _, err := util.TestFs()
+	r.NoError(err)
 
 	json := `
-{
-  "defaults": {
-    "aws_region_provider": "reg",
-    "aws_region_backend": "reg",
-    "aws_profile_provider": "prof",
-    "aws_profile_backend": "prof",
-    "aws_provider_version": "0.12.0",
-    "account_id": 789,
-    "infra_s3_bucket": "buck",
-    "project": "proj",
-    "terraform_version": "0.100.0",
-		"owner": "foo@example.com",
-		"tools": {
-			  "travis_ci": {
-						"enabled": true,
-						"aws_iam_role_name": "travis",
-						"id_account_name": "id",
-						"test_buckets": 7
-			  }
+	{
+	  "defaults": {
+		"aws_region_provider": "reg",
+		"aws_region_backend": "reg",
+		"aws_profile_provider": "prof",
+		"aws_profile_backend": "prof",
+		"aws_provider_version": "0.12.0",
+		"account_id": 789,
+		"infra_s3_bucket": "buck",
+		"project": "proj",
+		"terraform_version": "0.100.0",
+		"owner": "foo@example.com"
+	  },
+	  "travis_ci": {
+		"enabled": true,
+		"aws_iam_role_name": "travis",
+			"id_account_name": "id",
+			"test_buckets": 7
+	  },
+	  "accounts": {
+		"foo": {
+		  "account_id": 123
+		},
+		"bar": {
+		  "account_id": 456
 		}
-  },
-  "accounts": {
-    "foo": {
-      "account_id": 123
-    },
-    "bar": {
-      "account_id": 456
-    }
-  },
-  "modules": {
-    "my_module": {}
-  },
-  "envs": {
-    "staging":{
-        "components": {
-            "comp1": {},
-            "comp2": {}
-        }
-    },
-    "prod": {}
-  }
-}
-`
+	  },
+	  "modules": {
+		"my_module": {}
+	  },
+	  "envs": {
+		"staging":{
+			"components": {
+				"comp1": {},
+				"comp2": {}
+			}
+		},
+		"prod": {}
+	  }
+	}
+	`
 	c, e := v1.ReadConfig([]byte(json))
 	r.NoError(e)
 	c2, e := config.UpgradeConfigVersion(c)

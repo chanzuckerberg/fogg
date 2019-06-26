@@ -1,0 +1,55 @@
+accounts:
+  bar:
+    providers:
+      aws:
+        account_id: 456
+  foo:
+    providers:
+      aws:
+        account_id: 123
+defaults:
+  backend:
+    bucket: buck
+    profile: profile
+    region: us-west-2
+  extra_vars:
+    foo: bar1
+  owner: foo@example.com
+  project: proj
+  providers:
+    aws:
+      account_id: 456
+      profile: profile
+      region: us-west-2
+      version: 0.12.0
+  terraform_version: 0.100.0
+envs:
+  prod: {}
+  staging:
+    components:
+      comp_helm_template:
+        eks:
+          cluster_name: k8s
+        kind: helm_template
+      comp1:
+        backend:
+          profile: comp1
+      comp2: {}
+      vpc:
+        extra_vars:
+          foo: bar3
+        module_source: github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0
+    extra_vars:
+      foo: bar2
+modules:
+  my_module: {}
+plugins:
+  custom_plugins:
+    custom:
+      format: zip
+      url: https://example.com/custom.zip
+  terraform_providers:
+    provider:
+      format: tar
+      url: https://example.com/provider.tar.gz
+version: 2
