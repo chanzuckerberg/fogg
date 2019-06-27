@@ -15,44 +15,27 @@ github.com/apparentlymart/go-textseg/textseg
 # github.com/armon/go-radix v0.0.0-20160115234725-4239b77079c7
 github.com/armon/go-radix
 # github.com/aws/aws-sdk-go v1.16.36
-github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/arn
-github.com/aws/aws-sdk-go/aws/credentials/stscreds
-github.com/aws/aws-sdk-go/aws/session
+github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/credentials
 github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds
 github.com/aws/aws-sdk-go/aws/ec2metadata
+github.com/aws/aws-sdk-go/aws/session
 github.com/aws/aws-sdk-go/service/s3
 github.com/aws/aws-sdk-go/aws/awserr
 github.com/aws/aws-sdk-go/aws/endpoints
 github.com/aws/aws-sdk-go/internal/sdkio
-github.com/aws/aws-sdk-go/aws/client
-github.com/aws/aws-sdk-go/service/sts
-github.com/aws/aws-sdk-go/aws/corehandlers
-github.com/aws/aws-sdk-go/aws/credentials/processcreds
-github.com/aws/aws-sdk-go/aws/csm
-github.com/aws/aws-sdk-go/aws/defaults
-github.com/aws/aws-sdk-go/aws/request
 github.com/aws/aws-sdk-go/internal/ini
 github.com/aws/aws-sdk-go/internal/shareddefaults
-github.com/aws/aws-sdk-go/service/ec2
-github.com/aws/aws-sdk-go/service/ec2/ec2iface
-github.com/aws/aws-sdk-go/service/iam
-github.com/aws/aws-sdk-go/service/iam/iamiface
-github.com/aws/aws-sdk-go/service/kms
-github.com/aws/aws-sdk-go/service/kms/kmsiface
-github.com/aws/aws-sdk-go/service/lambda
-github.com/aws/aws-sdk-go/service/lambda/lambdaiface
-github.com/aws/aws-sdk-go/service/s3/s3iface
-github.com/aws/aws-sdk-go/service/s3/s3manager
-github.com/aws/aws-sdk-go/service/s3/s3manager/s3manageriface
-github.com/aws/aws-sdk-go/service/secretsmanager
-github.com/aws/aws-sdk-go/service/secretsmanager/secretsmanageriface
-github.com/aws/aws-sdk-go/service/sts/stsiface
-github.com/aws/aws-sdk-go/service/support
-github.com/aws/aws-sdk-go/service/support/supportiface
+github.com/aws/aws-sdk-go/aws/client
 github.com/aws/aws-sdk-go/internal/sdkuri
 github.com/aws/aws-sdk-go/aws/client/metadata
+github.com/aws/aws-sdk-go/aws/corehandlers
+github.com/aws/aws-sdk-go/aws/request
+github.com/aws/aws-sdk-go/aws/credentials/processcreds
+github.com/aws/aws-sdk-go/aws/credentials/stscreds
+github.com/aws/aws-sdk-go/aws/csm
+github.com/aws/aws-sdk-go/aws/defaults
 github.com/aws/aws-sdk-go/aws/awsutil
 github.com/aws/aws-sdk-go/aws/signer/v4
 github.com/aws/aws-sdk-go/internal/s3err
@@ -62,14 +45,11 @@ github.com/aws/aws-sdk-go/private/protocol/eventstream/eventstreamapi
 github.com/aws/aws-sdk-go/private/protocol/rest
 github.com/aws/aws-sdk-go/private/protocol/restxml
 github.com/aws/aws-sdk-go/internal/sdkrand
-github.com/aws/aws-sdk-go/private/protocol/query
+github.com/aws/aws-sdk-go/service/sts
 github.com/aws/aws-sdk-go/aws/credentials/endpointcreds
-github.com/aws/aws-sdk-go/private/protocol/ec2query
-github.com/aws/aws-sdk-go/private/protocol/jsonrpc
-github.com/aws/aws-sdk-go/private/protocol/restjson
+github.com/aws/aws-sdk-go/private/protocol/query
 github.com/aws/aws-sdk-go/private/protocol/xml/xmlutil
 github.com/aws/aws-sdk-go/private/protocol/query/queryutil
-github.com/aws/aws-sdk-go/private/protocol/json/jsonutil
 # github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d
 github.com/bgentry/go-netrc/netrc
 # github.com/bgentry/speakeasy v0.0.0-20161015143505-675b82c74c0e
@@ -77,7 +57,6 @@ github.com/bgentry/speakeasy
 # github.com/blang/semver v0.0.0-20170202183821-4a1e882c79dc
 github.com/blang/semver
 # github.com/chanzuckerberg/go-misc v0.0.0-20190522161436-7c0dfc0d970f
-github.com/chanzuckerberg/go-misc/aws
 github.com/chanzuckerberg/go-misc/ver
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
@@ -224,12 +203,9 @@ github.com/spf13/afero/mem
 github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.3
 github.com/spf13/pflag
-# github.com/stretchr/objx v0.1.1
-github.com/stretchr/objx
 # github.com/stretchr/testify v1.3.0
 github.com/stretchr/testify/assert
 github.com/stretchr/testify/require
-github.com/stretchr/testify/mock
 # github.com/ulikunitz/xz v0.5.4
 github.com/ulikunitz/xz
 github.com/ulikunitz/xz/internal/xlog
@@ -270,5 +246,5 @@ golang.org/x/text/secure/bidirule
 golang.org/x/text/unicode/bidi
 # gopkg.in/go-playground/validator.v9 v9.29.0
 gopkg.in/go-playground/validator.v9
-# gopkg.in/yaml.v2 v2.2.2
-gopkg.in/yaml.v2
+# gopkg.in/yaml.v3 v3.0.0-20190502103701-55513cacd4ae
+gopkg.in/yaml.v3
