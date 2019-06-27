@@ -10,7 +10,7 @@ install:
   - STEP_START=$(date +%s)
   - STEP_SPAN_ID=$(echo install | sum | cut -f 1 -d \ )
   - mkdir bin # this is in theory supposed to exist already
-  - curl -L -o $HOME/bin/buildevents https://github.com/honeycombio/buildevents/releases/latest/download/buildevents-darwin-amd64
+  - curl -L -o $HOME/bin/buildevents https://github.com/honeycombio/buildevents/releases/latest/download/buildevents-linux-amd64
   - chmod 755 $HOME/bin/buildevents
   - buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID npm-install -- npm install -g snyk
   - buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID make-setup -- make setup
