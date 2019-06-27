@@ -10,7 +10,7 @@ import (
 	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/spf13/afero"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 //ReadConfig take a byte array as input and outputs a json or yaml config struct
