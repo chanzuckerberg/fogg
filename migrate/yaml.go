@@ -2,6 +2,7 @@ package migrate
 
 import (
 	"github.com/chanzuckerberg/fogg/config"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v2"
 )
@@ -22,5 +23,13 @@ func ConvertToYaml(fs afero.Fs, configFile string) error {
 	if err != nil {
 		return err
 	}
+	logrus.Info("Created fogg.yml config file")
+
+	err = fs.Remove(configFile)
+	if err != nil {
+		return err
+	}
+	logrus.Infof("Removed %s config file", configFile)
+
 	return nil
 }
