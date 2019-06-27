@@ -127,9 +127,9 @@ type Module struct {
 
 type TravisCI struct {
 	Enabled        *bool   `json:"enabled,omitempty" yaml:"enabled,omitempty"`
-	AWSIAMRoleName *string `json:"aws_iam_role_name" yaml:"aws_iam_role_name"`
-	TestBuckets    *int    `json:"test_buckets" yaml:"test_buckets"`
-	Command        *string `json:"command,omitempty"`
+	AWSIAMRoleName *string `json:"aws_iam_role_name" yaml:"aws_iam_role_name,omitempty"`
+	TestBuckets    *int    `json:"test_buckets" yaml:"test_buckets,omitempty"`
+	Command        *string `json:"command,omitempty" yaml:"command,omitempty"`
 }
 
 type Config struct {
