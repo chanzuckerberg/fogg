@@ -122,7 +122,7 @@ type Plugins struct {
 
 // Module is a module
 type Module struct {
-	TerraformVersion *string `json:"terraform_version,omitempty"`
+	TerraformVersion *string `json:"terraform_version,omitempty" yaml:"terraform_version,omitempty"`
 }
 
 type TravisCI struct {
