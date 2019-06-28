@@ -4,7 +4,7 @@ import (
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 //ConvertToYaml method converts fogg.json to fogg.yml

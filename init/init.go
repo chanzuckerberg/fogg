@@ -6,7 +6,7 @@ import (
 	"github.com/chanzuckerberg/fogg/errs"
 	prompt "github.com/segmentio/go-prompt"
 	"github.com/spf13/afero"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 const AWSProviderVersion = "1.27.0"

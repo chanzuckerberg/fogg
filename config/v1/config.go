@@ -116,20 +116,20 @@ type Component struct {
 
 // Plugins contains configuration around plugins
 type Plugins struct {
-	CustomPlugins      map[string]*plugins.CustomPlugin `json:"custom_plugins,omitempty"`
-	TerraformProviders map[string]*plugins.CustomPlugin `json:"terraform_providers,omitempty"`
+	CustomPlugins      map[string]*plugins.CustomPlugin `json:"custom_plugins,omitempty" yaml:"custom_plugins,omitempty"`
+	TerraformProviders map[string]*plugins.CustomPlugin `json:"terraform_providers,omitempty" yaml:"terraform_providers,omitempty"`
 }
 
 // Module is a module
 type Module struct {
-	TerraformVersion *string `json:"terraform_version,omitempty"`
+	TerraformVersion *string `json:"terraform_version,omitempty" yaml:"terraform_version,omitempty"`
 }
 
 type TravisCI struct {
 	Enabled        *bool   `json:"enabled,omitempty" yaml:"enabled,omitempty"`
-	AWSIAMRoleName *string `json:"aws_iam_role_name" yaml:"aws_iam_role_name"`
-	TestBuckets    *int    `json:"test_buckets" yaml:"test_buckets"`
-	Command        *string `json:"command,omitempty"`
+	AWSIAMRoleName *string `json:"aws_iam_role_name" yaml:"aws_iam_role_name,omitempty"`
+	TestBuckets    *int    `json:"test_buckets" yaml:"test_buckets,omitempty"`
+	Command        *string `json:"command,omitempty" yaml:"command,omitempty"`
 }
 
 type Config struct {
