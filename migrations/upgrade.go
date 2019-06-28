@@ -36,6 +36,8 @@ func (m *VersionUpgradeMigration) Migrate(fs afero.Fs, configFile string) (strin
 	if err != nil {
 		return "", err
 	}
+	logrus.Info("Upgrading versions")
+
 	switch version {
 	case 1:
 		c1, err := v1.ReadConfig(bytes)

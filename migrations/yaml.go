@@ -30,6 +30,7 @@ func (m *JSONToYamlMigration) Guard(fs afero.Fs, configFile string) (bool, error
 
 //Migrate method converts fogg.json to fogg.yml
 func (m *JSONToYamlMigration) Migrate(fs afero.Fs, configFile string) (string, error) {
+	logrus.Info("Migrating to yaml")
 	config, err := config.FindAndReadConfig(fs, configFile)
 	if err != nil {
 		return "", err
@@ -53,5 +54,4 @@ func (m *JSONToYamlMigration) Migrate(fs afero.Fs, configFile string) (string, e
 	logrus.Infof("Removed %s config file", configFile)
 
 	return "fogg.yml", nil
-	//TODO: Might need to add a separator
 }
