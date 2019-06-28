@@ -4,16 +4,16 @@ import (
 	"os"
 
 	"github.com/chanzuckerberg/fogg/errs"
-	"github.com/chanzuckerberg/fogg/migrate"
+	"github.com/chanzuckerberg/fogg/migrations"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
 
+//upgrade.Flags().StringP("config", "c", "fogg.yml", "Use this to override the fogg config file.")
 func init() {
 	migrateCommand.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
 	rootCmd.AddCommand(migrateCommand)
 }
-
 
 var migrateCommand = &cobra.Command{
 	Use:   "migrate",
@@ -35,7 +35,6 @@ var migrateCommand = &cobra.Command{
 
 		openGitOrExit(fs)
 
-
-		return migrations.ConvertToYaml(fs, configFile)
+		return migrations.RunMigrations(fs, configFile)
 	},
 }
