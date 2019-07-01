@@ -39,7 +39,7 @@ func (m *VersionUpgradeMigration) Migrate(fs afero.Fs, configFile string) (strin
 	logrus.Info("Upgrading versions")
 
 	switch version {
-	case 1:
+	case 1: // Upgrades to v2 and craetes yaml file
 		c1, err := v1.ReadConfig(bytes)
 		if err != nil {
 			return "", err
@@ -56,11 +56,12 @@ func (m *VersionUpgradeMigration) Migrate(fs afero.Fs, configFile string) (strin
 		err = afero.WriteFile(fs, configFile, marshalled, 0644)
 		return configFile, errs.WrapInternal(err, "Could not write config to disk")
 
-	case 2:
+	case 2: // Already v2, do nothing
 		logrus.Infof("config already v%d, nothing to do", version)
 		return configFile, nil
 
 	default:
+		//TODO: Should this return the file or empty string
 		return configFile, errs.NewUserf("config version %d unrecognized", version)
 	}
 }
