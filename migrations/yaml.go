@@ -10,11 +10,11 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-//JSONToYamlMigration Defines a fogg json to yaml config file upgrade
+//JSONToYamlMigration Defines a fogg json to yaml config file migration
 type JSONToYamlMigration struct {
 }
 
-//Guard method checks to see if config file needs to be converted to .yml
+//Guard Checks to see if config file needs to be converted to .yml
 func (m *JSONToYamlMigration) Guard(fs afero.Fs, configFile string) (bool, error) {
 	ext := filepath.Ext(configFile)
 
@@ -30,7 +30,7 @@ func (m *JSONToYamlMigration) Guard(fs afero.Fs, configFile string) (bool, error
 
 //Migrate method converts fogg.json to fogg.yml
 func (m *JSONToYamlMigration) Migrate(fs afero.Fs, configFile string) (string, error) {
-	logrus.Info("Migrating to yaml")
+	logrus.Infof("Migrating %s to .yml file type", configFile)
 	config, err := config.FindAndReadConfig(fs, configFile)
 	if err != nil {
 		return "", err
@@ -52,6 +52,5 @@ func (m *JSONToYamlMigration) Migrate(fs afero.Fs, configFile string) (string, e
 		return "", err
 	}
 	logrus.Infof("Removed %s config file", configFile)
-
 	return "fogg.yml", nil
 }

@@ -9,7 +9,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-//VersionUpgradeMigration Defines a fogg versioning upgrade
+//VersionUpgradeMigration Defines a fogg version upgrade
 type VersionUpgradeMigration struct {
 }
 
@@ -21,9 +21,9 @@ func (m *VersionUpgradeMigration) Guard(fs afero.Fs, configFile string) (bool, e
 	}
 
 	switch version {
-	case 1:
+	case 1: //Upgrade is needed
 		return true, nil
-	case 2:
+	case 2: //Latest version
 		return false, nil
 	default:
 		return false, errs.NewUser("Config file version was not recognized")
@@ -36,7 +36,7 @@ func (m *VersionUpgradeMigration) Migrate(fs afero.Fs, configFile string) (strin
 	if err != nil {
 		return "", err
 	}
-	logrus.Info("Upgrading versions")
+	logrus.Infof("Attempting to upgrade v%d", version)
 
 	switch version {
 	case 1: // Upgrades to v2 and craetes yaml file
@@ -61,7 +61,6 @@ func (m *VersionUpgradeMigration) Migrate(fs afero.Fs, configFile string) (strin
 		return configFile, nil
 
 	default:
-		//TODO: Should this return the file or empty string
-		return configFile, errs.NewUserf("config version %d unrecognized", version)
+		return configFile, errs.NewUserf("config version %d was not recognized", version)
 	}
 }

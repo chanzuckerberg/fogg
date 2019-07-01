@@ -1,7 +1,6 @@
 package migrations
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/config"
@@ -20,6 +19,10 @@ func TestUpgradeV2(t *testing.T) {
 	r.Nil(err)
 
 	err = afero.WriteFile(fs, confPath, conf, 0644)
+	r.Nil(err)
+
+	shouldRun, err := upgradeMigration.Guard(fs, confPath)
+	r.Equal(true, shouldRun)
 	r.Nil(err)
 
 	configFile, err := upgradeMigration.Migrate(fs, confPath)
@@ -43,6 +46,10 @@ func TestV2DoNothing(t *testing.T) {
 	err = afero.WriteFile(fs, confPath, conf, 0644)
 	r.Nil(err)
 
+	shouldRun, err := upgradeMigration.Guard(fs, confPath)
+	r.Equal(false, shouldRun)
+	r.Nil(err)
+
 	configFile, err := upgradeMigration.Migrate(fs, confPath)
 	r.Nil(err)
 	r.Equal("fogg.yml", configFile)
@@ -64,8 +71,11 @@ func TestUpgradeUnknownVersion(t *testing.T) {
 	err = afero.WriteFile(fs, confPath, conf, 0644)
 	r.Nil(err)
 
+	shouldRun, err := upgradeMigration.Guard(fs, confPath)
+	r.Equal(false, shouldRun)
+	r.Error(err, "Config file version was not recognized")
+
 	configFile, err := upgradeMigration.Migrate(fs, confPath)
-	fmt.Println(configFile)
 	r.Error(err, "config version 100 unrecognized")
 	r.Equal(configFile, "fogg.yml")
 }
@@ -84,10 +94,13 @@ func TestUpgradeV1(t *testing.T) {
 	err = afero.WriteFile(fs, confPath, v1, 0644)
 	r.NoError(err)
 
-	//
 	_, v, err := config.FindConfig(fs, confPath)
 	r.NoError(err)
 	r.Equal(1, v)
+
+	shouldRun, err := upgradeMigration.Guard(fs, confPath)
+	r.Nil(err)
+	r.Equal(true, shouldRun)
 
 	configFile, err := upgradeMigration.Migrate(fs, confPath)
 	r.NoError(err)
