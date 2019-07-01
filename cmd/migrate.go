@@ -3,23 +3,24 @@ package cmd
 import (
 	"os"
 
-	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/errs"
+	"github.com/chanzuckerberg/fogg/migrations"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
 
 func init() {
-	upgrade.Flags().StringP("config", "c", "fogg.yml", "Use this to override the fogg config file.")
-	rootCmd.AddCommand(upgrade)
+	//TODO: What should the default value be?
+	migrateCommand.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
+	rootCmd.AddCommand(migrateCommand)
 }
 
-var upgrade = &cobra.Command{
-	Use:   "upgrade",
-	Short: "Upgrades a fogg config",
-	Long: `This command will upgrade a fogg config.
-	Note that this might be a lossy transformation.`,
+var migrateCommand = &cobra.Command{
+	Use:   "migrate",
+	Short: "Converts existing fogg.json to fogg.yml",
+	Long:  "This command will convert the fogg.json to a fogg.yml file type.",
 	RunE: func(cmd *cobra.Command, args []string) error {
+
 		// Set up fs
 		pwd, err := os.Getwd()
 		if err != nil {
@@ -27,14 +28,13 @@ var upgrade = &cobra.Command{
 		}
 		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
-		// handle flags
 		configFile, err := cmd.Flags().GetString("config")
 		if err != nil {
 			return errs.WrapInternal(err, "couldn't parse config flag")
 		}
 
-		// check that we are at root of initialized git repo
 		openGitOrExit(fs)
-		return config.Upgrade(fs, configFile)
+
+		return migrations.RunMigrations(fs, configFile)
 	},
 }
