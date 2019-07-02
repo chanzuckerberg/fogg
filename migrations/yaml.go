@@ -13,7 +13,11 @@ import (
 
 //JSONToYamlMigration Defines a fogg json to yaml config file migration
 type JSONToYamlMigration struct {
-	MigrationDescription string
+}
+
+//Description Describes the filetype migration taking place
+func (m *JSONToYamlMigration) Description() string {
+	return ".json to .yml migration"
 }
 
 //Guard Checks to see if config file needs to be converted to .yml

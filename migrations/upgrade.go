@@ -12,8 +12,11 @@ import (
 
 //VersionUpgradeMigration Defines a fogg version upgrade
 type VersionUpgradeMigration struct {
-	//TODO: Add Migration Identifier
-	MigrationName string
+}
+
+//Description Describes the upgrade taking place
+func (m *VersionUpgradeMigration) Description() string {
+	return "v1 to v2 upgrade"
 }
 
 //Guard Checks the version of the config file and determines whether an upgrade is necessary
