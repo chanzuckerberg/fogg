@@ -5,6 +5,7 @@ import (
 
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/errs"
+	prompt "github.com/segmentio/go-prompt"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
@@ -12,6 +13,7 @@ import (
 
 //JSONToYamlMigration Defines a fogg json to yaml config file migration
 type JSONToYamlMigration struct {
+	MigrationDescription string
 }
 
 //Guard Checks to see if config file needs to be converted to .yml
@@ -53,4 +55,9 @@ func (m *JSONToYamlMigration) Migrate(fs afero.Fs, configFile string) (string, e
 	}
 	logrus.Infof("Removed %s config file", configFile)
 	return "fogg.yml", nil
+}
+
+//Prompt Checks to see if the user wants their config file to be migrated to yml
+func (m *JSONToYamlMigration) Prompt() bool {
+	return prompt.Confirm("Would you like to migrate your config file to .yml")
 }

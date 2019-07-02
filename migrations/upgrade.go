@@ -4,6 +4,7 @@ import (
 	"github.com/chanzuckerberg/fogg/config"
 	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/errs"
+	prompt "github.com/segmentio/go-prompt"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
@@ -11,6 +12,8 @@ import (
 
 //VersionUpgradeMigration Defines a fogg version upgrade
 type VersionUpgradeMigration struct {
+	//TODO: Add Migration Identifier
+	MigrationName string
 }
 
 //Guard Checks the version of the config file and determines whether an upgrade is necessary
@@ -36,7 +39,7 @@ func (m *VersionUpgradeMigration) Migrate(fs afero.Fs, configFile string) (strin
 	if err != nil {
 		return "", err
 	}
-	logrus.Infof("Attempting to upgrade v%d", version)
+	logrus.Infof("Attempting to upgrade v%d to the latest version", version)
 
 	switch version {
 	case 1: // Upgrades to v2 and craetes yaml file
@@ -63,4 +66,9 @@ func (m *VersionUpgradeMigration) Migrate(fs afero.Fs, configFile string) (strin
 	default:
 		return configFile, errs.NewUserf("config version %d was not recognized", version)
 	}
+}
+
+//Prompt Checks to see if the user wants their version to be upgraded
+func (m *VersionUpgradeMigration) Prompt() bool {
+	return prompt.Confirm("Would you like to upgrade from v1 to v2?")
 }
