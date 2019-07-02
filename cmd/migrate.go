@@ -11,6 +11,7 @@ import (
 
 func init() {
 	migrateCommand.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
+	migrateCommand.Flags().BoolP("skip", "s", false, "Use this to run all tests.")
 	rootCmd.AddCommand(migrateCommand)
 }
 
@@ -32,8 +33,13 @@ var migrateCommand = &cobra.Command{
 			return errs.WrapInternal(err, "couldn't parse config flag")
 		}
 
+		skipPrompts, err := cmd.Flags().GetBool("skip")
+		if err != nil {
+			return errs.WrapInternal(err, "couldn't parse skip flag")
+		}
+
 		openGitOrExit(fs)
 
-		return migrations.RunMigrations(fs, configFile)
+		return migrations.RunMigrations(fs, configFile, skipPrompts)
 	},
 }

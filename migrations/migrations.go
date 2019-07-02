@@ -1,9 +1,6 @@
 package migrations
 
 import (
-	"fmt"
-
-	prompt "github.com/segmentio/go-prompt"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
@@ -17,13 +14,11 @@ type Migration interface {
 }
 
 //RunMigrations cycles through a list of migrations and applies them if necessary
-func RunMigrations(fs afero.Fs, configFile string) error {
+func RunMigrations(fs afero.Fs, configFile string, skipAll bool) error {
 	migrations := []Migration{
 		&VersionUpgradeMigration{}, //This runs first because v1 to v2 uses json.Marshal
 		&JSONToYamlMigration{},
 	}
-
-	skipAll := prompt.Confirm("Would you like to run all tests")
 
 	for _, migration := range migrations {
 		shouldRun, err := migration.Guard(fs, configFile)
@@ -39,7 +34,6 @@ func RunMigrations(fs afero.Fs, configFile string) error {
 			//Use chooses if they want to run the migration or not
 			userRun := migration.Prompt()
 			if userRun == false {
-				fmt.Println(userRun)
 				continue
 			}
 		}
