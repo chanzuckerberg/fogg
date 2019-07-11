@@ -18,7 +18,7 @@ func init() {
 var migrateCommand = &cobra.Command{
 	Use:   "migrate",
 	Short: "Converts existing fogg.json to fogg.yml",
-	Long:  "This command will convert the fogg.json to a fogg.yml file type.",
+	Long:  "This command will run all applicable updates to fogg.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		// Set up fs
