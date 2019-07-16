@@ -108,6 +108,5 @@ func TestUpgradeV1(t *testing.T) {
 	//configFile is passed to validate the Migrate returned string
 	_, v, err = config.FindConfig(fs, configFile)
 	r.NoError(err)
-	r.Equal(2, v) // now upgraded
-	
+	r.Equal(2, v) // now upgraded	
 }
