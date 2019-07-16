@@ -50,7 +50,8 @@ func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVe
 func FindConfig(fs afero.Fs, configFile string) ([]byte, int, error) {
 	f, err := fs.Open(configFile)
 	if err != nil {
-		return nil, 0, errs.WrapUser(err, "unable to open config file")
+		logrus.Info("Fogg configuration files were recently migrated, run 'fogg migrate' to update Fogg")
+		return nil, 0, errs.NewUserf("could not open %s config file", configFile)
 	}
 	defer f.Close()
 
