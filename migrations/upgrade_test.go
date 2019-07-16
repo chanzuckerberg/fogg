@@ -109,4 +109,5 @@ func TestUpgradeV1(t *testing.T) {
 	_, v, err = config.FindConfig(fs, configFile)
 	r.NoError(err)
 	r.Equal(2, v) // now upgraded
+	
 }

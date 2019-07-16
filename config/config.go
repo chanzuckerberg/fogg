@@ -43,7 +43,6 @@ func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVe
 		Docker:   false,
 		Envs:     map[string]v2.Env{},
 		Modules:  map[string]v1.Module{},
-		Version:  2,
 	}
 }
 

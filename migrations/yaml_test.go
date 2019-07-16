@@ -61,4 +61,5 @@ func TestGuardFail(t *testing.T) {
 	shouldRun, err := yamlMigration.Guard(fs, confPath)
 	r.Nil(err)
 	r.Equal(false, shouldRun)
+	
 }

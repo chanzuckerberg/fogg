@@ -11,14 +11,14 @@ import (
 
 func init() {
 	migrateCommand.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
-	migrateCommand.Flags().BoolP("skip", "s", false, "Use this to run all tests.")
+	migrateCommand.Flags().BoolP("force", "f", false, "Use this to skip all of the migration prompts.")
 	rootCmd.AddCommand(migrateCommand)
 }
 
 var migrateCommand = &cobra.Command{
 	Use:   "migrate",
 	Short: "Converts existing fogg.json to fogg.yml",
-	Long:  "This command will run all applicable updates to fogg.",
+	Long:  "This command will run all applicable updates to fogg configuration.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		// Set up fs
