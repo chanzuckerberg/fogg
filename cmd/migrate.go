@@ -17,7 +17,7 @@ func init() {
 
 var migrateCommand = &cobra.Command{
 	Use:   "migrate",
-	Short: "Converts existing fogg.json to fogg.yml",
+	Short: "Runs all possible fogg migrations",
 	Long:  "This command will run all applicable updates to fogg configuration.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
@@ -33,7 +33,7 @@ var migrateCommand = &cobra.Command{
 			return errs.WrapInternal(err, "couldn't parse config flag")
 		}
 
-		skipPrompts, err := cmd.Flags().GetBool("skip")
+		skipPrompts, err := cmd.Flags().GetBool("force")
 		if err != nil {
 			return errs.WrapInternal(err, "couldn't parse skip flag")
 		}
