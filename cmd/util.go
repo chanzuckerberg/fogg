@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"net/http/pprof"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/chanzuckerberg/fogg/config"
@@ -91,11 +90,6 @@ func bootstrapCmd(cmd *cobra.Command, debug bool) (afero.Fs, *v2.Config, error) 
 	if err != nil {
 		return nil, nil, err
 	}
-	if filepath.Ext(configFile) == ".json" {
-		//FIXME: (shedninja6) Should this be an error or log something? How should I handle the spacing?
-		return nil, nil, errs.NewUser("You are using fogg.json file consider running 'fogg yaml-migrate' to migrate to the new .yml type.")
-	}
-
 	config, _, err := readAndValidateConfig(fs, configFile)
 
 	err = mergeConfigValidationErrors(err)
