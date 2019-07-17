@@ -14,7 +14,7 @@ type Migration interface {
 }
 
 //RunMigrations cycles through a list of migrations and applies them if necessary
-func RunMigrations(fs afero.Fs, configFile string, ignorePrompts bool) error {
+func RunMigrations(fs afero.Fs, configFile string, forceApply bool) error {
 	migrations := []Migration{
 		&VersionUpgradeMigration{}, //This runs first because v1 to v2 uses json.Marshal
 		&JSONToYamlMigration{},
@@ -30,7 +30,7 @@ func RunMigrations(fs afero.Fs, configFile string, ignorePrompts bool) error {
 		}
 
 		//If the user does not want to run this migration
-		if !ignorePrompts && migration.Prompt() {
+		if !forceApply && !migration.Prompt() {
 			continue
 		}
 
