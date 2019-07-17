@@ -25,13 +25,12 @@ func RunMigrations(fs afero.Fs, configFile string, skipPrompts bool) error {
 		if err != nil {
 			return err
 		}
-		if !shouldRun{
+		if !shouldRun {
 			continue
 		}
 
 		//If the user does not want to run this migration
-		if skipPrompts || !migration.Prompt(){
-			logrus.Debugf("%s was skipped", migration.Description())
+		if !skipPrompts && migration.Prompt() {
 			continue
 		}
 
