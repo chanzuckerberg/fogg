@@ -50,7 +50,7 @@ func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVe
 func FindConfig(fs afero.Fs, configFile string) ([]byte, int, error) {
 	f, err := fs.Open(configFile)
 	if err != nil {
-		return nil, 0, errs.WrapUser(err, "unable to open config file")
+		return nil, 0, errs.WrapUserf(err, "unable to open config file %s (Maybe specify the config file with a --config flag)", configFile)
 	}
 	defer f.Close()
 
