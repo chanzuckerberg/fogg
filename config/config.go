@@ -56,9 +56,9 @@ func FindConfig(fs afero.Fs, configFile string) ([]byte, int, error) {
 		if e == nil { //If a fogg.json exists
 			logrus.Warn(
 				`A fogg.json file was detected. Fogg now supports fogg.yml
-				by default. Run 'fogg migrate' to update the config file
-				to fogg.yml or use a -c flag to specify configuration file location
-				`)
+by default. Run 'fogg migrate' to update the config file
+to fogg.yml or use a -c flag to specify configuration file location
+`)
 		}
 	}
 	if err != nil {
