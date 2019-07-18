@@ -29,7 +29,7 @@ func openGitOrExit(fs afero.Fs) {
 func readAndValidateConfig(fs afero.Fs, configFile string) (*v2.Config, []string, error) {
 	conf, err := config.FindAndReadConfig(fs, configFile)
 	if err != nil {
-		return nil, nil, errs.WrapUser(err, "unable to read config file")
+		return nil, nil, err
 	}
 	logrus.Debug("CONFIG")
 	logrus.Debugf("%s\n=====", pretty.Sprint(conf))
@@ -90,7 +90,6 @@ func bootstrapCmd(cmd *cobra.Command, debug bool) (afero.Fs, *v2.Config, error) 
 	if err != nil {
 		return nil, nil, err
 	}
-
 	config, _, err := readAndValidateConfig(fs, configFile)
 
 	err = mergeConfigValidationErrors(err)

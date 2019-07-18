@@ -1,7 +1,7 @@
 package setup
 
 import (
-	"github.com/chanzuckerberg/fogg/config/v2"
+	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/sirupsen/logrus"
