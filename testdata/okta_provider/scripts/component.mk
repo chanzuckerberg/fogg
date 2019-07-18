@@ -44,10 +44,10 @@ lint-terraform-fmt: terraform
 
 ifeq ($(MODE),local)
 plan: init fmt
-	@$(terraform_command) plan $(TF_ARGS) -input=false
+	@$(terraform_command) plan $(TF_ARGS) -refresh=$(REFRESH_ENABLED) -input=false
 else ifeq ($(MODE),atlantis)
 plan: init lint
-	@$(terraform_command) plan $(TF_ARGS) -input=false -out $(PLANFILE) | scenery
+	@$(terraform_command) plan $(TF_ARGS) -refresh=$(REFRESH_ENABLED) -input=false -out $(PLANFILE) | scenery
 else
 	@echo "Unknown MODE: $(MODE)"
 	@exit -1
@@ -62,10 +62,10 @@ ifneq ($(FORCE),1)
 	exit -1
 endif
 endif
-	@$(terraform_command) apply $(TF_ARGS) -auto-approve=$(AUTO_APPROVE)
+	@$(terraform_command) apply $(TF_ARGS) -refresh=$(REFRESH_ENABLED) -auto-approve=$(AUTO_APPROVE)
 else ifeq ($(MODE),atlantis)
 apply:
-	@$(terraform_command) apply $(TF_ARGS) -auto-approve=true $(PLANFILE)
+	@$(terraform_command) apply $(TF_ARGS) -refresh=$(REFRESH_ENABLED) -auto-approve=true $(PLANFILE)
 else
 	echo "Unknown mode: $(MODE)"
 	exit -1
