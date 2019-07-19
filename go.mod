@@ -17,6 +17,7 @@ require (
 	github.com/go-test/deep v1.0.1
 	github.com/gobuffalo/packr v1.30.1
 	github.com/google/uuid v1.1.1 // indirect
+	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79
 	github.com/hashicorp/go-getter v1.3.0
 	github.com/hashicorp/go-multierror v1.0.0
 	github.com/hashicorp/hcl v1.0.0
@@ -27,12 +28,14 @@ require (
 	github.com/kr/pretty v0.1.0
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
+	github.com/peterbourgon/diskv v2.0.1+incompatible
 	github.com/pkg/errors v0.8.1
 	github.com/segmentio/go-prompt v1.2.1-0.20161017233205-f0d19b6901ad
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/afero v1.2.2
 	github.com/spf13/cobra v0.0.5
 	github.com/stretchr/testify v1.3.0
+	github.com/victorspringer/http-cache v0.0.0-20190506132534-a2b6ad92841a
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.29.0
 	gopkg.in/yaml.v3 v3.0.0-20190502103701-55513cacd4ae

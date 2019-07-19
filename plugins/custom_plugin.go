@@ -5,9 +5,9 @@ import (
 	"archive/zip"
 	"bytes"
 	"compress/gzip"
-	"fmt"
+	"crypto/sha256"
+	"encoding/base64"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
@@ -17,6 +17,8 @@ import (
 	"text/template"
 
 	"github.com/chanzuckerberg/fogg/errs"
+	"github.com/chanzuckerberg/fogg/util"
+	"github.com/peterbourgon/diskv"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
@@ -39,6 +41,8 @@ type CustomPlugin struct {
 	Format    TypePluginFormat `json:"format" yaml:"format" validate:"required"`
 	TarConfig *TarConfig       `json:"tar_config,omitempty" yaml:"tar_config,omitempty"`
 	TargetDir string           `json:"target_dir,omitempty" yaml:"target_dir,omitempty"`
+
+	cache *diskv.Diskv
 }
 
 // TarConfig configures the tar unpacking
@@ -55,6 +59,9 @@ func (tc *TarConfig) getStripComponents() int {
 
 // Install installs the custom plugin
 func (cp *CustomPlugin) Install(fs afero.Fs, pluginName string) error {
+	if cp.cache == nil {
+		return errs.NewInternal("download cache not configured")
+	}
 	return cp.install(fs, pluginName, cp.URL, runtime.GOOS, runtime.GOARCH)
 }
 
@@ -73,18 +80,20 @@ func (cp *CustomPlugin) install(
 		return errs.NewUser("nil fs")
 	}
 
-	fullUrl, err := Template(url, pluginOS, pluginArch)
+	fullURL, err := Template(url, pluginOS, pluginArch)
+	if err != nil {
+		logrus.Error(err)
+		return err
+	}
+	file, err := cp.fetch(pluginName, fullURL)
 	if err != nil {
 		return err
 	}
-	tmpPath, err := cp.fetch(pluginName, fullUrl)
-	defer os.Remove(tmpPath)
-	if err != nil {
-		return err
-	}
-	return cp.process(fs, pluginName, tmpPath, cp.TargetDir)
+	defer file.Close()
+	return cp.process(fs, pluginName, file, cp.TargetDir)
 }
 
+// Template templatizes a url with os and arch information
 func Template(url, os, arch string) (string, error) {
 	data := struct {
 		OS   string
@@ -104,42 +113,59 @@ func Template(url, os, arch string) (string, error) {
 	return out, nil
 }
 
-// SetTargetPath sets the target path for this plugin
-func (cp *CustomPlugin) SetTargetPath(path string) {
+// WithTargetPath sets the target path for this plugin
+func (cp *CustomPlugin) WithTargetPath(path string) *CustomPlugin {
 	cp.TargetDir = path
+	return cp
+}
+
+// WithCache adds a cache to plugins
+func (cp *CustomPlugin) WithCache(cache *diskv.Diskv) *CustomPlugin {
+	cp.cache = cache
+	return cp
 }
 
 // fetch fetches the custom plugin at URL
-func (cp *CustomPlugin) fetch(pluginName string, url string) (string, error) {
-	tmpFile, err := ioutil.TempFile("", fmt.Sprintf("%s-*.tmp", pluginName))
+func (cp *CustomPlugin) fetch(pluginName string, url string) (io.ReadCloser, error) {
+	h := sha256.New()
+	_, err := h.Write([]byte(url))
 	if err != nil {
-		return "", errs.WrapUser(err, "could not create temporary directory") //FIXME
+		return nil, errs.WrapUser(err, "error hashing url")
 	}
-	logrus.Debugf("downloading %s to tempfile", url)
-	resp, err := http.Get(url)
-	if err != nil {
-		return "", errs.WrapUserf(err, "could not get %s", url) // FIXME
+	cacheKey := base64.URLEncoding.EncodeToString(h.Sum(nil))
+
+	if !cp.cache.Has(cacheKey) {
+		logrus.Debugf("downloading %s to cache", url)
+		resp, err := http.Get(url)
+		if err != nil {
+			return nil, errs.WrapUserf(err, "could not get %s", url) // FIXME
+		}
+		defer resp.Body.Close()
+		err = cp.cache.WriteStream(cacheKey, resp.Body, true)
+		if err != nil {
+			return nil, errs.WrapUser(err, "could not write file to cache")
+		}
 	}
-	defer resp.Body.Close()
-	_, err = io.Copy(tmpFile, resp.Body)
-	return tmpFile.Name(), errs.WrapUser(err, "could not download file") //FIXME
+
+	f, err := cp.cache.ReadStream(cacheKey, false)
+	return f, errs.WrapUserf(err, "could not read %s from cache", url)
 }
 
 // process the custom plugin
-func (cp *CustomPlugin) process(fs afero.Fs, pluginName string, path string, targetDir string) error {
+func (cp *CustomPlugin) process(fs afero.Fs, pluginName string, file io.Reader, targetDir string) error {
 	switch cp.Format {
 	case TypePluginFormatTar:
-		return cp.processTar(fs, path, targetDir)
+		return cp.processTar(fs, file, targetDir)
 	case TypePluginFormatZip:
-		return cp.processZip(fs, path, targetDir)
+		return cp.processZip(fs, file, targetDir)
 	case TypePluginFormatBin:
-		return cp.processBin(fs, pluginName, path, targetDir)
+		return cp.processBin(fs, pluginName, file, targetDir)
 	default:
 		return errs.NewUserf("Unknown plugin format %s", cp.Format)
 	}
 }
 
-func (cp *CustomPlugin) processBin(fs afero.Fs, name string, downloadPath string, targetDir string) error {
+func (cp *CustomPlugin) processBin(fs afero.Fs, name string, file io.Reader, targetDir string) error {
 	target, err := Template(targetDir, runtime.GOOS, runtime.GOARCH)
 	if err != nil {
 		return errs.WrapUser(err, "unable to template url")
@@ -151,19 +177,14 @@ func (cp *CustomPlugin) processBin(fs afero.Fs, name string, downloadPath string
 	}
 
 	targetPath := path.Join(target, name)
-	src, err := os.Open(downloadPath)
-	if err != nil {
-		return errs.WrapUserf(err, "Could not open downloaded file at %s", downloadPath)
-	}
-
 	dst, err := fs.Create(targetPath)
 	if err != nil {
 		return errs.WrapUserf(err, "Could not open target file at %s", targetPath)
 	}
 
-	_, err = io.Copy(dst, src)
+	_, err = io.Copy(dst, file)
 	if err != nil {
-		return errs.WrapUserf(err, "Could not move %s to %s", downloadPath, targetPath)
+		return errs.WrapUserf(err, "Could not move read to %s", targetPath)
 	}
 
 	err = fs.Chmod(targetPath, os.FileMode(0755))
@@ -171,23 +192,17 @@ func (cp *CustomPlugin) processBin(fs afero.Fs, name string, downloadPath string
 }
 
 // https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
-func (cp *CustomPlugin) processTar(fs afero.Fs, path string, targetDir string) error {
+func (cp *CustomPlugin) processTar(fs afero.Fs, reader io.Reader, targetDir string) error {
 	targetDir, err := Template(targetDir, runtime.GOOS, runtime.GOARCH)
 	if err != nil {
 		return errs.WrapUser(err, "unable to template url for custom plugin")
 	}
-	logrus.Debugf("untarring from %s to %s", path, targetDir)
 
 	err = fs.MkdirAll(targetDir, 0755)
 	if err != nil {
 		return errs.WrapUserf(err, "Could not create directory %s", targetDir)
 	}
-	f, err := os.Open(path)
-	if err != nil {
-		return errs.WrapUser(err, "could not read staged custom plugin")
-	}
-	defer f.Close()
-	gzr, err := gzip.NewReader(f)
+	gzr, err := gzip.NewReader(reader)
 	if err != nil {
 		return errs.WrapUser(err, "could not create gzip reader")
 	}
@@ -241,22 +256,22 @@ func (cp *CustomPlugin) processTar(fs afero.Fs, path string, targetDir string) e
 }
 
 // based on https://golangcode.com/create-zip-files-in-go/
-func (cp *CustomPlugin) processZip(fs afero.Fs, downloadPath string, targetDir string) error {
-	targetDir, err := Template(targetDir, runtime.GOOS, runtime.GOARCH)
+func (cp *CustomPlugin) processZip(fs afero.Fs, reader io.Reader, targetDir string) error {
+	buff := bytes.NewBuffer(nil)
+	size, err := io.Copy(buff, reader)
 	if err != nil {
-		return errs.WrapUserf(err, "could not template targetDir")
+		return errs.WrapUser(err, "could not read plugin contents")
 	}
-
+	zipBytes := bytes.NewReader(buff.Bytes())
 	err = fs.MkdirAll(targetDir, 0755)
 	if err != nil {
 		return errs.WrapUserf(err, "Could not create directory %s", targetDir)
 	}
 
-	r, err := zip.OpenReader(downloadPath)
+	r, err := zip.NewReader(zipBytes, size)
 	if err != nil {
 		return errs.WrapUser(err, "could not read staged custom plugin")
 	}
-	defer r.Close()
 
 	for _, f := range r.File {
 		// We run this in a closure to invoke the `defer`s after each iteration
@@ -296,4 +311,13 @@ func (cp *CustomPlugin) processZip(fs afero.Fs, downloadPath string, targetDir s
 		}
 	}
 	return nil
+}
+
+// GetPluginCache returns the cache used for plugins
+func GetPluginCache(cacheDir string) *diskv.Diskv {
+	return diskv.New(diskv.Options{
+		BasePath:    cacheDir,
+		Transform:   func(k string) []string { return []string{"custom_plugins", util.VersionCacheKey(), k} },
+		Compression: diskv.NewGzipCompression(),
+	})
 }
