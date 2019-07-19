@@ -44,6 +44,11 @@ release-snapshot: ## run a release
 build: packr ## build the binary
 	go build ${LDFLAGS} .
 
+deps:
+	go get .
+	go mod tidy
+	go mod vendor
+
 coverage: ## run the go coverage tool, reading file coverage.out
 	go tool cover -html=coverage.out
 
