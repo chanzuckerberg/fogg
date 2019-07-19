@@ -82,7 +82,6 @@ func (cp *CustomPlugin) install(
 
 	fullURL, err := Template(url, pluginOS, pluginArch)
 	if err != nil {
-		logrus.Error(err)
 		return err
 	}
 	file, err := cp.fetch(pluginName, fullURL)
