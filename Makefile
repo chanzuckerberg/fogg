@@ -27,7 +27,7 @@ templates/a_templates-packr.go: $(TEMPLATES)
 packr: templates/a_templates-packr.go ## run the packr tool to generate our static files
 
 release: ## run a release
-	./bin/bff bump
+	bff bump
 	git push
 	goreleaser release
 
@@ -43,6 +43,11 @@ release-snapshot: ## run a release
 
 build: packr ## build the binary
 	go build ${LDFLAGS} .
+
+deps:
+	go get .
+	go mod tidy
+	go mod vendor
 
 coverage: ## run the go coverage tool, reading file coverage.out
 	go tool cover -html=coverage.out
