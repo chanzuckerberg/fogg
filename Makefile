@@ -27,7 +27,7 @@ templates/a_templates-packr.go: $(TEMPLATES)
 packr: templates/a_templates-packr.go ## run the packr tool to generate our static files
 
 release: ## run a release
-	./bin/bff bump
+	bff bump
 	git push
 	goreleaser release
 
