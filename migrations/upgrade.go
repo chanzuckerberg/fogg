@@ -1,13 +1,14 @@
 package migrations
 
 import (
+	"encoding/json"
+
 	"github.com/chanzuckerberg/fogg/config"
 	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/errs"
 	prompt "github.com/segmentio/go-prompt"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
-	"gopkg.in/yaml.v3"
 )
 
 //VersionUpgradeMigration Defines a fogg version upgrade
@@ -55,9 +56,9 @@ func (m *VersionUpgradeMigration) Migrate(fs afero.Fs, configFile string) (strin
 			return "", err
 		}
 
-		marshalled, err := yaml.Marshal(c2)
+		marshalled, err := json.Marshal(c2)
 		if err != nil {
-			return "", errs.WrapInternal(err, "Could not serialize config to yaml.")
+			return "", errs.WrapInternal(err, "Could not serialize config to json.")
 		}
 		err = afero.WriteFile(fs, configFile, marshalled, 0644)
 		return configFile, errs.WrapInternal(err, "Could not write config to disk")

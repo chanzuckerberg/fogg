@@ -11,7 +11,7 @@ import (
 
 func TestUpgradeV2(t *testing.T) {
 	r := require.New(t)
-	confPath := "fogg.yml"
+	confPath := "fogg.json"
 	conf := []byte(`{"version": 1}`)
 	upgradeMigration := VersionUpgradeMigration{}
 
@@ -27,7 +27,7 @@ func TestUpgradeV2(t *testing.T) {
 
 	configFile, err := upgradeMigration.Migrate(fs, confPath)
 	r.Nil(err)
-	r.Equal("fogg.yml", configFile)
+	r.Equal("fogg.json", configFile)
 
 	_, version, err := config.FindConfig(fs, configFile)
 	r.Nil(err)
@@ -36,7 +36,7 @@ func TestUpgradeV2(t *testing.T) {
 
 func TestV2DoNothing(t *testing.T) {
 	r := require.New(t)
-	confPath := "fogg.yml"
+	confPath := "fogg.json"
 	conf := []byte(`{"version": 2}`)
 	upgradeMigration := VersionUpgradeMigration{}
 
@@ -52,7 +52,7 @@ func TestV2DoNothing(t *testing.T) {
 
 	configFile, err := upgradeMigration.Migrate(fs, confPath)
 	r.Nil(err)
-	r.Equal("fogg.yml", configFile)
+	r.Equal("fogg.json", configFile)
 
 	_, version, err := config.FindConfig(fs, configFile)
 	r.Nil(err)
@@ -61,7 +61,7 @@ func TestV2DoNothing(t *testing.T) {
 
 func TestUpgradeUnknownVersion(t *testing.T) {
 	r := require.New(t)
-	confPath := "fogg.yml"
+	confPath := "fogg.json"
 	conf := []byte(`{"version": 100}`)
 	upgradeMigration := VersionUpgradeMigration{}
 
@@ -77,12 +77,12 @@ func TestUpgradeUnknownVersion(t *testing.T) {
 
 	configFile, err := upgradeMigration.Migrate(fs, confPath)
 	r.Error(err, "config version 100 unrecognized")
-	r.Equal(configFile, "fogg.yml")
+	r.Equal(configFile, "fogg.json")
 }
 
 func TestUpgradeV1(t *testing.T) {
 	r := require.New(t)
-	confPath := "fogg.yml"
+	confPath := "fogg.json"
 	upgradeMigration := VersionUpgradeMigration{}
 
 	fs, _, err := util.TestFs()
@@ -105,7 +105,7 @@ func TestUpgradeV1(t *testing.T) {
 	configFile, err := upgradeMigration.Migrate(fs, confPath)
 	r.NoError(err)
 
-	//configFile is passed to validate the Migrate returned string
+	//configFile is passed to validate that Migrate returned string
 	_, v, err = config.FindConfig(fs, configFile)
 	r.NoError(err)
 	r.Equal(2, v) // now upgraded	
