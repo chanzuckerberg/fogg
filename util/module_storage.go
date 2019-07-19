@@ -17,57 +17,63 @@ func DownloadModule(fs afero.Fs, cacheDir, source string) (string, error) {
 	// We want to do these operations from the root of our working repository.
 	// In the case where we have a BaseFs we pull out its root. Otherwise use `pwd`.
 	var pwd string
+	var err error
 	if baseFs, ok := fs.(*afero.BasePathFs); ok {
 		pwd = afero.FullBaseFsPath(baseFs, ".")
 	} else {
-		var e error
-		pwd, e = os.Getwd()
-		if e != nil {
-			return "", errs.WrapUser(e, "could not get pwd")
+		pwd, err = os.Getwd()
+		if err != nil {
+			return "", errs.WrapUser(err, "could not get pwd")
 		}
 	}
 
-	s, e := getter.Detect(source, pwd, getter.Detectors)
-	if e != nil {
-		return "", errs.WrapUser(e, "could not detect module type")
+	s, err := getter.Detect(source, pwd, getter.Detectors)
+	if err != nil {
+		return "", errs.WrapUser(err, "could not detect module type")
 	}
 
 	storage := &getter.FolderStorage{
 		StorageDir: cacheDir,
 	}
 	h := sha256.New()
-	_, e = h.Write([]byte(VersionCacheKey()))
-	if e != nil {
-		return "", errs.WrapUser(e, "could not hash")
+	_, err = h.Write([]byte(VersionCacheKey()))
+	if err != nil {
+		return "", errs.WrapUser(err, "could not hash")
 	}
-	_, e = h.Write([]byte(source))
-	if e != nil {
-		return "", errs.WrapUser(e, "could not hash")
+	_, err = h.Write([]byte(source))
+	if err != nil {
+		return "", errs.WrapUser(err, "could not hash")
 	}
 	hash := string(h.Sum(nil))
 
-	e = storage.Get(hash, s, false)
-	if e != nil {
-		return "", errs.WrapUser(e, "unable to read module from local storage")
+	err = storage.Get(hash, s, false)
+	if err != nil {
+		return "", errs.WrapUser(err, "unable to read module from local storage")
 	}
-	d, _, e := storage.Dir(hash)
-	if e != nil {
-		return "", errs.WrapUser(e, "could not get module storage dir")
+	d, _, err := storage.Dir(hash)
+	if err != nil {
+		return "", errs.WrapUser(err, "could not get module storage dir")
 	}
 	return d, nil
 }
 
-func DownloadAndParseModule(fs afero.Fs, mod string) (*config.Config, error) {
-	homedir, e := homedir.Dir()
-	if e != nil {
-		return nil, errs.WrapUser(e, "unable to find homedir")
+func GetFoggCachePath() (string, error) {
+	homedir, err := homedir.Dir()
+	if err != nil {
+		return "", errs.WrapUser(err, "unable to find homedir")
 	}
-
 	dir := filepath.Join(homedir, ".fogg", "cache")
+	return dir, nil
+}
 
-	d, e := DownloadModule(fs, dir, mod)
-	if e != nil {
-		return nil, errs.WrapUser(e, "unable to download module")
+func DownloadAndParseModule(fs afero.Fs, mod string) (*config.Config, error) {
+	dir, err := GetFoggCachePath()
+	if err != nil {
+		return nil, err
+	}
+	d, err := DownloadModule(fs, dir, mod)
+	if err != nil {
+		return nil, errs.WrapUser(err, "unable to download module")
 	}
 	return config.LoadDir(d)
 }

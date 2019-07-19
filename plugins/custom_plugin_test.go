@@ -18,14 +18,20 @@ import (
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestCustomPluginTar(t *testing.T) {
-	a := assert.New(t)
+	a := require.New(t)
 	pluginName := "test-provider"
 	fs, d, err := util.TestFs()
 	a.NoError(err)
 	defer os.RemoveAll(d)
+
+	cacheDir, err := ioutil.TempDir("", "")
+	a.NoError(err)
+	defer os.RemoveAll(cacheDir)
+	cache := plugins.GetPluginCache(cacheDir)
 
 	files := []string{"test.txt", "terraform-provider-testing"}
 	tarPath := generateTar(t, files, nil)
@@ -43,7 +49,7 @@ func TestCustomPluginTar(t *testing.T) {
 		URL:    ts.URL,
 		Format: plugins.TypePluginFormatTar,
 	}
-	customPlugin.SetTargetPath(plugins.CustomPluginDir)
+	customPlugin.WithTargetPath(plugins.CustomPluginDir).WithCache(cache)
 	a.Nil(customPlugin.Install(fs, pluginName))
 
 	a.NoError(afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
@@ -65,11 +71,16 @@ func TestCustomPluginTar(t *testing.T) {
 }
 
 func TestCustomPluginTarStripComponents(t *testing.T) {
-	a := assert.New(t)
+	a := require.New(t)
 	pluginName := "test-provider"
 	fs, d, err := util.TestFs()
 	a.NoError(err)
 	defer os.RemoveAll(d)
+
+	cacheDir, err := ioutil.TempDir("", "")
+	a.NoError(err)
+	defer os.RemoveAll(cacheDir)
+	cache := plugins.GetPluginCache(cacheDir)
 
 	files := []string{"a/test.txt", "terraform-provider-testing"}
 	expected_files := []string{"test.txt", ""}
@@ -92,7 +103,7 @@ func TestCustomPluginTarStripComponents(t *testing.T) {
 			StripComponents: 1,
 		},
 	}
-	customPlugin.SetTargetPath(plugins.CustomPluginDir)
+	customPlugin.WithTargetPath(plugins.CustomPluginDir).WithCache(cache)
 	a.Nil(customPlugin.Install(fs, pluginName))
 
 	a.NoError(afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
@@ -127,6 +138,11 @@ func TestCustomPluginZip(t *testing.T) {
 	a.NoError(err)
 	defer os.RemoveAll(d)
 
+	cacheDir, err := ioutil.TempDir("", "")
+	a.NoError(err)
+	defer os.RemoveAll(cacheDir)
+	cache := plugins.GetPluginCache(cacheDir)
+
 	files := []string{"test.txt", "terraform-provider-testing"}
 	zipPath := generateZip(t, files)
 	defer os.Remove(zipPath)
@@ -143,7 +159,7 @@ func TestCustomPluginZip(t *testing.T) {
 		URL:    ts.URL,
 		Format: plugins.TypePluginFormatZip,
 	}
-	customPlugin.SetTargetPath(plugins.CustomPluginDir)
+	customPlugin.WithTargetPath(plugins.CustomPluginDir).WithCache(cache)
 	a.Nil(customPlugin.Install(fs, pluginName))
 
 	a.NoError(afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
@@ -172,6 +188,11 @@ func TestCustomPluginBin(t *testing.T) {
 	defer os.RemoveAll(d)
 	fileContents := "some contents"
 
+	cacheDir, err := ioutil.TempDir("", "")
+	a.NoError(err)
+	defer os.RemoveAll(cacheDir)
+	cache := plugins.GetPluginCache(cacheDir)
+
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		_, err := fmt.Fprint(w, fileContents)
 		a.Nil(err)
@@ -183,7 +204,7 @@ func TestCustomPluginBin(t *testing.T) {
 		Format: plugins.TypePluginFormatBin,
 	}
 
-	customPlugin.SetTargetPath(plugins.CustomPluginDir)
+	customPlugin.WithTargetPath(plugins.CustomPluginDir).WithCache(cache)
 	a.Nil(customPlugin.Install(fs, pluginName))
 
 	a.NoError(afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
@@ -296,4 +317,19 @@ func TestTemplate(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestInstallErrorsOnNoCache(t *testing.T) {
+	r := require.New(t)
+	fs, d, err := util.TestFs()
+	r.NoError(err)
+	defer os.RemoveAll(d)
+
+	customPlugin := &plugins.CustomPlugin{
+		URL:    "my url",
+		Format: plugins.TypePluginFormatBin,
+	}
+
+	err = customPlugin.Install(fs, "my plugin name")
+	r.Error(err, "download cache not configured")
 }
