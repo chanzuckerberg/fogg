@@ -82,7 +82,6 @@ func (cp *CustomPlugin) install(
 
 	fullURL, err := Template(url, pluginOS, pluginArch)
 	if err != nil {
-		logrus.Error(err)
 		return err
 	}
 	file, err := cp.fetch(pluginName, fullURL)
@@ -184,7 +183,7 @@ func (cp *CustomPlugin) processBin(fs afero.Fs, name string, file io.Reader, tar
 
 	_, err = io.Copy(dst, file)
 	if err != nil {
-		return errs.WrapUserf(err, "Could not move read to %s", targetPath)
+		return errs.WrapUserf(err, "Could not move plugin to %s", targetPath)
 	}
 
 	err = fs.Chmod(targetPath, os.FileMode(0755))
