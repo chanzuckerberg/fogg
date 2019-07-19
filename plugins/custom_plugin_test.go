@@ -318,3 +318,18 @@ func TestTemplate(t *testing.T) {
 		})
 	}
 }
+
+func TestInstallErrorsOnNoCache(t *testing.T) {
+	r := require.New(t)
+	fs, d, err := util.TestFs()
+	r.NoError(err)
+	defer os.RemoveAll(d)
+
+	customPlugin := &plugins.CustomPlugin{
+		URL:    "my url",
+		Format: plugins.TypePluginFormatBin,
+	}
+
+	err = customPlugin.Install(fs, "my plugin name")
+	r.Error(err, "download cache not configured")
+}
