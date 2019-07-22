@@ -9,8 +9,8 @@ import (
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/sirupsen/logrus"
-	"github.com/stretchr/testify/assert"
 	"github.com/spf13/afero"
+	"github.com/stretchr/testify/assert"
 )
 
 func init() {
@@ -57,7 +57,8 @@ func TestResolveAccounts(t *testing.T) {
 
 	other := resolveAccounts(accounts)
 	assert.NotNil(t, other)
-	assert.Equal(t, map[string]json.Number{"bar": bar, "foo": foo}, other)
+	var nilJsonNumber *json.Number
+	assert.Equal(t, map[string]*json.Number{"bar": &bar, "foo": &foo, "baz": nilJsonNumber}, other)
 }
 
 func TestPlanBasicV1(t *testing.T) {
@@ -159,7 +160,7 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 	a.NoError(err)
 	err = afero.WriteFile(fs, "fogg.yml", b, 0644)
 	a.NoError(err)
-	c2, err := v2.ReadConfig(fs, b, "fogg.yml" )
+	c2, err := v2.ReadConfig(fs, b, "fogg.yml")
 	assert.Nil(t, err)
 
 	w, err := c2.Validate()
