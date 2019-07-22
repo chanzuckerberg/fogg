@@ -80,16 +80,22 @@ func (cp *CustomPlugin) install(
 		return errs.NewUser("nil fs")
 	}
 
+	targetDir, err := Template(cp.TargetDir, pluginOS, pluginArch)
+	if err != nil {
+		return err
+	}
+
 	fullURL, err := Template(url, pluginOS, pluginArch)
 	if err != nil {
 		return err
 	}
+
 	file, err := cp.fetch(pluginName, fullURL)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
-	return cp.process(fs, pluginName, file, cp.TargetDir)
+	return cp.process(fs, pluginName, file, targetDir)
 }
 
 // Template templatizes a url with os and arch information
@@ -165,17 +171,12 @@ func (cp *CustomPlugin) process(fs afero.Fs, pluginName string, file io.Reader, 
 }
 
 func (cp *CustomPlugin) processBin(fs afero.Fs, name string, file io.Reader, targetDir string) error {
-	target, err := Template(targetDir, runtime.GOOS, runtime.GOARCH)
+	err := fs.MkdirAll(targetDir, 0755)
 	if err != nil {
-		return errs.WrapUser(err, "unable to template url")
+		return errs.WrapUserf(err, "Could not create directory %s", targetDir)
 	}
 
-	err = fs.MkdirAll(target, 0755)
-	if err != nil {
-		return errs.WrapUserf(err, "Could not create directory %s", target)
-	}
-
-	targetPath := path.Join(target, name)
+	targetPath := path.Join(targetDir, name)
 	dst, err := fs.Create(targetPath)
 	if err != nil {
 		return errs.WrapUserf(err, "Could not open target file at %s", targetPath)
@@ -192,12 +193,7 @@ func (cp *CustomPlugin) processBin(fs afero.Fs, name string, file io.Reader, tar
 
 // https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
 func (cp *CustomPlugin) processTar(fs afero.Fs, reader io.Reader, targetDir string) error {
-	targetDir, err := Template(targetDir, runtime.GOOS, runtime.GOARCH)
-	if err != nil {
-		return errs.WrapUser(err, "unable to template url for custom plugin")
-	}
-
-	err = fs.MkdirAll(targetDir, 0755)
+	err := fs.MkdirAll(targetDir, 0755)
 	if err != nil {
 		return errs.WrapUserf(err, "Could not create directory %s", targetDir)
 	}

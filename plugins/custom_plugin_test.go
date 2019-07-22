@@ -11,6 +11,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -204,7 +205,7 @@ func TestCustomPluginBin(t *testing.T) {
 		Format: plugins.TypePluginFormatBin,
 	}
 
-	customPlugin.WithTargetPath(plugins.CustomPluginDir).WithCache(cache)
+	customPlugin.WithTargetPath(plugins.TerraformCustomPluginCacheDir).WithCache(cache)
 	a.Nil(customPlugin.Install(fs, pluginName))
 
 	a.NoError(afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
@@ -212,7 +213,10 @@ func TestCustomPluginBin(t *testing.T) {
 		return nil
 	}))
 
-	customPluginPath := path.Join(plugins.CustomPluginDir, pluginName)
+	// Make sure we properly template
+	pluginDir, err := plugins.Template(plugins.TerraformCustomPluginCacheDir, runtime.GOOS, runtime.GOARCH)
+	a.NoError(err)
+	customPluginPath := path.Join(pluginDir, pluginName)
 	f, err := fs.Open(customPluginPath)
 	a.Nil(err)
 
