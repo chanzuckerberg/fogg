@@ -6,7 +6,7 @@ TF_VARS := $(patsubst %,-e%,$(filter TF_VAR_%,$(.VARIABLES)))
 REPO_ROOT := $(shell git rev-parse --show-toplevel)
 REPO_RELATIVE_PATH := $(shell git rev-parse --show-prefix)
 AUTO_APPROVE := false
-REFRESH_ENABLED := true # Should terraform refresh during plan/apply
+REFRESH_ENABLED ?= true # Should terraform refresh during plan/apply
 
 # We need to do this because `terraform fmt` recurses into .terraform/modules
 # and wont' accept more than one file at a time.
