@@ -80,6 +80,11 @@ func (cp *CustomPlugin) install(
 		return errs.NewUser("nil fs")
 	}
 
+	targetDir, err := Template(cp.TargetDir, pluginOS, pluginArch)
+	if err != nil {
+		return err
+	}
+
 	fullURL, err := Template(url, pluginOS, pluginArch)
 	if err != nil {
 		return err
@@ -89,7 +94,7 @@ func (cp *CustomPlugin) install(
 		return err
 	}
 	defer file.Close()
-	return cp.process(fs, pluginName, file, cp.TargetDir)
+	return cp.process(fs, pluginName, file, targetDir)
 }
 
 // Template templatizes a url with os and arch information
@@ -256,6 +261,10 @@ func (cp *CustomPlugin) processTar(fs afero.Fs, reader io.Reader, targetDir stri
 
 // based on https://golangcode.com/create-zip-files-in-go/
 func (cp *CustomPlugin) processZip(fs afero.Fs, reader io.Reader, targetDir string) error {
+	targetDir, err := Template(targetDir, runtime.GOOS, runtime.GOARCH)
+	if err != nil {
+		return errs.WrapUser(err, "could not template targetDir for zip")
+	}
 	buff := bytes.NewBuffer(nil)
 	size, err := io.Copy(buff, reader)
 	if err != nil {
