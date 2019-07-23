@@ -45,3 +45,14 @@ data "terraform_remote_state" "global" {
     profile = "profile"
   }
 }
+
+data "terraform_remote_state" "foo" {
+  backend = "s3"
+
+  config = {
+    bucket  = "buck"
+    key     = "terraform/proj/accounts/foo.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+  }
+}

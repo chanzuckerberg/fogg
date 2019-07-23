@@ -114,8 +114,8 @@ type Module struct {
 type Account struct {
 	ComponentCommon `json:",inline" yaml:",inline"`
 
-	AllAccounts map[string]json.Number `yaml:"all_accounts"`
-	AccountName string                 `yaml:"account_name"`
+	AllAccounts map[string]*json.Number `yaml:"all_accounts"`
+	AccountName string                  `yaml:"account_name"`
 	Global      *Component
 }
 
@@ -195,7 +195,6 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 		accountPlan.AllAccounts = resolveAccounts(c.Accounts)
 		accountPlan.PathToRepoRoot = "../../../"
 		accountPlan.Global = &p.Global
-
 		accountPlans[name] = accountPlan
 	}
 
@@ -408,12 +407,14 @@ func resolveExtraVars(vars ...map[string]string) map[string]string {
 	return resolved
 }
 
-func resolveAccounts(accounts map[string]v2.Account) map[string]json.Number {
-	a := make(map[string]json.Number)
+func resolveAccounts(accounts map[string]v2.Account) map[string]*json.Number {
+	a := make(map[string]*json.Number)
 	for name, account := range accounts {
-		if account.Providers != nil && account.Providers.AWS != nil && account.Providers.AWS.AccountID != nil {
-			a[name] = *account.Providers.AWS.AccountID
+		var acctID *json.Number
+		if account.Providers != nil && account.Providers.AWS != nil {
+			acctID = account.Providers.AWS.AccountID
 		}
+		a[name] = acctID
 	}
 	return a
 }
