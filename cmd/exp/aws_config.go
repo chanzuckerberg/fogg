@@ -13,6 +13,7 @@ import (
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/pkg/errors"
 	"github.com/segmentio/go-prompt"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
@@ -78,6 +79,11 @@ output = json
 
 	Loop:
 		for name, account := range conf.Accounts {
+			// No AWS provider, skip this account
+			if account.Providers == nil || account.Providers.AWS == nil {
+				logrus.Infof("Skipping %s because no AWS providers detected", name)
+				continue
+			}
 			region := conf.Defaults.Providers.AWS.Region
 			if account.Providers.AWS.Region != nil {
 				region = account.Providers.AWS.Region
