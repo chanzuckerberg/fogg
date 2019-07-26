@@ -16,14 +16,12 @@ func TestGetLocalModules(t *testing.T){
 }
 
 func TestGetFromGithub(t *testing.T){
-	repo := "github.com/chanzuckerberg/cztack//aws-params-reader-policy?ref=v0.15.1"
 	mod,  err := getFromGithub(repo)
 	fmt.Println(err)
 	fmt.Println(mod)
 }
 
 func TestGetRegistryFromGithub(t *testing.T){
-	repo := "github.com/terraform-aws-modules/terraform-aws-security-group?ref=v3.1.0"
 	mod, err := getFromGithub(repo)
 	fmt.Println(err)
 	fmt.Println(mod)
@@ -37,7 +35,6 @@ func TestDownloadRegistryFromGithub(t *testing.T){
 }
 
 func TestGetFromAlbHttp(t *testing.T){
-	path := "/Users/echanakira/Desktop/learning/shared-infra/terraform/modules/alb-http"
 	mods, err := retrieveAllDependencies(path)
 	if mods == nil || err == nil{}
 }
