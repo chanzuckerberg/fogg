@@ -172,3 +172,4 @@ output "vpc_instance_tenancy" {
 output "vpc_main_route_table_id" {
   value = "${module.terraform-aws-vpc.vpc_main_route_table_id}"
 }
+

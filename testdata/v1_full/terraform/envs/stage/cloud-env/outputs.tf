@@ -8,3 +8,4 @@ output "bar" {
 output "foo" {
   value = "${module.fogg-test-module.foo}"
 }
+
