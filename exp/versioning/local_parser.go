@@ -144,7 +144,6 @@ func GetSources(mod *tfconfig.Module, keys []string) []ModuleWrapper {
 	return sources
 }
 
-//TODO:Separate github, local, and registry sources
 func getModules(module *tfconfig.Module) []string {
 	modMap := module.ModuleCalls
 	keys := make([]string, 0)
@@ -203,6 +202,7 @@ func getFromGithub(repo string) (*tfconfig.Module, error) {
 	return mod, nil
 }
 
+//downloadModule retrieves terraform modules from the registry
 func downloadModule(modulePath string, version string) (*tfconfig.Module, error) {
 	baseUrl := "https://registry.terraform.io/v1/modules/"
 	pwd, e := os.Getwd()

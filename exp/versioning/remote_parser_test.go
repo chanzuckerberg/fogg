@@ -1,29 +1,26 @@
 package versioning
 
-import(
+import (
 	"testing"
-	"fmt"
-	"github.com/stretchr/testify/assert"
+
+	"github.com/stretchr/testify/require"
 )
 
+func TestModuleStruct(t *testing.T) {
+	r := require.New(t)
+	module := GetModule()
+	r.NotNil(module)
 
-func TestModuleStruct(t *testing.T){
-	a := assert.New(t)
-	module := GetModule();
-
-	a.NotNil(module)
-	fmt.Println(module)
 }
 
-func TestGetModuleVersion(t *testing.T){
-	a := assert.New(t)
-	module := GetModule();
-	
-	a.Equal("4.1.0",module.Version)
+func TestGetModuleVersion(t *testing.T) {
+	r := require.New(t)
+	module := GetModule()
+	r.Equal("4.1.0", module.Version)
+
 }
 
-
-func TestFindModules(t *testing.T){
+func TestFindModules(t *testing.T) {
 	// repo := "github.com/chanzuckerberg/cztack//aws-params-reader-policy?ref=v0.15.1"
 	// localModules := GetLocalModules(repo)
 	// if localModules == nil{
@@ -33,6 +30,6 @@ func TestFindModules(t *testing.T){
 	GetAWSModules()
 
 	// registryModules := searchForModules(localModules, awsModules)
-	
+
 	// fmt.Println(registryModules)
 }
