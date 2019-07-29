@@ -1,46 +1,46 @@
-package versioning 
+package versioning
 
-import(
-	"net/http"
-	"io/ioutil"
+import (
 	"encoding/json"
 	"fmt"
-	
+	"io/ioutil"
+	"net/http"
 )
+
 //	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 
 const registry = "https://registry.terraform.io/v1/modules"
 const resource = "https://registry.terraform.io/v1/modules/terraform-aws-modules/alb/aws"
 
-func GetModule() Module{
+func GetModule() Module {
 	var module Module
 
 	res, err := http.Get(resource)
-	if err != nil{
+	if err != nil {
 		panic(err)
 	}
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
-	if err != nil{
+	if err != nil {
 		panic(err)
 	}
 
 	err = json.Unmarshal(body, &module)
-	if err != nil{
+	if err != nil {
 		panic(err)
 	}
 
 	return module
 }
 
-func GetAWSModules(){
+func GetAWSModules() {
 	//https://registry.terraform.io/v1/modules?namespace=terraform-aws-modules
-//
-//https://registry.terraform.io/v1/modules?namespace=terraform-aws-modules&offset=15
-//https://registry.terraform.io/v1/modules?provider=aws&verified=true
+	//
+	//https://registry.terraform.io/v1/modules?namespace=terraform-aws-modules&offset=15
+	//https://registry.terraform.io/v1/modules?provider=aws&verified=true
 	res, err := http.Get("https://registry.terraform.io/v1/modules?namespace=terraform-aws-modules")
-	if err != nil{
+	if err != nil {
 		panic(err)
 	}
 	defer res.Body.Close()
@@ -51,7 +51,8 @@ func GetAWSModules(){
 	var j interface{}
 
 	e := json.Unmarshal(bytes, &j)
-	if e != nil{}
+	if e != nil {
+	}
 
 	fmt.Println(j)
 }
@@ -62,7 +63,7 @@ func GetAWSModules(){
 // 	var module Module
 
 // 	for _, mod := range modules{
-		
+
 // 		// resource := createHttp(mod)
 // 		res, err := http.Get(resource)
 // 		if err != nil{
@@ -82,11 +83,9 @@ func GetAWSModules(){
 
 // 		globalModules = append(globalModules, module)
 // 	}
-	
 
 // 	return globalModules
 // }
-
 
 //
 // func createHttp(module *tfconfig.Module){

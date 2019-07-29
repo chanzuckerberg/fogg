@@ -47,7 +47,7 @@ func GetLocalModules(path string) []ModuleWrapper {
 	return modules
 }
 
-//Retrieves all modules and resources used to assemble the root module
+//retrieveAllDependencies retrieves all modules and resources used to assemble the root module
 func retrieveAllDependencies(path string) ([]ModuleWrapper, error) {
 	var temp []ModuleWrapper
 
@@ -99,6 +99,7 @@ func findSubmodules(dir string) ([]ModuleWrapper, error) {
 	for i, source := range sources {
 		// If it is a github link, do not append a local directory
 		if strings.HasPrefix(source.moduleSource, "github.com") {
+			//FIXME: I am doing all github specific actions here, should I do them somewhere else?
 			mod, err := getFromGithub(source.moduleSource)
 			if err != nil {
 				fmt.Println(err)
@@ -106,6 +107,7 @@ func findSubmodules(dir string) ([]ModuleWrapper, error) {
 			}
 
 			sources[i].module = mod
+			sources[i].version = getVersion(sources[i])
 			modules = append(modules, sources[i])
 		} else if strings.HasPrefix(source.moduleSource, "terraform-aws-modules/") {
 			mod, err := downloadModule(source.moduleSource, source.version)
@@ -259,4 +261,9 @@ func contains(modules []*tfconfig.Module, mod *tfconfig.Module) bool {
 		}
 	}
 	return false
+}
+
+//TODO: Potentially do something when empty string is returned
+func getVersion(mod ModuleWrapper) string {
+	return strings.Split(mod.moduleSource, "ref=v")[1]
 }

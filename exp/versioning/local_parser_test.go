@@ -10,7 +10,6 @@ func TestGetLocalModules(t *testing.T) {
 	r := require.New(t)
 	modules := GetLocalModules("/Users/echanakira/Desktop/learning/shared-infra/terraform/envs/staging/golinks/")
 	r.NotNil(modules)
-
 }
 
 func TestGetCztackModuleFromGithub(t *testing.T) {
