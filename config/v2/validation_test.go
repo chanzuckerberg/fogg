@@ -3,6 +3,7 @@ package v2
 import (
 	"testing"
 
+	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
@@ -210,4 +211,18 @@ func TestConfig_ValidateTravis(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestFailOnTF11(t *testing.T) {
+	r := require.New(t)
+
+	conf := confAcctOwner("foo", "bar")
+	conf.Modules = map[string]v1.Module{}
+
+	conf.Modules["bad_tf_version"] = v1.Module{
+		TerraformVersion: util.StrPtr("0.11.0"),
+	}
+
+	err := conf.validateModules()
+	r.Error(err, "fogg only supports tf versions >= 0.12.0 but 0.11.0 was provided")
 }

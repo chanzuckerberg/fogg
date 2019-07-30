@@ -334,7 +334,7 @@ func (c *Config) validateModules() error {
 		}
 
 		if v.LessThan(DefaultTerraformVersion) {
-			return errs.NewUserf("fogg only supports tf versions >= %s", DefaultTerraformVersion.String())
+			return errs.NewUserf("fogg only supports tf versions >= %s, but %s was provided", DefaultTerraformVersion.String(), *version)
 		}
 	}
 	return nil
