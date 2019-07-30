@@ -1,8 +1,6 @@
 package versioning
 
 import (
-	"fmt"
-
 	"github.com/spf13/afero"
 )
 
@@ -16,8 +14,6 @@ func V(fs afero.Fs) error {
 	// globalModules := GetGlobalModules(localModules)
 
 	// fmt.Printf("Modules = %v", localModules)
-	fmt.Println("Hello World")
-	if fs == nil {
-	}
+
 	return nil
 }

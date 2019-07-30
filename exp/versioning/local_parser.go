@@ -1,77 +1,69 @@
 package versioning
 
 import (
-	"fmt"
 	"os"
 	"strings"
 
-	"github.com/spf13/afero"
-
+	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/hashicorp/go-getter"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
+	"github.com/spf13/afero"
 )
 
-/*
- * 1) Read main file
- * 2) Find the source for each module
- *   a) If that file is a directory read that directory
- *   b) Otherwise, check if it is github
- * 3) Store the contents of each module
- */
+const apiHostname = "https://registry.terraform.io"
+const apiVersion = "/v1/modules/"
 
-/*
- *SOLVED: Path strings will get extremely long as submodules are parsed (can be fixed)
- *Solution -> Use Afero
- *SOLVED: The chanzuckerberg cztack links don't seem to link to anything (can be fixed, but getting the latest version will be challenging)
- *Solution -> Go Getter
- *Problem 3: Local files do not have versions
- *SOLVED: Terraform registry files do not always say they're from the registry
- *Solution -> If the file is not recognized, then parse fogg.yml and see if they are module sources
- *Problem 4: Do I want to get
- */
+//TODO: Replace some of the strings with modular constants
+//TODO: Freeze the code by creating a test directory
 
-//GetLocalModules Retrieves all modules that the given directory depends on
-func GetLocalModules(path string) []ModuleWrapper {
-	modules, err := retrieveAllDependencies(path)
-	if err != nil {
-		panic(err)
-	}
-	return modules
-}
-
-//retrieveAllDependencies retrieves all modules and resources used to assemble the root module
-func retrieveAllDependencies(path string) ([]ModuleWrapper, error) {
-	var temp []ModuleWrapper
-
-	//Read the initial path and add the submodules to directories
-	modules, err := findSubmodules(path)
+//GetLocalModules retrieves all terraform modules within a local directory
+//TODO:(EC) Define local and global modules OR rename the values
+func GetLocalModules(fs afero.Fs, dir string) ([]ModuleWrapper, error) {
+	_, err := os.Stat(dir)
 	if err != nil {
 		return nil, err
 	}
-	temp = append(temp, modules...)
 
-	for { //Do: add modules to modules slice, While: temp is not empty
+	modules, err := getAllModules(fs, dir)
+	if err != nil {
+		return nil, err
+	}
+	return modules, nil
+}
 
-		mods, err := findSubmodules(temp[0].module.Path)
+//getAllDependencies retrieves all modules from the root directory
+func getAllModules(fs afero.Fs, dir string) ([]ModuleWrapper, error) {
+	var queue []ModuleWrapper
+
+	//Find submodules for the root directory
+	submodules, err := getSubmodules(fs, dir)
+	if err != nil {
+		return nil, err
+	}
+	queue = append(queue, submodules...)
+
+	for { //Do: recursively add new submodules to queue, While: queue is not empty
+
+		submods, err := getSubmodules(fs, queue[0].module.Path)
 		if err == nil {
 			//Add new elements to temp
-			//TODO: Dont add repeats
-			temp = append(temp, mods...)
-			modules = append(modules, mods...)
+			//FIXME:(EC) Dont add repeats
+			queue = append(queue, submods...)
+			submodules = append(submodules, submods...)
 		}
 		//remove the current element
-		temp = append(temp[:0], temp[1:]...)
+		queue = append(queue[:0], queue[1:]...)
 
-		if !(len(temp) > 0) {
+		if !(len(queue) > 0) {
 			break
 		}
 	}
 
-	return modules, nil
+	return submodules, nil
 }
 
-//findSubmodules retrieves all modules related to the given path
-func findSubmodules(dir string) ([]ModuleWrapper, error) {
+//getSubmodules retrieves all submodules related to the root directory
+func getSubmodules(fs afero.Fs, dir string) ([]ModuleWrapper, error) {
 	_, err := os.Stat(dir)
 	if err != nil {
 		return nil, err
@@ -86,37 +78,30 @@ func findSubmodules(dir string) ([]ModuleWrapper, error) {
 	}
 
 	//Loads all modules that the current module depends on
-	keys := getModules(mod)
-	sources := GetSources(mod, keys)
+	sources := getSources(mod)
 	for i, source := range sources {
-		// If it is a github link, do not append a local directory
-		if strings.HasPrefix(source.moduleSource, "github.com") {
-			//FIXME: I am doing all github specific actions here, should I do them somewhere else?
-			mod, err := GetFromGithub(source.moduleSource)
+		if strings.HasPrefix(source.moduleSource, githubURL) { // If the module is a github link, specifically cztack
+			mod, err := GetFromGithub(fs, source.moduleSource)
 			if err != nil {
-				fmt.Println(err)
-				continue
+				return nil, err
 			}
 
 			sources[i].module = mod
 			sources[i].version = getVersion(sources[i])
 			modules = append(modules, sources[i])
-		} else if strings.HasPrefix(source.moduleSource, "terraform-aws-modules/") {
-			mod, err := downloadModule(source.moduleSource, source.version)
+		} else if strings.HasPrefix(source.moduleSource, awsRegistry) { // If the module is from the tf registry
+			mod, err := downloadModule(fs, source.moduleSource, source.version)
 			if err != nil {
-				fmt.Println(err)
-				continue
+				return nil, err
 			}
 
 			sources[i].module = mod
 			modules = append(modules, sources[i])
-		} else {
+		} else { //Otherwise, the module is not the leaf
 			//Append the local directory to the file
-			//FIXME: Appends to an index that does not exist
 			mod, diag := tfconfig.LoadModule(dir + source.moduleSource + "/")
 			if diag.HasErrors() {
-				fmt.Println(err)
-				continue
+				return nil, diag.Err()
 			}
 
 			sources[i].module = mod
@@ -126,72 +111,38 @@ func findSubmodules(dir string) ([]ModuleWrapper, error) {
 	return modules, nil
 }
 
-func GetSources(mod *tfconfig.Module, keys []string) []ModuleWrapper {
+//getSources retrieves the source for each module and creates a ModuleWrapper with it
+func getSources(mod *tfconfig.Module) []ModuleWrapper {
+	//ModuleCalls represents a module's submodules
 	modMap := mod.ModuleCalls
-
-	//Make 3 functions that separate git and other sources
 	sources := make([]ModuleWrapper, 0)
-	for _, key := range keys {
-		//FIXME: Fix any modules that might not contain verison
+
+	//TODO:(EC) Make 3 functions that separate git and other sources
+	for key := range modMap {
+		//FIXME:(EC) Fix any modules that might not contain verison
 		sources = append(sources, ModuleWrapper{modMap[key].Source, modMap[key].Version, nil})
 	}
+
 	return sources
 }
 
-func getModules(module *tfconfig.Module) []string {
-	modMap := module.ModuleCalls
-	keys := make([]string, 0)
-	for key := range modMap {
-		keys = append(keys, key)
-	}
-
-	return keys
-}
-
-//downloadModule retrieves terraform modules from the registry
-func downloadModule(modulePath string, version string) (*tfconfig.Module, error) {
-	baseUrl := "https://registry.terraform.io/v1/modules/"
-	pwd, e := os.Getwd()
-	if e != nil {
-		return nil, e
-	}
-
-	//TODO: Pass the fs from the top level
-	//Create temporary directory
-	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
-	//TODO: Make dir name, module repo name
-	tmpDirPath, err := afero.TempDir(fs, ".", "registry-download")
+//downloadModule downloads terraform module data from the tf registry
+func downloadModule(fs afero.Fs, modulePath string, version string) (*tfconfig.Module, error) {
+	tmpDir, err := afero.TempDir(fs, ".", "registry-download")
 	if err != nil {
-		fmt.Println("There was an error creating tmp Dir")
 		return nil, err
 	}
-	defer os.RemoveAll(tmpDirPath)
+	defer os.RemoveAll(tmpDir)
 
-	//Load github file
-	err = getter.Get(tmpDirPath, baseUrl+modulePath+"/"+version+"/download")
+	//download the module from tf registry
+	err = getter.Get(tmpDir, apiHostname+apiVersion+modulePath+"/"+version+"/download")
 	if err != nil {
-		fmt.Println("There was an issue getting the repo")
-		return nil, err
+		return nil, errs.WrapUser(err, "There was an issue downloading the file")
 	}
 
-	//Read the files into a directory
-	files, err := afero.ReadDir(fs, tmpDirPath)
-	if err != nil {
-		fmt.Println("There was an issue reading the directory")
-		return nil, err
-	}
-	fmt.Println(files)
-
-	//Read the module
-	//FIXME: Return value, potentially see whats in Diagnostics
-	mod, diag := tfconfig.LoadModule(tmpDirPath)
+	mod, diag := tfconfig.LoadModule(tmpDir)
 	if diag.HasErrors() {
-		return nil, nil
-	}
-	//TODO: Returns diagnostics error
-	if err != nil {
-		fmt.Println("tconfig could not read tmpDir")
-		return nil, err
+		return nil, errs.WrapUser(diag.Err(), "Could not load module")
 	}
 
 	return mod, nil
@@ -207,7 +158,7 @@ func contains(modules []*tfconfig.Module, mod *tfconfig.Module) bool {
 	return false
 }
 
-//TODO: Potentially do something when empty string is returned
+//TODO:(EC) Error handle when empty string is encountered
 func getVersion(mod ModuleWrapper) string {
 	return strings.Split(mod.moduleSource, "ref=v")[1]
 }

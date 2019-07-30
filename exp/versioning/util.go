@@ -15,16 +15,59 @@ type ModuleWrapper struct {
 	module       *tfconfig.Module
 }
 
-//GetFromGithub Retrieves modules that are available through github
-func GetFromGithub(repo string) (*tfconfig.Module, error) {
-	pwd, e := os.Getwd()
-	if e != nil {
-		return nil, e
-	}
+//FIXME: Make struct name more descriptive
+type RegistryModule struct {
+	ID         string      `json:"id"`
+	Namespace  string      `json:"namespace"`
+	Name       string      `json:"name"`
+	Version    string      `json:"version"`
+	Provider   string      `json:"provider"`
+	Source     string      `json:"source"`
+	Tag        string      `json:"tag"`
+	Root       Root        `json:"root"`
+	Submodules []Submodule `json:"submodules"`
+	Providers  []string    `json:"providers"`
+	Versions   []string    `json:"versions"`
+}
 
-	//TODO: Pass the fs from the top level
+type Root struct {
+	Inputs    []Input    `json:"inputs"`
+	Outputs   []Output   `json:"outputs"`
+	Resources []Resource `json:"resources"`
+}
+
+type Input struct {
+	Name     string `json:"name"`
+	Type     string `json:"type"`
+	Required bool   `json:"required"`
+}
+
+type Output struct {
+	Name string `json:"name"`
+}
+
+type Resource struct {
+	Name string `json:"name"`
+	Type string `json:"type"`
+}
+
+type Submodule struct {
+	Path      string     `json:"path"`
+	Name      string     `json:"name"`
+	Inputs    []Input    `json:"inputs"`
+	Outputs   []Output   `json:"outputs"`
+	Resources []Resource `json:"resources"`
+}
+
+const githubURL = "github.com"
+const awsRegistry = "terraform-aws-modules/"
+const cztack = "/chanzuckerberg/cztack/"
+const protocol = "https://"
+
+//GetFromGithub Retrieves modules that are available through github
+func GetFromGithub(fs afero.Fs, repo string) (*tfconfig.Module, error) {
+
 	//Create temporary directory
-	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 	//TODO: Make dir name, module repo name
 	tmpDirPath, err := afero.TempDir(fs, ".", "cztack")
 	if err != nil {
