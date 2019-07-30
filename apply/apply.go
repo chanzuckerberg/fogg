@@ -20,7 +20,7 @@ import (
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/gobuffalo/packr"
 	getter "github.com/hashicorp/go-getter"
-	"github.com/hashicorp/hcl/hcl/printer"
+	"github.com/hashicorp/hcl2/hclwrite"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
@@ -260,10 +260,7 @@ func fmtHcl(fs afero.Fs, path string) error {
 	if e != nil {
 		return errs.WrapUserf(e, "unable to read file %s", path)
 	}
-	out, e := printer.Format(in)
-	if e != nil {
-		return errs.WrapUserf(e, "fmt hcl failed for %s", path)
-	}
+	out := hclwrite.Format(in)
 	return afero.WriteReader(fs, path, bytes.NewReader(out))
 }
 
