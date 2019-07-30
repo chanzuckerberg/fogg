@@ -13,6 +13,15 @@ func TestModuleStruct(t *testing.T) {
 
 }
 
+func TestCompareLocalAndGlobal(t *testing.T) {
+	r := require.New(t)
+	localModules := GetLocalModules("/Users/echanakira/Desktop/learning/shared-infra/terraform/envs/staging/golinks/")
+	r.NotNil(localModules)
+
+	globalModules := GetGlobalModules(localModules)
+	r.NotNil(globalModules)
+}
+
 func TestGetModuleVersion(t *testing.T) {
 	r := require.New(t)
 	module := GetModule()

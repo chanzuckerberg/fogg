@@ -11,8 +11,6 @@ import (
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 )
 
-//	"gopkg.in/src-d/go-git.v4"
-
 /*
  * 1) Read main file
  * 2) Find the source for each module
@@ -31,12 +29,6 @@ import (
  *Solution -> If the file is not recognized, then parse fogg.yml and see if they are module sources
  *Problem 4: Do I want to get
  */
-
-type ModuleWrapper struct {
-	moduleSource string
-	version      string
-	module       *tfconfig.Module
-}
 
 //GetLocalModules Retrieves all modules that the given directory depends on
 func GetLocalModules(path string) []ModuleWrapper {
@@ -100,7 +92,7 @@ func findSubmodules(dir string) ([]ModuleWrapper, error) {
 		// If it is a github link, do not append a local directory
 		if strings.HasPrefix(source.moduleSource, "github.com") {
 			//FIXME: I am doing all github specific actions here, should I do them somewhere else?
-			mod, err := getFromGithub(source.moduleSource)
+			mod, err := GetFromGithub(source.moduleSource)
 			if err != nil {
 				fmt.Println(err)
 				continue
@@ -154,54 +146,6 @@ func getModules(module *tfconfig.Module) []string {
 	}
 
 	return keys
-}
-
-//GetFromGithub Retrieves modules that are available through github
-func getFromGithub(repo string) (*tfconfig.Module, error) {
-	pwd, e := os.Getwd()
-	if e != nil {
-		return nil, e
-	}
-
-	//TODO: Pass the fs from the top level
-	//Create temporary directory
-	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
-	//TODO: Make dir name, module repo name
-	tmpDirPath, err := afero.TempDir(fs, ".", "cztack")
-	if err != nil {
-		fmt.Println("There was an error creating tmp Dir")
-		return nil, err
-	}
-	defer os.RemoveAll(tmpDirPath)
-
-	//Load github file
-	err = getter.Get(tmpDirPath, repo)
-	if err != nil {
-		fmt.Println("There was an issue getting the repo")
-		return nil, err
-	}
-
-	//Read the files into a directory
-	files, err := afero.ReadDir(fs, tmpDirPath)
-	if err != nil {
-		fmt.Println("There was an issue reading the directory")
-		return nil, err
-	}
-	fmt.Println(files)
-
-	//Read the module
-	//FIXME: Return value, potentially see whats in Diagnostics
-	mod, diag := tfconfig.LoadModule(tmpDirPath)
-	if diag.HasErrors() {
-		return nil, nil
-	}
-	//TODO: Returns diagnostics error
-	if err != nil {
-		fmt.Println("tconfig could not read tmpDir")
-		return nil, err
-	}
-
-	return mod, nil
 }
 
 //downloadModule retrieves terraform modules from the registry

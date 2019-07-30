@@ -16,17 +16,17 @@ func TestGetCztackModuleFromGithub(t *testing.T) {
 	r := require.New(t)
 
 	repo := "github.com/chanzuckerberg/cztack//aws-params-reader-policy?ref=v0.15.1"
-	mod, err := getFromGithub(repo)
+	mod, err := GetFromGithub(repo)
 	r.NoError(err)
 	r.NotNil(mod)
 }
 
-//FIXME: Broken Test
+//FIXME: Test cannot retrieve the repo
 // func TestGetRegistryModuleFromGithub(t *testing.T) {
 // 	r := require.New(t)
 
 // 	repo := "github.com/terraform-aws-modules/terraform-aws-security-group?ref=v3.1.0"
-// 	mod, err := getFromGithub(repo)
+// 	mod, err := GetFromGithub(repo)
 // 	r.NoError(err)
 // 	r.NotNil(mod)
 // }
