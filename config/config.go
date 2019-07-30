@@ -13,7 +13,10 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
+	goVersion "github.com/hashicorp/go-version"
 )
+
+var defaultTerraformVersion = goVersion.Must(goVersion.NewVersion("0.12.5"))
 
 //InitConfig initializes the config file using user input
 func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVersion string) *v2.Config {
@@ -35,7 +38,7 @@ func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVe
 						Version: &awsProviderVersion,
 					},
 				},
-				TerraformVersion: util.StrPtr(v2.DefaultTerraformVersion.String()),
+				TerraformVersion: util.StrPtr(defaultTerraformVersion.String()),
 			},
 		},
 		Accounts: map[string]v2.Account{},

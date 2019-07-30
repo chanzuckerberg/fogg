@@ -11,10 +11,7 @@ import (
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
-	goVersion "github.com/hashicorp/go-version"
 )
-
-var DefaultTerraformVersion = goVersion.Must(goVersion.NewVersion("0.12.0"))
 
 //ReadConfig take a byte array as input and outputs a json or yaml config struct
 func ReadConfig(fs afero.Fs, b []byte, configFile string) (*Config, error) {

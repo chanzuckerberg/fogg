@@ -322,6 +322,8 @@ func (c *Config) validateExtraVars() error {
 }
 
 func (c *Config) validateModules() error {
+	minTFVersion := goVersion.Must(goVersion.NewVersion("0.12.0"))
+
 	for name, module := range c.Modules {
 		version := ResolveModuleTerraformVersion(c.Defaults, module)
 		if version == nil {
@@ -333,8 +335,8 @@ func (c *Config) validateModules() error {
 			return errs.WrapUserf(err, "Could not parse semver terraform version [%s]", *version)
 		}
 
-		if v.LessThan(DefaultTerraformVersion) {
-			return errs.NewUserf("fogg only supports tf versions >= %s, but %s was provided", DefaultTerraformVersion.String(), *version)
+		if v.LessThan(minTFVersion) {
+			return errs.NewUserf("fogg only supports tf versions >= %s, but %s was provided", minTFVersion.String(), *version)
 		}
 	}
 	return nil
