@@ -27,7 +27,7 @@ func TestInitConfig(t *testing.T) {
 	a.Equal("table", *c.Defaults.Common.Backend.DynamoTable)
 	a.Equal("me@foo.example", *c.Defaults.Owner)
 	a.Equal("proj", *c.Defaults.Project)
-	a.Equal("0.11.7", *c.Defaults.TerraformVersion)
+	a.Equal(v2.DefaultTerraformVersion.String(), *c.Defaults.TerraformVersion)
 }
 
 func Test_detectVersion(t *testing.T) {

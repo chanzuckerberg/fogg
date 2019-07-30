@@ -17,8 +17,6 @@ import (
 
 //InitConfig initializes the config file using user input
 func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVersion string) *v2.Config {
-	terraformVersion := "0.11.7"
-
 	return &v2.Config{
 		Defaults: v2.Defaults{
 			Common: v2.Common{
@@ -37,7 +35,7 @@ func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVe
 						Version: &awsProviderVersion,
 					},
 				},
-				TerraformVersion: &terraformVersion,
+				TerraformVersion: util.StrPtr(v2.DefaultTerraformVersion.String()),
 			},
 		},
 		Accounts: map[string]v2.Account{},
