@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/go-getter"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
 
@@ -15,7 +16,6 @@ type ModuleWrapper struct {
 	module       *tfconfig.Module
 }
 
-//FIXME: Make struct name more descriptive
 type RegistryModule struct {
 	ID         string      `json:"id"`
 	Namespace  string      `json:"namespace"`
@@ -66,25 +66,24 @@ const protocol = "https://"
 
 //GetFromGithub Retrieves modules that are available through github
 func GetFromGithub(fs afero.Fs, repo string) (*tfconfig.Module, error) {
-
-	//Create temporary directory
-	//TODO: Make dir name, module repo name
-	tmpDirPath, err := afero.TempDir(fs, ".", "cztack")
+	//TODO: (EC) Create temporary directory
+	//TODO: Make directory name more general
+	tmpDir, err := afero.TempDir(fs, ".", "cztack")
 	if err != nil {
 		fmt.Println("There was an error creating tmp Dir")
 		return nil, err
 	}
-	defer os.RemoveAll(tmpDirPath)
+	defer os.RemoveAll(tmpDir)
 
 	//Load github file
-	err = getter.Get(tmpDirPath, repo)
+	err = getter.Get(tmpDir, repo)
 	if err != nil {
 		fmt.Println("There was an issue getting the repo")
 		return nil, err
 	}
 
 	//Read the files into a directory
-	files, err := afero.ReadDir(fs, tmpDirPath)
+	files, err := afero.ReadDir(fs, tmpDir)
 	if err != nil {
 		fmt.Println("There was an issue reading the directory")
 		return nil, err
@@ -93,7 +92,7 @@ func GetFromGithub(fs afero.Fs, repo string) (*tfconfig.Module, error) {
 
 	//Read the module
 	//FIXME: Return value, potentially see whats in Diagnostics
-	mod, diag := tfconfig.LoadModule(tmpDirPath)
+	mod, diag := tfconfig.LoadModule(tmpDir)
 	if diag.HasErrors() {
 		return nil, nil
 	}
@@ -104,4 +103,13 @@ func GetFromGithub(fs afero.Fs, repo string) (*tfconfig.Module, error) {
 	}
 
 	return mod, nil
+}
+
+func openGitOrExit(fs afero.Fs) {
+	_, err := fs.Stat(".git")
+	if err != nil {
+		// assuming this means no repository
+		logrus.Fatal("fogg must be run from the root of a git repo")
+		os.Exit(1)
+	}
 }

@@ -26,6 +26,8 @@ var versioningCmd = &cobra.Command{
 		}
 		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
+		openGitOrExit(fs)
+
 		return versioning.V(fs)
 	},
 }

@@ -16,6 +16,8 @@ const apiVersion = "/v1/modules/"
 //TODO: Replace some of the strings with modular constants
 //TODO: Freeze the code by creating a test directory
 
+//Local refers to any files located within your local file system.
+
 //GetLocalModules retrieves all terraform modules within a local directory
 //TODO:(EC) Define local and global modules OR rename the values
 func GetLocalModules(fs afero.Fs, dir string) ([]ModuleWrapper, error) {

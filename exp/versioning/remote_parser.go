@@ -15,13 +15,14 @@ import (
 
 const tagPattern = "ref=v"
 
+//TODO:(EC) Use these to load modules from the terraform registry **DO NOT REMOVE**
 // const registry = "https://registry.terraform.io/v1/modules"
 // const resource = "https://registry.terraform.io/v1/modules/terraform-aws-modules/alb/aws"
 //https://registry.terraform.io/v1/modules?namespace=terraform-aws-modules
 //https://registry.terraform.io/v1/modules?namespace=terraform-aws-modules&offset=15
 //https://registry.terraform.io/v1/modules?provider=aws&verified=true
 
-//LatestModuleVersions retrieves the latest version of the given modules
+//LatestModuleVersions retrieves the latest version of the provided modules
 func LatestModuleVersions(fs afero.Fs, modules []ModuleWrapper) ([]ModuleWrapper, error) {
 	var latestModules []ModuleWrapper
 	var module ModuleWrapper
@@ -34,7 +35,6 @@ func LatestModuleVersions(fs afero.Fs, modules []ModuleWrapper) ([]ModuleWrapper
 			if err != nil {
 				return nil, errs.WrapUserf(err, "Could not generate url for %s latest module", mod.moduleSource)
 			}
-
 			module.module, err = GetFromGithub(fs, resource)
 			if err != nil {
 				return nil, err
@@ -68,7 +68,7 @@ func LatestModuleVersions(fs afero.Fs, modules []ModuleWrapper) ([]ModuleWrapper
 	return latestModules, nil
 }
 
-//generateURL creates github url
+//generateURL creates github url for the given module
 func generateURL(fs afero.Fs, module ModuleWrapper) (string, error) {
 	url := ""
 	if strings.HasPrefix(module.moduleSource, "github.com/chanzuckerberg") {
@@ -95,7 +95,7 @@ func generateURL(fs afero.Fs, module ModuleWrapper) (string, error) {
 			url = t.Name().String()
 			return nil
 		})
-		//TODO: Make the tag naming scheme modular
+		//TODO:(EC) Make the tag naming scheme modular
 		url = strings.Split(module.moduleSource, tagPattern)[0] + tagPattern + strings.Split(url, "tags/v")[1]
 	}
 	//TODO:(EC) For other link types include https://

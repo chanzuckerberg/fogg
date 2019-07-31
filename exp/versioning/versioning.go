@@ -8,12 +8,12 @@ func V(fs afero.Fs) error {
 	// path := "/Users/echanakira/Desktop/learning/shared-infra/terraform/envs/staging/golinks/"
 
 	//Collect local modules to be updated
-	// localModules := GetLocalModules(path)
+	localModules, err := GetLocalModules(fs, "/terraform/envs/staging/golinks/")
+	r.NoError(err)
+	r.NotNil(localModules)
 
-	//Use module call source path to make http requests
-	// globalModules := GetGlobalModules(localModules)
-
-	// fmt.Printf("Modules = %v", localModules)
-
+	globalModules, err := LatestModuleVersions(fs, localModules)
+	r.NoError(err)
+	r.NotNil(globalModules)
 	return nil
 }
