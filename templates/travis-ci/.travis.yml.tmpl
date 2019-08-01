@@ -24,6 +24,17 @@ before_script:
 
 jobs:
   include:
+    - stage: check
+      script:
+        - |
+        set -e
+        fogg apply
+        if [ "$(git status --porcelain)" != "" ]; then
+          echo "git tree is dirty after running fogg apply"
+          echo "ensure you run fogg apply on your branch"
+          git status
+          exit 1
+        fi
 {{ range $testBucket := .TestBuckets }}
     - stage: check
       script:
