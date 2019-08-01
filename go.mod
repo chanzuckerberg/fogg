@@ -14,7 +14,7 @@ require (
 	github.com/go-errors/errors v1.0.1
 	github.com/go-playground/locales v0.12.1 // indirect
 	github.com/go-playground/universal-translator v0.16.0 // indirect
-	github.com/go-test/deep v1.0.1
+	github.com/go-test/deep v1.0.2
 	github.com/gobuffalo/packr v1.30.1
 	github.com/google/uuid v1.1.1 // indirect
 	github.com/hashicorp/go-getter v1.3.1-0.20190627223108-da0323b9545e
