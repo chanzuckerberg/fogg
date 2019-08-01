@@ -17,15 +17,27 @@ install:
   - buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID go-get -- go get -u github.com/haya14busa/goverage
   - buildevents step $TRAVIS_BUILD_ID $STEP_SPAN_ID $STEP_START install
 
-script:
-  - STEP_START=$(date +%s)
-  - STEP_SPAN_ID=$(echo script | sum | cut -f 1 -d \ )
-  - buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID codecov-validate -- curl --data-binary @codecov.yml https://codecov.io/validate
-  - buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID make-test-coverage -- make test-coverage
-  # Disable snyk until https://github.com/snyk/snyk/issues/354 is resolved
-  # - if [[ ! -z "${SNYK_TOKEN}" ]]; then snyk monitor --org=czi; snyk test; fi
-  - buildevents step $TRAVIS_BUILD_ID $STEP_SPAN_ID $STEP_START script
-
+jobs:
+  include:
+    - stage: check
+      script:
+        - STEP_START=$(date +%s)
+        - STEP_SPAN_ID=$(echo script | sum | cut -f 1 -d \ )
+        - buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID codecov-validate -- curl --data-binary @codecov.yml https://codecov.io/validate
+        - buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID make-test-coverage -- make test-coverage
+        # Disable snyk until https://github.com/snyk/snyk/issues/354 is resolved
+        # - if [[ ! -z "${SNYK_TOKEN}" ]]; then snyk monitor --org=czi; snyk test; fi
+        - buildevents step $TRAVIS_BUILD_ID $STEP_SPAN_ID $STEP_START script
+    - stage: check
+      script: |
+        set -e
+        make deps
+        if [ "$(git status --porcelain)" != "" ]; then
+          echo "git tree is dirty after running make deps"
+          echo "ensure you run make deps on your branch"
+          git status
+          exit 1
+        fi
 after_failure:
   - STEP_START=$(date +%s)
   - STEP_SPAN_ID=$(echo after_failure | sum | cut -f 1 -d \ )
