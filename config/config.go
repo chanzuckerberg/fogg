@@ -18,8 +18,11 @@ import (
 
 var defaultTerraformVersion = goVersion.Must(goVersion.NewVersion("0.12.5"))
 
+//DefaultFoggVersion is the version that fogg will generate by default
+const DefaultFoggVersion = 2
+
 //InitConfig initializes the config file using user input
-func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVersion string, foggVersion int) *v2.Config {
+func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVersion string) *v2.Config {
 	return &v2.Config{
 		Defaults: v2.Defaults{
 			Common: v2.Common{
@@ -45,7 +48,7 @@ func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVe
 		Docker:   false,
 		Envs:     map[string]v2.Env{},
 		Modules:  map[string]v1.Module{},
-		Version:  foggVersion,
+		Version:  DefaultFoggVersion,
 	}
 }
 

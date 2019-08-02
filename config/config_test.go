@@ -17,7 +17,7 @@ import (
 
 func TestInitConfig(t *testing.T) {
 	a := assert.New(t)
-	c := InitConfig("proj", "reg", "buck", "table", "prof", "me@foo.example", "0.99.0", 0)
+	c := InitConfig("proj", "reg", "buck", "table", "prof", "me@foo.example", "0.99.0")
 	a.Equal("prof", *c.Defaults.Common.Backend.Profile)
 	a.Equal("prof", *c.Defaults.Providers.AWS.Profile)
 	a.Equal("reg", *c.Defaults.Providers.AWS.Region)

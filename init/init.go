@@ -10,7 +10,6 @@ import (
 )
 
 const AWSProviderVersion = "1.27.0"
-const foggVersion = 2
 
 func userPrompt() (string, string, string, string, string, string) {
 	project := prompt.StringRequired("project name?")
@@ -40,7 +39,7 @@ func writeConfig(fs afero.Fs, config *v2.Config) error {
 //Init reads user console input and generates a fogg.yml file
 func Init(fs afero.Fs) error {
 	project, region, bucket, table, profile, owner := userPrompt()
-	config := config.InitConfig(project, region, bucket, table, profile, owner, AWSProviderVersion, foggVersion)
+	config := config.InitConfig(project, region, bucket, table, profile, owner, AWSProviderVersion)
 	e := writeConfig(fs, config)
 	return e
 }

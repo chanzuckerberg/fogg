@@ -20,9 +20,9 @@ func TestInit(t *testing.T) {
 	fs, _, err := util.TestFs()
 	a.NoError(err)
 
-	conf := config.InitConfig(project, region, bucket, table, profile, owner, AWSProviderVersion, foggVersion)
+	conf := config.InitConfig(project, region, bucket, table, profile, owner, AWSProviderVersion)
 	a.NotNil(conf)
-	a.Equal(foggVersion, conf.Version)
+	a.Equal(config.DefaultFoggVersion, conf.Version)
 
 	err = writeConfig(fs, conf)
 	a.NoError(err)
@@ -30,32 +30,4 @@ func TestInit(t *testing.T) {
 	exists, err := afero.Exists(fs, "fogg.yml")
 	a.NoError(err)
 	a.True(exists)
-}
-
-func TestLatestInitVersion(t *testing.T) {
-	a := assert.New(t)
-	project := "acme"
-	region := "us-west-2"
-	bucket := "acme-infra"
-	table := "acme"
-	profile := "acme-auth"
-	owner := "infra@acme.example"
-
-	conf := config.InitConfig(project, region, bucket, table, profile, owner, AWSProviderVersion, foggVersion)
-	a.NotNil(conf)
-	a.Equal(foggVersion, conf.Version)
-}
-
-func TestInitVersionZero(t *testing.T) {
-	a := assert.New(t)
-	project := "acme"
-	region := "us-west-2"
-	bucket := "acme-infra"
-	table := "acme"
-	profile := "acme-auth"
-	owner := "infra@acme.example"
-
-	conf := config.InitConfig(project, region, bucket, table, profile, owner, AWSProviderVersion, 0)
-	a.NotNil(conf)
-	a.Equal(0, conf.Version)
 }
