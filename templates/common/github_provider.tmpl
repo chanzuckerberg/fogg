@@ -5,6 +5,9 @@ provider "github" {
   {{ if .BaseURL -}}
   base_url = "{{ .BaseURL }}"
   {{ end -}}
+  {{ if .Version -}}
+  version = "~>{{ .Version }}"
+  {{ end -}}
 }
 
 {{ end }}

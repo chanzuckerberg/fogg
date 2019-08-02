@@ -119,15 +119,17 @@ func ResolveAWSProvider(commons ...Common) *AWSProvider {
 func ResolveGithubProvider(commons ...Common) *GithubProvider {
 	org := lastNonNil(GithubProviderOrganizationGetter, commons...)
 
-	if org != nil {
-		return &GithubProvider{
-			Organization: org,
-
-			// optional fields
-			BaseURL: lastNonNil(GithubProviderBaseURLGetter, commons...),
-		}
+	if org == nil {
+		return nil
 	}
-	return nil
+
+	return &GithubProvider{
+		Organization: org,
+
+		// optional fields
+		BaseURL: lastNonNil(GithubProviderBaseURLGetter, commons...),
+		Version: lastNonNil(GithubProviderVersionGetter, commons...),
+	}
 }
 
 func ResolveSnowflakeProvider(commons ...Common) *SnowflakeProvider {
@@ -324,6 +326,13 @@ func GithubProviderOrganizationGetter(comm Common) *string {
 func GithubProviderBaseURLGetter(comm Common) *string {
 	if comm.Providers != nil && comm.Providers.Github != nil {
 		return comm.Providers.Github.BaseURL
+	}
+	return nil
+}
+
+func GithubProviderVersionGetter(comm Common) *string {
+	if comm.Providers != nil && comm.Providers.Github != nil {
+		return comm.Providers.Github.Version
 	}
 	return nil
 }

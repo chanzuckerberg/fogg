@@ -76,8 +76,9 @@ type AWSProvider struct {
 
 // GithubProvider represents a configuration of a github provider
 type GithubProvider struct {
-	Organization *string `yaml:"organization"`
+	Organization string `yaml:"organization"`
 	BaseURL      *string `yaml:"base_url"`
+	Version      *string `yaml:"version"`
 }
 
 //SnowflakeProvider represents Snowflake DB provider configuration
@@ -303,8 +304,9 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	if githubConfig != nil {
 		githubPlan = &GithubProvider{
-			Organization: githubConfig.Organization,
+			Organization: *githubConfig.Organization,
 			BaseURL:      githubConfig.BaseURL,
+			Version: githubConfig.Version,
 		}
 	}
 

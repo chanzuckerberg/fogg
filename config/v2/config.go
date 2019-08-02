@@ -129,6 +129,7 @@ type AWSProvider struct {
 type GithubProvider struct {
 	Organization *string `json:"organization,omitempty" yaml:"organization,omitempty"`
 	BaseURL      *string `json:"base_url,omitempty" yaml:"base_url,omitempty"`
+	Version      *string `json:"version,omitempty" yaml:"version,omitempty"`
 }
 
 type SnowflakeProvider struct {
