@@ -5,7 +5,6 @@ go:
 env:
   global:
     - BUILD_START=$(date +%s)
-    - GO111MODULE=on
 
 install:
   - STEP_START=$(date +%s)
@@ -32,6 +31,7 @@ jobs:
     - stage: check
       script: |
         set -e
+        export GO111MODULE=on
         make deps
         if [ "$(git status --porcelain)" != "" ]; then
           echo "git tree is dirty after running make deps"
