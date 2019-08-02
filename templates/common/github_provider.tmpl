@@ -1,0 +1,10 @@
+{{define "github_provider"}}
+
+provider "github" {
+  organization = "{{ .Organization }}"
+  {{ if .BaseURL -}}
+  base_url = "{{ .BaseURL }}"
+  {{ end -}}
+}
+
+{{ end }}

@@ -59,7 +59,7 @@ type TravisComponent struct {
 
 type Providers struct {
 	AWS       *AWSProvider       `yaml:"aws"`
-	Github *GithubProvider `yaml:"github"`
+	Github    *GithubProvider    `yaml:"github"`
 	Snowflake *SnowflakeProvider `yaml:"snowflake"`
 	Bless     *BlessProvider     `yaml:"bless"`
 	Okta      *OktaProvider      `yaml:"okta"`
@@ -302,9 +302,9 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	githubConfig := v2.ResolveGithubProvider(commons...)
 
 	if githubConfig != nil {
-		githubPlan = &GithubProvider {
+		githubPlan = &GithubProvider{
 			Organization: githubConfig.Organization,
-			BaseURL: githubConfig.BaseURL,
+			BaseURL:      githubConfig.BaseURL,
 		}
 	}
 
@@ -375,7 +375,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		},
 		Providers: Providers{
 			AWS:       awsPlan,
-			Github: githubPlan,
+			Github:    githubPlan,
 			Snowflake: snowflakePlan,
 			Bless:     blessPlan,
 			Okta:      oktaPlan,
