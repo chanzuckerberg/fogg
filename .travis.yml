@@ -5,6 +5,7 @@ go:
 env:
   global:
     - BUILD_START=$(date +%s)
+    - GO111MODULE=on
 
 install:
   - STEP_START=$(date +%s)
