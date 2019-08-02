@@ -32,7 +32,7 @@ func TestInit(t *testing.T) {
 	a.True(exists)
 }
 
-func TestInitVersion(t *testing.T) {
+func TestLatestInitVersion(t *testing.T) {
 	a := assert.New(t)
 	project := "acme"
 	region := "us-west-2"
