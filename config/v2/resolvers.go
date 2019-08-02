@@ -114,6 +114,22 @@ func ResolveAWSProvider(commons ...Common) *AWSProvider {
 	return nil
 }
 
+// ResolveGithubProvider will return an GithubProvder iff one of the required fields is set somewhere in the set of Common
+// config objects passed in. Otherwise it will return nil.
+func ResolveGithubProvider(commons ...Common) *GithubProvider {
+	org := lastNonNil(GithubProviderOrganizationGetter, commons...)
+
+	if org != nil {
+		return &GithubProvider{
+			Organization: org,
+
+			// optional fields
+			BaseURL: lastNonNil(GithubProviderBaseURLGetter, commons...),
+		}
+	}
+	return nil
+}
+
 func ResolveSnowflakeProvider(commons ...Common) *SnowflakeProvider {
 	account := lastNonNil(SnowflakeProviderAccountGetter, commons...)
 	role := lastNonNil(SnowflakeProviderRoleGetter, commons...)
@@ -294,6 +310,20 @@ func AWSProviderAccountIdGetter(comm Common) *json.Number {
 func AWSProviderAdditionalRegionsGetter(comm Common) []string {
 	if comm.Providers != nil && comm.Providers.AWS != nil {
 		return comm.Providers.AWS.AdditionalRegions
+	}
+	return nil
+}
+
+func GithubProviderOrganizationGetter(comm Common) *string {
+	if comm.Providers != nil && comm.Providers.Github != nil {
+		return comm.Providers.Github.Organization
+	}
+	return nil
+}
+
+func GithubProviderBaseURLGetter(comm Common) *string {
+	if comm.Providers != nil && comm.Providers.Github != nil {
+		return comm.Providers.Github.BaseURL
 	}
 	return nil
 }
