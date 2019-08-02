@@ -95,9 +95,10 @@ type Component struct {
 
 type Providers struct {
 	AWS       *AWSProvider       `json:"aws,omitempty" yaml:"aws,omitempty"`
-	Snowflake *SnowflakeProvider `json:"snowflake,omitempty" yaml:"snowflake,omitempty"`
 	Bless     *BlessProvider     `json:"bless,omitempty" yaml:"bless,omitempty"`
+	Github    *GithubProvider    `json:"github,omitempty" yaml:"github,omitempty"`
 	Okta      *OktaProvider      `json:"okta,omitempty" yaml:"okta,omitempty"`
+	Snowflake *SnowflakeProvider `json:"snowflake,omitempty" yaml:"snowflake,omitempty"`
 }
 
 // OktaProvider is an okta provider
@@ -123,6 +124,12 @@ type AWSProvider struct {
 	Profile           *string      `json:"profile,omitempty" yaml:"profile,omitempty"`
 	Region            *string      `json:"region,omitempty" yaml:"region,omitempty"`
 	Version           *string      `json:"version,omitempty" yaml:"version,omitempty"`
+}
+
+type GithubProvider struct {
+	Organization *string `json:"organization,omitempty" yaml:"organization,omitempty"`
+	BaseURL      *string `json:"base_url,omitempty" yaml:"base_url,omitempty"`
+	Version      *string `json:"version,omitempty" yaml:"version,omitempty"`
 }
 
 type SnowflakeProvider struct {
