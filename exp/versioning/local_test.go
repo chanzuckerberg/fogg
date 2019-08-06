@@ -13,9 +13,10 @@ func TestGetLocalModules(t *testing.T) {
 	r := require.New(t)
 	pwd, err := os.Getwd()
 	r.NoError(err)
+	pwd= "../../" + pwd
 	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
-	modules, err := GetLocalModules(fs, "/Users/echanakira/Desktop/test/saved-files/version_detection/terraform/envs/staging/app/")
+	modules, err := GetLocalModules(fs, "../../testdata/version_detection/terraform/envs/staging/app/")
 	r.NoError(err)
 	r.NotNil(modules)
 }

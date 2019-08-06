@@ -66,7 +66,7 @@ const protocol = "https://"
 
 //GetFromGithub Retrieves modules that are available through github
 func GetFromGithub(fs afero.Fs, repo string) (*tfconfig.Module, error) {
-	//TODO: (EC) Create temporary directory
+	//FIXME: (EC) Create temporary directory, when tests fail directory stays
 	//TODO: Make directory name more general
 	tmpDir, err := afero.TempDir(fs, ".", "cztack")
 	if err != nil {

@@ -1,6 +1,7 @@
 package versioning
 
 import (
+	"fmt"
 	"os"
 	"strings"
 
@@ -76,7 +77,8 @@ func getSubmodules(fs afero.Fs, dir string) ([]ModuleWrapper, error) {
 	var modules []ModuleWrapper
 	mod, diag := tfconfig.LoadModule(dir)
 	if diag.HasErrors() {
-		return nil, err
+		fmt.Println(diag.Err())
+		return nil, diag.Err()
 	}
 
 	//Loads all modules that the current module depends on

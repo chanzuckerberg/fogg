@@ -14,7 +14,7 @@ func TestCompareLocalAndGlobal(t *testing.T) {
 	r.NoError(err)
 	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
-	localModules, err := GetLocalModules(fs, "/Users/echanakira/Desktop/learning/shared-infra/terraform/envs/staging/golinks/")
+	localModules, err := GetLocalModules(fs, "../../testdata/version_detection/terraform/envs/staging/app/")
 	r.NoError(err)
 	r.NotNil(localModules)
 

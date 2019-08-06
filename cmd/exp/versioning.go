@@ -5,6 +5,7 @@ import (
 
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/exp/versioning"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
@@ -28,6 +29,15 @@ var versioningCmd = &cobra.Command{
 
 		openGitOrExit(fs)
 
-		return versioning.V(fs)
+		return versioning.Examine(fs, pwd)
 	},
+}
+
+func openGitOrExit(fs afero.Fs) {
+	_, err := fs.Stat(".git")
+	if err != nil {
+		// assuming this means no repository
+		logrus.Fatal("fogg must be run from the root of a git repo")
+		os.Exit(1)
+	}
 }
