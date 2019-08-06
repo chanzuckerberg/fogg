@@ -15,10 +15,13 @@ func TestGetLocalModules(t *testing.T) {
 	r.NoError(err)
 	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
-	modules, err := GetLocalModules(fs, "/Users/echanakira/Desktop/learning/shared-infra/terraform/envs/staging/golinks/")
+	modules, err := GetLocalModules(fs, "/Users/echanakira/Desktop/test/saved-files/version_detection/terraform/envs/staging/app/")
 	r.NoError(err)
 	r.NotNil(modules)
 }
+
+//Users/echanakira/Desktop/learning/shared-infra/terraform/envs/staging/golinks/
+//Users/echanakira/Desktop/test/saved-files/version_detection/terraform/envs/staging/app
 
 func TestGetCztackModuleFromGithub(t *testing.T) {
 	r := require.New(t)
