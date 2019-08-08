@@ -1,15 +1,16 @@
 package examine
 
 import (
-	"fmt"
 	"os"
 
+	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/hashicorp/go-getter"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
 
+//TODO:(EC) Add a RegistryModule field
 type ModuleWrapper struct {
 	moduleSource string
 	version      string
@@ -63,6 +64,7 @@ const githubURL = "github.com"
 const awsRegistry = "terraform-aws-modules/"
 const cztack = "/chanzuckerberg/cztack/"
 const protocol = "https://"
+const tagPattern = "ref=v"
 
 //GetFromGithub Retrieves modules that are available through github
 func GetFromGithub(fs afero.Fs, repo string) (*tfconfig.Module, error) {
@@ -70,36 +72,22 @@ func GetFromGithub(fs afero.Fs, repo string) (*tfconfig.Module, error) {
 	//TODO: Make directory name more general
 	tmpDir, err := afero.TempDir(fs, ".", "cztack")
 	if err != nil {
-		fmt.Println("There was an error creating tmp Dir")
-		return nil, err
+
+		return nil, errs.WrapInternal(err, "There was an issue creating a temp directory")
 	}
 	defer os.RemoveAll(tmpDir)
 
 	//Load github file
 	err = getter.Get(tmpDir, repo)
 	if err != nil {
-		fmt.Println("There was an issue getting the repo")
-		return nil, err
+
+		return nil, errs.WrapInternal(err, "There was an issue getting the repo")
 	}
 
-	//Read the files into a directory
-	files, err := afero.ReadDir(fs, tmpDir)
-	if err != nil {
-		fmt.Println("There was an issue reading the directory")
-		return nil, err
-	}
-	fmt.Println(files)
-
-	//Read the module
-	//FIXME: Return value, potentially see whats in Diagnostics
+	//Load module into struct
 	mod, diag := tfconfig.LoadModule(tmpDir)
 	if diag.HasErrors() {
-		return nil, nil
-	}
-	//TODO: Returns diagnostics error
-	if err != nil {
-		fmt.Println("tconfig could not read tmpDir")
-		return nil, err
+		return nil, errs.WrapInternal(diag.Err(), "There was an issue loading the module")
 	}
 
 	return mod, nil

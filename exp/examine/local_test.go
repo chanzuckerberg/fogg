@@ -20,10 +20,6 @@ func TestGetLocalModules(t *testing.T) {
 	r.NoError(err)
 	r.NotNil(modules)
 }
-
-//Users/echanakira/Desktop/learning/shared-infra/terraform/envs/staging/golinks/
-//Users/echanakira/Desktop/test/saved-files/version_detection/terraform/envs/staging/app
-
 func TestGetCztackModuleFromGithub(t *testing.T) {
 	r := require.New(t)
 	pwd, _ := os.Getwd()
@@ -34,16 +30,6 @@ func TestGetCztackModuleFromGithub(t *testing.T) {
 	r.NoError(err)
 	r.NotNil(mod)
 }
-
-//FIXME: Test cannot retrieve the repo
-// func TestGetRegistryModuleFromGithub(t *testing.T) {
-// 	r := require.New(t)
-
-// 	repo := "github.com/terraform-aws-modules/terraform-aws-security-group?ref=v3.1.0"
-// 	mod, err := GetFromGithub(repo)
-// 	r.NoError(err)
-// 	r.NotNil(mod)
-// }
 
 func TestDownloadModuleFromRegistry(t *testing.T) {
 	r := require.New(t)

@@ -13,15 +13,6 @@ import (
 	"gopkg.in/src-d/go-git.v4/plumbing"
 )
 
-const tagPattern = "ref=v"
-
-//TODO:(EC) Use these to load modules from the terraform registry **DO NOT REMOVE**
-// const registry = "https://registry.terraform.io/v1/modules"
-// const resource = "https://registry.terraform.io/v1/modules/terraform-aws-modules/alb/aws"
-//https://registry.terraform.io/v1/modules?namespace=terraform-aws-modules
-//https://registry.terraform.io/v1/modules?namespace=terraform-aws-modules&offset=15
-//https://registry.terraform.io/v1/modules?provider=aws&verified=true
-
 //LatestModuleVersions retrieves the latest version of the provided modules
 func LatestModuleVersions(fs afero.Fs, modules []ModuleWrapper) ([]ModuleWrapper, error) {
 	var latestModules []ModuleWrapper
@@ -30,7 +21,7 @@ func LatestModuleVersions(fs afero.Fs, modules []ModuleWrapper) ([]ModuleWrapper
 	var err error
 
 	for _, mod := range modules {
-		if strings.HasPrefix(mod.moduleSource, githubURL) {
+		if strings.HasPrefix(mod.moduleSource, githubURL) { //If the resource is from github then retrieve from custom url
 			resource, err = generateURL(fs, mod)
 			if err != nil {
 				return nil, errs.WrapUserf(err, "Could not generate url for %s latest module", mod.moduleSource)
@@ -55,7 +46,7 @@ func LatestModuleVersions(fs afero.Fs, modules []ModuleWrapper) ([]ModuleWrapper
 				return nil, err
 			}
 
-			//FIXME: unmarshal into ModuleWrapper Module struct
+			//FIXME: unmarshal body into ModuleWrapper, specifically in the RegistryModule part
 			//TODO:(EC) Get input about adding RegistryModule as a part of module
 			err = json.Unmarshal(body, &module)
 			if err != nil {
@@ -71,7 +62,7 @@ func LatestModuleVersions(fs afero.Fs, modules []ModuleWrapper) ([]ModuleWrapper
 //generateURL creates github url for the given module
 func generateURL(fs afero.Fs, module ModuleWrapper) (string, error) {
 	url := ""
-	if strings.HasPrefix(module.moduleSource, "github.com/chanzuckerberg") {
+	if strings.HasPrefix(module.moduleSource, "github.com/chanzuckerberg") { //Clone the repo and get the latest tag
 		tmpDir, err := afero.TempDir(fs, ".", "github")
 		if err != nil {
 			return "", err
@@ -98,6 +89,6 @@ func generateURL(fs afero.Fs, module ModuleWrapper) (string, error) {
 		//TODO:(EC) Make the tag naming scheme modular
 		url = strings.Split(module.moduleSource, tagPattern)[0] + tagPattern + strings.Split(url, "tags/v")[1]
 	}
-	//TODO:(EC) For other link types include https://
+	//TODO:(EC) Create process for other link types
 	return url, nil
 }

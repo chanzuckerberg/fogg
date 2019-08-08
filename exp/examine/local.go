@@ -1,7 +1,6 @@
 package examine
 
 import (
-	"fmt"
 	"os"
 	"strings"
 
@@ -12,14 +11,12 @@ import (
 )
 
 const apiHostname = "https://registry.terraform.io"
-const apiVersion = "/v1/modules/"
+const apiVersion = "/v1"
+const resourceType = "/modules/"
 
-//TODO: Replace some of the strings with modular constants
-//TODO: Freeze the code by creating a test directory
+//**Local refers to any files located within your local file system**
 
-//Local refers to any files located within your local file system.
-
-//GetLocalModules retrieves all terraform modules within a local directory
+//GetLocalModules retrieves all terraform modules within a given directory
 //TODO:(EC) Define local and global modules OR rename the values
 func GetLocalModules(fs afero.Fs, dir string) ([]ModuleWrapper, error) {
 	_, err := os.Stat(dir)
@@ -34,23 +31,23 @@ func GetLocalModules(fs afero.Fs, dir string) ([]ModuleWrapper, error) {
 	return modules, nil
 }
 
-//getAllDependencies retrieves all modules from the root directory
+//getAllModules retrieves all modules (and their respective resources, data, etc...) being used by the directory
 func getAllModules(fs afero.Fs, dir string) ([]ModuleWrapper, error) {
 	var queue []ModuleWrapper
 
-	//Find submodules for the root directory
+	//Find all submodules for the current directory
 	submodules, err := getSubmodules(fs, dir)
 	if err != nil {
 		return nil, err
 	}
 	queue = append(queue, submodules...)
 
+	//BFS on the current queue of submodules to find their submodules
 	for { //Do: recursively add new submodules to queue, While: queue is not empty
 
 		submods, err := getSubmodules(fs, queue[0].module.Path)
 		if err == nil {
 			//Add new elements to temp
-			//FIXME:(EC) Dont add repeats
 			queue = append(queue, submods...)
 			submodules = append(submodules, submods...)
 		}
@@ -72,13 +69,12 @@ func getSubmodules(fs afero.Fs, dir string) ([]ModuleWrapper, error) {
 		return nil, err
 	}
 
-	//FIXME: Make contains check module path
+	//FIXME: Make contains check module path so that repeats are not added
 	// if(modules != nil && contains(modules, dir))
 	var modules []ModuleWrapper
 	mod, diag := tfconfig.LoadModule(dir)
 	if diag.HasErrors() {
-		fmt.Println(diag.Err())
-		return nil, diag.Err()
+		return nil, errs.WrapInternal(diag.Err(), "There was an issue loading the module")
 	}
 
 	//Loads all modules that the current module depends on
@@ -105,7 +101,7 @@ func getSubmodules(fs afero.Fs, dir string) ([]ModuleWrapper, error) {
 			//Append the local directory to the file
 			mod, diag := tfconfig.LoadModule(dir + source.moduleSource + "/")
 			if diag.HasErrors() {
-				return nil, diag.Err()
+				return nil, errs.WrapInternal(diag.Err(), "There was an issue loading the module")
 			}
 
 			sources[i].module = mod
@@ -139,7 +135,7 @@ func downloadModule(fs afero.Fs, modulePath string, version string) (*tfconfig.M
 	defer os.RemoveAll(tmpDir)
 
 	//download the module from tf registry
-	err = getter.Get(tmpDir, apiHostname+apiVersion+modulePath+"/"+version+"/download")
+	err = getter.Get(tmpDir, apiHostname+apiVersion+resourceType+modulePath+"/"+version+"/download")
 	if err != nil {
 		return nil, errs.WrapUser(err, "There was an issue downloading the file")
 	}
@@ -164,5 +160,5 @@ func contains(modules []*tfconfig.Module, mod *tfconfig.Module) bool {
 
 //TODO:(EC) Error handle when empty string is encountered
 func getVersion(mod ModuleWrapper) string {
-	return strings.Split(mod.moduleSource, "ref=v")[1]
+	return strings.Split(mod.moduleSource, tagPattern)[1]
 }

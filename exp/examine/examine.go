@@ -4,18 +4,21 @@ import (
 	"github.com/spf13/afero"
 )
 
+//Examine loads local modules and compares them to their latest version to see differences
+//TODO: Comparison between local and latest
 func Examine(fs afero.Fs, path string) error {
 	//Collect local modules to be updated
 	localModules, err := GetLocalModules(fs, path)
 	if err != nil {
 		return err
 	}
+
+	//Load the latest version of each module
 	globalModules, err := LatestModuleVersions(fs, localModules)
 	if err != nil {
 		return err
 	}
 
-	//TODO:(EC)Middleware to compare local and global modules
 	if globalModules != nil {
 	} //To silence "declared and not used" error
 

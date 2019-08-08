@@ -14,11 +14,12 @@ func init() {
 	ExpCmd.AddCommand(examineCmd)
 }
 
+//TODO:(EC) Create a flag for path to walk
 var examineCmd = &cobra.Command{
 	Use:   "examine",
-	Short: "Detects terraform updates",
-	Long: `This command aims to detect changes between local terraform files
-	and remote registries.`,
+	Short: "Detects terraform module updates",
+	Long: `This command aims to detect version changes between local terraform file modules
+	and remote registry modules.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Set up fs
 		pwd, err := os.Getwd()
