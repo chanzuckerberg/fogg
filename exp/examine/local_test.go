@@ -13,7 +13,7 @@ func TestGetLocalModules(t *testing.T) {
 	r := require.New(t)
 	pwd, err := os.Getwd()
 	r.NoError(err)
-	pwd= "../../" + pwd
+	pwd = "../../" + pwd
 	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
 	modules, err := GetLocalModules(fs, "../../testdata/version_detection/terraform/envs/staging/app/")
@@ -45,7 +45,7 @@ func TestGetCztackModuleFromGithub(t *testing.T) {
 // 	r.NotNil(mod)
 // }
 
-func TestDownloadRegistryFromGithub(t *testing.T) {
+func TestDownloadModuleFromRegistry(t *testing.T) {
 	r := require.New(t)
 	pwd, _ := os.Getwd()
 	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
@@ -56,12 +56,12 @@ func TestDownloadRegistryFromGithub(t *testing.T) {
 	r.NotNil(mod)
 }
 
-func TestGetFromAlbHttp(t *testing.T) {
+func TestGetLocalRegistryModuleFromRegistry(t *testing.T) {
 	r := require.New(t)
 	pwd, _ := os.Getwd()
 	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
-	path := "/Users/echanakira/Desktop/learning/shared-infra/terraform/modules/alb-http/"
+	path := "../../testdata/version_detection/terraform/modules/test-component-2"
 	mods, err := getAllModules(fs, path)
 	r.NoError(err)
 	r.NotNil(mods)
