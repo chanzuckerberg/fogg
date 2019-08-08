@@ -10,15 +10,19 @@ import (
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/util"
+	goVersion "github.com/hashicorp/go-version"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
 )
 
+var defaultTerraformVersion = goVersion.Must(goVersion.NewVersion("0.12.5"))
+
+//DefaultFoggVersion is the version that fogg will generate by default
+const DefaultFoggVersion = 2
+
 //InitConfig initializes the config file using user input
 func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVersion string) *v2.Config {
-	terraformVersion := "0.11.7"
-
 	return &v2.Config{
 		Defaults: v2.Defaults{
 			Common: v2.Common{
@@ -37,13 +41,14 @@ func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVe
 						Version: &awsProviderVersion,
 					},
 				},
-				TerraformVersion: &terraformVersion,
+				TerraformVersion: util.StrPtr(defaultTerraformVersion.String()),
 			},
 		},
 		Accounts: map[string]v2.Account{},
 		Docker:   false,
 		Envs:     map[string]v2.Env{},
 		Modules:  map[string]v1.Module{},
+		Version:  DefaultFoggVersion,
 	}
 }
 

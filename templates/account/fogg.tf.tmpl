@@ -35,6 +35,10 @@
   {{ template "okta_provider" .Providers.Okta}}
 {{ end }}
 
+{{ if .Providers.Github}}
+  {{ template "github_provider" .Providers.Github}}
+{{ end }}
+
 terraform {
   required_version = "={{ .TerraformVersion }}"
 
@@ -110,7 +114,7 @@ data "terraform_remote_state" "{{ $accountName }}" {
 
   config = {
     bucket = "{{ $outer.Backend.Bucket }}"
-    {{ if $outer.Backend.DynamoTable }}dynamodb_table = "{{ $outer.Backend.DynamoTable }}"{{ end -}}
+    {{ if $outer.Backend.DynamoTable }}dynamodb_table = "{{ $outer.Backend.DynamoTable }}"{{ end }}
     key            = "terraform/{{ $outer.Project }}/accounts/{{ $accountName }}.tfstate"
     region         = "{{ $outer.Backend.Region }}"
     {{ if $outer.Backend.Profile }}profile        = "{{ $outer.Backend.Profile }}"{{ end }}
