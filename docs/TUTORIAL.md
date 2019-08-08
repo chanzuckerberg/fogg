@@ -290,32 +290,30 @@ Note that fogg works by generating Terraform and Make files. It does not run any
 
     Edit your fogg.json like so–
 
-    ```json
-    {
-        "defaults": {
-            "aws_profile_backend": "acme-auth",
-            "aws_profile_provider": "acme-auth",
-            "aws_provider_version": "1.27.0",
-            "aws_region_backend": "us-west-2",
-            "aws_region_provider": "us-west-2",
-            "infra_s3_bucket": "acme-infra",
-            "owner": "infra@acme.example",
-            "project": "acme",
-            "shared_infra_version": "0.10.0",
-            "terraform_version": "0.11.7"
-        },
-        "accounts": {},
-        "envs": {
-            "staging": {
-                "components": {
-                    "vpc" : {
-                        "module_source": "github.com/scholzj/terraform-aws-vpc"
-                    }
-                }
-            }
-        },
-        "modules": {}
-    }
+    ```yaml
+    defaults:
+        backend:
+            bucket: acme-infra
+            dynamodb_table: acme-dynamo
+            profile: acme-auth
+            region: us-west-2
+        owner: infra@acme.example
+        project: acme
+        providers:
+            aws:
+                account_id: "000"
+                profile: acme-auth
+                region: us-west-2
+                version: 1.27.0
+        terraform_version: 0.12.5
+    accounts: {}
+    envs: 
+        staging: 
+            components:
+                vpc:
+                    module_source: "github.com/scholzj/terraform-aws-vpc"
+    modules: {}
+    version: 2
     ```
 
     This is telling fogg to create a new component called 'vpc',  take the specified module source and code-generate an invocation of that module there.
@@ -327,33 +325,40 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     .
     ├── Makefile
     ├── README.md
-    ├── fogg.json
+    ├── fogg.yml
+    ├── fogg.yml~
     ├── scripts
-    │   ├── docker-ssh-forward.sh
-    │   ├── docker-ssh-mount.sh
-    │   ├── install_or_update.sh
-    │   └── ssh_config
-    └── terraform
-        ├── envs
-        │   └── staging
-        │       ├── Makefile
-        │       ├── README.md
-        │       └── vpc
-        │           ├── Makefile
-        │           ├── README.md
-        │           ├── fogg.tf
-        │           ├── main.tf
-        │           ├── outputs.tf
-        │           └── variables.tf
-        └── global
-            ├── Makefile
-            ├── README.md
-            ├── fogg.tf
-            ├── main.tf
-            ├── outputs.tf
-            └── variables.tf
+    │   ├── common.mk
+    │   ├── component.mk
+    │   ├── failed_output_only
+    │   ├── module.mk
+    │   └── update-readme.sh
+    ├── terraform
+    │   ├── envs
+    │   │   └── staging
+    │   │       ├── Makefile
+    │   │       ├── README.md
+    │   │       └── vpc
+    │   │           ├── Makefile
+    │   │           ├── README.md
+    │   │           ├── fogg.tf
+    │   │           ├── main.tf
+    │   │           ├── outputs.tf
+    │   │           ├── terraform.d -> ../../../../terraform.d
+    │   │           └── variables.tf
+    │   └── global
+    │       ├── Makefile
+    │       ├── README.md
+    │       ├── fogg.tf
+    │       ├── main.tf
+    │       ├── outputs.tf
+    │       ├── terraform.d -> ../../terraform.d
+    │       └── variables.tf
+    └── terraform.d
+        └── plugins
+            └── linux_amd64
 
-    6 directories, 21 files
+    11 directories, 23 files
     ```
 
     If you look in `terraform/envs/staging/vpc` you'll see that we've generated some terraform code that invokes the module we specified.
@@ -378,35 +383,33 @@ Note that fogg works by generating Terraform and Make files. It does not run any
 
 1. *create database component*
 
-    As we said at the beginning, our goal here is to set up a database and server in a VPC, so next let's set up the database. Let's edit the `fogg.json` file to look like so–
+    As we said at the beginning, our goal here is to set up a database and server in a VPC, so next let's set up the database. Let's edit the `fogg.yml` file to look like so–
 
-    ```json
-    {
-        "defaults": {
-            "aws_profile_backend": "acme-auth",
-            "aws_profile_provider": "acme-auth",
-            "aws_provider_version": "1.27.0",
-            "aws_region_backend": "us-west-2",
-            "aws_region_provider": "us-west-2",
-            "infra_s3_bucket": "acme-infra",
-            "owner": "infra@acme.example",
-            "project": "acme",
-            "shared_infra_version": "0.10.0",
-            "terraform_version": "0.11.7"
-        },
-        "accounts": {},
-        "envs": {
-            "staging": {
-                "components": {
-                    "vpc" : {
-                        "module_source": "github.com/scholzj/terraform-aws-vpc"
-                    },
-                    "database": {}
-                }
-            }
-        },
-        "modules": {}
-    }
+    ```yaml
+    defaults:
+        backend:
+            bucket: acme-infra
+            dynamodb_table: acme-dynamo
+            profile: acme-auth
+            region: us-west-2
+        owner: infra@acme.example
+        project: acme
+        providers:
+            aws:
+                account_id: "000"
+                profile: acme-auth
+                region: us-west-2
+                version: 1.27.0
+        terraform_version: 0.12.5
+    accounts: {}
+    envs: 
+        staging: 
+            components:
+                vpc:
+                    module_source: "github.com/scholzj/terraform-aws-vpc"
+                database: {}
+    modules: {}
+    version: 2
     ```
 
     Note that we've added a 'database' entry in the staging components. When we `fogg apply` we'll now have a directory structure like so–
@@ -416,40 +419,48 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     .
     ├── Makefile
     ├── README.md
-    ├── fogg.json
+    ├── fogg.yml
+    ├── fogg.yml~
     ├── scripts
-    │   ├── docker-ssh-forward.sh
-    │   ├── docker-ssh-mount.sh
-    │   ├── install_or_update.sh
-    │   └── ssh_config
-    └── terraform
-        ├── envs
-        │   └── staging
-        │       ├── Makefile
-        │       ├── README.md
-        │       ├── database
-        │       │   ├── Makefile
-        │       │   ├── README.md
-        │       │   ├── fogg.tf
-        │       │   ├── main.tf
-        │       │   ├── outputs.tf
-        │       │   └── variables.tf
-        │       └── vpc
-        │           ├── Makefile
-        │           ├── README.md
-        │           ├── fogg.tf
-        │           ├── main.tf
-        │           ├── outputs.tf
-        │           └── variables.tf
-        └── global
-            ├── Makefile
-            ├── README.md
-            ├── fogg.tf
-            ├── main.tf
-            ├── outputs.tf
-            └── variables.tf
+    │   ├── common.mk
+    │   ├── component.mk
+    │   ├── failed_output_only
+    │   ├── module.mk
+    │   └── update-readme.sh
+    ├── terraform
+    │   ├── envs
+    │   │   └── staging
+    │   │       ├── Makefile
+    │   │       ├── README.md
+    │   │       ├── database
+    │   │       │   ├── Makefile
+    │   │       │   ├── README.md
+    │   │       │   ├── fogg.tf
+    │   │       │   ├── main.tf
+    │   │       │   ├── outputs.tf
+    │   │       │   ├── terraform.d -> ../../../../terraform.d
+    │   │       │   └── variables.tf
+    │   │       └── vpc
+    │   │           ├── Makefile
+    │   │           ├── README.md
+    │   │           ├── fogg.tf
+    │   │           ├── main.tf
+    │   │           ├── outputs.tf
+    │   │           ├── terraform.d -> ../../../../terraform.d
+    │   │           └── variables.tf
+    │   └── global
+    │       ├── Makefile
+    │       ├── README.md
+    │       ├── fogg.tf
+    │       ├── main.tf
+    │       ├── outputs.tf
+    │       ├── terraform.d -> ../../terraform.d
+    │       └── variables.tf
+    └── terraform.d
+        └── plugins
+            └── linux_amd64
 
-    7 directories, 27 files
+    13 directories, 29 files
     ```
 
     Note that since we didn't specify a module_source here, the main.tf file in the database component is empty, Fogg is just creating the scaffolding, not any infrastructure for the database. You can then edit that main.tf file to create the infrastructure you want in that component.
@@ -458,34 +469,32 @@ Note that fogg works by generating Terraform and Make files. It does not run any
 
     Now let's do the same thing for a server component. Edit fogg.json like so– 
 
-    ```json
-    {
-    "defaults": {
-        "aws_profile_backend": "acme-auth",
-        "aws_profile_provider": "acme-auth",
-        "aws_provider_version": "1.27.0",
-        "aws_region_backend": "us-west-2",
-        "aws_region_provider": "us-west-2",
-        "infra_s3_bucket": "acme-infra",
-        "owner": "infra@acme.example",
-        "project": "acme",
-        "shared_infra_version": "0.10.0",
-        "terraform_version": "0.11.7"
-    },
-    "accounts": {},
-    "envs": {
-        "staging": {
-            "components": {
-                "vpc" : {
-                    "module_source": "github.com/scholzj/terraform-aws-vpc"
-                },
-                "database": {},
-                "server": {}
-            }
-        }
-    },
-    "modules": {}
-    }
+    ```yaml
+    defaults:
+        backend:
+            bucket: acme-infra
+            dynamodb_table: acme-dynamo
+            profile: acme-auth
+            region: us-west-2
+        owner: infra@acme.example
+        project: acme
+        providers:
+            aws:
+                account_id: "000"
+                profile: acme-auth
+                region: us-west-2
+                version: 1.27.0
+        terraform_version: 0.12.5
+    accounts: {}
+    envs: 
+        staging: 
+            components:
+                vpc:
+                    module_source: "github.com/scholzj/terraform-aws-vpc"
+                database: {}
+                server: {}
+    modules: {}
+    version: 2
     ```
 
     And with `fogg apply` you'll now see this–
@@ -495,47 +504,56 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     .
     ├── Makefile
     ├── README.md
-    ├── fogg.json
+    ├── fogg.yml
+    ├── fogg.yml~
     ├── scripts
-    │   ├── docker-ssh-forward.sh
-    │   ├── docker-ssh-mount.sh
-    │   ├── install_or_update.sh
-    │   └── ssh_config
-    └── terraform
-        ├── envs
-        │   └── staging
-        │       ├── Makefile
-        │       ├── README.md
-        │       ├── database
-        │       │   ├── Makefile
-        │       │   ├── README.md
-        │       │   ├── fogg.tf
-        │       │   ├── main.tf
-        │       │   ├── outputs.tf
-        │       │   └── variables.tf
-        │       ├── server
-        │       │   ├── Makefile
-        │       │   ├── README.md
-        │       │   ├── fogg.tf
-        │       │   ├── main.tf
-        │       │   ├── outputs.tf
-        │       │   └── variables.tf
-        │       └── vpc
-        │           ├── Makefile
-        │           ├── README.md
-        │           ├── fogg.tf
-        │           ├── main.tf
-        │           ├── outputs.tf
-        │           └── variables.tf
-        └── global
-            ├── Makefile
-            ├── README.md
-            ├── fogg.tf
-            ├── main.tf
-            ├── outputs.tf
-            └── variables.tf
+    │   ├── common.mk
+    │   ├── component.mk
+    │   ├── failed_output_only
+    │   ├── module.mk
+    │   └── update-readme.sh
+    ├── terraform
+    │   ├── envs
+    │   │   └── staging
+    │   │       ├── Makefile
+    │   │       ├── README.md
+    │   │       ├── database
+    │   │       │   ├── Makefile
+    │   │       │   ├── README.md
+    │   │       │   ├── fogg.tf
+    │   │       │   ├── main.tf
+    │   │       │   ├── outputs.tf
+    │   │       │   ├── terraform.d -> ../../../../terraform.d
+    │   │       │   └── variables.tf
+    │   │       ├── server
+    │   │       │   ├── Makefile
+    │   │       │   ├── README.md
+    │   │       │   ├── fogg.tf
+    │   │       │   ├── main.tf
+    │   │       │   ├── outputs.tf
+    │   │       │   ├── terraform.d -> ../../../../terraform.d
+    │   │       │   └── variables.tf
+    │   │       └── vpc
+    │   │           ├── Makefile
+    │   │           ├── README.md
+    │   │           ├── fogg.tf
+    │   │           ├── main.tf
+    │   │           ├── outputs.tf
+    │   │           ├── terraform.d -> ../../../../terraform.d
+    │   │           └── variables.tf
+    │   └── global
+    │       ├── Makefile
+    │       ├── README.md
+    │       ├── fogg.tf
+    │       ├── main.tf
+    │       ├── outputs.tf
+    │       ├── terraform.d -> ../../terraform.d
+    │       └── variables.tf
+    └── terraform.d
+        └── plugins
+            └── linux_amd64
 
-    8 directories, 33 files
+    15 directories, 35 files
     ```
 
     Now you have separate components for your VPC, database and server, in which you can create infrastructure which is managed by isolated Terraform state files.
