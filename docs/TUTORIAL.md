@@ -96,7 +96,7 @@ Note that fogg works by generating Terraform and Make files. It does not run any
 
     1. edit `fogg.yml` 
         - Add an `account_id` to the aws provider
-        ```shell
+        ```yaml
         providers:
             aws:
                 account_id: "000"
