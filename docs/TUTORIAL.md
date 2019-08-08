@@ -52,7 +52,7 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     * *project name* – we\'ve got to name things around here. This is a high level name for your site, infrastructure or product.
     * *aws region* – our setup is super flexible to run things in any and/or multiple regions. To get started we need a single region that we will configure as a default. This is also the region for the s3 bucket that will hold state files, so maybe think about it a little bit.
     * *infra bucket name* - we are going to store terraform\'s state files here. Fogg does not create this bucket, so you will need to do that ahead of time. Note that it should be in the same region you said above.
-    * *infra dynamo table name* - 
+    * *infra dynamo table name* - TODO
     * *auth profile* - we use aws authentication profiles, use this to specify the one to be used as a default. If you only have 1 profile set up, its probably called 'default'.
     * *owner* – we make it easy to tag all your resources with their owner. If you put this here will will drop variables everywhere with the owner in it.
 
@@ -139,7 +139,7 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     INFO terraform/global/fogg.tf templated
    ```
 
-    You'll see some output about that fogg is doing and now we have some structure to our repository–
+    You'll see some output about what fogg is doing and now we have some structure to our repository–
 
     ```shell
     .
@@ -171,7 +171,7 @@ Note that fogg works by generating Terraform and Make files. It does not run any
 
     Fogg has created 7 directories and put some files in them – `scripts` which exists to hold a handful of shell scripts useful to our operations and `terraform` which will include all our terraform code, both reusable modules and live infrastructure.
 
-    Before go on – a bit about how fogg organizes repos –
+    Before we go on – a bit about how fogg organizes repos –
 
     Fogg applies an opinionated repo organization. This serves to make it easy to factor your terraform code into many scopes/state-files and also provide some consistency and make working on a team a bit easier.
 
@@ -213,7 +213,7 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     version: 2
     ```
 
-    Note that we added `"staging": {}` in the `envs` object.
+    Note that we added `staging: {}` in the `envs` object.
 
     `fogg apply`
 
@@ -288,7 +288,7 @@ Note that fogg works by generating Terraform and Make files. It does not run any
 
     We need a VPC to run the resources we're about to build. Creating a VPC is a great use-case for Terraform modules. Terraform modules are very useful, but can become tedious if you have to create the same ones repeatedly. Fogg helps with this by allowing you to specify a module source and then code-generating all the parameters and outputs. All that is left for you is to define some `locals` for the parameters.
 
-    Edit your fogg.json like so–
+    Edit your `fogg.yaml` like so–
 
     ```yaml
     defaults:
@@ -379,7 +379,7 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     }
     ```
 
-    Fogg has taken care of the drudgery of figuring out what variables and outputs this module supports. All you have left to do is define some `local`s to specify the inputs to the module. Create a `locals.tf` file in that same directory defining the values we need and we're good to go.
+    Fogg has taken care of the drudgery of figuring out what variables and outputs this module supports. All you have left to do is define some `locals` to specify the inputs to the module. Create a `locals.tf` file in that same directory defining the values we need and we're good to go.
 
 1. *create database component*
 
@@ -467,7 +467,7 @@ Note that fogg works by generating Terraform and Make files. It does not run any
 
 1. create server component
 
-    Now let's do the same thing for a server component. Edit fogg.json like so– 
+    Now let's do the same thing for a server component. Edit `fogg.yaml` like so– 
 
     ```yaml
     defaults:
