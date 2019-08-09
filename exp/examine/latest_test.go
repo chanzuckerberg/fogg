@@ -23,22 +23,17 @@ func TestCompareLocalAndGlobal(t *testing.T) {
 	r.NotNil(globalModules)
 }
 
-//DISABLED
-// func TestGetModuleVersion(t *testing.T) {
-// 	r := require.New(t)
-// 	module := GetModule()
-// 	r.Equal("4.1.0", module.Version)
-// }
+func TestCreateGitUrl(t *testing.T) {
+	r := require.New(t)
+	pwd, err := os.Getwd()
+	r.NoError(err)
+	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
-//DISABLED
-// func TestFindModules(t *testing.T) {
-// repo := "github.com/chanzuckerberg/cztack//aws-params-reader-policy?ref=v0.15.1"
-// localModules := GetLocalModules(repo)
-// if localModules == nil{
+	config, err := GetLocalModules(fs, "../../testdata/version_detection/terraform/envs/staging/app/")
+	r.NoError(err)
+	r.NotNil(config)
 
-// }
-
-// registryModules := searchForModules(localModules, awsModules)
-
-// fmt.Println(registryModules)
-// }
+	url, err := createGitUrl(config.Modules[1])
+	r.NoError(err)
+	r.NotEmpty(url)
+}

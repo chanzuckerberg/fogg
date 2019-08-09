@@ -1,14 +1,13 @@
 package examine
 
 import (
-	"os"
+	"context"
 	"strings"
 
 	"github.com/chanzuckerberg/fogg/errs"
+	"github.com/google/go-github/github"
 	"github.com/hashicorp/terraform/config"
 	"github.com/spf13/afero"
-	"gopkg.in/src-d/go-git.v4"
-	"gopkg.in/src-d/go-git.v4/plumbing"
 )
 
 //LatestModuleVersions retrieves the latest version of the provided modules
@@ -20,7 +19,7 @@ func LatestModuleVersions(fs afero.Fs, config *config.Config) ([]ModuleWrapper, 
 
 	for _, mod := range config.Modules {
 		if strings.HasPrefix(mod.Source, githubURL) { //If the resource is from github then retrieve from custom url
-			resource, err = generateURL(fs, mod)
+			resource, err = createGitUrl(mod)
 			if err != nil {
 				return nil, errs.WrapUserf(err, "Could not generate url for %s latest module", mod.Source)
 			}
@@ -39,36 +38,17 @@ func LatestModuleVersions(fs afero.Fs, config *config.Config) ([]ModuleWrapper, 
 	return latestModules, nil
 }
 
-//generateURL creates github url for the given module
-func generateURL(fs afero.Fs, module *config.Module) (string, error) {
-	url := ""
-	if strings.HasPrefix(module.Source, "github.com/chanzuckerberg") { //Clone the repo and get the latest tag
-		tmpDir, err := afero.TempDir(fs, ".", "github")
-		if err != nil {
-			return "", err
-		}
-		defer os.RemoveAll(tmpDir)
-
-		repo, err := git.PlainClone(tmpDir, false, &git.CloneOptions{
-			URL: protocol + githubURL + cztack,
-		})
-		if err != nil {
-			return "", errs.WrapUser(err, "Could not clone repo")
-		}
-
-		//Runs git ls-remote --tags
-		tagIterator, err := repo.Tags()
-		if err != nil {
-			return "", errs.WrapUser(err, "Could not find tags for repo")
-		}
-
-		err = tagIterator.ForEach(func(t *plumbing.Reference) error {
-			url = t.Name().String()
-			return nil
-		})
-		//TODO:(EC) Make the tag naming scheme modular
-		url = strings.Split(module.Source, tagPattern)[0] + tagPattern + strings.Split(url, "tags/v")[1]
+//createGitUrl retrieves the latest release version and creates an HTTP accessible link
+func createGitUrl(module *config.Module) (string, error) {
+	splitString := strings.Split(module.Source, "/")
+	owner, repo := splitString[1], splitString[2]
+	client := github.NewClient(nil)
+	release, _, err := client.Repositories.GetLatestRelease(context.Background(), owner, repo)
+	if err != nil {
+		return "", err
 	}
-	//TODO:(EC) Create process for other link types
+
+	url := strings.Split(module.Source, tagPattern)[0] + tagPattern + *release.TagName
 	return url, nil
+
 }

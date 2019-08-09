@@ -63,7 +63,7 @@ const githubURL = "github.com"
 const awsRegistry = "terraform-aws-modules/"
 const cztack = "/chanzuckerberg/cztack/"
 const protocol = "https://"
-const tagPattern = "ref=v"
+const tagPattern = "ref="
 
 //GetFromGithub Retrieves modules that are available through github
 func GetFromGithub(fs afero.Fs, repo string) (*tfconfig.Module, error) {
