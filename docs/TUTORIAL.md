@@ -188,7 +188,7 @@ Note that fogg works by generating Terraform and Make files. It does not run any
 
     Fogg helps you organize your terraform code and the resources they create into separate environments. Think 'staging' vs 'production'. It is advisable to have them separate so that you can operate on them independently. Let's create a 'staging' environment.
 
-    To create a new env, edit your fogg.json to look like this–
+    To create a new env, edit your fogg.yaml to look like this–
 
     ```yml
     defaults:
