@@ -16,12 +16,14 @@ require (
 	github.com/go-playground/universal-translator v0.16.0 // indirect
 	github.com/go-test/deep v1.0.2
 	github.com/gobuffalo/packr v1.30.1
+	github.com/google/go-github/v27 v27.0.4
 	github.com/google/uuid v1.1.1 // indirect
 	github.com/hashicorp/go-getter v1.3.1-0.20190627223108-da0323b9545e
 	github.com/hashicorp/go-multierror v1.0.0
 	github.com/hashicorp/go-version v1.2.0
 	github.com/hashicorp/hcl2 v0.0.0-20190725010614-0c3fe388e450
 	github.com/hashicorp/terraform v0.12.5
+	github.com/hashicorp/terraform-config-inspect v0.0.0-20190327195015-8022a2663a70
 	github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c // indirect
 	github.com/huandu/xstrings v1.2.0 // indirect
 	github.com/imdario/mergo v0.3.7 // indirect
@@ -35,6 +37,8 @@ require (
 	github.com/spf13/afero v1.2.2
 	github.com/spf13/cobra v0.0.5
 	github.com/stretchr/testify v1.3.0
+	golang.org/x/net v0.0.0-20190724013045-ca1201d0de80 // indirect
+	golang.org/x/sys v0.0.0-20190726091711-fc99dfbffb4e // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.29.1
 	gopkg.in/yaml.v3 v3.0.0-20190709130402-674ba3eaed22
