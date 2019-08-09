@@ -6,7 +6,6 @@ import (
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/hashicorp/go-getter"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
 
@@ -72,7 +71,6 @@ func GetFromGithub(fs afero.Fs, repo string) (*tfconfig.Module, error) {
 	//TODO: Make directory name more general
 	tmpDir, err := afero.TempDir(fs, ".", "cztack")
 	if err != nil {
-
 		return nil, errs.WrapInternal(err, "There was an issue creating a temp directory")
 	}
 	defer os.RemoveAll(tmpDir)
@@ -80,7 +78,6 @@ func GetFromGithub(fs afero.Fs, repo string) (*tfconfig.Module, error) {
 	//Load github file
 	err = getter.Get(tmpDir, repo)
 	if err != nil {
-
 		return nil, errs.WrapInternal(err, "There was an issue getting the repo")
 	}
 
@@ -91,13 +88,4 @@ func GetFromGithub(fs afero.Fs, repo string) (*tfconfig.Module, error) {
 	}
 
 	return mod, nil
-}
-
-func openGitOrExit(fs afero.Fs) {
-	_, err := fs.Stat(".git")
-	if err != nil {
-		// assuming this means no repository
-		logrus.Fatal("fogg must be run from the root of a git repo")
-		os.Exit(1)
-	}
 }

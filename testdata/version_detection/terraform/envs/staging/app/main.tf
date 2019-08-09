@@ -23,3 +23,13 @@ module "test" {
   use_fargate                 = "true"
   registry_secretsmanager_arn = "${data.terraform_remote_state.credentials.dockerhub_czisi_arn}"
 }
+
+module "parameters-policy" {
+  source = "github.com/chanzuckerberg/cztack//aws-params-reader-policy?ref=v0.15.1"
+
+  project   = "${var.project}"
+  env       = "${var.env}"
+  service   = "${var.name}"
+  region    = "${var.region}"
+  role_name = "${aws_iam_role.role.name}"
+}
