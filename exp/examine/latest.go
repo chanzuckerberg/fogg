@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/chanzuckerberg/fogg/errs"
-	"github.com/google/go-github/github"
+	"github.com/google/go-github/v27/github"
 	"github.com/hashicorp/terraform/config"
 	"github.com/spf13/afero"
 )
