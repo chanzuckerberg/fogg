@@ -42,6 +42,7 @@ func LatestModuleVersions(fs afero.Fs, config *config.Config) ([]ModuleWrapper, 
 func createGitUrl(module *config.Module) (string, error) {
 	splitString := strings.Split(module.Source, "/")
 	owner, repo := splitString[1], splitString[2]
+
 	client := github.NewClient(nil)
 	release, _, err := client.Repositories.GetLatestRelease(context.Background(), owner, repo)
 	if err != nil {
