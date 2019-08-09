@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestCompareLocalAndGlobal(t *testing.T) {
+func TestComparison(t *testing.T) {
 	r := require.New(t)
 	pwd, err := os.Getwd()
 	r.NoError(err)
@@ -21,16 +21,7 @@ func TestCompareLocalAndGlobal(t *testing.T) {
 	globalModules, err := LatestModuleVersions(fs, config)
 	r.NoError(err)
 	r.NotNil(globalModules)
-}
 
-func TestCreateGitUrl(t *testing.T) {
-	r := require.New(t)
-
-	config, err := GetLocalModules("../../testdata/version_detection/terraform/envs/staging/app/")
-	r.NoError(err)
-	r.NotNil(config)
-
-	url, err := createGitUrl(config.Modules[1])
-	r.NoError(err)
-	r.NotEmpty(url)
+	diff := isDifferent(config, globalModules)
+	r.Equal(true, diff)
 }

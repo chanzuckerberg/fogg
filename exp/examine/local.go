@@ -4,7 +4,6 @@ import (
 	"os"
 
 	"github.com/hashicorp/terraform/config"
-	"github.com/spf13/afero"
 )
 
 const apiHostname = "https://registry.terraform.io"
@@ -15,7 +14,7 @@ const resourceType = "/modules/"
 
 //GetLocalModules retrieves all terraform modules within a given directory
 //TODO:(EC) Define local and global modules OR rename the values
-func GetLocalModules(fs afero.Fs, dir string) (*config.Config, error) {
+func GetLocalModules(dir string) (*config.Config, error) {
 	_, err := os.Stat(dir)
 	if err != nil {
 		return nil, err

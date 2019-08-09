@@ -1,6 +1,7 @@
 package examine
 
 import (
+	"github.com/hashicorp/terraform/config"
 	"github.com/spf13/afero"
 )
 
@@ -8,7 +9,7 @@ import (
 //TODO: Comparison between local and latest
 func Examine(fs afero.Fs, path string) error {
 	//Collect local modules to be updated
-	config, err := GetLocalModules(fs, path)
+	config, err := GetLocalModules(path)
 	if err != nil && config != nil {
 		return err
 	}
@@ -23,4 +24,8 @@ func Examine(fs afero.Fs, path string) error {
 	} //To silence "declared and not used" error
 
 	return nil
+}
+
+func isDifferent(config *config.Config, modules []ModuleWrapper) bool {
+	return true
 }
