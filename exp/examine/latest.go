@@ -48,7 +48,5 @@ func createGitUrl(module *config.Module) (string, error) {
 		return "", err
 	}
 
-	url := strings.Split(module.Source, tagPattern)[0] + tagPattern + *release.TagName
-	return url, nil
-
+	return strings.Split(module.Source, tagPattern)[0] + tagPattern + *release.TagName, nil
 }
