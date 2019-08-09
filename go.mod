@@ -16,6 +16,7 @@ require (
 	github.com/go-playground/universal-translator v0.16.0 // indirect
 	github.com/go-test/deep v1.0.2
 	github.com/gobuffalo/packr v1.30.1
+	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/uuid v1.1.1 // indirect
 	github.com/hashicorp/go-getter v1.3.1-0.20190627223108-da0323b9545e
 	github.com/hashicorp/go-multierror v1.0.0
