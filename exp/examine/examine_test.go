@@ -22,6 +22,9 @@ func TestComparison(t *testing.T) {
 	r.NoError(err)
 	r.NotNil(globalModules)
 
-	diff := isDifferent(config, globalModules)
+	diff := IsDifferent(config, globalModules)
 	r.Equal(true, diff)
+
+	err = ExamineDifferences(config, globalModules)
+	r.NoError(err)
 }
