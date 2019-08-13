@@ -104,11 +104,11 @@ And if you ever decide to stop using it, you have a working repo you can take in
 We use standard go tools + makefiles to build fogg. Getting started should be as simple as-
 
 0. install go
-1. go get github.com/chanzuckerberg/fogg
-2. cd $GOPATH/src/github.com/chanzuckerberg/fogg
-3. make
+1. `$ go get github.com/chanzuckerberg/fogg`
+2. `cd $GOPATH/src/github.com/chanzuckerberg/fogg`
+3. `make`
 
-If you would like to contribute some code, fork this repo and send a pull request.
+If you would like to contribute some code: Read through the documents  located in the `/docs` folder, fork this repo, and send a pull request.
 
 ## Copyright
 
