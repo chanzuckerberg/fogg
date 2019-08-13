@@ -2,10 +2,8 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// +build !linux,arm64
+// +build generate
 
-package cpu
+package windows
 
-const cacheLineSize = 64
-
-func doinit() {}
+//go:generate ./mkerrors.bash zerrors_windows.go

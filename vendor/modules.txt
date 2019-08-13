@@ -22,7 +22,7 @@ github.com/apparentlymart/go-cidr/cidr
 github.com/apparentlymart/go-textseg/textseg
 # github.com/armon/go-radix v1.0.0
 github.com/armon/go-radix
-# github.com/aws/aws-sdk-go v1.21.8
+# github.com/aws/aws-sdk-go v1.22.4
 github.com/aws/aws-sdk-go/aws/arn
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/credentials
@@ -70,13 +70,6 @@ github.com/blang/semver
 github.com/chanzuckerberg/go-misc/ver
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
-# github.com/emirpasic/gods v1.12.0
-github.com/emirpasic/gods/trees/binaryheap
-github.com/emirpasic/gods/containers
-github.com/emirpasic/gods/lists/arraylist
-github.com/emirpasic/gods/trees
-github.com/emirpasic/gods/utils
-github.com/emirpasic/gods/lists
 # github.com/fatih/color v1.7.0
 github.com/fatih/color
 # github.com/go-errors/errors v1.0.1
@@ -86,7 +79,7 @@ github.com/go-playground/locales
 github.com/go-playground/locales/currency
 # github.com/go-playground/universal-translator v0.16.0
 github.com/go-playground/universal-translator
-# github.com/go-test/deep v1.0.2
+# github.com/go-test/deep v1.0.1
 github.com/go-test/deep
 # github.com/gobuffalo/envy v1.7.0
 github.com/gobuffalo/envy
@@ -110,6 +103,10 @@ github.com/google/go-cmp/cmp/internal/diff
 github.com/google/go-cmp/cmp/internal/flags
 github.com/google/go-cmp/cmp/internal/function
 github.com/google/go-cmp/cmp/internal/value
+# github.com/google/go-github/v27 v27.0.4
+github.com/google/go-github/v27/github
+# github.com/google/go-querystring v1.0.0
+github.com/google/go-querystring/query
 # github.com/google/uuid v1.1.1
 github.com/google/uuid
 # github.com/googleapis/gax-go/v2 v2.0.3
@@ -139,13 +136,13 @@ github.com/hashicorp/hcl/hcl/scanner
 github.com/hashicorp/hcl/hcl/strconv
 github.com/hashicorp/hcl/json/scanner
 github.com/hashicorp/hcl/json/token
-# github.com/hashicorp/hcl2 v0.0.0-20190618163856-0b64543c968c
-github.com/hashicorp/hcl2/gohcl
+# github.com/hashicorp/hcl2 v0.0.0-20190809210004-72d32879a5c5
+github.com/hashicorp/hcl2/hclwrite
 github.com/hashicorp/hcl2/hcl
 github.com/hashicorp/hcl2/hcl/hclsyntax
+github.com/hashicorp/hcl2/gohcl
 github.com/hashicorp/hcl2/hclparse
 github.com/hashicorp/hcl2/hcldec
-github.com/hashicorp/hcl2/hclwrite
 github.com/hashicorp/hcl2/hcl/json
 github.com/hashicorp/hcl2/ext/typeexpr
 github.com/hashicorp/hcl2/ext/dynblock
@@ -154,11 +151,14 @@ github.com/hashicorp/hil
 github.com/hashicorp/hil/ast
 github.com/hashicorp/hil/parser
 github.com/hashicorp/hil/scanner
-# github.com/hashicorp/terraform v0.12.5
-github.com/hashicorp/terraform/terraform
+# github.com/hashicorp/terraform v0.12.6
 github.com/hashicorp/terraform/config
-github.com/hashicorp/terraform/addrs
+github.com/hashicorp/terraform/terraform
 github.com/hashicorp/terraform/config/hcl2shim
+github.com/hashicorp/terraform/helper/hilmapstructure
+github.com/hashicorp/terraform/plugin/discovery
+github.com/hashicorp/terraform/tfdiags
+github.com/hashicorp/terraform/addrs
 github.com/hashicorp/terraform/config/module
 github.com/hashicorp/terraform/configs
 github.com/hashicorp/terraform/configs/configschema
@@ -170,14 +170,11 @@ github.com/hashicorp/terraform/lang
 github.com/hashicorp/terraform/moduledeps
 github.com/hashicorp/terraform/plans
 github.com/hashicorp/terraform/plans/objchange
-github.com/hashicorp/terraform/plugin/discovery
 github.com/hashicorp/terraform/providers
 github.com/hashicorp/terraform/provisioners
 github.com/hashicorp/terraform/states
 github.com/hashicorp/terraform/states/statefile
-github.com/hashicorp/terraform/tfdiags
 github.com/hashicorp/terraform/version
-github.com/hashicorp/terraform/helper/hilmapstructure
 github.com/hashicorp/terraform/registry
 github.com/hashicorp/terraform/registry/regsrc
 github.com/hashicorp/terraform/registry/response
@@ -186,7 +183,7 @@ github.com/hashicorp/terraform/lang/blocktoattr
 github.com/hashicorp/terraform/lang/funcs
 github.com/hashicorp/terraform/svchost
 github.com/hashicorp/terraform/svchost/auth
-# github.com/hashicorp/terraform-config-inspect v0.0.0-20190327195015-8022a2663a70
+# github.com/hashicorp/terraform-config-inspect v0.0.0-20190628153518-9c24e68f3f10
 github.com/hashicorp/terraform-config-inspect/tfconfig
 # github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c
 github.com/howeyc/gopass
@@ -196,14 +193,10 @@ github.com/huandu/xstrings
 github.com/imdario/mergo
 # github.com/inconshreveable/mousetrap v1.0.0
 github.com/inconshreveable/mousetrap
-# github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99
-github.com/jbenet/go-context/io
 # github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 github.com/jmespath/go-jmespath
 # github.com/joho/godotenv v1.3.0
 github.com/joho/godotenv
-# github.com/kevinburke/ssh_config v0.0.0-20190725054713-01f96b0aa0cd
-github.com/kevinburke/ssh_config
 # github.com/konsorten/go-windows-terminal-sequences v1.0.2
 github.com/konsorten/go-windows-terminal-sequences
 # github.com/kr/pretty v0.1.0
@@ -251,8 +244,6 @@ github.com/rogpeppe/go-internal/semver
 github.com/satori/go.uuid
 # github.com/segmentio/go-prompt v1.2.1-0.20161017233205-f0d19b6901ad
 github.com/segmentio/go-prompt
-# github.com/sergi/go-diff v1.0.0
-github.com/sergi/go-diff/diffmatchpatch
 # github.com/sirupsen/logrus v1.4.2
 github.com/sirupsen/logrus
 # github.com/spf13/afero v1.2.2 => github.com/chanzuckerberg/afero v0.0.0-20190514223411-36a9495a9b51
@@ -262,11 +253,6 @@ github.com/spf13/afero/mem
 github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.3
 github.com/spf13/pflag
-# github.com/src-d/gcfg v1.4.0
-github.com/src-d/gcfg
-github.com/src-d/gcfg/scanner
-github.com/src-d/gcfg/token
-github.com/src-d/gcfg/types
 # github.com/stretchr/testify v1.3.0
 github.com/stretchr/testify/assert
 github.com/stretchr/testify/require
@@ -278,18 +264,16 @@ github.com/ulikunitz/xz/internal/hash
 # github.com/vmihailenco/msgpack v4.0.1+incompatible
 github.com/vmihailenco/msgpack
 github.com/vmihailenco/msgpack/codes
-# github.com/xanzy/ssh-agent v0.2.1
-github.com/xanzy/ssh-agent
-# github.com/zclconf/go-cty v1.0.0
-github.com/zclconf/go-cty/cty/json
+# github.com/zclconf/go-cty v1.0.1-0.20190708163926-19588f92a98f
 github.com/zclconf/go-cty/cty
+github.com/zclconf/go-cty/cty/json
 github.com/zclconf/go-cty/cty/convert
-github.com/zclconf/go-cty/cty/gocty
 github.com/zclconf/go-cty/cty/function
 github.com/zclconf/go-cty/cty/function/stdlib
+github.com/zclconf/go-cty/cty/gocty
 github.com/zclconf/go-cty/cty/set
 github.com/zclconf/go-cty/cty/msgpack
-# github.com/zclconf/go-cty-yaml v0.1.0
+# github.com/zclconf/go-cty-yaml v1.0.1
 github.com/zclconf/go-cty-yaml
 # go.opencensus.io v0.18.0
 go.opencensus.io/trace
@@ -308,31 +292,20 @@ go.opencensus.io/stats/internal
 go.opencensus.io/internal/tagencoding
 # golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
 golang.org/x/crypto/openpgp
-golang.org/x/crypto/scrypt
 golang.org/x/crypto/bcrypt
+golang.org/x/crypto/scrypt
 golang.org/x/crypto/ssh/terminal
 golang.org/x/crypto/openpgp/armor
 golang.org/x/crypto/openpgp/errors
 golang.org/x/crypto/openpgp/packet
 golang.org/x/crypto/openpgp/s2k
-golang.org/x/crypto/pbkdf2
 golang.org/x/crypto/blowfish
+golang.org/x/crypto/pbkdf2
 golang.org/x/crypto/cast5
 golang.org/x/crypto/openpgp/elgamal
-golang.org/x/crypto/ssh
-golang.org/x/crypto/ssh/knownhosts
-golang.org/x/crypto/ssh/agent
-golang.org/x/crypto/curve25519
-golang.org/x/crypto/ed25519
-golang.org/x/crypto/internal/chacha20
-golang.org/x/crypto/poly1305
-golang.org/x/crypto/ed25519/internal/edwards25519
-golang.org/x/crypto/internal/subtle
-# golang.org/x/net v0.0.0-20190724013045-ca1201d0de80
+# golang.org/x/net v0.0.0-20190502183928-7f726cade0ab
 golang.org/x/net/context
-golang.org/x/net/proxy
 golang.org/x/net/trace
-golang.org/x/net/internal/socks
 golang.org/x/net/idna
 golang.org/x/net/internal/timeseries
 golang.org/x/net/http2
@@ -345,10 +318,9 @@ golang.org/x/oauth2/google
 golang.org/x/oauth2/internal
 golang.org/x/oauth2/jws
 golang.org/x/oauth2/jwt
-# golang.org/x/sys v0.0.0-20190726091711-fc99dfbffb4e
+# golang.org/x/sys v0.0.0-20190515120540-06a5c4944438
 golang.org/x/sys/unix
 golang.org/x/sys/windows
-golang.org/x/sys/cpu
 # golang.org/x/text v0.3.2
 golang.org/x/text/transform
 golang.org/x/text/unicode/norm
@@ -416,55 +388,5 @@ google.golang.org/grpc/binarylog/grpc_binarylog_v1
 google.golang.org/grpc/internal/syscall
 # gopkg.in/go-playground/validator.v9 v9.29.1
 gopkg.in/go-playground/validator.v9
-# gopkg.in/src-d/go-billy.v4 v4.3.2
-gopkg.in/src-d/go-billy.v4
-gopkg.in/src-d/go-billy.v4/osfs
-gopkg.in/src-d/go-billy.v4/util
-gopkg.in/src-d/go-billy.v4/helper/chroot
-gopkg.in/src-d/go-billy.v4/helper/polyfill
-# gopkg.in/src-d/go-git.v4 v4.13.1
-gopkg.in/src-d/go-git.v4
-gopkg.in/src-d/go-git.v4/plumbing
-gopkg.in/src-d/go-git.v4/config
-gopkg.in/src-d/go-git.v4/internal/revision
-gopkg.in/src-d/go-git.v4/plumbing/cache
-gopkg.in/src-d/go-git.v4/plumbing/filemode
-gopkg.in/src-d/go-git.v4/plumbing/format/gitignore
-gopkg.in/src-d/go-git.v4/plumbing/format/index
-gopkg.in/src-d/go-git.v4/plumbing/format/packfile
-gopkg.in/src-d/go-git.v4/plumbing/object
-gopkg.in/src-d/go-git.v4/plumbing/protocol/packp
-gopkg.in/src-d/go-git.v4/plumbing/protocol/packp/capability
-gopkg.in/src-d/go-git.v4/plumbing/protocol/packp/sideband
-gopkg.in/src-d/go-git.v4/plumbing/revlist
-gopkg.in/src-d/go-git.v4/plumbing/storer
-gopkg.in/src-d/go-git.v4/plumbing/transport
-gopkg.in/src-d/go-git.v4/plumbing/transport/client
-gopkg.in/src-d/go-git.v4/storage
-gopkg.in/src-d/go-git.v4/storage/filesystem
-gopkg.in/src-d/go-git.v4/storage/memory
-gopkg.in/src-d/go-git.v4/utils/diff
-gopkg.in/src-d/go-git.v4/utils/ioutil
-gopkg.in/src-d/go-git.v4/utils/merkletrie
-gopkg.in/src-d/go-git.v4/utils/merkletrie/filesystem
-gopkg.in/src-d/go-git.v4/utils/merkletrie/index
-gopkg.in/src-d/go-git.v4/utils/merkletrie/noder
-gopkg.in/src-d/go-git.v4/internal/url
-gopkg.in/src-d/go-git.v4/plumbing/format/config
-gopkg.in/src-d/go-git.v4/utils/binary
-gopkg.in/src-d/go-git.v4/plumbing/format/idxfile
-gopkg.in/src-d/go-git.v4/plumbing/format/diff
-gopkg.in/src-d/go-git.v4/plumbing/format/pktline
-gopkg.in/src-d/go-git.v4/plumbing/transport/file
-gopkg.in/src-d/go-git.v4/plumbing/transport/git
-gopkg.in/src-d/go-git.v4/plumbing/transport/http
-gopkg.in/src-d/go-git.v4/plumbing/transport/ssh
-gopkg.in/src-d/go-git.v4/plumbing/format/objfile
-gopkg.in/src-d/go-git.v4/storage/filesystem/dotgit
-gopkg.in/src-d/go-git.v4/utils/merkletrie/internal/frame
-gopkg.in/src-d/go-git.v4/plumbing/transport/internal/common
-gopkg.in/src-d/go-git.v4/plumbing/transport/server
-# gopkg.in/warnings.v0 v0.1.2
-gopkg.in/warnings.v0
-# gopkg.in/yaml.v3 v3.0.0-20190502103701-55513cacd4ae
+# gopkg.in/yaml.v3 v3.0.0-20190709130402-674ba3eaed22
 gopkg.in/yaml.v3
