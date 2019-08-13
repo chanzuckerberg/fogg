@@ -40,6 +40,10 @@ func isDifferent(config *config.Config, modules []ModuleWrapper) bool {
 	return true
 }
 
+func areSimilar(mod *config.Module, modWrap ModuleWrapper) bool {
+	return false
+}
+
 func compare(mod *config.Module, modWrap ModuleWrapper) {
 	// fmt.Println(mod.Source)
 	// fmt.Println(modWrap.moduleSource)

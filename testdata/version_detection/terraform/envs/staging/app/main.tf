@@ -33,3 +33,18 @@ module "parameters-policy" {
   region    = "${var.region}"
   role_name = "${aws_iam_role.role.name}"
 }
+
+module "mock-module" {
+  create      = "${var.create_security_group}"
+  source      = "terraform-aws-modules/security-group/aws"
+  version     = "3.1.0"
+  name        = "${local.name}-alb"
+  description = "Security group"
+  vpc_id      = "${var.vpc_id}"
+  tags        = "${local.tags}"
+
+  ingress_cidr_blocks = "${var.ingress_cidrs}"
+  egress_cidr_blocks  = "${var.egress_cidrs}"
+  ingress_rules       = ["https-443-tcp", "http-80-tcp"]
+  egress_rules        = ["all-all"]
+}
