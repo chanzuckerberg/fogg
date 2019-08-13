@@ -22,7 +22,7 @@ github.com/apparentlymart/go-cidr/cidr
 github.com/apparentlymart/go-textseg/textseg
 # github.com/armon/go-radix v1.0.0
 github.com/armon/go-radix
-# github.com/aws/aws-sdk-go v1.21.9
+# github.com/aws/aws-sdk-go v1.22.4
 github.com/aws/aws-sdk-go/aws/arn
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/credentials
@@ -103,6 +103,10 @@ github.com/google/go-cmp/cmp/internal/diff
 github.com/google/go-cmp/cmp/internal/flags
 github.com/google/go-cmp/cmp/internal/function
 github.com/google/go-cmp/cmp/internal/value
+# github.com/google/go-github/v27 v27.0.4
+github.com/google/go-github/v27/github
+# github.com/google/go-querystring v1.0.0
+github.com/google/go-querystring/query
 # github.com/google/uuid v1.1.1
 github.com/google/uuid
 # github.com/googleapis/gax-go/v2 v2.0.3
@@ -132,26 +136,29 @@ github.com/hashicorp/hcl/hcl/scanner
 github.com/hashicorp/hcl/hcl/strconv
 github.com/hashicorp/hcl/json/scanner
 github.com/hashicorp/hcl/json/token
-# github.com/hashicorp/hcl2 v0.0.0-20190725010614-0c3fe388e450
+# github.com/hashicorp/hcl2 v0.0.0-20190809210004-72d32879a5c5
 github.com/hashicorp/hcl2/hclwrite
 github.com/hashicorp/hcl2/hcl
 github.com/hashicorp/hcl2/hcl/hclsyntax
-github.com/hashicorp/hcl2/hcldec
 github.com/hashicorp/hcl2/gohcl
 github.com/hashicorp/hcl2/hclparse
+github.com/hashicorp/hcl2/hcldec
+github.com/hashicorp/hcl2/hcl/json
 github.com/hashicorp/hcl2/ext/typeexpr
 github.com/hashicorp/hcl2/ext/dynblock
-github.com/hashicorp/hcl2/hcl/json
 # github.com/hashicorp/hil v0.0.0-20190212112733-ab17b08d6590
 github.com/hashicorp/hil
 github.com/hashicorp/hil/ast
 github.com/hashicorp/hil/parser
 github.com/hashicorp/hil/scanner
 # github.com/hashicorp/terraform v0.12.6
-github.com/hashicorp/terraform/terraform
 github.com/hashicorp/terraform/config
-github.com/hashicorp/terraform/addrs
+github.com/hashicorp/terraform/terraform
 github.com/hashicorp/terraform/config/hcl2shim
+github.com/hashicorp/terraform/helper/hilmapstructure
+github.com/hashicorp/terraform/plugin/discovery
+github.com/hashicorp/terraform/tfdiags
+github.com/hashicorp/terraform/addrs
 github.com/hashicorp/terraform/config/module
 github.com/hashicorp/terraform/configs
 github.com/hashicorp/terraform/configs/configschema
@@ -163,14 +170,11 @@ github.com/hashicorp/terraform/lang
 github.com/hashicorp/terraform/moduledeps
 github.com/hashicorp/terraform/plans
 github.com/hashicorp/terraform/plans/objchange
-github.com/hashicorp/terraform/plugin/discovery
 github.com/hashicorp/terraform/providers
 github.com/hashicorp/terraform/provisioners
 github.com/hashicorp/terraform/states
 github.com/hashicorp/terraform/states/statefile
-github.com/hashicorp/terraform/tfdiags
 github.com/hashicorp/terraform/version
-github.com/hashicorp/terraform/helper/hilmapstructure
 github.com/hashicorp/terraform/registry
 github.com/hashicorp/terraform/registry/regsrc
 github.com/hashicorp/terraform/registry/response
@@ -179,6 +183,8 @@ github.com/hashicorp/terraform/lang/blocktoattr
 github.com/hashicorp/terraform/lang/funcs
 github.com/hashicorp/terraform/svchost
 github.com/hashicorp/terraform/svchost/auth
+# github.com/hashicorp/terraform-config-inspect v0.0.0-20190628153518-9c24e68f3f10
+github.com/hashicorp/terraform-config-inspect/tfconfig
 # github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c
 github.com/howeyc/gopass
 # github.com/huandu/xstrings v1.2.0
@@ -260,11 +266,11 @@ github.com/vmihailenco/msgpack
 github.com/vmihailenco/msgpack/codes
 # github.com/zclconf/go-cty v1.0.1-0.20190708163926-19588f92a98f
 github.com/zclconf/go-cty/cty
-github.com/zclconf/go-cty/cty/convert
-github.com/zclconf/go-cty/cty/gocty
 github.com/zclconf/go-cty/cty/json
+github.com/zclconf/go-cty/cty/convert
 github.com/zclconf/go-cty/cty/function
 github.com/zclconf/go-cty/cty/function/stdlib
+github.com/zclconf/go-cty/cty/gocty
 github.com/zclconf/go-cty/cty/set
 github.com/zclconf/go-cty/cty/msgpack
 # github.com/zclconf/go-cty-yaml v1.0.1
@@ -285,16 +291,16 @@ go.opencensus.io
 go.opencensus.io/stats/internal
 go.opencensus.io/internal/tagencoding
 # golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
-golang.org/x/crypto/scrypt
-golang.org/x/crypto/bcrypt
-golang.org/x/crypto/ssh/terminal
 golang.org/x/crypto/openpgp
-golang.org/x/crypto/pbkdf2
-golang.org/x/crypto/blowfish
+golang.org/x/crypto/bcrypt
+golang.org/x/crypto/scrypt
+golang.org/x/crypto/ssh/terminal
 golang.org/x/crypto/openpgp/armor
 golang.org/x/crypto/openpgp/errors
 golang.org/x/crypto/openpgp/packet
 golang.org/x/crypto/openpgp/s2k
+golang.org/x/crypto/blowfish
+golang.org/x/crypto/pbkdf2
 golang.org/x/crypto/cast5
 golang.org/x/crypto/openpgp/elgamal
 # golang.org/x/net v0.0.0-20190502183928-7f726cade0ab

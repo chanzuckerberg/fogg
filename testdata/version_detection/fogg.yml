@@ -1,0 +1,24 @@
+defaults:
+    backend:
+        bucket: acme
+        dynamodb_table: acme-auth
+        profile: acme@infra.exmaple
+        region: us-west-2
+    owner: acme-infra
+    project: acme
+    providers:
+        aws:
+            account_id: "000"
+            profile: acme@infra.exmaple
+            region: us-west-2
+            version: 1.27.0
+    terraform_version: 0.12.5
+envs:
+    staging:
+        components:
+            app: 
+                module_source: "github.com/chanzuckerberg/cztack//aws-params-reader-policy?ref=v0.15.1"       
+modules:
+    vpc: 
+        module_source: "github.com/scholzj/terraform-aws-vpc"
+version: 2

@@ -46,7 +46,7 @@ type Config struct {
 	Global   Component            `json:"global,omitempty" yaml:"global,omitempty"`
 	Modules  map[string]v1.Module `json:"modules,omitempty" yaml:"modules,omitempty"`
 	Plugins  v1.Plugins           `json:"plugins,omitempty" yaml:"plugins,omitempty"`
-	Version  int                  `json:"version" yaml:"version" validate:"required,eq=2"`
+	Version  int                  `json:"version,omitempty" yaml:"version,omitempty" validate:"required,eq=2"`
 }
 
 type Common struct {
