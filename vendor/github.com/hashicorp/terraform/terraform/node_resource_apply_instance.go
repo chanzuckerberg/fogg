@@ -101,6 +101,13 @@ func (n *NodeApplyableResourceInstance) References() []*addrs.Reference {
 func (n *NodeApplyableResourceInstance) EvalTree() EvalNode {
 	addr := n.ResourceInstanceAddr()
 
+	// State still uses legacy-style internal ids, so we need to shim to get
+	// a suitable key to use.
+	stateId := NewLegacyResourceInstanceAddress(addr).stateId()
+
+	// Determine the dependencies for the state.
+	stateDeps := n.StateReferences()
+
 	if n.Config == nil {
 		// This should not be possible, but we've got here in at least one
 		// case as discussed in the following issue:
@@ -125,15 +132,15 @@ func (n *NodeApplyableResourceInstance) EvalTree() EvalNode {
 	// Eval info is different depending on what kind of resource this is
 	switch n.Config.Mode {
 	case addrs.ManagedResourceMode:
-		return n.evalTreeManagedResource(addr)
+		return n.evalTreeManagedResource(addr, stateId, stateDeps)
 	case addrs.DataResourceMode:
-		return n.evalTreeDataResource(addr)
+		return n.evalTreeDataResource(addr, stateId, stateDeps)
 	default:
 		panic(fmt.Errorf("unsupported resource mode %s", n.Config.Mode))
 	}
 }
 
-func (n *NodeApplyableResourceInstance) evalTreeDataResource(addr addrs.AbsResourceInstance) EvalNode {
+func (n *NodeApplyableResourceInstance) evalTreeDataResource(addr addrs.AbsResourceInstance, stateId string, stateDeps []addrs.Referenceable) EvalNode {
 	var provider providers.Interface
 	var providerSchema *ProviderSchema
 	var change *plans.ResourceInstanceChange
@@ -199,7 +206,7 @@ func (n *NodeApplyableResourceInstance) evalTreeDataResource(addr addrs.AbsResou
 	}
 }
 
-func (n *NodeApplyableResourceInstance) evalTreeManagedResource(addr addrs.AbsResourceInstance) EvalNode {
+func (n *NodeApplyableResourceInstance) evalTreeManagedResource(addr addrs.AbsResourceInstance, stateId string, stateDeps []addrs.Referenceable) EvalNode {
 	// Declare a bunch of variables that are used for state during
 	// evaluation. Most of this are written to by-address below.
 	var provider providers.Interface
