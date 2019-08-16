@@ -9,18 +9,13 @@ import (
 func Examine(fs afero.Fs, path string) error {
 	//Collect local modules to be updated
 	module, err := GetLocalModules(fs, path)
-	if err != nil && module != nil {
-		return err
-	}
-
-	//Load the latest version of each module
-	globalModules, err := LatestModuleVersions(fs, module)
 	if err != nil {
 		return err
 	}
-
-	if globalModules != nil {
-	} //To silence "declared and not used" error
-
-	return nil
+	if module == nil {
+		return nil
+	}
+	//Load the latest version of each module
+	_, err = LatestModuleVersions(fs, module)
+	return err
 }
