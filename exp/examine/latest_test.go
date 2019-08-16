@@ -9,6 +9,7 @@ import (
 )
 
 func TestCompareLocalAndGlobal(t *testing.T) {
+	t.Skip("This hits rate limits in CI. See https://travis-ci.com/chanzuckerberg/fogg/builds/123534108.")
 	r := require.New(t)
 	pwd, err := os.Getwd()
 	r.NoError(err)
@@ -24,6 +25,7 @@ func TestCompareLocalAndGlobal(t *testing.T) {
 }
 
 func TestCreateGitUrl(t *testing.T) {
+	t.Skip("This hits rate limits in CI. See https://travis-ci.com/chanzuckerberg/fogg/builds/123534108.")
 	r := require.New(t)
 	pwd, err := os.Getwd()
 	r.NoError(err)
