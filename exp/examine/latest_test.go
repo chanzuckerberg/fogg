@@ -14,11 +14,11 @@ func TestCompareLocalAndGlobal(t *testing.T) {
 	r.NoError(err)
 	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
-	config, err := GetLocalModules(fs, "../../testdata/version_detection/terraform/envs/staging/app/")
+	module, err := GetLocalModules(fs, "../../testdata/version_detection/terraform/envs/staging/app/")
 	r.NoError(err)
-	r.NotNil(config)
+	r.NotNil(module)
 
-	globalModules, err := LatestModuleVersions(fs, config)
+	globalModules, err := LatestModuleVersions(fs, module)
 	r.NoError(err)
 	r.NotNil(globalModules)
 }
@@ -29,11 +29,11 @@ func TestCreateGitUrl(t *testing.T) {
 	r.NoError(err)
 	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
-	config, err := GetLocalModules(fs, "../../testdata/version_detection/terraform/envs/staging/app/")
+	module, err := GetLocalModules(fs, "../../testdata/version_detection/terraform/envs/staging/app/")
 	r.NoError(err)
-	r.NotNil(config)
+	r.NotNil(module)
 
-	url, err := createGitUrl(config.Modules[1])
+	url, err := createGitUrl(module.ModuleCalls["parameters-policy"])
 	r.NoError(err)
 	r.NotEmpty(url)
 }

@@ -3,7 +3,8 @@ package examine
 import (
 	"os"
 
-	"github.com/hashicorp/terraform/config"
+	"github.com/chanzuckerberg/fogg/errs"
+	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/spf13/afero"
 )
 
@@ -15,17 +16,17 @@ const resourceType = "/modules/"
 
 //GetLocalModules retrieves all terraform modules within a given directory
 //TODO:(EC) Define local and global modules OR rename the values
-func GetLocalModules(fs afero.Fs, dir string) (*config.Config, error) {
+func GetLocalModules(fs afero.Fs, dir string) (*tfconfig.Module, error) {
 	_, err := os.Stat(dir)
 	if err != nil {
 		return nil, err
 	}
 
-	config, err := config.LoadDir(dir)
-	if err != nil {
-		return nil, err
+	module, diag := tfconfig.LoadModule(dir)
+	if diag.HasErrors() {
+		return nil, errs.WrapInternal(diag.Err(), "There was an issue loading the module")
 	}
 
-	return config, nil
+	return module, nil
 	// return getAllModules(fs, dir)
 }

@@ -7,7 +7,7 @@ import (
 
 	"github.com/chanzuckerberg/fogg/errs"
 	getter "github.com/hashicorp/go-getter"
-	"github.com/hashicorp/terraform/config"
+	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/afero"
 )
@@ -66,7 +66,7 @@ func GetFoggCachePath() (string, error) {
 	return dir, nil
 }
 
-func DownloadAndParseModule(fs afero.Fs, mod string) (*config.Config, error) {
+func DownloadAndParseModule(fs afero.Fs, mod string) (*tfconfig.Module, error) {
 	dir, err := GetFoggCachePath()
 	if err != nil {
 		return nil, err
@@ -75,5 +75,9 @@ func DownloadAndParseModule(fs afero.Fs, mod string) (*config.Config, error) {
 	if err != nil {
 		return nil, errs.WrapUser(err, "unable to download module")
 	}
-	return config.LoadDir(d)
+	module, diag := tfconfig.LoadModule(d)
+	if diag.HasErrors() {
+		return nil, errs.WrapInternal(diag.Err(), "There was an issue loading the module")
+	}
+	return module, nil
 }

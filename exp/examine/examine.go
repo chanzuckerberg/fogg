@@ -8,13 +8,13 @@ import (
 //TODO: Comparison between local and latest
 func Examine(fs afero.Fs, path string) error {
 	//Collect local modules to be updated
-	config, err := GetLocalModules(fs, path)
-	if err != nil && config != nil {
+	module, err := GetLocalModules(fs, path)
+	if err != nil && module != nil {
 		return err
 	}
 
 	//Load the latest version of each module
-	globalModules, err := LatestModuleVersions(fs, config)
+	globalModules, err := LatestModuleVersions(fs, module)
 	if err != nil {
 		return err
 	}

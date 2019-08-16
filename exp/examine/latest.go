@@ -6,31 +6,31 @@ import (
 
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/google/go-github/v27/github"
-	"github.com/hashicorp/terraform/config"
+	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/spf13/afero"
 )
 
 //LatestModuleVersions retrieves the latest version of the provided modules
-func LatestModuleVersions(fs afero.Fs, config *config.Config) ([]ModuleWrapper, error) {
+func LatestModuleVersions(fs afero.Fs, module *tfconfig.Module) ([]ModuleWrapper, error) {
 	var latestModules []ModuleWrapper
-	var module ModuleWrapper
+	var moduleWrapper ModuleWrapper
 	var resource string
 	var err error
 
-	for _, mod := range config.Modules {
-		if strings.HasPrefix(mod.Source, githubURL) { //If the resource is from github then retrieve from custom url
-			resource, err = createGitUrl(mod)
+	for _, moduleCall := range module.ModuleCalls {
+		if strings.HasPrefix(moduleCall.Source, githubURL) { //If the resource is from github then retrieve from custom url
+			resource, err = createGitUrl(moduleCall)
 			if err != nil {
-				return nil, errs.WrapUserf(err, "Could not generate url for %s latest module", mod.Source)
+				return nil, errs.WrapUserf(err, "Could not generate url for %s latest module", moduleCall.Source)
 			}
-			module.module, err = GetFromGithub(fs, resource)
+			moduleWrapper.module, err = GetFromGithub(fs, resource)
 			if err != nil {
 				return nil, err
 			}
-			module.moduleSource = mod.Source
-			module.version = mod.Version
+			moduleWrapper.moduleSource = moduleCall.Source
+			moduleWrapper.version = moduleCall.Version
 
-			latestModules = append(latestModules, module)
+			latestModules = append(latestModules, moduleWrapper)
 		}
 		//TODO: Implement retrieving the latest module from the terraform registry
 	}
@@ -39,8 +39,8 @@ func LatestModuleVersions(fs afero.Fs, config *config.Config) ([]ModuleWrapper, 
 }
 
 //createGitUrl retrieves the latest release version and creates an HTTP accessible link
-func createGitUrl(module *config.Module) (string, error) {
-	splitString := strings.Split(module.Source, "/")
+func createGitUrl(moduleCall *tfconfig.ModuleCall) (string, error) {
+	splitString := strings.Split(moduleCall.Source, "/")
 	owner, repo := splitString[1], splitString[2]
 
 	client := github.NewClient(nil)
@@ -49,5 +49,5 @@ func createGitUrl(module *config.Module) (string, error) {
 		return "", err
 	}
 
-	return strings.Split(module.Source, tagPattern)[0] + tagPattern + *release.TagName, nil
+	return strings.Split(moduleCall.Source, tagPattern)[0] + tagPattern + *release.TagName, nil
 }
