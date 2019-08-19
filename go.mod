@@ -11,25 +11,15 @@ require (
 	github.com/aws/aws-sdk-go v1.23.3
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/chanzuckerberg/go-misc v0.0.0-20190716060611-91021143eac9
-	github.com/coreos/bbolt v1.3.3 // indirect
-	github.com/coreos/etcd v3.3.13+incompatible // indirect
-	github.com/coreos/go-semver v0.3.0 // indirect
-	github.com/coreos/go-systemd v0.0.0-20190719114852-fd7a80b32e1f // indirect
 	github.com/fatih/color v1.7.0
 	github.com/go-errors/errors v1.0.1
-	github.com/go-kit/kit v0.9.0 // indirect
 	github.com/go-playground/locales v0.12.1 // indirect
 	github.com/go-playground/universal-translator v0.16.0 // indirect
 	github.com/go-test/deep v1.0.2
-	github.com/gobuffalo/logger v1.0.1 // indirect
 	github.com/gobuffalo/packr v1.30.1
-	github.com/gobuffalo/packr/v2 v2.5.2 // indirect
-	github.com/golang/groupcache v0.0.0-20190702054246-869f871628b6 // indirect
 	github.com/google/go-cmp v0.3.1 // indirect
 	github.com/google/go-github/v27 v27.0.4
-	github.com/google/pprof v0.0.0-20190723021845-34ac40c74b70 // indirect
 	github.com/google/uuid v1.1.1 // indirect
-	github.com/grpc-ecosystem/grpc-gateway v1.9.6 // indirect
 	github.com/hashicorp/go-getter v1.3.1-0.20190627223108-da0323b9545e
 	github.com/hashicorp/go-multierror v1.0.0
 	github.com/hashicorp/go-version v1.2.0
@@ -40,40 +30,22 @@ require (
 	github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c // indirect
 	github.com/huandu/xstrings v1.2.0 // indirect
 	github.com/imdario/mergo v0.3.7 // indirect
-	github.com/kisielk/errcheck v1.2.0 // indirect
 	github.com/kr/pretty v0.1.0
-	github.com/kr/pty v1.1.8 // indirect
 	github.com/leodido/go-urn v1.1.0 // indirect
-	github.com/magiconair/properties v1.8.1 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f // indirect
-	github.com/pelletier/go-toml v1.4.0 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible
 	github.com/pkg/errors v0.8.1
-	github.com/prometheus/client_golang v1.1.0 // indirect
-	github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4 // indirect
-	github.com/rakyll/gotest v0.0.0-20180125184505-86f0749cd8cc // indirect
-	github.com/rogpeppe/fastuuid v1.2.0 // indirect
-	github.com/russross/blackfriday v2.0.0+incompatible // indirect
 	github.com/segmentio/go-prompt v1.2.1-0.20161017233205-f0d19b6901ad
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/afero v1.2.2
 	github.com/spf13/cobra v0.0.5
-	github.com/spf13/jwalterweatherman v1.1.0 // indirect
-	github.com/spf13/viper v1.4.0 // indirect
-	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/stretchr/testify v1.4.0
-	github.com/ugorji/go v1.1.7 // indirect
-	go.etcd.io/bbolt v1.3.3 // indirect
-	golang.org/x/mobile v0.0.0-20190814143026-e8b3e6111d02 // indirect
 	golang.org/x/net v0.0.0-20190813141303-74dc4d7220e7 // indirect
 	golang.org/x/sys v0.0.0-20190813064441-fde4db37ae7a // indirect
-	golang.org/x/tools v0.0.0-20190816183240-caa95bb40b63 // indirect
 	google.golang.org/grpc v1.23.0 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.29.1
 	gopkg.in/yaml.v3 v3.0.0-20190709130402-674ba3eaed22
-	honnef.co/go/tools v0.0.1-2019.2.2 // indirect
 )
 
 replace github.com/spf13/afero v1.2.2 => github.com/chanzuckerberg/afero v0.0.0-20190514223411-36a9495a9b51
