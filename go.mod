@@ -20,7 +20,7 @@ require (
 	github.com/go-kit/kit v0.9.0 // indirect
 	github.com/go-playground/locales v0.12.1 // indirect
 	github.com/go-playground/universal-translator v0.16.0 // indirect
-	github.com/go-test/deep v1.0.2
+	github.com/go-test/deep v1.0.3
 	github.com/gobuffalo/logger v1.0.1 // indirect
 	github.com/gobuffalo/packr v1.30.1
 	github.com/gobuffalo/packr/v2 v2.5.2 // indirect
