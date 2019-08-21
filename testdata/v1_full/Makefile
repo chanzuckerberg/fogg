@@ -11,7 +11,7 @@ all: check
 
 setup:
 	curl -s https://raw.githubusercontent.com/chanzuckerberg/fogg/master/download.sh | bash -s -- -b .fogg/bin $(FOGG_VERSION)
-	fogg setup
+	.fogg/bin/fogg setup
 .PHONY: setup
 
 lint: lint-terraform
