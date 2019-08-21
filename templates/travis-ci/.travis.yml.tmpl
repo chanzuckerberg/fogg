@@ -9,6 +9,7 @@ install:
   - aws --version
   - curl -o download.sh -s https://raw.githubusercontent.com/chanzuckerberg/fogg/master/download.sh
   - travis_retry bash download.sh -b $HOME/bin v{{ .FoggVersion }}
+  - rm download.sh
   - travis_retry fogg setup
 before_script:
   # TODO add note about why these need to be prefixed with HUB_
