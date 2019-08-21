@@ -23,10 +23,10 @@ archives:
 release:
   prerelease: false
 
-brew:
-  description: "Terraform without pain."
-  github:
-    owner: chanzuckerberg
-    name: homebrew-tap
-  homepage: "https://github.com/chanzuckerberg/fogg"
-  test: system "#{bin}/fogg version"
+brews:
+  - description: "Terraform without pain."
+    github:
+      owner: chanzuckerberg
+      name: homebrew-tap
+    homepage: "https://github.com/chanzuckerberg/fogg"
+    test: system "#{bin}/fogg version"
