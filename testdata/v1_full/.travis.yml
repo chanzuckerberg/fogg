@@ -38,7 +38,7 @@ jobs:
       script:
         - |
           set -e
-          fogg apply
+          .fogg/bin/fogg apply
           if [ "$(git status --porcelain)" != "" ]; then
             echo "git tree is dirty after running fogg apply"
             echo "ensure you run fogg apply on your branch"
