@@ -7,9 +7,7 @@ python: 3.6
 install:
   - pip install awscli --upgrade
   - aws --version
-  - curl -o download.sh -s https://raw.githubusercontent.com/chanzuckerberg/fogg/master/download.sh
-  - travis_retry bash download.sh -b $HOME/bin v{{ .FoggVersion }}
-  - travis_retry fogg setup
+  - FOGG_VERSION="v{{ .FoggVersion }}" travis_retry make setup
 before_script:
   # TODO add note about why these need to be prefixed with HUB_
   - aws configure set aws_access_key_id     $IDACCT_AWS_ACCESS_KEY_ID     --profile _idacct
