@@ -7,7 +7,7 @@ python: 3.6
 install:
   - pip install awscli --upgrade
   - aws --version
-  - travis_retry make setup
+  - FOGG_VERSION="vundefined+undefined+dirty" travis_retry make setup
 before_script:
   # TODO add note about why these need to be prefixed with HUB_
   - aws configure set aws_access_key_id     $IDACCT_AWS_ACCESS_KEY_ID     --profile _idacct
