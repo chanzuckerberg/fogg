@@ -8,7 +8,7 @@ require (
 	github.com/Masterminds/semver v1.4.2 // indirect
 	github.com/Masterminds/sprig v2.20.0+incompatible
 	github.com/antzucaro/matchr v0.0.0-20180616170659-cbc221335f3c
-	github.com/aws/aws-sdk-go v1.22.3
+	github.com/aws/aws-sdk-go v1.23.8
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/chanzuckerberg/go-misc v0.0.0-20190716060611-91021143eac9
 	github.com/fatih/color v1.7.0
