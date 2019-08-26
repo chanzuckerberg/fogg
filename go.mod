@@ -18,7 +18,7 @@ require (
 	github.com/go-test/deep v1.0.2
 	github.com/gobuffalo/packr v1.30.1
 	github.com/google/go-cmp v0.3.1 // indirect
-	github.com/google/go-github/v27 v27.0.4
+	github.com/google/go-github/v27 v27.0.6
 	github.com/google/uuid v1.1.1 // indirect
 	github.com/hashicorp/go-getter v1.3.1-0.20190627223108-da0323b9545e
 	github.com/hashicorp/go-multierror v1.0.0
