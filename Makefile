@@ -72,7 +72,7 @@ test-offline: packr  ## run only tests that don't require internet
 .PHONY: test-offline
 
 test-coverage: packr  ## run the test with proper coverage reporting
-	go test -coverprofile=coverage.out -covermode=atomic ./...
+	goverage -coverprofile=coverage.out -covermode=atomic ./...
 	go tool cover -html=coverage.out
 .PHONY: test-coverage
 
