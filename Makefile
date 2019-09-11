@@ -4,16 +4,16 @@ DIRTY=false
 # TODO add release flag
 GO_PACKAGE=$(shell go list)
 LDFLAGS=-ldflags "-w -s -X $(GO_PACKAGE)/util.GitSha=${SHA} -X $(GO_PACKAGE)/util.Version=${VERSION} -X $(GO_PACKAGE)/util.Dirty=${DIRTY}"
+export GOFLAGS=-mod=vendor
+export GO111MODULE=on
 
 all: test install
 
 setup: ## setup development dependencies
-	go get github.com/rakyll/gotest
-	go install github.com/rakyll/gotest
-	go get -u github.com/gobuffalo/packr/...
-	go install github.com/gobuffalo/packr/packr
+	./.godownloader-packr.sh -d v1.24.1
 	curl -L https://raw.githubusercontent.com/chanzuckerberg/bff/master/download.sh | sh
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh
+.PHONY: setup
 
 lint: ## run the fast go linters
 	golangci-lint run
@@ -26,11 +26,13 @@ templates/a_templates-packr.go: $(TEMPLATES)
 	packr -v
 
 packr: templates/a_templates-packr.go ## run the packr tool to generate our static files
+.PHONY: packr
 
 release: ## run a release
 	bff bump
 	git push
 	goreleaser release
+.PHONY: release
 
 release-prerelease: build ## release to github as a 'pre-release'
 	version=`./fogg version`; \
@@ -38,30 +40,39 @@ release-prerelease: build ## release to github as a 'pre-release'
 	git push
 	git push --tags
 	goreleaser release -f .goreleaser.prerelease.yml --debug
+.PHONY: release-prelease
 
 release-snapshot: ## run a release
 	goreleaser release --snapshot
+.PHONY: release-snapshot
 
 build: packr ## build the binary
 	go build ${LDFLAGS} .
+.PHONY: build
 
 deps:
-	go get .
 	go mod tidy
 	go mod vendor
+.PHONY: deps
 
 coverage: ## run the go coverage tool, reading file coverage.out
 	go tool cover -html=coverage.out
+.PHONY: coverage
 
-test: packr ## run tests
-	gotest -cover ./...
+test: deps packr ## run tests
+	go test -cover ./...
+.PHONY: test
+
+test-ci: packr ## run tests
+	go test -coverprofile=coverage.out -cover ./...
+.PHONY: test-ci
 
 test-offline: packr  ## run only tests that don't require internet
-	gotest -tags=offline ./...
+	go test -tags=offline ./...
 .PHONY: test-offline
 
 test-coverage: packr  ## run the test with proper coverage reporting
-	goverage -coverprofile=coverage.out -covermode=atomic ./...
+	go test -coverprofile=coverage.out -covermode=atomic ./...
 	go tool cover -html=coverage.out
 .PHONY: test-coverage
 
