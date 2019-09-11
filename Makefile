@@ -22,8 +22,8 @@ lint: ## run the fast go linters
 TEMPLATES := $(shell find templates -not -name "*.go")
 
 templates/a_templates-packr.go: $(TEMPLATES)
-	packr clean -v
-	packr -v
+	./bin/packr clean -v
+	./bin/packr -v
 
 packr: templates/a_templates-packr.go ## run the packr tool to generate our static files
 .PHONY: packr
@@ -87,11 +87,9 @@ clean: ## clean the repo
 	go clean
 	go clean -testcache
 	rm -rf dist 2>/dev/null || true
-	packr clean
+	./bin/packr clean
 	rm coverage.out 2>/dev/null || true
 
 update-golden-files: clean ## update the golden files in testdata
 	go test -v -run TestIntegration ./apply/ -update
 .PHONY: update-golden-files
-
-.PHONY: build clean coverage test install packr release help setup
