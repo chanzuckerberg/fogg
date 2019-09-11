@@ -64,7 +64,16 @@ test: deps packr ## run tests
 .PHONY: test
 
 test-ci: packr ## run tests
-	go test -coverprofile=coverage.out -cover ./...
+	set -e; \
+	echo "" > coverage.txt; \
+	pkgs=$$(go list ./... | grep -v vendor); \
+	for d in $$( go list ./... | grep -v vendor ); do \
+		go test -coverprofile=profile.out -coverpkg=$$( echo $$pkgs  | paste -sd ',' - ) $d; \
+		if [ -f profile.out ]; then \
+			cat profile.out >> coverage.txt; \
+			rm profile.out; \
+		fi; \
+	done;
 .PHONY: test-ci
 
 test-offline: packr  ## run only tests that don't require internet
