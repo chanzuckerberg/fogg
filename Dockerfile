@@ -27,11 +27,6 @@ COPY util util
 # Build the Go app
 RUN CGO_ENABLED=0 GOOS=linux go build -o fogg .
 
-# Install chamber
-ENV CHAMBER_VERSION=v2.1.0
-RUN wget -q https://github.com//segmentio/chamber/releases/download/${CHAMBER_VERSION}/chamber-${CHAMBER_VERSION}-linux-amd64 -O /bin/chamber
-RUN chmod +x /bin/chamber
-
 # Final stage: the running container
 FROM alpine:latest AS final
 
@@ -39,6 +34,5 @@ FROM alpine:latest AS final
 RUN apk update && apk --no-cache add ca-certificates
 
 COPY --from=builder /app/fogg /bin/fogg
-COPY --from=builder /bin/chamber /bin/chamber
 
 CMD ["fogg"]
