@@ -22,3 +22,31 @@ archives:
 
 release:
   prerelease: true
+
+# image_template uses .ShortCommit for a unique tag that fits semver's guidelines and docker tagging requirements
+# We use .Version for .goreleaser.yml
+dockers:
+  - dockerfile: Dockerfile
+    image_templates:
+      - docker.pkg.github.com/chanzuckerberg/fogg/fogg:{{.ShortCommit}}
+    extra_files:
+      - cmd
+      - go.mod
+      - go.sum
+      - main.go
+      - vendor
+      - apply
+      - config
+      - docs
+      - errs
+      - exp
+      - init
+      - migrations
+      - plan
+      - plugins
+      - setup
+      - templates
+      - util
+
+env_files:
+  github_token: ~/.config/goreleaser/github_token
