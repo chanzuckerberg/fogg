@@ -40,6 +40,7 @@ dockers:
       - go.mod
       - go.sum
       - main.go
+      - vendor
       - apply
       - config
       - docs
@@ -53,6 +54,5 @@ dockers:
       - templates
       - testdata
       - util
-      - vendor
 env_files:
   github_token: ~/.config/goreleaser/github_token
