@@ -23,7 +23,7 @@ archives:
 release:
   prerelease: true
 
-# image_template uses .ShortCommit for a tag that fits semver's guidelines and docker tagging requirements
+# image_template uses .ShortCommit for a unique tag that fits semver's guidelines and docker tagging requirements
 # We use .Version for .goreleaser.yml
 dockers:
   - dockerfile: Dockerfile
