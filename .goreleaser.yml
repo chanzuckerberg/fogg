@@ -34,7 +34,7 @@ brews:
 dockers:
   - dockerfile: Dockerfile
     image_templates:
-      - docker.pkg.github.com/chanzuckerberg/fogg/fogg:v{{.Tag}}
+      - docker.pkg.github.com/chanzuckerberg/fogg/fogg:v{{.ShortCommit}}
     extra_files:
       - cmd
       - go.mod
