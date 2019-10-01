@@ -35,7 +35,7 @@ release: ## run a release
 .PHONY: release
 
 release-prerelease: build ## release to github as a 'pre-release'
-	version=`fogg version`; \
+	version=`./fogg version`; \
 	git tag v"$$version"; \
 	git push
 	git push --tags
