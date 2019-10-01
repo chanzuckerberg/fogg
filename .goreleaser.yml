@@ -52,7 +52,6 @@ dockers:
       - plugins
       - setup
       - templates
-      - testdata
       - util
 env_files:
   github_token: ~/.config/goreleaser/github_token

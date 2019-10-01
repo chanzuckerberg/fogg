@@ -44,7 +44,6 @@ dockers:
       - plugins
       - setup
       - templates
-      - testdata
       - util
 
 env_files:

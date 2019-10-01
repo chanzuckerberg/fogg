@@ -22,7 +22,6 @@ COPY plan plan
 COPY plugins plugins
 COPY setup setup
 COPY templates templates
-COPY testdata testdata
 COPY util util
 
 # Build the Go app
