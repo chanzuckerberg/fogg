@@ -32,10 +32,9 @@ dockers:
       - go.mod
       - go.sum
       - main.go
-      - config
-      - docs
       - apply
       - config
+      - docs
       - errs
       - exp
       - init
