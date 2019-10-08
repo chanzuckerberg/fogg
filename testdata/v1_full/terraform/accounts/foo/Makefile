@@ -5,5 +5,9 @@ export TERRAFORM_VERSION := 0.12.0
 export TFLINT_ENABLED := 1
 export TF_PLUGIN_CACHE_DIR := ../../..//.terraform.d/plugin-cache
 export ATLANTIS_ENABLED := 0
+export AWS_BACKEND_PROFILE := czi-foo
+
+export AWS_PROVIDER_PROFILE := czi-foo
+
 
 include ../../..//scripts/component.mk
