@@ -43,8 +43,9 @@ lint-terraform-fmt: terraform
 .PHONY: lint-terraform-fmt
 
 check-auth:
-	@aws --profile $(AWS_BACKEND_PROFILE) sts get-caller-identity >/dev/null || echo "AWS AUTH error. This component is configured to use a profile name $(AWS_BACKEND_PROFILE). Please add one to your ~/.aws/config"
-	@aws --profile $(AWS_PROVIDER_PROFILE) sts get-caller-identity >/dev/null || echo "AWS AUTH error. This component is configured to use a profile name $(AWS_PROVIDER_PROFILE). Please add one to your ~/.aws/config"
+	@for p in $(AWS_BACKEND_PROFILE) $(AWS_PROVIDER_PROFILE); do \
+		aws --profile $$p sts get-caller-identity > /dev/null || echo "AWS AUTH error. This component is configured to use a profile name $$p. Please add one to your ~/.aws/config"; \
+	done
 .PHONY: check-auth
 
 ifeq ($(MODE),local)
