@@ -4,5 +4,9 @@
 export TERRAFORM_VERSION := 0.14.0
 export TFLINT_ENABLED := 1
 export TF_PLUGIN_CACHE_DIR := ../../../..//.terraform.d/plugin-cache
+export AWS_BACKEND_PROFILE := czi-stage
+
+export AWS_PROVIDER_PROFILE := czi-stage
+
 
 include ../../../..//scripts/component.mk
