@@ -3,7 +3,6 @@ module github.com/chanzuckerberg/fogg
 go 1.13.1
 
 require (
-	cloud.google.com/go v0.44.3 // indirect
 	github.com/Masterminds/goutils v1.1.0 // indirect
 	github.com/Masterminds/semver v1.4.2 // indirect
 	github.com/Masterminds/sprig v2.20.0+incompatible
@@ -13,20 +12,20 @@ require (
 	github.com/chanzuckerberg/go-misc v0.0.0-20190716060611-91021143eac9
 	github.com/fatih/color v1.7.0
 	github.com/go-errors/errors v1.0.1
+	github.com/go-logfmt/logfmt v0.3.0
 	github.com/go-playground/locales v0.12.1 // indirect
 	github.com/go-playground/universal-translator v0.16.0 // indirect
-	github.com/go-test/deep v1.0.2
+	github.com/go-test/deep v1.0.3
 	github.com/gobuffalo/packr v1.30.1
 	github.com/google/go-cmp v0.3.1 // indirect
 	github.com/google/go-github/v27 v27.0.6
-	github.com/google/uuid v1.1.1 // indirect
-	github.com/hashicorp/go-getter v1.3.1-0.20190627223108-da0323b9545e
+	github.com/hashicorp/go-getter v1.4.0
 	github.com/hashicorp/go-multierror v1.0.0
 	github.com/hashicorp/go-version v1.2.0
 	github.com/hashicorp/golang-lru v0.5.3 // indirect
-	github.com/hashicorp/hcl2 v0.0.0-20190725010614-0c3fe388e450
-	github.com/hashicorp/terraform v0.12.6
-	github.com/hashicorp/terraform-config-inspect v0.0.0-20190327195015-8022a2663a70
+	github.com/hashicorp/hcl2 v0.0.0-20190821123243-0c888d1241f6
+	github.com/hashicorp/terraform v0.12.9
+	github.com/hashicorp/terraform-config-inspect v0.0.0-20190821133035-82a99dc22ef4
 	github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c // indirect
 	github.com/huandu/xstrings v1.2.0 // indirect
 	github.com/imdario/mergo v0.3.7 // indirect
