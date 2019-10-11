@@ -17,16 +17,20 @@ type TravisCI struct {
 	FoggVersion string
 	TestBuckets [][]TravisProject
 	AWSProfiles map[string]AWSRole
+	Buildevents bool
 }
 
 // TODO(el): mostly a duplicate of buildAtlantis(). refactor later
 func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
 	enabled := false
+	buildeventsEnabled := false
 	projects := []TravisProject{}
 	awsProfiles := map[string]AWSRole{}
 
 	if p.Global.TravisCI.Enabled {
 		enabled = true
+		buildeventsEnabled = buildeventsEnabled || p.Global.TravisCI.Buildevents
+
 		proj := TravisProject{
 			Name:    "global",
 			Dir:     "terraform/global",
@@ -52,6 +56,8 @@ func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
 	for name, acct := range p.Accounts {
 		if acct.TravisCI.Enabled {
 			enabled = true
+			buildeventsEnabled = buildeventsEnabled || p.Global.TravisCI.Buildevents
+
 			proj := TravisProject{
 				Name:    fmt.Sprintf("accounts/%s", name),
 				Dir:     fmt.Sprintf("terraform/accounts/%s", name),
@@ -80,6 +86,8 @@ func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
 		for cName, c := range env.Components {
 			if c.TravisCI.Enabled {
 				enabled = true
+				buildeventsEnabled = buildeventsEnabled || p.Global.TravisCI.Buildevents
+
 				proj := TravisProject{
 					Name:    fmt.Sprintf("%s/%s", envName, cName),
 					Dir:     fmt.Sprintf("terraform/envs/%s/%s", envName, cName),
@@ -138,6 +146,7 @@ func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
 
 	tr := TravisCI{
 		Enabled:     enabled,
+		Buildevents: buildeventsEnabled,
 		FoggVersion: foggVersion,
 		TestBuckets: testBuckets,
 		AWSProfiles: awsProfiles,

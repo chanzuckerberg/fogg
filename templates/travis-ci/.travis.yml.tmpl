@@ -6,10 +6,23 @@ sudo: required
 python: 3.6
 
 install:
+  {{ if .Buildevents }}
+  - STEP_START=$(date +%s)
+  - STEP_SPAN_ID=$(echo install | sum | cut -f 1 -d \ )
+  {{ end }}
   - pip install awscli --upgrade
   - aws --version
   - FOGG_VERSION="v{{ .FoggVersion }}" travis_retry make setup
+  {{ if .Buildevents }}
+  - mkdir bin # this is in theory supposed to exist already
+  - curl -L -o $HOME/bin/buildevents https://github.com/honeycombio/buildevents/releases/latest/download/buildevents-linux-amd64
+  - chmod 755 $HOME/bin/buildevents
+  {{ end }}
 before_script:
+  {{ if .Buildevents }}
+  - STEP_START=$(date +%s)
+  - STEP_SPAN_ID=$(echo before_script | sum | cut -f 1 -d \ )
+  {{ end }}
   # TODO add note about why these need to be prefixed with HUB_
   - aws configure set aws_access_key_id     $IDACCT_AWS_ACCESS_KEY_ID     --profile _idacct
   - aws configure set aws_secret_access_key $IDACCT_AWS_SECRET_ACCESS_KEY --profile _idacct
@@ -27,6 +40,10 @@ jobs:
       script:
         - |
           set -e
+          {{ if .Buildevents }}
+          STEP_START=$(date +%s)
+          STEP_SPAN_ID=$(echo before_script | sum | cut -f 1 -d \ )
+          {{ end }}
           .fogg/bin/fogg apply
           if [ "$(git status --porcelain)" != "" ]; then
             echo "git tree is dirty after running fogg apply"
@@ -34,11 +51,16 @@ jobs:
             git status
             exit 1
           fi
+{{ $travisCI := . }}
 {{ range $testBucket := .TestBuckets }}
     - stage: check
       script:
         - set -e
+      {{ if $travisCI.Buildevents }}
+        - STEP_START=$(date +%s)
+        - STEP_SPAN_ID=$(echo check | sum | cut -f 1 -d \ )
+      {{ end }}
       {{- range $component := $testBucket }}
-        - pushd {{ $component.Dir }} && travis_retry make {{ $component.Command }} && popd
+        - {{ if $travisCI.Buildevents }} buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID {{ $component.Dir }}.{{ $component.Command }} --{{ end }} pushd {{ $component.Dir }} && travis_retry make {{ $component.Command }} && popd
       {{- end -}}
 {{ end }}
