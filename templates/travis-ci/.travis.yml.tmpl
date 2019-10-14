@@ -7,28 +7,27 @@ python: 3.6
 env:
   global:
     - BUILD_START=$(date +%s)
+    - BUILDEVENTS_BUILD_ID=${TRAVIS_BUILD_ID} # .${TRAVIS_BUILD_NUMBER} TODO(el): should we add the build number too?
 
 install:
-  {{ if .Buildevents }}
+  {{- if .Buildevents }}
   - STEP_START=$(date +%s)
-  - STEP_SPAN_ID=$(echo install | sum | cut -f 1 -d \ )
-  {{ end }}
+  - STEP_SPAN_ID=$(echo ${TRAVIS_BUILD_NUMBER}install | sum | cut -f 1 -d \ )
+  {{- end }}
   - pip install awscli --upgrade
   - aws --version
   - FOGG_VERSION="v{{ .FoggVersion }}" travis_retry make setup
-  {{ if .Buildevents }}
+  {{- if .Buildevents }}
   - mkdir bin # this is in theory supposed to exist already
   - curl -L -o $HOME/bin/buildevents https://github.com/honeycombio/buildevents/releases/latest/download/buildevents-linux-amd64
   - chmod 755 $HOME/bin/buildevents
-  {{ end }}
-  {{ if .Buildevents }}
-  - buildevents step $TRAVIS_BUILD_ID $STEP_SPAN_ID $STEP_START install
-  {{ end }}
+  - buildevents step $BUILDEVENTS_BUILD_ID $STEP_SPAN_ID $STEP_START install
+  {{- end }}
 before_script:
-  {{ if .Buildevents }}
+  {{- if .Buildevents }}
   - STEP_START=$(date +%s)
-  - STEP_SPAN_ID=$(echo before_script | sum | cut -f 1 -d \ )
-  {{ end }}
+  - STEP_SPAN_ID=$(echo ${TRAVIS_BUILD_NUMBER}before_script | sum | cut -f 1 -d \ )
+  {{- end }}
   # TODO add note about why these need to be prefixed with HUB_
   - aws configure set aws_access_key_id     $IDACCT_AWS_ACCESS_KEY_ID     --profile _idacct
   - aws configure set aws_secret_access_key $IDACCT_AWS_SECRET_ACCESS_KEY --profile _idacct
@@ -39,9 +38,9 @@ before_script:
   - aws configure set profile.{{ $profileName }}.source_profile _idacct
   - aws --profile {{ $profileName }} sts get-caller-identity
 {{ end }}
-{{ if .Buildevents }}
-  - buildevents step $TRAVIS_BUILD_ID $STEP_SPAN_ID $STEP_START before_script
-{{ end }}
+{{- if .Buildevents }}
+  - buildevents step $BUILDEVENTS_BUILD_ID $STEP_SPAN_ID $STEP_START before_script
+{{- end }}
 
 jobs:
   include:
@@ -49,10 +48,10 @@ jobs:
       script:
         - |
           set -e
-          {{ if .Buildevents }}
+          {{- if .Buildevents }}
           STEP_START=$(date +%s)
-          STEP_SPAN_ID=$(echo before_script | sum | cut -f 1 -d \ )
-          {{ end }}
+          STEP_SPAN_ID=$(echo ${TRAVIS_BUILD_NUMBER}before_script | sum | cut -f 1 -d \ )
+          {{- end }}
           .fogg/bin/fogg apply
           if [ "$(git status --porcelain)" != "" ]; then
             echo "git tree is dirty after running fogg apply"
@@ -60,28 +59,27 @@ jobs:
             git status
             exit 1
           fi
-{{ $travisCI := . }}
-{{ range $testBucket := .TestBuckets }}
+{{- $travisCI := . }}
+{{- range $idx, $testBucket := .TestBuckets }}
     - stage: check
       script:
         - set -e
-      {{ if $travisCI.Buildevents }}
+      {{- if $travisCI.Buildevents }}
         - STEP_START=$(date +%s)
-        - STEP_SPAN_ID=$(echo check | sum | cut -f 1 -d \ )
-      {{ end }}
+        - STEP_SPAN_ID=$(echo ${TRAVIS_BUILD_NUMBER}check{{ $idx }} | sum | cut -f 1 -d \ )
+      {{- end }}
       {{- range $component := $testBucket }}
         - pushd {{ $component.Dir }}
-        - travis_retry {{ if $travisCI.Buildevents }} buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID {{ $component.Dir }} -- {{ end }}  make {{ $component.Command }}
+        - travis_retry {{ if $travisCI.Buildevents }} buildevents cmd $BUILDEVENTS_BUILD_ID $STEP_SPAN_ID {{ $component.Dir }} -- {{- end -}}  make {{ $component.Command }}
         - popd
-      {{- end -}}
-      {{ if $travisCI.Buildevents }}
-        - buildevents step $TRAVIS_BUILD_ID $STEP_SPAN_ID $STEP_START before_script
-      {{ end }}
-{{ end }}
-
-{{ if .Buildevents }}
+      {{- if $travisCI.Buildevents }}
+        - buildevents step $BUILDEVENTS_BUILD_ID $STEP_SPAN_ID $STEP_START before_script
+      {{- end }}
+  {{- end }}
+{{- end }}
+{{- if .Buildevents }}
 after_failure:
-  - buildevents build $TRAVIS_BUILD_ID $BUILD_START failure
+  - buildevents build $BUILDEVENTS_BUILD_ID $BUILD_START failure
 after_success:
-  - buildevents build $TRAVIS_BUILD_ID $BUILD_START success
-{{ end }}
+  - buildevents build $BUILDEVENTS_BUILD_ID $BUILD_START success
+{{- end }}
