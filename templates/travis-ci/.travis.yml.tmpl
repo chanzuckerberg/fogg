@@ -72,9 +72,9 @@ jobs:
       {{- range $component := $testBucket }}
         - travis_retry {{ if $travisCI.Buildevents }} buildevents cmd $TRAVIS_BUILD_ID $STEP_SPAN_ID {{ $component.Dir }}.{{ $component.Command }} --{{ end }} pushd {{ $component.Dir }} && make {{ $component.Command }} && popd
       {{- end -}}
-    {{ if .Buildevents }}
-      - buildevents step $TRAVIS_BUILD_ID $STEP_SPAN_ID $STEP_START before_script
-    {{ end }}
+      {{ if $travisCI.Buildevents }}
+        - buildevents step $TRAVIS_BUILD_ID $STEP_SPAN_ID $STEP_START before_script
+      {{ end }}
 {{ end }}
 
 {{ if .Buildevents }}
