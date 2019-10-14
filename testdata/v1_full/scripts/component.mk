@@ -102,7 +102,7 @@ endif
 .PHONY: init
 
 check-plan: init check-auth
-	@$(terraform_command) plan $(TF_ARGS) -detailed-exitcode; \
+	@$(terraform_command) plan $(TF_ARGS) -detailed-exitcode -lock=false; \
 	ERR=$$?; \
 	if [ $$ERR -eq 0 ] ; then \
 		echo "Success"; \
