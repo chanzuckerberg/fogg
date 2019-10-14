@@ -79,9 +79,7 @@ jobs:
 
 {{ if .Buildevents }}
 after_failure:
-  - traceURL=$(buildevents build $TRAVIS_BUILD_ID $BUILD_START failure)
-  - echo "Honeycomb Trace: $traceURL"
+  - buildevents build $TRAVIS_BUILD_ID $BUILD_START failure
 after_success:
-  - traceURL=$(buildevents build $TRAVIS_BUILD_ID $BUILD_START success)
-  - echo "Honeycomb Trace: $traceURL"
+  - buildevents build $TRAVIS_BUILD_ID $BUILD_START success
 {{ end }}
