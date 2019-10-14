@@ -4,12 +4,19 @@ dist: bionic
 language: python
 sudo: required
 python: 3.6
+env:
+  global:
+    - BUILD_START=$(date +%s)
 
 install:
+  
   - pip install awscli --upgrade
   - aws --version
   - FOGG_VERSION="vundefined+undefined+dirty" travis_retry make setup
+  
+  
 before_script:
+  
   # TODO add note about why these need to be prefixed with HUB_
   - aws configure set aws_access_key_id     $IDACCT_AWS_ACCESS_KEY_ID     --profile _idacct
   - aws configure set aws_secret_access_key $IDACCT_AWS_SECRET_ACCESS_KEY --profile _idacct
@@ -33,12 +40,14 @@ before_script:
   - aws --profile czi-stage sts get-caller-identity
 
 
+
 jobs:
   include:
     - stage: fogg-apply clean
       script:
         - |
           set -e
+          
           .fogg/bin/fogg apply
           if [ "$(git status --porcelain)" != "" ]; then
             echo "git tree is dirty after running fogg apply"
@@ -47,48 +56,89 @@ jobs:
             exit 1
           fi
 
+
     - stage: check
       script:
         - set -e
-        - pushd terraform/accounts/bar && travis_retry make check && popd
+      
+        - pushd terraform/accounts/bar
+        - travis_retry   make check
+        - popd
+
     - stage: check
       script:
         - set -e
-        - pushd terraform/accounts/foo && travis_retry make check && popd
+      
+        - pushd terraform/accounts/foo
+        - travis_retry   make check
+        - popd
+
     - stage: check
       script:
         - set -e
-        - pushd terraform/global && travis_retry make check && popd
+      
+        - pushd terraform/global
+        - travis_retry   make check
+        - popd
+
     - stage: check
       script:
         - set -e
-        - pushd terraform/modules/module1 && travis_retry make check && popd
+      
+        - pushd terraform/modules/module1
+        - travis_retry   make check
+        - popd
+
     - stage: check
       script:
         - set -e
-        - pushd terraform/envs/stage/cloud-env && travis_retry make check && popd
+      
+        - pushd terraform/envs/stage/cloud-env
+        - travis_retry   make check
+        - popd
+
     - stage: check
       script:
         - set -e
-        - pushd terraform/envs/stage/helm && travis_retry make check && popd
+      
+        - pushd terraform/envs/stage/helm
+        - travis_retry   make check
+        - popd
+
     - stage: check
       script:
         - set -e
+      
+
     - stage: check
       script:
         - set -e
+      
+
     - stage: check
       script:
         - set -e
+      
+
     - stage: check
       script:
         - set -e
+      
+
     - stage: check
       script:
         - set -e
+      
+
     - stage: check
       script:
         - set -e
+      
+
     - stage: check
       script:
         - set -e
+      
+
+
+
