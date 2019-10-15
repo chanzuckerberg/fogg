@@ -7,7 +7,7 @@ python: 3.6
 env:
   global:
     - BUILD_START=$(date +%s)
-    - BUILDEVENTS_BUILD_ID=${TRAVIS_BUILD_ID}.${TRAVIS_BUILD_NUMBER}
+    - BUILDEVENTS_BUILD_ID=${TRAVIS_BUILD_ID}
 
 install:
   - STEP_START=$(date +%s)
