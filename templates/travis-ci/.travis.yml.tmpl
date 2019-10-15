@@ -12,7 +12,8 @@ env:
 install:
   {{- if .Buildevents }}
   - STEP_START=$(date +%s)
-  - STEP_SPAN_ID=$(echo ${TRAVIS_BUILD_NUMBER}install | sum | cut -f 1 -d \ )
+  - STEP_NAME=${TRAVIS_BUILD_NUMBER}.install
+  - STEP_SPAN_ID=$(echo ${STEP_NAME} | sum | cut -f 1 -d \ )
   {{- end }}
   - pip install awscli --upgrade
   - aws --version
@@ -21,12 +22,13 @@ install:
   - mkdir bin # this is in theory supposed to exist already
   - curl -L -o $HOME/bin/buildevents https://github.com/honeycombio/buildevents/releases/latest/download/buildevents-linux-amd64
   - chmod 755 $HOME/bin/buildevents
-  - buildevents step $BUILDEVENTS_BUILD_ID $STEP_SPAN_ID $STEP_START install
+  - buildevents step $BUILDEVENTS_BUILD_ID $STEP_SPAN_ID $STEP_START $STEP_NAME
   {{- end }}
 before_script:
   {{- if .Buildevents }}
   - STEP_START=$(date +%s)
-  - STEP_SPAN_ID=$(echo ${TRAVIS_BUILD_NUMBER}before_script | sum | cut -f 1 -d \ )
+  - STEP_NAME=${TRAVIS_BUILD_NUMBER}.before_script
+  - STEP_SPAN_ID=$(echo ${STEP_NAME} | sum | cut -f 1 -d \ )
   {{- end }}
   # TODO add note about why these need to be prefixed with HUB_
   - aws configure set aws_access_key_id     $IDACCT_AWS_ACCESS_KEY_ID     --profile _idacct
@@ -39,7 +41,7 @@ before_script:
   - aws --profile {{ $profileName }} sts get-caller-identity
 {{ end }}
 {{- if .Buildevents }}
-  - buildevents step $BUILDEVENTS_BUILD_ID $STEP_SPAN_ID $STEP_START before_script
+  - buildevents step $BUILDEVENTS_BUILD_ID $STEP_SPAN_ID $STEP_START $STEP_NAME
 {{- end }}
 
 jobs:
@@ -50,7 +52,8 @@ jobs:
           set -e
           {{- if .Buildevents }}
           STEP_START=$(date +%s)
-          STEP_SPAN_ID=$(echo ${TRAVIS_BUILD_NUMBER}before_script | sum | cut -f 1 -d \ )
+          STEP_NAME=${TRAVIS_BUILD_NUMBER}.fogg-apply-clean
+          STEP_SPAN_ID=$(echo ${STEP_NAME} | sum | cut -f 1 -d \ )
           {{- end }}
           .fogg/bin/fogg apply
           if [ "$(git status --porcelain)" != "" ]; then
@@ -59,6 +62,9 @@ jobs:
             git status
             exit 1
           fi
+          {{- if .Buildevents }}
+          buildevents step $BUILDEVENTS_BUILD_ID $STEP_SPAN_ID $STEP_START $STEP_NAME
+          {{- end }}
 {{- $travisCI := . }}
 {{- range $idx, $testBucket := .TestBuckets }}
     - stage: check
@@ -66,16 +72,17 @@ jobs:
         - set -e
       {{- if $travisCI.Buildevents }}
         - STEP_START=$(date +%s)
-        - STEP_SPAN_ID=$(echo ${TRAVIS_BUILD_NUMBER}check{{ $idx }} | sum | cut -f 1 -d \ )
+        - STEP_NAME=${TRAVIS_BUILD_NUMBER}.check.{{ $idx }}
+        - STEP_SPAN_ID=$(echo ${STEP_NAME} | sum | cut -f 1 -d \ )
       {{- end }}
       {{- range $component := $testBucket }}
         - pushd {{ $component.Dir }}
         - travis_retry {{ if $travisCI.Buildevents }} buildevents cmd $BUILDEVENTS_BUILD_ID $STEP_SPAN_ID {{ $component.Dir }} -- {{- end }} make {{ $component.Command }}
         - popd
-      {{- if $travisCI.Buildevents }}
-        - buildevents step $BUILDEVENTS_BUILD_ID $STEP_SPAN_ID $STEP_START before_script
       {{- end }}
-  {{- end }}
+      {{- if $travisCI.Buildevents }}
+        - buildevents step $BUILDEVENTS_BUILD_ID $STEP_SPAN_ID $STEP_START $STEP_NAME
+      {{- end }}
 {{- end }}
 {{- if .Buildevents }}
 after_failure:
