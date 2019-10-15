@@ -70,7 +70,7 @@ jobs:
       {{- end }}
       {{- range $component := $testBucket }}
         - pushd {{ $component.Dir }}
-        - travis_retry {{ if $travisCI.Buildevents }} buildevents cmd $BUILDEVENTS_BUILD_ID $STEP_SPAN_ID {{ $component.Dir }} -- {{- end -}}  make {{ $component.Command }}
+        - travis_retry {{ if $travisCI.Buildevents }} buildevents cmd $BUILDEVENTS_BUILD_ID $STEP_SPAN_ID {{ $component.Dir }} -- {{- end }} make {{ $component.Command }}
         - popd
       {{- if $travisCI.Buildevents }}
         - buildevents step $BUILDEVENTS_BUILD_ID $STEP_SPAN_ID $STEP_START before_script
