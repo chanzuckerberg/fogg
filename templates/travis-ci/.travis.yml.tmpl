@@ -66,7 +66,6 @@ jobs:
           {{- if .Buildevents }}
           buildevents step $BUILDEVENTS_BUILD_ID $STEP_SPAN_ID $STEP_START $STEP_NAME
           {{- end }}
-{{- $travisCI := . }}
 {{- range $testBucket := .TestBuckets }}
     - stage: check
       script:
