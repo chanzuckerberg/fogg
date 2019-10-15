@@ -33,7 +33,9 @@ type terraformDiff struct {
 var entropyCmd = &cobra.Command{
 	Use:   "entropy",
 	Short: "Measures how many differences result from a terraform plan.",
-	Long:  `This command will parse a Terraform plan and deduce which components are out of sync with reality.`,
+	Long: `This command will parse a Terraform plan and track any diffs.
+It is meant to be run with honeycomb/buildevents and thus we generate
+output in LogFmt format.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		planFilePath, err := cmd.Flags().GetString("plan-file")
 		if err != nil {
@@ -93,7 +95,6 @@ var entropyCmd = &cobra.Command{
 				return fmt.Errorf("could not end record: %w", err)
 			}
 		}
-
 		return nil
 	},
 }
