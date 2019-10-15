@@ -2,7 +2,7 @@ dist: bionic
 language: go
 sudo: false
 go:
-  - "1.13"
+  - "1.13.1"
 env:
   global:
     - BUILD_START=$(date +%s)
