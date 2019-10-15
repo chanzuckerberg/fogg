@@ -13,7 +13,7 @@ env:
 install:
   {{- if .Buildevents }}
   - STEP_START=$(date +%s)
-  - STEP_NAME=${TRAVIS_BUILD_NUMBER}.install
+  - STEP_NAME=install.${TRAVIS_JOB_NUMBER}
   - STEP_SPAN_ID=$(echo ${STEP_NAME} | sum | cut -f 1 -d \ )
   {{- end }}
   - pip install awscli --upgrade
@@ -28,7 +28,7 @@ install:
 before_script:
   {{- if .Buildevents }}
   - STEP_START=$(date +%s)
-  - STEP_NAME=${TRAVIS_BUILD_NUMBER}.before_script
+  - STEP_NAME=before_script.${TRAVIS_JOB_NUMBER}
   - STEP_SPAN_ID=$(echo ${STEP_NAME} | sum | cut -f 1 -d \ )
   {{- end }}
   # TODO add note about why these need to be prefixed with HUB_
@@ -53,7 +53,7 @@ jobs:
           set -e
           {{- if .Buildevents }}
           STEP_START=$(date +%s)
-          STEP_NAME=${TRAVIS_BUILD_NUMBER}.fogg-apply-clean
+          STEP_NAME=fogg-apply-clean.${TRAVIS_JOB_NUMBER}
           STEP_SPAN_ID=$(echo ${STEP_NAME} | sum | cut -f 1 -d \ )
           {{- end }}
           .fogg/bin/fogg apply
@@ -67,13 +67,13 @@ jobs:
           buildevents step $BUILDEVENTS_BUILD_ID $STEP_SPAN_ID $STEP_START $STEP_NAME
           {{- end }}
 {{- $travisCI := . }}
-{{- range $idx, $testBucket := .TestBuckets }}
+{{- range $testBucket := .TestBuckets }}
     - stage: check
       script:
         - set -e
       {{- if $travisCI.Buildevents }}
         - STEP_START=$(date +%s)
-        - STEP_NAME=${TRAVIS_BUILD_NUMBER}.check.{{ $idx }}
+        - STEP_NAME=check.${TRAVIS_JOB_NUMBER}
         - STEP_SPAN_ID=$(echo ${STEP_NAME} | sum | cut -f 1 -d \ )
       {{- end }}
       {{- range $component := $testBucket }}
@@ -87,7 +87,7 @@ jobs:
 {{- end }}
 {{- if .Buildevents }}
 after_failure:
-  - buildevents build $BUILDEVENTS_BUILD_ID $BUILD_START failure
+  - echo "$(buildevents build $BUILDEVENTS_BUILD_ID $BUILD_START failure)"
 after_success:
-  - buildevents build $BUILDEVENTS_BUILD_ID $BUILD_START success
+  - echo "$(buildevents build $BUILDEVENTS_BUILD_ID $BUILD_START success)"
 {{- end }}
