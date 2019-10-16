@@ -129,6 +129,7 @@ func TestUpgradeConfigVersion(t *testing.T) {
 						Enabled:        boolptr(true),
 						AWSIAMRoleName: util.StrPtr("travis-role"),
 						TestBuckets:    intptr(13),
+						Buildevents:    boolptr(true),
 					},
 				},
 			},

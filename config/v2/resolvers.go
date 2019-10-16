@@ -214,6 +214,7 @@ func ResolveAtlantis(commons ...Common) *Atlantis {
 
 func ResolveTravis(commons ...Common) *v1.TravisCI {
 	enabled := false
+	buildevents := false
 	testCommand := "check"
 	for _, c := range commons {
 		if c.Tools != nil && c.Tools.TravisCI != nil && c.Tools.TravisCI.Enabled != nil {
@@ -223,12 +224,16 @@ func ResolveTravis(commons ...Common) *v1.TravisCI {
 		if c.Tools != nil && c.Tools.TravisCI != nil && c.Tools.TravisCI.Command != nil {
 			testCommand = *c.Tools.TravisCI.Command
 		}
+		if c.Tools != nil && c.Tools.TravisCI != nil && c.Tools.TravisCI.Buildevents != nil {
+			buildevents = *c.Tools.TravisCI.Buildevents
+		}
 	}
 
 	roleName := lastNonNil(TravisRoleNameGetter, commons...)
 
 	return &v1.TravisCI{
 		Enabled:        &enabled,
+		Buildevents:    &buildevents,
 		AWSIAMRoleName: roleName,
 		Command:        &testCommand,
 	}
