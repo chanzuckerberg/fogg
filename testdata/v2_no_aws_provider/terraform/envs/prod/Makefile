@@ -4,34 +4,43 @@
 COMPONENTS=
 
 all:
+.PHONY: all
 
-lint:
+lint: ## lint all components in the env
 	@for c in $(COMPONENTS); do \
 		$(MAKE) -C $$c lint || exit $$? ; \
 	done
+.PHONY: lint
 
-fmt:
+fmt: ## format terraform code in all components in this env
 	@for c in $(COMPONENTS); do \
 		$(MAKE) -C $$c fmt || exit $$? ; \
 	done
+.PHONY: fmt
 
-check-plan:
+check-plan: ## check all plans in this environment
 	@for c in $(COMPONENTS); do \
 		$(MAKE) -C $$c check-plan || exit $$? ; \
 	done
+.PHONY: check-plan
 
-docs:
+docs: ## generate docs for all components in this env
 	@for c in $(COMPONENTS); do \
 		$(MAKE) -C $$c docs || exit $$? ; \
 	done
+.PHONY: docs
 
-clean:
+clean: ## clean all components in this env
 	@for c in $(COMPONENTS); do \
 		$(MAKE) -C $$c clean || exit $$? ; \
 	done
-
-clean:
+.PHONY: clean
 
 test:
+.PHONY: test
 
-.PHONY: all lint fmt docs clean test check-plan
+
+help: ## display help for this makefile
+	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+.PHONY: help
+

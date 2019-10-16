@@ -25,12 +25,12 @@ ifeq ($(MODE),atlantis)
 endif
 
 
-tfenv:
+tfenv: ## install the tfenv tool
 	@if [ ! -d ${TFENV_DIR} ]; then \
 		git clone -q https://github.com/tfutils/tfenv.git $(TFENV_DIR); \
 	fi
 .PHONY: tfenv
 
-terraform: tfenv
+terraform: tfenv ## ensure that the proper version of terraform is installed
 	${TFENV_DIR}/bin/tfenv install $(TERRAFORM_VERSION)
 .PHONY: terraform
