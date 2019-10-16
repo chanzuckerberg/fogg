@@ -4,34 +4,39 @@
 COMPONENTS={{ .Components | dict | keys | sortAlpha | join " "}}
 
 all:
+.PHONY: all
 
-lint:
+lint: ## lint all components in the env
 	@for c in $(COMPONENTS); do \
 		$(MAKE) -C $$c lint || exit $$? ; \
 	done
+.PHONY: lint
 
-fmt:
+fmt: ## format terraform code in all components in this env
 	@for c in $(COMPONENTS); do \
 		$(MAKE) -C $$c fmt || exit $$? ; \
 	done
+.PHONY: fmt
 
-check-plan:
+check-plan: ## check all plans in this environment
 	@for c in $(COMPONENTS); do \
 		$(MAKE) -C $$c check-plan || exit $$? ; \
 	done
+.PHONY: check-plan
 
-docs:
+docs: ## generate docs for all components in this env
 	@for c in $(COMPONENTS); do \
 		$(MAKE) -C $$c docs || exit $$? ; \
 	done
+.PHONY: docs
 
-clean:
+clean: ## clean all components in this env
 	@for c in $(COMPONENTS); do \
 		$(MAKE) -C $$c clean || exit $$? ; \
 	done
-
-clean:
+.PHONY: clean
 
 test:
+.PHONY: test
 
-.PHONY: all lint fmt docs clean test check-plan
+{{ template "make_help"  }}

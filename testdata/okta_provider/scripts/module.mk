@@ -8,19 +8,19 @@ include $(SELF_DIR)/common.mk
 all: fmt lint doc
 .PHONY: all
 
-fmt: terraform
+fmt: terraform ## run terraform fmt on this module
 	@printf "fmt: ";
 	@for f in $(TF); do printf .; $(terraform_command) fmt $(TF_ARGS) $$f; done
 	@echo
 .PHONY: fmt
 
-check: lint check-docs
+check: lint check-docs ## run all checks on this module
 .PHONY: check
 
-lint: lint-tf
+lint: lint-tf ## run all linters on this module
 .PHONY: lint
 
-lint-tf: terraform
+lint-tf: terraform ## run terraform linters on this module
 	@printf "fmt: ";
 	@for f in $(TF); do \
 	  printf .; $(terraform_command) fmt $(TF_ARGS) --check=true --diff=true || exit $$? ; \
@@ -28,14 +28,14 @@ lint-tf: terraform
 	@echo
 .PHONY: lint-tf
 
-readme:
+readme: ## update this module's README.md 
 	bash $(REPO_ROOT)/scripts/update-readme.sh update
 .PHONY: readme
 
-docs: readme
+docs: readme ## update all docs for this module
 .PHONY: docs
 
-check-docs:
+check-docs: ## check that this module's docs are up-to-date
 	@bash $(REPO_ROOT)/scripts/update-readme.sh check; \
 	if [ ! $$? -eq 0 ];  then \
 		echo "Docs are out of date, run \`make docs\`"; \

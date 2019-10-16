@@ -10,6 +10,7 @@ KUBECTL_FLAGS := --wait=true --prune -l fogg/project=proj,fogg/env=staging,fogg/
 # TODO(el): Replace with kubectl diff once that is supported (k8s >= 1.13)
 plan: set-eks-context
 	@helm template -f variables.yaml . | kubectl --context='k8s' apply --dry-run $(KUBECTL_FLAGS) -f -
+.PHONY: plan
 
 apply: plan
 	@read -p "Continue (yes/no)? " choice && if [ "$${choice}" != "yes" ]; then \
@@ -17,20 +18,33 @@ apply: plan
 	else \
 		helm template -f variables.yaml . | kubectl --context='k8s' apply $(KUBECTL_FLAGS) -f -; \
 	fi
+.PHONY: apply
 
 check: lint plan
+.PHONY: check
 
 set-eks-context:
 	@aws --region us-west-2 --profile profile eks update-kubeconfig --name k8s --alias k8s
+.PHONY: set-eks-context
 
 lint:
 	@helm lint -f variables.yaml .
+.PHONY: lint
 
 fmt:
 	@echo "Not implemented for component of kind helm_template"
+.PHONY: fmt
 
 docs:
 	@echo "Not implemented for component of kind helm_template"
+.PHONY: docs
 
 clean:
 	@echo "Nothing to do"
+.PHONY: clean
+
+
+help: ## display help for this makefile
+	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+.PHONY: help
+
