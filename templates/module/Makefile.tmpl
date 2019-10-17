@@ -5,3 +5,5 @@ export TERRAFORM_VERSION := {{ .TerraformVersion }}
 export TF_PLUGIN_CACHE_DIR := {{ .PathToRepoRoot }}/.terraform.d/plugin-cache
 
 include {{ .PathToRepoRoot }}/scripts/module.mk
+
+{{ template "make_help"  }}

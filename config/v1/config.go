@@ -130,6 +130,7 @@ type TravisCI struct {
 	AWSIAMRoleName *string `json:"aws_iam_role_name" yaml:"aws_iam_role_name,omitempty"`
 	TestBuckets    *int    `json:"test_buckets" yaml:"test_buckets,omitempty"`
 	Command        *string `json:"command,omitempty" yaml:"command,omitempty"`
+	Buildevents    *bool   `json:"buildevents,omitempty" yaml:"buildevents,omitempty"`
 }
 
 type Config struct {

@@ -50,7 +50,9 @@ type AtlantisComponent struct {
 }
 
 type TravisComponent struct {
-	Enabled        bool
+	Enabled     bool
+	Buildevents bool
+
 	AWSProfileName string
 	AWSRoleName    string
 	AWSAccountID   string
@@ -76,7 +78,7 @@ type AWSProvider struct {
 
 // GithubProvider represents a configuration of a github provider
 type GithubProvider struct {
-	Organization string `yaml:"organization"`
+	Organization string  `yaml:"organization"`
 	BaseURL      *string `yaml:"base_url"`
 	Version      *string `yaml:"version"`
 }
@@ -306,7 +308,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		githubPlan = &GithubProvider{
 			Organization: *githubConfig.Organization,
 			BaseURL:      githubConfig.BaseURL,
-			Version: githubConfig.Version,
+			Version:      githubConfig.Version,
 		}
 	}
 
@@ -359,7 +361,8 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	travisConfig := v2.ResolveTravis(commons...)
 	travisPlan := TravisComponent{
-		Enabled: *travisConfig.Enabled,
+		Enabled:     *travisConfig.Enabled,
+		Buildevents: *travisConfig.Buildevents,
 	}
 	if travisPlan.Enabled {
 		travisPlan.AWSRoleName = *travisConfig.AWSIAMRoleName

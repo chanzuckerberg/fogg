@@ -24,6 +24,7 @@
   },
   "travis_ci": {
     "enabled": true,
+    "buildevents": true,
     "aws_iam_role_name": "travis-role",
     "test_buckets": 13
   },

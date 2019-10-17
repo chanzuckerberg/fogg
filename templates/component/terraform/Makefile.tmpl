@@ -10,3 +10,5 @@ export AWS_PROVIDER_PROFILE := {{ .Providers.AWS.Profile }}
 {{ end }}
 
 include {{ .PathToRepoRoot }}/scripts/component.mk
+
+{{ template "make_help"  }}
