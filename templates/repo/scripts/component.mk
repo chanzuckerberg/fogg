@@ -104,7 +104,7 @@ endif
 .PHONY: init
 
 check-plan: init check-auth ## run a terraform plan and check that it does not fail
-	@$(terraform_command) plan $(TF_ARGS) -detailed-exitcode -lock=false -out=$(BUILDEVENT_FILE) ; \
+	@$(terraform_command) plan $(TF_ARGS) -detailed-exitcode -lock=false -out=$(CHECK_PLANFILE) ; \
 	ERR=$$?; \
 	if [ $$ERR -eq 0 ] ; then \
 		echo "Success"; \
