@@ -36,65 +36,73 @@ var entropyCmd = &cobra.Command{
 	Long: `This command will parse a Terraform plan and track any diffs.
 It is meant to be run with honeycomb/buildevents and thus we generate
 output in LogFmt format.`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		planFilePath, err := cmd.Flags().GetString("plan-file")
+	Run: func(cmd *cobra.Command, args []string) {
+		err := entropyRun(cmd, args)
 		if err != nil {
-			return fmt.Errorf("could not read plan-file flag: %w", err)
+			// We don't want this to error out our build
+			fmt.Fprintf(os.Stderr, "fogg entropy error: %s", err)
 		}
-		outputFilePath, err := cmd.Flags().GetString("output-file")
-		if err != nil {
-			return fmt.Errorf("could not read output-file flag: %w", err)
-		}
-		component, err := cmd.Flags().GetString("component")
-		if err != nil {
-			return fmt.Errorf("could not read component flag: %w", err)
-		}
-		project, err := cmd.Flags().GetString("project")
-		if err != nil {
-			return fmt.Errorf("could not read project flag: %w", err)
-		}
-
-		planReader, err := planfile.Open(planFilePath)
-		if err != nil {
-			return fmt.Errorf("could not open terraform plan: %w", err)
-		}
-		defer planReader.Close()
-
-		plan, err := planReader.ReadPlan()
-		if err != nil {
-			return fmt.Errorf("could not read/parse terraform plan: %w", err)
-		}
-
-		f, err := os.Create(outputFilePath)
-		if err != nil {
-			return fmt.Errorf("could not open output file for writing: %w", err)
-		}
-		defer f.Close()
-
-		encoder := logfmt.NewEncoder(f)
-		for _, resourceChange := range plan.Changes.Resources {
-			addr := resourceChange.Addr.String()
-			resourceMode := resourceChange.Addr.Resource.Resource.Mode.String()
-			action := resourceChange.Action
-
-			if action == plans.NoOp {
-				continue
-			}
-
-			err = encoder.EncodeKeyvals(
-				"addr", addr,
-				"resource_mode", resourceMode,
-				"action", action,
-				"component", component,
-				"project", project)
-			if err != nil {
-				return fmt.Errorf("could not encode key/val: %w", err)
-			}
-			err = encoder.EndRecord()
-			if err != nil {
-				return fmt.Errorf("could not end record: %w", err)
-			}
-		}
-		return nil
 	},
+}
+
+func entropyRun(cmd *cobra.Command, args []string) error {
+	planFilePath, err := cmd.Flags().GetString("plan-file")
+	if err != nil {
+		return fmt.Errorf("could not read plan-file flag: %w", err)
+	}
+	outputFilePath, err := cmd.Flags().GetString("output-file")
+	if err != nil {
+		return fmt.Errorf("could not read output-file flag: %w", err)
+	}
+	component, err := cmd.Flags().GetString("component")
+	if err != nil {
+		return fmt.Errorf("could not read component flag: %w", err)
+	}
+	project, err := cmd.Flags().GetString("project")
+	if err != nil {
+		return fmt.Errorf("could not read project flag: %w", err)
+	}
+
+	planReader, err := planfile.Open(planFilePath)
+	if err != nil {
+		return fmt.Errorf("could not open terraform plan: %w", err)
+	}
+	defer planReader.Close()
+
+	plan, err := planReader.ReadPlan()
+	if err != nil {
+		return fmt.Errorf("could not read/parse terraform plan: %w", err)
+	}
+
+	f, err := os.Create(outputFilePath)
+	if err != nil {
+		return fmt.Errorf("could not open output file for writing: %w", err)
+	}
+	defer f.Close()
+
+	encoder := logfmt.NewEncoder(f)
+	for _, resourceChange := range plan.Changes.Resources {
+		addr := resourceChange.Addr.String()
+		resourceMode := resourceChange.Addr.Resource.Resource.Mode.String()
+		action := resourceChange.Action
+
+		if action == plans.NoOp {
+			continue
+		}
+
+		err = encoder.EncodeKeyvals(
+			"addr", addr,
+			"resource_mode", resourceMode,
+			"action", action,
+			"component", component,
+			"project", project)
+		if err != nil {
+			return fmt.Errorf("could not encode key/val: %w", err)
+		}
+		err = encoder.EndRecord()
+		if err != nil {
+			return fmt.Errorf("could not end record: %w", err)
+		}
+	}
+	return nil
 }
