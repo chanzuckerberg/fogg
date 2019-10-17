@@ -16,8 +16,8 @@ func init() {
 	entropyCmd.Flags().StringP("component", "c", "TODO", "The terraform component for this plan")
 	entropyCmd.Flags().StringP("project", "p", "TODO", "The terraform project for this plan")
 
-	entropyCmd.MarkFlagRequired("component")
-	entropyCmd.MarkFlagRequired("project")
+	// entropyCmd.MarkFlagRequired("component")
+	// entropyCmd.MarkFlagRequired("project")
 
 	ExpCmd.AddCommand(entropyCmd)
 }
