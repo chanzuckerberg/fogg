@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/hashicorp/hcl/v2"
+	"github.com/hashicorp/hcl2/hcl"
 )
 
 // LoadConfigDir reads the .tf and .tf.json files in the given directory

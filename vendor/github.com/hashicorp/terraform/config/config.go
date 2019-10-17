@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	hcl2 "github.com/hashicorp/hcl/v2"
+	hcl2 "github.com/hashicorp/hcl2/hcl"
 	"github.com/hashicorp/hil/ast"
 	"github.com/hashicorp/terraform/helper/hilmapstructure"
 	"github.com/hashicorp/terraform/plugin/discovery"

@@ -10,7 +10,7 @@ import (
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/convert"
 
-	hcl2 "github.com/hashicorp/hcl/v2"
+	hcl2 "github.com/hashicorp/hcl2/hcl"
 	"github.com/hashicorp/hil"
 	"github.com/hashicorp/hil/ast"
 	"github.com/mitchellh/copystructure"
