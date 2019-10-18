@@ -81,28 +81,42 @@ func entropyRun(cmd *cobra.Command, args []string) error {
 	defer f.Close()
 
 	encoder := logfmt.NewEncoder(f)
+	actionCounts := map[string]int{}
+
+	// We just keep a simple count of the terraform actions
 	for _, resourceChange := range plan.Changes.Resources {
-		addr := resourceChange.Addr.String()
-		resourceMode := resourceChange.Addr.Resource.Resource.Mode.String()
 		action := resourceChange.Action
 
 		if action == plans.NoOp {
 			continue
 		}
 
-		err = encoder.EncodeKeyvals(
-			"addr", addr,
-			"resource_mode", resourceMode,
-			"action", action,
-			"component", component,
-			"project", project)
-		if err != nil {
-			return fmt.Errorf("could not encode key/val: %w", err)
+		count, ok := actionCounts[action.String()]
+		if !ok {
+			actionCounts[action.String()] = 1
+		} else {
+			actionCounts[action.String()] = count + 1
 		}
-		err = encoder.EndRecord()
+	}
+
+	for action, count := range actionCounts {
+		err = encoder.EncodeKeyval(action, count)
 		if err != nil {
-			return fmt.Errorf("could not end record: %w", err)
+			return fmt.Errorf("could not encode key/val %w", err)
 		}
+	}
+
+	err = encoder.EncodeKeyvals(
+		"component", component,
+		"project", project,
+	)
+	if err != nil {
+		return fmt.Errorf("could not encode key/val: %w", err)
+	}
+
+	err = encoder.EndRecord()
+	if err != nil {
+		return fmt.Errorf("could not end record: %w", err)
 	}
 	return nil
 }

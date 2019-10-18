@@ -2,7 +2,7 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 SELF_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-CHECK_PLANFILE ?= check-plan.output
+CHECK_PLANFILE_PATH ?= check-plan.output
 BUILDEVENT_FILE ?= buildevents.plan
 
 include $(SELF_DIR)/common.mk
@@ -114,7 +114,7 @@ check-plan: init check-auth ## run a terraform plan and check that it does not f
 	elif [ $$ERR -eq 2 ] ; then \
 		echo "Diff";  \
 	fi
-	fogg exp entropy -f $(CHECK_PLANFILE) -o $(BUILDEVENT_FILE)
+	fogg exp entropy -f $(CHECK_PLANFILE_PATH) -o $(BUILDEVENT_FILE)
 .PHONY: check-plan
 
 run: check-auth ## run an arbitrary terraform command, CMD. ex `make run CMD='show'`

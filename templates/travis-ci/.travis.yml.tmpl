@@ -9,6 +9,10 @@ env:
   global:
     - BUILD_START=$(date +%s)
     - BUILDEVENTS_BUILD_ID=${TRAVIS_BUILD_ID}
+    {{- if .Buildevents }}
+    - CHECK_PLANFILE_PATH
+    -
+    {{- end }}
 
 install:
   {{- if .Buildevents }}
