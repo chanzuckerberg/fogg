@@ -9,6 +9,8 @@ env:
   global:
     - BUILD_START=$(date +%s)
     - BUILDEVENTS_BUILD_ID=${TRAVIS_BUILD_ID}
+    - CHECK_PLANFILE_PATH
+    -
 
 install:
   - STEP_START=$(date +%s)
