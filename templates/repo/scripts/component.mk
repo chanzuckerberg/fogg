@@ -114,7 +114,7 @@ check-plan: init check-auth ## run a terraform plan and check that it does not f
 		echo "Diff";  \
   fi ; \
 
-	if [ -n "$$BUILDEVENT_FILE" ]; then \
+	if [ -n "$(BUILDEVENT_FILE)" ]; then \
 		fogg exp entropy -f $(CHECK_PLANFILE_PATH) -o $(BUILDEVENT_FILE) ; \
   fi
 .PHONY: check-plan
