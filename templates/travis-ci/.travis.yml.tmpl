@@ -25,7 +25,9 @@ install:
   - FOGG_VERSION="v{{ .FoggVersion }}" travis_retry make setup
   {{- if .Buildevents }}
   - mkdir bin # this is in theory supposed to exist already
-  - curl -L -o $HOME/bin/buildevents https://github.com/honeycombio/buildevents/releases/latest/download/buildevents-linux-amd64
+  # TODO (el): replace once buildevents has released https://github.com/honeycombio/buildevents/pull/53
+  #- curl -L -o $HOME/bin/buildevents https://github.com/honeycombio/buildevents/releases/latest/download/buildevents-linux-amd64
+  - curl -L -o $HOME/bin/buildevents https://github.com/chanzuckerberg/buildevents/releases/download/v0.4.7-czi/buildevents
   - chmod 755 $HOME/bin/buildevents
   - buildevents --version
   - buildevents step $BUILDEVENTS_BUILD_ID $STEP_SPAN_ID $STEP_START $STEP_NAME
@@ -36,7 +38,6 @@ before_script:
   - STEP_NAME=before_script.${TRAVIS_JOB_NUMBER}
   - STEP_SPAN_ID=$(echo ${STEP_NAME} | sum | cut -f 1 -d \ )
   {{- end }}
-  # TODO add note about why these need to be prefixed with HUB_
   - aws configure set aws_access_key_id     $IDACCT_AWS_ACCESS_KEY_ID     --profile _idacct
   - aws configure set aws_secret_access_key $IDACCT_AWS_SECRET_ACCESS_KEY --profile _idacct
   - aws --profile _idacct sts get-caller-identity
