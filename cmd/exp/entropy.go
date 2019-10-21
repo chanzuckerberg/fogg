@@ -13,11 +13,6 @@ import (
 func init() {
 	entropyCmd.Flags().StringP("plan-file", "f", "TODO", "Path to Terraform Plan file to parse.")
 	entropyCmd.Flags().StringP("output-file", "o", "TODO", "Path to write instrumentation to")
-	entropyCmd.Flags().StringP("component", "c", "TODO", "The terraform component for this plan")
-	entropyCmd.Flags().StringP("project", "p", "TODO", "The terraform project for this plan")
-
-	// entropyCmd.MarkFlagRequired("component")
-	// entropyCmd.MarkFlagRequired("project")
 
 	ExpCmd.AddCommand(entropyCmd)
 }
@@ -48,35 +43,27 @@ output in LogFmt format.`,
 func entropyRun(cmd *cobra.Command, args []string) error {
 	planFilePath, err := cmd.Flags().GetString("plan-file")
 	if err != nil {
-		return fmt.Errorf("could not read plan-file flag: %w\n", err)
+		return fmt.Errorf("could not read plan-file flag: %w", err)
 	}
 	outputFilePath, err := cmd.Flags().GetString("output-file")
 	if err != nil {
-		return fmt.Errorf("could not read output-file flag: %w\n", err)
-	}
-	component, err := cmd.Flags().GetString("component")
-	if err != nil {
-		return fmt.Errorf("could not read component flag: %w\n", err)
-	}
-	project, err := cmd.Flags().GetString("project")
-	if err != nil {
-		return fmt.Errorf("could not read project flag: %w\n", err)
+		return fmt.Errorf("could not read output-file flag: %w", err)
 	}
 
 	planReader, err := planfile.Open(planFilePath)
 	if err != nil {
-		return fmt.Errorf("could not open terraform plan: %w\n", err)
+		return fmt.Errorf("could not open terraform plan: %w", err)
 	}
 	defer planReader.Close()
 
 	plan, err := planReader.ReadPlan()
 	if err != nil {
-		return fmt.Errorf("could not read/parse terraform plan: %w\n", err)
+		return fmt.Errorf("could not read/parse terraform plan: %w", err)
 	}
 
 	f, err := os.Create(outputFilePath)
 	if err != nil {
-		return fmt.Errorf("could not open output file for writing: %w\n", err)
+		return fmt.Errorf("could not open output file for writing: %w", err)
 	}
 	defer f.Close()
 
@@ -102,21 +89,13 @@ func entropyRun(cmd *cobra.Command, args []string) error {
 	for action, count := range actionCounts {
 		err = encoder.EncodeKeyval(action, count)
 		if err != nil {
-			return fmt.Errorf("could not encode key/val %w\n", err)
+			return fmt.Errorf("could not encode key/val %w", err)
 		}
-	}
-
-	err = encoder.EncodeKeyvals(
-		"component", component,
-		"project", project,
-	)
-	if err != nil {
-		return fmt.Errorf("could not encode key/val: %w\n", err)
 	}
 
 	err = encoder.EndRecord()
 	if err != nil {
-		return fmt.Errorf("could not end record: %w\n", err)
+		return fmt.Errorf("could not end record: %w", err)
 	}
 	return nil
 }
