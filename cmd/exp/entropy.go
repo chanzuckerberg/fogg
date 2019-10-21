@@ -48,35 +48,35 @@ output in LogFmt format.`,
 func entropyRun(cmd *cobra.Command, args []string) error {
 	planFilePath, err := cmd.Flags().GetString("plan-file")
 	if err != nil {
-		return fmt.Errorf("could not read plan-file flag: %w", err)
+		return fmt.Errorf("could not read plan-file flag: %w\n", err)
 	}
 	outputFilePath, err := cmd.Flags().GetString("output-file")
 	if err != nil {
-		return fmt.Errorf("could not read output-file flag: %w", err)
+		return fmt.Errorf("could not read output-file flag: %w\n", err)
 	}
 	component, err := cmd.Flags().GetString("component")
 	if err != nil {
-		return fmt.Errorf("could not read component flag: %w", err)
+		return fmt.Errorf("could not read component flag: %w\n", err)
 	}
 	project, err := cmd.Flags().GetString("project")
 	if err != nil {
-		return fmt.Errorf("could not read project flag: %w", err)
+		return fmt.Errorf("could not read project flag: %w\n", err)
 	}
 
 	planReader, err := planfile.Open(planFilePath)
 	if err != nil {
-		return fmt.Errorf("could not open terraform plan: %w", err)
+		return fmt.Errorf("could not open terraform plan: %w\n", err)
 	}
 	defer planReader.Close()
 
 	plan, err := planReader.ReadPlan()
 	if err != nil {
-		return fmt.Errorf("could not read/parse terraform plan: %w", err)
+		return fmt.Errorf("could not read/parse terraform plan: %w\n", err)
 	}
 
 	f, err := os.Create(outputFilePath)
 	if err != nil {
-		return fmt.Errorf("could not open output file for writing: %w", err)
+		return fmt.Errorf("could not open output file for writing: %w\n", err)
 	}
 	defer f.Close()
 
@@ -102,7 +102,7 @@ func entropyRun(cmd *cobra.Command, args []string) error {
 	for action, count := range actionCounts {
 		err = encoder.EncodeKeyval(action, count)
 		if err != nil {
-			return fmt.Errorf("could not encode key/val %w", err)
+			return fmt.Errorf("could not encode key/val %w\n", err)
 		}
 	}
 
@@ -111,12 +111,12 @@ func entropyRun(cmd *cobra.Command, args []string) error {
 		"project", project,
 	)
 	if err != nil {
-		return fmt.Errorf("could not encode key/val: %w", err)
+		return fmt.Errorf("could not encode key/val: %w\n", err)
 	}
 
 	err = encoder.EndRecord()
 	if err != nil {
-		return fmt.Errorf("could not end record: %w", err)
+		return fmt.Errorf("could not end record: %w\n", err)
 	}
 	return nil
 }

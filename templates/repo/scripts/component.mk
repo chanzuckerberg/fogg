@@ -114,7 +114,9 @@ check-plan: init check-auth ## run a terraform plan and check that it does not f
 	elif [ $$ERR -eq 2 ] ; then \
 		echo "Diff";  \
 	fi
+	ls
 	fogg exp entropy -f $(CHECK_PLANFILE_PATH) -o $(BUILDEVENT_FILE)
+	ls
 .PHONY: check-plan
 
 run: check-auth ## run an arbitrary terraform command, CMD. ex `make run CMD='show'`
