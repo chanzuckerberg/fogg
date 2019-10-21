@@ -17,6 +17,10 @@ func init() {
 	ExpCmd.AddCommand(entropyCmd)
 }
 
+const (
+	allActions = "AllActions"
+)
+
 type terraformDiff struct {
 	Address      string `logfmt:"address,omitempty"`
 	ResourceMode string `logfmt:"resource_mode,omitempty"`
@@ -68,7 +72,10 @@ func entropyRun(cmd *cobra.Command, args []string) error {
 	defer f.Close()
 
 	encoder := logfmt.NewEncoder(f)
-	actionCounts := map[string]int{}
+	actionCounts := map[string]int{
+		// Also keep a summary of all actions
+		allActions: 0,
+	}
 
 	// We just keep a simple count of the terraform actions
 	for _, resourceChange := range plan.Changes.Resources {
@@ -84,6 +91,7 @@ func entropyRun(cmd *cobra.Command, args []string) error {
 		} else {
 			actionCounts[action.String()] = count + 1
 		}
+		actionCounts[allActions] = actionCounts[allActions] + 1
 	}
 
 	for action, count := range actionCounts {
