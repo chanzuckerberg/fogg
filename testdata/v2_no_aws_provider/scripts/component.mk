@@ -3,7 +3,6 @@
 
 SELF_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 CHECK_PLANFILE_PATH ?= check-plan.output
-BUILDEVENT_FILE ?= buildevents.plan
 
 include $(SELF_DIR)/common.mk
 
@@ -104,7 +103,7 @@ endif
 .PHONY: init
 
 check-plan: init check-auth ## run a terraform plan and check that it does not fail
-	@$(terraform_command) plan $(TF_ARGS) -detailed-exitcode -lock=false -out=$(CHECK_PLANFILE) ; \
+	@$(terraform_command) plan $(TF_ARGS) -detailed-exitcode -lock=false -out=$(CHECK_PLANFILE_PATH) ; \
 	ERR=$$?; \
 	if [ $$ERR -eq 0 ] ; then \
 		echo "Success"; \
@@ -113,8 +112,11 @@ check-plan: init check-auth ## run a terraform plan and check that it does not f
 		exit 1; \
 	elif [ $$ERR -eq 2 ] ; then \
 		echo "Diff";  \
-	fi
-	fogg exp entropy -f $(CHECK_PLANFILE_PATH) -o $(BUILDEVENT_FILE)
+  fi ; \
+
+	if [ -n "$(BUILDEVENT_FILE)" ]; then \
+		fogg exp entropy -f $(CHECK_PLANFILE_PATH) -o $(BUILDEVENT_FILE) ; \
+  fi
 .PHONY: check-plan
 
 run: check-auth ## run an arbitrary terraform command, CMD. ex `make run CMD='show'`
