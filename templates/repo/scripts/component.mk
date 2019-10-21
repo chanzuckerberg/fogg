@@ -3,7 +3,6 @@
 
 SELF_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 CHECK_PLANFILE_PATH ?= check-plan.output
-BUILDEVENT_FILE ?= buildevents.plan
 
 include $(SELF_DIR)/common.mk
 
@@ -113,10 +112,11 @@ check-plan: init check-auth ## run a terraform plan and check that it does not f
 		exit 1; \
 	elif [ $$ERR -eq 2 ] ; then \
 		echo "Diff";  \
-	fi
-	ls
-	fogg exp entropy -f $(CHECK_PLANFILE_PATH) -o $(BUILDEVENT_FILE)
-	ls
+  fi
+
+	if [ -z "$$BUILDEVENT_FILE" ]; then \
+		fogg exp entropy -f $(CHECK_PLANFILE_PATH) -o $(BUILDEVENT_FILE) ; \
+  fi
 .PHONY: check-plan
 
 run: check-auth ## run an arbitrary terraform command, CMD. ex `make run CMD='show'`
