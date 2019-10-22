@@ -26,7 +26,7 @@ github.com/apparentlymart/go-cidr/cidr
 github.com/apparentlymart/go-textseg/textseg
 # github.com/armon/go-radix v1.0.0
 github.com/armon/go-radix
-# github.com/aws/aws-sdk-go v1.25.13
+# github.com/aws/aws-sdk-go v1.25.14
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/arn
 github.com/aws/aws-sdk-go/aws/awserr
@@ -81,6 +81,8 @@ github.com/davecgh/go-spew/spew
 github.com/fatih/color
 # github.com/go-errors/errors v1.0.1
 github.com/go-errors/errors
+# github.com/go-logfmt/logfmt v0.4.0
+github.com/go-logfmt/logfmt
 # github.com/go-playground/locales v0.12.1
 github.com/go-playground/locales
 github.com/go-playground/locales/currency
@@ -176,18 +178,22 @@ github.com/hashicorp/hil/scanner
 github.com/hashicorp/terraform/addrs
 github.com/hashicorp/terraform/config
 github.com/hashicorp/terraform/configs
+github.com/hashicorp/terraform/configs/configload
 github.com/hashicorp/terraform/configs/configschema
 github.com/hashicorp/terraform/configs/hcl2shim
 github.com/hashicorp/terraform/dag
 github.com/hashicorp/terraform/helper/didyoumean
 github.com/hashicorp/terraform/helper/hilmapstructure
 github.com/hashicorp/terraform/httpclient
+github.com/hashicorp/terraform/internal/modsdir
 github.com/hashicorp/terraform/lang
 github.com/hashicorp/terraform/lang/blocktoattr
 github.com/hashicorp/terraform/lang/funcs
 github.com/hashicorp/terraform/moduledeps
 github.com/hashicorp/terraform/plans
+github.com/hashicorp/terraform/plans/internal/planproto
 github.com/hashicorp/terraform/plans/objchange
+github.com/hashicorp/terraform/plans/planfile
 github.com/hashicorp/terraform/plugin/discovery
 github.com/hashicorp/terraform/providers
 github.com/hashicorp/terraform/provisioners
@@ -222,6 +228,8 @@ github.com/jstemmer/go-junit-report/formatter
 github.com/jstemmer/go-junit-report/parser
 # github.com/konsorten/go-windows-terminal-sequences v1.0.2
 github.com/konsorten/go-windows-terminal-sequences
+# github.com/kr/logfmt v0.0.0-20140226030751-b84e30acd515
+github.com/kr/logfmt
 # github.com/kr/pretty v0.1.0
 github.com/kr/pretty
 # github.com/kr/text v0.1.0
@@ -355,7 +363,7 @@ golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
-# golang.org/x/tools v0.0.0-20191015211201-9c6d90b5a7d0
+# golang.org/x/tools v0.0.0-20191017101817-846f856e7d71
 golang.org/x/tools/cmd/goimports
 golang.org/x/tools/go/analysis
 golang.org/x/tools/go/analysis/passes/inspect
@@ -373,6 +381,7 @@ golang.org/x/tools/internal/gopathwalk
 golang.org/x/tools/internal/imports
 golang.org/x/tools/internal/module
 golang.org/x/tools/internal/semver
+golang.org/x/tools/internal/span
 # google.golang.org/api v0.11.0
 google.golang.org/api/googleapi
 google.golang.org/api/googleapi/internal/uritemplates

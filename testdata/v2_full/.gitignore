@@ -27,3 +27,6 @@
 .DS_Store
 .vscode
 .envrc
+
+buildevents.plan
+check-plan.output
