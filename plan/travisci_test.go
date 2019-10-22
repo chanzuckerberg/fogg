@@ -33,6 +33,9 @@ func Test_buildTravisCI_Disabled(t *testing.T) {
 							Enabled: &f,
 						},
 					},
+					Backend: &v2.Backend{
+						Profile: util.StrPtr("my-profile"),
+					},
 				},
 			},
 		}
@@ -41,6 +44,8 @@ func Test_buildTravisCI_Disabled(t *testing.T) {
 		tr := p.buildTravisCI(c, "0.1.0")
 		a.NotNil(tr)
 		a.False(tr.Enabled)
+		// TODO: Write more tests here on the actual profile
+		a.Len(tr.AWSProfiles, 1)
 	}
 }
 
