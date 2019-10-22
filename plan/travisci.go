@@ -51,6 +51,13 @@ func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
 				}
 			}
 		}
+
+		if p.Global.Tools.AccountID != nil {
+			awsProfiles[p.Global.Tools.Profile] = AWSRole{
+				AccountID: *p.Global.Tools.AccountID,
+				RoleName:  p.Global.TravisCI.AWSRoleName,
+			}
+		}
 	}
 
 	for name, acct := range p.Accounts {
