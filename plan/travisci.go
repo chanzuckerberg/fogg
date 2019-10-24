@@ -82,43 +82,43 @@ func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
 		}
 	}
 
-	// for _, env := range p.Envs {
-	// 	for _, c := range env.Components {
-	// 		if c.TravisCI.Enabled {
-	// 			enabled = true
-	// 			buildeventsEnabled = buildeventsEnabled || p.Global.TravisCI.Buildevents
+	for _, env := range p.Envs {
+		for _, c := range env.Components {
+			if c.TravisCI.Enabled {
+				enabled = true
+				buildeventsEnabled = buildeventsEnabled || p.Global.TravisCI.Buildevents
 
-	// 			// proj := TravisProject{
-	// 			// 	Name:    fmt.Sprintf("%s/%s", envName, cName),
-	// 			// 	Dir:     fmt.Sprintf("terraform/envs/%s/%s", envName, cName),
-	// 			// 	Command: "check",
-	// 			// }
+				// proj := TravisProject{
+				// 	Name:    fmt.Sprintf("%s/%s", envName, cName),
+				// 	Dir:     fmt.Sprintf("terraform/envs/%s/%s", envName, cName),
+				// 	Command: "lint",
+				// }
 
-	// 			// projects = append(projects, proj)
+				// projects = append(projects, proj)
 
-	// 			if c.Backend.AccountID != nil {
-	// 				awsProfiles[c.Backend.Profile] = AWSRole{
-	// 					AccountID: *c.Backend.AccountID,
-	// 					RoleName:  c.TravisCI.AWSRoleName,
-	// 				}
-	// 			}
+				if c.Backend.AccountID != nil {
+					awsProfiles[c.Backend.Profile] = AWSRole{
+						AccountID: *c.Backend.AccountID,
+						RoleName:  c.TravisCI.AWSRoleName,
+					}
+				}
 
-	// 			if c.Providers.AWS != nil {
-	// 				a := *c.Providers.AWS
-	// 				awsProfiles[a.Profile] = AWSRole{
-	// 					AccountID: a.AccountID.String(),
-	// 					RoleName:  c.TravisCI.AWSRoleName,
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// }
+				if c.Providers.AWS != nil {
+					a := *c.Providers.AWS
+					awsProfiles[a.Profile] = AWSRole{
+						AccountID: a.AccountID.String(),
+						RoleName:  c.TravisCI.AWSRoleName,
+					}
+				}
+			}
+		}
+	}
 
 	// for moduleName := range p.Modules {
 	// 	proj := TravisProject{
 	// 		Name:    fmt.Sprintf("modules/%s", moduleName),
 	// 		Dir:     fmt.Sprintf("terraform/modules/%s", moduleName),
-	// 		Command: "check",
+	// 		Command: "lint",
 	// 	}
 	// 	projects = append(projects, proj)
 	// }
