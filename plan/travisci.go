@@ -91,7 +91,7 @@ func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
 				proj := TravisProject{
 					Name:    fmt.Sprintf("%s/%s", envName, cName),
 					Dir:     fmt.Sprintf("terraform/envs/%s/%s", envName, cName),
-					Command: "check",
+					Command: c.TravisCI.Command,
 				}
 
 				projects = append(projects, proj)
