@@ -88,14 +88,6 @@ func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
 				enabled = true
 				buildeventsEnabled = buildeventsEnabled || p.Global.TravisCI.Buildevents
 
-				// proj := TravisProject{
-				// 	Name:    fmt.Sprintf("%s/%s", envName, cName),
-				// 	Dir:     fmt.Sprintf("terraform/envs/%s/%s", envName, cName),
-				// 	Command: "lint",
-				// }
-
-				// projects = append(projects, proj)
-
 				if c.Backend.AccountID != nil {
 					awsProfiles[c.Backend.Profile] = AWSRole{
 						AccountID: *c.Backend.AccountID,
@@ -113,15 +105,6 @@ func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
 			}
 		}
 	}
-
-	// for moduleName := range p.Modules {
-	// 	proj := TravisProject{
-	// 		Name:    fmt.Sprintf("modules/%s", moduleName),
-	// 		Dir:     fmt.Sprintf("terraform/modules/%s", moduleName),
-	// 		Command: "lint",
-	// 	}
-	// 	projects = append(projects, proj)
-	// }
 
 	var buckets int
 	if c.Defaults.Tools != nil &&
