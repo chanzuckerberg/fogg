@@ -1,29 +1,27 @@
 package exp
 
 import (
-	"bytes"
 	"fmt"
 	"os"
-	"os/exec"
-	"strings"
-	"text/template"
 
 	"github.com/aws/aws-sdk-go/aws/arn"
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/errs"
-	"github.com/pkg/errors"
-	"github.com/segmentio/go-prompt"
+	"github.com/mitchellh/go-homedir"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
+	"gopkg.in/ini.v1"
 )
 
 func init() {
 	awsConfigCmd.Flags().StringP("source-profile", "p", "default", "Use this to override the base aws profile.")
 	awsConfigCmd.Flags().StringP("role", "r", "default", "Use this to override the default assume role.")
-	awsConfigCmd.Flags().StringP("config", "c", "fogg.yml", "Use this to override the fogg config file.")
-	awsConfigCmd.Flags().BoolP("export", "e", false, "Export whole thing to stdout.")
-	awsConfigCmd.Flags().BoolP("all", "a", false, "All profiles. Only makes sense if export=true.")
+
+	awsConfigCmd.Flags().String("fogg-config", "fogg.yml", "Use this to override the fogg config file.")
+	awsConfigCmd.Flags().String("aws-config", "~/.aws/config", "Path to your AWS config")
+	awsConfigCmd.Flags().String("okta-aws-saml-url", "", "Your aws-okta aws_saml_url value.")
+	awsConfigCmd.Flags().String("okta-role-arn", "", "Your aws-okta initial role to assume.")
 
 	ExpCmd.AddCommand(awsConfigCmd)
 }
@@ -40,26 +38,53 @@ var awsConfigCmd = &cobra.Command{
 			return errs.WrapUser(err, "can't get pwd")
 		}
 		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
+
 		// handle flags
-		configFile, err := cmd.Flags().GetString("config")
+		configFile, err := cmd.Flags().GetString("fogg-config")
 		if err != nil {
-			return errs.WrapInternal(err, "couldn't parse config flag")
+			return errs.WrapInternal(err, "couldn't parse fogg-config flag")
 		}
+
+		awsConfigPath, err := cmd.Flags().GetString("aws-config")
+		if err != nil {
+			return errs.WrapInternal(err, "couldn't parse aws-config flag")
+		}
+		awsConfigPath, err = homedir.Expand(awsConfigPath)
+		if err != nil {
+			return errs.WrapInternal(err, "couldn't expand aws-config path.")
+		}
+
 		sourceProfile, err := cmd.Flags().GetString("source-profile")
 		if err != nil {
 			return errs.WrapInternal(err, "couldn't parse source-profile")
 		}
+
+		var oktaAwsSamlURL *string
+		if cmd.Flags().Changed("okta-aws-saml-url") {
+			s, err := cmd.Flags().GetString("okta-aws-saml-url")
+			if err != nil {
+				return errs.WrapInternal(err, "couldn't parse okta-aws-saml-url")
+			}
+			oktaAwsSamlURL = &s
+		}
+
+		var oktaRoleARN *string
+		if cmd.Flags().Changed("okta-role-arn") {
+			s, err := cmd.Flags().GetString("okta-role-arn")
+			if err != nil {
+				return errs.WrapInternal(err, "couldn't parse okta-role-arn")
+			}
+			oktaRoleARN = &s
+		}
+
+		// both of them must be set or unset
+		if (oktaAwsSamlURL != nil) != (oktaRoleARN != nil) {
+			return errs.NewUser("Both okta-aws-saml-url and okta-role-arn must be set if either of them is.")
+		}
+
 		role, err := cmd.Flags().GetString("role")
 		if err != nil {
 			return errs.WrapInternal(err, "couldn't parse role")
-		}
-		export, err := cmd.Flags().GetBool("export")
-		if err != nil {
-			return errs.WrapInternal(err, "couldn't parse export")
-		}
-		all, err := cmd.Flags().GetBool("all")
-		if err != nil {
-			return errs.WrapInternal(err, "couldn't parse all")
 		}
 
 		conf, err := config.FindAndReadConfig(fs, configFile)
@@ -67,23 +92,22 @@ var awsConfigCmd = &cobra.Command{
 			return err
 		}
 
-		templateString := `
-[profile {{.accountName}}]
-role_arn = {{.roleARN}}
-source_profile = {{.sourceProfile}}
-region = {{.region}}
-output = json
-`
-		awsConfigBlock := bytes.NewBuffer(nil)
-		choices := []string{"yes", "no"}
+		confIni := ini.Empty()
 
-	Loop:
+		if oktaAwsSamlURL != nil {
+			section := confIni.Section("okta")
+			section.Key("role_arn").SetValue(*oktaRoleARN)
+			section.Key("aws_saml_url").SetValue(*oktaAwsSamlURL)
+		}
+
 		for name, account := range conf.Accounts {
+			logrus.Infof("Processing profile %s", name)
 			// No AWS provider, skip this account
 			if account.Providers == nil || account.Providers.AWS == nil {
 				logrus.Infof("Skipping %s because no AWS providers detected", name)
 				continue
 			}
+
 			region := conf.Defaults.Providers.AWS.Region
 			if account.Providers.AWS.Region != nil {
 				region = account.Providers.AWS.Region
@@ -96,64 +120,26 @@ output = json
 				Resource:  fmt.Sprintf("role/%s", role),
 			}
 
-			data := map[string]interface{}{
-				"accountName":   name,
-				"roleARN":       roleARN.String(),
-				"sourceProfile": sourceProfile,
-				"region":        region,
-			}
+			section := confIni.Section(fmt.Sprintf("profile %s", name))
 
-			t, err := template.New("aws config").Parse(templateString)
-			if err != nil {
-				return errors.Wrap(err, "Could not parse template")
-			}
+			section.Key("role_arn").SetValue(roleARN.String())
+			section.Key("region").SetValue(*region)
+			section.Key("output").SetValue("json")
 
-			err = t.Execute(awsConfigBlock, data)
-			if err != nil {
-				return errors.Wrap(err, "Could not templetize")
-			}
-
-			if export {
-				fmt.Println(awsConfigBlock.String())
+			if oktaAwsSamlURL != nil {
+				section.Key("credential_source").SetValue("Environment")
 			} else {
-				if !all {
-					fmt.Println(awsConfigBlock.String())
-
-					choiceIdx := prompt.Choose("Add this config?", choices)
-					switch choices[choiceIdx] {
-					case "no":
-						continue Loop // fixme
-					}
-				}
-
-				err = awsConfigure(name, roleARN.String(), sourceProfile, *region)
-				if err != nil {
-					return err
-				}
+				section.Key("source_profile").SetValue(sourceProfile)
 			}
-			awsConfigBlock.Reset()
+
 		}
-		return nil
-	},
-}
-
-func awsConfigure(name, roleARN, sourceProfile, region string) error {
-	cmds := []struct {
-		property string
-		value    string
-	}{
-		{"role_arn", roleARN},
-		{"source_profile", sourceProfile},
-		{"region", region},
-		{"output", "json"},
-	}
-
-	for _, params := range cmds {
-		cmd := exec.Command("aws", "configure", "set", fmt.Sprintf("profile.%s.%s", name, params.property), params.value)
-		err := cmd.Run()
+		awsConfigFile, err := os.OpenFile(awsConfigPath, os.O_WRONLY|os.O_CREATE, 0600)
 		if err != nil {
-			return errors.Wrapf(err, "Error executing: %s %s", cmd.Path, strings.Join(cmd.Args, " "))
+			return err
 		}
-	}
-	return nil
+		defer awsConfigFile.Close()
+
+		_, err = confIni.WriteTo(awsConfigFile)
+		return err
+	},
 }

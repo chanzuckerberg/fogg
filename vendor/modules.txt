@@ -449,6 +449,8 @@ google.golang.org/grpc/status
 google.golang.org/grpc/tap
 # gopkg.in/go-playground/validator.v9 v9.30.0
 gopkg.in/go-playground/validator.v9
+# gopkg.in/ini.v1 v1.42.0
+gopkg.in/ini.v1
 # gopkg.in/yaml.v2 v2.2.2
 gopkg.in/yaml.v2
 # gopkg.in/yaml.v3 v3.0.0-20191010095647-fc94e3f71652

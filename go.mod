@@ -60,5 +60,6 @@ require (
 	google.golang.org/appengine v1.6.5 // indirect
 	google.golang.org/grpc v1.24.0 // indirect
 	gopkg.in/go-playground/validator.v9 v9.30.0
+	gopkg.in/ini.v1 v1.42.0
 	gopkg.in/yaml.v3 v3.0.0-20191010095647-fc94e3f71652
 )
