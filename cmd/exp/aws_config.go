@@ -126,11 +126,12 @@ var awsConfigCmd = &cobra.Command{
 			section.Key("region").SetValue(*region)
 			section.Key("output").SetValue("json")
 
-			if oktaAwsSamlURL != nil {
-				section.Key("credential_source").SetValue("Environment")
-			} else {
-				section.Key("source_profile").SetValue(sourceProfile)
-			}
+			section.Key("source_profile").SetValue(sourceProfile)
+			// if oktaAwsSamlURL != nil {
+			// section.Key("credential_source").SetValue("Environment")
+			// } else {
+			// section.Key("source_profile").SetValue(sourceProfile)
+			// }
 
 		}
 		awsConfigFile, err := os.OpenFile(awsConfigPath, os.O_WRONLY|os.O_CREATE, 0600)
