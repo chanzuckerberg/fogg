@@ -1,0 +1,62 @@
+version: 2.1
+commands:
+  config_aws_source_profile:
+    description: Configure the AWS base profile
+    steps:
+      - run: aws configure set aws_access_key_id $IDACCT_AWS_ACCESS_KEY_ID --profile _idacct
+      - run: aws configure set aws_secret_access_key $IDACCT_AWS_SECRET_ACCESS_KEY --profile _idacct
+      - run: aws --profile _idacct sts get-caller-identity
+  config_aws_profile:
+    description: Configure AWS authentication
+    parameters:
+      profile_name:
+        type: string
+      aws_account_id:
+        type: string
+      role_name:
+        type: string
+    steps:
+      - run: aws configure set profile.<< parameters.profile_name >>.role_arn arn:aws:iam::<< parameters.aws_account_id>>:role/<< parameters.role_name >>
+      - run: aws configure set profile.<< parameters.profile_name >>.source_profile _idacct
+      - run: aws sts get-caller-identity --profile << parameters.profile_name >>
+  terraform_test:
+    description: Test a terraform component
+    parameters:
+      dir:
+        type: string
+      command:
+        type: string
+        default: check
+    steps:
+      - run: pushd << parameters.dir >>
+      - run: make << parameters.command >>
+executors:
+  python:
+    docker:
+      - image: circleci/python:3.8
+jobs:
+  dependencies:
+    executor: python
+    steps:
+      - checkout
+      - run: pip install awscli --upgrade
+      - run: aws --version
+      - run: FOGG_VERSION="v0.34.1" make setup
+      - config_aws_source_profile
+      - config_aws_profile:
+        profile_name: ""
+        aws_account_id: ""
+        role_name: ""
+      - save_cache:
+          paths:
+            - .fogg
+          key: v0-dependencies-{{ checksum ".fogg-version" }}-{{ checksum "fogg.yml" }}
+  test:
+    executor: python
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v0-dependencies-{{ checksum ".fogg-version" }}-{{ checksum "fogg.yml" }}
+workflows:
+  version: 2.1
