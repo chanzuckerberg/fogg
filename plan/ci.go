@@ -7,31 +7,31 @@ import (
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 )
 
-type TravisProject struct {
+type CIProject struct {
 	Name    string
 	Dir     string
 	Command string
 }
-type TravisCI struct {
+type CIConfig struct {
 	Enabled     bool
 	FoggVersion string
-	TestBuckets [][]TravisProject
+	TestBuckets [][]CIProject
 	AWSProfiles map[string]AWSRole
 	Buildevents bool
 }
 
 // TODO(el): mostly a duplicate of buildAtlantis(). refactor later
-func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
+func (p *Plan) buildCIConfig(c *v2.Config, foggVersion string) CIConfig {
 	enabled := false
 	buildeventsEnabled := false
-	projects := []TravisProject{}
+	projects := []CIProject{}
 	awsProfiles := map[string]AWSRole{}
 
 	if p.Global.TravisCI.Enabled {
 		enabled = true
 		buildeventsEnabled = buildeventsEnabled || p.Global.TravisCI.Buildevents
 
-		proj := TravisProject{
+		proj := CIProject{
 			Name:    "global",
 			Dir:     "terraform/global",
 			Command: p.Global.TravisCI.Command,
@@ -58,7 +58,7 @@ func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
 			enabled = true
 			buildeventsEnabled = buildeventsEnabled || p.Global.TravisCI.Buildevents
 
-			proj := TravisProject{
+			proj := CIProject{
 				Name:    fmt.Sprintf("accounts/%s", name),
 				Dir:     fmt.Sprintf("terraform/accounts/%s", name),
 				Command: acct.TravisCI.Command,
@@ -88,7 +88,7 @@ func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
 				enabled = true
 				buildeventsEnabled = buildeventsEnabled || p.Global.TravisCI.Buildevents
 
-				proj := TravisProject{
+				proj := CIProject{
 					Name:    fmt.Sprintf("%s/%s", envName, cName),
 					Dir:     fmt.Sprintf("terraform/envs/%s/%s", envName, cName),
 					Command: c.TravisCI.Command,
@@ -115,7 +115,7 @@ func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
 	}
 
 	for moduleName := range p.Modules {
-		proj := TravisProject{
+		proj := CIProject{
 			Name:    fmt.Sprintf("modules/%s", moduleName),
 			Dir:     fmt.Sprintf("terraform/modules/%s", moduleName),
 			Command: "check",
@@ -138,13 +138,13 @@ func (p *Plan) buildTravisCI(c *v2.Config, foggVersion string) TravisCI {
 		return projects[i].Name < projects[j].Name
 	})
 
-	testBuckets := make([][]TravisProject, buckets)
+	testBuckets := make([][]CIProject, buckets)
 	for i, proj := range projects {
 		bucket := i % buckets
 		testBuckets[bucket] = append(testBuckets[bucket], proj)
 	}
 
-	tr := TravisCI{
+	tr := CIConfig{
 		Enabled:     enabled,
 		Buildevents: buildeventsEnabled,
 		FoggVersion: foggVersion,

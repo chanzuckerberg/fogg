@@ -29,7 +29,7 @@ func Test_buildTravisCI_Disabled(t *testing.T) {
 			Defaults: v2.Defaults{
 				Common: v2.Common{
 					Tools: &v2.Tools{
-						TravisCI: &v1.TravisCI{
+						TravisCI: &v1.CI{
 							Enabled: &f,
 						},
 					},
@@ -38,7 +38,7 @@ func Test_buildTravisCI_Disabled(t *testing.T) {
 		}
 		p := &Plan{}
 		p.Accounts = p.buildAccounts(c)
-		tr := p.buildTravisCI(c, "0.1.0")
+		tr := p.buildCIConfig(c, "0.1.0")
 		a.NotNil(tr)
 		a.False(tr.Enabled)
 	}
@@ -69,7 +69,7 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 					AccountID: util.StrPtr("some account id"),
 				},
 				Tools: &v2.Tools{
-					TravisCI: &v1.TravisCI{
+					TravisCI: &v1.CI{
 						Enabled:        &tr,
 						AWSIAMRoleName: util.StrPtr("rollin"),
 					}},
@@ -88,7 +88,7 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 
 	p := &Plan{}
 	p.Accounts = p.buildAccounts(c)
-	tr := p.buildTravisCI(c, "0.1.0")
+	tr := p.buildCIConfig(c, "0.1.0")
 	a.Len(tr.AWSProfiles, 2)
 	a.Contains(tr.AWSProfiles, "profile")
 	a.Contains(tr.AWSProfiles, "foo")
@@ -120,7 +120,7 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 					Profile:   util.StrPtr("profile"),
 					AccountID: util.StrPtr("some account id"),
 				},
-				Tools: &v2.Tools{TravisCI: &v1.TravisCI{
+				Tools: &v2.Tools{TravisCI: &v1.CI{
 					Enabled:        &tr,
 					AWSIAMRoleName: util.StrPtr("rollin"),
 				}},
@@ -142,7 +142,7 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 
 	p := &Plan{}
 	p.Accounts = p.buildAccounts(c)
-	tr := p.buildTravisCI(c, "0.1.0")
+	tr := p.buildCIConfig(c, "0.1.0")
 	a.NotNil(p.Accounts["foo"].Providers.AWS)
 	a.Equal(id1, p.Accounts["foo"].Providers.AWS.AccountID)
 	a.Len(tr.TestBuckets, 1)

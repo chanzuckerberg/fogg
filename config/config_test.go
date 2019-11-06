@@ -125,7 +125,7 @@ func TestUpgradeConfigVersion(t *testing.T) {
 					TfLint: &v1.TfLint{
 						Enabled: boolptr(true),
 					},
-					TravisCI: &v1.TravisCI{
+					TravisCI: &v1.CI{
 						Enabled:        boolptr(true),
 						AWSIAMRoleName: util.StrPtr("travis-role"),
 						TestBuckets:    intptr(13),

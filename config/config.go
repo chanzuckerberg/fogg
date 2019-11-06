@@ -174,6 +174,7 @@ func UpgradeConfigVersion(c1 *v1.Config) (*v2.Config, error) {
 			Tools: &v2.Tools{
 				TfLint:   def1.TfLint,
 				TravisCI: c1.TravisCI,
+				CircleCI: c1.CircleCI,
 			},
 		},
 	}

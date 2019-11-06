@@ -56,6 +56,13 @@ func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade bool) error {
 		}
 	}
 
+	if p.CircleCI.Enabled {
+		e = applyTree(fs, &tmp.CircleCI, &tmp.Common, "", p.TravisCI)
+		if e != nil {
+			return errs.WrapUser(e, "unable to apply CircleCI")
+		}
+	}
+
 	if p.Atlantis.Enabled {
 		e = applyTree(fs, &tmp.Atlantis, &tmp.Common, "", p.Atlantis)
 		if e != nil {

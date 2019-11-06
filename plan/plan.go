@@ -19,7 +19,8 @@ type Plan struct {
 	Envs     map[string]Env     `json:"envs" yaml:"envs"`
 	Global   Component          `json:"global" yaml:"global"`
 	Modules  map[string]Module  `json:"modules" yaml:"modules"`
-	TravisCI TravisCI           `json:"travis_ci" yaml:"travis_ci"`
+	TravisCI CIConfig           `json:"travis_ci" yaml:"travis_ci"`
+	CircleCI CIConfig           `json:"circle_ci" yaml:"circle_ci"`
 	Version  string             `json:"version" yaml:"version"`
 }
 
@@ -40,7 +41,8 @@ type ComponentCommon struct {
 	Project   string            `json:"project" yaml:"project"`
 	Providers Providers         `json:"providers" yaml:"providers"`
 	TfLint    TfLint            `json:"tf_lint" yaml:"tf_lint"`
-	TravisCI  TravisComponent
+	TravisCI  CIComponent
+	CircleCI  CIComponent
 }
 
 type AtlantisComponent struct {
@@ -49,7 +51,7 @@ type AtlantisComponent struct {
 	RolePath string `yaml:"role_path"`
 }
 
-type TravisComponent struct {
+type CIComponent struct {
 	Enabled     bool
 	Buildevents bool
 
@@ -178,7 +180,7 @@ func Eval(c *v2.Config) (*Plan, error) {
 
 	p.Modules = p.buildModules(c)
 	p.Atlantis = p.buildAtlantis()
-	p.TravisCI = p.buildTravisCI(c, v)
+	p.TravisCI = p.buildCIConfig(c, v)
 
 	return p, nil
 }
@@ -360,7 +362,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	}
 
 	travisConfig := v2.ResolveTravis(commons...)
-	travisPlan := TravisComponent{
+	travisPlan := CIComponent{
 		Enabled:     *travisConfig.Enabled,
 		Buildevents: *travisConfig.Buildevents,
 	}

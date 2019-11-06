@@ -68,9 +68,10 @@ type Account struct {
 }
 
 type Tools struct {
-	Atlantis *Atlantis    `json:"atlantis,omitempty" yaml:"atlantis,omitempty"`
-	TravisCI *v1.TravisCI `json:"travis_ci,omitempty" yaml:"travis_ci,omitempty"`
-	TfLint   *v1.TfLint   `json:"tflint,omitempty" yaml:"tflint,omitempty"`
+	Atlantis *Atlantis  `json:"atlantis,omitempty" yaml:"atlantis,omitempty"`
+	TravisCI *v1.CI     `json:"travis_ci,omitempty" yaml:"travis_ci,omitempty"`
+	CircleCI *v1.CI     `json:"circle_ci,omitempty" yaml:"circle_ci,omitempty"`
+	TfLint   *v1.TfLint `json:"tflint,omitempty" yaml:"tflint,omitempty"`
 }
 
 type Atlantis struct {
@@ -260,7 +261,7 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		if r.Float32() < 0.5 {
 			c.Tools = &Tools{}
 			if r.Float32() < 0.5 {
-				c.Tools.TravisCI = &v1.TravisCI{
+				c.Tools.TravisCI = &v1.CI{
 					Enabled:     randBoolPtr(r, s),
 					TestBuckets: randIntPtr(r, s),
 				}

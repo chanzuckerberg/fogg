@@ -212,7 +212,7 @@ func ResolveAtlantis(commons ...Common) *Atlantis {
 	}
 }
 
-func ResolveTravis(commons ...Common) *v1.TravisCI {
+func ResolveTravis(commons ...Common) *v1.CI {
 	enabled := false
 	buildevents := false
 	testCommand := "check"
@@ -231,7 +231,7 @@ func ResolveTravis(commons ...Common) *v1.TravisCI {
 
 	roleName := lastNonNil(TravisRoleNameGetter, commons...)
 
-	return &v1.TravisCI{
+	return &v1.CI{
 		Enabled:        &enabled,
 		Buildevents:    &buildevents,
 		AWSIAMRoleName: roleName,
