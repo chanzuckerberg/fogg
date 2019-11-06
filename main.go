@@ -5,7 +5,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const foo = "bar"
+// const foo = "bar"
 
 func main() {
 	formatter := &logrus.TextFormatter{
