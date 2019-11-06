@@ -21,7 +21,7 @@ lint: ## run the fast go linters
 .PHONY: lint
 
 lint-ci: ## run the fast go linters
-	./bin/reviewdog -conf .reviewdog.yml  -reporter=github-pr-check
+	./bin/reviewdog -conf .reviewdog.yml  -reporter=github-pr-review
 .PHONY: lint
 
 lint-all: ## run the fast go linters
