@@ -125,12 +125,20 @@ type Module struct {
 	TerraformVersion *string `json:"terraform_version,omitempty" yaml:"terraform_version,omitempty"`
 }
 
-type CI struct {
+type CommonCI struct {
 	Enabled        *bool   `json:"enabled,omitempty" yaml:"enabled,omitempty"`
 	AWSIAMRoleName *string `json:"aws_iam_role_name" yaml:"aws_iam_role_name,omitempty"`
 	TestBuckets    *int    `json:"test_buckets" yaml:"test_buckets,omitempty"`
 	Command        *string `json:"command,omitempty" yaml:"command,omitempty"`
 	Buildevents    *bool   `json:"buildevents,omitempty" yaml:"buildevents,omitempty"`
+}
+
+type TravisCI struct {
+	CommonCI `json:",inline" yaml:",inline"`
+}
+
+type CircleCI struct {
+	CommonCI `json:",inline" yaml:",inline"`
 }
 
 type Config struct {
@@ -140,8 +148,8 @@ type Config struct {
 	Envs     map[string]Env     `json:"envs"`
 	Modules  map[string]Module  `json:"modules"`
 	Plugins  Plugins            `json:"plugins,omitempty"`
-	TravisCI *CI                `json:"travis_ci,omitempty"`
-	CircleCI *CI                `json:"circle_ci,omitempty"`
+	TravisCI *TravisCI          `json:"travis_ci,omitempty"`
+	CircleCI *CircleCI          `json:"circle_ci,omitempty"`
 }
 
 func ReadConfig(b []byte) (*Config, error) {

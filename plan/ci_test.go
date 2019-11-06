@@ -29,8 +29,10 @@ func Test_buildTravisCI_Disabled(t *testing.T) {
 			Defaults: v2.Defaults{
 				Common: v2.Common{
 					Tools: &v2.Tools{
-						TravisCI: &v1.CI{
-							Enabled: &f,
+						TravisCI: &v1.TravisCI{
+							CommonCI: v1.CommonCI{
+								Enabled: &f,
+							},
 						},
 					},
 				},
@@ -69,9 +71,11 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 					AccountID: util.StrPtr("some account id"),
 				},
 				Tools: &v2.Tools{
-					TravisCI: &v1.CI{
-						Enabled:        &tr,
-						AWSIAMRoleName: util.StrPtr("rollin"),
+					TravisCI: &v1.TravisCI{
+						CommonCI: v1.CommonCI{
+							Enabled:        &tr,
+							AWSIAMRoleName: util.StrPtr("rollin"),
+						},
 					}},
 			},
 		},
@@ -120,9 +124,11 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 					Profile:   util.StrPtr("profile"),
 					AccountID: util.StrPtr("some account id"),
 				},
-				Tools: &v2.Tools{TravisCI: &v1.CI{
-					Enabled:        &tr,
-					AWSIAMRoleName: util.StrPtr("rollin"),
+				Tools: &v2.Tools{TravisCI: &v1.TravisCI{
+					CommonCI: v1.CommonCI{
+						Enabled:        &tr,
+						AWSIAMRoleName: util.StrPtr("rollin"),
+					},
 				}},
 			},
 		},
