@@ -5,6 +5,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const foo = "bar"
+
 func main() {
 	formatter := &logrus.TextFormatter{
 		DisableTimestamp: true,
