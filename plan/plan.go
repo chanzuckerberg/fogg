@@ -61,6 +61,44 @@ type CIComponent struct {
 	Command        string
 }
 
+// generateCIConfig generates the config for ci
+func (c CIComponent) generateCIConfig(
+	backend AWSBackend,
+	provider *AWSProvider,
+	projName string,
+	projDir string) ([]CIProject, ciAwsProfiles, bool) {
+
+	projects := []CIProject{}
+	profiles := ciAwsProfiles{}
+	buildeventsEnabled := false
+
+	if !c.Enabled {
+		return projects, profiles, buildeventsEnabled
+	}
+
+	buildeventsEnabled = c.Buildevents
+	projects = append(projects, CIProject{
+		Name:    projName,
+		Dir:     projDir,
+		Command: c.Command,
+	})
+
+	if backend.AccountID != nil {
+		profiles[provider.Profile] = AWSRole{
+			AccountID: *backend.AccountID,
+			RoleName:  c.AWSRoleName,
+		}
+	}
+
+	if provider != nil {
+		profiles[provider.Profile] = AWSRole{
+			AccountID: provider.AccountID.String(),
+			RoleName:  c.AWSRoleName,
+		}
+	}
+	return projects, profiles, buildeventsEnabled
+}
+
 type Providers struct {
 	AWS       *AWSProvider       `yaml:"aws"`
 	Github    *GithubProvider    `yaml:"github"`
@@ -180,7 +218,7 @@ func Eval(c *v2.Config) (*Plan, error) {
 
 	p.Modules = p.buildModules(c)
 	p.Atlantis = p.buildAtlantis()
-	p.TravisCI = p.buildCIConfig(c, v)
+	p.TravisCI = p.buildTravisCIConfig(c, v)
 
 	return p, nil
 }

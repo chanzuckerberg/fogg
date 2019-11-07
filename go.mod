@@ -14,6 +14,7 @@ require (
 	github.com/aws/aws-sdk-go v1.25.14
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/chanzuckerberg/go-misc v0.0.0-20191016143922-52a18771c2dc
+	github.com/davecgh/go-spew v1.1.1
 	github.com/fatih/color v1.7.0
 	github.com/go-errors/errors v1.0.1
 	github.com/go-logfmt/logfmt v0.4.0

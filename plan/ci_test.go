@@ -40,7 +40,7 @@ func Test_buildTravisCI_Disabled(t *testing.T) {
 		}
 		p := &Plan{}
 		p.Accounts = p.buildAccounts(c)
-		tr := p.buildCIConfig(c, "0.1.0")
+		tr := p.buildTravisCIConfig(c, "0.1.0")
 		a.NotNil(tr)
 		a.False(tr.Enabled)
 	}
@@ -92,7 +92,7 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 
 	p := &Plan{}
 	p.Accounts = p.buildAccounts(c)
-	tr := p.buildCIConfig(c, "0.1.0")
+	tr := p.buildTravisCIConfig(c, "0.1.0")
 	a.Len(tr.AWSProfiles, 2)
 	a.Contains(tr.AWSProfiles, "profile")
 	a.Contains(tr.AWSProfiles, "foo")
@@ -148,7 +148,7 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 
 	p := &Plan{}
 	p.Accounts = p.buildAccounts(c)
-	tr := p.buildCIConfig(c, "0.1.0")
+	tr := p.buildTravisCIConfig(c, "0.1.0")
 	a.NotNil(p.Accounts["foo"].Providers.AWS)
 	a.Equal(id1, p.Accounts["foo"].Providers.AWS.AccountID)
 	a.Len(tr.TestBuckets, 1)
