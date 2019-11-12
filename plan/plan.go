@@ -66,37 +66,38 @@ func (c CIComponent) generateCIConfig(
 	backend AWSBackend,
 	provider *AWSProvider,
 	projName string,
-	projDir string) ([]CIProject, ciAwsProfiles, bool) {
-
-	projects := []CIProject{}
-	profiles := ciAwsProfiles{}
-	buildeventsEnabled := false
+	projDir string) *CIConfig {
 
 	if !c.Enabled {
-		return projects, profiles, buildeventsEnabled
+		return nil
 	}
 
-	buildeventsEnabled = c.Buildevents
-	projects = append(projects, CIProject{
+	ciConfig := &CIConfig{
+		AWSProfiles: ciAwsProfiles{},
+		Enabled:     true,
+		Buildevents: c.Buildevents,
+	}
+
+	ciConfig.projects = append(ciConfig.projects, CIProject{
 		Name:    projName,
 		Dir:     projDir,
 		Command: c.Command,
 	})
 
 	if backend.AccountID != nil {
-		profiles[provider.Profile] = AWSRole{
+		ciConfig.AWSProfiles[backend.Profile] = AWSRole{
 			AccountID: *backend.AccountID,
 			RoleName:  c.AWSRoleName,
 		}
 	}
 
 	if provider != nil {
-		profiles[provider.Profile] = AWSRole{
+		ciConfig.AWSProfiles[provider.Profile] = AWSRole{
 			AccountID: provider.AccountID.String(),
 			RoleName:  c.AWSRoleName,
 		}
 	}
-	return projects, profiles, buildeventsEnabled
+	return ciConfig
 }
 
 type Providers struct {

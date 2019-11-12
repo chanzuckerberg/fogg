@@ -5,6 +5,7 @@ import (
 	"sort"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
+	"github.com/davecgh/go-spew/spew"
 )
 
 type CIProject struct {
@@ -15,9 +16,49 @@ type CIProject struct {
 type CIConfig struct {
 	Enabled     bool
 	FoggVersion string
+	projects    []CIProject
+
 	TestBuckets [][]CIProject
-	AWSProfiles map[string]AWSRole
+	AWSProfiles ciAwsProfiles
 	Buildevents bool
+}
+
+func (c *CIConfig) populateBuckets(numBuckets int) *CIConfig {
+	sort.SliceStable(c.projects, func(i, j int) bool {
+		return c.projects[i].Name < c.projects[j].Name
+	})
+
+	c.TestBuckets = make([][]CIProject, numBuckets)
+	for i, proj := range c.projects {
+		bucket := i % numBuckets
+		c.TestBuckets[bucket] = append(c.TestBuckets[bucket], proj)
+	}
+	return c
+}
+
+func (c *CIConfig) addProjects(projects ...CIProject) *CIConfig {
+	if c == nil {
+		c = &CIConfig{}
+	}
+
+	c.projects = append(c.projects, projects...)
+	return c
+}
+
+func (c *CIConfig) merge(other *CIConfig) *CIConfig {
+	if c == nil {
+		c = &CIConfig{}
+	}
+	if other == nil {
+		return c
+	}
+
+	c.Enabled = c.Enabled || other.Enabled
+	c.Buildevents = c.Buildevents || other.Buildevents
+	c.AWSProfiles = c.AWSProfiles.merge(other.AWSProfiles)
+	c.projects = append(c.projects, other.projects...)
+
+	return c
 }
 
 type ciAwsProfiles map[string]AWSRole
@@ -36,45 +77,34 @@ func (p ciAwsProfiles) merge(other ciAwsProfiles) ciAwsProfiles {
 
 // TODO(el): mostly a duplicate of buildAtlantis(). refactor later
 func (p *Plan) buildTravisCIConfig(c *v2.Config, foggVersion string) CIConfig {
-	enabled := false
-	buildeventsEnabled := false
-	projects := []CIProject{}
-	awsProfiles := ciAwsProfiles{}
+	ciConfig := &CIConfig{}
 
-	globalProjects, globalProfiles, globalBuildeventsEnabled := p.Global.TravisCI.generateCIConfig(
+	globalConfig := p.Global.TravisCI.generateCIConfig(
 		p.Global.Backend,
 		p.Global.Providers.AWS,
 		"global",
 		"terraform/global")
-	buildeventsEnabled = buildeventsEnabled || globalBuildeventsEnabled
-	projects = append(projects, globalProjects...)
-	awsProfiles.merge(globalProfiles)
+	ciConfig = ciConfig.merge(globalConfig)
 
 	for name, acct := range p.Accounts {
-		accountProjects, accountProfiles, accoutnBuildeventsEnabled := acct.TravisCI.generateCIConfig(
+		accountConfig := acct.TravisCI.generateCIConfig(
 			acct.Backend,
 			acct.Providers.AWS,
 			fmt.Sprintf("accounts/%s", name),
 			fmt.Sprintf("terraform/accounts/%s", name),
 		)
-		buildeventsEnabled = buildeventsEnabled || accoutnBuildeventsEnabled
-		projects = append(projects, accountProjects...)
-		awsProfiles.merge(accountProfiles)
-		enabled = enabled || len(projects) > 0
+		ciConfig = ciConfig.merge(accountConfig)
 	}
 
 	for envName, env := range p.Envs {
 		for cName, c := range env.Components {
-			envProjects, envProfiles, envBuildeventsEnabled := c.TravisCI.generateCIConfig(
+			envConfig := c.TravisCI.generateCIConfig(
 				c.Backend,
 				c.Providers.AWS,
 				fmt.Sprintf("%s/%s", envName, cName),
 				fmt.Sprintf("terraform/envs/%s/%s", envName, cName),
 			)
-			buildeventsEnabled = buildeventsEnabled || envBuildeventsEnabled
-			projects = append(projects, envProjects...)
-			awsProfiles.merge(envProfiles)
-			enabled = enabled || len(projects) > 0
+			ciConfig = ciConfig.merge(envConfig)
 		}
 	}
 
@@ -84,34 +114,19 @@ func (p *Plan) buildTravisCIConfig(c *v2.Config, foggVersion string) CIConfig {
 			Dir:     fmt.Sprintf("terraform/modules/%s", moduleName),
 			Command: "check",
 		}
-		projects = append(projects, proj)
+		ciConfig = ciConfig.addProjects(proj)
 	}
 
-	buckets := 1
+	numBuckets := 1
 	if c.Defaults.Tools != nil &&
 		c.Defaults.Tools.TravisCI != nil &&
 		c.Defaults.Tools.TravisCI.TestBuckets != nil &&
 		*c.Defaults.Tools.TravisCI.TestBuckets > 0 {
 
-		buckets = *c.Defaults.Tools.TravisCI.TestBuckets
+		numBuckets = *c.Defaults.Tools.TravisCI.TestBuckets
 	}
 
-	sort.SliceStable(projects, func(i, j int) bool {
-		return projects[i].Name < projects[j].Name
-	})
-
-	testBuckets := make([][]CIProject, buckets)
-	for i, proj := range projects {
-		bucket := i % buckets
-		testBuckets[bucket] = append(testBuckets[bucket], proj)
-	}
-
-	tr := CIConfig{
-		Enabled:     enabled,
-		Buildevents: buildeventsEnabled,
-		FoggVersion: foggVersion,
-		TestBuckets: testBuckets,
-		AWSProfiles: awsProfiles,
-	}
-	return tr
+	ciConfig = ciConfig.populateBuckets(numBuckets)
+	spew.Dump(ciConfig)
+	return *ciConfig
 }

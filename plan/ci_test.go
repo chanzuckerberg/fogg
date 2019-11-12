@@ -7,6 +7,7 @@ import (
 	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/util"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -93,6 +94,7 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 	p := &Plan{}
 	p.Accounts = p.buildAccounts(c)
 	tr := p.buildTravisCIConfig(c, "0.1.0")
+	spew.Dump(tr)
 	a.Len(tr.AWSProfiles, 2)
 	a.Contains(tr.AWSProfiles, "profile")
 	a.Contains(tr.AWSProfiles, "foo")

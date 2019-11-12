@@ -18,7 +18,7 @@ install:
   - STEP_SPAN_ID=$(echo ${STEP_NAME} | sum | cut -f 1 -d \ )
   - pip install awscli --upgrade
   - aws --version
-  - FOGG_VERSION="vundefined+undefined+dirty" travis_retry make setup
+  - FOGG_VERSION="v" travis_retry make setup
   - mkdir bin # this is in theory supposed to exist already
   # TODO (el): replace once buildevents has released https://github.com/honeycombio/buildevents/pull/53
   #- curl -L -o $HOME/bin/buildevents https://github.com/honeycombio/buildevents/releases/latest/download/buildevents-linux-amd64
@@ -34,6 +34,10 @@ before_script:
   - aws configure set aws_secret_access_key $IDACCT_AWS_SECRET_ACCESS_KEY --profile _idacct
   - aws --profile _idacct sts get-caller-identity
 
+
+  - aws configure set profile.czi.role_arn arn:aws:iam::1:role/travis-role
+  - aws configure set profile.czi.source_profile _idacct
+  - buildevents cmd $BUILDEVENTS_BUILD_ID $STEP_SPAN_ID sts-caller-identity.czi -- aws --profile czi sts get-caller-identity
 
   - aws configure set profile.czi-bar.role_arn arn:aws:iam::3:role/travis-role
   - aws configure set profile.czi-bar.source_profile _idacct
