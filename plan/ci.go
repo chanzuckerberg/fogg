@@ -5,7 +5,6 @@ import (
 	"sort"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
-	"github.com/davecgh/go-spew/spew"
 )
 
 type CIProject struct {
@@ -75,7 +74,6 @@ func (p ciAwsProfiles) merge(other ciAwsProfiles) ciAwsProfiles {
 	return p
 }
 
-// TODO(el): mostly a duplicate of buildAtlantis(). refactor later
 func (p *Plan) buildTravisCIConfig(c *v2.Config, foggVersion string) CIConfig {
 	ciConfig := &CIConfig{}
 
@@ -127,6 +125,59 @@ func (p *Plan) buildTravisCIConfig(c *v2.Config, foggVersion string) CIConfig {
 	}
 
 	ciConfig = ciConfig.populateBuckets(numBuckets)
-	spew.Dump(ciConfig)
+	return *ciConfig
+}
+
+func (p *Plan) buildCircleCIConfig(c *v2.Config, foggVersion string) CIConfig {
+	ciConfig := &CIConfig{}
+
+	globalConfig := p.Global.CircleCI.generateCIConfig(
+		p.Global.Backend,
+		p.Global.Providers.AWS,
+		"global",
+		"terraform/global")
+	ciConfig = ciConfig.merge(globalConfig)
+
+	for name, acct := range p.Accounts {
+		accountConfig := acct.CircleCI.generateCIConfig(
+			acct.Backend,
+			acct.Providers.AWS,
+			fmt.Sprintf("accounts/%s", name),
+			fmt.Sprintf("terraform/accounts/%s", name),
+		)
+		ciConfig = ciConfig.merge(accountConfig)
+	}
+
+	for envName, env := range p.Envs {
+		for cName, c := range env.Components {
+			envConfig := c.CircleCI.generateCIConfig(
+				c.Backend,
+				c.Providers.AWS,
+				fmt.Sprintf("%s/%s", envName, cName),
+				fmt.Sprintf("terraform/envs/%s/%s", envName, cName),
+			)
+			ciConfig = ciConfig.merge(envConfig)
+		}
+	}
+
+	for moduleName := range p.Modules {
+		proj := CIProject{
+			Name:    fmt.Sprintf("modules/%s", moduleName),
+			Dir:     fmt.Sprintf("terraform/modules/%s", moduleName),
+			Command: "check",
+		}
+		ciConfig = ciConfig.addProjects(proj)
+	}
+
+	numBuckets := 1
+	if c.Defaults.Tools != nil &&
+		c.Defaults.Tools.CircleCI != nil &&
+		c.Defaults.Tools.CircleCI.TestBuckets != nil &&
+		*c.Defaults.Tools.CircleCI.TestBuckets > 0 {
+
+		numBuckets = *c.Defaults.Tools.CircleCI.TestBuckets
+	}
+
+	ciConfig = ciConfig.populateBuckets(numBuckets)
 	return *ciConfig
 }
