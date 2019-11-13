@@ -2,14 +2,14 @@
 version: 2.1
 
 working_directory: &working_directory ~/fogg
-venv_directory : &venv_directory ~/venv
+venv_directory: &venv_directory ~/venv
 cache_key: &cache_key v1-fogg-{{ `{{ .Revision }}` }}
 
 commands:
   activate_venv:
     description: Activate a venv
     steps:
-      - . << parameters.venv_directory >>/bin/activate
+      - run: . << parameters.venv_directory >>/bin/activate
     parameters:
       venv_directory:
         type: string
@@ -17,9 +17,9 @@ commands:
   create_venv:
     description: Configure a venv
     steps:
-      - python3 -m venv << parameters.venv_directory >>
+      - run: python3 -m venv << parameters.venv_directory >>
       - activate_venv:
-        venv_directory: << parameters.venv_directory >>
+          venv_directory: << parameters.venv_directory >>
     parameters:
       venv_directory:
         type: string
@@ -77,12 +77,12 @@ jobs:
             - .fogg
             - *venv_directory
   terraform-test:
-    environment:
-      PATH: $HOME/fogg/.fogg/bin:$PATH
     executor: python
+    working_directory: *working_directory
     parallelism: {{ len .TestBuckets }}
     steps:
       - checkout
+      - run: echo "export PATH=$HOME/fogg/.fogg/bin:$PATH" >> $BASH_ENV
       # HACK(el):Switch to key that reads private tf modules after checking out our code
       - add_ssh_keys:
           fingerprints:
