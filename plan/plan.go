@@ -411,6 +411,16 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		travisPlan.Command = *travisConfig.Command
 	}
 
+	circleConfig := v2.ResolveCircleCI(commons...)
+	circlePlan := CIComponent{
+		Enabled:     *circleConfig.Enabled,
+		Buildevents: *circleConfig.Buildevents,
+	}
+	if circlePlan.Enabled {
+		circlePlan.AWSRoleName = *circleConfig.AWSIAMRoleName
+		circlePlan.Command = *circleConfig.Command
+	}
+
 	return ComponentCommon{
 		Atlantis: atlantisPlan,
 		Backend: AWSBackend{
@@ -433,6 +443,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		Project:   v2.ResolveRequiredString(v2.ProjectGetter, commons...),
 		Common:    Common{TerraformVersion: v2.ResolveRequiredString(v2.TerraformVersionGetter, commons...)},
 		TravisCI:  travisPlan,
+		CircleCI:  circlePlan,
 	}
 }
 

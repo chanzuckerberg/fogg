@@ -1,9 +1,29 @@
+{{- $circleCI := . }}
 version: 2.1
 
 working_directory: &working_directory ~/fogg
+venv_directory : &venv_directory ~/venv
 cache_key: &cache_key v1-fogg-{{ `{{ .Revision }}` }}
 
 commands:
+  activate_venv:
+    description: Activate a venv
+    steps:
+      - . << parameters.venv_directory >>/bin/activate
+    parameters:
+      venv_directory:
+        type: string
+        default: *venv_directory
+  create_venv:
+    description: Configure a venv
+    steps:
+      - python3 -m venv << parameters.venv_directory >>
+      - activate_venv:
+        venv_directory: << parameters.venv_directory >>
+    parameters:
+      venv_directory:
+        type: string
+        default: *venv_directory
   config_aws_source_profile:
     description: Configure the AWS source profile
     steps:
@@ -45,24 +65,39 @@ jobs:
     working_directory: *working_directory
     steps:
       - checkout
+      - create_venv
       - run: pip install awscli --upgrade --user
       - run: aws --version
       - config_aws_source_profile
-      - run: FOGG_VERSION="v0.34.1" make setup
+      - run: FOGG_VERSION="{{ .FoggVersion }}" make setup
       - save_cache:
           key: *cache_key
           paths:
             - ~/.aws
             - .fogg
+            - *venv_directory
   terraform-test:
+    environment:
+      PATH: $HOME/fogg/.fogg/bin:$PATH
     executor: python
+    parallelism: {{ len .TestBuckets }}
     steps:
       - checkout
+      # HACK(el):Switch to key that reads private tf modules after checking out our code
+      - add_ssh_keys:
+          fingerprints:
+            - "d2:52:20:b3:82:e2:ee:e8:98:02:05:15:b5:37:f6:2c"
       - restore_cache:
           keys:
             - *cache_key
-      - run: ls -la
-      - run: cat ~/.aws/*
+      - activate_venv
+{{- range $testBucket := .TestBuckets }}
+  {{- range $component := $testBucket }}
+      - terraform_test:
+          dir: {{ $component.Dir }}
+          command: {{ $component.Command }}
+  {{- end }}
+{{- end }}
 workflows:
   version: 2.1
   test:

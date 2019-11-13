@@ -241,6 +241,35 @@ func ResolveTravis(commons ...Common) *v1.TravisCI {
 	}
 }
 
+func ResolveCircleCI(commons ...Common) *v1.CircleCI {
+	enabled := false
+	buildevents := false
+	testCommand := "check"
+	for _, c := range commons {
+		if c.Tools != nil && c.Tools.CircleCI != nil && c.Tools.CircleCI.Enabled != nil {
+			enabled = *c.Tools.CircleCI.Enabled
+		}
+
+		if c.Tools != nil && c.Tools.CircleCI != nil && c.Tools.CircleCI.Command != nil {
+			testCommand = *c.Tools.CircleCI.Command
+		}
+		if c.Tools != nil && c.Tools.CircleCI != nil && c.Tools.CircleCI.Buildevents != nil {
+			buildevents = *c.Tools.CircleCI.Buildevents
+		}
+	}
+
+	roleName := lastNonNil(CircleRoleNameGetter, commons...)
+
+	return &v1.CircleCI{
+		CommonCI: v1.CommonCI{
+			Enabled:        &enabled,
+			Buildevents:    &buildevents,
+			AWSIAMRoleName: roleName,
+			Command:        &testCommand,
+		},
+	}
+}
+
 func OwnerGetter(comm Common) *string {
 	return comm.Owner
 }
@@ -443,9 +472,9 @@ func TravisRoleNameGetter(comm Common) *string {
 	return comm.Tools.TravisCI.AWSIAMRoleName
 }
 
-func TravisTestCommandGetter(comm Common) *string {
-	if comm.Tools == nil || comm.Tools.TravisCI == nil {
+func CircleRoleNameGetter(comm Common) *string {
+	if comm.Tools == nil || comm.Tools.CircleCI == nil {
 		return nil
 	}
-	return comm.Tools.TravisCI.Command
+	return comm.Tools.CircleCI.AWSIAMRoleName
 }
