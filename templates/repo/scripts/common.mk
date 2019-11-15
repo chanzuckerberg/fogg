@@ -13,7 +13,7 @@ REFRESH_ENABLED ?= true # Should terraform refresh during plan/apply
 TF=$(wildcard *.tf)
 
 TFENV_DIR ?= $(REPO_ROOT)/.fogg/tfenv
-export PATH :=$(TFENV_DIR)/versions/$(TERRAFORM_VERSION)/:$(REPO_ROOT)/.fogg/bin:$(PATH)
+export PATH :=$(TFENV_DIR)/libexec:$(TFENV_DIR)/versions/$(TERRAFORM_VERSION)/:$(REPO_ROOT)/.fogg/bin:$(PATH)
 export TF_PLUGIN_CACHE_DIR=$(REPO_ROOT)/.terraform.d/plugin-cache
 export TF_IN_AUTOMATION=1
 terraform_command ?= $(TFENV_DIR)/versions/$(TERRAFORM_VERSION)/terraform
@@ -26,11 +26,14 @@ endif
 
 
 tfenv: ## install the tfenv tool
-	@if [ ! -d ${TFENV_DIR} ]; then \
+	if [ ! -d ${TFENV_DIR} ]; then \
 		git clone -q https://github.com/tfutils/tfenv.git $(TFENV_DIR); \
 	fi
+	tree -a ${REPO_ROOT}
+	echo ${PATH}
 .PHONY: tfenv
 
 terraform: tfenv ## ensure that the proper version of terraform is installed
+	echo ${PATH}
 	${TFENV_DIR}/bin/tfenv install $(TERRAFORM_VERSION)
 .PHONY: terraform

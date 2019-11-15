@@ -91,6 +91,8 @@ jobs:
           keys:
             - *cache_key
       - activate_venv
+      - run: echo $PATH
+      - run: sudo apt-get --yes update && sudo apt-get install tree && tree -a .
 {{- range $testBucket := .TestBuckets }}
   {{- range $component := $testBucket }}
       - terraform_test:
