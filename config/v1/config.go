@@ -138,7 +138,8 @@ type TravisCI struct {
 }
 
 type CircleCI struct {
-	CommonCI `json:",inline" yaml:",inline"`
+	CommonCI           `json:",inline" yaml:",inline"`
+	SSHKeyFingerprints []string `json:"ssh_key_fingerprints" yaml:"ssh_key_fingerprints"`
 }
 
 type Config struct {

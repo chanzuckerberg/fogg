@@ -18,7 +18,7 @@ install:
   - STEP_SPAN_ID=$(echo ${STEP_NAME} | sum | cut -f 1 -d \ )
   - pip install awscli --upgrade
   - aws --version
-  - FOGG_VERSION="v" travis_retry make setup
+  - FOGG_VERSION="vundefined+undefined+dirty" travis_retry make setup
   - mkdir bin # this is in theory supposed to exist already
   # TODO (el): replace once buildevents has released https://github.com/honeycombio/buildevents/pull/53
   #- curl -L -o $HOME/bin/buildevents https://github.com/honeycombio/buildevents/releases/latest/download/buildevents-linux-amd64

@@ -22,6 +22,15 @@ type CIConfig struct {
 	Buildevents bool
 }
 
+type CircleCIConfig struct {
+	CIConfig
+	SSHFingerprints []string
+}
+
+type TravisCIConfig struct {
+	CIConfig
+}
+
 func (c *CIConfig) populateBuckets(numBuckets int) *CIConfig {
 	sort.SliceStable(c.projects, func(i, j int) bool {
 		return c.projects[i].Name < c.projects[j].Name
@@ -74,8 +83,10 @@ func (p ciAwsProfiles) merge(other ciAwsProfiles) ciAwsProfiles {
 	return p
 }
 
-func (p *Plan) buildTravisCIConfig(c *v2.Config, foggVersion string) CIConfig {
-	ciConfig := &CIConfig{}
+func (p *Plan) buildTravisCIConfig(c *v2.Config, foggVersion string) TravisCIConfig {
+	ciConfig := &CIConfig{
+		FoggVersion: foggVersion,
+	}
 
 	globalConfig := p.Global.TravisCI.generateCIConfig(
 		p.Global.Backend,
@@ -125,11 +136,15 @@ func (p *Plan) buildTravisCIConfig(c *v2.Config, foggVersion string) CIConfig {
 	}
 
 	ciConfig = ciConfig.populateBuckets(numBuckets)
-	return *ciConfig
+	return TravisCIConfig{
+		CIConfig: *ciConfig,
+	}
 }
 
-func (p *Plan) buildCircleCIConfig(c *v2.Config, foggVersion string) CIConfig {
-	ciConfig := &CIConfig{}
+func (p *Plan) buildCircleCIConfig(c *v2.Config, foggVersion string) CircleCIConfig {
+	ciConfig := &CIConfig{
+		FoggVersion: foggVersion,
+	}
 
 	globalConfig := p.Global.CircleCI.generateCIConfig(
 		p.Global.Backend,
@@ -177,7 +192,16 @@ func (p *Plan) buildCircleCIConfig(c *v2.Config, foggVersion string) CIConfig {
 
 		numBuckets = *c.Defaults.Tools.CircleCI.TestBuckets
 	}
-
 	ciConfig = ciConfig.populateBuckets(numBuckets)
-	return *ciConfig
+
+	sshFingerprints := []string{}
+	if c.Defaults.Tools != nil &&
+		c.Defaults.Tools.CircleCI != nil {
+		sshFingerprints = append(sshFingerprints, c.Defaults.Tools.CircleCI.SSHKeyFingerprints...)
+	}
+
+	return CircleCIConfig{
+		CIConfig:        *ciConfig,
+		SSHFingerprints: sshFingerprints,
+	}
 }

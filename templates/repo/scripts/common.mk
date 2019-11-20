@@ -26,14 +26,11 @@ endif
 
 
 tfenv: ## install the tfenv tool
-	if [ ! -d ${TFENV_DIR} ]; then \
+	@if [ ! -d ${TFENV_DIR} ]; then \
 		git clone -q https://github.com/tfutils/tfenv.git $(TFENV_DIR); \
 	fi
-	tree -a ${REPO_ROOT}
-	echo ${PATH}
 .PHONY: tfenv
 
 terraform: tfenv ## ensure that the proper version of terraform is installed
-	echo ${PATH}
 	${TFENV_DIR}/bin/tfenv install $(TERRAFORM_VERSION)
 .PHONY: terraform

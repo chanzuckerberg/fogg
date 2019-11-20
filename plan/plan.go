@@ -19,8 +19,8 @@ type Plan struct {
 	Envs     map[string]Env     `json:"envs" yaml:"envs"`
 	Global   Component          `json:"global" yaml:"global"`
 	Modules  map[string]Module  `json:"modules" yaml:"modules"`
-	TravisCI CIConfig           `json:"travis_ci" yaml:"travis_ci"`
-	CircleCI CIConfig           `json:"circle_ci" yaml:"circle_ci"`
+	TravisCI TravisCIConfig     `json:"travis_ci" yaml:"travis_ci"`
+	CircleCI CircleCIConfig     `json:"circle_ci" yaml:"circle_ci"`
 	Version  string             `json:"version" yaml:"version"`
 }
 
@@ -41,14 +41,25 @@ type ComponentCommon struct {
 	Project   string            `json:"project" yaml:"project"`
 	Providers Providers         `json:"providers" yaml:"providers"`
 	TfLint    TfLint            `json:"tf_lint" yaml:"tf_lint"`
-	TravisCI  CIComponent
-	CircleCI  CIComponent
+
+	TravisCI TravisCIComponent
+	CircleCI CircleCIComponent
 }
 
 type AtlantisComponent struct {
 	Enabled  bool   `yaml:"enabled"`
 	RoleName string `yaml:"role_name"`
 	RolePath string `yaml:"role_path"`
+}
+
+type TravisCIComponent struct {
+	CIComponent
+}
+
+type CircleCIComponent struct {
+	CIComponent
+
+	SSHFingerprints []string
 }
 
 type CIComponent struct {
@@ -220,6 +231,7 @@ func Eval(c *v2.Config) (*Plan, error) {
 	p.Modules = p.buildModules(c)
 	p.Atlantis = p.buildAtlantis()
 	p.TravisCI = p.buildTravisCIConfig(c, v)
+
 	p.CircleCI = p.buildCircleCIConfig(c, v)
 
 	return p, nil
@@ -402,9 +414,11 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	}
 
 	travisConfig := v2.ResolveTravis(commons...)
-	travisPlan := CIComponent{
-		Enabled:     *travisConfig.Enabled,
-		Buildevents: *travisConfig.Buildevents,
+	travisPlan := TravisCIComponent{
+		CIComponent: CIComponent{
+			Enabled:     *travisConfig.Enabled,
+			Buildevents: *travisConfig.Buildevents,
+		},
 	}
 	if travisPlan.Enabled {
 		travisPlan.AWSRoleName = *travisConfig.AWSIAMRoleName
@@ -412,9 +426,11 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	}
 
 	circleConfig := v2.ResolveCircleCI(commons...)
-	circlePlan := CIComponent{
-		Enabled:     *circleConfig.Enabled,
-		Buildevents: *circleConfig.Buildevents,
+	circlePlan := CircleCIComponent{
+		CIComponent: CIComponent{
+			Enabled:     *circleConfig.Enabled,
+			Buildevents: *circleConfig.Buildevents,
+		},
 	}
 	if circlePlan.Enabled {
 		circlePlan.AWSRoleName = *circleConfig.AWSIAMRoleName

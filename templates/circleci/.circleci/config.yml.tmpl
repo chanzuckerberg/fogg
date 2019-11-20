@@ -1,96 +1,33 @@
 {{- $circleCI := . }}
 version: 2
+
 working_directory: &working_directory ~/fogg
 venv_directory: &venv_directory ~/venv
-cache_key: &cache_key v1-fogg-{{ `{{ .Revision }}` }}
-
-commands:
-  activate_venv:
-    description: Activate a venv
-    steps:
-      - run: . << parameters.venv_directory >>/bin/activate
-    parameters:
-      venv_directory:
-        type: string
-        default: *venv_directory
-  create_venv:
-    description: Configure a venv
-    steps:
-      - run: python3 -m venv << parameters.venv_directory >>
-      - activate_venv:
-          venv_directory: << parameters.venv_directory >>
-    parameters:
-      venv_directory:
-        type: string
-        default: *venv_directory
-  config_aws_source_profile:
-    description: Configure the AWS source profile
-    steps:
-      - run: aws configure set aws_access_key_id $IDACCT_AWS_ACCESS_KEY_ID --profile _idacct
-      - run: aws configure set aws_secret_access_key $IDACCT_AWS_SECRET_ACCESS_KEY --profile _idacct
-      # - run: aws --profile _idacct sts get-caller-identity
-  config_aws_profile:
-    description: Configure AWS authentication
-    parameters:
-      profile_name:
-        type: string
-      aws_account_id:
-        type: string
-      role_name:
-        type: string
-    steps:
-      - run: aws configure set profile.<< parameters.profile_name >>.role_arn arn:aws:iam::<< parameters.aws_account_id>>:role/<< parameters.role_name >>
-      - run: aws configure set profile.<< parameters.profile_name >>.source_profile _idacct
-      # - run: aws sts get-caller-identity --profile << parameters.profile_name >>
-  terraform_test:
-    description: Test a terraform component
-    parameters:
-      dir:
-        type: string
-      command:
-        type: string
-        default: check
-    steps:
-      - run: cd << parameters.dir >>
-      - run: make << parameters.command >>
-  dependencies:
-    description: Configure job dependencies
-    steps:
-      - create_venv
-      - run: pip install awscli --upgrade --user
-      - run: aws --version
-      - config_aws_source_profile
-      - run: FOGG_VERSION="{{ .FoggVersion }}" make setup
-
-executors:
-  python:
-    docker:
-      - image: circleci/python:3.8
 
 jobs:
-  terraform-test:
-    executor: python
+  build:
+    docker:
+      - image: circleci/python:3.8
     working_directory: *working_directory
     parallelism: {{ len .TestBuckets }}
     steps:
       - checkout
-      - run: echo "export PATH=$HOME/fogg/.fogg/bin:$PATH" >> $BASH_ENV
       # HACK(el):Switch to key that reads private tf modules after checking out our code
       - add_ssh_keys:
           fingerprints:
-            - "d2:52:20:b3:82:e2:ee:e8:98:02:05:15:b5:37:f6:2c"
-      - dependencies
-      - run: echo $PATH
-      - run: sudo apt-get --yes update && sudo apt-get install tree && tree -a .
+          {{- range $sshFingerprint := .SSHFingerprints }}
+            - {{ $sshFingerprint }}
+          {{- end }}
+      - run: python3 -m venv *venv_directory
+      - run: . *venv_directory/bin/activate
+      - run: pip install awscli --upgrade --user
+      - run: aws --version
+      - run: FOGG_VERSION="{{ .FoggVersion }}" make setup
 {{- range $testBucket := .TestBuckets }}
   {{- range $component := $testBucket }}
-      - terraform_test:
-          dir: {{ $component.Dir }}
-          command: {{ $component.Command }}
+      - run:
+          command: |
+            cd {{ $component.Dir }}
+            make  {{ $component.Command }}
   {{- end }}
 {{- end }}
-workflows:
-  version: 2.1
-  test:
-    jobs:
-      - terraform-test
