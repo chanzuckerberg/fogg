@@ -22,7 +22,7 @@ jobs:
       - run: . *venv_directory/bin/activate
       - run: pip install awscli --upgrade --user
       - run: aws --version
-      - run: FOGG_VERSION="{{ .FoggVersion }}" make setup
+      - run: FOGG_VERSION="v{{ .FoggVersion }}" make setup
 {{- range $testBucket := .TestBuckets }}
   {{- range $component := $testBucket }}
       - run:
