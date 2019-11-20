@@ -1,6 +1,5 @@
 {{- $circleCI := . }}
-version: 2.1
-
+version: 2
 working_directory: &working_directory ~/fogg
 venv_directory: &venv_directory ~/venv
 cache_key: &cache_key v1-fogg-{{ `{{ .Revision }}` }}
@@ -54,28 +53,21 @@ commands:
     steps:
       - run: cd << parameters.dir >>
       - run: make << parameters.command >>
+  dependencies:
+    description: Configure job dependencies
+    steps:
+      - create_venv
+      - run: pip install awscli --upgrade --user
+      - run: aws --version
+      - config_aws_source_profile
+      - run: FOGG_VERSION="{{ .FoggVersion }}" make setup
+
 executors:
   python:
     docker:
       - image: circleci/python:3.8
 
 jobs:
-  dependencies:
-    executor: python
-    working_directory: *working_directory
-    steps:
-      - checkout
-      - create_venv
-      - run: pip install awscli --upgrade --user
-      - run: aws --version
-      - config_aws_source_profile
-      - run: FOGG_VERSION="{{ .FoggVersion }}" make setup
-      - save_cache:
-          key: *cache_key
-          paths:
-            - ~/.aws
-            - .fogg
-            - *venv_directory
   terraform-test:
     executor: python
     working_directory: *working_directory
@@ -87,10 +79,7 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "d2:52:20:b3:82:e2:ee:e8:98:02:05:15:b5:37:f6:2c"
-      - restore_cache:
-          keys:
-            - *cache_key
-      - activate_venv
+      - dependencies
       - run: echo $PATH
       - run: sudo apt-get --yes update && sudo apt-get install tree && tree -a .
 {{- range $testBucket := .TestBuckets }}
@@ -104,7 +93,4 @@ workflows:
   version: 2.1
   test:
     jobs:
-      - dependencies
-      - terraform-test:
-          requires:
-            - dependencies
+      - terraform-test
