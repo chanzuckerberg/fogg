@@ -128,11 +128,18 @@ func (p *Plan) buildTravisCIConfig(c *v2.Config, foggVersion string) TravisCICon
 
 	numBuckets := 1
 	if c.Defaults.Tools != nil &&
-		c.Defaults.Tools.TravisCI != nil &&
-		c.Defaults.Tools.TravisCI.TestBuckets != nil &&
-		*c.Defaults.Tools.TravisCI.TestBuckets > 0 {
+		c.Defaults.Tools.TravisCI != nil {
 
-		numBuckets = *c.Defaults.Tools.TravisCI.TestBuckets
+		if c.Defaults.Tools.TravisCI.TestBuckets != nil &&
+			*c.Defaults.Tools.TravisCI.TestBuckets > 0 {
+			numBuckets = *c.Defaults.Tools.TravisCI.TestBuckets
+		}
+
+		// If aws is disabled, reset the providers
+		aws, ok := c.Defaults.Tools.TravisCI.Providers["aws"]
+		if ok && aws.Disabled {
+			ciConfig.AWSProfiles = ciAwsProfiles{}
+		}
 	}
 
 	ciConfig = ciConfig.populateBuckets(numBuckets)
@@ -185,21 +192,25 @@ func (p *Plan) buildCircleCIConfig(c *v2.Config, foggVersion string) CircleCICon
 	}
 
 	numBuckets := 1
-	if c.Defaults.Tools != nil &&
-		c.Defaults.Tools.CircleCI != nil &&
-		c.Defaults.Tools.CircleCI.TestBuckets != nil &&
-		*c.Defaults.Tools.CircleCI.TestBuckets > 0 {
-
-		numBuckets = *c.Defaults.Tools.CircleCI.TestBuckets
-	}
-	ciConfig = ciConfig.populateBuckets(numBuckets)
-
 	sshFingerprints := []string{}
-	if c.Defaults.Tools != nil &&
-		c.Defaults.Tools.CircleCI != nil {
+
+	if c.Defaults.Tools != nil && c.Defaults.Tools.CircleCI != nil {
+
+		if c.Defaults.Tools.CircleCI.TestBuckets != nil &&
+			*c.Defaults.Tools.CircleCI.TestBuckets > 0 {
+			numBuckets = *c.Defaults.Tools.CircleCI.TestBuckets
+		}
+
 		sshFingerprints = append(sshFingerprints, c.Defaults.Tools.CircleCI.SSHKeyFingerprints...)
+
+		// If aws is disabled, reset the providers
+		aws, ok := c.Defaults.Tools.CircleCI.Providers["aws"]
+		if ok && aws.Disabled {
+			ciConfig.AWSProfiles = ciAwsProfiles{}
+		}
 	}
 
+	ciConfig = ciConfig.populateBuckets(numBuckets)
 	return CircleCIConfig{
 		CIConfig:        *ciConfig,
 		SSHFingerprints: sshFingerprints,
