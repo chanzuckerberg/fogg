@@ -2,7 +2,6 @@
 version: 2
 
 working_directory: &working_directory ~/fogg
-venv_directory: &venv_directory ~/venv
 
 jobs:
   build:
@@ -20,8 +19,8 @@ jobs:
             - {{ $sshFingerprint }}
           {{- end }}
 {{- end }}
-      - run: python3 -m venv *venv_directory
-      - run: . *venv_directory/bin/activate
+      - run: python3 -m venv venv
+      - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
       - run: aws --version
       - run: FOGG_VERSION="v{{ .FoggVersion }}" make setup
