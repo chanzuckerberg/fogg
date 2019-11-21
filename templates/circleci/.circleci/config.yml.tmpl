@@ -11,8 +11,8 @@ jobs:
     parallelism: {{ len .TestBuckets }}
     steps:
       - checkout
-      # HACK(el):Switch to key that reads private tf modules after checking out our code
 {{- if not (eq (len .SSHFingerprints) 0) }}
+      # HACK(el):Switch to key that reads private tf modules after checking out our code
       - add_ssh_keys:
           fingerprints:
           {{- range $sshFingerprint := .SSHFingerprints }}
