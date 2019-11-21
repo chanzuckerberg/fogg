@@ -1,0 +1,73 @@
+
+version: 2
+
+working_directory: &working_directory ~/fogg
+venv_directory: &venv_directory ~/venv
+
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.8
+    working_directory: *working_directory
+    parallelism: 13
+    steps:
+      - checkout
+      # HACK(el):Switch to key that reads private tf modules after checking out our code
+      - add_ssh_keys:
+          fingerprints:
+      - run: python3 -m venv *venv_directory
+      - run: . *venv_directory/bin/activate
+      - run: pip install awscli --upgrade --user
+      - run: aws --version
+      - run: FOGG_VERSION="vundefined+undefined+dirty" make setup
+      - run:
+          command: |
+            .fogg/bin/fogg apply
+            if [ "$(git status --porcelain)" != "" ]; then
+              echo "git tree is dirty after running fogg apply"
+              echo "ensure you run fogg apply on your branch"
+              git status
+              exit 1
+            fi
+      - aws configure set aws_access_key_id     $IDACCT_AWS_ACCESS_KEY_ID     --profile _idacct
+      - aws configure set aws_secret_access_key $IDACCT_AWS_SECRET_ACCESS_KEY --profile _idacct
+      - aws --profile _idacct sts get-caller-identity
+      - aws configure set profile.czi.role_arn arn:aws:iam::1:role/travis-role
+      - aws configure set profile.czi.source_profile _idacct
+      - aws --profile czi sts get-caller-identity
+      - aws configure set profile.czi-bar.role_arn arn:aws:iam::3:role/travis-role
+      - aws configure set profile.czi-bar.source_profile _idacct
+      - aws --profile czi-bar sts get-caller-identity
+      - aws configure set profile.czi-env.role_arn arn:aws:iam::5:role/travis-role
+      - aws configure set profile.czi-env.source_profile _idacct
+      - aws --profile czi-env sts get-caller-identity
+      - aws configure set profile.czi-foo.role_arn arn:aws:iam::2:role/travis-role
+      - aws configure set profile.czi-foo.source_profile _idacct
+      - aws --profile czi-foo sts get-caller-identity
+      - aws configure set profile.czi-stage.role_arn arn:aws:iam::4:role/travis-role
+      - aws configure set profile.czi-stage.source_profile _idacct
+      - aws --profile czi-stage sts get-caller-identity
+      - run:
+          command: |
+            cd terraform/accounts/bar
+            make  check
+      - run:
+          command: |
+            cd terraform/accounts/foo
+            make  check
+      - run:
+          command: |
+            cd terraform/global
+            make  check
+      - run:
+          command: |
+            cd terraform/modules/module1
+            make  check
+      - run:
+          command: |
+            cd terraform/envs/stage/cloud-env
+            make  check
+      - run:
+          command: |
+            cd terraform/envs/stage/helm
+            make  check
