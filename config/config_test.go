@@ -136,7 +136,7 @@ func TestUpgradeConfigVersion(t *testing.T) {
 					CircleCI: &v1.CircleCI{
 						CommonCI: v1.CommonCI{
 							Enabled:        boolptr(true),
-							AWSIAMRoleName: util.StrPtr("travis-role"),
+							AWSIAMRoleName: util.StrPtr("foobar-role"),
 							TestBuckets:    intptr(13),
 							Buildevents:    boolptr(true),
 						},

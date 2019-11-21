@@ -31,7 +31,7 @@
   "circle_ci": {
     "enabled": true,
     "buildevents": true,
-    "aws_iam_role_name": "travis-role",
+    "aws_iam_role_name": "foobar-role",
     "test_buckets": 13
   },
   "accounts": {
