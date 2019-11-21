@@ -9,6 +9,7 @@ import (
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/util"
+	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
 
@@ -435,6 +436,10 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	if circlePlan.Enabled {
 		circlePlan.AWSRoleName = *circleConfig.AWSIAMRoleName
 		circlePlan.Command = *circleConfig.Command
+	}
+
+	if travisPlan.Enabled && circlePlan.Enabled {
+		logrus.Warn("Detected both travisCI and circleCI are enabled, is this intentional?")
 	}
 
 	return ComponentCommon{
