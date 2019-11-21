@@ -232,7 +232,6 @@ func Eval(c *v2.Config) (*Plan, error) {
 	p.Modules = p.buildModules(c)
 	p.Atlantis = p.buildAtlantis()
 	p.TravisCI = p.buildTravisCIConfig(c, v)
-
 	p.CircleCI = p.buildCircleCIConfig(c, v)
 
 	return p, nil
