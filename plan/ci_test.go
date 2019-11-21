@@ -180,7 +180,7 @@ func Test_buildCircleCI_Profiles(t *testing.T) {
 					AccountID: util.StrPtr("some account id"),
 				},
 				Tools: &v2.Tools{
-					CircleCI: &v1.CircleCI{
+					CircleCI: &v2.CircleCI{
 						CommonCI: v1.CommonCI{
 							Enabled:        &tr,
 							AWSIAMRoleName: util.StrPtr("rollin"),
@@ -234,7 +234,7 @@ func Test_buildCircleCI_ProfilesDisabled(t *testing.T) {
 					AccountID: util.StrPtr("some account id"),
 				},
 				Tools: &v2.Tools{
-					CircleCI: &v1.CircleCI{
+					CircleCI: &v2.CircleCI{
 						CommonCI: v1.CommonCI{
 							Enabled:        &tr,
 							AWSIAMRoleName: util.StrPtr("rollin"),

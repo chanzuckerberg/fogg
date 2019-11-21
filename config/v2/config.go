@@ -70,8 +70,14 @@ type Account struct {
 type Tools struct {
 	Atlantis *Atlantis    `json:"atlantis,omitempty" yaml:"atlantis,omitempty"`
 	TravisCI *v1.TravisCI `json:"travis_ci,omitempty" yaml:"travis_ci,omitempty"`
-	CircleCI *v1.CircleCI `json:"circle_ci,omitempty" yaml:"circle_ci,omitempty"`
+	CircleCI *CircleCI    `json:"circle_ci,omitempty" yaml:"circle_ci,omitempty"`
 	TfLint   *v1.TfLint   `json:"tflint,omitempty" yaml:"tflint,omitempty"`
+}
+
+type CircleCI struct {
+	v1.CommonCI `json:",inline" yaml:",inline"`
+
+	SSHKeyFingerprints []string `json:"ssh_key_fingerprints" yaml:"ssh_key_fingerprints"`
 }
 
 type Atlantis struct {

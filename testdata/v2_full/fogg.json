@@ -26,6 +26,10 @@
         "enabled": true,
         "role_name": "bar",
         "role_path": "foo"
+      },
+      "circle_ci": {
+        "enabled": true,
+        "aws_iam_role_name": "foobar-role"
       }
     }
   },

@@ -242,7 +242,7 @@ func ResolveTravis(commons ...Common) *v1.TravisCI {
 	}
 }
 
-func ResolveCircleCI(commons ...Common) *v1.CircleCI {
+func ResolveCircleCI(commons ...Common) *CircleCI {
 	enabled := false
 	buildevents := false
 	testCommand := "check"
@@ -262,7 +262,7 @@ func ResolveCircleCI(commons ...Common) *v1.CircleCI {
 	sshFingerprints := ResolveOptionalStringSlice(CircleCISSHFingerprintsGetter, commons...)
 	roleName := lastNonNil(CircleCIRoleNameGetter, commons...)
 
-	return &v1.CircleCI{
+	return &CircleCI{
 		CommonCI: v1.CommonCI{
 			Enabled:        &enabled,
 			Buildevents:    &buildevents,

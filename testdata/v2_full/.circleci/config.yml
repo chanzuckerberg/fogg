@@ -8,7 +8,7 @@ jobs:
     docker:
       - image: circleci/python:3.8
     working_directory: *working_directory
-    parallelism: 13
+    parallelism: 1
     steps:
       - checkout
       - run: python3 -m venv venv
@@ -28,21 +28,12 @@ jobs:
       - aws configure set aws_access_key_id     $IDACCT_AWS_ACCESS_KEY_ID     --profile _idacct
       - aws configure set aws_secret_access_key $IDACCT_AWS_SECRET_ACCESS_KEY --profile _idacct
       - aws --profile _idacct sts get-caller-identity
-      - aws configure set profile.czi.role_arn arn:aws:iam::1:role/foobar-role
-      - aws configure set profile.czi.source_profile _idacct
-      - aws --profile czi sts get-caller-identity
-      - aws configure set profile.czi-bar.role_arn arn:aws:iam::3:role/foobar-role
-      - aws configure set profile.czi-bar.source_profile _idacct
-      - aws --profile czi-bar sts get-caller-identity
-      - aws configure set profile.czi-env.role_arn arn:aws:iam::5:role/foobar-role
-      - aws configure set profile.czi-env.source_profile _idacct
-      - aws --profile czi-env sts get-caller-identity
-      - aws configure set profile.czi-foo.role_arn arn:aws:iam::2:role/foobar-role
-      - aws configure set profile.czi-foo.source_profile _idacct
-      - aws --profile czi-foo sts get-caller-identity
-      - aws configure set profile.czi-stage.role_arn arn:aws:iam::4:role/foobar-role
-      - aws configure set profile.czi-stage.source_profile _idacct
-      - aws --profile czi-stage sts get-caller-identity
+      - aws configure set profile.comp1.role_arn arn:aws:iam::1234:role/foobar-role
+      - aws configure set profile.comp1.source_profile _idacct
+      - aws --profile comp1 sts get-caller-identity
+      - aws configure set profile.profile.role_arn arn:aws:iam::456:role/foobar-role
+      - aws configure set profile.profile.source_profile _idacct
+      - aws --profile profile sts get-caller-identity
       - run:
           command: |
             cd terraform/accounts/bar
@@ -57,13 +48,21 @@ jobs:
             make  check
       - run:
           command: |
-            cd terraform/modules/module1
+            cd terraform/modules/my_module
             make  check
       - run:
           command: |
-            cd terraform/envs/stage/cloud-env
+            cd terraform/envs/staging/comp1
             make  check
       - run:
           command: |
-            cd terraform/envs/stage/helm
+            cd terraform/envs/staging/comp2
+            make  check
+      - run:
+          command: |
+            cd terraform/envs/staging/comp_helm_template
+            make  check
+      - run:
+          command: |
+            cd terraform/envs/staging/vpc
             make  check

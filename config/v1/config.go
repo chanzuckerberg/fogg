@@ -142,11 +142,6 @@ type TravisCI struct {
 	CommonCI `json:",inline" yaml:",inline"`
 }
 
-type CircleCI struct {
-	CommonCI           `json:",inline" yaml:",inline"`
-	SSHKeyFingerprints []string `json:"ssh_key_fingerprints" yaml:"ssh_key_fingerprints"`
-}
-
 type Config struct {
 	Accounts map[string]Account `json:"accounts"`
 	Defaults Defaults           `json:"defaults"`
@@ -155,7 +150,6 @@ type Config struct {
 	Modules  map[string]Module  `json:"modules"`
 	Plugins  Plugins            `json:"plugins,omitempty"`
 	TravisCI *TravisCI          `json:"travis_ci,omitempty"`
-	CircleCI *CircleCI          `json:"circle_ci,omitempty"`
 }
 
 func ReadConfig(b []byte) (*Config, error) {
