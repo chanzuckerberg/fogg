@@ -13,8 +13,6 @@ jobs:
     steps:
       - checkout
       # HACK(el):Switch to key that reads private tf modules after checking out our code
-      - add_ssh_keys:
-          fingerprints:
       - run: python3 -m venv *venv_directory
       - run: . *venv_directory/bin/activate
       - run: pip install awscli --upgrade --user
