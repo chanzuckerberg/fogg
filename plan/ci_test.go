@@ -30,7 +30,9 @@ func Test_buildTravisCI_Disabled(t *testing.T) {
 				Common: v2.Common{
 					Tools: &v2.Tools{
 						TravisCI: &v1.TravisCI{
-							Enabled: &f,
+							CommonCI: v1.CommonCI{
+								Enabled: &f,
+							},
 						},
 					},
 				},
@@ -38,7 +40,7 @@ func Test_buildTravisCI_Disabled(t *testing.T) {
 		}
 		p := &Plan{}
 		p.Accounts = p.buildAccounts(c)
-		tr := p.buildTravisCI(c, "0.1.0")
+		tr := p.buildTravisCIConfig(c, "0.1.0")
 		a.NotNil(tr)
 		a.False(tr.Enabled)
 	}
@@ -70,8 +72,10 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 				},
 				Tools: &v2.Tools{
 					TravisCI: &v1.TravisCI{
-						Enabled:        &tr,
-						AWSIAMRoleName: util.StrPtr("rollin"),
+						CommonCI: v1.CommonCI{
+							Enabled:        &tr,
+							AWSIAMRoleName: util.StrPtr("rollin"),
+						},
 					}},
 			},
 		},
@@ -88,7 +92,7 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 
 	p := &Plan{}
 	p.Accounts = p.buildAccounts(c)
-	tr := p.buildTravisCI(c, "0.1.0")
+	tr := p.buildTravisCIConfig(c, "0.1.0")
 	a.Len(tr.AWSProfiles, 2)
 	a.Contains(tr.AWSProfiles, "profile")
 	a.Contains(tr.AWSProfiles, "foo")
@@ -121,8 +125,10 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 					AccountID: util.StrPtr("some account id"),
 				},
 				Tools: &v2.Tools{TravisCI: &v1.TravisCI{
-					Enabled:        &tr,
-					AWSIAMRoleName: util.StrPtr("rollin"),
+					CommonCI: v1.CommonCI{
+						Enabled:        &tr,
+						AWSIAMRoleName: util.StrPtr("rollin"),
+					},
 				}},
 			},
 		},
@@ -142,9 +148,118 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 
 	p := &Plan{}
 	p.Accounts = p.buildAccounts(c)
-	tr := p.buildTravisCI(c, "0.1.0")
+	tr := p.buildTravisCIConfig(c, "0.1.0")
 	a.NotNil(p.Accounts["foo"].Providers.AWS)
 	a.Equal(id1, p.Accounts["foo"].Providers.AWS.AccountID)
 	a.Len(tr.TestBuckets, 1)
 	a.Len(tr.TestBuckets[0], 2)
+}
+
+func Test_buildCircleCI_Profiles(t *testing.T) {
+	a := assert.New(t)
+
+	c := &v2.Config{
+		Version: 2,
+		Defaults: v2.Defaults{
+			Common: v2.Common{
+				Project:          util.StrPtr("foo"),
+				Owner:            util.StrPtr("bar"),
+				TerraformVersion: util.StrPtr("0.1.0"),
+				Providers: &v2.Providers{
+					AWS: &v2.AWSProvider{
+						AccountID: util.JsonNumberPtr(123),
+						Region:    util.StrPtr("us-west-2"),
+						Profile:   util.StrPtr("foo"),
+						Version:   util.StrPtr("0.12.0"),
+					},
+				},
+				Backend: &v2.Backend{
+					Bucket:    util.StrPtr("bucket"),
+					Region:    util.StrPtr("us-west-2"),
+					Profile:   util.StrPtr("profile"),
+					AccountID: util.StrPtr("some account id"),
+				},
+				Tools: &v2.Tools{
+					CircleCI: &v2.CircleCI{
+						CommonCI: v1.CommonCI{
+							Enabled:        &tr,
+							AWSIAMRoleName: util.StrPtr("rollin"),
+						},
+					}},
+			},
+		},
+		Accounts: map[string]v2.Account{
+			"foo": v2.Account{
+				Common: v2.Common{Providers: &v2.Providers{AWS: &v2.AWSProvider{AccountID: &id1}}},
+			},
+		},
+	}
+
+	w, err := c.Validate()
+	a.NoError(err)
+	a.Len(w, 0)
+
+	p := &Plan{}
+	p.Accounts = p.buildAccounts(c)
+	circle := p.buildCircleCIConfig(c, "0.1.0")
+	a.Len(circle.AWSProfiles, 2)
+	a.Contains(circle.AWSProfiles, "profile")
+	a.Contains(circle.AWSProfiles, "foo")
+	a.Equal(id1.String(), circle.AWSProfiles["foo"].AccountID)
+	a.Equal("rollin", circle.AWSProfiles["foo"].RoleName)
+}
+
+func Test_buildCircleCI_ProfilesDisabled(t *testing.T) {
+	a := assert.New(t)
+
+	c := &v2.Config{
+		Version: 2,
+		Defaults: v2.Defaults{
+			Common: v2.Common{
+				Project:          util.StrPtr("foo"),
+				Owner:            util.StrPtr("bar"),
+				TerraformVersion: util.StrPtr("0.1.0"),
+				Providers: &v2.Providers{
+					AWS: &v2.AWSProvider{
+						AccountID: util.JsonNumberPtr(123),
+						Region:    util.StrPtr("us-west-2"),
+						Profile:   util.StrPtr("foo"),
+						Version:   util.StrPtr("0.12.0"),
+					},
+				},
+				Backend: &v2.Backend{
+					Bucket:    util.StrPtr("bucket"),
+					Region:    util.StrPtr("us-west-2"),
+					Profile:   util.StrPtr("profile"),
+					AccountID: util.StrPtr("some account id"),
+				},
+				Tools: &v2.Tools{
+					CircleCI: &v2.CircleCI{
+						CommonCI: v1.CommonCI{
+							Enabled:        &tr,
+							AWSIAMRoleName: util.StrPtr("rollin"),
+							Providers: map[string]v1.CIProviderConfig{
+								"aws": v1.CIProviderConfig{
+									Disabled: true,
+								},
+							},
+						},
+					}},
+			},
+		},
+		Accounts: map[string]v2.Account{
+			"foo": v2.Account{
+				Common: v2.Common{Providers: &v2.Providers{AWS: &v2.AWSProvider{AccountID: &id1}}},
+			},
+		},
+	}
+
+	w, err := c.Validate()
+	a.NoError(err)
+	a.Len(w, 0)
+
+	p := &Plan{}
+	p.Accounts = p.buildAccounts(c)
+	circle := p.buildCircleCIConfig(c, "0.1.0")
+	a.Len(circle.AWSProfiles, 0)
 }
