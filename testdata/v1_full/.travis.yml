@@ -33,6 +33,10 @@ before_script:
   - aws --profile _idacct sts get-caller-identity
 
 
+  - aws configure set profile.czi.role_arn arn:aws:iam::1:role/travis-role
+  - aws configure set profile.czi.source_profile _idacct
+  - buildevents cmd $BUILDEVENTS_BUILD_ID $STEP_SPAN_ID sts-caller-identity.czi -- aws --profile czi sts get-caller-identity
+
   - aws configure set profile.czi-bar.role_arn arn:aws:iam::3:role/travis-role
   - aws configure set profile.czi-bar.source_profile _idacct
   - buildevents cmd $BUILDEVENTS_BUILD_ID $STEP_SPAN_ID sts-caller-identity.czi-bar -- aws --profile czi-bar sts get-caller-identity

@@ -1,7 +1,7 @@
 package templates
 
 import (
-	"github.com/chanzuckerberg/fogg/config/v1"
+	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/gobuffalo/packr"
 )
 
@@ -16,6 +16,7 @@ type T struct {
 	ModuleInvocation packr.Box
 	Repo             packr.Box
 	TravisCI         packr.Box
+	CircleCI         packr.Box
 }
 
 var Templates = &T{
@@ -32,4 +33,5 @@ var Templates = &T{
 	ModuleInvocation: packr.NewBox("module-invocation"),
 	Repo:             packr.NewBox("repo"),
 	TravisCI:         packr.NewBox("travis-ci"),
+	CircleCI:         packr.NewBox("circleci"),
 }
