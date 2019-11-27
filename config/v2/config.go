@@ -70,7 +70,14 @@ type Account struct {
 type Tools struct {
 	Atlantis *Atlantis    `json:"atlantis,omitempty" yaml:"atlantis,omitempty"`
 	TravisCI *v1.TravisCI `json:"travis_ci,omitempty" yaml:"travis_ci,omitempty"`
+	CircleCI *CircleCI    `json:"circle_ci,omitempty" yaml:"circle_ci,omitempty"`
 	TfLint   *v1.TfLint   `json:"tflint,omitempty" yaml:"tflint,omitempty"`
+}
+
+type CircleCI struct {
+	v1.CommonCI `json:",inline" yaml:",inline"`
+
+	SSHKeyFingerprints []string `json:"ssh_key_fingerprints" yaml:"ssh_key_fingerprints"`
 }
 
 type Atlantis struct {
@@ -261,8 +268,10 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 			c.Tools = &Tools{}
 			if r.Float32() < 0.5 {
 				c.Tools.TravisCI = &v1.TravisCI{
-					Enabled:     randBoolPtr(r, s),
-					TestBuckets: randIntPtr(r, s),
+					CommonCI: v1.CommonCI{
+						Enabled:     randBoolPtr(r, s),
+						TestBuckets: randIntPtr(r, s),
+					},
 				}
 			}
 			if r.Float32() < 0.5 {

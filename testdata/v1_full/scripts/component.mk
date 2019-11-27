@@ -25,7 +25,7 @@ fmt: terraform ## format code in this component
 lint: lint-terraform-fmt lint-tflint ## run all linters for this component
 .PHONY: lint
 
-lint-tflint: init ## run the tflint linter for this component
+lint-tflint: ## run the tflint linter for this component
 	@printf "tflint: "
 ifeq ($(TFLINT_ENABLED),1)
 	@tflint || exit $$?;

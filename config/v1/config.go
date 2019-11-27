@@ -125,12 +125,21 @@ type Module struct {
 	TerraformVersion *string `json:"terraform_version,omitempty" yaml:"terraform_version,omitempty"`
 }
 
+type CIProviderConfig struct {
+	Disabled bool `json:"disabled,omitempty" yaml:"disabled,omitempty"`
+}
+
+type CommonCI struct {
+	Enabled        *bool                       `json:"enabled,omitempty" yaml:"enabled,omitempty"`
+	AWSIAMRoleName *string                     `json:"aws_iam_role_name" yaml:"aws_iam_role_name,omitempty"`
+	TestBuckets    *int                        `json:"test_buckets" yaml:"test_buckets,omitempty"`
+	Command        *string                     `json:"command,omitempty" yaml:"command,omitempty"`
+	Buildevents    *bool                       `json:"buildevents,omitempty" yaml:"buildevents,omitempty"`
+	Providers      map[string]CIProviderConfig `json:"providers,omitempty" yaml:"providers,omitempty"`
+}
+
 type TravisCI struct {
-	Enabled        *bool   `json:"enabled,omitempty" yaml:"enabled,omitempty"`
-	AWSIAMRoleName *string `json:"aws_iam_role_name" yaml:"aws_iam_role_name,omitempty"`
-	TestBuckets    *int    `json:"test_buckets" yaml:"test_buckets,omitempty"`
-	Command        *string `json:"command,omitempty" yaml:"command,omitempty"`
-	Buildevents    *bool   `json:"buildevents,omitempty" yaml:"buildevents,omitempty"`
+	CommonCI `json:",inline" yaml:",inline"`
 }
 
 type Config struct {

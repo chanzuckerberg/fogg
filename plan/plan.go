@@ -9,6 +9,7 @@ import (
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/util"
+	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
 
@@ -19,7 +20,8 @@ type Plan struct {
 	Envs     map[string]Env     `json:"envs" yaml:"envs"`
 	Global   Component          `json:"global" yaml:"global"`
 	Modules  map[string]Module  `json:"modules" yaml:"modules"`
-	TravisCI TravisCI           `json:"travis_ci" yaml:"travis_ci"`
+	TravisCI TravisCIConfig     `json:"travis_ci" yaml:"travis_ci"`
+	CircleCI CircleCIConfig     `json:"circle_ci" yaml:"circle_ci"`
 	Version  string             `json:"version" yaml:"version"`
 }
 
@@ -40,7 +42,9 @@ type ComponentCommon struct {
 	Project   string            `json:"project" yaml:"project"`
 	Providers Providers         `json:"providers" yaml:"providers"`
 	TfLint    TfLint            `json:"tf_lint" yaml:"tf_lint"`
-	TravisCI  TravisComponent
+
+	TravisCI TravisCIComponent
+	CircleCI CircleCIComponent
 }
 
 type AtlantisComponent struct {
@@ -49,7 +53,17 @@ type AtlantisComponent struct {
 	RolePath string `yaml:"role_path"`
 }
 
-type TravisComponent struct {
+type TravisCIComponent struct {
+	CIComponent
+}
+
+type CircleCIComponent struct {
+	CIComponent
+
+	SSHFingerprints []string
+}
+
+type CIComponent struct {
 	Enabled     bool
 	Buildevents bool
 
@@ -57,6 +71,45 @@ type TravisComponent struct {
 	AWSRoleName    string
 	AWSAccountID   string
 	Command        string
+}
+
+// generateCIConfig generates the config for ci
+func (c CIComponent) generateCIConfig(
+	backend AWSBackend,
+	provider *AWSProvider,
+	projName string,
+	projDir string) *CIConfig {
+
+	if !c.Enabled {
+		return nil
+	}
+
+	ciConfig := &CIConfig{
+		AWSProfiles: ciAwsProfiles{},
+		Enabled:     true,
+		Buildevents: c.Buildevents,
+	}
+
+	ciConfig.projects = append(ciConfig.projects, CIProject{
+		Name:    projName,
+		Dir:     projDir,
+		Command: c.Command,
+	})
+
+	if backend.AccountID != nil {
+		ciConfig.AWSProfiles[backend.Profile] = AWSRole{
+			AccountID: *backend.AccountID,
+			RoleName:  c.AWSRoleName,
+		}
+	}
+
+	if provider != nil {
+		ciConfig.AWSProfiles[provider.Profile] = AWSRole{
+			AccountID: provider.AccountID.String(),
+			RoleName:  c.AWSRoleName,
+		}
+	}
+	return ciConfig
 }
 
 type Providers struct {
@@ -178,7 +231,8 @@ func Eval(c *v2.Config) (*Plan, error) {
 
 	p.Modules = p.buildModules(c)
 	p.Atlantis = p.buildAtlantis()
-	p.TravisCI = p.buildTravisCI(c, v)
+	p.TravisCI = p.buildTravisCIConfig(c, v)
+	p.CircleCI = p.buildCircleCIConfig(c, v)
 
 	return p, nil
 }
@@ -360,13 +414,31 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	}
 
 	travisConfig := v2.ResolveTravis(commons...)
-	travisPlan := TravisComponent{
-		Enabled:     *travisConfig.Enabled,
-		Buildevents: *travisConfig.Buildevents,
+	travisPlan := TravisCIComponent{
+		CIComponent: CIComponent{
+			Enabled:     *travisConfig.Enabled,
+			Buildevents: *travisConfig.Buildevents,
+		},
 	}
 	if travisPlan.Enabled {
 		travisPlan.AWSRoleName = *travisConfig.AWSIAMRoleName
 		travisPlan.Command = *travisConfig.Command
+	}
+
+	circleConfig := v2.ResolveCircleCI(commons...)
+	circlePlan := CircleCIComponent{
+		CIComponent: CIComponent{
+			Enabled:     *circleConfig.Enabled,
+			Buildevents: *circleConfig.Buildevents,
+		},
+	}
+	if circlePlan.Enabled {
+		circlePlan.AWSRoleName = *circleConfig.AWSIAMRoleName
+		circlePlan.Command = *circleConfig.Command
+	}
+
+	if travisPlan.Enabled && circlePlan.Enabled {
+		logrus.Warn("Detected both travisCI and circleCI are enabled, is this intentional?")
 	}
 
 	return ComponentCommon{
@@ -391,6 +463,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		Project:   v2.ResolveRequiredString(v2.ProjectGetter, commons...),
 		Common:    Common{TerraformVersion: v2.ResolveRequiredString(v2.TerraformVersionGetter, commons...)},
 		TravisCI:  travisPlan,
+		CircleCI:  circlePlan,
 	}
 }
 

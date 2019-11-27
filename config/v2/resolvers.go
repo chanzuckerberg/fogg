@@ -216,6 +216,7 @@ func ResolveTravis(commons ...Common) *v1.TravisCI {
 	enabled := false
 	buildevents := false
 	testCommand := "check"
+
 	for _, c := range commons {
 		if c.Tools != nil && c.Tools.TravisCI != nil && c.Tools.TravisCI.Enabled != nil {
 			enabled = *c.Tools.TravisCI.Enabled
@@ -232,10 +233,43 @@ func ResolveTravis(commons ...Common) *v1.TravisCI {
 	roleName := lastNonNil(TravisRoleNameGetter, commons...)
 
 	return &v1.TravisCI{
-		Enabled:        &enabled,
-		Buildevents:    &buildevents,
-		AWSIAMRoleName: roleName,
-		Command:        &testCommand,
+		CommonCI: v1.CommonCI{
+			Enabled:        &enabled,
+			Buildevents:    &buildevents,
+			AWSIAMRoleName: roleName,
+			Command:        &testCommand,
+		},
+	}
+}
+
+func ResolveCircleCI(commons ...Common) *CircleCI {
+	enabled := false
+	buildevents := false
+	testCommand := "check"
+
+	for _, c := range commons {
+		if c.Tools != nil && c.Tools.CircleCI != nil && c.Tools.CircleCI.Enabled != nil {
+			enabled = *c.Tools.CircleCI.Enabled
+		}
+		if c.Tools != nil && c.Tools.CircleCI != nil && c.Tools.CircleCI.Command != nil {
+			testCommand = *c.Tools.CircleCI.Command
+		}
+		if c.Tools != nil && c.Tools.CircleCI != nil && c.Tools.CircleCI.Buildevents != nil {
+			buildevents = *c.Tools.CircleCI.Buildevents
+		}
+	}
+
+	sshFingerprints := ResolveOptionalStringSlice(CircleCISSHFingerprintsGetter, commons...)
+	roleName := lastNonNil(CircleCIRoleNameGetter, commons...)
+
+	return &CircleCI{
+		CommonCI: v1.CommonCI{
+			Enabled:        &enabled,
+			Buildevents:    &buildevents,
+			AWSIAMRoleName: roleName,
+			Command:        &testCommand,
+		},
+		SSHKeyFingerprints: sshFingerprints,
 	}
 }
 
@@ -441,9 +475,16 @@ func TravisRoleNameGetter(comm Common) *string {
 	return comm.Tools.TravisCI.AWSIAMRoleName
 }
 
-func TravisTestCommandGetter(comm Common) *string {
-	if comm.Tools == nil || comm.Tools.TravisCI == nil {
+func CircleCIRoleNameGetter(comm Common) *string {
+	if comm.Tools == nil || comm.Tools.CircleCI == nil {
 		return nil
 	}
-	return comm.Tools.TravisCI.Command
+	return comm.Tools.CircleCI.AWSIAMRoleName
+}
+
+func CircleCISSHFingerprintsGetter(comm Common) []string {
+	if comm.Tools == nil || comm.Tools.CircleCI == nil {
+		return nil
+	}
+	return comm.Tools.CircleCI.SSHKeyFingerprints
 }
