@@ -15,13 +15,12 @@ import (
 )
 
 func init() {
-	awsConfigCmd.Flags().StringP("source-profile", "p", "default", "Use this to override the base aws profile.")
 	awsConfigCmd.Flags().StringP("role", "r", "default", "Use this to override the default assume role.")
+	awsConfigCmd.Flags().StringP("okta-aws-saml-url", "o", "", "Your aws-okta aws_saml_url value.")
+	awsConfigCmd.Flags().StringP("aws-okta-mfa-device", "m", "", "Your aws-okta mfa device to use.")
 
 	awsConfigCmd.Flags().String("fogg-config", "fogg.yml", "Use this to override the fogg config file.")
 	awsConfigCmd.Flags().String("aws-config", "~/.aws/config", "Path to your AWS config")
-	awsConfigCmd.Flags().String("okta-aws-saml-url", "", "Your aws-okta aws_saml_url value.")
-	awsConfigCmd.Flags().String("okta-role-arn", "", "Your aws-okta initial role to assume.")
 
 	ExpCmd.AddCommand(awsConfigCmd)
 }
@@ -54,11 +53,6 @@ var awsConfigCmd = &cobra.Command{
 			return errs.WrapInternal(err, "couldn't expand aws-config path.")
 		}
 
-		sourceProfile, err := cmd.Flags().GetString("source-profile")
-		if err != nil {
-			return errs.WrapInternal(err, "couldn't parse source-profile")
-		}
-
 		var oktaAwsSamlURL *string
 		if cmd.Flags().Changed("okta-aws-saml-url") {
 			s, err := cmd.Flags().GetString("okta-aws-saml-url")
@@ -67,19 +61,17 @@ var awsConfigCmd = &cobra.Command{
 			}
 			oktaAwsSamlURL = &s
 		}
-
-		var oktaRoleARN *string
-		if cmd.Flags().Changed("okta-role-arn") {
-			s, err := cmd.Flags().GetString("okta-role-arn")
+		var awsOktaMFADevice *string
+		if cmd.Flags().Changed("aws-okta-mfa-device") {
+			s, err := cmd.Flags().GetString("aws-okta-mfa-device")
 			if err != nil {
-				return errs.WrapInternal(err, "couldn't parse okta-role-arn")
+				return errs.WrapInternal(err, "couldn't parse aws-okta-mfa-device")
 			}
-			oktaRoleARN = &s
+			awsOktaMFADevice = &s
 		}
 
-		// both of them must be set or unset
-		if (oktaAwsSamlURL != nil) != (oktaRoleARN != nil) {
-			return errs.NewUser("Both okta-aws-saml-url and okta-role-arn must be set if either of them is.")
+		if (oktaAwsSamlURL != nil) != (awsOktaMFADevice != nil) {
+			return errs.NewUser("Both okta-aws-saml-url and aws-okta-mfa-device must be set if either of them is.")
 		}
 
 		role, err := cmd.Flags().GetString("role")
@@ -93,12 +85,6 @@ var awsConfigCmd = &cobra.Command{
 		}
 
 		confIni := ini.Empty()
-
-		if oktaAwsSamlURL != nil {
-			section := confIni.Section("okta")
-			section.Key("role_arn").SetValue(*oktaRoleARN)
-			section.Key("aws_saml_url").SetValue(*oktaAwsSamlURL)
-		}
 
 		for name, account := range conf.Accounts {
 			logrus.Infof("Processing profile %s", name)
@@ -121,18 +107,18 @@ var awsConfigCmd = &cobra.Command{
 			}
 
 			section := confIni.Section(fmt.Sprintf("profile %s", name))
-
-			section.Key("role_arn").SetValue(roleARN.String())
 			section.Key("region").SetValue(*region)
 			section.Key("output").SetValue("json")
 
-			section.Key("source_profile").SetValue(sourceProfile)
-			// if oktaAwsSamlURL != nil {
-			// section.Key("credential_source").SetValue("Environment")
-			// } else {
-			// section.Key("source_profile").SetValue(sourceProfile)
-			// }
+			if oktaAwsSamlURL != nil {
+				oktaProfileName := fmt.Sprintf("okta-%s", name)
+				oktaSection := confIni.Section(fmt.Sprintf("profile %s", oktaProfileName))
+				oktaSection.Key("role_arn").SetValue(roleARN.String())
+				oktaSection.Key("aws_saml_url").SetValue(*oktaAwsSamlURL)
 
+				section.Key("credential_process").SetValue(
+					fmt.Sprintf("aws-okta cred-process %s --mfa-duo-device %s", oktaProfileName, *awsOktaMFADevice))
+			}
 		}
 		awsConfigFile, err := os.OpenFile(awsConfigPath, os.O_WRONLY|os.O_CREATE, 0600)
 		if err != nil {
