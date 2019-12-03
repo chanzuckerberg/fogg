@@ -11,11 +11,21 @@ all: test install
 
 setup: ## setup development dependencies
 	./.godownloader-packr.sh -d v1.24.1
-	curl -L https://raw.githubusercontent.com/chanzuckerberg/bff/master/download.sh | sh
+	curl -sfL https://raw.githubusercontent.com/chanzuckerberg/bff/master/download.sh | sh
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh
+	curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh
 .PHONY: setup
 
 lint: ## run the fast go linters
+	./bin/reviewdog -conf .reviewdog.yml  -diff "git diff master"
+.PHONY: lint
+
+lint-ci: ## run the fast go linters
+	./bin/reviewdog -conf .reviewdog.yml  -reporter=github-pr-review
+.PHONY: lint
+
+lint-all: ## run the fast go linters
+	# doesn't seem to be a way to get reviewdog to not filter by diff
 	golangci-lint run
 .PHONY: lint
 
