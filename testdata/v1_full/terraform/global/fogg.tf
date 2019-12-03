@@ -37,9 +37,7 @@ terraform {
     bucket         = "the-bucket"
     dynamodb_table = "the-table"
 
-    key                     = "terraform/test-project/global.tfstate"
-    skip_metadata_api_check = true
-
+    key = "terraform/test-project/global.tfstate"
 
     encrypt = true
     region  = "us-west-2"
