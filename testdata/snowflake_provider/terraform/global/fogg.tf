@@ -30,7 +30,6 @@ terraform {
 
     key = "terraform/foo/global.tfstate"
 
-
     encrypt = true
     region  = "region"
     profile = "foo"

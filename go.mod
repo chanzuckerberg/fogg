@@ -22,7 +22,7 @@ require (
 	github.com/gobuffalo/envy v1.7.1 // indirect
 	github.com/gobuffalo/packr v1.30.1
 	github.com/golang/groupcache v0.0.0-20191027212112-611e8accdfc9 // indirect
-	github.com/google/go-github/v27 v27.0.6
+	github.com/google/go-github/v27 v27.0.4
 	github.com/hashicorp/go-getter v1.4.0
 	github.com/hashicorp/go-multierror v1.0.0
 	github.com/hashicorp/go-version v1.2.0
@@ -59,5 +59,6 @@ require (
 	google.golang.org/appengine v1.6.5 // indirect
 	google.golang.org/grpc v1.25.0 // indirect
 	gopkg.in/go-playground/validator.v9 v9.30.0
+	gopkg.in/ini.v1 v1.42.0
 	gopkg.in/yaml.v3 v3.0.0-20191107175235-0b070bb63a18
 )

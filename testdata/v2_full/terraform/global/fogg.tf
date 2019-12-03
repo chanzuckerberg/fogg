@@ -31,7 +31,6 @@ terraform {
 
     key = "terraform/proj/global.tfstate"
 
-
     encrypt = true
     region  = "us-west-2"
     profile = "profile"
