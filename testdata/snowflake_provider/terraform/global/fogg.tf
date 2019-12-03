@@ -28,7 +28,8 @@ terraform {
     bucket = "bucket"
 
 
-    key = "terraform/foo/global.tfstate"
+    key                     = "terraform/foo/global.tfstate"
+    skip_metadata_api_check = true
 
 
     encrypt = true

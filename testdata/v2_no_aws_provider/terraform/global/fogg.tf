@@ -18,7 +18,8 @@ terraform {
     bucket = "buck"
 
 
-    key = "terraform/proj/global.tfstate"
+    key                     = "terraform/proj/global.tfstate"
+    skip_metadata_api_check = true
 
 
     encrypt = true

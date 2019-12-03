@@ -8,7 +8,6 @@
     region = "{{ .Providers.AWS.Region }}"
     profile = "{{ .Providers.AWS.Profile }}"
     allowed_account_ids = [{{ .Providers.AWS.AccountID }}]
-    skip_metadata_api_check = true
   }
 
   # Aliased Providers (for doing things in every region).
@@ -20,7 +19,6 @@
       region = "{{ $region }}"
       profile = "{{ $outer.Providers.AWS.Profile }}"
       allowed_account_ids = [{{ $outer.Providers.AWS.AccountID }}]
-      skip_metadata_api_check = true
     }
   {{ end }}
 {{ end }}
@@ -51,7 +49,6 @@ terraform {
     encrypt        = true
     region         = "{{ .Backend.Region }}"
     profile        = "{{ .Backend.Profile }}"
-    skip_metadata_api_check = true
   }
 }
 

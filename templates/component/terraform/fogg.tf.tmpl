@@ -18,7 +18,6 @@
       region = "{{ $region }}"
       profile = "{{ $outer.Providers.AWS.Profile }}"
       allowed_account_ids = [{{ $outer.Providers.AWS.AccountID }}]
-      skip_metadata_api_check = true
     }
   {{ end }}
 
