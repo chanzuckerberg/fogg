@@ -48,42 +48,42 @@ terraform {
 }
 
 variable "env" {
-  type    = "string"
+  type    = string
   default = "stage"
 }
 
 variable "project" {
-  type    = "string"
+  type    = string
   default = "stage-project"
 }
 
 
 variable "region" {
-  type    = "string"
+  type    = string
   default = "us-west-stage1"
 }
 
 
 variable "component" {
-  type    = "string"
+  type    = string
   default = "helm"
 }
 
 
 variable "aws_profile" {
-  type    = "string"
+  type    = string
   default = "czi-stage"
 }
 
 
 
 variable "owner" {
-  type    = "string"
+  type    = string
   default = "stage@example.com"
 }
 
 variable "tags" {
-  type = "map"
+  type = map
   default = {
     project   = "stage-project"
     env       = "stage"
@@ -95,7 +95,7 @@ variable "tags" {
 
 
 variable "foo" {
-  type    = "string"
+  type    = string
   default = "stage"
 }
 
@@ -156,7 +156,7 @@ data "terraform_remote_state" "foo" {
 
 # map of aws_accounts
 variable "aws_accounts" {
-  type = "map"
+  type = map
   default = {
 
 

@@ -53,31 +53,31 @@ terraform {
 }
 
 variable "project" {
-  type    = "string"
+  type    =  string
   default = "{{ .Project }}"
 }
 
 {{ if .Providers.AWS }}
   variable "region" {
-    type    = "string"
+    type    =  string
     default = "{{ .Providers.AWS.Region }}"
   }
 {{ end }}
 
 {{if .Providers.AWS}}
   variable "aws_profile" {
-    type = "string"
+    type =  string
     default =  "{{ .Providers.AWS.Profile }}"
   }
 {{ end }}
 
 variable "owner" {
-  type = "string"
+  type =  string
   default = "{{ .Owner }}"
 }
 
 variable "aws_accounts" {
-  type = "map"
+  type =  map
   default = {
   {{ range $account, $id := .AllAccounts }}
     {{ if $id }}
@@ -89,7 +89,7 @@ variable "aws_accounts" {
 
 {{ range $key, $val := .ExtraVars }}
 variable "{{ $key }}" {
-  type = "string"
+  type =  string
   default = "{{ $val }}"
 }
 {{ end }}

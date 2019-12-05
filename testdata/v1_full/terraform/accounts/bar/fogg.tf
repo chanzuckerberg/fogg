@@ -44,31 +44,31 @@ terraform {
 }
 
 variable "project" {
-  type    = "string"
+  type    = string
   default = "bar-project"
 }
 
 
 variable "region" {
-  type    = "string"
+  type    = string
   default = "us-west-bar1"
 }
 
 
 
 variable "aws_profile" {
-  type    = "string"
+  type    = string
   default = "czi-bar"
 }
 
 
 variable "owner" {
-  type    = "string"
+  type    = string
   default = "bar@example.com"
 }
 
 variable "aws_accounts" {
-  type = "map"
+  type = map
   default = {
 
 
@@ -84,7 +84,7 @@ variable "aws_accounts" {
 
 
 variable "foo" {
-  type    = "string"
+  type    = string
   default = "bar"
 }
 

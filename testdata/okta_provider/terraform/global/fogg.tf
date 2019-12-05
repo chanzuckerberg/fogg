@@ -36,31 +36,31 @@ terraform {
 }
 
 variable "env" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
 variable "project" {
-  type    = "string"
+  type    = string
   default = "foofoo"
 }
 
 
 
 variable "component" {
-  type    = "string"
+  type    = string
   default = "global"
 }
 
 
 
 variable "owner" {
-  type    = "string"
+  type    = string
   default = "foo@example.com"
 }
 
 variable "tags" {
-  type = "map"
+  type = map
   default = {
     project   = "foofoo"
     env       = ""
