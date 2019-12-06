@@ -25,7 +25,7 @@ terraform {
 }
 
 variable "project" {
-  type    = "string"
+  type    = string
   default = "proj"
 }
 
@@ -34,12 +34,12 @@ variable "project" {
 
 
 variable "owner" {
-  type    = "string"
+  type    = string
   default = "foo@example.com"
 }
 
 variable "aws_accounts" {
-  type = "map"
+  type = map
   default = {
 
 
@@ -51,7 +51,7 @@ variable "aws_accounts" {
 
 
 variable "foo" {
-  type    = "string"
+  type    = string
   default = "bar1"
 }
 

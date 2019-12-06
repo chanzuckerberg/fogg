@@ -60,42 +60,42 @@ terraform {
 }
 
 variable "env" {
-  type    = "string"
+  type    =  string
   default = "{{ .Env }}"
 }
 
 variable "project" {
-  type    = "string"
+  type    =  string
   default = "{{ .Project }}"
 }
 
 {{if .Providers.AWS}}
   variable "region" {
-    type    = "string"
+    type    =  string
     default = "{{ .Providers.AWS.Region }}"
   }
 {{ end }}
 
 variable "component" {
-  type = "string"
+  type =  string
   default = "{{ .Component }}"
 }
 
 {{if .Providers.AWS}}
   variable "aws_profile" {
-    type = "string"
+    type =  string
     default =  "{{ .Providers.AWS.Profile }}"
   }
 {{ end }}
 
 
 variable "owner" {
-  type = "string"
+  type =  string
   default = "{{ .Owner }}"
 }
 
 variable "tags" {
-  type = "map"
+  type =  map
   default = {
     project   = "{{ .Project }}"
     env       = "{{ .Env }}"
@@ -107,7 +107,7 @@ variable "tags" {
 
 {{ range $key, $val := .ExtraVars }}
 variable "{{ $key }}" {
-  type = "string"
+  type =  string
   default = "{{ $val }}"
 }
 {{ end }}
@@ -156,7 +156,7 @@ data "terraform_remote_state" "{{ $accountName }}" {
 
 # map of aws_accounts
 variable "aws_accounts" {
-  type = "map"
+  type =  map
   default = {
   {{ range $accountName, $account := .Accounts }}
     {{ if $account.Providers.AWS }}

@@ -28,19 +28,19 @@ terraform {
 }
 
 variable "env" {
-  type    = "string"
+  type    = string
   default = "staging"
 }
 
 variable "project" {
-  type    = "string"
+  type    = string
   default = "proj"
 }
 
 
 
 variable "component" {
-  type    = "string"
+  type    = string
   default = "vpc"
 }
 
@@ -48,12 +48,12 @@ variable "component" {
 
 
 variable "owner" {
-  type    = "string"
+  type    = string
   default = "foo@example.com"
 }
 
 variable "tags" {
-  type = "map"
+  type = map
   default = {
     project   = "proj"
     env       = "staging"
@@ -65,7 +65,7 @@ variable "tags" {
 
 
 variable "foo" {
-  type    = "string"
+  type    = string
   default = "bar3"
 }
 
@@ -138,7 +138,7 @@ data "terraform_remote_state" "foo" {
 
 # map of aws_accounts
 variable "aws_accounts" {
-  type = "map"
+  type = map
   default = {
 
 

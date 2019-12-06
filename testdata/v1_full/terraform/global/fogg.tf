@@ -46,41 +46,41 @@ terraform {
 }
 
 variable "env" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
 variable "project" {
-  type    = "string"
+  type    = string
   default = "test-project"
 }
 
 
 variable "region" {
-  type    = "string"
+  type    = string
   default = "us-west-1"
 }
 
 
 variable "component" {
-  type    = "string"
+  type    = string
   default = "global"
 }
 
 
 variable "aws_profile" {
-  type    = "string"
+  type    = string
   default = "czi"
 }
 
 
 variable "owner" {
-  type    = "string"
+  type    = string
   default = "default@example.com"
 }
 
 variable "tags" {
-  type = "map"
+  type = map
   default = {
     project   = "test-project"
     env       = ""
@@ -92,7 +92,7 @@ variable "tags" {
 
 
 variable "foo" {
-  type    = "string"
+  type    = string
   default = "bar"
 }
 
