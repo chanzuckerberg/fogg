@@ -4,7 +4,7 @@
 {{ $outer := . -}}
 {{- range .Outputs -}}
 output "{{.}}" {
-  value = "${module.{{$outer.ModuleName}}.{{.}}}"
+  value = module.{{$outer.ModuleName}}.{{.}}
 }
 
 {{end}}
