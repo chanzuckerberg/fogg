@@ -2,10 +2,11 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 output "bar" {
-  value = "${module.fogg-test-module.bar}"
+  value = module.fogg-test-module.bar
 }
 
 output "foo" {
-  value = "${module.fogg-test-module.foo}"
+  value = module.fogg-test-module.foo
 }
+
 

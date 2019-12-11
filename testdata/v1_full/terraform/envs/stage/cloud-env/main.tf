@@ -3,7 +3,7 @@
 
 module "fogg-test-module" {
   source = "github.com/chanzuckerberg/fogg-test-module"
-  bar    = "${local.bar}"
-  foo    = "${local.foo}"
+  bar    = local.bar
+  foo    = local.foo
 
 }
