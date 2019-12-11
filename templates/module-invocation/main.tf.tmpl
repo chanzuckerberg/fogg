@@ -4,6 +4,6 @@
 module "{{.ModuleName}}" {
   source = "{{.ModuleSource}}"
   {{range .Variables -}}
-    {{.}} = "${local.{{.}}}"
+    {{.}} = local.{{.}}
   {{ end}}
 }
