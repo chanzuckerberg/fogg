@@ -83,7 +83,7 @@ variable "owner" {
 }
 
 variable "tags" {
-  type = map
+  type = map(string)
   default = {
     project   = "env-project"
     env       = "stage"
