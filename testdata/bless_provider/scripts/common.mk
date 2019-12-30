@@ -8,10 +8,6 @@ REPO_RELATIVE_PATH := $(shell git rev-parse --show-prefix)
 AUTO_APPROVE := false
 REFRESH_ENABLED ?= true # Should terraform refresh during plan/apply
 
-# We need to do this because `terraform fmt` recurses into .terraform/modules
-# and wont' accept more than one file at a time.
-TF=$(wildcard *.tf)
-
 TFENV_DIR ?= $(REPO_ROOT)/.fogg/tfenv
 export PATH :=$(TFENV_DIR)/libexec:$(TFENV_DIR)/versions/$(TERRAFORM_VERSION)/:$(REPO_ROOT)/.fogg/bin:$(PATH)
 export TF_PLUGIN_CACHE_DIR=$(REPO_ROOT)/.terraform.d/plugin-cache
