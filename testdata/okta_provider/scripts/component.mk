@@ -17,9 +17,7 @@ check: lint check-plan ## run all checks for this component
 .PHONY: check
 
 fmt: terraform ## format code in this component
-	@printf "fmt: ";
-	@for f in $(TF); do printf .; $(terraform_command) fmt $(TF_ARGS) $$f; done
-	@echo
+	$(terraform_command) fmt $(TF_ARGS)
 .PHONY: fmt
 
 lint: lint-terraform-fmt lint-tflint ## run all linters for this component
