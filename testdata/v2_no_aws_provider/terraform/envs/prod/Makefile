@@ -8,30 +8,35 @@ all:
 
 lint: ## lint all components in the env
 	@for c in $(COMPONENTS); do \
+		echo $$c; \
 		$(MAKE) -C $$c lint || exit $$? ; \
 	done
 .PHONY: lint
 
 fmt: ## format terraform code in all components in this env
 	@for c in $(COMPONENTS); do \
+		echo $$c; \
 		$(MAKE) -C $$c fmt || exit $$? ; \
 	done
 .PHONY: fmt
 
 check-plan: ## check all plans in this environment
 	@for c in $(COMPONENTS); do \
+		echo $$c; \
 		$(MAKE) -C $$c check-plan || exit $$? ; \
 	done
 .PHONY: check-plan
 
 docs: ## generate docs for all components in this env
 	@for c in $(COMPONENTS); do \
+		echo $$c; \
 		$(MAKE) -C $$c docs || exit $$? ; \
 	done
 .PHONY: docs
 
 clean: ## clean all components in this env
 	@for c in $(COMPONENTS); do \
+		echo $$c; \
 		$(MAKE) -C $$c clean || exit $$? ; \
 	done
 .PHONY: clean
