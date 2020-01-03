@@ -38,13 +38,17 @@ templates/a_templates-packr.go: $(TEMPLATES)
 packr: templates/a_templates-packr.go ## run the packr tool to generate our static files
 .PHONY: packr
 
-release: ## run a release
-	bff bump
+docker: ## check to be sure docker is running
+	@docker ps
+.PHONY: docker
+
+release: setup docker ## run a release
+	./bin/bff bump
 	git push
 	goreleaser release
 .PHONY: release
 
-release-prerelease: build ## release to github as a 'pre-release'
+release-prerelease: setup build ## release to github as a 'pre-release'
 	version=`./fogg version`; \
 	git tag v"$$version"; \
 	git push
@@ -52,7 +56,7 @@ release-prerelease: build ## release to github as a 'pre-release'
 	goreleaser release -f .goreleaser.prerelease.yml --debug
 .PHONY: release-prelease
 
-release-snapshot: ## run a release
+release-snapshot: setup ## run a release
 	goreleaser release --snapshot
 .PHONY: release-snapshot
 
