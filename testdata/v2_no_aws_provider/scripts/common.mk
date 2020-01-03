@@ -28,5 +28,5 @@ tfenv: ## install the tfenv tool
 .PHONY: tfenv
 
 terraform: tfenv ## ensure that the proper version of terraform is installed
-	${TFENV_DIR}/bin/tfenv install $(TERRAFORM_VERSION)
+	@${TFENV_DIR}/bin/tfenv install $(TERRAFORM_VERSION)
 .PHONY: terraform
