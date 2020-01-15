@@ -104,6 +104,7 @@ type Providers struct {
 	AWS       *AWSProvider       `json:"aws,omitempty" yaml:"aws,omitempty"`
 	Bless     *BlessProvider     `json:"bless,omitempty" yaml:"bless,omitempty"`
 	Github    *GithubProvider    `json:"github,omitempty" yaml:"github,omitempty"`
+	Heroku    *HerokuProvider    `json:"heroku,omitempty" yaml:"heroku,omitempty"`
 	Okta      *OktaProvider      `json:"okta,omitempty" yaml:"okta,omitempty"`
 	Snowflake *SnowflakeProvider `json:"snowflake,omitempty" yaml:"snowflake,omitempty"`
 }
@@ -144,6 +145,9 @@ type SnowflakeProvider struct {
 	Role    *string `json:"role,omitempty" yaml:"role,omitempty"`
 	Region  *string `json:"region,omitempty" yaml:"region,omitempty"`
 	Version *string `json:"version,omitempty" yaml:"version,omitempty"`
+}
+
+type HerokuProvider struct {
 }
 
 type Backend struct {
@@ -246,6 +250,13 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		return nil
 	}
 
+	randHerokuProvider := func(r *rand.Rand, s int) *HerokuProvider {
+		if r.Float32() < 0.5 {
+			return &HerokuProvider{}
+		}
+		return nil
+	}
+
 	randCommon := func(r *rand.Rand, s int) Common {
 		c := Common{
 			Backend: &Backend{
@@ -260,6 +271,7 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 				Snowflake: randSnowflakeProvider(r, s),
 				Okta:      randOktaProvider(r, s),
 				Bless:     randBlessProvider(r, s),
+				Heroku:    randHerokuProvider(r, s),
 			},
 			TerraformVersion: randStringPtr(r, s),
 		}

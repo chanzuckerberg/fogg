@@ -24,7 +24,11 @@ defaults:
       version: 0.12.0
   terraform_version: 0.100.0
 envs:
-  prod: {}
+  prod:
+    components:
+      hero:
+        providers:
+          heroku: {}
   staging:
     components:
       comp_helm_template:
