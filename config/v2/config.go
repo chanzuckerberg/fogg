@@ -147,8 +147,7 @@ type SnowflakeProvider struct {
 	Version *string `json:"version,omitempty" yaml:"version,omitempty"`
 }
 
-type HerokuProvider struct {
-}
+type HerokuProvider struct{}
 
 type Backend struct {
 	AccountID   *string `json:"account_id,omitempty" yaml:"account_id,omitempty"`
