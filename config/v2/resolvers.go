@@ -181,6 +181,18 @@ func ResolveBlessProvider(commons ...Common) *BlessProvider {
 	}
 }
 
+func ResolveHerokuProvider(commons ...Common) *HerokuProvider {
+	var p *HerokuProvider
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.Heroku == nil {
+			continue
+		}
+		p = c.Providers.Heroku
+	}
+
+	return p
+}
+
 func ResolveTfLint(commons ...Common) v1.TfLint {
 	enabled := false
 	for _, c := range commons {

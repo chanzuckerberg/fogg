@@ -41,11 +41,25 @@ lint-terraform-fmt: terraform ## run `terraform fmt` in check mode
 	@echo
 .PHONY: lint-terraform-fmt
 
-check-auth: ## check that authentication is properly set up for this component
-	@for p in $(AWS_BACKEND_PROFILE) $(AWS_PROVIDER_PROFILE); do \
-		aws --profile $$p sts get-caller-identity > /dev/null || echo "AWS AUTH error. This component is configured to use a profile name $$p. Please add one to your ~/.aws/config"; \
-	done
+check-auth: check-auth-aws check-auth-heroku ## check that authentication is properly set up for this component
 .PHONY: check-auth
+
+check-auth-aws:
+	@for p in $(AWS_BACKEND_PROFILE) $(AWS_PROVIDER_PROFILE); do \
+		aws --profile $$p sts get-caller-identity > /dev/null || (echo "AWS AUTH error. This component is configured to use a profile named '$$p'. Please add one to your ~/.aws/config" && exit -1); \
+	done
+.PHONY: check-auth-aws
+
+check-auth-heroku:
+ifeq ($(HEROKU_PROVIDER),1)
+	@echo "Checking heroku auth..."
+	@if command heroku >/dev/null; then \
+		heroku auth:whoami || (echo "Not authenticated to heroku. For SSO accounts, run 'heroku login', for non-sso accounts set HEROKU_EMAIL and HEROKU_API_KEY" && exit -1); \
+	else \
+		echo "Heroku CLI not installed, can't check auth."; \
+	fi
+endif
+.PHONY: check-auth-heroku
 
 ifeq ($(MODE),local)
 plan: check-auth init fmt ## run a terraform plan
