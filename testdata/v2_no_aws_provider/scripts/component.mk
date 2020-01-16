@@ -51,8 +51,14 @@ check-auth-aws:
 .PHONY: check-auth-aws
 
 check-auth-heroku:
+ifeq ($(HEROKU_PROVIDER),1)
 	@echo "Checking heroku auth..."
-	@heroku auth:whoami || (echo "Not authenticated to heroku. For SSO accounts, run 'heroku login', for non-sso accounts set HEROKU_EMAIL and HEROKU_API_KEY" && exit -1);
+	@if command heroku >/dev/null; then \
+		heroku auth:whoami || (echo "Not authenticated to heroku. For SSO accounts, run 'heroku login', for non-sso accounts set HEROKU_EMAIL and HEROKU_API_KEY" && exit -1); \
+	else \
+		echo "Heroku CLI not installed, can't check auth."; \
+	fi
+endif
 .PHONY: check-auth-heroku
 
 ifeq ($(MODE),local)
