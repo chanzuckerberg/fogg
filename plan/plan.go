@@ -115,6 +115,7 @@ func (c CIComponent) generateCIConfig(
 type Providers struct {
 	AWS       *AWSProvider       `yaml:"aws"`
 	Github    *GithubProvider    `yaml:"github"`
+	Heroku    *HerokuProvider    `yaml:"heroku"`
 	Snowflake *SnowflakeProvider `yaml:"snowflake"`
 	Bless     *BlessProvider     `yaml:"bless"`
 	Okta      *OktaProvider      `yaml:"okta"`
@@ -157,6 +158,8 @@ type BlessProvider struct {
 	AWSRegion         string   `json:"aws_region,omitempty" yaml:"aws_region,omitempty"`
 	Version           *string  `json:"version,omitempty" yaml:"version,omitempty"`
 }
+
+type HerokuProvider struct{}
 
 // AWSBackend represents aws backend configuration
 type AWSBackend struct {
@@ -397,6 +400,12 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
+	var herokuPlan *HerokuProvider
+	herokuConfig := v2.ResolveHerokuProvider(commons...)
+	if herokuConfig != nil {
+		herokuPlan = &HerokuProvider{}
+	}
+
 	tflintConfig := v2.ResolveTfLint(commons...)
 
 	tfLintPlan := TfLint{
@@ -453,6 +462,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		Providers: Providers{
 			AWS:       awsPlan,
 			Github:    githubPlan,
+			Heroku:    herokuPlan,
 			Snowflake: snowflakePlan,
 			Bless:     blessPlan,
 			Okta:      oktaPlan,

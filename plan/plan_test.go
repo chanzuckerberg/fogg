@@ -196,6 +196,11 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 
 	assert.NotNil(t, plan.Envs["staging"].Components["comp_helm_template"])
 	assert.Equal(t, "k8s", plan.Envs["staging"].Components["comp_helm_template"].EKS.ClusterName)
+
+	assert.NotNil(t, plan.Envs["prod"])
+	assert.NotNil(t, plan.Envs["prod"].Components["hero"])
+	assert.NotNil(t, plan.Envs["prod"].Components["hero"].Providers)
+	assert.NotNil(t, plan.Envs["prod"].Components["hero"].Providers.Heroku)
 }
 
 func TestExtraVarsCompositionV2(t *testing.T) {

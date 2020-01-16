@@ -39,6 +39,10 @@
   {{ template "github_provider" .Providers.Github}}
 {{ end }}
 
+{{ if .Providers.Heroku }}
+  {{ template "heroku_provider" .Providers.Heroku }}
+{{ end }}
+
 terraform {
   required_version = "~>{{ .TerraformVersion }}"
 
