@@ -115,3 +115,15 @@ variable "aws_accounts" {
 
   }
 }
+
+provider random {
+  version = "~> 2.2"
+}
+
+provider template {
+  version = "~> 2.1"
+}
+
+provider archive {
+  version = "~> 1.3"
+}
