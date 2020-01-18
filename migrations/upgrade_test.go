@@ -79,34 +79,3 @@ func TestUpgradeUnknownVersion(t *testing.T) {
 	r.Error(err, "config version 100 unrecognized")
 	r.Equal(configFile, "fogg.json")
 }
-
-func TestUpgradeV1(t *testing.T) {
-	r := require.New(t)
-	confPath := "fogg.json"
-	upgradeMigration := VersionUpgradeMigration{}
-
-	fs, _, err := util.TestFs()
-	r.Nil(err)
-
-	v1, err := util.TestFile("v1_full")
-	r.NoError(err)
-
-	err = afero.WriteFile(fs, confPath, v1, 0644)
-	r.NoError(err)
-
-	_, v, err := config.FindConfig(fs, confPath)
-	r.NoError(err)
-	r.Equal(1, v)
-
-	shouldRun, err := upgradeMigration.Guard(fs, confPath)
-	r.Nil(err)
-	r.Equal(true, shouldRun)
-
-	configFile, err := upgradeMigration.Migrate(fs, confPath)
-	r.NoError(err)
-
-	//configFile is passed to validate that Migrate returned string
-	_, v, err = config.FindConfig(fs, configFile)
-	r.NoError(err)
-	r.Equal(2, v) // now upgraded	
-}

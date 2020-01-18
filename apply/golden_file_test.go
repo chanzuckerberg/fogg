@@ -24,7 +24,6 @@ func TestIntegration(t *testing.T) {
 	var testCases = []struct {
 		fileName string
 	}{
-		{"v1_full"},
 		{"v2_full"},
 		{"v2_minimal_valid"},
 		{"v2_no_aws_provider"},
