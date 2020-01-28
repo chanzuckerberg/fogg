@@ -117,7 +117,7 @@ var awsConfigCmd = &cobra.Command{
 				oktaSection.Key("aws_saml_url").SetValue(*oktaAwsSamlURL)
 
 				section.Key("credential_process").SetValue(
-					fmt.Sprintf("aws-okta cred-process %s --mfa-duo-device %s", oktaProfileName, *awsOktaMFADevice))
+					fmt.Sprintf("sh -c 'aws-okta cred-process %s --mfa-duo-device %s 2> /dev/tty'", oktaProfileName, *awsOktaMFADevice))
 			}
 		}
 		awsConfigFile, err := os.OpenFile(awsConfigPath, os.O_WRONLY|os.O_CREATE, 0600)
