@@ -116,6 +116,12 @@ var awsConfigCmd = &cobra.Command{
 				oktaSection.Key("role_arn").SetValue(roleARN.String())
 				oktaSection.Key("aws_saml_url").SetValue(*oktaAwsSamlURL)
 
+				// HACK HACK (el): botocore will consume both stderr and stdout
+				// we need a way to display mfa prompts to users
+				// direct stderr to the tty directly.
+				// I assume there are some corner cases where this might break
+				// but seems like a good enough place to start.
+				// https://github.com/boto/botocore/issues/1348
 				section.Key("credential_process").SetValue(
 					fmt.Sprintf("sh -c 'aws-okta cred-process %s --mfa-duo-device %s 2> /dev/tty'", oktaProfileName, *awsOktaMFADevice))
 			}
