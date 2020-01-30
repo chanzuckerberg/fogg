@@ -132,7 +132,7 @@ var awsConfigCmd = &cobra.Command{
 		dirName := filepath.Dir(awsConfigPath)
 		err := os.MkdirAll(dirName, os.ModePerm)
 		if err != nil {
-				return err
+			return err
 		}
 		
 		awsConfigFile, err := os.OpenFile(awsConfigPath, os.O_WRONLY|os.O_CREATE, 0600)
