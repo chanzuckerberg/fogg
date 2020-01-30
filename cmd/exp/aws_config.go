@@ -126,6 +126,16 @@ var awsConfigCmd = &cobra.Command{
 					fmt.Sprintf("sh -c 'aws-okta cred-process %s --mfa-duo-device %s 2> /dev/tty'", oktaProfileName, *awsOktaMFADevice))
 			}
 		}
+
+		// Create directories in the aws config path if they doesn't exist already.
+		dirName := filepath.Dir(fileName)
+		if _, err := os.Stat(dirName); err != nil {
+			err := os.MkdirAll(dirName, os.ModePerm)
+			if err != nil {
+				return err
+			}
+		}
+
 		awsConfigFile, err := os.OpenFile(awsConfigPath, os.O_WRONLY|os.O_CREATE, 0600)
 		if err != nil {
 			return err
