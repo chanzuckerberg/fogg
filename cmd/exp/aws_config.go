@@ -130,7 +130,7 @@ var awsConfigCmd = &cobra.Command{
 
 		// Create directories in the aws config path if they doesn't exist already.
 		dirName := filepath.Dir(awsConfigPath)
-		err := os.MkdirAll(dirName, os.ModePerm)
+		err = os.MkdirAll(dirName, os.ModePerm)
 		if err != nil {
 			return err
 		}
