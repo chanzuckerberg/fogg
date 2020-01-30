@@ -3,6 +3,7 @@ package exp
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/aws/aws-sdk-go/aws/arn"
 	"github.com/chanzuckerberg/fogg/config"
@@ -128,14 +129,12 @@ var awsConfigCmd = &cobra.Command{
 		}
 
 		// Create directories in the aws config path if they doesn't exist already.
-		dirName := filepath.Dir(fileName)
-		if _, err := os.Stat(dirName); err != nil {
-			err := os.MkdirAll(dirName, os.ModePerm)
-			if err != nil {
+		dirName := filepath.Dir(awsConfigPath)
+		err := os.MkdirAll(dirName, os.ModePerm)
+		if err != nil {
 				return err
-			}
 		}
-
+		
 		awsConfigFile, err := os.OpenFile(awsConfigPath, os.O_WRONLY|os.O_CREATE, 0600)
 		if err != nil {
 			return err
