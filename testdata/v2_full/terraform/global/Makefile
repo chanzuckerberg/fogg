@@ -4,6 +4,13 @@
 export TERRAFORM_VERSION := 0.100.0
 export TFLINT_ENABLED := 0
 export TF_PLUGIN_CACHE_DIR := ../..//.terraform.d/plugin-cache
+export ATLANTIS_ENABLED := 1
+export AWS_BACKEND_PROFILE := profile
+
+export AWS_PROVIDER_PROFILE := profile
+
+
+
 
 include ../..//scripts/component.mk
 
@@ -11,3 +18,4 @@ include ../..//scripts/component.mk
 help: ## display help for this makefile
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 .PHONY: help
+
