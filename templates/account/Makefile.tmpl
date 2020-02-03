@@ -9,6 +9,10 @@ export AWS_BACKEND_PROFILE := {{ .Backend.Profile }}
 {{if .Providers.AWS}}
 export AWS_PROVIDER_PROFILE := {{ .Providers.AWS.Profile }}
 {{ end }}
+{{if .Providers.Heroku}}
+export HEROKU_PROVIDER := 1
+{{end}}
+
 
 include {{ .PathToRepoRoot }}/scripts/component.mk
 
