@@ -84,3 +84,11 @@ provider archive {
 provider null {
   version = "~> 2.1"
 }
+
+provider local {
+  version = "~> 1.4"
+}
+
+provider tls {
+  version = "~> 2.1"
+}
