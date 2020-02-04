@@ -15,12 +15,6 @@ export TF_IN_AUTOMATION=1
 terraform_command ?= $(TFENV_DIR)/versions/$(TERRAFORM_VERSION)/terraform
 MODE ?= local
 
-ifeq ($(MODE),atlantis)
-	export AWS_CONFIG_FILE=$(REPO_ROOT)/config/atlantis-aws-config
-	TF_ARGS ?= -no-color
-endif
-
-
 tfenv: ## install the tfenv tool
 	@if [ ! -d ${TFENV_DIR} ]; then \
 		git clone -q https://github.com/chanzuckerberg/tfenv.git $(TFENV_DIR); \

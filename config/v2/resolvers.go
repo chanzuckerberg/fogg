@@ -206,24 +206,6 @@ func ResolveTfLint(commons ...Common) v1.TfLint {
 	}
 }
 
-func ResolveAtlantis(commons ...Common) *Atlantis {
-	enabled := false
-	for _, c := range commons {
-		if c.Tools != nil && c.Tools.Atlantis != nil && c.Tools.Atlantis.Enabled != nil {
-			enabled = *c.Tools.Atlantis.Enabled
-		}
-	}
-
-	roleName := lastNonNil(AtlantisRoleNameGetter, commons...)
-	rolePath := lastNonNil(AtlantisRolePathGetter, commons...)
-
-	return &Atlantis{
-		Enabled:  &enabled,
-		RoleName: roleName,
-		RolePath: rolePath,
-	}
-}
-
 func ResolveTravis(commons ...Common) *v1.TravisCI {
 	enabled := false
 	buildevents := false
@@ -464,20 +446,6 @@ func OktaProviderOrgNameGetter(comm Common) *string {
 		return nil
 	}
 	return comm.Providers.Okta.OrgName
-}
-
-func AtlantisRolePathGetter(comm Common) *string {
-	if comm.Tools == nil || comm.Tools.Atlantis == nil {
-		return nil
-	}
-	return comm.Tools.Atlantis.RolePath
-}
-
-func AtlantisRoleNameGetter(comm Common) *string {
-	if comm.Tools == nil || comm.Tools.Atlantis == nil {
-		return nil
-	}
-	return comm.Tools.Atlantis.RoleName
 }
 
 func TravisRoleNameGetter(comm Common) *string {
