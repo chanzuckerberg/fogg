@@ -21,7 +21,7 @@ func TestOpenTemplate(t *testing.T) {
 		tLen    int
 		wantErr bool
 	}{
-		{"foo", args{temps.Account, "Makefile.tmpl"}, 8, false},
+		{"foo", args{temps.Account, "Makefile.tmpl"}, 9, false},
 	}
 
 	for _, tt := range tests {
