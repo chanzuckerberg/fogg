@@ -9,7 +9,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const AWSProviderVersion = "1.27.0"
+const AWSProviderVersion = "2.47.0"
 
 func userPrompt() (string, string, string, string, string, string) {
 	project := prompt.StringRequired("project name?")
