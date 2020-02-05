@@ -61,34 +61,12 @@ ifeq ($(HEROKU_PROVIDER),1)
 endif
 .PHONY: check-auth-heroku
 
-ifeq ($(MODE),local)
 plan: check-auth init fmt ## run a terraform plan
 	@$(terraform_command) plan $(TF_ARGS) -refresh=$(REFRESH_ENABLED) -input=false
-else ifeq ($(MODE),atlantis)
-plan: check-auth init lint
-	@$(terraform_command) plan $(TF_ARGS) -refresh=$(REFRESH_ENABLED) -input=false -out $(PLANFILE) | scenery
-else
-	@echo "Unknown MODE: $(MODE)"
-	@exit -1
-endif
 .PHONY: plan
 
-ifeq ($(MODE),local)
 apply: check-auth init ## run a terraform apply
-ifeq ($(ATLANTIS_ENABLED),1)
-ifneq ($(FORCE),1)
-	@echo "`tput bold`This component is configured to be used with atlantis. If you want to override and apply locally, add FORCE=1.`tput sgr0`"
-	exit -1
-endif
-endif
 	@$(terraform_command) apply $(TF_ARGS) -refresh=$(REFRESH_ENABLED) -auto-approve=$(AUTO_APPROVE)
-else ifeq ($(MODE),atlantis)
-apply: check-auth ## run a terraform apply
-	@$(terraform_command) apply $(TF_ARGS) -refresh=$(REFRESH_ENABLED) -auto-approve=true $(PLANFILE)
-else
-	echo "Unknown mode: $(MODE)"
-	exit -1
-endif
 .PHONY: apply
 
 docs:
@@ -104,14 +82,7 @@ test:
 .PHONY: test
 
 init: terraform check-auth ## run terraform init for this component
-ifeq ($(MODE),local)
 	@$(terraform_command) init -input=false
-else ifeq ($(MODE),atlantis)
-	@$(terraform_command) init $(TF_ARGS) -input=false
-else
-	@echo "Unknown MODE: $(MODE)"
-	@exit -1
-endif
 .PHONY: init
 
 check-plan: init check-auth ## run a terraform plan and check that it does not fail

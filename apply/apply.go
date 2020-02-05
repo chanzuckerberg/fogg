@@ -63,13 +63,6 @@ func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade bool) error {
 		}
 	}
 
-	if p.Atlantis.Enabled {
-		e = applyTree(fs, &tmp.Atlantis, &tmp.Common, "", p.Atlantis)
-		if e != nil {
-			return errs.WrapUser(e, "unable to apply atlantis")
-		}
-	}
-
 	e = applyAccounts(fs, p, &tmp.Account, &tmp.Common)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply accounts")

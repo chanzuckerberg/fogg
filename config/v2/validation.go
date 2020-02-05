@@ -54,7 +54,6 @@ func (c *Config) Validate() ([]string, error) {
 	errs = multierror.Append(errs, c.ValidateBlessProviders())
 	errs = multierror.Append(errs, c.ValidateOktaProviders())
 	errs = multierror.Append(errs, c.validateModules())
-	errs = multierror.Append(errs, c.ValidateAtlantis())
 	errs = multierror.Append(errs, c.ValidateTravis())
 
 	// refactor to make it easier to manage these
@@ -169,25 +168,6 @@ func (c *Config) ValidateOktaProviders() error {
 		p := ResolveOktaProvider(comms...)
 		if err := p.Validate(component); err != nil {
 			errs = multierror.Append(errs, err)
-		}
-	})
-	return errs
-}
-
-func (c *Config) ValidateAtlantis() error {
-	var errs *multierror.Error
-	c.WalkComponents(func(component string, comms ...Common) {
-		a := ResolveAtlantis(comms...)
-
-		if a.Enabled != nil && *a.Enabled {
-			if a.RoleName == nil || *a.RoleName == "" {
-				errs = multierror.Append(errs, fmt.Errorf("if atlantis is enabled, role name must be specified (currently %#v in %s)", a.RoleName, component))
-			}
-
-			backendAccountId := lastNonNil(BackendAccountIdGetter, comms...)
-			if backendAccountId == nil {
-				errs = multierror.Append(errs, fmt.Errorf("if atlantis is enabled, backend acccount id must be specified (%s)", component))
-			}
 		}
 	})
 	return errs

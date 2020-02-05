@@ -16,7 +16,6 @@ import (
 // Plan represents a set of actions to take
 type Plan struct {
 	Accounts map[string]Account `json:"account" yaml:"account"`
-	Atlantis Atlantis           `json:"atlantis" yaml:"atlantis"`
 	Envs     map[string]Env     `json:"envs" yaml:"envs"`
 	Global   Component          `json:"global" yaml:"global"`
 	Modules  map[string]Module  `json:"modules" yaml:"modules"`
@@ -35,7 +34,6 @@ type Common struct {
 type ComponentCommon struct {
 	Common `yaml:",inline"`
 
-	Atlantis  AtlantisComponent `yaml:"atlantis"`
 	Backend   AWSBackend        `json:"backend" yaml:"backend"`
 	ExtraVars map[string]string `json:"extra_vars" yaml:"extra_vars"`
 	Owner     string            `json:"owner" yaml:"owner"`
@@ -45,12 +43,6 @@ type ComponentCommon struct {
 
 	TravisCI TravisCIComponent
 	CircleCI CircleCIComponent
-}
-
-type AtlantisComponent struct {
-	Enabled  bool   `yaml:"enabled"`
-	RoleName string `yaml:"role_name"`
-	RolePath string `yaml:"role_path"`
 }
 
 type TravisCIComponent struct {
@@ -233,7 +225,6 @@ func Eval(c *v2.Config) (*Plan, error) {
 	}
 
 	p.Modules = p.buildModules(c)
-	p.Atlantis = p.buildAtlantis()
 	p.TravisCI = p.buildTravisCIConfig(c, v)
 	p.CircleCI = p.buildCircleCIConfig(c, v)
 
@@ -412,16 +403,6 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		Enabled: *tflintConfig.Enabled,
 	}
 
-	atlantisConfig := v2.ResolveAtlantis(commons...)
-
-	atlantisPlan := AtlantisComponent{
-		Enabled: *atlantisConfig.Enabled,
-	}
-	if atlantisPlan.Enabled {
-		atlantisPlan.RoleName = *atlantisConfig.RoleName
-		atlantisPlan.RolePath = *atlantisConfig.RolePath
-	}
-
 	travisConfig := v2.ResolveTravis(commons...)
 	travisPlan := TravisCIComponent{
 		CIComponent: CIComponent{
@@ -451,7 +432,6 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	}
 
 	return ComponentCommon{
-		Atlantis: atlantisPlan,
 		Backend: AWSBackend{
 			AccountID:   v2.ResolveOptionalString(v2.BackendAccountIdGetter, commons...),
 			Region:      v2.ResolveRequiredString(v2.BackendRegionGetter, commons...),
