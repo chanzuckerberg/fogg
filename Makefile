@@ -17,12 +17,12 @@ setup: ## setup development dependencies
 .PHONY: setup
 
 lint: ## run the fast go linters
-	./bin/reviewdog -conf .reviewdog.yml  -diff "git diff master"
+	./bin/reviewdog -conf .reviewdog.yml  -diff "git diff master" -tee
 .PHONY: lint
 
 lint-ci: ## run the fast go linters
-	./bin/reviewdog -conf .reviewdog.yml  -reporter=github-pr-review
-.PHONY: lint
+	./bin/reviewdog -conf .reviewdog.yml  -reporter=github-pr-review -tee
+.PHONY: lint-ci
 
 lint-all: ## run the fast go linters
 	# doesn't seem to be a way to get reviewdog to not filter by diff
