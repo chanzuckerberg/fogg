@@ -3,8 +3,6 @@
 {{- $circleCI := . }}
 version: 2
 working_directory: &working_directory ~/fogg
-aliases: &deps
-
 
 jobs:
 {{- range $idx, $testBucket := $circleCI.TestBuckets }}

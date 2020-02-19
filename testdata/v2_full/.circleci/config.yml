@@ -4,11 +4,10 @@ version: 2
 working_directory: &working_directory ~/fogg
 
 jobs:
-  build:
+  terraform_0:
     docker:
       - image: circleci/python:3.8
     working_directory: *working_directory
-    parallelism: 1
     steps:
       - checkout
       - run: python3 -m venv venv
@@ -66,3 +65,9 @@ jobs:
           command: |
             cd terraform/envs/staging/vpc
             make  check
+
+workflows:
+  version: 2
+  terraform:
+    jobs:
+      - terraform_0
