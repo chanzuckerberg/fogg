@@ -2,30 +2,29 @@
 # Make improvements in fogg, so that everyone can benefit.
 {{- $circleCI := . }}
 version: 2
-
 working_directory: &working_directory ~/fogg
 
 jobs:
-  build:
+{{- range $idx, $testBucket := $circleCI.TestBuckets }}
+  terraform_{{$idx}}:
     docker:
       - image: circleci/python:3.8
     working_directory: *working_directory
-    parallelism: {{ len .TestBuckets }}
     steps:
       - checkout
-{{- if not (eq (len .SSHFingerprints) 0) }}
+{{- if not (eq (len $circleCI.SSHFingerprints) 0) }}
       # HACK(el):Switch to key that reads private tf modules after checking out our code
       - add_ssh_keys:
-          fingerprints:
-          {{- range $sshFingerprint := .SSHFingerprints }}
-            - {{ $sshFingerprint }}
-          {{- end }}
+        fingerprints:
+        {{- range $sshFingerprint := $circleCI.SSHFingerprints }}
+          - {{ $sshFingerprint }}
+        {{- end }}
 {{- end }}
       - run: python3 -m venv venv
       - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
       - run: aws --version
-      - run: FOGG_VERSION="v{{ .FoggVersion }}" make setup
+      - run: FOGG_VERSION="v{{ $circleCI.FoggVersion }}" make setup
       - run:
           command: |
             .fogg/bin/fogg apply
@@ -35,22 +34,28 @@ jobs:
               git status
               exit 1
             fi
-{{- if not (eq (len .AWSProfiles) 0) }}
-      - aws configure set aws_access_key_id     $IDACCT_AWS_ACCESS_KEY_ID     --profile _idacct
-      - aws configure set aws_secret_access_key $IDACCT_AWS_SECRET_ACCESS_KEY --profile _idacct
-      - aws --profile _idacct sts get-caller-identity
+{{- if not (eq (len $circleCI.AWSProfiles) 0) }}
+      - run: aws configure set aws_access_key_id     $IDACCT_AWS_ACCESS_KEY_ID     --profile _idacct
+      - run: aws configure set aws_secret_access_key $IDACCT_AWS_SECRET_ACCESS_KEY --profile _idacct
+      - run: aws --profile _idacct sts get-caller-identity
 {{- end }}
-{{- range $profileName, $profile := .AWSProfiles }}
-      - aws configure set profile.{{ $profileName }}.role_arn arn:aws:iam::{{ $profile.AccountID }}:role/{{ $profile.RoleName}}
-      - aws configure set profile.{{ $profileName }}.source_profile _idacct
-      - aws --profile {{ $profileName }} sts get-caller-identity
+{{- range $profileName, $profile := $circleCI.AWSProfiles }}
+      - run: aws configure set profile.{{ $profileName }}.role_arn arn:aws:iam::{{ $profile.AccountID }}:role/{{ $profile.RoleName}}
+      - run: aws configure set profile.{{ $profileName }}.source_profile _idacct
+      - run: aws --profile {{ $profileName }} sts get-caller-identity
 {{- end }}
-
-{{- range $testBucket := .TestBuckets }}
   {{- range $component := $testBucket }}
       - run:
           command: |
             cd {{ $component.Dir }}
             make  {{ $component.Command }}
   {{- end }}
+{{- end }}
+
+workflows:
+  version: 2
+  terraform:
+    jobs:
+{{- range $idx, $testBucket := $circleCI.TestBuckets }}
+      - terraform_{{$idx}}
 {{- end }}
