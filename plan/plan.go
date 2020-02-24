@@ -111,6 +111,7 @@ type Providers struct {
 	Snowflake *SnowflakeProvider `yaml:"snowflake"`
 	Bless     *BlessProvider     `yaml:"bless"`
 	Okta      *OktaProvider      `yaml:"okta"`
+	Datadog   *DatadogProvider   `yaml:"datadog"`
 }
 
 //AWSProvider represents AWS provider configuration
@@ -152,6 +153,8 @@ type BlessProvider struct {
 }
 
 type HerokuProvider struct{}
+
+type DatadogProvider struct{}
 
 // AWSBackend represents aws backend configuration
 type AWSBackend struct {
@@ -397,6 +400,12 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		herokuPlan = &HerokuProvider{}
 	}
 
+	var datadogPlan *DatadogProvider
+	datadogConfig := v2.ResolveDatadogProvider(commons...)
+	if datadogConfig != nil {
+		datadogPlan = &DatadogProvider{}
+	}
+
 	tflintConfig := v2.ResolveTfLint(commons...)
 
 	tfLintPlan := TfLint{
@@ -446,6 +455,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Snowflake: snowflakePlan,
 			Bless:     blessPlan,
 			Okta:      oktaPlan,
+			Datadog:   datadogPlan,
 		},
 		TfLint:    tfLintPlan,
 		ExtraVars: v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),

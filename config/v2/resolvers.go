@@ -193,6 +193,18 @@ func ResolveHerokuProvider(commons ...Common) *HerokuProvider {
 	return p
 }
 
+func ResolveDatadogProvider(commons ...Common) *DatadogProvider {
+	var p *DatadogProvider
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.Datadog == nil {
+			continue
+		}
+		p = c.Providers.Datadog
+	}
+
+	return p
+}
+
 func ResolveTfLint(commons ...Common) v1.TfLint {
 	enabled := false
 	for _, c := range commons {

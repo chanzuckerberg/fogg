@@ -100,6 +100,7 @@ type Providers struct {
 	Heroku    *HerokuProvider    `json:"heroku,omitempty" yaml:"heroku,omitempty"`
 	Okta      *OktaProvider      `json:"okta,omitempty" yaml:"okta,omitempty"`
 	Snowflake *SnowflakeProvider `json:"snowflake,omitempty" yaml:"snowflake,omitempty"`
+	Datadog   *DatadogProvider   `json:"datadog,omitempty" yaml:"datadog,omitempty"`
 }
 
 // OktaProvider is an okta provider
@@ -141,6 +142,8 @@ type SnowflakeProvider struct {
 }
 
 type HerokuProvider struct{}
+
+type DatadogProvider struct{}
 
 type Backend struct {
 	AccountID   *string `json:"account_id,omitempty" yaml:"account_id,omitempty"`
@@ -249,6 +252,13 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		return nil
 	}
 
+	randDatadogProvider := func(r *rand.Rand, s int) *DatadogProvider {
+		if r.Float32() < 0.5 {
+			return &DatadogProvider{}
+		}
+		return nil
+	}
+
 	randCommon := func(r *rand.Rand, s int) Common {
 		c := Common{
 			Backend: &Backend{
@@ -264,6 +274,7 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 				Okta:      randOktaProvider(r, s),
 				Bless:     randBlessProvider(r, s),
 				Heroku:    randHerokuProvider(r, s),
+				Datadog:   randDatadogProvider(r, s),
 			},
 			TerraformVersion: randStringPtr(r, s),
 		}
