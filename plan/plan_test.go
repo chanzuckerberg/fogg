@@ -2,7 +2,6 @@ package plan
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/config"
@@ -203,12 +202,9 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 	assert.NotNil(t, plan.Envs["prod"].Components["hero"].Providers)
 	assert.NotNil(t, plan.Envs["prod"].Components["hero"].Providers.Heroku)
 
-	fmt.Println("VALUE1:", plan.Envs["prod"].Components["hero"].Providers.Heroku)
-	fmt.Println("VALUE2:", plan.Envs["prod"].Components["datadog"].Providers.Datadog)
 	assert.NotNil(t, plan.Envs["prod"])
 	assert.NotNil(t, plan.Envs["prod"].Components["datadog"])
 	assert.NotNil(t, plan.Envs["prod"].Components["datadog"].Providers)
-	fmt.Println("VALUE3:", plan)
 	assert.NotNil(t, plan.Envs["prod"].Components["datadog"].Providers.Datadog)
 }
 
