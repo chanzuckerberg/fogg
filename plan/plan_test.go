@@ -201,6 +201,11 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 	assert.NotNil(t, plan.Envs["prod"].Components["hero"])
 	assert.NotNil(t, plan.Envs["prod"].Components["hero"].Providers)
 	assert.NotNil(t, plan.Envs["prod"].Components["hero"].Providers.Heroku)
+
+	assert.NotNil(t, plan.Envs["prod"])
+	assert.NotNil(t, plan.Envs["prod"].Components["datadog"])
+	assert.NotNil(t, plan.Envs["prod"].Components["datadog"].Providers)
+	assert.NotNil(t, plan.Envs["prod"].Components["datadog"].Providers.Datadog)
 }
 
 func TestExtraVarsCompositionV2(t *testing.T) {

@@ -29,6 +29,9 @@ envs:
       hero:
         providers:
           heroku: {}
+      datadog:
+        providers:
+          datadog: {}
   staging:
     components:
       comp_helm_template:

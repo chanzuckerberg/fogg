@@ -43,6 +43,10 @@
   {{ template "heroku_provider" .Providers.Heroku }}
 {{ end }}
 
+{{ if .Providers.Datadog }}
+  {{ template "datadog_provider" .Providers.Datadog }}
+{{ end }}
+
 terraform {
   required_version = "~>{{ .TerraformVersion }}"
 
