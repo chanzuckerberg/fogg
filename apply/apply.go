@@ -63,6 +63,13 @@ func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade bool) error {
 		}
 	}
 
+	if p.GitHubActionsCI.Enabled {
+		e = applyTree(fs, &tmp.GitHubActionsCI, &tmp.Common, ".github", p.GitHubActionsCI)
+		if e != nil {
+			return errs.WrapUser(e, "unable to apply GitHub Actions CI")
+		}
+	}
+
 	e = applyAccounts(fs, p, &tmp.Account, &tmp.Common)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply accounts")

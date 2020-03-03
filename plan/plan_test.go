@@ -109,6 +109,7 @@ func TestPlanBasicV2(t *testing.T) {
 	assert.NoError(t, e)
 
 	fs, _, err := util.TestFs()
+	a.NoError(err)
 	err = afero.WriteFile(fs, "fogg.json", b, 0644)
 	a.NoError(err)
 

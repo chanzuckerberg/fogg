@@ -16,6 +16,7 @@ type T struct {
 	Repo             packr.Box
 	TravisCI         packr.Box
 	CircleCI         packr.Box
+	GitHubActionsCI  packr.Box
 }
 
 var Templates = &T{
@@ -32,4 +33,5 @@ var Templates = &T{
 	Repo:             packr.NewBox("repo"),
 	TravisCI:         packr.NewBox("travis-ci"),
 	CircleCI:         packr.NewBox("circleci"),
+	GitHubActionsCI:  packr.NewBox(".github"),
 }
