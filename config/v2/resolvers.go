@@ -248,6 +248,33 @@ func ResolveTravis(commons ...Common) *v1.TravisCI {
 	}
 }
 
+func ResolveGitHubActionsCI(commons ...Common) *GitHubActionsCI {
+	enabled := false
+	buildevents := false
+	testCommand := "check"
+	for _, c := range commons {
+		if c.Tools != nil && c.Tools.GitHubActionsCI != nil && c.Tools.GitHubActionsCI.Enabled != nil {
+			enabled = *c.Tools.GitHubActionsCI.Enabled
+		}
+		if c.Tools != nil && c.Tools.GitHubActionsCI != nil && c.Tools.GitHubActionsCI.Command != nil {
+			testCommand = *c.Tools.GitHubActionsCI.Command
+		}
+		if c.Tools != nil && c.Tools.GitHubActionsCI != nil && c.Tools.GitHubActionsCI.Buildevents != nil {
+			buildevents = *c.Tools.GitHubActionsCI.Buildevents
+		}
+	}
+
+	roleName := lastNonNil(GitHubActionsRoleNameGetter, commons...)
+	return &GitHubActionsCI{
+		CommonCI: v1.CommonCI{
+			Enabled:        &enabled,
+			Buildevents:    &buildevents,
+			AWSIAMRoleName: roleName,
+			Command:        &testCommand,
+		},
+	}
+}
+
 func ResolveCircleCI(commons ...Common) *CircleCI {
 	enabled := false
 	buildevents := false
@@ -465,6 +492,13 @@ func TravisRoleNameGetter(comm Common) *string {
 		return nil
 	}
 	return comm.Tools.TravisCI.AWSIAMRoleName
+}
+
+func GitHubActionsRoleNameGetter(comm Common) *string {
+	if comm.Tools == nil || comm.Tools.GitHubActionsCI == nil {
+		return nil
+	}
+	return comm.Tools.GitHubActionsCI.AWSIAMRoleName
 }
 
 func CircleCIRoleNameGetter(comm Common) *string {
