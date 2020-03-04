@@ -30,6 +30,10 @@
       "circle_ci": {
         "enabled": true,
         "aws_iam_role_name": "foobar-role"
+      },
+      "github_actions_ci": {
+        "enabled": true,
+        "aws_iam_role_name": "testo-role"
       }
     }
   },
