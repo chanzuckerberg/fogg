@@ -61,12 +61,28 @@ ifeq ($(HEROKU_PROVIDER),1)
 endif
 .PHONY: check-auth-heroku
 
-plan: check-auth init fmt ## run a terraform plan
-	@$(terraform_command) plan $(TF_ARGS) -refresh=$(REFRESH_ENABLED) -input=false
+refresh:
+	@$(terraform_command) refresh $(TF_ARGS)
+	@date +%s > .terraform/refreshed_at
+.PHONY: refresh
+
+refresh-cached:
+	@last_refresh=`cat .terraform/refreshed_at || echo '0'`; \
+	current_time=`date +%s`; \
+	if (( current_time - last_refresh > 600 )); then \
+		echo "It has been awhile since the last refresh. It is time."; \
+		$(MAKE) refresh; \
+	else \
+		echo "Not time to refresh yet."; \
+	fi;
+.PHONY: refresh-cached
+
+plan: check-auth init fmt refresh-cached ## run a terraform plan
+	@$(terraform_command) plan $(TF_ARGS) -refresh=false -input=false
 .PHONY: plan
 
-apply: check-auth init ## run a terraform apply
-	@$(terraform_command) apply $(TF_ARGS) -refresh=$(REFRESH_ENABLED) -auto-approve=$(AUTO_APPROVE)
+apply: check-auth init refresh ## run a terraform apply
+	@$(terraform_command) apply $(TF_ARGS) -refresh=false -auto-approve=$(AUTO_APPROVE)
 .PHONY: apply
 
 docs:
@@ -85,7 +101,7 @@ init: terraform check-auth ## run terraform init for this component
 	@$(terraform_command) init -input=false
 .PHONY: init
 
-check-plan: init check-auth ## run a terraform plan and check that it does not fail
+check-plan: check-auth init refresh-cached ## run a terraform plan and check that it does not fail
 	@$(terraform_command) plan $(TF_ARGS) -detailed-exitcode -lock=false -out=$(CHECK_PLANFILE_PATH) ; \
 	ERR=$$?; \
 	if [ $$ERR -eq 0 ] ; then \
