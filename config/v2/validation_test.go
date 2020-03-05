@@ -190,7 +190,7 @@ func TestConfig_ValidateTravis(t *testing.T) {
 		fileName string
 		wantErr  bool
 	}{
-		{"v2_invalid_travis_command", true},
+		{"v2_invalid_travis_command_yaml", true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.fileName, func(t *testing.T) {
