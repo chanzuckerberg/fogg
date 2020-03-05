@@ -1,0 +1,13 @@
+#!/bin/sh
+
+t=`mktemp` && \
+exec $@  2>&1 > $t || \
+(
+    a=$?;
+    echo $a;
+    cat $t;
+    rm $t;
+    exit $a
+)
+
+
