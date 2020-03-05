@@ -15,13 +15,14 @@ import (
 
 // Plan represents a set of actions to take
 type Plan struct {
-	Accounts map[string]Account `json:"account" yaml:"account"`
-	Envs     map[string]Env     `json:"envs" yaml:"envs"`
-	Global   Component          `json:"global" yaml:"global"`
-	Modules  map[string]Module  `json:"modules" yaml:"modules"`
-	TravisCI TravisCIConfig     `json:"travis_ci" yaml:"travis_ci"`
-	CircleCI CircleCIConfig     `json:"circle_ci" yaml:"circle_ci"`
-	Version  string             `json:"version" yaml:"version"`
+	Accounts        map[string]Account    `json:"account" yaml:"account"`
+	Envs            map[string]Env        `json:"envs" yaml:"envs"`
+	Global          Component             `json:"global" yaml:"global"`
+	Modules         map[string]Module     `json:"modules" yaml:"modules"`
+	TravisCI        TravisCIConfig        `json:"travis_ci" yaml:"travis_ci"`
+	CircleCI        CircleCIConfig        `json:"github_actions_ci" yaml:"github_actions_ci"`
+	GitHubActionsCI GitHubActionsCIConfig `json:"circle_ci" yaml:"circle_ci"`
+	Version         string                `json:"version" yaml:"version"`
 }
 
 // Common represents common fields
@@ -41,8 +42,9 @@ type ComponentCommon struct {
 	Providers Providers         `json:"providers" yaml:"providers"`
 	TfLint    TfLint            `json:"tf_lint" yaml:"tf_lint"`
 
-	TravisCI TravisCIComponent
-	CircleCI CircleCIComponent
+	TravisCI        TravisCIComponent
+	CircleCI        CircleCIComponent
+	GitHubActionsCI GitHubActionsComponent
 }
 
 type TravisCIComponent struct {
@@ -53,6 +55,10 @@ type CircleCIComponent struct {
 	CIComponent
 
 	SSHFingerprints []string
+}
+
+type GitHubActionsComponent struct {
+	CIComponent
 }
 
 type CIComponent struct {
@@ -230,6 +236,7 @@ func Eval(c *v2.Config) (*Plan, error) {
 	p.Modules = p.buildModules(c)
 	p.TravisCI = p.buildTravisCIConfig(c, v)
 	p.CircleCI = p.buildCircleCIConfig(c, v)
+	p.GitHubActionsCI = p.buildGitHubActionsConfig(c, v)
 
 	return p, nil
 }
@@ -424,6 +431,18 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		travisPlan.Command = *travisConfig.Command
 	}
 
+	githubActionsConfig := v2.ResolveGitHubActionsCI(commons...)
+	githubActionsPlan := GitHubActionsComponent{
+		CIComponent: CIComponent{
+			Enabled:     *githubActionsConfig.Enabled,
+			Buildevents: *githubActionsConfig.Buildevents,
+		},
+	}
+	if githubActionsPlan.Enabled {
+		githubActionsPlan.AWSRoleName = *githubActionsConfig.AWSIAMRoleName
+		githubActionsPlan.Command = *githubActionsConfig.Command
+	}
+
 	circleConfig := v2.ResolveCircleCI(commons...)
 	circlePlan := CircleCIComponent{
 		CIComponent: CIComponent{
@@ -457,13 +476,14 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Okta:      oktaPlan,
 			Datadog:   datadogPlan,
 		},
-		TfLint:    tfLintPlan,
-		ExtraVars: v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),
-		Owner:     v2.ResolveRequiredString(v2.OwnerGetter, commons...),
-		Project:   v2.ResolveRequiredString(v2.ProjectGetter, commons...),
-		Common:    Common{TerraformVersion: v2.ResolveRequiredString(v2.TerraformVersionGetter, commons...)},
-		TravisCI:  travisPlan,
-		CircleCI:  circlePlan,
+		TfLint:          tfLintPlan,
+		ExtraVars:       v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),
+		Owner:           v2.ResolveRequiredString(v2.OwnerGetter, commons...),
+		Project:         v2.ResolveRequiredString(v2.ProjectGetter, commons...),
+		Common:          Common{TerraformVersion: v2.ResolveRequiredString(v2.TerraformVersionGetter, commons...)},
+		TravisCI:        travisPlan,
+		CircleCI:        circlePlan,
+		GitHubActionsCI: githubActionsPlan,
 	}
 }
 

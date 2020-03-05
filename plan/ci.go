@@ -27,6 +27,10 @@ type CircleCIConfig struct {
 	SSHFingerprints []string
 }
 
+type GitHubActionsCIConfig struct {
+	CIConfig
+}
+
 type TravisCIConfig struct {
 	CIConfig
 }
@@ -214,5 +218,69 @@ func (p *Plan) buildCircleCIConfig(c *v2.Config, foggVersion string) CircleCICon
 	return CircleCIConfig{
 		CIConfig:        *ciConfig,
 		SSHFingerprints: sshFingerprints,
+	}
+}
+
+func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHubActionsCIConfig {
+	ciConfig := &CIConfig{
+		FoggVersion: foggVersion,
+	}
+
+	globalConfig := p.Global.GitHubActionsCI.generateCIConfig(
+		p.Global.Backend,
+		p.Global.Providers.AWS,
+		"global",
+		"terraform/global")
+	ciConfig = ciConfig.merge(globalConfig)
+
+	for name, acct := range p.Accounts {
+		accountConfig := acct.GitHubActionsCI.generateCIConfig(
+			acct.Backend,
+			acct.Providers.AWS,
+			fmt.Sprintf("accounts/%s", name),
+			fmt.Sprintf("terraform/accounts/%s", name),
+		)
+		ciConfig = ciConfig.merge(accountConfig)
+	}
+
+	for envName, env := range p.Envs {
+		for cName, c := range env.Components {
+			envConfig := c.GitHubActionsCI.generateCIConfig(
+				c.Backend,
+				c.Providers.AWS,
+				fmt.Sprintf("%s/%s", envName, cName),
+				fmt.Sprintf("terraform/envs/%s/%s", envName, cName),
+			)
+			ciConfig = ciConfig.merge(envConfig)
+		}
+	}
+
+	for moduleName := range p.Modules {
+		proj := CIProject{
+			Name:    fmt.Sprintf("modules/%s", moduleName),
+			Dir:     fmt.Sprintf("terraform/modules/%s", moduleName),
+			Command: "check",
+		}
+		ciConfig = ciConfig.addProjects(proj)
+	}
+
+	numBuckets := 1
+	if c.Defaults.Tools != nil && c.Defaults.Tools.GitHubActionsCI != nil {
+
+		if c.Defaults.Tools.GitHubActionsCI.TestBuckets != nil &&
+			*c.Defaults.Tools.GitHubActionsCI.TestBuckets > 0 {
+			numBuckets = *c.Defaults.Tools.GitHubActionsCI.TestBuckets
+		}
+
+		// If aws is disabled, reset the providers
+		aws, ok := c.Defaults.Tools.GitHubActionsCI.Providers["aws"]
+		if ok && aws.Disabled {
+			ciConfig.AWSProfiles = ciAwsProfiles{}
+		}
+	}
+
+	ciConfig = ciConfig.populateBuckets(numBuckets)
+	return GitHubActionsCIConfig{
+		CIConfig: *ciConfig,
 	}
 }

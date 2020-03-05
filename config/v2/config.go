@@ -68,15 +68,20 @@ type Account struct {
 }
 
 type Tools struct {
-	TravisCI *v1.TravisCI `json:"travis_ci,omitempty" yaml:"travis_ci,omitempty"`
-	CircleCI *CircleCI    `json:"circle_ci,omitempty" yaml:"circle_ci,omitempty"`
-	TfLint   *v1.TfLint   `json:"tflint,omitempty" yaml:"tflint,omitempty"`
+	TravisCI        *v1.TravisCI     `json:"travis_ci,omitempty" yaml:"travis_ci,omitempty"`
+	CircleCI        *CircleCI        `json:"circle_ci,omitempty" yaml:"circle_ci,omitempty"`
+	GitHubActionsCI *GitHubActionsCI `json:"github_actions_ci,omitempty" yaml:"github_actions_ci,omitempty"`
+	TfLint          *v1.TfLint       `json:"tflint,omitempty" yaml:"tflint,omitempty"`
 }
 
 type CircleCI struct {
 	v1.CommonCI `json:",inline" yaml:",inline"`
 
 	SSHKeyFingerprints []string `json:"ssh_key_fingerprints" yaml:"ssh_key_fingerprints"`
+}
+
+type GitHubActionsCI struct {
+	v1.CommonCI `json:",inline" yaml:",inline"`
 }
 
 type Env struct {
