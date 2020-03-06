@@ -159,9 +159,9 @@ func TestConfig_ValidateAWSProviders(t *testing.T) {
 		fileName string
 		wantErr  bool
 	}{
-		{"v2_full", false},
-		{"v2_minimal_valid", false},
-		{"v2_invalid_aws_provider", true},
+		{"v2_full_yaml", false},
+		{"v2_minimal_valid_yaml", false},
+		{"v2_invalid_aws_provider_yaml", true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.fileName, func(t *testing.T) {
@@ -171,10 +171,10 @@ func TestConfig_ValidateAWSProviders(t *testing.T) {
 
 			b, e := util.TestFile(tt.fileName)
 			r.NoError(e)
-			e = afero.WriteFile(fs, "fogg.json", b, 0644)
+			e = afero.WriteFile(fs, "fogg.yml", b, 0644)
 			r.NoError(e)
 
-			c, e := ReadConfig(fs, b, "fogg.json")
+			c, e := ReadConfig(fs, b, "fogg.yml")
 			r.NoError(e)
 			r.NotNil(c)
 
@@ -190,7 +190,7 @@ func TestConfig_ValidateTravis(t *testing.T) {
 		fileName string
 		wantErr  bool
 	}{
-		{"v2_invalid_travis_command", true},
+		{"v2_invalid_travis_command_yaml", true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.fileName, func(t *testing.T) {

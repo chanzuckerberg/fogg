@@ -19,7 +19,6 @@ require (
 	github.com/go-errors/errors v1.0.1
 	github.com/go-logfmt/logfmt v0.4.0
 	github.com/go-playground/universal-translator v0.17.0 // indirect
-	github.com/go-test/deep v1.0.3
 	github.com/gobuffalo/envy v1.8.1 // indirect
 	github.com/gobuffalo/packr v1.30.1
 	github.com/golang/groupcache v0.0.0-20191027212112-611e8accdfc9 // indirect

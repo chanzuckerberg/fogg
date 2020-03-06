@@ -22,16 +22,16 @@ var updateGoldenFiles = flag.Bool("update", false, "when set, rewrite the golden
 func TestIntegration(t *testing.T) {
 
 	var testCases = []struct {
-		fileName string
+		fileName   string
+		configFile string
 	}{
-		{"v1_full"},
-		{"v2_full"},
-		{"v2_minimal_valid"},
-		{"v2_no_aws_provider"},
-		{"snowflake_provider"},
-		{"bless_provider"},
-		{"okta_provider"},
-		{"github_provider"},
+		{"okta_provider_yaml", "fogg.yml"},
+		{"github_provider_yaml", "fogg.yml"},
+		{"bless_provider_yaml", "fogg.yml"},
+		{"snowflake_provider_yaml", "fogg.yml"},
+		{"v2_full_yaml", "fogg.yml"},
+		{"v2_minimal_valid_yaml", "fogg.yml"},
+		{"v2_no_aws_provider_yaml", "fogg.yml"},
 	}
 
 	for _, tc := range testCases {
@@ -45,33 +45,33 @@ func TestIntegration(t *testing.T) {
 				// delete all files except fogg.json
 				e := afero.Walk(testdataFs, ".", func(path string, info os.FileInfo, err error) error {
 					fmt.Printf("\n\n HERE:%s \n\n", path)
-					if !info.IsDir() && path != "fogg.json" {
+					if !info.IsDir() && !(path == tc.configFile) {
 						return testdataFs.Remove(path)
 					}
 					return nil
 				})
 				a.NoError(e)
 
-				conf, e := config.FindAndReadConfig(testdataFs, "fogg.json")
-				a.NoError(e)
+				conf, e := config.FindAndReadConfig(testdataFs, tc.configFile)
+				r.NoError(e)
 				fmt.Printf("conf %#v\n", conf)
 				fmt.Println("READ CONFIG")
 
 				w, e := conf.Validate()
-				a.NoError(e)
-				a.Len(w, 0)
+				r.NoError(e)
+				r.Len(w, 0)
 
 				e = apply.Apply(testdataFs, conf, templates.Templates, true)
-				a.NoError(e)
+				r.NoError(e)
 			} else {
 				fileName := "fogg.yml"
 				fs, _, e := util.TestFs()
 				a.NoError(e)
 
-				// copy fogg.json into the tmp test dir (so that it doesn't show up as a diff)
+				// copy tc.configFile into the tmp test dir (so that it doesn't show up as a diff)
 				configContents, e := afero.ReadFile(testdataFs, fileName)
 				if os.IsNotExist(e) { //If the error is related to the file being non-existent
-					fileName = "fogg.json"
+					fileName = tc.configFile
 					configContents, e = afero.ReadFile(testdataFs, fileName)
 				}
 				a.NoError(e)
