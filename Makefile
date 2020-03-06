@@ -16,6 +16,10 @@ setup: ## setup development dependencies
 	curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh
 .PHONY: setup
 
+fmt:
+	goimports -w -d $$(find . -type f -name '*.go' -not -path "./vendor/*")
+.PHONY: fmt
+
 lint: ## run the fast go linters
 	./bin/reviewdog -conf .reviewdog.yml  -diff "git diff master" -tee
 .PHONY: lint
@@ -60,7 +64,7 @@ release-snapshot: setup ## run a release
 	goreleaser release --snapshot
 .PHONY: release-snapshot
 
-build: packr ## build the binary
+build: fmt packr ## build the binary
 	go build ${LDFLAGS} .
 .PHONY: build
 
@@ -73,8 +77,12 @@ coverage: ## run the go coverage tool, reading file coverage.out
 	go tool cover -html=coverage.out
 .PHONY: coverage
 
-test: deps packr ## run tests
+test: fmt deps packr ## run tests
+ ifeq (, $(shell which lzop))
+	gotest -cover ./...
+ else
 	go test -cover ./...
+ endif
 .PHONY: test
 
 test-ci: packr ## run tests

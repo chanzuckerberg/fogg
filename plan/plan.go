@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/util"
@@ -192,10 +191,10 @@ type Component struct {
 
 	Accounts  map[string]Account `json:"accounts" yaml:"accounts"` // Reference accounts for remote state
 	Component string             `json:"component" yaml:"component"`
-	EKS       *v1.EKSConfig      `json:"eks,omitempty" yaml:"eks,omitempty"`
+	EKS       *v2.EKSConfig      `json:"eks,omitempty" yaml:"eks,omitempty"`
 	Env       string
 
-	Kind            *v1.ComponentKind `json:"kind,omitempty" yaml:"kind,omitempty"`
+	Kind            *v2.ComponentKind `json:"kind,omitempty" yaml:"kind,omitempty"`
 	ModuleSource    *string           `json:"module_source" yaml:"module_source"`
 	OtherComponents []string          `json:"other_components" yaml:"other_components"`
 	Global          *Component        `json:"global" yaml:"global"`
@@ -205,7 +204,7 @@ type Component struct {
 type Env struct {
 	Components map[string]Component `json:"components" yaml:"components"`
 	Env        string               `json:"env" yaml:"env"`
-	EKS        *v1.EKSConfig        `json:"eks" yaml:"eks"`
+	EKS        *v2.EKSConfig        `json:"eks" yaml:"eks"`
 }
 
 // TfLint containts a plan for running tflint
@@ -322,7 +321,7 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 				return nil, errs.WrapUser(fmt.Errorf("Component %s can't have same name as account", componentName), "Invalid component name")
 			}
 
-			if componentConf.Kind.GetOrDefault() == v1.ComponentKindHelmTemplate {
+			if componentConf.Kind.GetOrDefault() == v2.ComponentKindHelmTemplate {
 				componentPlan.EKS = resolveEKSConfig(envPlan.EKS, componentConf.EKS)
 			}
 			componentPlan.Accounts = p.Accounts
@@ -491,7 +490,7 @@ func otherComponentNames(components map[string]v2.Component, thisComponent strin
 	r := make([]string, 0)
 	for componentName, componentConf := range components {
 		// Only set up remote state for terraform components
-		if componentConf.Kind.GetOrDefault() != v1.ComponentKindTerraform {
+		if componentConf.Kind.GetOrDefault() != v2.ComponentKindTerraform {
 			continue
 		}
 		if componentName != thisComponent {
@@ -501,8 +500,8 @@ func otherComponentNames(components map[string]v2.Component, thisComponent strin
 	return r
 }
 
-func resolveEKSConfig(def *v1.EKSConfig, override *v1.EKSConfig) *v1.EKSConfig {
-	resolved := &v1.EKSConfig{}
+func resolveEKSConfig(def *v2.EKSConfig, override *v2.EKSConfig) *v2.EKSConfig {
+	resolved := &v2.EKSConfig{}
 	if def != nil {
 		resolved.ClusterName = def.ClusterName
 	}

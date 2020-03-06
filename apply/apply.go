@@ -12,7 +12,6 @@ import (
 	"sort"
 	"strings"
 
-	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plan"
@@ -165,7 +164,7 @@ func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox, commonBox *p
 	return nil
 }
 
-func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBoxes map[v1.ComponentKind]packr.Box, commonBox *packr.Box) (e error) {
+func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBoxes map[v2.ComponentKind]packr.Box, commonBox *packr.Box) (e error) {
 	logrus.Debug("applying envs")
 	for env, envPlan := range p.Envs {
 		logrus.Debugf("applying %s", env)

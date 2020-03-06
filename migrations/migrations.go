@@ -16,7 +16,6 @@ type Migration interface {
 //RunMigrations cycles through a list of migrations and applies them if necessary
 func RunMigrations(fs afero.Fs, configFile string, forceApply bool) error {
 	migrations := []Migration{
-		&VersionUpgradeMigration{}, //This runs first because v1 to v2 uses json.Marshal
 		&JSONToYamlMigration{},
 	}
 
