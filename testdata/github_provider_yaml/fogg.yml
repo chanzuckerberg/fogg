@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "defaults":
+    {
+      "providers":
+        {
+          "github":
+            { "organization": "foo", "base_url": "https://example.com/" },
+        },
+      "backend": { "bucket": "bucket", "region": "region", "profile": "foo" },
+      "project": "foo",
+      "owner": "foo@example.com",
+      "terraform_version": "1.1.1",
+    },
+  "accounts": { "foo": {} },
+  "envs": { "bar": { "components": { "bam": {} } } },
+}

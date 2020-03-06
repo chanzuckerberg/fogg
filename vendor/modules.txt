@@ -89,8 +89,6 @@ github.com/go-playground/locales
 github.com/go-playground/locales/currency
 # github.com/go-playground/universal-translator v0.17.0
 github.com/go-playground/universal-translator
-# github.com/go-test/deep v1.0.3
-github.com/go-test/deep
 # github.com/gobuffalo/envy v1.8.1
 github.com/gobuffalo/envy
 # github.com/gobuffalo/packd v0.3.0

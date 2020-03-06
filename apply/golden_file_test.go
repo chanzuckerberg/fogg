@@ -25,14 +25,8 @@ func TestIntegration(t *testing.T) {
 		fileName   string
 		configFile string
 	}{
-		{"v1_full", "fogg.json"},
-		{"v2_full", "fogg.json"},
-		{"v2_minimal_valid", "fogg.json"},
-		{"v2_no_aws_provider", "fogg.json"},
-		{"snowflake_provider", "fogg.json"},
-		{"bless_provider", "fogg.json"},
-		{"okta_provider", "fogg.json"},
-		{"github_provider", "fogg.json"},
+		{"okta_provider_yaml", "fogg.yml"},
+		{"github_provider_yaml", "fogg.yml"},
 		{"bless_provider_yaml", "fogg.yml"},
 		{"snowflake_provider_yaml", "fogg.yml"},
 		{"v2_full_yaml", "fogg.yml"},
