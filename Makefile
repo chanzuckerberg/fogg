@@ -79,9 +79,9 @@ coverage: ## run the go coverage tool, reading file coverage.out
 
 test: fmt deps packr ## run tests
  ifeq (, $(shell which gotest))
-	gotest -cover ./...
- else
 	go test -cover ./...
+ else
+	gotest -cover ./...
  endif
 .PHONY: test
 
