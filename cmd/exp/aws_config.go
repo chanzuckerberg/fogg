@@ -134,7 +134,7 @@ var awsConfigCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		
+
 		awsConfigFile, err := os.OpenFile(awsConfigPath, os.O_WRONLY|os.O_CREATE, 0600)
 		if err != nil {
 			return err

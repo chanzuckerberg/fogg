@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"testing"
 
-	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/stretchr/testify/assert"
@@ -29,8 +28,8 @@ func Test_buildTravisCI_Disabled(t *testing.T) {
 			Defaults: v2.Defaults{
 				Common: v2.Common{
 					Tools: &v2.Tools{
-						TravisCI: &v1.TravisCI{
-							CommonCI: v1.CommonCI{
+						TravisCI: &v2.TravisCI{
+							CommonCI: v2.CommonCI{
 								Enabled: &f,
 							},
 						},
@@ -71,8 +70,8 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 					AccountID: util.StrPtr("some account id"),
 				},
 				Tools: &v2.Tools{
-					TravisCI: &v1.TravisCI{
-						CommonCI: v1.CommonCI{
+					TravisCI: &v2.TravisCI{
+						CommonCI: v2.CommonCI{
 							Enabled:        &tr,
 							AWSIAMRoleName: util.StrPtr("rollin"),
 						},
@@ -124,8 +123,8 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 					Profile:   util.StrPtr("profile"),
 					AccountID: util.StrPtr("some account id"),
 				},
-				Tools: &v2.Tools{TravisCI: &v1.TravisCI{
-					CommonCI: v1.CommonCI{
+				Tools: &v2.Tools{TravisCI: &v2.TravisCI{
+					CommonCI: v2.CommonCI{
 						Enabled:        &tr,
 						AWSIAMRoleName: util.StrPtr("rollin"),
 					},
@@ -181,7 +180,7 @@ func Test_buildCircleCI_Profiles(t *testing.T) {
 				},
 				Tools: &v2.Tools{
 					CircleCI: &v2.CircleCI{
-						CommonCI: v1.CommonCI{
+						CommonCI: v2.CommonCI{
 							Enabled:        &tr,
 							AWSIAMRoleName: util.StrPtr("rollin"),
 						},
@@ -235,11 +234,11 @@ func Test_buildCircleCI_ProfilesDisabled(t *testing.T) {
 				},
 				Tools: &v2.Tools{
 					CircleCI: &v2.CircleCI{
-						CommonCI: v1.CommonCI{
+						CommonCI: v2.CommonCI{
 							Enabled:        &tr,
 							AWSIAMRoleName: util.StrPtr("rollin"),
-							Providers: map[string]v1.CIProviderConfig{
-								"aws": v1.CIProviderConfig{
+							Providers: map[string]v2.CIProviderConfig{
+								"aws": v2.CIProviderConfig{
 									Disabled: true,
 								},
 							},

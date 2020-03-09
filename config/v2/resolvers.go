@@ -2,8 +2,6 @@ package v2
 
 import (
 	"encoding/json"
-
-	v1 "github.com/chanzuckerberg/fogg/config/v1"
 )
 
 // lastNonNil, despite its name can return nil if all results are nil
@@ -205,7 +203,7 @@ func ResolveDatadogProvider(commons ...Common) *DatadogProvider {
 	return p
 }
 
-func ResolveTfLint(commons ...Common) v1.TfLint {
+func ResolveTfLint(commons ...Common) TfLint {
 	enabled := false
 	for _, c := range commons {
 		if c.Tools != nil && c.Tools.TfLint != nil && c.Tools.TfLint.Enabled != nil {
@@ -213,12 +211,12 @@ func ResolveTfLint(commons ...Common) v1.TfLint {
 		}
 	}
 
-	return v1.TfLint{
+	return TfLint{
 		Enabled: &enabled,
 	}
 }
 
-func ResolveTravis(commons ...Common) *v1.TravisCI {
+func ResolveTravis(commons ...Common) *TravisCI {
 	enabled := false
 	buildevents := false
 	testCommand := "check"
@@ -238,8 +236,8 @@ func ResolveTravis(commons ...Common) *v1.TravisCI {
 
 	roleName := lastNonNil(TravisRoleNameGetter, commons...)
 
-	return &v1.TravisCI{
-		CommonCI: v1.CommonCI{
+	return &TravisCI{
+		CommonCI: CommonCI{
 			Enabled:        &enabled,
 			Buildevents:    &buildevents,
 			AWSIAMRoleName: roleName,
@@ -266,7 +264,7 @@ func ResolveGitHubActionsCI(commons ...Common) *GitHubActionsCI {
 
 	roleName := lastNonNil(GitHubActionsRoleNameGetter, commons...)
 	return &GitHubActionsCI{
-		CommonCI: v1.CommonCI{
+		CommonCI: CommonCI{
 			Enabled:        &enabled,
 			Buildevents:    &buildevents,
 			AWSIAMRoleName: roleName,
@@ -296,7 +294,7 @@ func ResolveCircleCI(commons ...Common) *CircleCI {
 	roleName := lastNonNil(CircleCIRoleNameGetter, commons...)
 
 	return &CircleCI{
-		CommonCI: v1.CommonCI{
+		CommonCI: CommonCI{
 			Enabled:        &enabled,
 			Buildevents:    &buildevents,
 			AWSIAMRoleName: roleName,
@@ -416,7 +414,7 @@ func ExtraVarsGetter(comm Common) map[string]string {
 	return map[string]string{}
 }
 
-func ResolveModuleTerraformVersion(def Defaults, module v1.Module) *string {
+func ResolveModuleTerraformVersion(def Defaults, module Module) *string {
 	if module.TerraformVersion != nil {
 		return module.TerraformVersion
 	}

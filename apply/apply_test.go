@@ -8,8 +8,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chanzuckerberg/fogg/config"
-	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
@@ -248,66 +246,6 @@ version: 2
 	r.Len(w, 0)
 
 	e = Apply(fs, c, templates.Templates, false)
-	r.NoError(e)
-}
-
-func TestApplySmokeTestJSON(t *testing.T) {
-	r := require.New(t)
-	fs, _, err := util.TestFs()
-	r.NoError(err)
-
-	json := `
-	{
-	  "defaults": {
-		"aws_region_provider": "reg",
-		"aws_region_backend": "reg",
-		"aws_profile_provider": "prof",
-		"aws_profile_backend": "prof",
-		"aws_provider_version": "0.12.0",
-		"account_id": 789,
-		"infra_s3_bucket": "buck",
-		"project": "proj",
-		"terraform_version": "0.100.0",
-		"owner": "foo@example.com"
-	  },
-	  "travis_ci": {
-		"enabled": true,
-		"aws_iam_role_name": "travis",
-			"id_account_name": "id",
-			"test_buckets": 7
-	  },
-	  "accounts": {
-		"foo": {
-		  "account_id": 123
-		},
-		"bar": {
-		  "account_id": 456
-		}
-	  },
-	  "modules": {
-		"my_module": {}
-	  },
-	  "envs": {
-		"staging":{
-			"components": {
-				"comp1": {},
-				"comp2": {}
-			}
-		},
-		"prod": {}
-	  }
-	}
-	`
-	c, e := v1.ReadConfig([]byte(json))
-	r.NoError(e)
-	c2, e := config.UpgradeConfigVersion(c)
-	r.NoError(e)
-
-	w, e := c2.Validate()
-	r.NoError(e)
-	r.Len(w, 1)
-
-	e = Apply(fs, c2, templates.Templates, false)
 	r.NoError(e)
 }
 

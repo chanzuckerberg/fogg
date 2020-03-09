@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"testing"
 
-	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/sirupsen/logrus"
@@ -128,6 +127,6 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 func TestResolveEKSConfig(t *testing.T) {
 	a := assert.New(t)
 	a.Equal("", resolveEKSConfig(nil, nil).ClusterName)
-	a.Equal("a", resolveEKSConfig(&v1.EKSConfig{ClusterName: "a"}, nil).ClusterName)
-	a.Equal("b", resolveEKSConfig(&v1.EKSConfig{ClusterName: "a"}, &v1.EKSConfig{ClusterName: "b"}).ClusterName)
+	a.Equal("a", resolveEKSConfig(&v2.EKSConfig{ClusterName: "a"}, nil).ClusterName)
+	a.Equal("b", resolveEKSConfig(&v2.EKSConfig{ClusterName: "a"}, &v2.EKSConfig{ClusterName: "b"}).ClusterName)
 }

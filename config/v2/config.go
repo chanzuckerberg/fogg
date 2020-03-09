@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"reflect"
 
-	v1 "github.com/chanzuckerberg/fogg/config/v1"
 	"github.com/chanzuckerberg/fogg/errs"
+	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
 )
@@ -39,14 +39,14 @@ func ReadConfig(fs afero.Fs, b []byte, configFile string) (*Config, error) {
 }
 
 type Config struct {
-	Accounts map[string]Account   `json:"accounts,omitempty" yaml:"accounts,omitempty"`
-	Defaults Defaults             `json:"defaults" yaml:"defaults" validate:"required"`
-	Docker   bool                 `json:"docker,omitempty" yaml:"docker,omitempty"`
-	Envs     map[string]Env       `json:"envs,omitempty" yaml:"envs,omitempty"`
-	Global   Component            `json:"global,omitempty" yaml:"global,omitempty"`
-	Modules  map[string]v1.Module `json:"modules,omitempty" yaml:"modules,omitempty"`
-	Plugins  v1.Plugins           `json:"plugins,omitempty" yaml:"plugins,omitempty"`
-	Version  int                  `json:"version,omitempty" yaml:"version,omitempty" validate:"required,eq=2"`
+	Accounts map[string]Account `json:"accounts,omitempty" yaml:"accounts,omitempty"`
+	Defaults Defaults           `json:"defaults" yaml:"defaults" validate:"required"`
+	Docker   bool               `json:"docker,omitempty" yaml:"docker,omitempty"`
+	Envs     map[string]Env     `json:"envs,omitempty" yaml:"envs,omitempty"`
+	Global   Component          `json:"global,omitempty" yaml:"global,omitempty"`
+	Modules  map[string]Module  `json:"modules,omitempty" yaml:"modules,omitempty"`
+	Plugins  Plugins            `json:"plugins,omitempty" yaml:"plugins,omitempty"`
+	Version  int                `json:"version,omitempty" yaml:"version,omitempty" validate:"required,eq=2"`
 }
 
 type Common struct {
@@ -68,20 +68,20 @@ type Account struct {
 }
 
 type Tools struct {
-	TravisCI        *v1.TravisCI     `json:"travis_ci,omitempty" yaml:"travis_ci,omitempty"`
+	TravisCI        *TravisCI        `json:"travis_ci,omitempty" yaml:"travis_ci,omitempty"`
 	CircleCI        *CircleCI        `json:"circle_ci,omitempty" yaml:"circle_ci,omitempty"`
 	GitHubActionsCI *GitHubActionsCI `json:"github_actions_ci,omitempty" yaml:"github_actions_ci,omitempty"`
-	TfLint          *v1.TfLint       `json:"tflint,omitempty" yaml:"tflint,omitempty"`
+	TfLint          *TfLint          `json:"tflint,omitempty" yaml:"tflint,omitempty"`
 }
 
 type CircleCI struct {
-	v1.CommonCI `json:",inline" yaml:",inline"`
+	CommonCI `json:",inline" yaml:",inline"`
 
 	SSHKeyFingerprints []string `json:"ssh_key_fingerprints" yaml:"ssh_key_fingerprints"`
 }
 
 type GitHubActionsCI struct {
-	v1.CommonCI `json:",inline" yaml:",inline"`
+	CommonCI `json:",inline" yaml:",inline"`
 }
 
 type Env struct {
@@ -93,9 +93,9 @@ type Env struct {
 type Component struct {
 	Common `json:",inline" yaml:",inline"`
 
-	EKS          *v1.EKSConfig     `json:"eks,omitempty" yaml:"eks,omitempty"`
-	Kind         *v1.ComponentKind `json:"kind,omitempty" yaml:"kind,omitempty"`
-	ModuleSource *string           `json:"module_source,omitempty" yaml:"module_source,omitempty"`
+	EKS          *EKSConfig     `json:"eks,omitempty" yaml:"eks,omitempty"`
+	Kind         *ComponentKind `json:"kind,omitempty" yaml:"kind,omitempty"`
+	ModuleSource *string        `json:"module_source,omitempty" yaml:"module_source,omitempty"`
 }
 
 type Providers struct {
@@ -157,6 +157,63 @@ type Backend struct {
 	Profile     *string `json:"profile,omitempty" yaml:"profile,omitempty"`
 	Region      *string `json:"region,omitempty" yaml:"region,omitempty"`
 }
+
+// Module is a module
+type Module struct {
+	TerraformVersion *string `json:"terraform_version,omitempty" yaml:"terraform_version,omitempty"`
+}
+
+// Plugins contains configuration around plugins
+type Plugins struct {
+	CustomPlugins      map[string]*plugins.CustomPlugin `json:"custom_plugins,omitempty" yaml:"custom_plugins,omitempty"`
+	TerraformProviders map[string]*plugins.CustomPlugin `json:"terraform_providers,omitempty" yaml:"terraform_providers,omitempty"`
+}
+
+type TravisCI struct {
+	CommonCI `json:",inline" yaml:",inline"`
+}
+
+type CommonCI struct {
+	Enabled        *bool                       `json:"enabled,omitempty" yaml:"enabled,omitempty"`
+	AWSIAMRoleName *string                     `json:"aws_iam_role_name" yaml:"aws_iam_role_name,omitempty"`
+	TestBuckets    *int                        `json:"test_buckets" yaml:"test_buckets,omitempty"`
+	Command        *string                     `json:"command,omitempty" yaml:"command,omitempty"`
+	Buildevents    *bool                       `json:"buildevents,omitempty" yaml:"buildevents,omitempty"`
+	Providers      map[string]CIProviderConfig `json:"providers,omitempty" yaml:"providers,omitempty"`
+}
+
+type CIProviderConfig struct {
+	Disabled bool `json:"disabled,omitempty" yaml:"disabled,omitempty"`
+}
+
+type TfLint struct {
+	Enabled *bool `json:"enabled,omitempty" yaml:"enabled,omitempty"`
+}
+
+// EKSConfig is the configuration for an eks cluster
+type EKSConfig struct {
+	ClusterName string `json:"cluster_name" yaml:"cluster_name"`
+}
+
+// ComponentKind is the kind of this component
+type ComponentKind string
+
+// GetOrDefault gets the component kind or default
+func (ck *ComponentKind) GetOrDefault() ComponentKind {
+	if ck == nil || *ck == "" {
+		return DefaultComponentKind
+	}
+	return *ck
+}
+
+const (
+	// DefaultComponentKind defaults to terraform component
+	DefaultComponentKind ComponentKind = "terraform"
+	// ComponentKindTerraform is a terraform component
+	ComponentKindTerraform = DefaultComponentKind
+	// ComponentKindHelmTemplate is a helm template component
+	ComponentKindHelmTemplate ComponentKind = "helm_template"
+)
 
 // Generate is used for test/quick integration. There are supposedly ways to do this without polluting the public
 // api, but givent that fogg isn't an api, it doesn't seem like a big deal
@@ -287,8 +344,8 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		if r.Float32() < 0.5 {
 			c.Tools = &Tools{}
 			if r.Float32() < 0.5 {
-				c.Tools.TravisCI = &v1.TravisCI{
-					CommonCI: v1.CommonCI{
+				c.Tools.TravisCI = &TravisCI{
+					CommonCI: CommonCI{
 						Enabled:     randBoolPtr(r, s),
 						TestBuckets: randIntPtr(r, s),
 					},
@@ -296,7 +353,7 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 			}
 			if r.Float32() < 0.5 {
 				p := r.Float32() < 0.5
-				c.Tools.TfLint = &v1.TfLint{
+				c.Tools.TfLint = &TfLint{
 					Enabled: &p,
 				}
 			}

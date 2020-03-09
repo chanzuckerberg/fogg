@@ -22,7 +22,7 @@ func TestBasicYamlMigrate(t *testing.T) {
 
 	shouldRun, err := yamlMigration.Guard(fs, confPath)
 	r.Nil(err)
-	r.Equal(true,shouldRun)
+	r.Equal(true, shouldRun)
 
 	configFile, err := yamlMigration.Migrate(fs, confPath)
 	r.Nil(err)
