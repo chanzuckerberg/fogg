@@ -34,7 +34,7 @@ type Common struct {
 type ComponentCommon struct {
 	Common `yaml:",inline"`
 
-	Backend   S3Backend         `json:"backend" yaml:"backend"`
+	Backend   Backend           `json:"backend" yaml:"backend"`
 	ExtraVars map[string]string `json:"extra_vars" yaml:"extra_vars"`
 	Owner     string            `json:"owner" yaml:"owner"`
 	Project   string            `json:"project" yaml:"project"`
@@ -72,7 +72,7 @@ type CIComponent struct {
 
 // generateCIConfig generates the config for ci
 func (c CIComponent) generateCIConfig(
-	backend S3Backend,
+	backend Backend,
 	provider *AWSProvider,
 	projName string,
 	projDir string) *CIConfig {
@@ -93,9 +93,9 @@ func (c CIComponent) generateCIConfig(
 		Command: c.Command,
 	})
 
-	if backend.AccountID != nil {
-		ciConfig.AWSProfiles[backend.Profile] = AWSRole{
-			AccountID: *backend.AccountID,
+	if backend.S3 != nil && backend.S3.AccountID != nil {
+		ciConfig.AWSProfiles[backend.S3.Profile] = AWSRole{
+			AccountID: *backend.S3.AccountID,
 			RoleName:  c.AWSRoleName,
 		}
 	}
@@ -160,6 +160,21 @@ type BlessProvider struct {
 type HerokuProvider struct{}
 
 type DatadogProvider struct{}
+
+// BackendType is a enum of backends we support
+type BackendType string
+
+const (
+	// BackendTypeS3 is https://www.terraform.io/docs/backends/types/s3.html
+	BackendTypeS3 BackendType = "s3"
+)
+
+//Backend represents a plan for configuring the terraform backend. Only one struct member can be
+//non-nil at a time
+type Backend struct {
+	Type BackendType `yaml:"type"`
+	S3   *S3Backend  `yaml:"s3,omitempty"`
+}
 
 // S3Backend represents aws backend configuration
 type S3Backend struct {
@@ -459,12 +474,14 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	}
 
 	return ComponentCommon{
-		Backend: S3Backend{
-			AccountID:   v2.ResolveOptionalString(v2.BackendAccountIdGetter, commons...),
-			Region:      v2.ResolveRequiredString(v2.BackendRegionGetter, commons...),
-			Profile:     v2.ResolveRequiredString(v2.BackendProfileGetter, commons...),
-			Bucket:      v2.ResolveRequiredString(v2.BackendBucketGetter, commons...),
-			DynamoTable: v2.ResolveOptionalString(v2.BackendDynamoTableGetter, commons...),
+		Backend: Backend{
+			S3: &S3Backend{
+				AccountID:   v2.ResolveOptionalString(v2.BackendAccountIdGetter, commons...),
+				Region:      v2.ResolveRequiredString(v2.BackendRegionGetter, commons...),
+				Profile:     v2.ResolveRequiredString(v2.BackendProfileGetter, commons...),
+				Bucket:      v2.ResolveRequiredString(v2.BackendBucketGetter, commons...),
+				DynamoTable: v2.ResolveOptionalString(v2.BackendDynamoTableGetter, commons...),
+			},
 		},
 		Providers: Providers{
 			AWS:       awsPlan,

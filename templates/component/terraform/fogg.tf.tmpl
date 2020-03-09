@@ -51,8 +51,8 @@ terraform {
   required_version = "~>{{ .TerraformVersion }}"
 
   backend "s3" {
-    bucket         = "{{ .Backend.Bucket }}"
-    {{ if .Backend.DynamoTable }}dynamodb_table = "{{ .Backend.DynamoTable }}"{{ end }}
+    bucket         = "{{ .Backend.S3.Bucket }}"
+    {{ if .Backend.S3.DynamoTable }}dynamodb_table = "{{ .Backend.S3.DynamoTable }}"{{ end }}
     {{/* {%- if env is defined and component_name is defined %} */}}
     key            = "terraform/{{ .Project }}/envs/{{ .Env }}/components/{{ .Component }}.tfstate"
 
@@ -62,8 +62,8 @@ terraform {
     {%- endif %}
 */}}
     encrypt = true
-    region = "{{ .Backend.Region }}"
-    profile = "{{ .Backend.Profile }}"
+    region = "{{ .Backend.S3.Region }}"
+    profile = "{{ .Backend.S3.Profile }}"
   }
 }
 
@@ -124,11 +124,11 @@ data "terraform_remote_state" "global" {
   backend = "s3"
 
   config = {
-    bucket         = "{{ .Global.Backend.Bucket }}"
-    {{ if .Backend.DynamoTable }}dynamodb_table = "{{ .Global.Backend.DynamoTable }}"{{ end }}
+    bucket         = "{{ .Global.Backend.S3.Bucket }}"
+    {{ if .Backend.S3.DynamoTable }}dynamodb_table = "{{ .Global.Backend.S3.DynamoTable }}"{{ end }}
     key            = "terraform/{{ .Global.Project }}/global.tfstate"
-    region         = "{{ .Global.Backend.Region }}"
-    {{ if .Global.Backend.Profile }}profile        = "{{ .Global.Backend.Profile }}"{{ end }}
+    region         = "{{ .Global.Backend.S3.Region }}"
+    {{ if .Global.Backend.S3.Profile }}profile        = "{{ .Global.Backend.S3.Profile }}"{{ end }}
   }
 }
 
@@ -138,11 +138,11 @@ data "terraform_remote_state" "{{ $component }}" {
   backend = "s3"
 
   config = {
-    bucket         = "{{ $outer.Backend.Bucket }}"
-    {{ if $outer.Backend.DynamoTable }}dynamodb_table = "{{ $outer.Backend.DynamoTable }}"{{ end }}
+    bucket         = "{{ $outer.Backend.S3.Bucket }}"
+    {{ if $outer.Backend.S3.DynamoTable }}dynamodb_table = "{{ $outer.Backend.S3.DynamoTable }}"{{ end }}
     key            = "terraform/{{ $outer.Project }}/envs/{{ $outer.Env }}/components/{{ $component }}.tfstate"
-    region         = "{{ $outer.Backend.Region }}"
-    {{ if $outer.Backend.Profile }}profile        = "{{ $outer.Backend.Profile }}"{{ end }}
+    region         = "{{ $outer.Backend.S3.Region }}"
+    {{ if $outer.Backend.S3.Profile }}profile        = "{{ $outer.Backend.S3.Profile }}"{{ end }}
   }
 }
 {{ end }}
@@ -153,11 +153,11 @@ data "terraform_remote_state" "{{ $accountName }}" {
   backend = "s3"
 
   config = {
-    bucket         = "{{ $account.Backend.Bucket }}"
-    {{ if $account.Backend.DynamoTable }}dynamodb_table = "{{ $account.Backend.DynamoTable }}"{{ end }}
+    bucket         = "{{ $account.Backend.S3.Bucket }}"
+    {{ if $account.Backend.S3.DynamoTable }}dynamodb_table = "{{ $account.Backend.S3.DynamoTable }}"{{ end }}
     key            = "terraform/{{ .Project }}/accounts/{{ $account.AccountName }}.tfstate"
-    region         = "{{ $account.Backend.Region }}"
-    {{ if $account.Backend.Profile }}profile        = "{{ $account.Backend.Profile }}"{{ end }}
+    region         = "{{ $account.Backend.S3.Region }}"
+    {{ if $account.Backend.S3.Profile }}profile        = "{{ $account.Backend.S3.Profile }}"{{ end }}
   }
 }
 {{ end }}
