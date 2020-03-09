@@ -34,7 +34,7 @@ type Common struct {
 type ComponentCommon struct {
 	Common `yaml:",inline"`
 
-	Backend   AWSBackend        `json:"backend" yaml:"backend"`
+	Backend   S3Backend         `json:"backend" yaml:"backend"`
 	ExtraVars map[string]string `json:"extra_vars" yaml:"extra_vars"`
 	Owner     string            `json:"owner" yaml:"owner"`
 	Project   string            `json:"project" yaml:"project"`
@@ -72,7 +72,7 @@ type CIComponent struct {
 
 // generateCIConfig generates the config for ci
 func (c CIComponent) generateCIConfig(
-	backend AWSBackend,
+	backend S3Backend,
 	provider *AWSProvider,
 	projName string,
 	projDir string) *CIConfig {
@@ -161,8 +161,8 @@ type HerokuProvider struct{}
 
 type DatadogProvider struct{}
 
-// AWSBackend represents aws backend configuration
-type AWSBackend struct {
+// S3Backend represents aws backend configuration
+type S3Backend struct {
 	AccountID   *string `yaml:"account_id,omitempty"`
 	AccountName string  `json:"account_name" yaml:"account_name"`
 	Profile     string  `json:"profile" yaml:"profile"`
@@ -459,7 +459,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	}
 
 	return ComponentCommon{
-		Backend: AWSBackend{
+		Backend: S3Backend{
 			AccountID:   v2.ResolveOptionalString(v2.BackendAccountIdGetter, commons...),
 			Region:      v2.ResolveRequiredString(v2.BackendRegionGetter, commons...),
 			Profile:     v2.ResolveRequiredString(v2.BackendProfileGetter, commons...),
