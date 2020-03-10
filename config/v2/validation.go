@@ -43,11 +43,7 @@ func (c *Config) Validate() ([]string, error) {
 	errs = multierror.Append(errs, c.validateInheritedStringField("owner", OwnerGetter, nonEmptyString))
 	errs = multierror.Append(errs, c.validateInheritedStringField("project", ProjectGetter, nonEmptyString))
 	errs = multierror.Append(errs, c.validateInheritedStringField("terraform version", TerraformVersionGetter, nonEmptyString))
-
-	errs = multierror.Append(errs, c.validateInheritedStringField("backend bucket", BackendBucketGetter, nonEmptyString))
-	errs = multierror.Append(errs, c.validateInheritedStringField("backend region", BackendRegionGetter, nonEmptyString))
-	errs = multierror.Append(errs, c.validateInheritedStringField("backend profile", BackendProfileGetter, nonEmptyString))
-
+	// errs = multierror.Append(errs, c.validateBackend())
 	errs = multierror.Append(errs, c.ValidateAWSProviders())
 	errs = multierror.Append(errs, c.ValidateSnowflakeProviders())
 	errs = multierror.Append(errs, c.ValidateBlessProviders())
@@ -102,6 +98,16 @@ func (c *Config) ValidateAWSProviders() error {
 	})
 
 	return errs.ErrorOrNil()
+}
+
+func (c *Config) ValidateBackend() error {
+	var errs *multierror.Error
+
+	// 	c.WalkComponents(func(component string comms ...Common){
+	// 		backendConfig := ResolveBackend(comms...)
+	// 		// validate
+	// 	})
+	return errs
 }
 
 func (p *BlessProvider) Validate(component string) error {

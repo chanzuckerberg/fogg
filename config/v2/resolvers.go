@@ -112,6 +112,31 @@ func ResolveAWSProvider(commons ...Common) *AWSProvider {
 	return nil
 }
 
+// ResolveBackend returns the Backend configuration for a given component, after applying all inheritance rules
+func ResolveBackend(commons ...Common) *Backend {
+	kind := lastNonNil(BackendKindGetter, commons...)
+
+	accountID := lastNonNil(BackendAccountIDGetter, commons...)
+	bucket := lastNonNil(BackendBucketGetter, commons...)
+	dynamoTable := lastNonNil(BackendDynamoTableGetter, commons...)
+	profile := lastNonNil(BackendProfileGetter, commons...)
+	region := lastNonNil(BackendRegionGetter, commons...)
+	hostName := lastNonNil(BackendHostNameGetter, commons...)
+	organization := lastNonNil(BackendOrganizationGetter, commons...)
+
+	return &Backend{
+		Kind: kind,
+
+		AccountID:    accountID,
+		Bucket:       bucket,
+		DynamoTable:  dynamoTable,
+		Profile:      profile,
+		Region:       region,
+		HostName:     hostName,
+		Organization: organization,
+	}
+}
+
 // ResolveGithubProvider will return an GithubProvder iff one of the required fields is set somewhere in the set of Common
 // config objects passed in. Otherwise it will return nil.
 func ResolveGithubProvider(commons ...Common) *GithubProvider {
@@ -384,6 +409,38 @@ func AWSProviderAdditionalRegionsGetter(comm Common) []string {
 		return comm.Providers.AWS.AdditionalRegions
 	}
 	return nil
+}
+
+// BackendKindGetter retrieves the Kind for the current common object
+func BackendKindGetter(comm Common) *string {
+	if comm.Backend == nil {
+		return nil
+	}
+	return comm.Backend.Kind
+}
+
+func BackendAccountIDGetter(comm Common) *string {
+	if comm.Backend == nil {
+		return nil
+	}
+
+	return comm.Backend.AccountID
+}
+
+func BackendHostNameGetter(comm Common) *string {
+	if comm.Backend == nil {
+		return nil
+	}
+
+	return comm.Backend.HostName
+}
+
+func BackendOrganizationGetter(comm Common) *string {
+	if comm.Backend == nil {
+		return nil
+	}
+
+	return comm.Backend.Organization
 }
 
 func GithubProviderOrganizationGetter(comm Common) *string {

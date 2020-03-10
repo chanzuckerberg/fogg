@@ -79,7 +79,7 @@ func TestValidateOwnersComponent(t *testing.T) {
 func TestValidateBackend(t *testing.T) {
 	r := require.New(t)
 
-	c := confBackendType()
+	c := confBackendKind()
 
 	_, err := c.Validate()
 	r.Error(err)
@@ -112,14 +112,14 @@ func confAcctOwner(def, acct string) Config {
 	}
 }
 
-func confBackendType() Config {
+func confBackendKind() Config {
 	return Config{
 		Version: 2,
 		Defaults: Defaults{
 			Common{
 				Owner: util.StrPtr("foo@example.com"),
 				Backend: &Backend{
-					Type:    util.StrPtr("invalid"),
+					Kind:    util.StrPtr("invalid"),
 					Bucket:  util.StrPtr("foo"),
 					Region:  util.StrPtr("foo"),
 					Profile: util.StrPtr("foo"),
