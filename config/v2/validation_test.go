@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/util"
+	"github.com/jinzhu/copier"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -76,13 +77,64 @@ func TestValidateOwnersComponent(t *testing.T) {
 	}
 }
 
-func TestValidateBackend(t *testing.T) {
-	r := require.New(t)
+func TestValidateBackends(t *testing.T) {
 
-	c := confBackendKind()
+	var cases = []struct {
+		kind     string
+		genValid bool
+		wantErr  bool
+	}{
+		// {"invalid", false, true},
+		// {"s3", true, false},
+		{"remote", true, false},
+	}
 
-	_, err := c.Validate()
-	r.Error(err)
+	for _, tt := range cases {
+		t.Run(tt.kind, func(t *testing.T) {
+			r := require.New(t)
+
+			c := confBackendKind(tt.kind, tt.genValid)
+			_, err := c.Validate()
+			if tt.wantErr {
+				r.Error(err)
+			} else {
+				r.NoError(err)
+			}
+		})
+	}
+}
+
+func confBackendKind(kind string, generateValid bool) Config {
+	base := Config{
+		Version: 2,
+		Defaults: Defaults{
+			Common{
+				Owner: util.StrPtr("foo@example.com"),
+				Backend: &Backend{
+					Kind:    util.StrPtr(kind),
+					Bucket:  util.StrPtr("foo"),
+					Region:  util.StrPtr("foo"),
+					Profile: util.StrPtr("foo"),
+				},
+				Project:          util.StrPtr("foo"),
+				TerraformVersion: util.StrPtr("1.1.1"),
+			},
+		},
+	}
+
+	if kind == "remote" {
+		var remote Config
+		copier.Copy(&remote, &base)
+
+		remote.Defaults.Common.Backend = &Backend{
+			Kind:         util.StrPtr("remote"),
+			HostName:     util.StrPtr("example.com"),
+			Organization: util.StrPtr("example"),
+		}
+		return remote
+	}
+
+	return base
 }
 
 func confAcctOwner(def, acct string) Config {
@@ -107,25 +159,6 @@ func confAcctOwner(def, acct string) Config {
 		Global: Component{
 			Common: Common{
 				Owner: util.StrPtr(acct),
-			},
-		},
-	}
-}
-
-func confBackendKind() Config {
-	return Config{
-		Version: 2,
-		Defaults: Defaults{
-			Common{
-				Owner: util.StrPtr("foo@example.com"),
-				Backend: &Backend{
-					Kind:    util.StrPtr("invalid"),
-					Bucket:  util.StrPtr("foo"),
-					Region:  util.StrPtr("foo"),
-					Profile: util.StrPtr("foo"),
-				},
-				Project:          util.StrPtr("foo"),
-				TerraformVersion: util.StrPtr("1.1.1"),
 			},
 		},
 	}
@@ -252,4 +285,45 @@ func TestFailOnTF11(t *testing.T) {
 
 	err := conf.validateModules()
 	r.Error(err, "fogg only supports tf versions >= 0.12.0 but 0.11.0 was provided")
+}
+
+func TestValidateBackend(t *testing.T) {
+	validS3 := &Backend{
+		Kind:    util.StrPtr("s3"),
+		Bucket:  util.StrPtr("bucket"),
+		Profile: util.StrPtr("profile"),
+		Region:  util.StrPtr("region"),
+	}
+
+	invalidS3 := &Backend{
+		Kind: util.StrPtr("s3"),
+	}
+
+	validRemote := &Backend{
+		Kind:         util.StrPtr("remote"),
+		HostName:     util.StrPtr("example.com"),
+		Organization: util.StrPtr("org"),
+	}
+
+	invalidRemote := &Backend{
+		Kind: util.StrPtr("remote"),
+	}
+
+	tests := []struct {
+		name    string
+		backend *Backend
+		wantErr bool
+	}{
+		{"valid-s3", validS3, false},
+		{"invalid-s3", invalidS3, true},
+		{"valid-remote", validRemote, false},
+		{"invalid-remote", invalidRemote, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := ValidateBackend(tt.backend, tt.name); (err != nil) != tt.wantErr {
+				t.Errorf("ValidateBackend() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
 }

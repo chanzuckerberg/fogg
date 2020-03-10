@@ -2,6 +2,8 @@ package v2
 
 import (
 	"encoding/json"
+
+	"github.com/chanzuckerberg/fogg/util"
 )
 
 // lastNonNil, despite its name can return nil if all results are nil
@@ -115,6 +117,11 @@ func ResolveAWSProvider(commons ...Common) *AWSProvider {
 // ResolveBackend returns the Backend configuration for a given component, after applying all inheritance rules
 func ResolveBackend(commons ...Common) *Backend {
 	kind := lastNonNil(BackendKindGetter, commons...)
+
+	// This feels like a somewhat hacky way to do this, but not sure of a better place yet
+	if kind == nil {
+		kind = util.StrPtr("s3")
+	}
 
 	accountID := lastNonNil(BackendAccountIDGetter, commons...)
 	bucket := lastNonNil(BackendBucketGetter, commons...)
