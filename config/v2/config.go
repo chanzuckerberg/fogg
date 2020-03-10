@@ -152,7 +152,7 @@ type DatadogProvider struct{}
 
 //Backend is used to configure a terraform backend
 type Backend struct {
-	Type        *string `json:"type,omitempty" yaml:"type,omitempty" validate:"omitempty,oneof=s3"`
+	Kind        *string `json:"type,omitempty" yaml:"type,omitempty" validate:"omitempty,oneof=s3"`
 	AccountID   *string `json:"account_id,omitempty" yaml:"account_id,omitempty"`
 	Bucket      *string `json:"bucket,omitempty" yaml:"bucket,omitempty"`
 	DynamoTable *string `json:"dynamodb_table,omitempty" yaml:"dynamodb_table,omitempty"`
