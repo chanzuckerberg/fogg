@@ -1,0 +1,10 @@
+{{define "s3_backend"}}
+  backend "s3" {
+    bucket         = "{{ .Backend.S3.Bucket }}"
+    {{ if .Backend.S3.DynamoTable }}dynamodb_table = "{{ .Backend.S3.DynamoTable }}"{{ end }}
+    key            = "{{ .Backend.S3.KeyPath }}"
+    encrypt = true
+    region = "{{ .Backend.S3.Region }}"
+    profile = "{{ .Backend.S3.Profile }}"
+  }
+{{ end }}

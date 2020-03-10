@@ -28,6 +28,7 @@ provider "snowflake" {
 terraform {
   required_version = "=1.1.1"
 
+
   backend "s3" {
     bucket = "bucket"
 
@@ -36,6 +37,7 @@ terraform {
     region  = "region"
     profile = "foo"
   }
+
 }
 
 variable "project" {

@@ -35,17 +35,16 @@ provider "datadog" {
 terraform {
   required_version = "~>0.100.0"
 
+
   backend "s3" {
     bucket = "buck"
 
-
-    key = "terraform/proj/envs/prod/components/datadog.tfstate"
-
-
+    key     = "terraform/proj/envs/prod/components/datadog.tfstate"
     encrypt = true
     region  = "us-west-2"
     profile = "profile"
   }
+
 }
 
 variable "env" {

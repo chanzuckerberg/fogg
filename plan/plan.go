@@ -161,19 +161,21 @@ type HerokuProvider struct{}
 
 type DatadogProvider struct{}
 
-// BackendType is a enum of backends we support
-type BackendType string
+// BackendKind is a enum of backends we support
+type BackendKind string
 
 const (
-	// BackendTypeS3 is https://www.terraform.io/docs/backends/types/s3.html
-	BackendTypeS3 BackendType = "s3"
+	// BackendKindS3 is https://www.terraform.io/docs/backends/types/s3.html
+	BackendKindS3     BackendKind = "s3"
+	BackendKindRemote BackendKind = "remote"
 )
 
 //Backend represents a plan for configuring the terraform backend. Only one struct member can be
 //non-nil at a time
 type Backend struct {
-	Type BackendType `yaml:"type"`
-	S3   *S3Backend  `yaml:"s3,omitempty"`
+	Kind   BackendKind    `yaml:"kind"`
+	S3     *S3Backend     `yaml:"s3,omitempty"`
+	Remote *RemoteBackend `yaml:"remote,omitempty"`
 }
 
 // S3Backend represents aws backend configuration
@@ -184,6 +186,13 @@ type S3Backend struct {
 	Region      string  `json:"region" yaml:"region"`
 	Bucket      string  `json:"bucket" yaml:"bucket"`
 	DynamoTable *string `json:"dynamo_table" yaml:"dynamo_table"`
+	KeyPath     string  `json:"key_path" yaml:"key_path"`
+}
+
+// RemoteBackend represents a plan to configure a terraform remote backend
+type RemoteBackend struct {
+	HostName     string `yaml:"host_name"`
+	Organization string `yaml:"organization"`
 }
 
 // Module is a module
@@ -274,6 +283,9 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 
 		accountPlan.AccountName = name
 		accountPlan.ComponentCommon = resolveComponentCommon(defaults.Common, acct.Common)
+		if accountPlan.ComponentCommon.Backend.Kind == BackendKindS3 {
+			accountPlan.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/accounts/%s.tfstate", accountPlan.ComponentCommon.Project, name)
+		}
 		accountPlan.AllAccounts = resolveAccounts(c.Accounts)
 		accountPlan.PathToRepoRoot = "../../../"
 		accountPlan.Global = &p.Global
@@ -309,7 +321,9 @@ func (p *Plan) buildGlobal(conf *v2.Config) Component {
 	global := conf.Global
 
 	componentPlan.ComponentCommon = resolveComponentCommon(defaults.Common, global.Common)
-
+	if componentPlan.ComponentCommon.Backend.Kind == BackendKindS3 {
+		componentPlan.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/global.tfstate", componentPlan.ComponentCommon.Project)
+	}
 	componentPlan.Component = "global"
 	componentPlan.OtherComponents = []string{}
 	componentPlan.ExtraVars = resolveExtraVars(defaults.ExtraVars, global.ExtraVars)
@@ -343,6 +357,9 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 
 			componentPlan.ComponentCommon = resolveComponentCommon(defaults.Common, envConf.Common, componentConf.Common)
 
+			if componentPlan.ComponentCommon.Backend.Kind == BackendKindS3 {
+				componentPlan.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/envs/%s/components/%s.tfstate", componentPlan.ComponentCommon.Project, envName, componentName)
+			}
 			componentPlan.Env = envName
 			componentPlan.Component = componentName
 			componentPlan.OtherComponents = otherComponentNames(conf.Envs[envName].Components, componentName)
@@ -473,16 +490,35 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		logrus.Warn("Detected both travisCI and circleCI are enabled, is this intentional?")
 	}
 
-	return ComponentCommon{
-		Backend: Backend{
+	project := v2.ResolveRequiredString(v2.ProjectGetter, commons...)
+
+	backendConf := v2.ResolveBackend(commons...)
+	var backend Backend
+
+	if *backendConf.Kind == "s3" {
+		backend = Backend{
+			Kind: BackendKindS3,
 			S3: &S3Backend{
-				AccountID:   v2.ResolveOptionalString(v2.BackendAccountIdGetter, commons...),
-				Region:      v2.ResolveRequiredString(v2.BackendRegionGetter, commons...),
-				Profile:     v2.ResolveRequiredString(v2.BackendProfileGetter, commons...),
-				Bucket:      v2.ResolveRequiredString(v2.BackendBucketGetter, commons...),
-				DynamoTable: v2.ResolveOptionalString(v2.BackendDynamoTableGetter, commons...),
+				Region:  *backendConf.Region,
+				Profile: *backendConf.Profile,
+				Bucket:  *backendConf.Bucket,
+
+				AccountID:   backendConf.AccountID,
+				DynamoTable: backendConf.DynamoTable,
 			},
-		},
+		}
+	} else if *backendConf.Kind == "remote" {
+		backend = Backend{
+			Kind: BackendKindRemote,
+			Remote: &RemoteBackend{
+				HostName:     *backendConf.HostName,
+				Organization: *backendConf.Organization,
+			},
+		}
+	}
+
+	return ComponentCommon{
+		Backend: backend,
 		Providers: Providers{
 			AWS:       awsPlan,
 			Github:    githubPlan,
@@ -495,7 +531,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		TfLint:          tfLintPlan,
 		ExtraVars:       v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),
 		Owner:           v2.ResolveRequiredString(v2.OwnerGetter, commons...),
-		Project:         v2.ResolveRequiredString(v2.ProjectGetter, commons...),
+		Project:         project,
 		Common:          Common{TerraformVersion: v2.ResolveRequiredString(v2.TerraformVersionGetter, commons...)},
 		TravisCI:        travisPlan,
 		CircleCI:        circlePlan,

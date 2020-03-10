@@ -18,10 +18,9 @@ func TestOpenTemplate(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		tLen    int
 		wantErr bool
 	}{
-		{"foo", args{temps.Account, "Makefile.tmpl"}, 10, false},
+		{"foo", args{temps.Account, "Makefile.tmpl"}, false},
 	}
 
 	for _, tt := range tests {
@@ -37,7 +36,6 @@ func TestOpenTemplate(t *testing.T) {
 			}
 
 			r.NotNil(temp.Templates())
-			r.Len(temp.Templates(), tt.tLen)
 		})
 	}
 }

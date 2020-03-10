@@ -50,14 +50,7 @@
 terraform {
   required_version = "={{ .TerraformVersion }}"
 
-  backend "s3" {
-    bucket         = "{{ .Backend.S3.Bucket }}"
-    {{ if .Backend.S3.DynamoTable }}dynamodb_table = "{{ .Backend.S3.DynamoTable }}"{{ end }}
-    key            = "terraform/{{ .Project }}/accounts/{{ .AccountName }}.tfstate"
-    encrypt        = true
-    region         = "{{ .Backend.S3.Region }}"
-    profile        = "{{ .Backend.S3.Profile }}"
-  }
+{{ template "s3_backend" . }}
 }
 
 variable "project" {

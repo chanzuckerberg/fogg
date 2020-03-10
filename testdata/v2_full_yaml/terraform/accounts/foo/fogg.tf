@@ -29,6 +29,7 @@ provider "aws" {
 terraform {
   required_version = "=0.100.0"
 
+
   backend "s3" {
     bucket = "buck"
 
@@ -37,6 +38,7 @@ terraform {
     region  = "us-west-2"
     profile = "profile"
   }
+
 }
 
 variable "project" {

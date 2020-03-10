@@ -43,17 +43,16 @@ provider "bless" {
 terraform {
   required_version = "~>1.1.1"
 
+
   backend "s3" {
     bucket = "bucket"
 
-
-    key = "terraform/foofoo/envs/bar/components/bam.tfstate"
-
-
+    key     = "terraform/foofoo/envs/bar/components/bam.tfstate"
     encrypt = true
     region  = "region"
     profile = "foofoo"
   }
+
 }
 
 variable "env" {

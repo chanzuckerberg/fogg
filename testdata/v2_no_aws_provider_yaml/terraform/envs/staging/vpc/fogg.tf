@@ -18,17 +18,16 @@
 terraform {
   required_version = "~>0.100.0"
 
+
   backend "s3" {
     bucket = "buck"
 
-
-    key = "terraform/proj/envs/staging/components/vpc.tfstate"
-
-
+    key     = "terraform/proj/envs/staging/components/vpc.tfstate"
     encrypt = true
     region  = "us-west-2"
     profile = "profile"
   }
+
 }
 
 variable "env" {

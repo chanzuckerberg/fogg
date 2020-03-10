@@ -47,9 +47,7 @@ terraform {
   backend "s3" {
     bucket = "bucket"
 
-
-    key = "terraform/foofoo/global.tfstate"
-
+    key     = "terraform/foofoo/global.tfstate"
     encrypt = true
     region  = "region"
     profile = "foofoo"

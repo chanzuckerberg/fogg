@@ -30,17 +30,16 @@ provider "aws" {
 terraform {
   required_version = "~>0.100.0"
 
+
   backend "s3" {
     bucket = "buck"
 
-
-    key = "terraform/proj/envs/staging/components/comp1.tfstate"
-
-
+    key     = "terraform/proj/envs/staging/components/comp1.tfstate"
     encrypt = true
     region  = "us-west-2"
     profile = "comp1"
   }
+
 }
 
 variable "env" {
