@@ -51,12 +51,12 @@ terraform {
   required_version = "={{ .TerraformVersion }}"
 
   backend "s3" {
-    bucket         = "{{ .Backend.Bucket }}"
-    {{ if .Backend.DynamoTable }}dynamodb_table = "{{ .Backend.DynamoTable }}"{{ end }}
+    bucket         = "{{ .Backend.S3.Bucket }}"
+    {{ if .Backend.S3.DynamoTable }}dynamodb_table = "{{ .Backend.S3.DynamoTable }}"{{ end }}
     key            = "terraform/{{ .Project }}/accounts/{{ .AccountName }}.tfstate"
     encrypt        = true
-    region         = "{{ .Backend.Region }}"
-    profile        = "{{ .Backend.Profile }}"
+    region         = "{{ .Backend.S3.Region }}"
+    profile        = "{{ .Backend.S3.Profile }}"
   }
 }
 
@@ -106,11 +106,11 @@ data "terraform_remote_state" "global" {
   backend = "s3"
 
   config = {
-    bucket         = "{{ .Global.Backend.Bucket }}"
-    {{ if .Backend.DynamoTable }}dynamodb_table = "{{ .Global.Backend.DynamoTable }}"{{ end }}
+    bucket         = "{{ .Global.Backend.S3.Bucket }}"
+    {{ if .Backend.S3.DynamoTable }}dynamodb_table = "{{ .Global.Backend.S3.DynamoTable }}"{{ end }}
     key            = "terraform/{{ .Global.Project }}/global.tfstate"
-    region         = "{{ .Global.Backend.Region }}"
-    {{ if .Global.Backend.Profile }}profile        = "{{ .Global.Backend.Profile }}"{{ end }}
+    region         = "{{ .Global.Backend.S3.Region }}"
+    {{ if .Global.Backend.S3.Profile }}profile        = "{{ .Global.Backend.S3.Profile }}"{{ end }}
   }
 }
 
@@ -121,11 +121,11 @@ data "terraform_remote_state" "{{ $accountName }}" {
   backend = "s3"
 
   config = {
-    bucket = "{{ $outer.Backend.Bucket }}"
-    {{ if $outer.Backend.DynamoTable }}dynamodb_table = "{{ $outer.Backend.DynamoTable }}"{{ end }}
+    bucket = "{{ $outer.Backend.S3.Bucket }}"
+    {{ if $outer.Backend.S3.DynamoTable }}dynamodb_table = "{{ $outer.Backend.S3.DynamoTable }}"{{ end }}
     key            = "terraform/{{ $outer.Project }}/accounts/{{ $accountName }}.tfstate"
-    region         = "{{ $outer.Backend.Region }}"
-    {{ if $outer.Backend.Profile }}profile        = "{{ $outer.Backend.Profile }}"{{ end }}
+    region         = "{{ $outer.Backend.S3.Region }}"
+    {{ if $outer.Backend.S3.Profile }}profile        = "{{ $outer.Backend.S3.Profile }}"{{ end }}
   }
 }
 {{ end }}

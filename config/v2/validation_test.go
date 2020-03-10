@@ -76,6 +76,15 @@ func TestValidateOwnersComponent(t *testing.T) {
 	}
 }
 
+func TestValidateBackend(t *testing.T) {
+	r := require.New(t)
+
+	c := confBackendType()
+
+	_, err := c.Validate()
+	r.Error(err)
+}
+
 func confAcctOwner(def, acct string) Config {
 	return Config{
 		Defaults: Defaults{
@@ -98,6 +107,25 @@ func confAcctOwner(def, acct string) Config {
 		Global: Component{
 			Common: Common{
 				Owner: util.StrPtr(acct),
+			},
+		},
+	}
+}
+
+func confBackendType() Config {
+	return Config{
+		Version: 2,
+		Defaults: Defaults{
+			Common{
+				Owner: util.StrPtr("foo@example.com"),
+				Backend: &Backend{
+					Type:    util.StrPtr("invalid"),
+					Bucket:  util.StrPtr("foo"),
+					Region:  util.StrPtr("foo"),
+					Profile: util.StrPtr("foo"),
+				},
+				Project:          util.StrPtr("foo"),
+				TerraformVersion: util.StrPtr("1.1.1"),
 			},
 		},
 	}
