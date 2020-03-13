@@ -32,6 +32,7 @@ func TestIntegration(t *testing.T) {
 		{"v2_full_yaml", "fogg.yml"},
 		{"v2_minimal_valid_yaml", "fogg.yml"},
 		{"v2_no_aws_provider_yaml", "fogg.yml"},
+		{"github_actions", "fogg.yml"},
 	}
 
 	for _, tc := range testCases {
