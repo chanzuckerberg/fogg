@@ -52,7 +52,8 @@ release: setup docker ## run a release
 	goreleaser release
 .PHONY: release
 
-release-prerelease: setup build ## release to github as a 'pre-release'
+release-prerelease: setup ## release to github as a 'pre-release'
+	go build ${LDFLAGS} .
 	version=`./fogg version`; \
 	git tag v"$$version"; \
 	git push
