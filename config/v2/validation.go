@@ -90,7 +90,6 @@ func ValidateAWSProvider(p *AWSProvider, component string) error {
 // ValidateBackend will check the resolved configuration for a backend and return any errors it
 // finds
 func ValidateBackend(backend *Backend, component string) error {
-	fmt.Println("ValidateBackend")
 	if backend == nil {
 		return nil
 	}

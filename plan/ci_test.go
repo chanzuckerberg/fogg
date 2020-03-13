@@ -7,6 +7,7 @@ import (
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var id1, id2 json.Number
@@ -22,7 +23,7 @@ func init() {
 }
 
 func Test_buildTravisCI_Disabled(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 	{
 		c := &v2.Config{
 			Defaults: v2.Defaults{
@@ -38,10 +39,12 @@ func Test_buildTravisCI_Disabled(t *testing.T) {
 			},
 		}
 		p := &Plan{}
-		p.Accounts = p.buildAccounts(c)
+		accts, err := p.buildAccounts(c)
+		r.NoError(err)
+		p.Accounts = accts
 		tr := p.buildTravisCIConfig(c, "0.1.0")
-		a.NotNil(tr)
-		a.False(tr.Enabled)
+		r.NotNil(tr)
+		r.False(tr.Enabled)
 	}
 }
 
@@ -90,7 +93,11 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 	a.Len(w, 0)
 
 	p := &Plan{}
-	p.Accounts = p.buildAccounts(c)
+	accts, err := p.buildAccounts(c)
+	a.NoError(err)
+	a.Len(accts, 1)
+	t.Logf("accts: %#v\n", accts)
+	p.Accounts = accts
 	tr := p.buildTravisCIConfig(c, "0.1.0")
 	a.Len(tr.AWSProfiles, 2)
 	a.Contains(tr.AWSProfiles, "profile")
@@ -146,7 +153,9 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 	a.Len(w, 0)
 
 	p := &Plan{}
-	p.Accounts = p.buildAccounts(c)
+	accts, err := p.buildAccounts(c)
+	a.NoError(err)
+	p.Accounts = accts
 	tr := p.buildTravisCIConfig(c, "0.1.0")
 	a.NotNil(p.Accounts["foo"].Providers.AWS)
 	a.Equal(id1, p.Accounts["foo"].Providers.AWS.AccountID)
@@ -199,7 +208,9 @@ func Test_buildCircleCI_Profiles(t *testing.T) {
 	a.Len(w, 0)
 
 	p := &Plan{}
-	p.Accounts = p.buildAccounts(c)
+	accts, err := p.buildAccounts(c)
+	a.NoError(err)
+	p.Accounts = accts
 	circle := p.buildCircleCIConfig(c, "0.1.0")
 	a.Len(circle.AWSProfiles, 2)
 	a.Contains(circle.AWSProfiles, "profile")
@@ -258,7 +269,9 @@ func Test_buildCircleCI_ProfilesDisabled(t *testing.T) {
 	a.Len(w, 0)
 
 	p := &Plan{}
-	p.Accounts = p.buildAccounts(c)
+	accts, err := p.buildAccounts(c)
+	a.NoError(err)
+	p.Accounts = accts
 	circle := p.buildCircleCIConfig(c, "0.1.0")
 	a.Len(circle.AWSProfiles, 0)
 }

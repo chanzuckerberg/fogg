@@ -114,6 +114,6 @@ clean: ## clean the repo
 	./bin/packr clean
 	rm coverage.out 2>/dev/null || true
 
-update-golden-files: clean ## update the golden files in testdata
+update-golden-files: clean deps ## update the golden files in testdata
 	go test -v -run TestIntegration ./apply/ -update
 .PHONY: update-golden-files

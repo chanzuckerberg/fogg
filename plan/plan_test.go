@@ -9,6 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func init() {
@@ -61,6 +62,7 @@ func TestResolveAccounts(t *testing.T) {
 
 func TestPlanBasicV2Yaml(t *testing.T) {
 	a := assert.New(t)
+	r := require.New(t)
 
 	b, e := util.TestFile("v2_full_yaml")
 	assert.NoError(t, e)
@@ -77,7 +79,7 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 	a.Len(w, 0)
 
 	plan, e := Eval(c2)
-	assert.Nil(t, e)
+	r.NoError(e)
 	assert.NotNil(t, plan)
 	assert.NotNil(t, plan.Accounts)
 	assert.Len(t, plan.Accounts, 2)
@@ -122,6 +124,9 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 	assert.Equal(t, "bar2", plan.Envs["staging"].Components["comp1"].ExtraVars["foo"])
 	// component overwrite env
 	assert.Equal(t, "bar3", plan.Envs["staging"].Components["vpc"].ExtraVars["foo"])
+
+	t.Logf("%#v\n", plan.Accounts["foo"])
+	r.Len(plan.Accounts["foo"].Accounts, 1)
 }
 
 func TestResolveEKSConfig(t *testing.T) {

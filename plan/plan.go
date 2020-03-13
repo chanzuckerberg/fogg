@@ -204,6 +204,7 @@ type Module struct {
 type Account struct {
 	ComponentCommon `json:",inline" yaml:",inline"`
 
+	Accounts    map[string]Account      `json:"accounts" yaml:"accounts"` // Reference accounts for remote state
 	AllAccounts map[string]*json.Number `yaml:"all_accounts"`
 	AccountName string                  `yaml:"account_name"`
 	Global      *Component
@@ -250,7 +251,10 @@ func Eval(c *v2.Config) (*Plan, error) {
 
 	var err error
 	p.Global = p.buildGlobal(c)
-	p.Accounts = p.buildAccounts(c)
+	p.Accounts, err = p.buildAccounts(c)
+	if err != nil {
+		return nil, err
+	}
 	p.Envs, err = p.buildEnvs(c)
 	if err != nil {
 		return nil, err
@@ -274,7 +278,7 @@ func Print(p *Plan) error {
 	return nil
 }
 
-func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
+func (p *Plan) buildAccounts(c *v2.Config) (map[string]Account, error) {
 	defaults := c.Defaults
 
 	accountPlans := make(map[string]Account, len(c.Accounts))
@@ -286,13 +290,27 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 		if accountPlan.ComponentCommon.Backend.Kind == BackendKindS3 {
 			accountPlan.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/accounts/%s.tfstate", accountPlan.ComponentCommon.Project, name)
 		}
+
 		accountPlan.AllAccounts = resolveAccounts(c.Accounts)
 		accountPlan.PathToRepoRoot = "../../../"
 		accountPlan.Global = &p.Global
 		accountPlans[name] = accountPlan
 	}
 
-	return accountPlans
+	accountPlans2 := make(map[string]Account, len(c.Accounts))
+
+	for name, acct := range accountPlans {
+		acctCopy := acct
+		acctCopy.Accounts = make(map[string]Account)
+		for name2, acct2 := range accountPlans {
+			if name != name2 {
+				acctCopy.Accounts[name] = acct2
+			}
+		}
+		accountPlans2[name] = acctCopy
+	}
+
+	return accountPlans2, nil
 }
 
 func (p *Plan) buildModules(c *v2.Config) map[string]Module {
