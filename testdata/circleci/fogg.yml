@@ -1,0 +1,19 @@
+defaults:
+  backend:
+    bucket: bucket
+    profile: foo
+    region: region
+  owner: foo@example.com
+  project: foo
+  providers: {}
+  terraform_version: 1.1.1
+  tools:
+    circle_ci:
+      aws_iam_role_name: infraci
+      command: lint
+      enabled: true
+      test_buckets: 7
+      ssh_key_fingerprints:
+        - d2:52:20:b3:82:e2:ee:e8:98:02:05:15:b5:37:f6:2c
+
+version: 2
