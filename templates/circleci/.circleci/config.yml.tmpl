@@ -15,10 +15,10 @@ jobs:
 {{- if not (eq (len $circleCI.SSHFingerprints) 0) }}
       # HACK(el):Switch to key that reads private tf modules after checking out our code
       - add_ssh_keys:
-        fingerprints:
-        {{- range $sshFingerprint := $circleCI.SSHFingerprints }}
-          - {{ $sshFingerprint }}
-        {{- end }}
+          fingerprints:
+          {{- range $sshFingerprint := $circleCI.SSHFingerprints }}
+            - {{ $sshFingerprint }}
+          {{- end }}
 {{- end }}
       - run: python3 -m venv venv
       - run: . venv/bin/activate
