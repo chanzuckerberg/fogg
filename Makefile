@@ -17,7 +17,7 @@ setup: ## setup development dependencies
 .PHONY: setup
 
 fmt:
-	goimports -w -d $$(find . -type f -name '*.go' -not -path "./vendor/*")
+	goimports -w -d $$(find . -type f -name '*.go' -not -path "./vendor/*" -not -path "./dist/*")
 .PHONY: fmt
 
 lint: ## run the fast go linters
