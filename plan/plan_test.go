@@ -135,3 +135,32 @@ func TestResolveEKSConfig(t *testing.T) {
 	a.Equal("a", resolveEKSConfig(&v2.EKSConfig{ClusterName: "a"}, nil).ClusterName)
 	a.Equal("b", resolveEKSConfig(&v2.EKSConfig{ClusterName: "a"}, &v2.EKSConfig{ClusterName: "b"}).ClusterName)
 }
+
+func TestRemoteBackendPlan(t *testing.T) {
+	r := require.New(t)
+
+	b, e := util.TestFile("remote_backend_yaml")
+	r.NoError(e)
+
+	fs, _, err := util.TestFs()
+	r.NoError(err)
+	err = afero.WriteFile(fs, "fogg.yml", b, 0644)
+	r.NoError(err)
+	c2, err := v2.ReadConfig(fs, b, "fogg.yml")
+	r.Nil(err)
+
+	fmt.Println("c2")
+	util.Dump(c2)
+
+	w, err := c2.Validate()
+	r.NoError(err)
+	r.Len(w, 0)
+
+	plan, e := Eval(c2)
+	r.NoError(e)
+	r.NotNil(plan)
+
+	r.NotNil(plan.Global)
+	r.NotNil(plan.Global.Backend.Kind)
+	r.Equal(plan.Global.Backend.Kind, BackendKindRemote)
+}

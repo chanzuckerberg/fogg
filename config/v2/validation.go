@@ -110,7 +110,7 @@ func ValidateBackend(backend *Backend, component string) error {
 		}
 	} else if *backend.Kind == "remote" {
 		if backend.HostName == nil {
-			errs = multierror.Append(errs, fmt.Errorf("when backend kind == 'remote', host name is required (component %s)", component))
+			errs = multierror.Append(errs, fmt.Errorf("when backend kind == 'remote', host_name is required (component %s)", component))
 		}
 		if backend.Organization == nil {
 			errs = multierror.Append(errs, fmt.Errorf("when backend kind == 'remote', organization is required (component %s)", component))
