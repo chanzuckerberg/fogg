@@ -4,12 +4,10 @@
 export TERRAFORM_VERSION := 0.100.0
 export TFLINT_ENABLED := 0
 export TF_PLUGIN_CACHE_DIR := ../../..//.terraform.d/plugin-cache
-
 export AWS_BACKEND_PROFILE := profile
 
 
 export AWS_PROVIDER_PROFILE := profile
-
 
 
 
