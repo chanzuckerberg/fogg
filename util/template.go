@@ -26,18 +26,6 @@ func dict(in interface{}) map[string]interface{} {
 	return nil
 }
 
-// https://gist.github.com/morrxy/06fb44e967ba5c8b4b59f08268f9dd73
-func hasField(v interface{}, name string) bool {
-	rv := reflect.ValueOf(v)
-	if rv.Kind() == reflect.Ptr {
-		rv = rv.Elem()
-	}
-	if rv.Kind() != reflect.Struct {
-		return false
-	}
-	return rv.FieldByName(name).IsValid()
-}
-
 // OpenTemplate will read `source` for a template, parse, configure and return a template.Template
 func OpenTemplate(label string, source io.Reader, commonTemplates *packr.Box) (*template.Template, error) {
 	// TODO we should probably cache these rather than open and parse them for every apply
@@ -58,7 +46,6 @@ func OpenTemplate(label string, source io.Reader, commonTemplates *packr.Box) (*
 
 	funcs := sprig.TxtFuncMap()
 	funcs["dict"] = dict
-	funcs["hasField"] = hasField
 
 	t, err := template.New(label).Funcs(funcs).Parse(s)
 	if err != nil {
