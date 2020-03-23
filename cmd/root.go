@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"runtime/pprof"
 
 	"github.com/chanzuckerberg/fogg/cmd/exp"
 	"github.com/chanzuckerberg/fogg/errs"
@@ -11,14 +13,15 @@ import (
 )
 
 var (
-	debug bool
-	quiet bool
+	debug      bool
+	quiet      bool
+	cpuprofile string
 )
 
 func init() {
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "enable verbose output")
 	rootCmd.PersistentFlags().BoolVarP(&quiet, "quiet", "q", false, "do not output to console; use return code to determine success/failure")
-
+	rootCmd.PersistentFlags().StringVarP(&cpuprofile, "cpuprofile", "p", "", "activate cpu profiling via pprof and write to file")
 	rootCmd.AddCommand(exp.ExpCmd)
 }
 
@@ -26,6 +29,18 @@ var rootCmd = &cobra.Command{
 	Use:          "fogg",
 	Short:        "",
 	SilenceUsage: true,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		fmt.Printf("Inside rootCmd PersistentPreRun with args: %v\n", args)
+		if cpuprofile != "" {
+			log.Println("starting cpu profile")
+			f, err := os.Create(cpuprofile)
+			if err != nil {
+				log.Fatal(err)
+			}
+			pprof.StartCPUProfile(f)
+			defer pprof.StopCPUProfile()
+		}
+	},
 }
 
 // Execute executes the rootCmd
