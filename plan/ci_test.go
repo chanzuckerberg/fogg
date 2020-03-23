@@ -96,7 +96,6 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 	accts, err := p.buildAccounts(c)
 	a.NoError(err)
 	a.Len(accts, 1)
-	t.Logf("accts: %#v\n", accts)
 	p.Accounts = accts
 	tr := p.buildTravisCIConfig(c, "0.1.0")
 	a.Len(tr.AWSProfiles, 2)

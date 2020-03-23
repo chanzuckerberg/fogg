@@ -93,7 +93,7 @@ func TestValidateBackends(t *testing.T) {
 		t.Run(tt.kind, func(t *testing.T) {
 			r := require.New(t)
 
-			c := confBackendKind(tt.kind, tt.genValid)
+			c := confBackendKind(t, tt.kind, tt.genValid)
 			_, err := c.Validate()
 			if tt.wantErr {
 				r.Error(err)
@@ -104,7 +104,8 @@ func TestValidateBackends(t *testing.T) {
 	}
 }
 
-func confBackendKind(kind string, generateValid bool) Config {
+func confBackendKind(t *testing.T, kind string, generateValid bool) Config {
+	r := require.New(t)
 	base := Config{
 		Version: 2,
 		Defaults: Defaults{
@@ -124,7 +125,8 @@ func confBackendKind(kind string, generateValid bool) Config {
 
 	if kind == "remote" {
 		var remote Config
-		copier.Copy(&remote, &base)
+		err := copier.Copy(&remote, &base)
+		r.NoError(err)
 
 		remote.Defaults.Common.Backend = &Backend{
 			Kind:         util.StrPtr("remote"),

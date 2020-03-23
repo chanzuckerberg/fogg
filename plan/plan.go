@@ -308,8 +308,6 @@ func (p *Plan) buildAccounts(c *v2.Config) (map[string]Account, error) {
 		for name2, acct2 := range accountPlans {
 			if name != name2 {
 				acctCopy.Accounts[name2] = acct2
-			} else {
-				fmt.Println("no")
 			}
 		}
 		accountPlans2[name] = acctCopy
