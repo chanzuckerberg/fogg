@@ -4,11 +4,11 @@ import (
 	"testing"
 
 	"github.com/blang/semver"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestParse(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 
 	testCases := []struct {
 		input   string
@@ -24,10 +24,10 @@ func TestParse(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			v, sha, dirty := ParseVersion(tc.input)
 			semVersion, e := semver.Parse(tc.version)
-			a.NoError(e)
-			a.Equal(semVersion, v)
-			a.Equal(tc.sha, sha)
-			a.Equal(tc.dirty, dirty)
+			r.NoError(e)
+			r.Equal(semVersion, v)
+			r.Equal(tc.sha, sha)
+			r.Equal(tc.dirty, dirty)
 		})
 	}
 

@@ -7,22 +7,22 @@ import (
 
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/spf13/afero"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestInitConfig(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 	c := InitConfig("proj", "reg", "buck", "table", "prof", "me@foo.example", "0.99.0")
-	a.Equal("prof", *c.Defaults.Common.Backend.Profile)
-	a.Equal("prof", *c.Defaults.Providers.AWS.Profile)
-	a.Equal("reg", *c.Defaults.Providers.AWS.Region)
-	a.Equal("reg", *c.Defaults.Providers.AWS.Region)
-	a.Equal("0.99.0", *c.Defaults.Providers.AWS.Version)
-	a.Equal("buck", *c.Defaults.Common.Backend.Bucket)
-	a.Equal("table", *c.Defaults.Common.Backend.DynamoTable)
-	a.Equal("me@foo.example", *c.Defaults.Owner)
-	a.Equal("proj", *c.Defaults.Project)
-	a.Equal(defaultTerraformVersion.String(), *c.Defaults.TerraformVersion)
+	r.Equal("prof", *c.Defaults.Common.Backend.Profile)
+	r.Equal("prof", *c.Defaults.Providers.AWS.Profile)
+	r.Equal("reg", *c.Defaults.Providers.AWS.Region)
+	r.Equal("reg", *c.Defaults.Providers.AWS.Region)
+	r.Equal("0.99.0", *c.Defaults.Providers.AWS.Version)
+	r.Equal("buck", *c.Defaults.Common.Backend.Bucket)
+	r.Equal("table", *c.Defaults.Common.Backend.DynamoTable)
+	r.Equal("me@foo.example", *c.Defaults.Owner)
+	r.Equal("proj", *c.Defaults.Project)
+	r.Equal(defaultTerraformVersion.String(), *c.Defaults.TerraformVersion)
 }
 
 func Test_detectVersion(t *testing.T) {
@@ -40,9 +40,10 @@ func Test_detectVersion(t *testing.T) {
 		{"explicit 2", args{[]byte(`{"version": 2}`)}, 2, false},
 		{"err", args{[]byte(`{`)}, 0, true},
 	}
-	a := assert.New(t)
+	r := require.New(t)
 	fs, _, err := util.TestFs()
-	a.NoError(err)
+	r.NoError(err)
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var got int

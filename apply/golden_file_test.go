@@ -13,7 +13,6 @@ import (
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -38,7 +37,6 @@ func TestIntegration(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.fileName, func(t *testing.T) {
-			a := assert.New(t)
 			r := require.New(t)
 
 			testdataFs := afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(util.ProjectRoot(), "testdata", tc.fileName))
@@ -52,7 +50,7 @@ func TestIntegration(t *testing.T) {
 					}
 					return nil
 				})
-				a.NoError(e)
+				r.NoError(e)
 
 				conf, e := config.FindAndReadConfig(testdataFs, tc.configFile)
 				r.NoError(e)
@@ -68,7 +66,7 @@ func TestIntegration(t *testing.T) {
 			} else {
 				fileName := "fogg.yml"
 				fs, _, e := util.TestFs()
-				a.NoError(e)
+				r.NoError(e)
 
 				// copy tc.configFile into the tmp test dir (so that it doesn't show up as a diff)
 				configContents, e := afero.ReadFile(testdataFs, fileName)
@@ -76,24 +74,24 @@ func TestIntegration(t *testing.T) {
 					fileName = tc.configFile
 					configContents, e = afero.ReadFile(testdataFs, fileName)
 				}
-				a.NoError(e)
+				r.NoError(e)
 
 				configMode, e := testdataFs.Stat(fileName)
-				a.NoError(e)
-				a.NoError(afero.WriteFile(fs, fileName, configContents, configMode.Mode()))
+				r.NoError(e)
+				r.NoError(afero.WriteFile(fs, fileName, configContents, configMode.Mode()))
 
 				conf, e := config.FindAndReadConfig(fs, fileName)
-				a.NoError(e)
+				r.NoError(e)
 				fmt.Printf("conf %#v\n", conf)
 
 				w, e := conf.Validate()
-				a.NoError(e)
-				a.Len(w, 0)
+				r.NoError(e)
+				r.Len(w, 0)
 
 				e = apply.Apply(fs, conf, templates.Templates, true)
-				a.NoError(e)
+				r.NoError(e)
 
-				a.NoError(afero.Walk(testdataFs, ".", func(path string, info os.FileInfo, err error) error {
+				r.NoError(afero.Walk(testdataFs, ".", func(path string, info os.FileInfo, err error) error {
 					logrus.Debug("================================================")
 					logrus.Debug(path)
 					if !info.Mode().IsRegular() {
@@ -110,7 +108,7 @@ func TestIntegration(t *testing.T) {
 						logrus.Debugf("i1 size: %d ii2 size %d", i1.Size(), i2.Size())
 						r.Equalf(i1.Size(), i2.Size(), "file size: %s", path)
 						// This (below) doesn't currently work for files created on a mac then tested on linux. :shrug:
-						// a.Equalf(i1.Mode(), i2.Mode(), "file mode: %s, %o vs %o", path, i1.Mode(), i2.Mode())
+						// r.Equalf(i1.Mode(), i2.Mode(), "file mode: %s, %o vs %o", path, i1.Mode(), i2.Mode())
 
 						f1, e3 := afero.ReadFile(testdataFs, path)
 						r.NoError(e3)
