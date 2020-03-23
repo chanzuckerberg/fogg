@@ -20,12 +20,18 @@ terraform {
   required_version = "~>0.100.0"
 
   backend "s3" {
+
+
+
     bucket = "buck"
 
     key     = "terraform/proj/global.tfstate"
     encrypt = true
     region  = "us-west-2"
     profile = "profile"
+
+
+
   }
 }
 
@@ -69,8 +75,6 @@ variable "foo" {
   type    = string
   default = "bar1"
 }
-
-
 
 
 

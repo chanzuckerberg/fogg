@@ -1,0 +1,30 @@
+{{ define "backend" }}
+  backend "{{ .Kind }}" {
+    {{ template "backend_inner" . }}
+  }
+{{ end }}
+
+{{ define "backend_inner" }}
+  {{ if eq .Kind "s3" }}
+    {{ template "s3_backend" .S3 }}
+  {{ else if eq .Kind "remote" }}
+    {{ template "remote_backend" .Remote }}
+  {{ end }}
+{{ end }}
+
+{{ define "s3_backend" }}
+  bucket         = "{{ .Bucket }}"
+  {{ if .DynamoTable }}dynamodb_table = "{{ .DynamoTable }}"{{ end }}
+  key            = "{{ .KeyPath }}"
+  encrypt = true
+  region = "{{ .Region }}"
+  profile = "{{ .Profile }}"
+{{ end }}
+
+{{ define "remote_backend" }}
+  hostname = "{{ .HostName }}"
+  organization = "{{ .Organization }}"
+  workspaces {
+      name = "{{ .Workspace }}"
+  }
+{{ end }}

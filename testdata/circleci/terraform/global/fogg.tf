@@ -20,14 +20,18 @@ terraform {
   required_version = "~>1.1.1"
 
   backend "s3" {
+
+
+
     bucket = "bucket"
 
-
-    key = "terraform/foo/global.tfstate"
-
+    key     = "terraform/foo/global.tfstate"
     encrypt = true
     region  = "region"
     profile = "foo"
+
+
+
   }
 }
 
@@ -65,8 +69,6 @@ variable "tags" {
     managedBy = "terraform"
   }
 }
-
-
 
 
 

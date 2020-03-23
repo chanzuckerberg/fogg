@@ -32,12 +32,18 @@ terraform {
 
 
   backend "s3" {
+
+
+
     bucket = "buck"
 
     key     = "terraform/proj/envs/staging/components/comp1.tfstate"
     encrypt = true
     region  = "us-west-2"
     profile = "comp1"
+
+
+
   }
 
 }
@@ -99,11 +105,18 @@ data "terraform_remote_state" "global" {
   backend = "s3"
 
   config = {
+
+
+
     bucket = "buck"
 
     key     = "terraform/proj/global.tfstate"
+    encrypt = true
     region  = "us-west-2"
     profile = "profile"
+
+
+
   }
 }
 
@@ -113,11 +126,7 @@ data "terraform_remote_state" "comp2" {
   backend = "s3"
 
   config = {
-    bucket = "buck"
-
-    key     = "terraform/proj/envs/staging/components/comp2.tfstate"
-    region  = "us-west-2"
-    profile = "comp1"
+    FIXME
   }
 }
 
@@ -125,11 +134,7 @@ data "terraform_remote_state" "vpc" {
   backend = "s3"
 
   config = {
-    bucket = "buck"
-
-    key     = "terraform/proj/envs/staging/components/vpc.tfstate"
-    region  = "us-west-2"
-    profile = "comp1"
+    FIXME
   }
 }
 
@@ -140,11 +145,18 @@ data "terraform_remote_state" "bar" {
   backend = "s3"
 
   config = {
+
+
+
     bucket = "buck"
 
-    key     = "terraform/proj/accounts/bar.tfstate"
+    key     = "terraform/proj/global.tfstate"
+    encrypt = true
     region  = "us-west-2"
     profile = "profile"
+
+
+
   }
 }
 
@@ -152,11 +164,18 @@ data "terraform_remote_state" "foo" {
   backend = "s3"
 
   config = {
+
+
+
     bucket = "buck"
 
-    key     = "terraform/proj/accounts/foo.tfstate"
+    key     = "terraform/proj/global.tfstate"
+    encrypt = true
     region  = "us-west-2"
     profile = "profile"
+
+
+
   }
 }
 

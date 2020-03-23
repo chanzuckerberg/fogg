@@ -322,7 +322,7 @@ func applyTemplate(sourceFile io.Reader, commonTemplates *packr.Box, dest afero.
 	if err != nil {
 		return errs.WrapUser(err, "unable to open file")
 	}
-	t, e := util.OpenTemplate(sourceFile, commonTemplates)
+	t, e := util.OpenTemplate(path, sourceFile, commonTemplates)
 	if e != nil {
 		return e
 	}

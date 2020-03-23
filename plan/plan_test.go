@@ -2,6 +2,7 @@ package plan
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
@@ -125,7 +126,17 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 	// component overwrite env
 	assert.Equal(t, "bar3", plan.Envs["staging"].Components["vpc"].ExtraVars["foo"])
 
-	t.Logf("%#v\n", plan.Accounts["foo"])
+	assert.Equal(t, "terraform/proj/accounts/bar.tfstate", plan.Accounts["bar"].Backend.S3.KeyPath)
+	assert.Equal(t, "terraform/proj/accounts/foo.tfstate", plan.Accounts["foo"].Backend.S3.KeyPath)
+
+	r.Len(plan.Accounts["foo"].Accounts, 1)
+	r.NotNil(plan.Accounts["foo"].Accounts["bar"])
+	r.NotNil(plan.Accounts["foo"].Accounts["bar"].Backend)
+	fmt.Println("accts")
+	r.Equal(BackendKindS3, plan.Accounts["foo"].Accounts["bar"].Backend.Kind)
+	r.NotNil(plan.Accounts["foo"].Accounts["bar"].Backend.S3)
+	// assert.Equal(t, "terraform/proj/accounts/bar.tfstate", plan.Accounts["foo"].Accounts["bar"].Backend.S3.KeyPath)
+
 	r.Len(plan.Accounts["foo"].Accounts, 1)
 }
 
@@ -150,7 +161,6 @@ func TestRemoteBackendPlan(t *testing.T) {
 	r.Nil(err)
 
 	fmt.Println("c2")
-	util.Dump(c2)
 
 	w, err := c2.Validate()
 	r.NoError(err)

@@ -193,6 +193,7 @@ type S3Backend struct {
 type RemoteBackend struct {
 	HostName     string `yaml:"host_name"`
 	Organization string `yaml:"organization"`
+	Workspace    string `yaml:"workspace"`
 }
 
 // Module is a module
@@ -289,9 +290,11 @@ func (p *Plan) buildAccounts(c *v2.Config) (map[string]Account, error) {
 		accountPlan.ComponentCommon = resolveComponentCommon(defaults.Common, acct.Common)
 		if accountPlan.ComponentCommon.Backend.Kind == BackendKindS3 {
 			accountPlan.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/accounts/%s.tfstate", accountPlan.ComponentCommon.Project, name)
+		} else if accountPlan.ComponentCommon.Backend.Kind == BackendKindRemote {
+			accountPlan.ComponentCommon.Backend.Remote.Workspace = fmt.Sprintf("accounts/%s", name)
 		}
 
-		accountPlan.AllAccounts = resolveAccounts(c.Accounts)
+		accountPlan.AllAccounts = resolveAccounts(c.Accounts) //FIXME this needs to run as a second phase, not directly from the config
 		accountPlan.PathToRepoRoot = "../../../"
 		accountPlan.Global = &p.Global
 		accountPlans[name] = accountPlan
@@ -304,7 +307,9 @@ func (p *Plan) buildAccounts(c *v2.Config) (map[string]Account, error) {
 		acctCopy.Accounts = make(map[string]Account)
 		for name2, acct2 := range accountPlans {
 			if name != name2 {
-				acctCopy.Accounts[name] = acct2
+				acctCopy.Accounts[name2] = acct2
+			} else {
+				fmt.Println("no")
 			}
 		}
 		accountPlans2[name] = acctCopy
@@ -341,6 +346,8 @@ func (p *Plan) buildGlobal(conf *v2.Config) Component {
 	componentPlan.ComponentCommon = resolveComponentCommon(defaults.Common, global.Common)
 	if componentPlan.ComponentCommon.Backend.Kind == BackendKindS3 {
 		componentPlan.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/global.tfstate", componentPlan.ComponentCommon.Project)
+	} else if componentPlan.ComponentCommon.Backend.Kind == BackendKindRemote {
+		componentPlan.ComponentCommon.Backend.Remote.Workspace = "global"
 	}
 	componentPlan.Component = "global"
 	componentPlan.OtherComponents = []string{}
@@ -377,6 +384,8 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 
 			if componentPlan.ComponentCommon.Backend.Kind == BackendKindS3 {
 				componentPlan.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/envs/%s/components/%s.tfstate", componentPlan.ComponentCommon.Project, envName, componentName)
+			} else if componentPlan.ComponentCommon.Backend.Kind == BackendKindRemote {
+				componentPlan.ComponentCommon.Backend.Remote.Workspace = fmt.Sprintf("%s/%s", envName, componentName)
 			}
 			componentPlan.Env = envName
 			componentPlan.Component = componentName

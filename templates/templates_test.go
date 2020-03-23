@@ -29,7 +29,7 @@ func TestOpenTemplate(t *testing.T) {
 			f, err := tt.args.box.Open(tt.args.path)
 			r.NoError(err)
 
-			temp, err := util.OpenTemplate(f, &temps.Common)
+			temp, err := util.OpenTemplate("foo", f, &temps.Common)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("OpenTemplate() error = %v, wantErr %v", err, tt.wantErr)
 				return
