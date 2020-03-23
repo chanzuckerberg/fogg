@@ -87,7 +87,7 @@ func ValidateAWSProvider(p *AWSProvider, component string) error {
 	return errs
 }
 
-// ValidateBackend will check the resolved configuration for a backend and return any errors it
+// ValidateBackends will check the resolved configuration for a backend and return any errors it
 // finds
 func ValidateBackend(backend *Backend, component string) error {
 	if backend == nil {
