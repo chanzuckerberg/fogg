@@ -18,19 +18,18 @@ import (
 	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/spf13/afero"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestCustomPluginTar(t *testing.T) {
-	a := require.New(t)
+	r := require.New(t)
 	pluginName := "test-provider"
 	fs, d, err := util.TestFs()
-	a.NoError(err)
+	r.NoError(err)
 	defer os.RemoveAll(d)
 
 	cacheDir, err := ioutil.TempDir("", "")
-	a.NoError(err)
+	r.NoError(err)
 	defer os.RemoveAll(cacheDir)
 	cache := plugins.GetPluginCache(cacheDir)
 
@@ -38,11 +37,11 @@ func TestCustomPluginTar(t *testing.T) {
 	tarPath := generateTar(t, files, nil)
 	defer os.Remove(tarPath)
 
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		f, err := os.Open(tarPath)
-		a.Nil(err)
+		r.Nil(err)
 		_, err = io.Copy(w, f)
-		a.Nil(err)
+		r.Nil(err)
 	}))
 	defer ts.Close()
 
@@ -51,35 +50,35 @@ func TestCustomPluginTar(t *testing.T) {
 		Format: plugins.TypePluginFormatTar,
 	}
 	customPlugin.WithTargetPath(plugins.CustomPluginDir).WithCache(cache)
-	a.Nil(customPlugin.Install(fs, pluginName))
+	r.Nil(customPlugin.Install(fs, pluginName))
 
-	a.NoError(afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
-		a.Nil(err)
+	r.NoError(afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
+		r.Nil(err)
 		return nil
 	}))
 
 	for _, file := range files {
 		filePath := path.Join(plugins.CustomPluginDir, file)
 		fi, err := fs.Stat(filePath)
-		a.Nil(err)
-		a.False(fi.IsDir())
-		a.Equal(fi.Mode(), os.FileMode(0755))
+		r.Nil(err)
+		r.False(fi.IsDir())
+		r.Equal(fi.Mode(), os.FileMode(0755))
 
 		bytes, err := afero.ReadFile(fs, filePath)
-		a.Nil(err)
-		a.Equal(bytes, []byte(file)) // We wrote the filename as the contents as well
+		r.Nil(err)
+		r.Equal(bytes, []byte(file)) // We wrote the filename as the contents as well
 	}
 }
 
 func TestCustomPluginTarStripComponents(t *testing.T) {
-	a := require.New(t)
+	r := require.New(t)
 	pluginName := "test-provider"
 	fs, d, err := util.TestFs()
-	a.NoError(err)
+	r.NoError(err)
 	defer os.RemoveAll(d)
 
 	cacheDir, err := ioutil.TempDir("", "")
-	a.NoError(err)
+	r.NoError(err)
 	defer os.RemoveAll(cacheDir)
 	cache := plugins.GetPluginCache(cacheDir)
 
@@ -89,11 +88,11 @@ func TestCustomPluginTarStripComponents(t *testing.T) {
 	tarPath := generateTar(t, files, dirs)
 	defer os.Remove(tarPath)
 
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		f, err := os.Open(tarPath)
-		a.Nil(err)
+		r.Nil(err)
 		_, err = io.Copy(w, f)
-		a.Nil(err)
+		r.Nil(err)
 	}))
 	defer ts.Close()
 
@@ -105,10 +104,10 @@ func TestCustomPluginTarStripComponents(t *testing.T) {
 		},
 	}
 	customPlugin.WithTargetPath(plugins.CustomPluginDir).WithCache(cache)
-	a.Nil(customPlugin.Install(fs, pluginName))
+	r.Nil(customPlugin.Install(fs, pluginName))
 
-	a.NoError(afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
-		a.Nil(err)
+	r.NoError(afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
+		r.Nil(err)
 		return nil
 	}))
 
@@ -117,30 +116,30 @@ func TestCustomPluginTarStripComponents(t *testing.T) {
 		if file == "" {
 			filePath := path.Join(plugins.CustomPluginDir, files[idx])
 			_, err := fs.Stat(filePath)
-			a.NotNil(err)
-			a.True(os.IsNotExist(err))
+			r.NotNil(err)
+			r.True(os.IsNotExist(err))
 			continue
 		}
 		filePath := path.Join(plugins.CustomPluginDir, file)
 		fi, err := fs.Stat(filePath)
-		a.Nil(err)
-		a.False(fi.IsDir())
-		a.Equal(fi.Mode(), os.FileMode(0755))
+		r.Nil(err)
+		r.False(fi.IsDir())
+		r.Equal(fi.Mode(), os.FileMode(0755))
 
 		bytes, err := afero.ReadFile(fs, filePath)
-		a.Nil(err)
-		a.Equal(bytes, []byte(files[idx])) // We wrote the filename as the contents as well
+		r.Nil(err)
+		r.Equal(bytes, []byte(files[idx])) // We wrote the filename as the contents as well
 	}
 }
 func TestCustomPluginZip(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 	pluginName := "test-provider"
 	fs, d, err := util.TestFs()
-	a.NoError(err)
+	r.NoError(err)
 	defer os.RemoveAll(d)
 
 	cacheDir, err := ioutil.TempDir("", "")
-	a.NoError(err)
+	r.NoError(err)
 	defer os.RemoveAll(cacheDir)
 	cache := plugins.GetPluginCache(cacheDir)
 
@@ -148,11 +147,11 @@ func TestCustomPluginZip(t *testing.T) {
 	zipPath := generateZip(t, files)
 	defer os.Remove(zipPath)
 
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		f, err := os.Open(zipPath)
-		a.Nil(err)
+		r.Nil(err)
 		_, err = io.Copy(w, f)
-		a.Nil(err)
+		r.Nil(err)
 	}))
 	defer ts.Close()
 
@@ -161,42 +160,42 @@ func TestCustomPluginZip(t *testing.T) {
 		Format: plugins.TypePluginFormatZip,
 	}
 	customPlugin.WithTargetPath(plugins.CustomPluginDir).WithCache(cache)
-	a.Nil(customPlugin.Install(fs, pluginName))
+	r.Nil(customPlugin.Install(fs, pluginName))
 
-	a.NoError(afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
-		a.Nil(err)
+	r.NoError(afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
+		r.Nil(err)
 		return nil
 	}))
 
 	for _, file := range files {
 		filePath := path.Join(plugins.CustomPluginDir, file)
 		fi, err := fs.Stat(filePath)
-		a.Nil(err)
-		a.False(fi.IsDir())
-		a.Equal(fi.Mode(), os.FileMode(0755))
+		r.Nil(err)
+		r.False(fi.IsDir())
+		r.Equal(fi.Mode(), os.FileMode(0755))
 
 		bytes, err := afero.ReadFile(fs, filePath)
-		a.Nil(err)
-		a.Equal(bytes, []byte(file)) // We wrote the filename as the contents as well
+		r.Nil(err)
+		r.Equal(bytes, []byte(file)) // We wrote the filename as the contents as well
 	}
 }
 
 func TestCustomPluginBin(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 	pluginName := "test-provider"
 	fs, d, err := util.TestFs()
-	a.NoError(err)
+	r.NoError(err)
 	defer os.RemoveAll(d)
 	fileContents := "some contents"
 
 	cacheDir, err := ioutil.TempDir("", "")
-	a.NoError(err)
+	r.NoError(err)
 	defer os.RemoveAll(cacheDir)
 	cache := plugins.GetPluginCache(cacheDir)
 
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		_, err := fmt.Fprint(w, fileContents)
-		a.Nil(err)
+		r.Nil(err)
 	}))
 	defer ts.Close()
 
@@ -206,35 +205,35 @@ func TestCustomPluginBin(t *testing.T) {
 	}
 
 	customPlugin.WithTargetPath(plugins.TerraformCustomPluginCacheDir).WithCache(cache)
-	a.Nil(customPlugin.Install(fs, pluginName))
+	r.Nil(customPlugin.Install(fs, pluginName))
 
-	a.NoError(afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
-		a.Nil(err)
+	r.NoError(afero.Walk(fs, "", func(path string, info os.FileInfo, err error) error {
+		r.Nil(err)
 		return nil
 	}))
 
 	// Make sure we properly template
 	pluginDir, err := plugins.Template(plugins.TerraformCustomPluginCacheDir, runtime.GOOS, runtime.GOARCH)
-	a.NoError(err)
+	r.NoError(err)
 	customPluginPath := path.Join(pluginDir, pluginName)
 	f, err := fs.Open(customPluginPath)
-	a.Nil(err)
+	r.Nil(err)
 
 	contents, err := ioutil.ReadAll(f)
-	a.Nil(err)
-	a.Equal(string(contents), fileContents)
+	r.Nil(err)
+	r.Equal(string(contents), fileContents)
 
 	fi, err := fs.Stat(customPluginPath)
-	a.Nil(err)
-	a.False(fi.IsDir())
-	a.Equal(os.FileMode(0755), fi.Mode().Perm())
+	r.Nil(err)
+	r.False(fi.IsDir())
+	r.Equal(os.FileMode(0755), fi.Mode().Perm())
 }
 
 func generateTar(t *testing.T, files []string, dirs []string) string {
-	a := assert.New(t)
+	r := require.New(t)
 
 	f, err := ioutil.TempFile("", "testing")
-	a.Nil(err)
+	r.Nil(err)
 	defer f.Close()
 	gw := gzip.NewWriter(f)
 	defer gw.Close()
@@ -248,7 +247,7 @@ func generateTar(t *testing.T, files []string, dirs []string) string {
 		header.Mode = int64(0777)
 		header.Typeflag = tar.TypeDir
 
-		a.Nil(tw.WriteHeader(header))
+		r.Nil(tw.WriteHeader(header))
 	}
 
 	for _, file := range files {
@@ -258,9 +257,9 @@ func generateTar(t *testing.T, files []string, dirs []string) string {
 		header.Mode = int64(0755)
 		header.Typeflag = tar.TypeReg
 
-		a.Nil(tw.WriteHeader(header))
+		r.Nil(tw.WriteHeader(header))
 		_, err = fmt.Fprintf(tw, file)
-		a.Nil(err)
+		r.Nil(err)
 	}
 
 	return f.Name()
@@ -268,9 +267,9 @@ func generateTar(t *testing.T, files []string, dirs []string) string {
 
 // based on https://golangcode.com/create-zip-files-in-go/
 func generateZip(t *testing.T, files []string) string {
-	a := assert.New(t)
+	r := require.New(t)
 	f, err := ioutil.TempFile("", "testing")
-	a.Nil(err)
+	r.Nil(err)
 
 	defer f.Close()
 
@@ -284,9 +283,9 @@ func generateZip(t *testing.T, files []string) string {
 		}
 		header.SetMode(os.FileMode(0755))
 		writer, err := zipWriter.CreateHeader(header)
-		a.Nil(err)
+		r.Nil(err)
 		_, err = io.Copy(writer, strings.NewReader(file))
-		a.Nil(err)
+		r.Nil(err)
 	}
 	return f.Name()
 }

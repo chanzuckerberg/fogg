@@ -8,37 +8,37 @@ import (
 	"testing"
 
 	"github.com/spf13/afero"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestDownloadModule(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 	dir, e := ioutil.TempDir("", "fogg")
-	assert.Nil(t, e)
+	r.Nil(e)
 
 	pwd, e := os.Getwd()
-	a.NoError(e)
+	r.NoError(e)
 
 	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 	d, e := DownloadModule(fs, dir, "github.com/chanzuckerberg/fogg-test-module")
-	a.NoError(e)
-	a.NotNil(d)
-	a.NotEmpty(d)
+	r.NoError(e)
+	r.NotNil(d)
+	r.NotEmpty(d)
 	// TODO more asserts
 }
 
 func TestDownloadAndParseModule(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 
 	pwd, e := os.Getwd()
-	a.NoError(e)
+	r.NoError(e)
 	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
 	c, e := DownloadAndParseModule(fs, "github.com/chanzuckerberg/fogg-test-module")
-	assert.Nil(t, e)
-	assert.NotNil(t, c)
-	assert.NotNil(t, c.Variables)
-	assert.NotNil(t, c.Outputs)
-	assert.Len(t, c.Variables, 2)
-	assert.Len(t, c.Outputs, 2)
+	r.Nil(e)
+	r.NotNil(c)
+	r.NotNil(c.Variables)
+	r.NotNil(c.Outputs)
+	r.Len(c.Variables, 2)
+	r.Len(c.Outputs, 2)
 }

@@ -5,44 +5,43 @@ import (
 
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/spf13/afero"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestReadConfig(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 
 	b, e := util.TestFile("empty_yaml")
-	a.NoError(e)
+	r.NoError(e)
 
 	fs, _, e := util.TestFs()
-	a.NoError(e)
+	r.NoError(e)
 	e = afero.WriteFile(fs, "fogg.yml", b, 0644)
-	a.NoError(e)
+	r.NoError(e)
 	c, e := ReadConfig(fs, b, "fogg.yml")
-	a.NoError(e)
+	r.NoError(e)
 
 	w, e := c.Validate()
-	a.Error(e)
-	a.Len(w, 0)
+	r.Error(e)
+	r.Len(w, 0)
 }
 
 func TestReadConfigYaml(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 
 	b2, e := util.TestFile("v2_minimal_valid_yaml")
-	a.NoError(e)
+	r.NoError(e)
 
 	fs, _, e := util.TestFs()
-	a.NoError(e)
+	r.NoError(e)
 	e = afero.WriteFile(fs, "fogg.yml", b2, 0644)
-	a.NoError(e)
+	r.NoError(e)
 	c, e := ReadConfig(fs, b2, "fogg.yml")
-	a.NoError(e)
+	r.NoError(e)
 
 	w, e := c.Validate()
-	a.NoError(e)
-	a.Len(w, 0)
+	r.NoError(e)
+	r.Len(w, 0)
 }
 
 func TestReadSnowflakeProviderYaml(t *testing.T) {
