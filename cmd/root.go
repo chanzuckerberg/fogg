@@ -29,7 +29,7 @@ var rootCmd = &cobra.Command{
 	Use:          "fogg",
 	Short:        "",
 	SilenceUsage: true,
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("Inside rootCmd PersistentPreRun with args: %v\n", args)
 		if cpuprofile != "" {
 			log.Println("starting cpu profile")
