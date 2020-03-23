@@ -17,7 +17,7 @@ setup: ## setup development dependencies
 .PHONY: setup
 
 fmt:
-	goimports -w -d $$(find . -type f -name '*.go' -not -path "./vendor/*")
+	goimports -w -d $$(find . -type f -name '*.go' -not -path "./vendor/*" -not -path "./dist/*")
 .PHONY: fmt
 
 lint: ## run the fast go linters
@@ -80,9 +80,9 @@ coverage: ## run the go coverage tool, reading file coverage.out
 
 test: fmt deps packr ## run tests
  ifeq (, $(shell which gotest))
-	go test -cover ./...
+	go test -failfast -cover ./...
  else
-	gotest -cover ./...
+	gotest -failfast -cover ./...
  endif
 .PHONY: test
 
@@ -115,6 +115,6 @@ clean: ## clean the repo
 	./bin/packr clean
 	rm coverage.out 2>/dev/null || true
 
-update-golden-files: clean ## update the golden files in testdata
+update-golden-files: clean deps ## update the golden files in testdata
 	go test -v -run TestIntegration ./apply/ -update
 .PHONY: update-golden-files
