@@ -39,7 +39,7 @@ func hasField(v interface{}, name string) bool {
 }
 
 // OpenTemplate will read `source` for a template, parse, configure and return a template.Template
-func OpenTemplate(path string, source io.Reader, commonTemplates *packr.Box) (*template.Template, error) {
+func OpenTemplate(label string, source io.Reader, commonTemplates *packr.Box) (*template.Template, error) {
 	// TODO we should probably cache these rather than open and parse them for every apply
 
 	var readTemplate = func(source io.Reader) (string, error) {
@@ -60,7 +60,7 @@ func OpenTemplate(path string, source io.Reader, commonTemplates *packr.Box) (*t
 	funcs["dict"] = dict
 	funcs["hasField"] = hasField
 
-	t, err := template.New(path).Funcs(funcs).Parse(s)
+	t, err := template.New(label).Funcs(funcs).Parse(s)
 	if err != nil {
 		return nil, err
 	}
