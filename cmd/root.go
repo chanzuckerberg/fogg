@@ -2,13 +2,13 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"runtime/pprof"
 
 	"github.com/chanzuckerberg/fogg/cmd/exp"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/fatih/color"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -29,17 +29,21 @@ var rootCmd = &cobra.Command{
 	Use:          "fogg",
 	Short:        "",
 	SilenceUsage: true,
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Inside rootCmd PersistentPreRun with args: %v\n", args)
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		if cpuprofile != "" {
-			log.Println("starting cpu profile")
+			logrus.Info("starting cpu profile")
 			f, err := os.Create(cpuprofile)
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
-			pprof.StartCPUProfile(f)
-			defer pprof.StopCPUProfile()
+			return pprof.StartCPUProfile(f)
 		}
+		return nil
+	},
+	PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
+		logrus.Info("stopping cpu profile")
+		pprof.StopCPUProfile()
+		return nil
 	},
 }
 
