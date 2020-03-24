@@ -6,7 +6,6 @@ import (
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/util"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -49,7 +48,7 @@ func Test_buildTravisCI_Disabled(t *testing.T) {
 }
 
 func Test_buildTravisCI_Profiles(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 
 	c := &v2.Config{
 		Version: 2,
@@ -89,24 +88,24 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 	}
 
 	w, err := c.Validate()
-	a.NoError(err)
-	a.Len(w, 0)
+	r.NoError(err)
+	r.Len(w, 0)
 
 	p := &Plan{}
 	accts, err := p.buildAccounts(c)
-	a.NoError(err)
-	a.Len(accts, 1)
+	r.NoError(err)
+	r.Len(accts, 1)
 	p.Accounts = accts
 	tr := p.buildTravisCIConfig(c, "0.1.0")
-	a.Len(tr.AWSProfiles, 2)
-	a.Contains(tr.AWSProfiles, "profile")
-	a.Contains(tr.AWSProfiles, "foo")
-	a.Equal(id1.String(), tr.AWSProfiles["foo"].AccountID)
-	a.Equal("rollin", tr.AWSProfiles["foo"].RoleName)
+	r.Len(tr.AWSProfiles, 2)
+	r.Contains(tr.AWSProfiles, "profile")
+	r.Contains(tr.AWSProfiles, "foo")
+	r.Equal(id1.String(), tr.AWSProfiles["foo"].AccountID)
+	r.Equal("rollin", tr.AWSProfiles["foo"].RoleName)
 }
 
 func Test_buildTravisCI_TestBuckets(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 
 	c := &v2.Config{
 		Version: 2,
@@ -148,22 +147,22 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 	}
 
 	w, err := c.Validate()
-	a.NoError(err)
-	a.Len(w, 0)
+	r.NoError(err)
+	r.Len(w, 0)
 
 	p := &Plan{}
 	accts, err := p.buildAccounts(c)
-	a.NoError(err)
+	r.NoError(err)
 	p.Accounts = accts
 	tr := p.buildTravisCIConfig(c, "0.1.0")
-	a.NotNil(p.Accounts["foo"].Providers.AWS)
-	a.Equal(id1, p.Accounts["foo"].Providers.AWS.AccountID)
-	a.Len(tr.TestBuckets, 1)
-	a.Len(tr.TestBuckets[0], 2)
+	r.NotNil(p.Accounts["foo"].Providers.AWS)
+	r.Equal(id1, p.Accounts["foo"].Providers.AWS.AccountID)
+	r.Len(tr.TestBuckets, 1)
+	r.Len(tr.TestBuckets[0], 2)
 }
 
 func Test_buildCircleCI_Profiles(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 
 	c := &v2.Config{
 		Version: 2,
@@ -203,23 +202,23 @@ func Test_buildCircleCI_Profiles(t *testing.T) {
 	}
 
 	w, err := c.Validate()
-	a.NoError(err)
-	a.Len(w, 0)
+	r.NoError(err)
+	r.Len(w, 0)
 
 	p := &Plan{}
 	accts, err := p.buildAccounts(c)
-	a.NoError(err)
+	r.NoError(err)
 	p.Accounts = accts
 	circle := p.buildCircleCIConfig(c, "0.1.0")
-	a.Len(circle.AWSProfiles, 2)
-	a.Contains(circle.AWSProfiles, "profile")
-	a.Contains(circle.AWSProfiles, "foo")
-	a.Equal(id1.String(), circle.AWSProfiles["foo"].AccountID)
-	a.Equal("rollin", circle.AWSProfiles["foo"].RoleName)
+	r.Len(circle.AWSProfiles, 2)
+	r.Contains(circle.AWSProfiles, "profile")
+	r.Contains(circle.AWSProfiles, "foo")
+	r.Equal(id1.String(), circle.AWSProfiles["foo"].AccountID)
+	r.Equal("rollin", circle.AWSProfiles["foo"].RoleName)
 }
 
 func Test_buildCircleCI_ProfilesDisabled(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 
 	c := &v2.Config{
 		Version: 2,
@@ -264,13 +263,13 @@ func Test_buildCircleCI_ProfilesDisabled(t *testing.T) {
 	}
 
 	w, err := c.Validate()
-	a.NoError(err)
-	a.Len(w, 0)
+	r.NoError(err)
+	r.Len(w, 0)
 
 	p := &Plan{}
 	accts, err := p.buildAccounts(c)
-	a.NoError(err)
+	r.NoError(err)
 	p.Accounts = accts
 	circle := p.buildCircleCIConfig(c, "0.1.0")
-	a.Len(circle.AWSProfiles, 0)
+	r.Len(circle.AWSProfiles, 0)
 }

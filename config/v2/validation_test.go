@@ -6,24 +6,23 @@ import (
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/jinzhu/copier"
 	"github.com/spf13/afero"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func Test_nonEmptyString(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 
 	empty := ""
 	nonEmpty := "foo"
-	a.True(nonEmptyString(&nonEmpty))
-	a.False(nonEmptyString(&empty))
-	a.False(nonEmptyString(nil))
+	r.True(nonEmptyString(&nonEmpty))
+	r.False(nonEmptyString(&empty))
+	r.False(nonEmptyString(nil))
 }
 
 func TestValidateOwnersAccount(t *testing.T) {
 	// this will serve as a test for all the fuctions that use validateInheritedStringField, since they are equivalent
 
-	a := assert.New(t)
+	r := require.New(t)
 	foo := "foo@example.com"
 
 	// acct owner
@@ -31,15 +30,15 @@ func TestValidateOwnersAccount(t *testing.T) {
 	c := confAcctOwner(foo, foo)
 
 	// Both defaults and acct are set
-	a.Nil(c.validateInheritedStringField("owner", OwnerGetter, nonEmptyString).ErrorOrNil())
+	r.Nil(c.validateInheritedStringField("owner", OwnerGetter, nonEmptyString).ErrorOrNil())
 
 	// defaults unset, still valid
 	c = confAcctOwner("", foo)
-	a.NoError(c.validateInheritedStringField("owner", OwnerGetter, nonEmptyString).ErrorOrNil())
+	r.NoError(c.validateInheritedStringField("owner", OwnerGetter, nonEmptyString).ErrorOrNil())
 
 	// both unset, no longer valid
 	c = confAcctOwner("", "")
-	a.Equal(2, c.validateInheritedStringField("owner", OwnerGetter, nonEmptyString).Len())
+	r.Equal(2, c.validateInheritedStringField("owner", OwnerGetter, nonEmptyString).Len())
 }
 
 func TestValidateOwnersComponent(t *testing.T) {
@@ -64,14 +63,14 @@ func TestValidateOwnersComponent(t *testing.T) {
 
 	for _, tt := range cases {
 		t.Run(tt.label, func(t *testing.T) {
-			a := assert.New(t)
+			r := require.New(t)
 			c := confComponentOwner(tt.def, tt.env, tt.comp)
 			e := c.validateInheritedStringField("owner", OwnerGetter, nonEmptyString)
 			if tt.errNil {
-				a.NoError(e.ErrorOrNil())
+				r.NoError(e.ErrorOrNil())
 			} else {
-				a.NotNil(e)
-				a.Equal(tt.errz, e.Len())
+				r.NotNil(e)
+				r.Equal(tt.errz, e.Len())
 			}
 		})
 	}
@@ -201,18 +200,19 @@ func confComponentOwner(def, env, component string) Config {
 }
 
 func TestResolveStringArray(t *testing.T) {
+	r := require.New(t)
 	def := []string{"foo"}
 	override := []string{"bar"}
 
 	result := ResolveStringArray(def, override)
-	assert.Len(t, result, 1)
-	assert.Equal(t, "bar", result[0])
+	r.Len(result, 1)
+	r.Equal("bar", result[0])
 
 	override = nil
 
 	result2 := ResolveStringArray(def, override)
-	assert.Len(t, result2, 1)
-	assert.Equal(t, "foo", result2[0])
+	r.Len(result2, 1)
+	r.Equal("foo", result2[0])
 }
 
 func TestConfig_ValidateAWSProviders(t *testing.T) {

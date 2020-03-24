@@ -8,7 +8,6 @@ import (
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -22,14 +21,15 @@ func init() {
 
 // func TestResolveRequired(t *testing.T) {
 // 	resolved := resolveRequired("def", nil)
-// 	assert.Equal(t, "def", resolved)
+// 	r.Equal("def", resolved)
 
 // 	over := "over"
 // 	resolved = resolveRequired("def", &over)
-// 	assert.Equal(t, "over", resolved)
+// 	r.Equal("over", resolved)
 // }
 
 func TestResolveAccounts(t *testing.T) {
+	r := require.New(t)
 	foo, bar := json.Number("123"), json.Number("456")
 
 	accounts := map[string]v2.Account{
@@ -55,91 +55,90 @@ func TestResolveAccounts(t *testing.T) {
 	}
 
 	other := resolveAccounts(accounts)
-	assert.NotNil(t, other)
+	r.NotNil(other)
 	var nilJsonNumber *json.Number
-	assert.Equal(t, map[string]*json.Number{"bar": &bar, "foo": &foo, "baz": nilJsonNumber}, other)
+	r.Equal(map[string]*json.Number{"bar": &bar, "foo": &foo, "baz": nilJsonNumber}, other)
 }
 
 func TestPlanBasicV2Yaml(t *testing.T) {
-	a := assert.New(t)
 	r := require.New(t)
 
 	b, e := util.TestFile("v2_full_yaml")
-	assert.NoError(t, e)
+	r.NoError(e)
 
 	fs, _, err := util.TestFs()
-	a.NoError(err)
+	r.NoError(err)
 	err = afero.WriteFile(fs, "fogg.yml", b, 0644)
-	a.NoError(err)
+	r.NoError(err)
 	c2, err := v2.ReadConfig(fs, b, "fogg.yml")
-	assert.Nil(t, err)
+	r.Nil(err)
 
 	w, err := c2.Validate()
-	a.NoError(err)
-	a.Len(w, 0)
+	r.NoError(err)
+	r.Len(w, 0)
 
 	plan, e := Eval(c2)
 	r.NoError(e)
-	assert.NotNil(t, plan)
-	assert.NotNil(t, plan.Accounts)
-	assert.Len(t, plan.Accounts, 2)
+	r.NotNil(plan)
+	r.NotNil(plan.Accounts)
+	r.Len(plan.Accounts, 2)
 
-	assert.NotNil(t, plan.Modules)
-	assert.Len(t, plan.Modules, 1)
-	assert.Equal(t, "0.100.0", plan.Modules["my_module"].TerraformVersion)
+	r.NotNil(plan.Modules)
+	r.Len(plan.Modules, 1)
+	r.Equal("0.100.0", plan.Modules["my_module"].TerraformVersion)
 
-	assert.NotNil(t, plan.Envs)
-	assert.Len(t, plan.Envs, 2)
+	r.NotNil(plan.Envs)
+	r.Len(plan.Envs, 2)
 
-	assert.NotNil(t, plan.Envs["staging"])
+	r.NotNil(plan.Envs["staging"])
 
-	assert.NotNil(t, plan.Envs["staging"].Components)
-	assert.Len(t, plan.Envs["staging"].Components, 4)
+	r.NotNil(plan.Envs["staging"].Components)
+	r.Len(plan.Envs["staging"].Components, 4)
 
-	assert.NotNil(t, plan.Envs["staging"])
-	assert.NotNil(t, plan.Envs["staging"].Components["vpc"])
+	r.NotNil(plan.Envs["staging"])
+	r.NotNil(plan.Envs["staging"].Components["vpc"])
 	logrus.Debugf("%#v\n", plan.Envs["staging"].Components["vpc"].ModuleSource)
-	assert.NotNil(t, *plan.Envs["staging"].Components["vpc"].ModuleSource)
-	assert.Equal(t, "github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0", *plan.Envs["staging"].Components["vpc"].ModuleSource)
+	r.NotNil(*plan.Envs["staging"].Components["vpc"].ModuleSource)
+	r.Equal("github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0", *plan.Envs["staging"].Components["vpc"].ModuleSource)
 
-	assert.NotNil(t, plan.Envs["staging"].Components["comp1"])
-	assert.Equal(t, "0.100.0", plan.Envs["staging"].Components["comp1"].TerraformVersion)
+	r.NotNil(plan.Envs["staging"].Components["comp1"])
+	r.Equal("0.100.0", plan.Envs["staging"].Components["comp1"].TerraformVersion)
 
-	assert.NotNil(t, plan.Envs["staging"].Components["comp_helm_template"])
-	assert.Equal(t, "k8s", plan.Envs["staging"].Components["comp_helm_template"].EKS.ClusterName)
+	r.NotNil(plan.Envs["staging"].Components["comp_helm_template"])
+	r.Equal("k8s", plan.Envs["staging"].Components["comp_helm_template"].EKS.ClusterName)
 
-	assert.NotNil(t, plan.Envs["prod"])
-	assert.NotNil(t, plan.Envs["prod"].Components["hero"])
-	assert.NotNil(t, plan.Envs["prod"].Components["hero"].Providers)
-	assert.NotNil(t, plan.Envs["prod"].Components["hero"].Providers.Heroku)
+	r.NotNil(plan.Envs["prod"])
+	r.NotNil(plan.Envs["prod"].Components["hero"])
+	r.NotNil(plan.Envs["prod"].Components["hero"].Providers)
+	r.NotNil(plan.Envs["prod"].Components["hero"].Providers.Heroku)
 
-	assert.NotNil(t, plan.Envs["prod"])
-	assert.NotNil(t, plan.Envs["prod"].Components["datadog"])
-	assert.NotNil(t, plan.Envs["prod"].Components["datadog"].Providers)
-	assert.NotNil(t, plan.Envs["prod"].Components["datadog"].Providers.Datadog)
+	r.NotNil(plan.Envs["prod"])
+	r.NotNil(plan.Envs["prod"].Components["datadog"])
+	r.NotNil(plan.Envs["prod"].Components["datadog"].Providers)
+	r.NotNil(plan.Envs["prod"].Components["datadog"].Providers.Datadog)
 
 	// accts inherit defaults
-	assert.Equal(t, "bar1", plan.Accounts["foo"].ExtraVars["foo"])
+	r.Equal("bar1", plan.Accounts["foo"].ExtraVars["foo"])
 	// envs overwrite defaults
-	assert.Equal(t, "bar2", plan.Envs["staging"].Components["comp1"].ExtraVars["foo"])
+	r.Equal("bar2", plan.Envs["staging"].Components["comp1"].ExtraVars["foo"])
 	// component overwrite env
-	assert.Equal(t, "bar3", plan.Envs["staging"].Components["vpc"].ExtraVars["foo"])
+	r.Equal("bar3", plan.Envs["staging"].Components["vpc"].ExtraVars["foo"])
 
-	assert.Equal(t, "terraform/proj/accounts/bar.tfstate", plan.Accounts["bar"].Backend.S3.KeyPath)
-	assert.Equal(t, "terraform/proj/accounts/foo.tfstate", plan.Accounts["foo"].Backend.S3.KeyPath)
+	r.Equal("terraform/proj/accounts/bar.tfstate", plan.Accounts["bar"].Backend.S3.KeyPath)
+	r.Equal("terraform/proj/accounts/foo.tfstate", plan.Accounts["foo"].Backend.S3.KeyPath)
 
 	r.Len(plan.Accounts["foo"].AccountBackends, 2)
 	r.NotNil(plan.Accounts["foo"].AccountBackends["bar"])
 	r.Equal(BackendKindS3, plan.Accounts["foo"].AccountBackends["bar"].Kind)
 	r.NotNil(plan.Accounts["foo"].AccountBackends["bar"].S3)
-	assert.Equal(t, "terraform/proj/accounts/bar.tfstate", plan.Accounts["foo"].AccountBackends["bar"].S3.KeyPath)
+	r.Equal("terraform/proj/accounts/bar.tfstate", plan.Accounts["foo"].AccountBackends["bar"].S3.KeyPath)
 }
 
 func TestResolveEKSConfig(t *testing.T) {
-	a := assert.New(t)
-	a.Equal("", resolveEKSConfig(nil, nil).ClusterName)
-	a.Equal("a", resolveEKSConfig(&v2.EKSConfig{ClusterName: "a"}, nil).ClusterName)
-	a.Equal("b", resolveEKSConfig(&v2.EKSConfig{ClusterName: "a"}, &v2.EKSConfig{ClusterName: "b"}).ClusterName)
+	r := require.New(t)
+	r.Equal("", resolveEKSConfig(nil, nil).ClusterName)
+	r.Equal("a", resolveEKSConfig(&v2.EKSConfig{ClusterName: "a"}, nil).ClusterName)
+	r.Equal("b", resolveEKSConfig(&v2.EKSConfig{ClusterName: "a"}, &v2.EKSConfig{ClusterName: "b"}).ClusterName)
 }
 
 func TestRemoteBackendPlan(t *testing.T) {

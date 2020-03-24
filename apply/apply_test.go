@@ -13,7 +13,6 @@ import (
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 )
@@ -48,44 +47,45 @@ func getNonExistentDirectoryName() string {
 }
 
 func TestRemoveExtension(t *testing.T) {
+	r := require.New(t)
 	x := removeExtension("foo")
-	assert.Equal(t, "foo", x)
+	r.Equal("foo", x)
 
 	x = removeExtension("foo.txt")
-	assert.Equal(t, "foo", x)
+	r.Equal("foo", x)
 
 	x = removeExtension("foo.txt.asdf")
-	assert.Equal(t, "foo.txt", x)
+	r.Equal("foo.txt", x)
 
 	x = removeExtension("foo/bar.txt")
-	assert.Equal(t, "foo/bar", x)
+	r.Equal("foo/bar", x)
 }
 
 func TestApplyTemplateBasic(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 	sourceFile := strings.NewReader("foo")
 	dest, d, err := util.TestFs()
-	a.NoError(err)
+	r.NoError(err)
 	defer os.Remove(d)
 
 	path := "bar"
 	overrides := struct{ Foo string }{"foo"}
 
 	e := applyTemplate(sourceFile, &templates.Templates.Common, dest, path, overrides)
-	a.Nil(e)
+	r.Nil(e)
 	f, e := dest.Open("bar")
-	a.Nil(e)
-	r, e := ioutil.ReadAll(f)
-	a.Nil(e)
-	a.Equal("foo", string(r))
+	r.Nil(e)
+	i, e := ioutil.ReadAll(f)
+	r.Nil(e)
+	r.Equal("foo", string(i))
 }
 
 func TestApplyTemplateBasicNewDirectory(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 	sourceFile := strings.NewReader("foo")
 
 	dest, d, err := util.TestFs()
-	a.NoError(err)
+	r.NoError(err)
 	defer os.RemoveAll(d)
 
 	nonexistentDir := getNonExistentDirectoryName()
@@ -94,127 +94,127 @@ func TestApplyTemplateBasicNewDirectory(t *testing.T) {
 	overrides := struct{ Foo string }{"foo"}
 
 	e := applyTemplate(sourceFile, &templates.Templates.Common, dest, path, overrides)
-	a.Nil(e)
+	r.Nil(e)
 	f, e := dest.Open(path)
-	a.Nil(e)
-	r, e := ioutil.ReadAll(f)
-	a.Nil(e)
-	a.Equal("foo", string(r))
+	r.Nil(e)
+	i, e := ioutil.ReadAll(f)
+	r.Nil(e)
+	r.Equal("foo", string(i))
 }
 
 func TestApplyTemplate(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 	sourceFile := strings.NewReader("Hello {{.Name}}")
 	dest, d, err := util.TestFs()
-	a.NoError(err)
+	r.NoError(err)
 	defer os.RemoveAll(d)
 
 	path := "hello"
 	overrides := struct{ Name string }{"World"}
 
 	e := applyTemplate(sourceFile, &templates.Templates.Common, dest, path, overrides)
-	a.Nil(e)
+	r.Nil(e)
 	f, e := dest.Open("hello")
-	a.Nil(e)
-	r, e := ioutil.ReadAll(f)
-	a.Nil(e)
-	a.Equal("Hello World", string(r))
+	r.Nil(e)
+	i, e := ioutil.ReadAll(f)
+	r.Nil(e)
+	r.Equal("Hello World", string(i))
 }
 
 func TestTouchFile(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 	fs, d, err := util.TestFs()
-	a.NoError(err)
+	r.NoError(err)
 	defer os.RemoveAll(d)
 
 	e := touchFile(fs, "foo")
-	a.Nil(e)
-	r, e := readFile(fs, "foo")
-	a.Nil(e)
-	a.Equal("", r)
+	r.Nil(e)
+	i, e := readFile(fs, "foo")
+	r.Nil(e)
+	r.Equal("", i)
 
 	fs, d2, err := util.TestFs()
-	a.NoError(err)
+	r.NoError(err)
 	defer os.RemoveAll(d2)
 
 	err = writeFile(fs, "asdf", "jkl")
-	a.NoError(err)
+	r.NoError(err)
 
-	r, e = readFile(fs, "asdf")
-	a.Nil(e)
-	a.Equal("jkl", r)
+	i, e = readFile(fs, "asdf")
+	r.Nil(e)
+	r.Equal("jkl", i)
 
 	e = touchFile(fs, "asdf")
-	a.Nil(e)
-	r, e = readFile(fs, "asdf")
-	a.Nil(e)
-	a.Equal("jkl", r)
+	r.Nil(e)
+	i, e = readFile(fs, "asdf")
+	r.Nil(e)
+	r.Equal("jkl", i)
 }
 
 func TestTouchFileNonExistentDirectory(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 	dest, d, err := util.TestFs()
-	a.NoError(err)
+	r.NoError(err)
 	defer os.RemoveAll(d)
 
 	nonexistentDir := getNonExistentDirectoryName()
 	defer dest.RemoveAll(nonexistentDir) //nolint
 	e := touchFile(dest, filepath.Join(nonexistentDir, "foo"))
-	a.Nil(e)
-	r, e := readFile(dest, filepath.Join(nonexistentDir, "foo"))
-	a.Nil(e)
-	a.Equal("", r)
-	a.Nil(e)
+	r.Nil(e)
+	i, e := readFile(dest, filepath.Join(nonexistentDir, "foo"))
+	r.Nil(e)
+	r.Equal("", i)
+	r.Nil(e)
 }
 
 func TestCreateFile(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 	fs, d, err := util.TestFs()
-	a.NoError(err)
+	r.NoError(err)
 	defer os.RemoveAll(d)
 
 	// create new file
 
 	e := createFile(fs, "foo", strings.NewReader("bar"))
-	a.Nil(e)
+	r.Nil(e)
 
-	r, e := readFile(fs, "foo")
-	a.Nil(e)
-	a.Equal("bar", r)
+	i, e := readFile(fs, "foo")
+	r.Nil(e)
+	r.Equal("bar", i)
 
 	// not overwrite existing file
 
 	fs, d2, err := util.TestFs()
-	a.NoError(err)
+	r.NoError(err)
 	defer os.RemoveAll(d2)
 
 	e = createFile(fs, "foo", strings.NewReader("bar"))
-	a.Nil(e)
+	r.Nil(e)
 
-	r, e = readFile(fs, "foo")
-	a.Nil(e)
-	a.Equal("bar", r)
+	i, e = readFile(fs, "foo")
+	r.Nil(e)
+	r.Equal("bar", i)
 
 	e = createFile(fs, "foo", strings.NewReader("BAM"))
-	a.Nil(e)
+	r.Nil(e)
 
-	r, e = readFile(fs, "foo")
-	a.Nil(e)
-	a.Equal("bar", r)
+	i, e = readFile(fs, "foo")
+	r.Nil(e)
+	r.Equal("bar", i)
 }
 
 func TestCreateFileNonExistentDirectory(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 	// create new file in nonexistent directory
 	dest, _, e := util.TestFs()
-	a.NoError(e)
+	r.NoError(e)
 
 	e = createFile(dest, "newdir/foo", strings.NewReader("bar"))
-	a.NoError(e)
+	r.NoError(e)
 
-	r, e := readFile(dest, "newdir/foo")
-	a.NoError(e)
-	a.Equal("bar", r)
+	i, e := readFile(dest, "newdir/foo")
+	r.NoError(e)
+	r.Equal("bar", i)
 }
 
 func TestApplySmokeTest(t *testing.T) {
@@ -249,35 +249,35 @@ version: 2
 }
 
 func TestApplyModuleInvocation(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 	testFs, d, err := util.TestFs()
-	a.NoError(err)
+	r.NoError(err)
 	defer os.RemoveAll(d)
 	pwdFs, err := util.PwdFs()
-	a.NoError(err)
+	r.NoError(err)
 
 	fs := afero.NewCopyOnWriteFs(pwdFs, testFs)
 
 	e := applyModuleInvocation(fs, "mymodule", "test-module", templates.Templates.ModuleInvocation, &templates.Templates.Common)
-	a.NoError(e)
+	r.NoError(e)
 
 	s, e := fs.Stat("mymodule")
-	a.Nil(e)
-	a.True(s.IsDir())
+	r.Nil(e)
+	r.True(s.IsDir())
 
 	_, e = fs.Stat("mymodule/main.tf")
-	a.Nil(e)
-	r, e := afero.ReadFile(fs, "mymodule/main.tf")
-	a.Nil(e)
+	r.Nil(e)
+	i, e := afero.ReadFile(fs, "mymodule/main.tf")
+	r.Nil(e)
 	expected := "# Auto-generated by fogg. Do not edit\n# Make improvements in fogg, so that everyone can benefit.\n\nmodule \"test-module\" {\n  source = \"../test-module\"\n  bar    = local.bar\n  foo    = local.foo\n\n}\n"
-	a.Equal(expected, string(r))
+	r.Equal(expected, string(i))
 
 	_, e = fs.Stat("mymodule/outputs.tf")
-	a.Nil(e)
-	r, e = afero.ReadFile(fs, "mymodule/outputs.tf")
-	a.Nil(e)
+	r.Nil(e)
+	i, e = afero.ReadFile(fs, "mymodule/outputs.tf")
+	r.Nil(e)
 	expected = "# Auto-generated by fogg. Do not edit\n# Make improvements in fogg, so that everyone can benefit.\n\noutput \"bar\" {\n  value = module.test-module.bar\n}\n\noutput \"foo\" {\n  value = module.test-module.foo\n}\n\n\n"
-	a.Equal(expected, string(r))
+	r.Equal(expected, string(i))
 }
 func TestGetTargetPath(t *testing.T) {
 	data := []struct {
@@ -296,31 +296,32 @@ func TestGetTargetPath(t *testing.T) {
 	}
 	for _, test := range data {
 		t.Run(test.source, func(t *testing.T) {
+			r := require.New(t)
 			out := getTargetPath(test.base, test.source)
-			assert.Equal(t, test.output, out)
+			r.Equal(test.output, out)
 		})
 	}
 }
 
 func TestFmtHcl(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 
 	before := `foo { bar     = "bam"}`
 	after := `foo { bar = "bam" }`
 	fs, d, err := util.TestFs()
-	a.NoError(err)
+	r.NoError(err)
 	defer os.RemoveAll(d)
 
 	in := strings.NewReader(before)
 	e := afero.WriteReader(fs, "foo.tf", in)
-	a.Nil(e)
+	r.Nil(e)
 	e = fmtHcl(fs, "foo.tf")
-	a.Nil(e)
+	r.Nil(e)
 	out, e := afero.ReadFile(fs, "foo.tf")
-	a.Nil(e)
-	a.NotNil(out)
+	r.Nil(e)
+	r.NotNil(out)
 	s := string(out)
-	a.Equal(after, s)
+	r.Equal(after, s)
 }
 
 func TestCalculateLocalPath(t *testing.T) {
@@ -344,9 +345,10 @@ func TestCalculateLocalPath(t *testing.T) {
 
 	for _, test := range data {
 		t.Run("", func(t *testing.T) {
+			r := require.New(t)
 			p, e := calculateModuleAddressForSource(test.path, test.moduleAddress)
-			assert.Nil(t, e)
-			assert.Equal(t, test.expected, p)
+			r.Nil(e)
+			r.Equal(test.expected, p)
 		})
 	}
 }
@@ -369,29 +371,29 @@ var versionTests = []struct {
 func TestCheckToolVersions(t *testing.T) {
 	for _, tc := range versionTests {
 		t.Run("", func(t *testing.T) {
-			a := assert.New(t)
+			r := require.New(t)
 			fs, d, err := util.TestFs()
-			a.NoError(err)
+			r.NoError(err)
 			defer os.RemoveAll(d)
 
 			err = writeFile(fs, ".fogg-version", tc.current)
-			a.NoError(err)
+			r.NoError(err)
 
 			v, _, e := checkToolVersions(fs, tc.tool)
-			a.NoError(e)
-			a.Equal(tc.result, v)
+			r.NoError(e)
+			r.Equal(tc.result, v)
 		})
 	}
 }
 
 func TestVersionIsChanged(t *testing.T) {
-	a := assert.New(t)
+	r := require.New(t)
 
 	for _, test := range versionTests {
 		t.Run("", func(t *testing.T) {
 			b, e := versionIsChanged(test.current, test.tool)
-			a.NoError(e)
-			a.Equal(test.result, b)
+			r.NoError(e)
+			r.Equal(test.result, b)
 		})
 	}
 }
