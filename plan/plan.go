@@ -292,7 +292,7 @@ func (p *Plan) buildAccounts(c *v2.Config) (map[string]Account, error) {
 		if accountPlan.ComponentCommon.Backend.Kind == BackendKindS3 {
 			accountPlan.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/accounts/%s.tfstate", accountPlan.ComponentCommon.Project, name)
 		} else if accountPlan.ComponentCommon.Backend.Kind == BackendKindRemote {
-			accountPlan.ComponentCommon.Backend.Remote.Workspace = fmt.Sprintf("accounts/%s", name)
+			accountPlan.ComponentCommon.Backend.Remote.Workspace = fmt.Sprintf("accounts-%s", name)
 		}
 
 		accountPlan.AllAccounts = resolveAccounts(c.Accounts) //FIXME this needs to run as a second phase, not directly from the config
@@ -382,7 +382,7 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			if componentPlan.ComponentCommon.Backend.Kind == BackendKindS3 {
 				componentPlan.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/envs/%s/components/%s.tfstate", componentPlan.ComponentCommon.Project, envName, componentName)
 			} else if componentPlan.ComponentCommon.Backend.Kind == BackendKindRemote {
-				componentPlan.ComponentCommon.Backend.Remote.Workspace = fmt.Sprintf("%s/%s", envName, componentName)
+				componentPlan.ComponentCommon.Backend.Remote.Workspace = fmt.Sprintf("%s-%s", envName, componentName)
 			}
 			componentPlan.Env = envName
 			componentPlan.Component = componentName
