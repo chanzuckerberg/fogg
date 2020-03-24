@@ -38,16 +38,12 @@ terraform {
 
   backend "s3" {
 
-
-
     bucket = "buck"
 
     key     = "terraform/proj/envs/prod/components/datadog.tfstate"
     encrypt = true
     region  = "us-west-2"
     profile = "profile"
-
-
 
   }
 
@@ -112,14 +108,11 @@ data "terraform_remote_state" "global" {
   config = {
 
 
-
     bucket = "buck"
 
     key     = "terraform/proj/global.tfstate"
-    encrypt = true
     region  = "us-west-2"
     profile = "profile"
-
 
 
   }
@@ -136,14 +129,11 @@ data "terraform_remote_state" "hero" {
   config = {
 
 
-
     bucket = "buck"
 
     key     = "terraform/proj/envs/prod/components/hero.tfstate"
-    encrypt = true
     region  = "us-west-2"
     profile = "profile"
-
 
 
   }
@@ -159,14 +149,11 @@ data "terraform_remote_state" "bar" {
   config = {
 
 
-
     bucket = "buck"
 
     key     = "terraform/proj/accounts/bar.tfstate"
-    encrypt = true
     region  = "us-west-2"
     profile = "profile"
-
 
 
   }
@@ -178,14 +165,11 @@ data "terraform_remote_state" "foo" {
   config = {
 
 
-
     bucket = "buck"
 
     key     = "terraform/proj/accounts/foo.tfstate"
-    encrypt = true
     region  = "us-west-2"
     profile = "profile"
-
 
 
   }

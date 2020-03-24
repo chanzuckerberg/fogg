@@ -2,7 +2,7 @@
   backend "{{ .Kind }}" {
   {{ if eq .Kind "s3" }}
     bucket         = "{{ .S3.Bucket }}"
-    {{ if .DynamoTable }}dynamodb_table = "{{ .Backend.S3.DynamoTable }}"{{ end }}
+    {{ if .S3.DynamoTable }}dynamodb_table = "{{ .S3.DynamoTable }}"{{ end }}
     key            = "{{ .S3.KeyPath }}"
     encrypt = true
     region = "{{ .S3.Region }}"
@@ -20,10 +20,10 @@
 {{ define "remote_backend" }}
   {{ if eq .Kind "s3" }}
     bucket         = "{{ .S3.Bucket }}"
-    {{ if .DynamoTable }}dynamodb_table = "{{ .S3.DynamoTable }}"{{ end }}
+    {{ if .S3.DynamoTable }}dynamodb_table = "{{ .S3.DynamoTable }}"{{ end }}
     key            = "{{ .S3.KeyPath }}"
     region = "{{ .S3.Region }}"
-    profile = "{{ .Profile }}"
+    profile = "{{ .S3.Profile }}"
   {{ else if eq .Kind "remote" }}
     hostname = "{{ .Remote.HostName }}"
     organization = "{{ .Remote.Organization }}"

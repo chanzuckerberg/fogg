@@ -32,16 +32,12 @@ terraform {
 
   backend "s3" {
 
-
-
     bucket = "buck"
 
     key     = "terraform/proj/global.tfstate"
     encrypt = true
     region  = "us-west-2"
     profile = "profile"
-
-
 
   }
 }

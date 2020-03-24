@@ -21,16 +21,12 @@ terraform {
 
   backend "s3" {
 
-
-
     bucket = "buck"
 
     key     = "terraform/proj/envs/staging/components/vpc.tfstate"
     encrypt = true
     region  = "us-west-2"
     profile = "profile"
-
-
 
   }
 
@@ -85,14 +81,11 @@ data "terraform_remote_state" "global" {
   config = {
 
 
-
     bucket = "buck"
 
     key     = "terraform/proj/global.tfstate"
-    encrypt = true
     region  = "us-west-2"
     profile = "profile"
-
 
 
   }

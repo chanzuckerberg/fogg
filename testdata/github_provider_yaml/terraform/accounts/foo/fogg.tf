@@ -29,16 +29,12 @@ terraform {
 
   backend "s3" {
 
-
-
     bucket = "bucket"
 
     key     = "terraform/foo/accounts/foo.tfstate"
     encrypt = true
     region  = "region"
     profile = "foo"
-
-
 
   }
 
@@ -76,14 +72,11 @@ data "terraform_remote_state" "global" {
   config = {
 
 
-
     bucket = "bucket"
 
     key     = "terraform/foo/global.tfstate"
-    encrypt = true
     region  = "region"
     profile = "foo"
-
 
 
   }
