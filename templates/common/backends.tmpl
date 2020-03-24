@@ -1,30 +1,34 @@
 {{ define "backend" }}
   backend "{{ .Kind }}" {
-    {{ template "backend_inner" . }}
-  }
-{{ end }}
-
-{{ define "backend_inner" }}
   {{ if eq .Kind "s3" }}
-    {{ template "s3_backend" .S3 }}
+    bucket         = "{{ .S3.Bucket }}"
+    {{ if .DynamoTable }}dynamodb_table = "{{ .Backend.S3.DynamoTable }}"{{ end }}
+    key            = "{{ .S3.KeyPath }}"
+    encrypt = true
+    region = "{{ .S3.Region }}"
+    profile = "{{ .S3.Profile }}"
   {{ else if eq .Kind "remote" }}
-    {{ template "remote_backend" .Remote }}
+    hostname = "{{ .Remote.HostName }}"
+    organization = "{{ .Remote.Organization }}"
+    workspaces {
+      name = "{{ .Remote.Workspace }}"
+    }
   {{ end }}
-{{ end }}
-
-{{ define "s3_backend" }}
-  bucket         = "{{ .Bucket }}"
-  {{ if .DynamoTable }}dynamodb_table = "{{ .DynamoTable }}"{{ end }}
-  key            = "{{ .KeyPath }}"
-  encrypt = true
-  region = "{{ .Region }}"
-  profile = "{{ .Profile }}"
+  }
 {{ end }}
 
 {{ define "remote_backend" }}
-  hostname = "{{ .HostName }}"
-  organization = "{{ .Organization }}"
-  workspaces {
-      name = "{{ .Workspace }}"
-  }
+  {{ if eq .Kind "s3" }}
+    bucket         = "{{ .S3.Bucket }}"
+    {{ if .DynamoTable }}dynamodb_table = "{{ .S3.DynamoTable }}"{{ end }}
+    key            = "{{ .S3.KeyPath }}"
+    region = "{{ .S3.Region }}"
+    profile = "{{ .Profile }}"
+  {{ else if eq .Kind "remote" }}
+    hostname = "{{ .Remote.HostName }}"
+    organization = "{{ .Remote.Organization }}"
+    workspaces = {
+      name = "{{ .Remote.Workspace }}"
+    }
+  {{ end }}
 {{ end }}

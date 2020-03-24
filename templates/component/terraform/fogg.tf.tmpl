@@ -110,7 +110,7 @@ data "terraform_remote_state" "global" {
   backend = "s3"
 
   config = {
-    {{ template "backend_inner" .Global.Backend }}
+    {{ template "remote_backend" .Global.Backend }}
   }
 }
 
@@ -121,7 +121,7 @@ data "terraform_remote_state" "{{ $component }}" {
   backend = "s3"
 
   config = {
-      {{ template "backend_inner" $backend }}
+      {{ template "remote_backend" $backend }}
   }
 }
 {{ end }}
@@ -133,7 +133,7 @@ data "terraform_remote_state" "{{ $accountName }}" {
   backend = "s3"
 
   config = {
-    {{ template "backend_inner" $account.Backend }}
+    {{ template "remote_backend" $account.Backend }}
   }
 }
 {{ end }}

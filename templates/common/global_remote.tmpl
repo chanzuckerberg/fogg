@@ -3,7 +3,7 @@ data "terraform_remote_state" "global" {
   backend = "{{ .Global.Backend.Kind }}"
 
   config = {
-    {{ template "backend_inner" .Global.Backend }}
+    {{ template "remote_backend" .Global.Backend }}
   }
 }
 {{ end }}

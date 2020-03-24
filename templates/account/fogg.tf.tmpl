@@ -99,7 +99,7 @@ data "terraform_remote_state" "global" {
   backend = "{{ .Global.Backend.Kind }}"
 
   config = {
-    {{ template "backend_inner" .Global.Backend }}
+    {{ template "remote_backend" .Global.Backend }}
   }
 }
 
@@ -110,7 +110,7 @@ data "terraform_remote_state" "{{ $accountName }}" {
   backend = "{{ $backend.Kind }}"
 
   config = {
-    {{ template "backend_inner" $backend }}
+    {{ template "remote_backend" $backend }}
   }
 }
 {{ end }}
