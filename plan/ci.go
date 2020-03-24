@@ -57,7 +57,7 @@ func (c *CIConfig) addProjects(projects ...CIProject) *CIConfig {
 	return c
 }
 
-func (c *CIConfig) merge(other *CIConfig) *CIConfig {
+func (c *CIConfig) merge(other *CIConfig, awsProvider v2.CIProviderConfig) *CIConfig {
 	if c == nil {
 		c = &CIConfig{}
 	}
@@ -67,7 +67,7 @@ func (c *CIConfig) merge(other *CIConfig) *CIConfig {
 
 	c.Enabled = c.Enabled || other.Enabled
 	c.Buildevents = c.Buildevents || other.Buildevents
-	c.AWSProfiles = c.AWSProfiles.merge(other.AWSProfiles)
+	c.AWSProfiles = c.AWSProfiles.merge(other.AWSProfiles, awsProvider)
 	c.projects = append(c.projects, other.projects...)
 
 	return c
@@ -75,9 +75,13 @@ func (c *CIConfig) merge(other *CIConfig) *CIConfig {
 
 type ciAwsProfiles map[string]AWSRole
 
-func (p ciAwsProfiles) merge(other ciAwsProfiles) ciAwsProfiles {
+func (p ciAwsProfiles) merge(other ciAwsProfiles, awsProvider v2.CIProviderConfig) ciAwsProfiles {
 	if p == nil {
 		p = ciAwsProfiles{}
+	}
+
+	if awsProvider.Disabled {
+		return p
 	}
 
 	for profile, role := range other {
@@ -92,12 +96,23 @@ func (p *Plan) buildTravisCIConfig(c *v2.Config, foggVersion string) TravisCICon
 		FoggVersion: foggVersion,
 	}
 
+	var awsProvider v2.CIProviderConfig
+
+	if c.Defaults.Tools != nil && c.Defaults.Tools.TravisCI != nil {
+		awsProvider = c.Defaults.Tools.TravisCI.Providers["aws"]
+	}
+
 	globalConfig := p.Global.TravisCI.generateCIConfig(
 		p.Global.Backend,
 		p.Global.Providers.AWS,
 		"global",
 		"terraform/global")
-	ciConfig = ciConfig.merge(globalConfig)
+
+	if c.Global.Tools != nil && c.Global.Tools.TravisCI != nil {
+		ciConfig = ciConfig.merge(globalConfig, c.Global.Tools.TravisCI.Providers["aws"])
+	} else {
+		ciConfig = ciConfig.merge(globalConfig, awsProvider)
+	}
 
 	for name, acct := range p.Accounts {
 		accountConfig := acct.TravisCI.generateCIConfig(
@@ -106,18 +121,28 @@ func (p *Plan) buildTravisCIConfig(c *v2.Config, foggVersion string) TravisCICon
 			fmt.Sprintf("accounts/%s", name),
 			fmt.Sprintf("terraform/accounts/%s", name),
 		)
-		ciConfig = ciConfig.merge(accountConfig)
+
+		if c.Accounts[name].Tools != nil && c.Accounts[name].Tools.TravisCI != nil {
+			ciConfig = ciConfig.merge(accountConfig, c.Accounts[name].Tools.TravisCI.Providers["aws"])
+		} else {
+			ciConfig = ciConfig.merge(accountConfig, awsProvider)
+		}
 	}
 
 	for envName, env := range p.Envs {
-		for cName, c := range env.Components {
-			envConfig := c.TravisCI.generateCIConfig(
-				c.Backend,
-				c.Providers.AWS,
+		for cName, d := range env.Components {
+			envConfig := d.TravisCI.generateCIConfig(
+				d.Backend,
+				d.Providers.AWS,
 				fmt.Sprintf("%s/%s", envName, cName),
 				fmt.Sprintf("terraform/envs/%s/%s", envName, cName),
 			)
-			ciConfig = ciConfig.merge(envConfig)
+
+			if c.Envs[envName].Tools != nil && c.Envs[envName].Tools.TravisCI != nil {
+				ciConfig = ciConfig.merge(envConfig, c.Envs[envName].Tools.TravisCI.Providers["aws"])
+			} else {
+				ciConfig = ciConfig.merge(envConfig, awsProvider)
+			}
 		}
 	}
 
@@ -138,12 +163,6 @@ func (p *Plan) buildTravisCIConfig(c *v2.Config, foggVersion string) TravisCICon
 			*c.Defaults.Tools.TravisCI.TestBuckets > 0 {
 			numBuckets = *c.Defaults.Tools.TravisCI.TestBuckets
 		}
-
-		// If aws is disabled, reset the providers
-		aws, ok := c.Defaults.Tools.TravisCI.Providers["aws"]
-		if ok && aws.Disabled {
-			ciConfig.AWSProfiles = ciAwsProfiles{}
-		}
 	}
 
 	ciConfig = ciConfig.populateBuckets(numBuckets)
@@ -157,12 +176,23 @@ func (p *Plan) buildCircleCIConfig(c *v2.Config, foggVersion string) CircleCICon
 		FoggVersion: foggVersion,
 	}
 
+	var awsProvider v2.CIProviderConfig
+
+	if c.Defaults.Tools != nil && c.Defaults.Tools.CircleCI != nil {
+		awsProvider = c.Defaults.Tools.CircleCI.Providers["aws"]
+	}
+
 	globalConfig := p.Global.CircleCI.generateCIConfig(
 		p.Global.Backend,
 		p.Global.Providers.AWS,
 		"global",
 		"terraform/global")
-	ciConfig = ciConfig.merge(globalConfig)
+
+	if c.Global.Tools != nil && c.Global.Tools.CircleCI != nil {
+		ciConfig = ciConfig.merge(globalConfig, c.Global.Tools.CircleCI.Providers["aws"])
+	} else {
+		ciConfig = ciConfig.merge(globalConfig, awsProvider)
+	}
 
 	for name, acct := range p.Accounts {
 		accountConfig := acct.CircleCI.generateCIConfig(
@@ -171,18 +201,28 @@ func (p *Plan) buildCircleCIConfig(c *v2.Config, foggVersion string) CircleCICon
 			fmt.Sprintf("accounts/%s", name),
 			fmt.Sprintf("terraform/accounts/%s", name),
 		)
-		ciConfig = ciConfig.merge(accountConfig)
+
+		if c.Accounts[name].Tools != nil && c.Accounts[name].Tools.CircleCI != nil {
+			ciConfig = ciConfig.merge(accountConfig, c.Accounts[name].Tools.CircleCI.Providers["aws"])
+		} else {
+			ciConfig = ciConfig.merge(accountConfig, awsProvider)
+		}
 	}
 
 	for envName, env := range p.Envs {
-		for cName, c := range env.Components {
-			envConfig := c.CircleCI.generateCIConfig(
-				c.Backend,
-				c.Providers.AWS,
+		for cName, d := range env.Components {
+			envConfig := d.CircleCI.generateCIConfig(
+				d.Backend,
+				d.Providers.AWS,
 				fmt.Sprintf("%s/%s", envName, cName),
 				fmt.Sprintf("terraform/envs/%s/%s", envName, cName),
 			)
-			ciConfig = ciConfig.merge(envConfig)
+
+			if c.Envs[envName].Tools != nil && c.Envs[envName].Tools.CircleCI != nil {
+				ciConfig = ciConfig.merge(envConfig, c.Envs[envName].Tools.CircleCI.Providers["aws"])
+			} else {
+				ciConfig = ciConfig.merge(envConfig, awsProvider)
+			}
 		}
 	}
 
@@ -206,12 +246,6 @@ func (p *Plan) buildCircleCIConfig(c *v2.Config, foggVersion string) CircleCICon
 		}
 
 		sshFingerprints = append(sshFingerprints, c.Defaults.Tools.CircleCI.SSHKeyFingerprints...)
-
-		// If aws is disabled, reset the providers
-		aws, ok := c.Defaults.Tools.CircleCI.Providers["aws"]
-		if ok && aws.Disabled {
-			ciConfig.AWSProfiles = ciAwsProfiles{}
-		}
 	}
 
 	ciConfig = ciConfig.populateBuckets(numBuckets)
@@ -226,12 +260,23 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 		FoggVersion: foggVersion,
 	}
 
+	var awsProvider v2.CIProviderConfig
+
+	if c.Defaults.Tools != nil && c.Defaults.Tools.GitHubActionsCI != nil {
+		awsProvider = c.Defaults.Tools.GitHubActionsCI.Providers["aws"]
+	}
+
 	globalConfig := p.Global.GitHubActionsCI.generateCIConfig(
 		p.Global.Backend,
 		p.Global.Providers.AWS,
 		"global",
 		"terraform/global")
-	ciConfig = ciConfig.merge(globalConfig)
+
+	if c.Global.Tools != nil && c.Global.Tools.GitHubActionsCI != nil {
+		ciConfig = ciConfig.merge(globalConfig, c.Global.Tools.GitHubActionsCI.Providers["aws"])
+	} else {
+		ciConfig = ciConfig.merge(globalConfig, awsProvider)
+	}
 
 	for name, acct := range p.Accounts {
 		accountConfig := acct.GitHubActionsCI.generateCIConfig(
@@ -240,18 +285,28 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 			fmt.Sprintf("accounts/%s", name),
 			fmt.Sprintf("terraform/accounts/%s", name),
 		)
-		ciConfig = ciConfig.merge(accountConfig)
+
+		if c.Accounts[name].Tools != nil && c.Accounts[name].Tools.GitHubActionsCI != nil {
+			ciConfig = ciConfig.merge(accountConfig, c.Accounts[name].Tools.GitHubActionsCI.Providers["aws"])
+		} else {
+			ciConfig = ciConfig.merge(accountConfig, awsProvider)
+		}
 	}
 
 	for envName, env := range p.Envs {
-		for cName, c := range env.Components {
-			envConfig := c.GitHubActionsCI.generateCIConfig(
-				c.Backend,
-				c.Providers.AWS,
+		for cName, d := range env.Components {
+			envConfig := d.GitHubActionsCI.generateCIConfig(
+				d.Backend,
+				d.Providers.AWS,
 				fmt.Sprintf("%s/%s", envName, cName),
 				fmt.Sprintf("terraform/envs/%s/%s", envName, cName),
 			)
-			ciConfig = ciConfig.merge(envConfig)
+
+			if c.Envs[envName].Tools != nil && c.Envs[envName].Tools.GitHubActionsCI != nil {
+				ciConfig = ciConfig.merge(envConfig, c.Envs[envName].Tools.GitHubActionsCI.Providers["aws"])
+			} else {
+				ciConfig = ciConfig.merge(envConfig, awsProvider)
+			}
 		}
 	}
 
@@ -270,12 +325,6 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 		if c.Defaults.Tools.GitHubActionsCI.TestBuckets != nil &&
 			*c.Defaults.Tools.GitHubActionsCI.TestBuckets > 0 {
 			numBuckets = *c.Defaults.Tools.GitHubActionsCI.TestBuckets
-		}
-
-		// If aws is disabled, reset the providers
-		aws, ok := c.Defaults.Tools.GitHubActionsCI.Providers["aws"]
-		if ok && aws.Disabled {
-			ciConfig.AWSProfiles = ciAwsProfiles{}
 		}
 	}
 
