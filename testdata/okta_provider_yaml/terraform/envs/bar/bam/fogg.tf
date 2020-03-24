@@ -116,7 +116,7 @@ data "terraform_remote_state" "foo" {
 
     bucket = "bucket"
 
-    key     = "terraform/foofoo/global.tfstate"
+    key     = "terraform/foofoo/accounts/foo.tfstate"
     encrypt = true
     region  = "region"
     profile = "foofoo"

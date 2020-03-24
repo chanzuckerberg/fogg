@@ -150,7 +150,7 @@ data "terraform_remote_state" "bar" {
 
     bucket = "buck"
 
-    key     = "terraform/proj/global.tfstate"
+    key     = "terraform/proj/accounts/bar.tfstate"
     encrypt = true
     region  = "us-west-2"
     profile = "profile"
@@ -169,7 +169,7 @@ data "terraform_remote_state" "foo" {
 
     bucket = "buck"
 
-    key     = "terraform/proj/global.tfstate"
+    key     = "terraform/proj/accounts/foo.tfstate"
     encrypt = true
     region  = "us-west-2"
     profile = "profile"

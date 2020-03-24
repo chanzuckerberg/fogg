@@ -205,10 +205,10 @@ type Module struct {
 type Account struct {
 	ComponentCommon `json:",inline" yaml:",inline"`
 
-	Accounts    map[string]Account      `json:"accounts" yaml:"accounts"` // Reference accounts for remote state
-	AllAccounts map[string]*json.Number `yaml:"all_accounts"`
-	AccountName string                  `yaml:"account_name"`
-	Global      *Component
+	AccountBackends map[string]Backend      `json:"account_backends" yaml:"account_backends"` // Reference accounts for remote state
+	AllAccounts     map[string]*json.Number `yaml:"all_accounts"`
+	AccountName     string                  `yaml:"account_name"`
+	Global          *Component
 }
 
 // Component is a component
@@ -300,20 +300,18 @@ func (p *Plan) buildAccounts(c *v2.Config) (map[string]Account, error) {
 		accountPlans[name] = accountPlan
 	}
 
-	accountPlans2 := make(map[string]Account, len(c.Accounts))
-
-	for name, acct := range accountPlans {
-		acctCopy := acct
-		acctCopy.Accounts = make(map[string]Account)
-		for name2, acct2 := range accountPlans {
-			if name != name2 {
-				acctCopy.Accounts[name2] = acct2
-			}
-		}
-		accountPlans2[name] = acctCopy
+	accountBackends := make(map[string]Backend)
+	for acctName, acct := range accountPlans {
+		accountBackends[acctName] = acct.Backend
 	}
 
-	return accountPlans2, nil
+	for acctName := range accountPlans {
+		a := accountPlans[acctName]
+		a.AccountBackends = accountBackends
+		accountPlans[acctName] = a
+	}
+
+	return accountPlans, nil
 }
 
 func (p *Plan) buildModules(c *v2.Config) map[string]Module {

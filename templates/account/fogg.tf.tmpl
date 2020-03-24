@@ -76,6 +76,7 @@ variable "owner" {
   default = "{{ .Owner }}"
 }
 
+# map of aws_accounts
 variable "aws_accounts" {
   type =  map
   default = {
@@ -103,13 +104,13 @@ data "terraform_remote_state" "global" {
 }
 
 {{ $outer := . }}
-{{ range $accountName, $account := .Accounts}}
+{{ range $accountName, $backend := .AccountBackends}}
 {{ if ne $accountName $outer.AccountName }}
 data "terraform_remote_state" "{{ $accountName }}" {
-  backend = "{{ $account.Backend.Kind }}"
+  backend = "{{ $backend.Kind }}"
 
   config = {
-    {{ template "backend_inner" $account.Backend }}
+    {{ template "backend_inner" $backend }}
   }
 }
 {{ end }}

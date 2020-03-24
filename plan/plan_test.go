@@ -128,14 +128,11 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 	assert.Equal(t, "terraform/proj/accounts/bar.tfstate", plan.Accounts["bar"].Backend.S3.KeyPath)
 	assert.Equal(t, "terraform/proj/accounts/foo.tfstate", plan.Accounts["foo"].Backend.S3.KeyPath)
 
-	r.Len(plan.Accounts["foo"].Accounts, 1)
-	r.NotNil(plan.Accounts["foo"].Accounts["bar"])
-	r.NotNil(plan.Accounts["foo"].Accounts["bar"].Backend)
-	r.Equal(BackendKindS3, plan.Accounts["foo"].Accounts["bar"].Backend.Kind)
-	r.NotNil(plan.Accounts["foo"].Accounts["bar"].Backend.S3)
-	assert.Equal(t, "terraform/proj/accounts/bar.tfstate", plan.Accounts["foo"].Accounts["bar"].Backend.S3.KeyPath)
-
-	r.Len(plan.Accounts["foo"].Accounts, 1)
+	r.Len(plan.Accounts["foo"].AccountBackends, 2)
+	r.NotNil(plan.Accounts["foo"].AccountBackends["bar"])
+	r.Equal(BackendKindS3, plan.Accounts["foo"].AccountBackends["bar"].Kind)
+	r.NotNil(plan.Accounts["foo"].AccountBackends["bar"].S3)
+	assert.Equal(t, "terraform/proj/accounts/bar.tfstate", plan.Accounts["foo"].AccountBackends["bar"].S3.KeyPath)
 }
 
 func TestResolveEKSConfig(t *testing.T) {

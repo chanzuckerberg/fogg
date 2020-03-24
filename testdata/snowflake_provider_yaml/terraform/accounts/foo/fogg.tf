@@ -59,6 +59,7 @@ variable "owner" {
   default = "foo@example.com"
 }
 
+# map of aws_accounts
 variable "aws_accounts" {
   type = map
   default = {
@@ -88,6 +89,8 @@ data "terraform_remote_state" "global" {
 
   }
 }
+
+
 
 
 

@@ -215,7 +215,6 @@ func TestCreateFileNonExistentDirectory(t *testing.T) {
 	r, e := readFile(dest, "newdir/foo")
 	a.NoError(e)
 	a.Equal("bar", r)
-
 }
 
 func TestApplySmokeTest(t *testing.T) {
