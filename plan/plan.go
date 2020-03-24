@@ -220,10 +220,11 @@ type Component struct {
 	EKS       *v2.EKSConfig      `json:"eks,omitempty" yaml:"eks,omitempty"`
 	Env       string
 
-	Kind            *v2.ComponentKind `json:"kind,omitempty" yaml:"kind,omitempty"`
-	ModuleSource    *string           `json:"module_source" yaml:"module_source"`
-	OtherComponents []string          `json:"other_components" yaml:"other_components"`
-	Global          *Component        `json:"global" yaml:"global"`
+	Kind              *v2.ComponentKind  `json:"kind,omitempty" yaml:"kind,omitempty"`
+	ModuleSource      *string            `json:"module_source" yaml:"module_source"`
+	OtherComponents   []string           `json:"other_components" yaml:"other_components"`
+	ComponentBackends map[string]Backend `json:"component_backends" yaml:"component_backends"`
+	Global            *Component         `json:"global" yaml:"global"`
 }
 
 // Env is an env
@@ -392,6 +393,17 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			componentPlan.Global = &p.Global
 
 			envPlan.Components[componentName] = componentPlan
+		}
+
+		componentBackends := make(map[string]Backend)
+		for componentName, component := range envPlan.Components {
+			componentBackends[componentName] = component.Backend
+		}
+
+		for componentName := range envPlan.Components {
+			c := envPlan.Components[componentName]
+			c.ComponentBackends = componentBackends
+			envPlan.Components[componentName] = c
 		}
 
 		envPlans[envName] = envPlan

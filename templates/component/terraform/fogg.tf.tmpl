@@ -115,12 +115,12 @@ data "terraform_remote_state" "global" {
 }
 
 {{ $outer := . }}
-{{ range $component := .OtherComponents | sortAlpha  }}
+{{ range $component, $backend := .ComponentBackends  }}
 data "terraform_remote_state" "{{ $component }}" {
   backend = "s3"
 
   config = {
-    FIXME
+      {{ template "backend_inner" $backend }}
   }
 }
 {{ end }}
