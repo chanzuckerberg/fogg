@@ -120,24 +120,7 @@ data "terraform_remote_state" "global" {
 
 
 
-data "terraform_remote_state" "bam" {
-  backend = "s3"
 
-  config = {
-
-
-
-    bucket = "bucket"
-
-    key     = "terraform/foofoo/envs/bar/components/bam.tfstate"
-    encrypt = true
-    region  = "region"
-    profile = "foofoo"
-
-
-
-  }
-}
 
 
 # remote state for accounts

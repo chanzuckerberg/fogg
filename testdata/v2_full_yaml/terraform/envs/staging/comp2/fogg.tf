@@ -122,6 +122,7 @@ data "terraform_remote_state" "global" {
 
 
 
+
 data "terraform_remote_state" "comp1" {
   backend = "s3"
 
@@ -141,24 +142,9 @@ data "terraform_remote_state" "comp1" {
   }
 }
 
-data "terraform_remote_state" "comp2" {
-  backend = "s3"
-
-  config = {
 
 
 
-    bucket = "buck"
-
-    key     = "terraform/proj/envs/staging/components/comp2.tfstate"
-    encrypt = true
-    region  = "us-west-2"
-    profile = "profile"
-
-
-
-  }
-}
 
 data "terraform_remote_state" "comp_helm_template" {
   backend = "s3"
@@ -179,6 +165,8 @@ data "terraform_remote_state" "comp_helm_template" {
   }
 }
 
+
+
 data "terraform_remote_state" "vpc" {
   backend = "s3"
 
@@ -197,6 +185,7 @@ data "terraform_remote_state" "vpc" {
 
   }
 }
+
 
 
 # remote state for accounts

@@ -116,6 +116,7 @@ data "terraform_remote_state" "global" {
 
 {{ $outer := . }}
 {{ range $component, $backend := .ComponentBackends  }}
+{{ if ne $component $outer.Component }}
 data "terraform_remote_state" "{{ $component }}" {
   backend = "s3"
 
@@ -123,6 +124,7 @@ data "terraform_remote_state" "{{ $component }}" {
       {{ template "backend_inner" $backend }}
   }
 }
+{{ end }}
 {{ end }}
 
 # remote state for accounts

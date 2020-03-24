@@ -127,24 +127,8 @@ data "terraform_remote_state" "global" {
 
 
 
-data "terraform_remote_state" "datadog" {
-  backend = "s3"
-
-  config = {
 
 
-
-    bucket = "buck"
-
-    key     = "terraform/proj/envs/prod/components/datadog.tfstate"
-    encrypt = true
-    region  = "us-west-2"
-    profile = "profile"
-
-
-
-  }
-}
 
 data "terraform_remote_state" "hero" {
   backend = "s3"
@@ -164,6 +148,7 @@ data "terraform_remote_state" "hero" {
 
   }
 }
+
 
 
 # remote state for accounts
