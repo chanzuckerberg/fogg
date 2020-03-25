@@ -6,7 +6,6 @@ TF_VARS := $(patsubst %,-e%,$(filter TF_VAR_%,$(.VARIABLES)))
 REPO_ROOT := $(shell git rev-parse --show-toplevel)
 REPO_RELATIVE_PATH := $(shell git rev-parse --show-prefix)
 AUTO_APPROVE := false
-REFRESH_ENABLED ?= true # Should terraform refresh during plan/apply
 
 TFENV_DIR ?= $(REPO_ROOT)/.fogg/tfenv
 export PATH :=$(TFENV_DIR)/libexec:$(TFENV_DIR)/versions/$(TERRAFORM_VERSION)/:$(REPO_ROOT)/.fogg/bin:$(PATH)

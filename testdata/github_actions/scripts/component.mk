@@ -62,8 +62,12 @@ endif
 .PHONY: check-auth-heroku
 
 refresh:
-	@$(terraform_command) refresh $(TF_ARGS)
-	@date +%s > .terraform/refreshed_at
+	@if $(REFRESH_ENABLED) == "true" ]; then \
+		$(terraform_command) refresh $(TF_ARGS); \
+		date +%s > .terraform/refreshed_at; \
+	else \
+		echo "refresh disabled, skipping"; \
+	fi
 .PHONY: refresh
 
 refresh-cached:
