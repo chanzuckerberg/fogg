@@ -55,7 +55,7 @@ Fogg works entirely by generating code (terraform and make). It will generate di
 
 The basic workflow is –
 
-1. update fogg.json
+1. update fogg.yml
 2. run `fogg apply` to code generate
 3. use the generated Makefiles to run your Terraform commands
 

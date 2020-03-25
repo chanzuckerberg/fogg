@@ -21,18 +21,17 @@ var updateGoldenFiles = flag.Bool("update", false, "when set, rewrite the golden
 func TestIntegration(t *testing.T) {
 
 	var testCases = []struct {
-		fileName   string
-		configFile string
+		fileName string
 	}{
-		{"okta_provider_yaml", "fogg.yml"},
-		{"github_provider_yaml", "fogg.yml"},
-		{"bless_provider_yaml", "fogg.yml"},
-		{"snowflake_provider_yaml", "fogg.yml"},
-		{"v2_full_yaml", "fogg.yml"},
-		{"v2_minimal_valid_yaml", "fogg.yml"},
-		{"v2_no_aws_provider_yaml", "fogg.yml"},
-		{"github_actions", "fogg.yml"},
-		{"circleci", "fogg.yml"},
+		{"okta_provider_yaml"},
+		{"github_provider_yaml"},
+		{"bless_provider_yaml"},
+		{"snowflake_provider_yaml"},
+		{"v2_full_yaml"},
+		{"v2_minimal_valid_yaml"},
+		{"v2_no_aws_provider_yaml"},
+		{"github_actions"},
+		{"circleci"},
 	}
 
 	for _, tc := range testCases {
@@ -42,17 +41,16 @@ func TestIntegration(t *testing.T) {
 			testdataFs := afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(util.ProjectRoot(), "testdata", tc.fileName))
 
 			if *updateGoldenFiles {
-				// delete all files except fogg.json
+				// delete all files except fogg.yml
 				e := afero.Walk(testdataFs, ".", func(path string, info os.FileInfo, err error) error {
-					fmt.Printf("\n\n HERE:%s \n\n", path)
-					if !info.IsDir() && !(path == tc.configFile) {
+					if !info.IsDir() && !(path == "fogg.yml") {
 						return testdataFs.Remove(path)
 					}
 					return nil
 				})
 				r.NoError(e)
 
-				conf, e := config.FindAndReadConfig(testdataFs, tc.configFile)
+				conf, e := config.FindAndReadConfig(testdataFs, "fogg.yml")
 				r.NoError(e)
 				fmt.Printf("conf %#v\n", conf)
 				fmt.Println("READ CONFIG")
@@ -68,10 +66,10 @@ func TestIntegration(t *testing.T) {
 				fs, _, e := util.TestFs()
 				r.NoError(e)
 
-				// copy tc.configFile into the tmp test dir (so that it doesn't show up as a diff)
+				// copy fogg.yml into the tmp test dir (so that it doesn't show up as a diff)
 				configContents, e := afero.ReadFile(testdataFs, fileName)
 				if os.IsNotExist(e) { //If the error is related to the file being non-existent
-					fileName = tc.configFile
+					fileName = "fogg.yml"
 					configContents, e = afero.ReadFile(testdataFs, fileName)
 				}
 				r.NoError(e)
