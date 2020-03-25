@@ -12,7 +12,13 @@ export PATH :=$(TFENV_DIR)/libexec:$(TFENV_DIR)/versions/$(TERRAFORM_VERSION)/:$
 export TF_PLUGIN_CACHE_DIR=$(REPO_ROOT)/.terraform.d/plugin-cache
 export TF_IN_AUTOMATION=1
 terraform_command ?= $(TFENV_DIR)/versions/$(TERRAFORM_VERSION)/terraform
-MODE ?= local
+
+ifeq ($(TF_BACKEND_KIND),remote)
+	REFRESH := true
+else
+	REFRESH := false
+endif
+
 
 tfenv: ## install the tfenv tool
 	@if [ ! -d ${TFENV_DIR} ]; then \

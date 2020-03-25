@@ -3,11 +3,6 @@
 
 SELF_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 CHECK_PLANFILE_PATH ?= check-plan.output
-ifeq ($(TF_BACKEND_KIND),remote)
-	REFRESH := true
-else
-	REFRESH := false
-endif
 
 include $(SELF_DIR)/common.mk
 
@@ -91,7 +86,7 @@ plan: check-auth init fmt refresh-cached ## run a terraform plan
 .PHONY: plan
 
 apply: check-auth init refresh ## run a terraform apply
-	@$(terraform_command) apply $(TF_ARGS) -refresh=false -auto-approve=$(AUTO_APPROVE)
+	@$(terraform_command) apply $(TF_ARGS) -refresh=$(REFRESH) -auto-approve=$(AUTO_APPROVE)
 .PHONY: apply
 
 docs:
