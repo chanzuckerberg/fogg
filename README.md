@@ -104,13 +104,14 @@ And if you ever decide to stop using it, you have a working repo you can take in
 
 ## Releasing
 
-The release process is mostly automated. To run a release, first make sure of a few things–
+The release process is mostly automated but has some rough edges. To run a release follow these steps
 
 1. you are running docker
 1. you have access to write to [chanzuckerberg/homebrew-tap](https://github.com/chanzuckerberg/homebrew-tap)
+1. ensure that you have a `GITHUB_TOKEN` environment variable set that has permissions to do releases on this project
+1. run `git clean -fdx`
 1. you have run `make setup`
-
-Once those preconditions are met, you should be able to 'just' run `make release`.
+1. run `make release`
 
 ## Contributing
 
