@@ -62,11 +62,11 @@ endif
 .PHONY: check-auth-heroku
 
 refresh:
-	@if $(REFRESH_ENABLED) == "true" ]; then \
+	@if [ $(TF_BACKEND_KIND) != "remote" ]; then \
 		$(terraform_command) refresh $(TF_ARGS); \
 		date +%s > .terraform/refreshed_at; \
 	else \
-		echo "refresh disabled, skipping"; \
+		echo "remote backend does not support the refresh command, skipping"; \
 	fi
 .PHONY: refresh
 
@@ -82,11 +82,11 @@ refresh-cached:
 .PHONY: refresh-cached
 
 plan: check-auth init fmt refresh-cached ## run a terraform plan
-	@$(terraform_command) plan $(TF_ARGS) -refresh=false -input=false
+	$(terraform_command) plan $(TF_ARGS) -refresh=$(REFRESH) -input=false
 .PHONY: plan
 
 apply: check-auth init refresh ## run a terraform apply
-	@$(terraform_command) apply $(TF_ARGS) -refresh=false -auto-approve=$(AUTO_APPROVE)
+	@$(terraform_command) apply $(TF_ARGS) -refresh=$(REFRESH) -auto-approve=$(AUTO_APPROVE)
 .PHONY: apply
 
 docs:
