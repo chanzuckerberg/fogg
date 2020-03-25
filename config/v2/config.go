@@ -30,8 +30,6 @@ func ReadConfig(fs afero.Fs, b []byte, configFile string) (*Config, error) {
 	switch ext {
 	case ".yml", ".yaml":
 		e = yaml.Unmarshal(b, c)
-	case ".json":
-		e = json.Unmarshal(b, c)
 	default:
 		return nil, errs.NewUserf("File type %s is not supported", ext)
 	}

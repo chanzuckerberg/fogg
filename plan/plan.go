@@ -145,8 +145,8 @@ type SnowflakeProvider struct {
 
 //OktaProvider represents Okta configuration
 type OktaProvider struct {
-	OrgName string  `json:"org_name,omitempty"`
-	Version *string `json:"version,omitempty"`
+	OrgName string  `yaml:"org_name,omitempty"`
+	Version *string `yaml:"version,omitempty"`
 }
 
 //BlessProvider represents Bless ssh provider configuration

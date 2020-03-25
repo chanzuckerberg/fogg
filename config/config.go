@@ -2,7 +2,6 @@ package config
 
 import (
 	"io/ioutil"
-	"os"
 	"path/filepath"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
@@ -53,17 +52,6 @@ func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVe
 // FindConfig loads a config and its version into memory
 func FindConfig(fs afero.Fs, configFile string) ([]byte, int, error) {
 	f, err := fs.Open(configFile)
-	if os.IsNotExist(err) {
-		//TODO(ec): Remove this deprecation warning
-		_, e := os.Stat("fogg.json")
-		if e == nil { //If a fogg.json exists
-			logrus.Warn(
-				`A fogg.json file was detected. Fogg now supports fogg.yml
-by default. Run 'fogg migrate' to update the config file
-to fogg.yml or use a -c flag to specify configuration file location
-`)
-		}
-	}
 	if err != nil {
 		return nil, 0, errs.NewUserf("could not open %s config file", configFile)
 	}
