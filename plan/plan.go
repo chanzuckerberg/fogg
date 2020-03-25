@@ -254,10 +254,7 @@ func Eval(c *v2.Config) (*Plan, error) {
 
 	var err error
 	p.Global = p.buildGlobal(c)
-	p.Accounts, err = p.buildAccounts(c)
-	if err != nil {
-		return nil, err
-	}
+	p.Accounts = p.buildAccounts(c)
 	p.Envs, err = p.buildEnvs(c)
 	if err != nil {
 		return nil, err
@@ -282,7 +279,7 @@ func Print(p *Plan) error {
 	return nil
 }
 
-func (p *Plan) buildAccounts(c *v2.Config) (map[string]Account, error) {
+func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 	defaults := c.Defaults
 
 	accountPlans := make(map[string]Account, len(c.Accounts))
@@ -314,7 +311,7 @@ func (p *Plan) buildAccounts(c *v2.Config) (map[string]Account, error) {
 		accountPlans[acctName] = a
 	}
 
-	return accountPlans, nil
+	return accountPlans
 }
 
 func (p *Plan) buildModules(c *v2.Config) map[string]Module {

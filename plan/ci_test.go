@@ -38,8 +38,7 @@ func Test_buildTravisCI_Disabled(t *testing.T) {
 			},
 		}
 		p := &Plan{}
-		accts, err := p.buildAccounts(c)
-		r.NoError(err)
+		accts := p.buildAccounts(c)
 		p.Accounts = accts
 		tr := p.buildTravisCIConfig(c, "0.1.0")
 		r.NotNil(tr)
@@ -92,8 +91,7 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 	r.Len(w, 0)
 
 	p := &Plan{}
-	accts, err := p.buildAccounts(c)
-	r.NoError(err)
+	accts := p.buildAccounts(c)
 	r.Len(accts, 1)
 	p.Accounts = accts
 	tr := p.buildTravisCIConfig(c, "0.1.0")
@@ -151,8 +149,7 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 	r.Len(w, 0)
 
 	p := &Plan{}
-	accts, err := p.buildAccounts(c)
-	r.NoError(err)
+	accts := p.buildAccounts(c)
 	p.Accounts = accts
 	tr := p.buildTravisCIConfig(c, "0.1.0")
 	r.NotNil(p.Accounts["foo"].Providers.AWS)
@@ -206,8 +203,7 @@ func Test_buildCircleCI_Profiles(t *testing.T) {
 	r.Len(w, 0)
 
 	p := &Plan{}
-	accts, err := p.buildAccounts(c)
-	r.NoError(err)
+	accts := p.buildAccounts(c)
 	p.Accounts = accts
 	circle := p.buildCircleCIConfig(c, "0.1.0")
 	r.Len(circle.AWSProfiles, 2)
@@ -267,8 +263,7 @@ func Test_buildCircleCI_ProfilesDisabled(t *testing.T) {
 	r.Len(w, 0)
 
 	p := &Plan{}
-	accts, err := p.buildAccounts(c)
-	r.NoError(err)
+	accts := p.buildAccounts(c)
 	p.Accounts = accts
 	circle := p.buildCircleCIConfig(c, "0.1.0")
 	r.Len(circle.AWSProfiles, 0)

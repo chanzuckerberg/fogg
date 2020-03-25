@@ -144,23 +144,7 @@ func TestResolveEKSConfig(t *testing.T) {
 func TestRemoteBackendPlan(t *testing.T) {
 	r := require.New(t)
 
-	b, e := util.TestFile("remote_backend_yaml")
-	r.NoError(e)
-
-	fs, _, err := util.TestFs()
-	r.NoError(err)
-	err = afero.WriteFile(fs, "fogg.yml", b, 0644)
-	r.NoError(err)
-	c2, err := v2.ReadConfig(fs, b, "fogg.yml")
-	r.Nil(err)
-
-	w, err := c2.Validate()
-	r.NoError(err)
-	r.Len(w, 0)
-
-	plan, e := Eval(c2)
-	r.NoError(e)
-	r.NotNil(plan)
+	plan := buildPlan(t, "remote_backend_yaml")
 
 	r.NotNil(plan.Global)
 	r.NotNil(plan.Global.Backend.Kind)
@@ -185,6 +169,7 @@ func buildPlan(t *testing.T, testfile string) *Plan {
 
 	plan, e := Eval(c2)
 	r.NoError(e)
+	r.NotNil(plan)
 
 	return plan
 }
