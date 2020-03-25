@@ -22,6 +22,7 @@ type Plan struct {
 	CircleCI        CircleCIConfig        `json:"github_actions_ci" yaml:"github_actions_ci"`
 	GitHubActionsCI GitHubActionsCIConfig `json:"circle_ci" yaml:"circle_ci"`
 	Version         string                `json:"version" yaml:"version"`
+	TerraformIgnore []string              `json:"terraform_ignore" yaml:"terraform_ignore"`
 }
 
 // Common represents common fields
@@ -266,6 +267,7 @@ func Eval(c *v2.Config) (*Plan, error) {
 	p.TravisCI = p.buildTravisCIConfig(c, v)
 	p.CircleCI = p.buildCircleCIConfig(c, v)
 	p.GitHubActionsCI = p.buildGitHubActionsConfig(c, v)
+	p.TerraformIgnore = p.buildTerraformIgnore()
 
 	return p, nil
 }
@@ -620,4 +622,28 @@ func resolveAccounts(accounts map[string]v2.Account) map[string]*json.Number {
 		a[name] = acctID
 	}
 	return a
+}
+
+func (p *Plan) buildTerraformIgnore() []string {
+	// start with a static list that applies to every repository
+	ignores := []string{
+		".git/",
+		".fogg/",
+		".terraform.d/",
+		"terraform/global/.terraform/plugins/",
+	}
+
+	for a := range p.Accounts {
+		ignores = append(ignores, fmt.Sprintf("terraform/accounts/%s/.terraform/plugins/", a))
+	}
+
+	for envName, env := range p.Envs {
+		for componentName, component := range env.Components {
+			if component.Kind.GetOrDefault() == v2.ComponentKindTerraform {
+				ignores = append(ignores, fmt.Sprintf("terraform/envs/%s/%s/.terraform/plugins/", envName, componentName))
+			}
+		}
+	}
+
+	return ignores
 }

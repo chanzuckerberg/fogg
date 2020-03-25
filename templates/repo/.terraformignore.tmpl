@@ -1,0 +1,4 @@
+{{ template "fogg_header" }}
+{{ range $i := .TerraformIgnore | sortAlpha }}
+{{ $i }}{{ end }}
+

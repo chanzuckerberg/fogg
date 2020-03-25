@@ -166,3 +166,49 @@ func TestRemoteBackendPlan(t *testing.T) {
 	r.NotNil(plan.Global.Backend.Kind)
 	r.Equal(plan.Global.Backend.Kind, BackendKindRemote)
 }
+
+func buildPlan(t *testing.T, testfile string) *Plan {
+	r := require.New(t)
+	b, e := util.TestFile(testfile)
+	r.NoError(e)
+
+	fs, _, err := util.TestFs()
+	r.NoError(err)
+	err = afero.WriteFile(fs, "fogg.yml", b, 0644)
+	r.NoError(err)
+	c2, err := v2.ReadConfig(fs, b, "fogg.yml")
+	r.Nil(err)
+
+	w, err := c2.Validate()
+	r.NoError(err)
+	r.Len(w, 0)
+
+	plan, e := Eval(c2)
+	r.NoError(e)
+
+	return plan
+}
+
+func Test_buildTerraformIgnore(t *testing.T) {
+	r := require.New(t)
+
+	p := buildPlan(t, "v2_full_yaml")
+
+	r.NotNil(p)
+
+	expected := []string{
+		".git/",
+		".fogg/",
+		".terraform.d/",
+		"terraform/global/.terraform/plugins/",
+		"terraform/accounts/foo/.terraform/plugins/",
+		"terraform/accounts/bar/.terraform/plugins/",
+		"terraform/envs/prod/hero/.terraform/plugins/",
+		"terraform/envs/prod/datadog/.terraform/plugins/",
+		"terraform/envs/staging/comp1/.terraform/plugins/",
+		"terraform/envs/staging/comp2/.terraform/plugins/",
+		"terraform/envs/staging/vpc/.terraform/plugins/",
+	}
+
+	r.ElementsMatch(expected, p.TerraformIgnore)
+}
