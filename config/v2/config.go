@@ -39,111 +39,111 @@ func ReadConfig(fs afero.Fs, b []byte, configFile string) (*Config, error) {
 }
 
 type Config struct {
-	Accounts map[string]Account `json:"accounts,omitempty" yaml:"accounts,omitempty"`
-	Defaults Defaults           `json:"defaults" yaml:"defaults" validate:"required"`
-	Docker   bool               `json:"docker,omitempty" yaml:"docker,omitempty"`
-	Envs     map[string]Env     `json:"envs,omitempty" yaml:"envs,omitempty"`
-	Global   Component          `json:"global,omitempty" yaml:"global,omitempty"`
-	Modules  map[string]Module  `json:"modules,omitempty" yaml:"modules,omitempty"`
-	Plugins  Plugins            `json:"plugins,omitempty" yaml:"plugins,omitempty"`
-	Version  int                `json:"version,omitempty" yaml:"version,omitempty" validate:"required,eq=2"`
+	Accounts map[string]Account `yaml:"accounts,omitempty"`
+	Defaults Defaults           `yaml:"defaults" validate:"required"`
+	Docker   bool               `yaml:"docker,omitempty"`
+	Envs     map[string]Env     `yaml:"envs,omitempty"`
+	Global   Component          `yaml:"global,omitempty"`
+	Modules  map[string]Module  `yaml:"modules,omitempty"`
+	Plugins  Plugins            `yaml:"plugins,omitempty"`
+	Version  int                `validate:"required,eq=2"`
 }
 
 type Common struct {
-	Backend          *Backend          `json:"backend,omitempty" yaml:"backend,omitempty"`
-	ExtraVars        map[string]string `json:"extra_vars,omitempty" yaml:"extra_vars,omitempty"`
-	Owner            *string           `json:"owner,omitempty" yaml:"owner,omitempty"`
-	Project          *string           `json:"project,omitempty" yaml:"project,omitempty"`
-	Providers        *Providers        `json:"providers,omitempty" yaml:"providers,omitempty"`
-	TerraformVersion *string           `json:"terraform_version,omitempty" yaml:"terraform_version,omitempty"`
-	Tools            *Tools            `json:"tools,omitempty" yaml:"tools,omitempty"`
+	Backend          *Backend          `yaml:"backend,omitempty"`
+	ExtraVars        map[string]string `yaml:"extra_vars,omitempty"`
+	Owner            *string           `yaml:"owner,omitempty"`
+	Project          *string           `yaml:"project,omitempty"`
+	Providers        *Providers        `yaml:"providers,omitempty"`
+	TerraformVersion *string           `yaml:"terraform_version,omitempty"`
+	Tools            *Tools            `yaml:"tools,omitempty"`
 }
 
 type Defaults struct {
-	Common `json:",inline" yaml:",inline"`
+	Common `yaml:",inline"`
 }
 
 type Account struct {
-	Common `json:",inline" yaml:",inline"`
+	Common `yaml:",inline"`
 }
 
 type Tools struct {
-	TravisCI        *TravisCI        `json:"travis_ci,omitempty" yaml:"travis_ci,omitempty"`
-	CircleCI        *CircleCI        `json:"circle_ci,omitempty" yaml:"circle_ci,omitempty"`
-	GitHubActionsCI *GitHubActionsCI `json:"github_actions_ci,omitempty" yaml:"github_actions_ci,omitempty"`
-	TfLint          *TfLint          `json:"tflint,omitempty" yaml:"tflint,omitempty"`
+	TravisCI        *TravisCI        `yaml:"travis_ci,omitempty"`
+	CircleCI        *CircleCI        `yaml:"circle_ci,omitempty"`
+	GitHubActionsCI *GitHubActionsCI `yaml:"github_actions_ci,omitempty"`
+	TfLint          *TfLint          `yaml:"tflint,omitempty"`
 }
 
 type CircleCI struct {
-	CommonCI `json:",inline" yaml:",inline"`
+	CommonCI `yaml:",inline"`
 
-	SSHKeyFingerprints []string `json:"ssh_key_fingerprints" yaml:"ssh_key_fingerprints"`
+	SSHKeyFingerprints []string `yaml:"ssh_key_fingerprints"`
 }
 
 type GitHubActionsCI struct {
-	CommonCI `json:",inline" yaml:",inline"`
+	CommonCI `yaml:",inline"`
 }
 
 type Env struct {
-	Common `json:",inline" yaml:",inline"`
+	Common `yaml:",inline"`
 
-	Components map[string]Component `json:"components,omitempty" yaml:"components,omitempty"`
+	Components map[string]Component `yaml:"components,omitempty"`
 }
 
 type Component struct {
-	Common `json:",inline" yaml:",inline"`
+	Common `yaml:",inline"`
 
-	EKS          *EKSConfig     `json:"eks,omitempty" yaml:"eks,omitempty"`
-	Kind         *ComponentKind `json:"kind,omitempty" yaml:"kind,omitempty"`
-	ModuleSource *string        `json:"module_source,omitempty" yaml:"module_source,omitempty"`
+	EKS          *EKSConfig     `yaml:"eks,omitempty"`
+	Kind         *ComponentKind `yaml:"kind,omitempty"`
+	ModuleSource *string        `yaml:"module_source,omitempty"`
 }
 
 type Providers struct {
-	AWS       *AWSProvider       `json:"aws,omitempty" yaml:"aws,omitempty"`
-	Bless     *BlessProvider     `json:"bless,omitempty" yaml:"bless,omitempty"`
-	Github    *GithubProvider    `json:"github,omitempty" yaml:"github,omitempty"`
-	Heroku    *HerokuProvider    `json:"heroku,omitempty" yaml:"heroku,omitempty"`
-	Okta      *OktaProvider      `json:"okta,omitempty" yaml:"okta,omitempty"`
-	Snowflake *SnowflakeProvider `json:"snowflake,omitempty" yaml:"snowflake,omitempty"`
-	Datadog   *DatadogProvider   `json:"datadog,omitempty" yaml:"datadog,omitempty"`
+	AWS       *AWSProvider       `yaml:"aws,omitempty"`
+	Bless     *BlessProvider     `yaml:"bless,omitempty"`
+	Github    *GithubProvider    `yaml:"github,omitempty"`
+	Heroku    *HerokuProvider    `yaml:"heroku,omitempty"`
+	Okta      *OktaProvider      `yaml:"okta,omitempty"`
+	Snowflake *SnowflakeProvider `yaml:"snowflake,omitempty"`
+	Datadog   *DatadogProvider   `yaml:"datadog,omitempty"`
 }
 
 // OktaProvider is an okta provider
 type OktaProvider struct {
 	// the okta provider is optional (above) but if supplied you must set an OrgName
-	OrgName *string `json:"org_name,omitempty" yaml:"org_name,omitempty"`
-	Version *string `json:"version,omitempty" yaml:"version,omitempty"`
+	OrgName *string `yaml:"org_name,omitempty"`
+	Version *string `yaml:"version,omitempty"`
 }
 
 // BlessProvider allows for terraform-provider-bless configuration
 type BlessProvider struct {
 	// the bless provider is optional (above) but if supplied you must set a region and aws_profile
-	AdditionalRegions []string `json:"additional_regions,omitempty" yaml:"additional_regions,omitempty"`
-	AWSProfile        *string  `json:"aws_profile,omitempty" yaml:"aws_profile,omitempty"`
-	AWSRegion         *string  `json:"aws_region,omitempty" yaml:"aws_region,omitempty"`
-	Version           *string  `json:"version,omitempty" yaml:"version,omitempty"`
+	AdditionalRegions []string `yaml:"additional_regions,omitempty"`
+	AWSProfile        *string  `yaml:"aws_profile,omitempty"`
+	AWSRegion         *string  `yaml:"aws_region,omitempty"`
+	Version           *string  `yaml:"version,omitempty"`
 }
 
 type AWSProvider struct {
 	// the aws provider is optional (above) but if supplied you must set account id and region
-	AccountID         *json.Number `json:"account_id,omitempty" yaml:"account_id,omitempty"`
-	AdditionalRegions []string     `json:"additional_regions,omitempty" yaml:"additional_regions,omitempty"`
-	Profile           *string      `json:"profile,omitempty" yaml:"profile,omitempty"`
-	Region            *string      `json:"region,omitempty" yaml:"region,omitempty"`
-	Version           *string      `json:"version,omitempty" yaml:"version,omitempty"`
+	AccountID         *json.Number `yaml:"account_id,omitempty"`
+	AdditionalRegions []string     `yaml:"additional_regions,omitempty"`
+	Profile           *string      `yaml:"profile,omitempty"`
+	Region            *string      `yaml:"region,omitempty"`
+	Version           *string      `yaml:"version,omitempty"`
 }
 
 type GithubProvider struct {
-	Organization *string `json:"organization,omitempty" yaml:"organization,omitempty"`
-	BaseURL      *string `json:"base_url,omitempty" yaml:"base_url,omitempty"`
-	Version      *string `json:"version,omitempty" yaml:"version,omitempty"`
+	Organization *string `yaml:"organization,omitempty"`
+	BaseURL      *string `yaml:"base_url,omitempty"`
+	Version      *string `yaml:"version,omitempty"`
 }
 
 type SnowflakeProvider struct {
-	Account *string `json:"account,omitempty" yaml:"account,omitempty"`
-	Role    *string `json:"role,omitempty" yaml:"role,omitempty"`
-	Region  *string `json:"region,omitempty" yaml:"region,omitempty"`
-	Version *string `json:"version,omitempty" yaml:"version,omitempty"`
+	Account *string `yaml:"account,omitempty"`
+	Role    *string `yaml:"role,omitempty"`
+	Region  *string `yaml:"region,omitempty"`
+	Version *string `yaml:"version,omitempty"`
 }
 
 type HerokuProvider struct{}
@@ -152,49 +152,49 @@ type DatadogProvider struct{}
 
 //Backend is used to configure a terraform backend
 type Backend struct {
-	Type        *string `json:"type,omitempty" yaml:"type,omitempty" validate:"omitempty,oneof=s3"`
-	AccountID   *string `json:"account_id,omitempty" yaml:"account_id,omitempty"`
-	Bucket      *string `json:"bucket,omitempty" yaml:"bucket,omitempty"`
-	DynamoTable *string `json:"dynamodb_table,omitempty" yaml:"dynamodb_table,omitempty"`
-	Profile     *string `json:"profile,omitempty" yaml:"profile,omitempty"`
-	Region      *string `json:"region,omitempty" yaml:"region,omitempty"`
+	Type        *string `validate:"omitempty,oneof=s3"`
+	AccountID   *string `yaml:"account_id,omitempty"`
+	Bucket      *string `yaml:"bucket,omitempty"`
+	DynamoTable *string `yaml:"dynamodb_table,omitempty"`
+	Profile     *string `yaml:"profile,omitempty"`
+	Region      *string `yaml:"region,omitempty"`
 }
 
 // Module is a module
 type Module struct {
-	TerraformVersion *string `json:"terraform_version,omitempty" yaml:"terraform_version,omitempty"`
+	TerraformVersion *string `yaml:"terraform_version,omitempty"`
 }
 
 // Plugins contains configuration around plugins
 type Plugins struct {
-	CustomPlugins      map[string]*plugins.CustomPlugin `json:"custom_plugins,omitempty" yaml:"custom_plugins,omitempty"`
-	TerraformProviders map[string]*plugins.CustomPlugin `json:"terraform_providers,omitempty" yaml:"terraform_providers,omitempty"`
+	CustomPlugins      map[string]*plugins.CustomPlugin `yaml:"custom_plugins,omitempty"`
+	TerraformProviders map[string]*plugins.CustomPlugin `yaml:"terraform_providers,omitempty"`
 }
 
 type TravisCI struct {
-	CommonCI `json:",inline" yaml:",inline"`
+	CommonCI `yaml:",inline"`
 }
 
 type CommonCI struct {
-	Enabled        *bool                       `json:"enabled,omitempty" yaml:"enabled,omitempty"`
-	AWSIAMRoleName *string                     `json:"aws_iam_role_name" yaml:"aws_iam_role_name,omitempty"`
-	TestBuckets    *int                        `json:"test_buckets" yaml:"test_buckets,omitempty"`
-	Command        *string                     `json:"command,omitempty" yaml:"command,omitempty"`
-	Buildevents    *bool                       `json:"buildevents,omitempty" yaml:"buildevents,omitempty"`
-	Providers      map[string]CIProviderConfig `json:"providers,omitempty" yaml:"providers,omitempty"`
+	Enabled        *bool                       `yaml:"enabled,omitempty"`
+	AWSIAMRoleName *string                     `yaml:"aws_iam_role_name,omitempty"`
+	TestBuckets    *int                        `yaml:"test_buckets,omitempty"`
+	Command        *string                     `yaml:"command,omitempty"`
+	Buildevents    *bool                       `yaml:"buildevents,omitempty"`
+	Providers      map[string]CIProviderConfig `yaml:"providers,omitempty"`
 }
 
 type CIProviderConfig struct {
-	Disabled bool `json:"disabled,omitempty" yaml:"disabled,omitempty"`
+	Disabled bool `yaml:"disabled,omitempty"`
 }
 
 type TfLint struct {
-	Enabled *bool `json:"enabled,omitempty" yaml:"enabled,omitempty"`
+	Enabled *bool `yaml:"enabled,omitempty"`
 }
 
 // EKSConfig is the configuration for an eks cluster
 type EKSConfig struct {
-	ClusterName string `json:"cluster_name" yaml:"cluster_name"`
+	ClusterName string `yaml:"cluster_name"`
 }
 
 // ComponentKind is the kind of this component

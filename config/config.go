@@ -1,7 +1,6 @@
 package config
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -100,7 +99,7 @@ func FindAndReadConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
 }
 
 type ver struct {
-	Version int `json:"version" yaml:"version"`
+	Version int `yaml:"version"`
 }
 
 // detectVersion will detect the version of a config
@@ -117,8 +116,6 @@ func detectVersion(b []byte, fs afero.Fs, configFile string) (int, error) {
 	switch filepath.Ext(info.Name()) {
 	case ".yml", ".yaml":
 		err = yaml.Unmarshal(b, v)
-	case ".json":
-		err = json.Unmarshal(b, v)
 	default:
 		return 0, errs.NewUser("File type is not supported")
 	}

@@ -15,9 +15,7 @@ type Migration interface {
 
 //RunMigrations cycles through a list of migrations and applies them if necessary
 func RunMigrations(fs afero.Fs, configFile string, forceApply bool) error {
-	migrations := []Migration{
-		&JSONToYamlMigration{},
-	}
+	migrations := []Migration{}
 
 	for _, migration := range migrations {
 		shouldRun, err := migration.Guard(fs, configFile)

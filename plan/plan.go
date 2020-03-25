@@ -14,14 +14,14 @@ import (
 
 // Plan represents a set of actions to take
 type Plan struct {
-	Accounts        map[string]Account    `json:"account" yaml:"account"`
-	Envs            map[string]Env        `json:"envs" yaml:"envs"`
-	Global          Component             `json:"global" yaml:"global"`
-	Modules         map[string]Module     `json:"modules" yaml:"modules"`
-	TravisCI        TravisCIConfig        `json:"travis_ci" yaml:"travis_ci"`
-	CircleCI        CircleCIConfig        `json:"github_actions_ci" yaml:"github_actions_ci"`
-	GitHubActionsCI GitHubActionsCIConfig `json:"circle_ci" yaml:"circle_ci"`
-	Version         string                `json:"version" yaml:"version"`
+	Accounts        map[string]Account    `yaml:"account"`
+	Envs            map[string]Env        `yaml:"envs"`
+	Global          Component             `yaml:"global"`
+	Modules         map[string]Module     `yaml:"modules"`
+	TravisCI        TravisCIConfig        `yaml:"travis_ci"`
+	CircleCI        CircleCIConfig        `yaml:"github_actions_ci"`
+	GitHubActionsCI GitHubActionsCIConfig `yaml:"circle_ci"`
+	Version         string                `yaml:"version"`
 }
 
 // Common represents common fields
@@ -34,12 +34,12 @@ type Common struct {
 type ComponentCommon struct {
 	Common `yaml:",inline"`
 
-	Backend   Backend           `json:"backend" yaml:"backend"`
-	ExtraVars map[string]string `json:"extra_vars" yaml:"extra_vars"`
-	Owner     string            `json:"owner" yaml:"owner"`
-	Project   string            `json:"project" yaml:"project"`
-	Providers Providers         `json:"providers" yaml:"providers"`
-	TfLint    TfLint            `json:"tf_lint" yaml:"tf_lint"`
+	Backend   Backend           `yaml:"backend"`
+	ExtraVars map[string]string `yaml:"extra_vars"`
+	Owner     string            `yaml:"owner"`
+	Project   string            `yaml:"project"`
+	Providers Providers         `yaml:"providers"`
+	TfLint    TfLint            `yaml:"tf_lint"`
 
 	TravisCI        TravisCIComponent
 	CircleCI        CircleCIComponent
@@ -137,10 +137,10 @@ type GithubProvider struct {
 
 //SnowflakeProvider represents Snowflake DB provider configuration
 type SnowflakeProvider struct {
-	Account string  `json:"account,omitempty" yaml:"account,omitempty"`
-	Role    string  `json:"role,omitempty" yaml:"role,omitempty"`
-	Region  string  `json:"region,omitempty" yaml:"region,omitempty"`
-	Version *string `json:"version,omitempty" yaml:"version,omitempty"`
+	Account string  `yaml:"account,omitempty"`
+	Role    string  `yaml:"role,omitempty"`
+	Region  string  `yaml:"region,omitempty"`
+	Version *string `yaml:"version,omitempty"`
 }
 
 //OktaProvider represents Okta configuration
@@ -151,10 +151,10 @@ type OktaProvider struct {
 
 //BlessProvider represents Bless ssh provider configuration
 type BlessProvider struct {
-	AdditionalRegions []string `json:"additional_regions,omitempty" yaml:"additional_regions,omitempty"`
-	AWSProfile        string   `json:"aws_profile,omitempty" yaml:"aws_profile,omitempty"`
-	AWSRegion         string   `json:"aws_region,omitempty" yaml:"aws_region,omitempty"`
-	Version           *string  `json:"version,omitempty" yaml:"version,omitempty"`
+	AdditionalRegions []string `yaml:"additional_regions,omitempty"`
+	AWSProfile        string   `yaml:"aws_profile,omitempty"`
+	AWSRegion         string   `yaml:"aws_region,omitempty"`
+	Version           *string  `yaml:"version,omitempty"`
 }
 
 type HerokuProvider struct{}
@@ -179,21 +179,21 @@ type Backend struct {
 // S3Backend represents aws backend configuration
 type S3Backend struct {
 	AccountID   *string `yaml:"account_id,omitempty"`
-	AccountName string  `json:"account_name" yaml:"account_name"`
-	Profile     string  `json:"profile" yaml:"profile"`
-	Region      string  `json:"region" yaml:"region"`
-	Bucket      string  `json:"bucket" yaml:"bucket"`
-	DynamoTable *string `json:"dynamo_table" yaml:"dynamo_table"`
+	AccountName string  `yaml:"account_name"`
+	Profile     string  `yaml:"profile"`
+	Region      string  `yaml:"region"`
+	Bucket      string  `yaml:"bucket"`
+	DynamoTable *string `yaml:"dynamo_table"`
 }
 
 // Module is a module
 type Module struct {
-	Common `json:",inline" yaml:",inline"`
+	Common `yaml:",inline"`
 }
 
 // Account is an account
 type Account struct {
-	ComponentCommon `json:",inline" yaml:",inline"`
+	ComponentCommon `yaml:",inline"`
 
 	AllAccounts map[string]*json.Number `yaml:"all_accounts"`
 	AccountName string                  `yaml:"account_name"`
@@ -202,29 +202,29 @@ type Account struct {
 
 // Component is a component
 type Component struct {
-	ComponentCommon `json:",inline" yaml:",inline"`
+	ComponentCommon `yaml:",inline"`
 
-	Accounts  map[string]Account `json:"accounts" yaml:"accounts"` // Reference accounts for remote state
-	Component string             `json:"component" yaml:"component"`
-	EKS       *v2.EKSConfig      `json:"eks,omitempty" yaml:"eks,omitempty"`
+	Accounts  map[string]Account `yaml:"accounts"` // Reference accounts for remote state
+	Component string             `yaml:"component"`
+	EKS       *v2.EKSConfig      `yaml:"eks,omitempty"`
 	Env       string
 
-	Kind            *v2.ComponentKind `json:"kind,omitempty" yaml:"kind,omitempty"`
-	ModuleSource    *string           `json:"module_source" yaml:"module_source"`
-	OtherComponents []string          `json:"other_components" yaml:"other_components"`
-	Global          *Component        `json:"global" yaml:"global"`
+	Kind            *v2.ComponentKind `yaml:"kind,omitempty"`
+	ModuleSource    *string           `yaml:"module_source"`
+	OtherComponents []string          `yaml:"other_components"`
+	Global          *Component        `yaml:"global"`
 }
 
 // Env is an env
 type Env struct {
-	Components map[string]Component `json:"components" yaml:"components"`
-	Env        string               `json:"env" yaml:"env"`
-	EKS        *v2.EKSConfig        `json:"eks" yaml:"eks"`
+	Components map[string]Component `yaml:"components"`
+	Env        string               `yaml:"env"`
+	EKS        *v2.EKSConfig        `yaml:"eks"`
 }
 
 // TfLint containts a plan for running tflint
 type TfLint struct {
-	Enabled bool `json:"enabled" yaml:"enabled"`
+	Enabled bool `yaml:"enabled"`
 }
 
 // Eval evaluates a config
