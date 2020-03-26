@@ -309,16 +309,23 @@ func ResolveCircleCI(commons ...Common) *CircleCI {
 	enabled := false
 	buildevents := false
 	testCommand := "check"
+	var providers map[string]CIProviderConfig
 
 	for _, c := range commons {
 		if c.Tools != nil && c.Tools.CircleCI != nil && c.Tools.CircleCI.Enabled != nil {
 			enabled = *c.Tools.CircleCI.Enabled
 		}
+
 		if c.Tools != nil && c.Tools.CircleCI != nil && c.Tools.CircleCI.Command != nil {
 			testCommand = *c.Tools.CircleCI.Command
 		}
+
 		if c.Tools != nil && c.Tools.CircleCI != nil && c.Tools.CircleCI.Buildevents != nil {
 			buildevents = *c.Tools.CircleCI.Buildevents
+		}
+
+		if c.Tools != nil && c.Tools.CircleCI != nil {
+			providers = c.Tools.CircleCI.Providers
 		}
 	}
 
@@ -331,6 +338,7 @@ func ResolveCircleCI(commons ...Common) *CircleCI {
 			Buildevents:    &buildevents,
 			AWSIAMRoleName: roleName,
 			Command:        &testCommand,
+			Providers:      providers,
 		},
 		SSHKeyFingerprints: sshFingerprints,
 	}

@@ -41,8 +41,10 @@ var rootCmd = &cobra.Command{
 		return nil
 	},
 	PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
-		logrus.Info("stopping cpu profile")
-		pprof.StopCPUProfile()
+		if cpuprofile != "" {
+			logrus.Info("stopping cpu profile")
+			pprof.StopCPUProfile()
+		}
 		return nil
 	},
 }
