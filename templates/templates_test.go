@@ -18,10 +18,9 @@ func TestOpenTemplate(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		tLen    int
 		wantErr bool
 	}{
-		{"foo", args{temps.Account, "Makefile.tmpl"}, 10, false},
+		{"foo", args{temps.Account, "Makefile.tmpl"}, false},
 	}
 
 	for _, tt := range tests {
@@ -30,14 +29,13 @@ func TestOpenTemplate(t *testing.T) {
 			f, err := tt.args.box.Open(tt.args.path)
 			r.NoError(err)
 
-			temp, err := util.OpenTemplate(f, &temps.Common)
+			temp, err := util.OpenTemplate("foo", f, &temps.Common)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("OpenTemplate() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 
 			r.NotNil(temp.Templates())
-			r.Len(temp.Templates(), tt.tLen)
 		})
 	}
 }

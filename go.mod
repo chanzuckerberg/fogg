@@ -15,6 +15,7 @@ require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/bmatcuk/doublestar v1.2.1 // indirect
 	github.com/chanzuckerberg/go-misc v0.0.0-20191125152854-38391fa92cd1
+	github.com/davecgh/go-spew v1.1.1
 	github.com/fatih/color v1.9.0
 	github.com/go-errors/errors v1.0.1
 	github.com/go-logfmt/logfmt v0.4.0
@@ -35,6 +36,7 @@ require (
 	github.com/howeyc/gopass v0.0.0-20190910152052-7cb4b85ec19c // indirect
 	github.com/huandu/xstrings v1.2.1 // indirect
 	github.com/imdario/mergo v0.3.8 // indirect
+	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/jstemmer/go-junit-report v0.9.1 // indirect
 	github.com/kr/pretty v0.1.0
 	github.com/leodido/go-urn v1.2.0 // indirect

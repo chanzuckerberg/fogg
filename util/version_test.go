@@ -30,5 +30,4 @@ func TestParse(t *testing.T) {
 			r.Equal(tc.dirty, dirty)
 		})
 	}
-
 }

@@ -49,21 +49,7 @@
 
 terraform {
   required_version = "~>{{ .TerraformVersion }}"
-
-  backend "s3" {
-    bucket         = "{{ .Backend.S3.Bucket }}"
-    {{ if .Backend.S3.DynamoTable }}dynamodb_table = "{{ .Backend.S3.DynamoTable }}"{{ end }}
-    {{/* {%- if env is defined and component_name is defined %} */}}
-    key    = "terraform/{{ .Project }}/{{ .Component }}.tfstate"
-{{/*
-    {%- else %}
-    key    = "terraform/{{ project }}/global.tfstate"
-    {%- endif %}
-*/}}
-    encrypt = true
-    region = "{{ .Backend.S3.Region }}"
-    profile = "{{ .Backend.S3.Profile }}"
-  }
+  {{ template "backend" .Backend -}}
 }
 
 variable "env" {
@@ -118,19 +104,5 @@ variable "{{ $key }}" {
 }
 {{ end }}
 
-{{ $outer := . }}
-{{ range $component := .OtherComponents | sortAlpha  }}
-data "terraform_remote_state" "{{ $component }}" {
-  backend = "s3"
-
-  config = {
-    bucket         = "{{ $outer.Backend.S3.Bucket }}"
-    {{ if .Backend.S3.DynamoTable }}dynamodb_table = "{{ .Backend.S3.DynamoTable }}"{{ end }}
-    key            = "terraform/{{ $.Project }}/envs/{{ $outer.Env }}/components/{{ $component }}.tfstate"
-    region         = "{{ $outer.Backend.S3.Region }}"
-    profile        = "{{ $outer.Backend.S3.Profile }}"
-  }
-}
-{{ end }}
 
 {{ template "common_providers" }}

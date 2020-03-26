@@ -1,0 +1,9 @@
+{{ define "global_remote " }}
+data "terraform_remote_state" "global" {
+  backend = "{{ .Global.Backend.Kind }}"
+
+  config = {
+    {{ template "remote_backend" .Global.Backend }}
+  }
+}
+{{ end }}
