@@ -288,10 +288,13 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 
 		accountPlan.AccountName = name
 		accountPlan.ComponentCommon = resolveComponentCommon(defaults.Common, acct.Common)
+
 		if accountPlan.ComponentCommon.Backend.Kind == BackendKindS3 {
 			accountPlan.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/accounts/%s.tfstate", accountPlan.ComponentCommon.Project, name)
 		} else if accountPlan.ComponentCommon.Backend.Kind == BackendKindRemote {
 			accountPlan.ComponentCommon.Backend.Remote.Workspace = fmt.Sprintf("accounts-%s", name)
+		} else {
+			panic(fmt.Sprintf("Invalid backend kind of %s", accountPlan.ComponentCommon.Backend.Kind))
 		}
 
 		accountPlan.AllAccounts = resolveAccounts(c.Accounts) //FIXME this needs to run as a second phase, not directly from the config
@@ -340,11 +343,15 @@ func (p *Plan) buildGlobal(conf *v2.Config) Component {
 	global := conf.Global
 
 	componentPlan.ComponentCommon = resolveComponentCommon(defaults.Common, global.Common)
+
 	if componentPlan.ComponentCommon.Backend.Kind == BackendKindS3 {
 		componentPlan.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/global.tfstate", componentPlan.ComponentCommon.Project)
 	} else if componentPlan.ComponentCommon.Backend.Kind == BackendKindRemote {
 		componentPlan.ComponentCommon.Backend.Remote.Workspace = "global"
+	} else {
+		panic(fmt.Sprintf("Invalid backend kind of %s", componentPlan.ComponentCommon.Backend.Kind))
 	}
+
 	componentPlan.Component = "global"
 	componentPlan.OtherComponents = []string{}
 	componentPlan.ExtraVars = resolveExtraVars(defaults.ExtraVars, global.ExtraVars)
@@ -382,7 +389,10 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 				componentPlan.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/envs/%s/components/%s.tfstate", componentPlan.ComponentCommon.Project, envName, componentName)
 			} else if componentPlan.ComponentCommon.Backend.Kind == BackendKindRemote {
 				componentPlan.ComponentCommon.Backend.Remote.Workspace = fmt.Sprintf("%s-%s", envName, componentName)
+			} else {
+				panic(fmt.Sprintf("Invalid backend kind of %s", componentPlan.ComponentCommon.Backend.Kind))
 			}
+
 			componentPlan.Env = envName
 			componentPlan.Component = componentName
 			componentPlan.OtherComponents = otherComponentNames(conf.Envs[envName].Components, componentName)

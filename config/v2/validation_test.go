@@ -83,8 +83,8 @@ func TestValidateBackends(t *testing.T) {
 		genValid bool
 		wantErr  bool
 	}{
-		// {"invalid", false, true},
-		// {"s3", true, false},
+		{"invalid", false, true},
+		{"s3", true, false},
 		{"remote", true, false},
 	}
 

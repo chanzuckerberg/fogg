@@ -98,26 +98,41 @@ func ValidateBackend(backend *Backend, component string) error {
 
 	if backend.Kind == nil {
 		errs = multierror.Append(errs, fmt.Errorf("unable to resolve backend for component %s", component))
-	} else if *backend.Kind == "s3" {
+
+		return errs.ErrorOrNil()
+	}
+
+	if *backend.Kind == "s3" {
+
 		if backend.Bucket == nil {
 			errs = multierror.Append(errs, fmt.Errorf("when backend kind == 's3', bucket is required (component %s)", component))
 		}
+
 		if backend.Region == nil {
 			errs = multierror.Append(errs, fmt.Errorf("when backend kind == 's3', region is required (component %s)", component))
 		}
+
 		if backend.Profile == nil {
 			errs = multierror.Append(errs, fmt.Errorf("when backend kind == 's3', profile is required (component %s)", component))
 		}
-	} else if *backend.Kind == "remote" {
+
+		return errs.ErrorOrNil()
+	}
+
+	if *backend.Kind == "remote" {
+
 		if backend.HostName == nil {
 			errs = multierror.Append(errs, fmt.Errorf("when backend kind == 'remote', host_name is required (component %s)", component))
 		}
+
 		if backend.Organization == nil {
 			errs = multierror.Append(errs, fmt.Errorf("when backend kind == 'remote', organization is required (component %s)", component))
 		}
-	} else {
-		errs = multierror.Append(errs, fmt.Errorf("invalid backend kind %#v for component %s", backend.Kind, component))
+
+		return errs.ErrorOrNil()
 	}
+
+	errs = multierror.Append(errs, fmt.Errorf("invalid backend kind %#v for component %s", backend.Kind, component))
 
 	return errs.ErrorOrNil()
 }
