@@ -158,7 +158,9 @@ type BlessProvider struct {
 	Version           *string  `json:"version,omitempty" yaml:"version,omitempty"`
 }
 
-type HerokuProvider struct{}
+type HerokuProvider struct {
+	Version *string `yaml:"version,omitempty"`
+}
 
 type DatadogProvider struct{}
 
@@ -479,7 +481,9 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	var herokuPlan *HerokuProvider
 	herokuConfig := v2.ResolveHerokuProvider(commons...)
 	if herokuConfig != nil {
-		herokuPlan = &HerokuProvider{}
+		herokuPlan = &HerokuProvider{
+			Version: herokuConfig.Version,
+		}
 	}
 
 	var datadogPlan *DatadogProvider

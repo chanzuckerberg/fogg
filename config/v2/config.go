@@ -146,7 +146,9 @@ type SnowflakeProvider struct {
 	Version *string `json:"version,omitempty" yaml:"version,omitempty"`
 }
 
-type HerokuProvider struct{}
+type HerokuProvider struct {
+	Version *string `yaml:"version,omitempty"`
+}
 
 type DatadogProvider struct{}
 
