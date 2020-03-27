@@ -6,7 +6,7 @@
 
 
 
-provider "snowflake" {
+provider snowflake {
   account = "foo"
   role    = "bar"
   region  = "us-west-2"
@@ -28,7 +28,7 @@ provider "snowflake" {
 terraform {
   required_version = "=1.1.1"
 
-  backend "s3" {
+  backend s3 {
 
     bucket = "bucket"
 
@@ -41,7 +41,7 @@ terraform {
 
 }
 
-variable "project" {
+variable project {
   type    = string
   default = "foo"
 }
@@ -50,13 +50,13 @@ variable "project" {
 
 
 
-variable "owner" {
+variable owner {
   type    = string
   default = "foo@example.com"
 }
 
 # map of aws_accounts
-variable "aws_accounts" {
+variable aws_accounts {
   type = map
   default = {
 
@@ -67,7 +67,7 @@ variable "aws_accounts" {
 
 
 
-data "terraform_remote_state" "global" {
+data terraform_remote_state global {
   backend = "s3"
 
   config = {

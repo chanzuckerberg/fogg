@@ -11,7 +11,7 @@
 
 
 // https://github.com/articulate/terraform-provider-okta
-provider "okta" {
+provider okta {
   version  = "~>aversion"
   org_name = "orgname"
 }
@@ -27,7 +27,7 @@ provider "okta" {
 terraform {
   required_version = "=1.1.1"
 
-  backend "s3" {
+  backend s3 {
 
     bucket = "bucket"
 
@@ -40,7 +40,7 @@ terraform {
 
 }
 
-variable "project" {
+variable project {
   type    = string
   default = "foofoo"
 }
@@ -49,13 +49,13 @@ variable "project" {
 
 
 
-variable "owner" {
+variable owner {
   type    = string
   default = "foo@example.com"
 }
 
 # map of aws_accounts
-variable "aws_accounts" {
+variable aws_accounts {
   type = map
   default = {
 
@@ -66,7 +66,7 @@ variable "aws_accounts" {
 
 
 
-data "terraform_remote_state" "global" {
+data terraform_remote_state global {
   backend = "s3"
 
   config = {

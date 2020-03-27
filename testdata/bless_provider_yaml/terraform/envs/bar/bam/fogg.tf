@@ -8,21 +8,21 @@
 
 
 
-provider "bless" {
+provider bless {
   version = "~>0.0.0"
   region  = "bar"
   profile = "foofoofoo"
 }
 
 
-provider "bless" {
+provider bless {
   alias   = "a"
   version = "~>0.0.0"
   region  = "a"
   profile = "foofoofoo"
 }
 
-provider "bless" {
+provider bless {
   alias   = "b"
   version = "~>0.0.0"
   region  = "b"
@@ -44,7 +44,7 @@ terraform {
   required_version = "~>1.1.1"
 
 
-  backend "s3" {
+  backend s3 {
 
     bucket = "bucket"
 
@@ -57,19 +57,19 @@ terraform {
 
 }
 
-variable "env" {
+variable env {
   type    = string
   default = "bar"
 }
 
-variable "project" {
+variable project {
   type    = string
   default = "foofoo"
 }
 
 
 
-variable "component" {
+variable component {
   type    = string
   default = "bam"
 }
@@ -77,12 +77,12 @@ variable "component" {
 
 
 
-variable "owner" {
+variable owner {
   type    = string
   default = "foo@example.com"
 }
 
-variable "tags" {
+variable tags {
   type = map(string)
   default = {
     project   = "foofoo"
@@ -95,7 +95,7 @@ variable "tags" {
 
 
 
-data "terraform_remote_state" "global" {
+data terraform_remote_state global {
   backend = "s3"
 
   config = {
@@ -118,7 +118,7 @@ data "terraform_remote_state" "global" {
 
 # remote state for accounts
 
-data "terraform_remote_state" "foo" {
+data terraform_remote_state foo {
   backend = "s3 "
 
   config = {
@@ -136,7 +136,7 @@ data "terraform_remote_state" "foo" {
 
 
 # map of aws_accounts
-variable "aws_accounts" {
+variable aws_accounts {
   type = map
   default = {
 
