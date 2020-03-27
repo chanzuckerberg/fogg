@@ -3,7 +3,7 @@
 
 {{if .Providers.AWS}}
   # Default Provider
-  provider "aws" {
+  provider aws {
     version = "~> {{ .Providers.AWS.Version }}"
     region = "{{ .Providers.AWS.Region }}"
     profile = "{{ .Providers.AWS.Profile }}"
@@ -13,7 +13,7 @@
   # Aliased Providers (for doing things in every region).
   {{ $outer := . -}}
   {{ range $region := .Providers.AWS.AdditionalRegions }}
-    provider "aws" {
+    provider aws {
       alias = "{{ $region }}"
       version = "~> {{ $outer.Providers.AWS.Version }}"
       region = "{{ $region }}"
@@ -49,42 +49,35 @@
 
 terraform {
   required_version = "={{ .TerraformVersion }}"
-
-  backend "s3" {
-    bucket         = "{{ .Backend.S3.Bucket }}"
-    {{ if .Backend.S3.DynamoTable }}dynamodb_table = "{{ .Backend.S3.DynamoTable }}"{{ end }}
-    key            = "terraform/{{ .Project }}/accounts/{{ .AccountName }}.tfstate"
-    encrypt        = true
-    region         = "{{ .Backend.S3.Region }}"
-    profile        = "{{ .Backend.S3.Profile }}"
-  }
+{{ template "backend" .Backend }}
 }
 
-variable "project" {
+variable project {
   type    =  string
   default = "{{ .Project }}"
 }
 
 {{ if .Providers.AWS }}
-  variable "region" {
+  variable region {
     type    =  string
     default = "{{ .Providers.AWS.Region }}"
   }
 {{ end }}
 
 {{if .Providers.AWS}}
-  variable "aws_profile" {
+  variable aws_profile {
     type =  string
     default =  "{{ .Providers.AWS.Profile }}"
   }
 {{ end }}
 
-variable "owner" {
+variable owner {
   type =  string
   default = "{{ .Owner }}"
 }
 
-variable "aws_accounts" {
+# map of aws_accounts
+variable aws_accounts {
   type =  map
   default = {
   {{ range $account, $id := .AllAccounts }}
@@ -96,36 +89,28 @@ variable "aws_accounts" {
 }
 
 {{ range $key, $val := .ExtraVars }}
-variable "{{ $key }}" {
+variable {{ $key }} {
   type =  string
   default = "{{ $val }}"
 }
 {{ end }}
 
-data "terraform_remote_state" "global" {
-  backend = "s3"
+data terraform_remote_state global {
+  backend = "{{ .Global.Backend.Kind }}"
 
   config = {
-    bucket         = "{{ .Global.Backend.S3.Bucket }}"
-    {{ if .Backend.S3.DynamoTable }}dynamodb_table = "{{ .Global.Backend.S3.DynamoTable }}"{{ end }}
-    key            = "terraform/{{ .Global.Project }}/global.tfstate"
-    region         = "{{ .Global.Backend.S3.Region }}"
-    {{ if .Global.Backend.S3.Profile }}profile        = "{{ .Global.Backend.S3.Profile }}"{{ end }}
+    {{ template "remote_backend" .Global.Backend }}
   }
 }
 
 {{ $outer := . }}
-{{ range $accountName, $accountID := .AllAccounts}}
+{{ range $accountName, $backend := .AccountBackends}}
 {{ if ne $accountName $outer.AccountName }}
-data "terraform_remote_state" "{{ $accountName }}" {
-  backend = "s3"
+data terraform_remote_state {{ $accountName }} {
+  backend = "{{ $backend.Kind }}"
 
   config = {
-    bucket = "{{ $outer.Backend.S3.Bucket }}"
-    {{ if $outer.Backend.S3.DynamoTable }}dynamodb_table = "{{ $outer.Backend.S3.DynamoTable }}"{{ end }}
-    key            = "terraform/{{ $outer.Project }}/accounts/{{ $accountName }}.tfstate"
-    region         = "{{ $outer.Backend.S3.Region }}"
-    {{ if $outer.Backend.S3.Profile }}profile        = "{{ $outer.Backend.S3.Profile }}"{{ end }}
+    {{ template "remote_backend" $backend }}
   }
 }
 {{ end }}

@@ -12,7 +12,7 @@
 
 
 
-provider "github" {
+provider github {
   organization = "foo"
   base_url     = "https://example.com/"
 }
@@ -28,43 +28,43 @@ provider "github" {
 terraform {
   required_version = "~>1.1.1"
 
-  backend "s3" {
+  backend s3 {
+
     bucket = "bucket"
 
-
-    key = "terraform/foo/global.tfstate"
-
+    key     = "terraform/foo/global.tfstate"
     encrypt = true
     region  = "region"
     profile = "foo"
+
   }
 }
 
-variable "env" {
+variable env {
   type    = string
   default = ""
 }
 
-variable "project" {
+variable project {
   type    = string
   default = "foo"
 }
 
 
 
-variable "component" {
+variable component {
   type    = string
   default = "global"
 }
 
 
 
-variable "owner" {
+variable owner {
   type    = string
   default = "foo@example.com"
 }
 
-variable "tags" {
+variable tags {
   type = map(string)
   default = {
     project   = "foo"
@@ -74,8 +74,6 @@ variable "tags" {
     managedBy = "terraform"
   }
 }
-
-
 
 
 

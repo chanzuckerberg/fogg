@@ -2,7 +2,7 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 {{ if .Providers.AWS }}
-  provider "aws" {
+  provider aws {
     version = "~> {{ .Providers.AWS.Version }}"
     region = "{{ .Providers.AWS.Region }}"
     profile = "{{ .Providers.AWS.Profile }}"
@@ -12,7 +12,7 @@
   # Aliased Providers (for doing things in every region).
   {{ $p := .Providers.AWS }}
   {{ range $region := .Providers.AWS.AdditionalRegions }}
-    provider "aws" {
+    provider aws {
       alias = "{{ $region }}"
       version = "~> {{ $p.Version }}"
       region = "{{ $region }}"
@@ -49,58 +49,44 @@
 
 terraform {
   required_version = "~>{{ .TerraformVersion }}"
-
-  backend "s3" {
-    bucket         = "{{ .Backend.S3.Bucket }}"
-    {{ if .Backend.S3.DynamoTable }}dynamodb_table = "{{ .Backend.S3.DynamoTable }}"{{ end }}
-    {{/* {%- if env is defined and component_name is defined %} */}}
-    key    = "terraform/{{ .Project }}/{{ .Component }}.tfstate"
-{{/*
-    {%- else %}
-    key    = "terraform/{{ project }}/global.tfstate"
-    {%- endif %}
-*/}}
-    encrypt = true
-    region = "{{ .Backend.S3.Region }}"
-    profile = "{{ .Backend.S3.Profile }}"
-  }
+  {{ template "backend" .Backend -}}
 }
 
-variable "env" {
+variable env {
   type    =  string
   default = "{{ .Env }}"
 }
 
-variable "project" {
+variable project {
   type    =  string
   default = "{{ .Project }}"
 }
 
 {{ if .Providers.AWS }}
-  variable "region" {
+  variable region {
     type    =  string
     default = "{{ .Providers.AWS.Region }}"
   }
 {{ end }}
 
-variable "component" {
+variable component {
   type =  string
   default = "{{ .Component }}"
 }
 
 {{ if .Providers.AWS }}
-  variable "aws_profile" {
+  variable aws_profile {
     type =  string
     default =  "{{ .Providers.AWS.Profile }}"
   }
 {{ end }}
 
-variable "owner" {
+variable owner {
   type =  string
   default = "{{ .Owner }}"
 }
 
-variable "tags" {
+variable tags {
   type =  map(string)
   default = {
     project   = "{{ .Project }}"
@@ -112,25 +98,11 @@ variable "tags" {
 }
 
 {{ range $key, $val := .ExtraVars }}
-variable "{{ $key }}" {
+variable {{ $key }} {
   type =  string
   default = "{{ $val }}"
 }
 {{ end }}
 
-{{ $outer := . }}
-{{ range $component := .OtherComponents | sortAlpha  }}
-data "terraform_remote_state" "{{ $component }}" {
-  backend = "s3"
-
-  config = {
-    bucket         = "{{ $outer.Backend.S3.Bucket }}"
-    {{ if .Backend.S3.DynamoTable }}dynamodb_table = "{{ .Backend.S3.DynamoTable }}"{{ end }}
-    key            = "terraform/{{ $.Project }}/envs/{{ $outer.Env }}/components/{{ $component }}.tfstate"
-    region         = "{{ $outer.Backend.S3.Region }}"
-    profile        = "{{ $outer.Backend.S3.Profile }}"
-  }
-}
-{{ end }}
 
 {{ template "common_providers" }}

@@ -2,7 +2,7 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 
-provider "aws" {
+provider aws {
   version             = "~> 0.12.0"
   region              = "us-west-2"
   profile             = "profile"
@@ -30,55 +30,56 @@ provider "aws" {
 terraform {
   required_version = "~>0.100.0"
 
-  backend "s3" {
+
+  backend s3 {
+
     bucket = "buck"
 
-
-    key = "terraform/proj/envs/staging/components/comp2.tfstate"
-
-
+    key     = "terraform/proj/envs/staging/components/comp2.tfstate"
     encrypt = true
     region  = "us-west-2"
     profile = "profile"
+
   }
+
 }
 
-variable "env" {
+variable env {
   type    = string
   default = "staging"
 }
 
-variable "project" {
+variable project {
   type    = string
   default = "proj"
 }
 
 
-variable "region" {
+variable region {
   type    = string
   default = "us-west-2"
 }
 
 
-variable "component" {
+variable component {
   type    = string
   default = "comp2"
 }
 
 
-variable "aws_profile" {
+variable aws_profile {
   type    = string
   default = "profile"
 }
 
 
 
-variable "owner" {
+variable owner {
   type    = string
   default = "foo@example.com"
 }
 
-variable "tags" {
+variable tags {
   type = map(string)
   default = {
     project   = "proj"
@@ -90,80 +91,124 @@ variable "tags" {
 }
 
 
-variable "foo" {
+variable foo {
   type    = string
   default = "bar2"
 }
 
 
-data "terraform_remote_state" "global" {
+data terraform_remote_state global {
   backend = "s3"
 
   config = {
+
+
     bucket = "buck"
 
     key     = "terraform/proj/global.tfstate"
     region  = "us-west-2"
     profile = "profile"
+
+
   }
 }
 
 
 
-data "terraform_remote_state" "comp1" {
+
+data terraform_remote_state comp1 {
   backend = "s3"
 
   config = {
+
+
     bucket = "buck"
 
     key     = "terraform/proj/envs/staging/components/comp1.tfstate"
     region  = "us-west-2"
-    profile = "profile"
+    profile = "comp1"
+
+
   }
 }
 
-data "terraform_remote_state" "vpc" {
+
+
+
+
+data terraform_remote_state comp_helm_template {
   backend = "s3"
 
   config = {
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/envs/staging/components/comp_helm_template.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
+  }
+}
+
+
+
+data terraform_remote_state vpc {
+  backend = "s3"
+
+  config = {
+
+
     bucket = "buck"
 
     key     = "terraform/proj/envs/staging/components/vpc.tfstate"
     region  = "us-west-2"
     profile = "profile"
+
+
   }
 }
 
 
+
 # remote state for accounts
 
-data "terraform_remote_state" "bar" {
+data terraform_remote_state bar {
   backend = "s3"
 
   config = {
+
+
     bucket = "buck"
 
     key     = "terraform/proj/accounts/bar.tfstate"
     region  = "us-west-2"
     profile = "profile"
+
+
   }
 }
 
-data "terraform_remote_state" "foo" {
+data terraform_remote_state foo {
   backend = "s3"
 
   config = {
+
+
     bucket = "buck"
 
     key     = "terraform/proj/accounts/foo.tfstate"
     region  = "us-west-2"
     profile = "profile"
+
+
   }
 }
 
 
 # map of aws_accounts
-variable "aws_accounts" {
+variable aws_accounts {
   type = map
   default = {
 

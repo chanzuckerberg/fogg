@@ -96,7 +96,6 @@ func FindAndReadConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
 	default:
 		return nil, errs.NewUser("could not figure out config file version")
 	}
-
 }
 
 type ver struct {

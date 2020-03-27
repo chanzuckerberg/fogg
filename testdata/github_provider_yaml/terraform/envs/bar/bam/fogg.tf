@@ -12,7 +12,7 @@
 
 
 
-provider "github" {
+provider github {
   organization = "foo"
   base_url     = "https://example.com/"
 }
@@ -27,32 +27,33 @@ provider "github" {
 terraform {
   required_version = "~>1.1.1"
 
-  backend "s3" {
+
+  backend s3 {
+
     bucket = "bucket"
 
-
-    key = "terraform/foo/envs/bar/components/bam.tfstate"
-
-
+    key     = "terraform/foo/envs/bar/components/bam.tfstate"
     encrypt = true
     region  = "region"
     profile = "foo"
+
   }
+
 }
 
-variable "env" {
+variable env {
   type    = string
   default = "bar"
 }
 
-variable "project" {
+variable project {
   type    = string
   default = "foo"
 }
 
 
 
-variable "component" {
+variable component {
   type    = string
   default = "bam"
 }
@@ -60,12 +61,12 @@ variable "component" {
 
 
 
-variable "owner" {
+variable owner {
   type    = string
   default = "foo@example.com"
 }
 
-variable "tags" {
+variable tags {
   type = map(string)
   default = {
     project   = "foo"
@@ -78,38 +79,48 @@ variable "tags" {
 
 
 
-data "terraform_remote_state" "global" {
+data terraform_remote_state global {
   backend = "s3"
 
   config = {
+
+
     bucket = "bucket"
 
     key     = "terraform/foo/global.tfstate"
     region  = "region"
     profile = "foo"
+
+
   }
 }
+
+
 
 
 
 
 # remote state for accounts
 
-data "terraform_remote_state" "foo" {
+data terraform_remote_state foo {
   backend = "s3"
 
   config = {
+
+
     bucket = "bucket"
 
     key     = "terraform/foo/accounts/foo.tfstate"
     region  = "region"
     profile = "foo"
+
+
   }
 }
 
 
 # map of aws_accounts
-variable "aws_accounts" {
+variable aws_accounts {
   type = map
   default = {
 

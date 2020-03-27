@@ -18,32 +18,33 @@
 terraform {
   required_version = "~>0.100.0"
 
-  backend "s3" {
+
+  backend s3 {
+
     bucket = "buck"
 
-
-    key = "terraform/proj/envs/staging/components/vpc.tfstate"
-
-
+    key     = "terraform/proj/envs/staging/components/vpc.tfstate"
     encrypt = true
     region  = "us-west-2"
     profile = "profile"
+
   }
+
 }
 
-variable "env" {
+variable env {
   type    = string
   default = "staging"
 }
 
-variable "project" {
+variable project {
   type    = string
   default = "proj"
 }
 
 
 
-variable "component" {
+variable component {
   type    = string
   default = "vpc"
 }
@@ -51,12 +52,12 @@ variable "component" {
 
 
 
-variable "owner" {
+variable owner {
   type    = string
   default = "foo@example.com"
 }
 
-variable "tags" {
+variable tags {
   type = map(string)
   default = {
     project   = "proj"
@@ -68,23 +69,29 @@ variable "tags" {
 }
 
 
-variable "foo" {
+variable foo {
   type    = string
   default = "bar3"
 }
 
 
-data "terraform_remote_state" "global" {
+data terraform_remote_state global {
   backend = "s3"
 
   config = {
+
+
     bucket = "buck"
 
     key     = "terraform/proj/global.tfstate"
     region  = "us-west-2"
     profile = "profile"
+
+
   }
 }
+
+
 
 
 
@@ -93,7 +100,7 @@ data "terraform_remote_state" "global" {
 
 
 # map of aws_accounts
-variable "aws_accounts" {
+variable aws_accounts {
   type = map
   default = {
 

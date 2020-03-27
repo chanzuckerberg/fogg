@@ -1,0 +1,34 @@
+{{ define "backend" }}
+  backend {{ .Kind }} {
+  {{ if eq .Kind "s3" }}
+    bucket         = "{{ .S3.Bucket }}"
+    {{ if .S3.DynamoTable }}dynamodb_table = "{{ .S3.DynamoTable }}"{{ end }}
+    key            = "{{ .S3.KeyPath }}"
+    encrypt = true
+    region = "{{ .S3.Region }}"
+    profile = "{{ .S3.Profile }}"
+  {{ else if eq .Kind "remote" }}
+    hostname = "{{ .Remote.HostName }}"
+    organization = "{{ .Remote.Organization }}"
+    workspaces {
+      name = "{{ .Remote.Workspace }}"
+    }
+  {{ end }}
+  }
+{{ end }}
+
+{{ define "remote_backend" }}
+  {{ if eq .Kind "s3" }}
+    bucket         = "{{ .S3.Bucket }}"
+    {{ if .S3.DynamoTable }}dynamodb_table = "{{ .S3.DynamoTable }}"{{ end }}
+    key            = "{{ .S3.KeyPath }}"
+    region = "{{ .S3.Region }}"
+    profile = "{{ .S3.Profile }}"
+  {{ else if eq .Kind "remote" }}
+    hostname = "{{ .Remote.HostName }}"
+    organization = "{{ .Remote.Organization }}"
+    workspaces = {
+      name = "{{ .Remote.Workspace }}"
+    }
+  {{ end }}
+{{ end }}

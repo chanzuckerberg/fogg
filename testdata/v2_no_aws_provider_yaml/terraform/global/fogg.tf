@@ -19,43 +19,43 @@
 terraform {
   required_version = "~>0.100.0"
 
-  backend "s3" {
+  backend s3 {
+
     bucket = "buck"
 
-
-    key = "terraform/proj/global.tfstate"
-
+    key     = "terraform/proj/global.tfstate"
     encrypt = true
     region  = "us-west-2"
     profile = "profile"
+
   }
 }
 
-variable "env" {
+variable env {
   type    = string
   default = ""
 }
 
-variable "project" {
+variable project {
   type    = string
   default = "proj"
 }
 
 
 
-variable "component" {
+variable component {
   type    = string
   default = "global"
 }
 
 
 
-variable "owner" {
+variable owner {
   type    = string
   default = "foo@example.com"
 }
 
-variable "tags" {
+variable tags {
   type = map(string)
   default = {
     project   = "proj"
@@ -67,12 +67,10 @@ variable "tags" {
 }
 
 
-variable "foo" {
+variable foo {
   type    = string
   default = "bar1"
 }
-
-
 
 
 

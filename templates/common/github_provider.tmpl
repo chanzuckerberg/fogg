@@ -1,6 +1,6 @@
 {{define "github_provider"}}
 
-provider "github" {
+provider github {
   organization = "{{ .Organization }}"
   {{ if .BaseURL -}}
   base_url = "{{ .BaseURL }}"

@@ -78,7 +78,7 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 	r.Len(w, 0)
 
 	plan, e := Eval(c2)
-	r.Nil(e)
+	r.NoError(e)
 	r.NotNil(plan)
 	r.NotNil(plan.Accounts)
 	r.Len(plan.Accounts, 2)
@@ -123,6 +123,15 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 	r.Equal("bar2", plan.Envs["staging"].Components["comp1"].ExtraVars["foo"])
 	// component overwrite env
 	r.Equal("bar3", plan.Envs["staging"].Components["vpc"].ExtraVars["foo"])
+
+	r.Equal("terraform/proj/accounts/bar.tfstate", plan.Accounts["bar"].Backend.S3.KeyPath)
+	r.Equal("terraform/proj/accounts/foo.tfstate", plan.Accounts["foo"].Backend.S3.KeyPath)
+
+	r.Len(plan.Accounts["foo"].AccountBackends, 2)
+	r.NotNil(plan.Accounts["foo"].AccountBackends["bar"])
+	r.Equal(BackendKindS3, plan.Accounts["foo"].AccountBackends["bar"].Kind)
+	r.NotNil(plan.Accounts["foo"].AccountBackends["bar"].S3)
+	r.Equal("terraform/proj/accounts/bar.tfstate", plan.Accounts["foo"].AccountBackends["bar"].S3.KeyPath)
 }
 
 func TestResolveEKSConfig(t *testing.T) {
@@ -130,4 +139,61 @@ func TestResolveEKSConfig(t *testing.T) {
 	r.Equal("", resolveEKSConfig(nil, nil).ClusterName)
 	r.Equal("a", resolveEKSConfig(&v2.EKSConfig{ClusterName: "a"}, nil).ClusterName)
 	r.Equal("b", resolveEKSConfig(&v2.EKSConfig{ClusterName: "a"}, &v2.EKSConfig{ClusterName: "b"}).ClusterName)
+}
+
+func TestRemoteBackendPlan(t *testing.T) {
+	r := require.New(t)
+
+	plan := buildPlan(t, "remote_backend_yaml")
+
+	r.NotNil(plan.Global)
+	r.NotNil(plan.Global.Backend.Kind)
+	r.Equal(plan.Global.Backend.Kind, BackendKindRemote)
+}
+
+func buildPlan(t *testing.T, testfile string) *Plan {
+	r := require.New(t)
+	b, e := util.TestFile(testfile)
+	r.NoError(e)
+
+	fs, _, err := util.TestFs()
+	r.NoError(err)
+	err = afero.WriteFile(fs, "fogg.yml", b, 0644)
+	r.NoError(err)
+	c2, err := v2.ReadConfig(fs, b, "fogg.yml")
+	r.Nil(err)
+
+	w, err := c2.Validate()
+	r.NoError(err)
+	r.Len(w, 0)
+
+	plan, e := Eval(c2)
+	r.NoError(e)
+	r.NotNil(plan)
+
+	return plan
+}
+
+func Test_buildTerraformIgnore(t *testing.T) {
+	r := require.New(t)
+
+	p := buildPlan(t, "v2_full_yaml")
+
+	r.NotNil(p)
+
+	expected := []string{
+		".git/",
+		".fogg/",
+		".terraform.d/",
+		"terraform/global/.terraform/plugins/",
+		"terraform/accounts/foo/.terraform/plugins/",
+		"terraform/accounts/bar/.terraform/plugins/",
+		"terraform/envs/prod/hero/.terraform/plugins/",
+		"terraform/envs/prod/datadog/.terraform/plugins/",
+		"terraform/envs/staging/comp1/.terraform/plugins/",
+		"terraform/envs/staging/comp2/.terraform/plugins/",
+		"terraform/envs/staging/vpc/.terraform/plugins/",
+	}
+
+	r.ElementsMatch(expected, p.TerraformIgnore)
 }
