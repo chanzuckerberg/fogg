@@ -279,6 +279,8 @@ github.com/hashicorp/terraform-svchost v0.0.0-20191119180714-d2e4933b9136 h1:81D
 github.com/hashicorp/terraform-svchost v0.0.0-20191119180714-d2e4933b9136/go.mod h1:kNDNcF7sN4DocDLBkQYz73HGKwN1ANB1blq4lIYLYvg=
 github.com/hashicorp/vault v0.10.4/go.mod h1:KfSyffbKxoVyspOdlaGVjIuwLobi07qD1bAbosPMpP0=
 github.com/hashicorp/yamux v0.0.0-20180604194846-3520598351bb/go.mod h1:+NfK9FKeTrX5uv1uIXGdwYDTeHna2qgaIlx54MXqjAM=
+github.com/haya14busa/goverage v0.0.0-20180129164344-eec3514a20b5 h1:FdBGmSkD2QpQzRWup//SGObvWf2nq89zj9+ta9OvI3A=
+github.com/haya14busa/goverage v0.0.0-20180129164344-eec3514a20b5/go.mod h1:0YZ2wQSuwviXXXGUiK6zXzskyBLAbLXhamxzcFHSLoM=
 github.com/honeycombio/libhoney-go v1.12.0/go.mod h1:jdLxh51fcBTy6XIpx1efuJmHePs2xUfVkw25lr+hsmg=
 github.com/howeyc/gopass v0.0.0-20190910152052-7cb4b85ec19c h1:aY2hhxLhjEAbfXOx2nRJxCXezC6CO2V/yN+OCr1srtk=
 github.com/howeyc/gopass v0.0.0-20190910152052-7cb4b85ec19c/go.mod h1:lADxMC39cJJqL93Duh1xhAs4I2Zs8mKS89XWXFGp9cs=
