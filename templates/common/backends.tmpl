@@ -1,5 +1,5 @@
 {{ define "backend" }}
-  backend "{{ .Kind }}" {
+  backend {{ .Kind }} {
   {{ if eq .Kind "s3" }}
     bucket         = "{{ .S3.Bucket }}"
     {{ if .S3.DynamoTable }}dynamodb_table = "{{ .S3.DynamoTable }}"{{ end }}

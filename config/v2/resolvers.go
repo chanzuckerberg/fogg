@@ -240,8 +240,10 @@ func ResolveDatadogProvider(commons ...Common) *DatadogProvider {
 		p = c.Providers.Datadog
 	}
 
+	version := lastNonNil(DatadogProviderVersionGetter, commons...)
+
 	if version != nil {
-		return &HerokuProvider{
+		return &DatadogProvider{
 			Version: version,
 		}
 	} else {
@@ -562,6 +564,13 @@ func HerokuProviderVersionGetter(comm Common) *string {
 		return nil
 	}
 	return comm.Providers.Heroku.Version
+}
+
+func DatadogProviderVersionGetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.Datadog == nil {
+		return nil
+	}
+	return comm.Providers.Datadog.Version
 }
 
 func OktaProviderVersionGetter(comm Common) *string {

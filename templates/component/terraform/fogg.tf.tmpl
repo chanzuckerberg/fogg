@@ -2,7 +2,7 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 {{ if .Providers.AWS }}
-  provider "aws" {
+  provider aws {
     version = "~> {{ .Providers.AWS.Version }}"
     region = "{{ .Providers.AWS.Region }}"
     profile = "{{ .Providers.AWS.Profile }}"
@@ -12,7 +12,7 @@
   # Aliased Providers (for doing things in every region).
   {{ $outer := . }}
   {{ range $region := .Providers.AWS.AdditionalRegions }}
-    provider "aws" {
+    provider aws {
       alias = "{{ $region }}"
       version = "~> {{ $outer.Providers.AWS.Version }}"
       region = "{{ $region }}"
@@ -53,42 +53,42 @@ terraform {
   {{ template "backend" .Backend }}
 }
 
-variable "env" {
+variable env {
   type    =  string
   default = "{{ .Env }}"
 }
 
-variable "project" {
+variable project {
   type    =  string
   default = "{{ .Project }}"
 }
 
 {{if .Providers.AWS}}
-  variable "region" {
+  variable region {
     type    =  string
     default = "{{ .Providers.AWS.Region }}"
   }
 {{ end }}
 
-variable "component" {
+variable component {
   type =  string
   default = "{{ .Component }}"
 }
 
 {{if .Providers.AWS}}
-  variable "aws_profile" {
+  variable aws_profile {
     type =  string
     default =  "{{ .Providers.AWS.Profile }}"
   }
 {{ end }}
 
 
-variable "owner" {
+variable owner {
   type =  string
   default = "{{ .Owner }}"
 }
 
-variable "tags" {
+variable tags {
   type =  map(string)
   default = {
     project   = "{{ .Project }}"
@@ -100,14 +100,14 @@ variable "tags" {
 }
 
 {{ range $key, $val := .ExtraVars }}
-variable "{{ $key }}" {
+variable {{ $key }} {
   type =  string
   default = "{{ $val }}"
 }
 {{ end }}
 
-data "terraform_remote_state" "global" {
-  backend = "s3"
+data terraform_remote_state global {
+  backend = "{{ .Global.Backend.Kind }}"
 
   config = {
     {{ template "remote_backend" .Global.Backend }}
@@ -117,8 +117,8 @@ data "terraform_remote_state" "global" {
 {{ $outer := . }}
 {{ range $component, $backend := .ComponentBackends  }}
 {{ if ne $component $outer.Component }}
-data "terraform_remote_state" "{{ $component }}" {
-  backend = "s3"
+data terraform_remote_state {{ $component }} {
+  backend = "{{ $backend.Kind }}"
 
   config = {
       {{ template "remote_backend" $backend }}
@@ -129,8 +129,8 @@ data "terraform_remote_state" "{{ $component }}" {
 
 # remote state for accounts
 {{ range $accountName, $account := .Accounts }}
-data "terraform_remote_state" "{{ $accountName }}" {
-  backend = "s3"
+data terraform_remote_state {{ $accountName }} {
+  backend = "{{ $account.Backend.Kind }}"
 
   config = {
     {{ template "remote_backend" $account.Backend }}
@@ -139,7 +139,7 @@ data "terraform_remote_state" "{{ $accountName }}" {
 {{ end }}
 
 # map of aws_accounts
-variable "aws_accounts" {
+variable aws_accounts {
   type =  map
   default = {
   {{ range $accountName, $account := .Accounts }}

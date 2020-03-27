@@ -3,7 +3,7 @@
 
 
 # Default Provider
-provider "aws" {
+provider aws {
   version             = "~> 0.12.0"
   region              = "us-west-2"
   profile             = "profile"
@@ -29,7 +29,7 @@ provider "aws" {
 terraform {
   required_version = "=0.100.0"
 
-  backend "s3" {
+  backend s3 {
 
     bucket = "buck"
 
@@ -42,32 +42,32 @@ terraform {
 
 }
 
-variable "project" {
+variable project {
   type    = string
   default = "proj"
 }
 
 
-variable "region" {
+variable region {
   type    = string
   default = "us-west-2"
 }
 
 
 
-variable "aws_profile" {
+variable aws_profile {
   type    = string
   default = "profile"
 }
 
 
-variable "owner" {
+variable owner {
   type    = string
   default = "foo@example.com"
 }
 
 # map of aws_accounts
-variable "aws_accounts" {
+variable aws_accounts {
   type = map
   default = {
 
@@ -83,13 +83,13 @@ variable "aws_accounts" {
 }
 
 
-variable "foo" {
+variable foo {
   type    = string
   default = "bar1"
 }
 
 
-data "terraform_remote_state" "global" {
+data terraform_remote_state global {
   backend = "s3"
 
   config = {
@@ -108,7 +108,7 @@ data "terraform_remote_state" "global" {
 
 
 
-data "terraform_remote_state" "bar" {
+data terraform_remote_state bar {
   backend = "s3"
 
   config = {

@@ -1,7 +1,6 @@
 {{define "heroku_provider"}}
-provider "heroku" {
+provider heroku {
 {{ if .Version -}}
-version = "~>{{ .Version }}"
+  version = "~>{{ .Version }}"
 {{ end -}}
-}
 {{ end }}

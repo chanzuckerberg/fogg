@@ -3,7 +3,7 @@
 
 {{if .Providers.AWS}}
   # Default Provider
-  provider "aws" {
+  provider aws {
     version = "~> {{ .Providers.AWS.Version }}"
     region = "{{ .Providers.AWS.Region }}"
     profile = "{{ .Providers.AWS.Profile }}"
@@ -13,7 +13,7 @@
   # Aliased Providers (for doing things in every region).
   {{ $outer := . -}}
   {{ range $region := .Providers.AWS.AdditionalRegions }}
-    provider "aws" {
+    provider aws {
       alias = "{{ $region }}"
       version = "~> {{ $outer.Providers.AWS.Version }}"
       region = "{{ $region }}"
@@ -52,32 +52,32 @@ terraform {
 {{ template "backend" .Backend }}
 }
 
-variable "project" {
+variable project {
   type    =  string
   default = "{{ .Project }}"
 }
 
 {{ if .Providers.AWS }}
-  variable "region" {
+  variable region {
     type    =  string
     default = "{{ .Providers.AWS.Region }}"
   }
 {{ end }}
 
 {{if .Providers.AWS}}
-  variable "aws_profile" {
+  variable aws_profile {
     type =  string
     default =  "{{ .Providers.AWS.Profile }}"
   }
 {{ end }}
 
-variable "owner" {
+variable owner {
   type =  string
   default = "{{ .Owner }}"
 }
 
 # map of aws_accounts
-variable "aws_accounts" {
+variable aws_accounts {
   type =  map
   default = {
   {{ range $account, $id := .AllAccounts }}
@@ -89,13 +89,13 @@ variable "aws_accounts" {
 }
 
 {{ range $key, $val := .ExtraVars }}
-variable "{{ $key }}" {
+variable {{ $key }} {
   type =  string
   default = "{{ $val }}"
 }
 {{ end }}
 
-data "terraform_remote_state" "global" {
+data terraform_remote_state global {
   backend = "{{ .Global.Backend.Kind }}"
 
   config = {
@@ -106,7 +106,7 @@ data "terraform_remote_state" "global" {
 {{ $outer := . }}
 {{ range $accountName, $backend := .AccountBackends}}
 {{ if ne $accountName $outer.AccountName }}
-data "terraform_remote_state" "{{ $accountName }}" {
+data terraform_remote_state {{ $accountName }} {
   backend = "{{ $backend.Kind }}"
 
   config = {

@@ -492,7 +492,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	datadogConfig := v2.ResolveDatadogProvider(commons...)
 	if datadogConfig != nil {
 		datadogPlan = &DatadogProvider{
-			Version: datadogConfig.Version
+			Version: datadogConfig.Version,
 		}
 	}
 
