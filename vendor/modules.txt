@@ -235,6 +235,8 @@ github.com/hashicorp/terraform-config-inspect/tfconfig
 github.com/hashicorp/terraform-svchost
 github.com/hashicorp/terraform-svchost/auth
 github.com/hashicorp/terraform-svchost/disco
+# github.com/haya14busa/goverage v0.0.0-20180129164344-eec3514a20b5
+## explicit
 # github.com/howeyc/gopass v0.0.0-20190910152052-7cb4b85ec19c
 ## explicit
 github.com/howeyc/gopass
