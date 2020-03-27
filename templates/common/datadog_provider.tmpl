@@ -1,4 +1,7 @@
 {{define "datadog_provider"}}
 provider "datadog" {
+{{ if .Version -}}
+  version = "~>{{ .Version }}"
+{{ end -}}
 }
 {{ end }}

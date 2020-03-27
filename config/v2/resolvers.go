@@ -240,7 +240,13 @@ func ResolveDatadogProvider(commons ...Common) *DatadogProvider {
 		p = c.Providers.Datadog
 	}
 
-	return p
+	if version != nil {
+		return &HerokuProvider{
+			Version: version,
+		}
+	} else {
+		return p
+	}
 }
 
 func ResolveTfLint(commons ...Common) TfLint {
