@@ -51,11 +51,7 @@ Binaries are available on the releases page. Download one for your architecture,
 
 Instructions on downloading the binary:
 1. Go here: https://github.com/chanzuckerberg/fogg/releases, go to the release you want to download, find the tar file that is correct for your machine, and right click the link. Then click "Copy Link Address".
-2. On your machine, use `wget` and paste the link address as the argument
-3. Then use `tar -xvf fogg_0.xx.y_os.tar.gz`
-4. If you have a previous version of fogg, use `which fogg` to find where your current fogg is
-5. To replace a previous version, use `cp fogg old/path/of/fogg`, the path should look like: `/usr/local/bin/fogg`
-6. To check that you've correctly replaced your old fogg, use `fogg version`
+2. Run `curl -s https://raw.githubusercontent.com/chanzuckerberg/fogg/master/download.sh | bash -s -- -b PATH VERSION` where PATH is where you want to install and VERSION is the version you want to install. To find the path of your current fogg, you can run `which fogg`. Then use the path that is outputted as PATH in the command.
 
 ## Usage
 
