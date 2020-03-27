@@ -28,17 +28,18 @@ provider "snowflake" {
 terraform {
   required_version = "~>1.1.1"
 
+
   backend "s3" {
+
     bucket = "bucket"
 
-
-    key = "terraform/foo/envs/bar/components/bam.tfstate"
-
-
+    key     = "terraform/foo/envs/bar/components/bam.tfstate"
     encrypt = true
     region  = "region"
     profile = "foo"
+
   }
+
 }
 
 variable "env" {
@@ -83,13 +84,19 @@ data "terraform_remote_state" "global" {
   backend = "s3"
 
   config = {
+
+
     bucket = "bucket"
 
     key     = "terraform/foo/global.tfstate"
     region  = "region"
     profile = "foo"
+
+
   }
 }
+
+
 
 
 
@@ -100,11 +107,15 @@ data "terraform_remote_state" "foo" {
   backend = "s3"
 
   config = {
+
+
     bucket = "bucket"
 
     key     = "terraform/foo/accounts/foo.tfstate"
     region  = "region"
     profile = "foo"
+
+
   }
 }
 

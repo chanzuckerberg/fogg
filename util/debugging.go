@@ -1,7 +1,10 @@
 package util
 
-import "github.com/sirupsen/logrus"
+import (
+	"github.com/davecgh/go-spew/spew"
+)
 
+// Dump will pretty print whatever is in foo
 func Dump(foo interface{}) {
-	logrus.Debugf("%#v\n", foo)
+	spew.Dump(foo)
 }

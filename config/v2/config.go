@@ -150,12 +150,18 @@ type DatadogProvider struct{}
 
 //Backend is used to configure a terraform backend
 type Backend struct {
-	Type        *string `validate:"omitempty,oneof=s3"`
+	Kind *string `yaml:"kind,omitempty" validate:"omitempty,oneof=s3 remote"`
+
+	// fields used for S3 backend
 	AccountID   *string `yaml:"account_id,omitempty"`
 	Bucket      *string `yaml:"bucket,omitempty"`
 	DynamoTable *string `yaml:"dynamodb_table,omitempty"`
 	Profile     *string `yaml:"profile,omitempty"`
 	Region      *string `yaml:"region,omitempty"`
+
+	// fields used for remote backend
+	HostName     *string `yaml:"host_name,omitempty"`
+	Organization *string `yaml:"organization,omitempty"`
 }
 
 // Module is a module

@@ -43,11 +43,7 @@ func (c *Config) Validate() ([]string, error) {
 	errs = multierror.Append(errs, c.validateInheritedStringField("owner", OwnerGetter, nonEmptyString))
 	errs = multierror.Append(errs, c.validateInheritedStringField("project", ProjectGetter, nonEmptyString))
 	errs = multierror.Append(errs, c.validateInheritedStringField("terraform version", TerraformVersionGetter, nonEmptyString))
-
-	errs = multierror.Append(errs, c.validateInheritedStringField("backend bucket", BackendBucketGetter, nonEmptyString))
-	errs = multierror.Append(errs, c.validateInheritedStringField("backend region", BackendRegionGetter, nonEmptyString))
-	errs = multierror.Append(errs, c.validateInheritedStringField("backend profile", BackendProfileGetter, nonEmptyString))
-
+	errs = multierror.Append(errs, c.ValidateBackends())
 	errs = multierror.Append(errs, c.ValidateAWSProviders())
 	errs = multierror.Append(errs, c.ValidateSnowflakeProviders())
 	errs = multierror.Append(errs, c.ValidateBlessProviders())
@@ -91,6 +87,56 @@ func ValidateAWSProvider(p *AWSProvider, component string) error {
 	return errs
 }
 
+// ValidateBackend will check the resolved configuration for a backend and return any errors it
+// finds
+func ValidateBackend(backend *Backend, component string) error {
+	if backend == nil {
+		return nil
+	}
+
+	var errs *multierror.Error
+
+	if backend.Kind == nil {
+		errs = multierror.Append(errs, fmt.Errorf("unable to resolve backend for component %s", component))
+
+		return errs.ErrorOrNil()
+	}
+
+	if *backend.Kind == "s3" {
+
+		if backend.Bucket == nil {
+			errs = multierror.Append(errs, fmt.Errorf("when backend kind == 's3', bucket is required (component %s)", component))
+		}
+
+		if backend.Region == nil {
+			errs = multierror.Append(errs, fmt.Errorf("when backend kind == 's3', region is required (component %s)", component))
+		}
+
+		if backend.Profile == nil {
+			errs = multierror.Append(errs, fmt.Errorf("when backend kind == 's3', profile is required (component %s)", component))
+		}
+
+		return errs.ErrorOrNil()
+	}
+
+	if *backend.Kind == "remote" {
+
+		if backend.HostName == nil {
+			errs = multierror.Append(errs, fmt.Errorf("when backend kind == 'remote', host_name is required (component %s)", component))
+		}
+
+		if backend.Organization == nil {
+			errs = multierror.Append(errs, fmt.Errorf("when backend kind == 'remote', organization is required (component %s)", component))
+		}
+
+		return errs.ErrorOrNil()
+	}
+
+	errs = multierror.Append(errs, fmt.Errorf("invalid backend kind %#v for component %s", backend.Kind, component))
+
+	return errs.ErrorOrNil()
+}
+
 func (c *Config) ValidateAWSProviders() error {
 	var errs *multierror.Error
 
@@ -101,6 +147,19 @@ func (c *Config) ValidateAWSProviders() error {
 		}
 	})
 
+	return errs.ErrorOrNil()
+}
+
+func (c *Config) ValidateBackends() error {
+	var errs *multierror.Error
+
+	c.WalkComponents(func(component string, comms ...Common) {
+		backendConfig := ResolveBackend(comms...)
+
+		if e := ValidateBackend(backendConfig, component); e != nil {
+			errs = multierror.Append(errs, e)
+		}
+	})
 	return errs.ErrorOrNil()
 }
 

@@ -50,21 +50,7 @@
 terraform {
   required_version = "~>{{ .TerraformVersion }}"
 
-  backend "s3" {
-    bucket         = "{{ .Backend.S3.Bucket }}"
-    {{ if .Backend.S3.DynamoTable }}dynamodb_table = "{{ .Backend.S3.DynamoTable }}"{{ end }}
-    {{/* {%- if env is defined and component_name is defined %} */}}
-    key            = "terraform/{{ .Project }}/envs/{{ .Env }}/components/{{ .Component }}.tfstate"
-
-{{/*
-    {%- else %}
-    key    = "terraform/{{ project }}/global.tfstate"
-    {%- endif %}
-*/}}
-    encrypt = true
-    region = "{{ .Backend.S3.Region }}"
-    profile = "{{ .Backend.S3.Profile }}"
-  }
+  {{ template "backend" .Backend }}
 }
 
 variable "env" {
@@ -124,27 +110,21 @@ data "terraform_remote_state" "global" {
   backend = "s3"
 
   config = {
-    bucket         = "{{ .Global.Backend.S3.Bucket }}"
-    {{ if .Backend.S3.DynamoTable }}dynamodb_table = "{{ .Global.Backend.S3.DynamoTable }}"{{ end }}
-    key            = "terraform/{{ .Global.Project }}/global.tfstate"
-    region         = "{{ .Global.Backend.S3.Region }}"
-    {{ if .Global.Backend.S3.Profile }}profile        = "{{ .Global.Backend.S3.Profile }}"{{ end }}
+    {{ template "remote_backend" .Global.Backend }}
   }
 }
 
 {{ $outer := . }}
-{{ range $component := .OtherComponents | sortAlpha  }}
+{{ range $component, $backend := .ComponentBackends  }}
+{{ if ne $component $outer.Component }}
 data "terraform_remote_state" "{{ $component }}" {
   backend = "s3"
 
   config = {
-    bucket         = "{{ $outer.Backend.S3.Bucket }}"
-    {{ if $outer.Backend.S3.DynamoTable }}dynamodb_table = "{{ $outer.Backend.S3.DynamoTable }}"{{ end }}
-    key            = "terraform/{{ $outer.Project }}/envs/{{ $outer.Env }}/components/{{ $component }}.tfstate"
-    region         = "{{ $outer.Backend.S3.Region }}"
-    {{ if $outer.Backend.S3.Profile }}profile        = "{{ $outer.Backend.S3.Profile }}"{{ end }}
+      {{ template "remote_backend" $backend }}
   }
 }
+{{ end }}
 {{ end }}
 
 # remote state for accounts
@@ -153,11 +133,7 @@ data "terraform_remote_state" "{{ $accountName }}" {
   backend = "s3"
 
   config = {
-    bucket         = "{{ $account.Backend.S3.Bucket }}"
-    {{ if $account.Backend.S3.DynamoTable }}dynamodb_table = "{{ $account.Backend.S3.DynamoTable }}"{{ end }}
-    key            = "terraform/{{ .Project }}/accounts/{{ $account.AccountName }}.tfstate"
-    region         = "{{ $account.Backend.S3.Region }}"
-    {{ if $account.Backend.S3.Profile }}profile        = "{{ $account.Backend.S3.Profile }}"{{ end }}
+    {{ template "remote_backend" $account.Backend }}
   }
 }
 {{ end }}

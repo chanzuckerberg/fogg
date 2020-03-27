@@ -30,17 +30,18 @@ provider "aws" {
 terraform {
   required_version = "~>0.100.0"
 
+
   backend "s3" {
+
     bucket = "buck"
 
-
-    key = "terraform/proj/envs/staging/components/comp1.tfstate"
-
-
+    key     = "terraform/proj/envs/staging/components/comp1.tfstate"
     encrypt = true
     region  = "us-west-2"
     profile = "comp1"
+
   }
+
 }
 
 variable "env" {
@@ -100,13 +101,20 @@ data "terraform_remote_state" "global" {
   backend = "s3"
 
   config = {
+
+
     bucket = "buck"
 
     key     = "terraform/proj/global.tfstate"
     region  = "us-west-2"
     profile = "profile"
+
+
   }
 }
+
+
+
 
 
 
@@ -114,25 +122,54 @@ data "terraform_remote_state" "comp2" {
   backend = "s3"
 
   config = {
+
+
     bucket = "buck"
 
     key     = "terraform/proj/envs/staging/components/comp2.tfstate"
     region  = "us-west-2"
-    profile = "comp1"
+    profile = "profile"
+
+
   }
 }
+
+
+
+data "terraform_remote_state" "comp_helm_template" {
+  backend = "s3"
+
+  config = {
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/envs/staging/components/comp_helm_template.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
+  }
+}
+
+
 
 data "terraform_remote_state" "vpc" {
   backend = "s3"
 
   config = {
+
+
     bucket = "buck"
 
     key     = "terraform/proj/envs/staging/components/vpc.tfstate"
     region  = "us-west-2"
-    profile = "comp1"
+    profile = "profile"
+
+
   }
 }
+
 
 
 # remote state for accounts
@@ -141,11 +178,15 @@ data "terraform_remote_state" "bar" {
   backend = "s3"
 
   config = {
+
+
     bucket = "buck"
 
     key     = "terraform/proj/accounts/bar.tfstate"
     region  = "us-west-2"
     profile = "profile"
+
+
   }
 }
 
@@ -153,11 +194,15 @@ data "terraform_remote_state" "foo" {
   backend = "s3"
 
   config = {
+
+
     bucket = "buck"
 
     key     = "terraform/proj/accounts/foo.tfstate"
     region  = "us-west-2"
     profile = "profile"
+
+
   }
 }
 

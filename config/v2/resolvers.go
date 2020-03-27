@@ -2,6 +2,8 @@ package v2
 
 import (
 	"encoding/json"
+
+	"github.com/chanzuckerberg/fogg/util"
 )
 
 // lastNonNil, despite its name can return nil if all results are nil
@@ -110,6 +112,36 @@ func ResolveAWSProvider(commons ...Common) *AWSProvider {
 		}
 	}
 	return nil
+}
+
+// ResolveBackend returns the Backend configuration for a given component, after applying all inheritance rules
+func ResolveBackend(commons ...Common) *Backend {
+	kind := lastNonNil(BackendKindGetter, commons...)
+
+	// This feels like a somewhat hacky way to do this, but not sure of a better place yet
+	if kind == nil {
+		kind = util.StrPtr("s3")
+	}
+
+	accountID := lastNonNil(BackendAccountIDGetter, commons...)
+	bucket := lastNonNil(BackendBucketGetter, commons...)
+	dynamoTable := lastNonNil(BackendDynamoTableGetter, commons...)
+	profile := lastNonNil(BackendProfileGetter, commons...)
+	region := lastNonNil(BackendRegionGetter, commons...)
+	hostName := lastNonNil(BackendHostNameGetter, commons...)
+	organization := lastNonNil(BackendOrganizationGetter, commons...)
+
+	return &Backend{
+		Kind: kind,
+
+		AccountID:    accountID,
+		Bucket:       bucket,
+		DynamoTable:  dynamoTable,
+		Profile:      profile,
+		Region:       region,
+		HostName:     hostName,
+		Organization: organization,
+	}
 }
 
 // ResolveGithubProvider will return an GithubProvder iff one of the required fields is set somewhere in the set of Common
@@ -392,6 +424,38 @@ func AWSProviderAdditionalRegionsGetter(comm Common) []string {
 		return comm.Providers.AWS.AdditionalRegions
 	}
 	return nil
+}
+
+// BackendKindGetter retrieves the Kind for the current common object
+func BackendKindGetter(comm Common) *string {
+	if comm.Backend == nil {
+		return nil
+	}
+	return comm.Backend.Kind
+}
+
+func BackendAccountIDGetter(comm Common) *string {
+	if comm.Backend == nil {
+		return nil
+	}
+
+	return comm.Backend.AccountID
+}
+
+func BackendHostNameGetter(comm Common) *string {
+	if comm.Backend == nil {
+		return nil
+	}
+
+	return comm.Backend.HostName
+}
+
+func BackendOrganizationGetter(comm Common) *string {
+	if comm.Backend == nil {
+		return nil
+	}
+
+	return comm.Backend.Organization
 }
 
 func GithubProviderOrganizationGetter(comm Common) *string {

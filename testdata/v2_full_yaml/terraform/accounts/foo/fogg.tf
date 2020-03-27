@@ -30,13 +30,16 @@ terraform {
   required_version = "=0.100.0"
 
   backend "s3" {
+
     bucket = "buck"
 
     key     = "terraform/proj/accounts/foo.tfstate"
     encrypt = true
     region  = "us-west-2"
     profile = "profile"
+
   }
+
 }
 
 variable "project" {
@@ -63,6 +66,7 @@ variable "owner" {
   default = "foo@example.com"
 }
 
+# map of aws_accounts
 variable "aws_accounts" {
   type = map
   default = {
@@ -89,11 +93,15 @@ data "terraform_remote_state" "global" {
   backend = "s3"
 
   config = {
+
+
     bucket = "buck"
 
     key     = "terraform/proj/global.tfstate"
     region  = "us-west-2"
     profile = "profile"
+
+
   }
 }
 
@@ -104,11 +112,15 @@ data "terraform_remote_state" "bar" {
   backend = "s3"
 
   config = {
+
+
     bucket = "buck"
 
     key     = "terraform/proj/accounts/bar.tfstate"
     region  = "us-west-2"
     profile = "profile"
+
+
   }
 }
 
