@@ -49,6 +49,10 @@ brew untap chanzuckerberg/fogg
 
 Binaries are available on the releases page. Download one for your architecture, put it in your path and make it executable.
 
+Instructions on downloading the binary:
+1. Go here: https://github.com/chanzuckerberg/fogg/releases, go to the release you want to download, find the tar file that is correct for your machine, and right click the link. Then click "Copy Link Address".
+2. Run `curl -s https://raw.githubusercontent.com/chanzuckerberg/fogg/master/download.sh | bash -s -- -b PATH VERSION` where PATH is where you want to install and VERSION is the version you want to install. To find the path of your current fogg, you can run `which fogg`. Then use the path that is outputted as PATH in the command.
+
 ## Usage
 
 Fogg works entirely by generating code (terraform and make). It will generate directories and files to organize and standardize your repo and then it gets out of your way for you to use terraform and make to manage your infrastructure.
