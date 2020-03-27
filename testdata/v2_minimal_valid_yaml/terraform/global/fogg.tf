@@ -19,7 +19,7 @@
 terraform {
   required_version = "~>1.1.1"
 
-  backend "s3" {
+  backend s3 {
 
     bucket = "bucket"
 
@@ -31,31 +31,31 @@ terraform {
   }
 }
 
-variable "env" {
+variable env {
   type    = string
   default = ""
 }
 
-variable "project" {
+variable project {
   type    = string
   default = "foo"
 }
 
 
 
-variable "component" {
+variable component {
   type    = string
   default = "global"
 }
 
 
 
-variable "owner" {
+variable owner {
   type    = string
   default = "foo@example.com"
 }
 
-variable "tags" {
+variable tags {
   type = map(string)
   default = {
     project   = "foo"
