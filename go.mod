@@ -33,7 +33,6 @@ require (
 	github.com/hashicorp/terraform v0.12.17
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20191121111010-e9629612a215
 	github.com/hashicorp/terraform-svchost v0.0.0-20191119180714-d2e4933b9136 // indirect
-	github.com/haya14busa/goverage v0.0.0-20180129164344-eec3514a20b5 // indirect
 	github.com/howeyc/gopass v0.0.0-20190910152052-7cb4b85ec19c // indirect
 	github.com/huandu/xstrings v1.2.1 // indirect
 	github.com/imdario/mergo v0.3.8 // indirect

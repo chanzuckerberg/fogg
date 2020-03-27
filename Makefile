@@ -87,7 +87,7 @@ test: fmt deps packr ## run tests
 .PHONY: test
 
 test-ci: packr ## run tests
-	goverage -coverprofile=coverage.out -covermode=atomic ./...
+	go test -race -coverprofile=coverage.out -covermode=atomic ./...
 .PHONY: test-ci
 
 test-offline: packr  ## run only tests that don't require internet
@@ -95,7 +95,7 @@ test-offline: packr  ## run only tests that don't require internet
 .PHONY: test-offline
 
 test-coverage: packr  ## run the test with proper coverage reporting
-	goverage -coverprofile=coverage.out -covermode=atomic ./...
+	go test -race -coverprofile=coverage.out -covermode=atomic ./...
 	go tool cover -html=coverage.out
 .PHONY: test-coverage
 
