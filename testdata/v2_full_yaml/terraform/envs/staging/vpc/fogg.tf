@@ -117,7 +117,7 @@ data "terraform_remote_state" "global" {
 
 
 data "terraform_remote_state" "comp1" {
-  backend = "s3"
+  backend = "s3 "
 
   config = {
 
@@ -135,7 +135,7 @@ data "terraform_remote_state" "comp1" {
 
 
 data "terraform_remote_state" "comp2" {
-  backend = "s3"
+  backend = "s3 "
 
   config = {
 
@@ -153,7 +153,7 @@ data "terraform_remote_state" "comp2" {
 
 
 data "terraform_remote_state" "comp_helm_template" {
-  backend = "s3"
+  backend = "s3 "
 
   config = {
 
@@ -175,7 +175,7 @@ data "terraform_remote_state" "comp_helm_template" {
 # remote state for accounts
 
 data "terraform_remote_state" "bar" {
-  backend = "s3"
+  backend = "s3 "
 
   config = {
 
@@ -191,7 +191,7 @@ data "terraform_remote_state" "bar" {
 }
 
 data "terraform_remote_state" "foo" {
-  backend = "s3"
+  backend = "s3 "
 
   config = {
 

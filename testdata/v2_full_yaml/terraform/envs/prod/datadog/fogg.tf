@@ -124,7 +124,7 @@ data "terraform_remote_state" "global" {
 
 
 data "terraform_remote_state" "hero" {
-  backend = "s3"
+  backend = "s3 "
 
   config = {
 
@@ -144,7 +144,7 @@ data "terraform_remote_state" "hero" {
 # remote state for accounts
 
 data "terraform_remote_state" "bar" {
-  backend = "s3"
+  backend = "s3 "
 
   config = {
 
@@ -160,7 +160,7 @@ data "terraform_remote_state" "bar" {
 }
 
 data "terraform_remote_state" "foo" {
-  backend = "s3"
+  backend = "s3 "
 
   config = {
 

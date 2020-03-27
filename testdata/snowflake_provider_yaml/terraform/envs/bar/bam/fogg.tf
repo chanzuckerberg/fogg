@@ -104,7 +104,7 @@ data "terraform_remote_state" "global" {
 # remote state for accounts
 
 data "terraform_remote_state" "foo" {
-  backend = "s3"
+  backend = "s3 "
 
   config = {
 
