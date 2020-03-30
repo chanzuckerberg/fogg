@@ -30,7 +30,7 @@ func (c *Config) Validate() ([]string, error) {
 	// nested in the structure
 	// https://github.com/go-playground/validator/issues/323#issuecomment-343670840
 	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
-		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+		name := strings.SplitN(fld.Tag.Get("yaml"), ",", 2)[0]
 
 		if name == "-" {
 			return ""

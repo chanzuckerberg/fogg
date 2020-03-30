@@ -35,8 +35,6 @@ func Test_detectVersion(t *testing.T) {
 		want    int
 		wantErr bool
 	}{
-		{"implicit 1", args{[]byte(`{}`)}, 2, false},
-		{"explicit 1", args{[]byte(`{"version": 1}`)}, 1, false},
 		{"explicit 2", args{[]byte(`{"version": 2}`)}, 2, false},
 		{"err", args{[]byte(`{`)}, 0, true},
 	}
@@ -49,9 +47,6 @@ func Test_detectVersion(t *testing.T) {
 			var got int
 			var err error
 			switch tt.want {
-			case 1:
-				afero.WriteFile(fs, "fogg.json", tt.args.b, 0644)
-				got, err = detectVersion(tt.args.b, fs, "fogg.json")
 			case 2:
 				afero.WriteFile(fs, "fogg.yml", tt.args.b, 0644)
 				got, err = detectVersion(tt.args.b, fs, "fogg.yml")

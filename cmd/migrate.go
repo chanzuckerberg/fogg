@@ -10,7 +10,7 @@ import (
 )
 
 func init() {
-	migrateCommand.Flags().StringP("config", "c", "fogg.json", "Use this to override the fogg config file.")
+	migrateCommand.Flags().StringP("config", "c", "fogg.yml", "Use this to override the fogg config file.")
 	migrateCommand.Flags().BoolP("force", "f", false, "Use this to skip all of the migration prompts.")
 	rootCmd.AddCommand(migrateCommand)
 }
