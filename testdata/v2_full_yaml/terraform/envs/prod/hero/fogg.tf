@@ -26,192 +26,191 @@ provider aws {
 
 
 provider heroku {
-}
 
 
 
 
 
-terraform {
-  required_version = "~>0.100.0"
+  terraform {
+    required_version = "~>0.100.0"
 
 
-  backend s3 {
+    backend s3 {
 
-    bucket = "buck"
+      bucket = "buck"
 
-    key     = "terraform/proj/envs/prod/components/hero.tfstate"
-    encrypt = true
-    region  = "us-west-2"
-    profile = "profile"
+      key     = "terraform/proj/envs/prod/components/hero.tfstate"
+      encrypt = true
+      region  = "us-west-2"
+      profile = "profile"
 
-  }
-
-}
-
-variable env {
-  type    = string
-  default = "prod"
-}
-
-variable project {
-  type    = string
-  default = "proj"
-}
-
-
-variable region {
-  type    = string
-  default = "us-west-2"
-}
-
-
-variable component {
-  type    = string
-  default = "hero"
-}
-
-
-variable aws_profile {
-  type    = string
-  default = "profile"
-}
-
-
-
-variable owner {
-  type    = string
-  default = "foo@example.com"
-}
-
-variable tags {
-  type = map(string)
-  default = {
-    project   = "proj"
-    env       = "prod"
-    service   = "hero"
-    owner     = "foo@example.com"
-    managedBy = "terraform"
-  }
-}
-
-
-variable foo {
-  type    = string
-  default = "bar1"
-}
-
-
-data terraform_remote_state global {
-  backend = "s3"
-
-  config = {
-
-
-    bucket = "buck"
-
-    key     = "terraform/proj/global.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
-
+    }
 
   }
-}
 
-
-
-
-data terraform_remote_state datadog {
-  backend = "s3"
-
-  config = {
-
-
-    bucket = "buck"
-
-    key     = "terraform/proj/envs/prod/components/datadog.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
-
-
+  variable env {
+    type    = string
+    default = "prod"
   }
-}
 
-
-
-
-
-# remote state for accounts
-
-data terraform_remote_state bar {
-  backend = "s3"
-
-  config = {
-
-
-    bucket = "buck"
-
-    key     = "terraform/proj/accounts/bar.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
-
-
+  variable project {
+    type    = string
+    default = "proj"
   }
-}
-
-data terraform_remote_state foo {
-  backend = "s3"
-
-  config = {
 
 
-    bucket = "buck"
-
-    key     = "terraform/proj/accounts/foo.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
-
-
+  variable region {
+    type    = string
+    default = "us-west-2"
   }
-}
 
 
-# map of aws_accounts
-variable aws_accounts {
-  type = map
-  default = {
-
-
-    bar = 456
-
-
-
-    foo = 123
-
-
+  variable component {
+    type    = string
+    default = "hero"
   }
-}
 
-provider random {
-  version = "~> 2.2"
-}
 
-provider template {
-  version = "~> 2.1"
-}
+  variable aws_profile {
+    type    = string
+    default = "profile"
+  }
 
-provider archive {
-  version = "~> 1.3"
-}
 
-provider null {
-  version = "~> 2.1"
-}
 
-provider local {
-  version = "~> 1.4"
-}
+  variable owner {
+    type    = string
+    default = "foo@example.com"
+  }
 
-provider tls {
-  version = "~> 2.1"
-}
+  variable tags {
+    type = map(string)
+    default = {
+      project   = "proj"
+      env       = "prod"
+      service   = "hero"
+      owner     = "foo@example.com"
+      managedBy = "terraform"
+    }
+  }
+
+
+  variable foo {
+    type    = string
+    default = "bar1"
+  }
+
+
+  data terraform_remote_state global {
+    backend = "s3"
+
+    config = {
+
+
+      bucket = "buck"
+
+      key     = "terraform/proj/global.tfstate"
+      region  = "us-west-2"
+      profile = "profile"
+
+
+    }
+  }
+
+
+
+
+  data terraform_remote_state datadog {
+    backend = "s3"
+
+    config = {
+
+
+      bucket = "buck"
+
+      key     = "terraform/proj/envs/prod/components/datadog.tfstate"
+      region  = "us-west-2"
+      profile = "profile"
+
+
+    }
+  }
+
+
+
+
+
+  # remote state for accounts
+
+  data terraform_remote_state bar {
+    backend = "s3"
+
+    config = {
+
+
+      bucket = "buck"
+
+      key     = "terraform/proj/accounts/bar.tfstate"
+      region  = "us-west-2"
+      profile = "profile"
+
+
+    }
+  }
+
+  data terraform_remote_state foo {
+    backend = "s3"
+
+    config = {
+
+
+      bucket = "buck"
+
+      key     = "terraform/proj/accounts/foo.tfstate"
+      region  = "us-west-2"
+      profile = "profile"
+
+
+    }
+  }
+
+
+  # map of aws_accounts
+  variable aws_accounts {
+    type = map
+    default = {
+
+
+      bar = 456
+
+
+
+      foo = 123
+
+
+    }
+  }
+
+  provider random {
+    version = "~> 2.2"
+  }
+
+  provider template {
+    version = "~> 2.1"
+  }
+
+  provider archive {
+    version = "~> 1.3"
+  }
+
+  provider null {
+    version = "~> 2.1"
+  }
+
+  provider local {
+    version = "~> 1.4"
+  }
+
+  provider tls {
+    version = "~> 2.1"
+  }
