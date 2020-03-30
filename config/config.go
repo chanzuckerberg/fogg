@@ -1,9 +1,7 @@
 package config
 
 import (
-	"encoding/json"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
@@ -54,17 +52,6 @@ func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVe
 // FindConfig loads a config and its version into memory
 func FindConfig(fs afero.Fs, configFile string) ([]byte, int, error) {
 	f, err := fs.Open(configFile)
-	if os.IsNotExist(err) {
-		//TODO(ec): Remove this deprecation warning
-		_, e := os.Stat("fogg.json")
-		if e == nil { //If a fogg.json exists
-			logrus.Warn(
-				`A fogg.json file was detected. Fogg now supports fogg.yml
-by default. Run 'fogg migrate' to update the config file
-to fogg.yml or use a -c flag to specify configuration file location
-`)
-		}
-	}
 	if err != nil {
 		return nil, 0, errs.NewUserf("could not open %s config file", configFile)
 	}
@@ -99,7 +86,7 @@ func FindAndReadConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
 }
 
 type ver struct {
-	Version int `json:"version" yaml:"version"`
+	Version int `yaml:"version"`
 }
 
 // detectVersion will detect the version of a config
@@ -116,8 +103,6 @@ func detectVersion(b []byte, fs afero.Fs, configFile string) (int, error) {
 	switch filepath.Ext(info.Name()) {
 	case ".yml", ".yaml":
 		err = yaml.Unmarshal(b, v)
-	case ".json":
-		err = json.Unmarshal(b, v)
 	default:
 		return 0, errs.NewUser("File type is not supported")
 	}

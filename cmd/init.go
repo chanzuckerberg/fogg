@@ -16,7 +16,7 @@ func init() {
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initialize a new repo for use with fogg",
-	Long:  "fogg init will ask you some questions and generate a basic fogg.json.",
+	Long:  "fogg init will ask you some questions and generate a basic fogg.yml.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var e error
 		pwd, e := os.Getwd()

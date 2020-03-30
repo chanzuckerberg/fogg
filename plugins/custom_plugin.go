@@ -37,17 +37,17 @@ const (
 
 // CustomPlugin is a custom plugin
 type CustomPlugin struct {
-	URL       string           `json:"url" yaml:"url" validate:"required"`
-	Format    TypePluginFormat `json:"format" yaml:"format" validate:"required"`
-	TarConfig *TarConfig       `json:"tar_config,omitempty" yaml:"tar_config,omitempty"`
-	TargetDir string           `json:"target_dir,omitempty" yaml:"target_dir,omitempty"`
+	URL       string           `validate:"required"`
+	Format    TypePluginFormat `validate:"required"`
+	TarConfig *TarConfig       `yaml:"tar_config,omitempty"`
+	TargetDir string           `yaml:"target_dir,omitempty"`
 
 	cache *diskv.Diskv
 }
 
 // TarConfig configures the tar unpacking
 type TarConfig struct {
-	StripComponents int `json:"strip_components,omitempty" yaml:"strip_components,omitempty"`
+	StripComponents int `yaml:"strip_components,omitempty"`
 }
 
 func (tc *TarConfig) getStripComponents() int {
