@@ -158,9 +158,13 @@ type BlessProvider struct {
 	Version           *string  `yaml:"version,omitempty"`
 }
 
-type HerokuProvider struct{}
+type HerokuProvider struct {
+	Version *string `yaml:"version,omitempty"`
+}
 
-type DatadogProvider struct{}
+type DatadogProvider struct {
+	Version *string `yaml:"version,omitempty"`
+}
 
 // BackendKind is a enum of backends we support
 type BackendKind string
@@ -479,13 +483,17 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	var herokuPlan *HerokuProvider
 	herokuConfig := v2.ResolveHerokuProvider(commons...)
 	if herokuConfig != nil {
-		herokuPlan = &HerokuProvider{}
+		herokuPlan = &HerokuProvider{
+			Version: herokuConfig.Version,
+		}
 	}
 
 	var datadogPlan *DatadogProvider
 	datadogConfig := v2.ResolveDatadogProvider(commons...)
 	if datadogConfig != nil {
-		datadogPlan = &DatadogProvider{}
+		datadogPlan = &DatadogProvider{
+			Version: datadogConfig.Version,
+		}
 	}
 
 	tflintConfig := v2.ResolveTfLint(commons...)

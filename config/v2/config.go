@@ -144,9 +144,13 @@ type SnowflakeProvider struct {
 	Version *string `yaml:"version,omitempty"`
 }
 
-type HerokuProvider struct{}
+type HerokuProvider struct {
+	Version *string `yaml:"version,omitempty"`
+}
 
-type DatadogProvider struct{}
+type DatadogProvider struct {
+	Version *string `yaml:"version,omitempty"`
+}
 
 //Backend is used to configure a terraform backend
 type Backend struct {

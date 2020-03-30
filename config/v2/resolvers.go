@@ -220,7 +220,15 @@ func ResolveHerokuProvider(commons ...Common) *HerokuProvider {
 		p = c.Providers.Heroku
 	}
 
-	return p
+	version := lastNonNil(HerokuProviderVersionGetter, commons...)
+
+	if version != nil {
+		return &HerokuProvider{
+			Version: version,
+		}
+	} else {
+		return p
+	}
 }
 
 func ResolveDatadogProvider(commons ...Common) *DatadogProvider {
@@ -232,7 +240,15 @@ func ResolveDatadogProvider(commons ...Common) *DatadogProvider {
 		p = c.Providers.Datadog
 	}
 
-	return p
+	version := lastNonNil(DatadogProviderVersionGetter, commons...)
+
+	if version != nil {
+		return &DatadogProvider{
+			Version: version,
+		}
+	} else {
+		return p
+	}
 }
 
 func ResolveTfLint(commons ...Common) TfLint {
@@ -541,6 +557,20 @@ func BlessProviderAdditionalRegionsGetter(comm Common) []string {
 		return nil
 	}
 	return comm.Providers.Bless.AdditionalRegions
+}
+
+func HerokuProviderVersionGetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.Heroku == nil {
+		return nil
+	}
+	return comm.Providers.Heroku.Version
+}
+
+func DatadogProviderVersionGetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.Datadog == nil {
+		return nil
+	}
+	return comm.Providers.Datadog.Version
 }
 
 func OktaProviderVersionGetter(comm Common) *string {
