@@ -107,7 +107,7 @@ variable {{ $key }} {
 {{ end }}
 
 data terraform_remote_state global {
-  backend = "s3"
+  backend = "{{ .Global.Backend.Kind }}"
 
   config = {
     {{ template "remote_backend" .Global.Backend }}
@@ -118,7 +118,7 @@ data terraform_remote_state global {
 {{ range $component, $backend := .ComponentBackends  }}
 {{ if ne $component $outer.Component }}
 data terraform_remote_state {{ $component }} {
-  backend = "s3"
+  backend = "{{ $backend.Kind }}"
 
   config = {
       {{ template "remote_backend" $backend }}
@@ -130,7 +130,7 @@ data terraform_remote_state {{ $component }} {
 # remote state for accounts
 {{ range $accountName, $account := .Accounts }}
 data terraform_remote_state {{ $accountName }} {
-  backend = "s3"
+  backend = "{{ $account.Backend.Kind }}"
 
   config = {
     {{ template "remote_backend" $account.Backend }}
