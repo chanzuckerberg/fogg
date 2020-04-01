@@ -100,7 +100,7 @@ func checkToolVersions(fs afero.Fs, current string) (bool, string, error) {
 	if e != nil {
 		return false, "", errs.WrapUser(e, "unable to read .fogg-version file")
 	}
-	repoVersion := string(b)
+	repoVersion := strings.TrimSpace(string(b))
 	changed, e := versionIsChanged(repoVersion, current)
 	return changed, repoVersion, e
 }

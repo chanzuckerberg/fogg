@@ -366,6 +366,7 @@ var versionTests = []struct {
 	{"0.1.0-abcdef-dirty", "0.1.0", true},
 	{"0.1.0-abc", "0.1.0-def", true},
 	{"0.1.0-abc", "0.1.0-abc", false},
+	{"\t\n 0.2.0 \n\t", "0.2.0", false},
 }
 
 func TestCheckToolVersions(t *testing.T) {
