@@ -25,7 +25,7 @@ func VersionCacheKey() string {
 func ParseVersion(version string) (semver.Version, string, bool) {
 	var dirty bool
 	var sha string
-	v := version
+	v := strings.TrimSpace(version)
 	if strings.HasSuffix(v, ".dirty") {
 		dirty = true
 		v = strings.TrimSuffix(v, ".dirty")
