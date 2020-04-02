@@ -62,7 +62,7 @@ endif
 .PHONY: check-auth-heroku
 
 refresh:
-	@if [ $(TF_BACKEND_KIND) != "remote" ]; then \
+	@if [ "$(TF_BACKEND_KIND)" != "remote" ]; then \
 		$(terraform_command) refresh $(TF_ARGS); \
 		date +%s > .terraform/refreshed_at; \
 	else \
