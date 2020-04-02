@@ -110,7 +110,7 @@ data terraform_remote_state global {
 
 
 
-data foo {
+data terraform_remote_state foo {
   backend = "s3"
 
   config = {

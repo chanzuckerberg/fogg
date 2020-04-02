@@ -108,7 +108,7 @@ data terraform_remote_state global {
 
 
 
-data bar {
+data terraform_remote_state bar {
   backend = "s3"
 
   config = {
