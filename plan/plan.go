@@ -227,7 +227,6 @@ type Component struct {
 
 	Kind              *v2.ComponentKind  `yaml:"kind,omitempty"`
 	ModuleSource      *string            `yaml:"module_source"`
-	OtherComponents   []string           `yaml:"other_components"`
 	ComponentBackends map[string]Backend `yaml:"component_backends"`
 	Global            *Component         `yaml:"global"`
 }
@@ -357,7 +356,6 @@ func (p *Plan) buildGlobal(conf *v2.Config) Component {
 	}
 
 	componentPlan.Component = "global"
-	componentPlan.OtherComponents = []string{}
 	componentPlan.ExtraVars = resolveExtraVars(defaults.ExtraVars, global.ExtraVars)
 	componentPlan.PathToRepoRoot = "../../"
 
@@ -399,7 +397,6 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 
 			componentPlan.Env = envName
 			componentPlan.Component = componentName
-			componentPlan.OtherComponents = otherComponentNames(conf.Envs[envName].Components, componentName)
 			componentPlan.ModuleSource = componentConf.ModuleSource
 			componentPlan.PathToRepoRoot = "../../../../"
 
@@ -409,7 +406,13 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 		}
 
 		componentBackends := make(map[string]Backend)
+
 		for componentName, component := range envPlan.Components {
+			// FIXME (el): get rid of non-terraform component kinds
+			if component.Kind.GetOrDefault() != v2.ComponentKindTerraform {
+				continue
+			}
+
 			componentBackends[componentName] = component.Backend
 		}
 
@@ -589,20 +592,6 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		CircleCI:        circlePlan,
 		GitHubActionsCI: githubActionsPlan,
 	}
-}
-
-func otherComponentNames(components map[string]v2.Component, thisComponent string) []string {
-	r := make([]string, 0)
-	for componentName, componentConf := range components {
-		// Only set up remote state for terraform components
-		if componentConf.Kind.GetOrDefault() != v2.ComponentKindTerraform {
-			continue
-		}
-		if componentName != thisComponent {
-			r = append(r, componentName)
-		}
-	}
-	return r
 }
 
 func resolveEKSConfig(def *v2.EKSConfig, override *v2.EKSConfig) *v2.EKSConfig {

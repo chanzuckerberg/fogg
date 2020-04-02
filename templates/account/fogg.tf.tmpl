@@ -106,7 +106,7 @@ data terraform_remote_state global {
 {{ $outer := . }}
 {{ range $accountName, $backend := .AccountBackends}}
 {{ if ne $accountName $outer.AccountName }}
-data terraform_remote_state {{ $accountName }} {
+data  {{ $accountName }} {
   backend = "{{ $backend.Kind }}"
 
   config = {

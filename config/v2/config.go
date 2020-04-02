@@ -2,7 +2,6 @@ package v2
 
 import (
 	"encoding/json"
-	"fmt"
 	"math/rand"
 	"path/filepath"
 	"reflect"
@@ -230,7 +229,6 @@ const (
 func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 	// TODO write this to be part of tests https://github.com/shiwano/submarine/blob/5c02c0cfcf05126454568ef9624550eb0d84f86c/server/battle/src/battle/util/util_test.go#L19
 
-	fmt.Println("generate")
 	conf := &Config{}
 
 	const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
