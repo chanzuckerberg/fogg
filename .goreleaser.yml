@@ -13,7 +13,7 @@ builds:
     goarch:
       - amd64
     ldflags:
-      - "-w -s -X github.com/chanzuckerberg/fogg/util.GitSha={{.Commit}} -X github.com/chanzuckerberg/fogg/util.Version={{.Version}} -X github.com/chanzuckerberg/fogg/util.Dirty=false -X github.com/chanzuckerberg/fogg/util.Release=true"
+      - '-w -s -X github.com/chanzuckerberg/fogg/util.GitSha={{.Commit}} -X github.com/chanzuckerberg/fogg/util.Version={{.Version}} -X github.com/chanzuckerberg/fogg/util.Dirty=false -X github.com/chanzuckerberg/fogg/util.Release=true'
 
 archives:
   - files:
@@ -23,34 +23,11 @@ release:
   prerelease: false
 
 brews:
-  - description: "Terraform without pain."
+  - description: 'Terraform without pain.'
     github:
       owner: chanzuckerberg
       name: homebrew-tap
-    homepage: "https://github.com/chanzuckerberg/fogg"
+    homepage: 'https://github.com/chanzuckerberg/fogg'
     test: system "#{bin}/fogg version"
-
-dockers:
-  - dockerfile: Dockerfile
-    image_templates:
-      - docker.pkg.github.com/chanzuckerberg/fogg/fogg:v{{.Version}}
-    extra_files:
-      - cmd
-      - go.mod
-      - go.sum
-      - main.go
-      - vendor
-      - apply
-      - config
-      - docs
-      - errs
-      - exp
-      - init
-      - migrations
-      - plan
-      - plugins
-      - setup
-      - templates
-      - util
 env_files:
   github_token: ~/.config/goreleaser/github_token
