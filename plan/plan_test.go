@@ -19,15 +19,6 @@ func init() {
 	logrus.SetFormatter(formatter)
 }
 
-// func TestResolveRequired(t *testing.T) {
-// 	resolved := resolveRequired("def", nil)
-// 	r.Equal("def", resolved)
-
-// 	over := "over"
-// 	resolved = resolveRequired("def", &over)
-// 	r.Equal("over", resolved)
-// }
-
 func TestResolveAccounts(t *testing.T) {
 	r := require.New(t)
 	foo, bar := json.Number("123"), json.Number("456")
@@ -149,6 +140,17 @@ func TestRemoteBackendPlan(t *testing.T) {
 	r.NotNil(plan.Global)
 	r.NotNil(plan.Global.Backend.Kind)
 	r.Equal(plan.Global.Backend.Kind, BackendKindRemote)
+}
+
+func TestComponentKindNotTerraform(t *testing.T) {
+	r := require.New(t)
+
+	plan := buildPlan(t, "component_kind")
+	backends := plan.Envs["env1"].Components["foo"].ComponentBackends
+
+	// only contains 1 backend, for itself, and not for "bar"
+	r.Len(backends, 1)
+	r.Contains(backends, "foo")
 }
 
 func buildPlan(t *testing.T, testfile string) *Plan {
