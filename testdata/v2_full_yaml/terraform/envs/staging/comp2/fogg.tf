@@ -136,24 +136,6 @@ data terraform_remote_state comp1 {
 
 
 
-data terraform_remote_state comp_helm_template {
-  backend = "s3"
-
-  config = {
-
-
-    bucket = "buck"
-
-    key     = "terraform/proj/envs/staging/components/comp_helm_template.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
-
-
-  }
-}
-
-
-
 data terraform_remote_state vpc {
   backend = "s3"
 
