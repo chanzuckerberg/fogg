@@ -4,7 +4,6 @@ DIRTY=false
 # TODO add release flag
 GO_PACKAGE=$(shell go list)
 LDFLAGS=-ldflags "-w -s -X $(GO_PACKAGE)/util.GitSha=${SHA} -X $(GO_PACKAGE)/util.Version=${VERSION} -X $(GO_PACKAGE)/util.Dirty=${DIRTY}"
-export GOFLAGS=-mod=vendor
 export GO111MODULE=on
 
 all: test install
@@ -71,7 +70,6 @@ build: fmt packr ## build the binary
 
 deps:
 	go mod tidy
-	go mod vendor
 .PHONY: deps
 
 coverage: ## run the go coverage tool, reading file coverage.out
