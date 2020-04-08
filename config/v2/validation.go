@@ -246,7 +246,7 @@ func (c *Config) ValidateTravis() error {
 	var errs *multierror.Error
 	c.WalkComponents(func(component string, comms ...Common) {
 		t := ResolveTravis(comms...)
-		if t.Enabled == nil || *t.Enabled == false {
+		if t.Enabled == nil || !*t.Enabled {
 			return // nothing to do
 		}
 
