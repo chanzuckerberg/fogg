@@ -1,8 +1,6 @@
 package config
 
 import (
-	"encoding/json"
-	"strconv"
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/util"
@@ -48,7 +46,7 @@ func Test_detectVersion(t *testing.T) {
 			var err error
 			switch tt.want {
 			case 2:
-				afero.WriteFile(fs, "fogg.yml", tt.args.b, 0644)
+				afero.WriteFile(fs, "fogg.yml", tt.args.b, 0644) //nolint:errcheck
 				got, err = detectVersion(tt.args.b, fs, "fogg.yml")
 			default:
 				got, err = detectVersion(tt.args.b, fs, "fogg.yml")
@@ -63,21 +61,4 @@ func Test_detectVersion(t *testing.T) {
 			}
 		})
 	}
-}
-
-func intptr(i int) *int {
-	return &i
-}
-
-func jsonNumberPtr(i int) *json.Number {
-	j := json.Number(strconv.Itoa(i))
-	return &j
-}
-
-func strptr(s string) *string {
-	return &s
-}
-
-func boolptr(b bool) *bool {
-	return &b
 }
