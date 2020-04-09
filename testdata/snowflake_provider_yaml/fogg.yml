@@ -17,11 +17,10 @@ envs:
   bar:
     components:
       bam:
-        eks: 
+        eks:
           cluster_name: foo
-          kind: bar
 modules:
-  foo: 
+  foo:
     terraform_version: 1.1.1
-        
+
 version: 2

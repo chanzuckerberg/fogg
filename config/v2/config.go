@@ -1,6 +1,7 @@
 package v2
 
 import (
+	"bytes"
 	"encoding/json"
 	"math/rand"
 	"path/filepath"
@@ -28,7 +29,10 @@ func ReadConfig(fs afero.Fs, b []byte, configFile string) (*Config, error) {
 	//Determines the file extension
 	switch ext {
 	case ".yml", ".yaml":
-		e = yaml.Unmarshal(b, c)
+		reader := bytes.NewReader(b)
+		decoder := yaml.NewDecoder(reader)
+		decoder.KnownFields(true)
+		e = decoder.Decode(c)
 	default:
 		return nil, errs.NewUserf("File type %s is not supported", ext)
 	}
