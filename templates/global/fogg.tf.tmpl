@@ -46,6 +46,9 @@
   {{ template "datadog_provider" .Providers.Datadog }}
 {{ end }}
 
+{{ if .Providers.Tfe }}{{ if .Providers.Tfe.Enabled }}
+  {{ template "tfe_provider" .Providers.Tfe }}
+{{ end }}{{ end }}
 
 terraform {
   required_version = "~>{{ .TerraformVersion }}"

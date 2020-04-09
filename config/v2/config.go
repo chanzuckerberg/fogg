@@ -103,6 +103,14 @@ type Providers struct {
 	Okta      *OktaProvider      `yaml:"okta,omitempty"`
 	Snowflake *SnowflakeProvider `yaml:"snowflake,omitempty"`
 	Datadog   *DatadogProvider   `yaml:"datadog,omitempty"`
+	Tfe       *TfeProvider       `yaml:"tfe,omitempty"`
+}
+
+// CommonProvider encapsulates common properties across providers
+// TODO refactor other providers to use CommonProvider inline
+type CommonProvider struct {
+	Enabled *bool   `yaml:"enabled,omitempty"`
+	Version *string `yaml:"version,omitempty"`
 }
 
 // OktaProvider is an okta provider
@@ -149,6 +157,12 @@ type HerokuProvider struct {
 
 type DatadogProvider struct {
 	Version *string `yaml:"version,omitempty"`
+}
+
+type TfeProvider struct {
+	CommonProvider `yaml:",inline"`
+
+	Hostname *string `yaml:"hostname,omitempty"`
 }
 
 //Backend is used to configure a terraform backend

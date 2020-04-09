@@ -199,3 +199,24 @@ func Test_buildTerraformIgnore(t *testing.T) {
 
 	r.ElementsMatch(expected, p.TerraformIgnore)
 }
+
+func TestTfeProvider(t *testing.T) {
+	r := require.New(t)
+
+	plan := buildPlan(t, "tfe_provider_yaml")
+
+	on := func(c ComponentCommon) {
+		r.NotNil(c)
+		r.NotNil(c.Providers.Tfe)
+		r.True(c.Providers.Tfe.Enabled)
+	}
+
+	off := func(c ComponentCommon, enabled bool) {
+		r.NotNil(c)
+		r.Nil(c.Providers.Tfe)
+	}
+
+	on(plan.Global.ComponentCommon)
+	on(plan.Accounts["foo"].ComponentCommon)
+	off(plan.Envs["bar"].Components["bam"].ComponentCommon, false)
+}
