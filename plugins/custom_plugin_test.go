@@ -258,7 +258,7 @@ func generateTar(t *testing.T, files []string, dirs []string) string {
 		header.Typeflag = tar.TypeReg
 
 		r.Nil(tw.WriteHeader(header))
-		_, err = fmt.Fprintf(tw, file)
+		_, err = fmt.Fprint(tw, file)
 		r.Nil(err)
 	}
 
