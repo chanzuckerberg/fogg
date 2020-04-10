@@ -58,7 +58,7 @@ release-prerelease: setup ## release to github as a 'pre-release'
 	git push
 	git push --tags
 	goreleaser release -f .goreleaser.prerelease.yml --debug
-.PHONY: release-prelease
+.PHONY: release-prerelease
 
 release-snapshot: setup ## run a release
 	goreleaser release --snapshot
