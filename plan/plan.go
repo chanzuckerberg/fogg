@@ -118,6 +118,7 @@ type Providers struct {
 	Bless     *BlessProvider     `yaml:"bless"`
 	Okta      *OktaProvider      `yaml:"okta"`
 	Datadog   *DatadogProvider   `yaml:"datadog"`
+	Tfe       *TfeProvider       `yaml:"tfe"`
 }
 
 //AWSProvider represents AWS provider configuration
@@ -164,6 +165,12 @@ type HerokuProvider struct {
 
 type DatadogProvider struct {
 	Version *string `yaml:"version,omitempty"`
+}
+
+type TfeProvider struct {
+	Enabled  bool    `yaml:"enabled,omitempty"`
+	Version  *string `yaml:"version,omitempty"`
+	Hostname *string `yaml:"hostname,omitempty"`
 }
 
 // BackendKind is a enum of backends we support
@@ -499,6 +506,17 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
+	var tfePlan *TfeProvider
+
+	tfeConfig := v2.ResolveTfeProvider(commons...)
+	if tfeConfig.Enabled != nil && *tfeConfig.Enabled {
+		tfePlan = &TfeProvider{
+			Enabled:  true,
+			Version:  tfeConfig.Version,
+			Hostname: tfeConfig.Hostname,
+		}
+	}
+
 	tflintConfig := v2.ResolveTfLint(commons...)
 
 	tfLintPlan := TfLint{
@@ -582,6 +600,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Bless:     blessPlan,
 			Okta:      oktaPlan,
 			Datadog:   datadogPlan,
+			Tfe:       tfePlan,
 		},
 		TfLint:          tfLintPlan,
 		ExtraVars:       v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),
