@@ -30,7 +30,7 @@ require (
 	github.com/hashicorp/hcl/v2 v2.1.0 // indirect
 	github.com/hashicorp/hcl2 v0.0.0-20191002203319-fb75b3253c80
 	github.com/hashicorp/hil v0.0.0-20190212132231-97b3a9cdfa93 // indirect
-	github.com/hashicorp/terraform v0.12.17
+	github.com/hashicorp/terraform v0.12.24
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20191121111010-e9629612a215
 	github.com/hashicorp/terraform-svchost v0.0.0-20191119180714-d2e4933b9136 // indirect
 	github.com/howeyc/gopass v0.0.0-20190910152052-7cb4b85ec19c // indirect
