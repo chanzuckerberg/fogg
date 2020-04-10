@@ -1,0 +1,11 @@
+{{define "tfe_provider"}}
+provider tfe {
+{{ if .Version -}}
+  version = "~>{{ .Version }}"
+{{ end -}}
+{{ if .Hostname -}}
+  hostname = "{{ .Hostname }}"
+{{ end -}}
+
+}
+{{ end }}
