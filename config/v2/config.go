@@ -139,6 +139,7 @@ type AWSProvider struct {
 	AdditionalRegions []string     `yaml:"additional_regions,omitempty"`
 	Profile           *string      `yaml:"profile,omitempty"`
 	Region            *string      `yaml:"region,omitempty"`
+	Role              *string      `yaml:"role,omitempty"` // FIXME validate format
 	Version           *string      `yaml:"version,omitempty"`
 }
 
@@ -312,11 +313,20 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 	randAWSProvider := func(r *rand.Rand, s int) *AWSProvider {
 		if r.Float32() < 0.5 {
 			accountID := json.Number(randString(r, s))
-			return &AWSProvider{
-				AccountID: &accountID,
-				Region:    randStringPtr(r, s),
-				Profile:   randStringPtr(r, s),
-				Version:   randStringPtr(r, s),
+			if r.Float32() < 0.5 {
+				return &AWSProvider{
+					AccountID: &accountID,
+					Region:    randStringPtr(r, s),
+					Profile:   randStringPtr(r, s),
+					Version:   randStringPtr(r, s),
+				}
+			} else {
+				return &AWSProvider{
+					AccountID: &accountID,
+					Region:    randStringPtr(r, s),
+					Role:      randStringPtr(r, s),
+					Version:   randStringPtr(r, s),
+				}
 			}
 		}
 		return nil
