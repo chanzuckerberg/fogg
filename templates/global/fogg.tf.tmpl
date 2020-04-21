@@ -2,13 +2,7 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 {{ if .Providers.AWS }}
-  provider aws {
-    version = "~> {{ .Providers.AWS.Version }}"
-    region = "{{ .Providers.AWS.Region }}"
-    profile = "{{ .Providers.AWS.Profile }}"
-    {{ if .Providers.AWS.AccountID }}allowed_account_ids = [{{ .Providers.AWS.AccountID }}]{{ end }}
-  }
-
+{{ template "aws_provider" .Providers.AWS}}
   # Aliased Providers (for doing things in every region).
   {{ $p := .Providers.AWS }}
   {{ range $region := .Providers.AWS.AdditionalRegions }}
