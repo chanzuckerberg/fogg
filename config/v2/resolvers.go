@@ -92,7 +92,7 @@ func ResolveAWSProvider(commons ...Common) *AWSProvider {
 			p := c.Providers.AWS
 
 			// Profile and Role are mutually exclusive, so if one is set then we set the other to
-			// nil Our previous validations in validateAWSProviderAuth will assure that they are not
+			// nil Our validations in validateAWSProviderAuth will assure that they are not
 			// both set in the same stuct.
 			if p.Profile != nil {
 				profile = p.Profile
