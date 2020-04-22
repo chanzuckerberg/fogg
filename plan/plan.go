@@ -124,12 +124,11 @@ type Providers struct {
 
 //AWSProvider represents AWS provider configuration
 type AWSProvider struct {
-	AccountID         json.Number `yaml:"account_id"`
-	AdditionalRegions []string    `yaml:"additional_regions"`
-	Alias             *string     `yaml:"alias"`
-	Profile           string      `yaml:"profile"`
-	Region            string      `yaml:"region"`
-	Version           string      `yaml:"version"`
+	AccountID json.Number `yaml:"account_id"`
+	Alias     *string     `yaml:"alias"`
+	Profile   string      `yaml:"profile"`
+	Region    string      `yaml:"region"`
+	Version   string      `yaml:"version"`
 }
 
 // GithubProvider represents a configuration of a github provider
@@ -450,13 +449,15 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 
 		for _, r := range awsConfig.AdditionalRegions {
+			// we have to take a reference here otherwise it gets overwritten by the loop
+			region := r
 			additionalProviders = append(additionalProviders,
 				AWSProvider{
 					AccountID: *awsConfig.AccountID,
-					Alias:     &r,
+					Alias:     &region,
 					Profile:   *awsConfig.Profile,
 					Version:   *awsConfig.Version,
-					Region:    *awsConfig.Region,
+					Region:    region,
 				})
 		}
 	}

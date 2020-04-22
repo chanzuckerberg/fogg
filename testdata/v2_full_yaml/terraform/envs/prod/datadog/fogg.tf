@@ -28,7 +28,6 @@ provider aws {
 
 
 
-
 provider datadog {
 }
 
