@@ -55,12 +55,12 @@ variable project {
   }
 {{ end }}
 
-{{if .Providers.AWS}}
+{{ if .Providers.AWS }}{{ if .Providers.AWS.Profile }}
   variable aws_profile {
     type =  string
     default =  "{{ .Providers.AWS.Profile }}"
   }
-{{ end }}
+{{ end }}{{ end }}
 
 variable owner {
   type =  string

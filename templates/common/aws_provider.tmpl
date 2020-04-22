@@ -3,7 +3,12 @@ provider aws {
   {{ if .Alias }}alias = "{{ .Alias }}"{{ end }}
   version = "~> {{ .Version }}"
   region = "{{ .Region }}"
-  profile = "{{ .Profile }}"
+  {{ if .Profile }} profile = "{{ .Profile }}"{{ end }}
+  {{ if .Role }}
+  assume_role {
+    role_arn     = "arn:aws:iam::{{ .AccountID }}:role/{{ .Role }}"
+  }
+  {{ end }}
   allowed_account_ids = [{{ .AccountID }}]
 }
 {{ end }}

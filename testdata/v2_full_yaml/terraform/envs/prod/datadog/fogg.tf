@@ -5,9 +5,10 @@
 
 provider aws {
 
-  version             = "~> 0.12.0"
-  region              = "us-west-2"
-  profile             = "profile"
+  version = "~> 0.12.0"
+  region  = "us-west-2"
+  profile = "profile"
+
   allowed_account_ids = [456]
 }
 
@@ -80,7 +81,6 @@ variable aws_profile {
   type    = string
   default = "profile"
 }
-
 
 
 variable owner {

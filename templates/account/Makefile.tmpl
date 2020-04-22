@@ -6,9 +6,9 @@ export TFLINT_ENABLED := {{ if .TfLint.Enabled }}1{{ else }}0{{ end }}
 export TF_PLUGIN_CACHE_DIR := {{ .PathToRepoRoot }}/.terraform.d/plugin-cache
 export TF_BACKEND_KIND := {{ .Backend.Kind }}
 {{ if eq .Backend.Kind "s3" }}export AWS_BACKEND_PROFILE := {{ .Backend.S3.Profile }}{{ end }}
-{{ if .Providers.AWS }}
+{{ if .Providers.AWS }}{{ if .Providers.AWS.Profile }}
 export AWS_PROVIDER_PROFILE := {{ .Providers.AWS.Profile }}
-{{ end }}
+{{ end }}{{ end }}
 {{if .Providers.Heroku}}
 export HEROKU_PROVIDER := 1
 {{end}}
