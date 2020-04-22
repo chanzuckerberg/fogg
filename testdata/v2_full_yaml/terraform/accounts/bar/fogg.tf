@@ -17,7 +17,7 @@ provider aws {
 provider aws {
   alias               = "us-east-2"
   version             = "~> 0.12.0"
-  region              = "us-west-2"
+  region              = "us-east-1"
   profile             = "profile"
   allowed_account_ids = [456]
 }
@@ -27,7 +27,7 @@ provider aws {
 provider aws {
   alias               = "us-east-2"
   version             = "~> 0.12.0"
-  region              = "us-west-2"
+  region              = "us-east-2"
   profile             = "profile"
   allowed_account_ids = [456]
 }

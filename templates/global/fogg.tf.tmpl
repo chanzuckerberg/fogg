@@ -4,17 +4,9 @@
 {{ if .Providers.AWS }}
 {{ template "aws_provider" .Providers.AWS}}
   # Aliased Providers (for doing things in every region).
-  {{ $p := .Providers.AWS }}
-  {{ range $region := .Providers.AWS.AdditionalRegions }}
-    provider aws {
-      alias = "{{ $region }}"
-      version = "~> {{ $p.Version }}"
-      region = "{{ $region }}"
-      profile = "{{ $p.Profile }}"
-      {{ if $p.AccountID }}allowed_account_ids = [{{ $p.AccountID }}]{{ end }}
-    }
-  {{ end }}
-{{ end }}
+  {{ range $p := .Providers.AWSAdditionalProviders }}
+    {{ template "aws_provider" $p}}
+  {{ end }}{{ end }}
 
 {{ if .Providers.Snowflake }}
   {{ template "snowflake_provider" .Providers.Snowflake }}

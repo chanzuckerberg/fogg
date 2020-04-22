@@ -4,7 +4,6 @@
 {{if .Providers.AWS}}
 {{ template "aws_provider" .Providers.AWS}}
   # Aliased Providers (for doing things in every region).
-  {{ $outer := . -}}
   {{ range $p := .Providers.AWSAdditionalProviders }}
     {{ template "aws_provider" $p}}
   {{ end }}
