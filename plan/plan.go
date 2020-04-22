@@ -102,9 +102,11 @@ func (c CIComponent) generateCIConfig(
 	}
 
 	if provider != nil {
-		ciConfig.AWSProfiles[provider.Profile] = AWSRole{
-			AccountID: provider.AccountID.String(),
-			RoleName:  c.AWSRoleName,
+		if provider.Profile != nil {
+			ciConfig.AWSProfiles[*provider.Profile] = AWSRole{
+				AccountID: provider.AccountID.String(),
+				RoleName:  c.AWSRoleName,
+			}
 		}
 	}
 	return ciConfig
@@ -126,8 +128,9 @@ type Providers struct {
 type AWSProvider struct {
 	AccountID json.Number `yaml:"account_id"`
 	Alias     *string     `yaml:"alias"`
-	Profile   string      `yaml:"profile"`
+	Profile   *string     `yaml:"profile"`
 	Region    string      `yaml:"region"`
+	Role      *string     `yaml:"role"`
 	Version   string      `yaml:"version"`
 }
 
@@ -443,9 +446,10 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	if awsConfig != nil {
 		awsPlan = &AWSProvider{
 			AccountID: *awsConfig.AccountID,
-			Profile:   *awsConfig.Profile,
-			Version:   *awsConfig.Version,
+			Profile:   awsConfig.Profile,
 			Region:    *awsConfig.Region,
+			Role:      awsConfig.Role,
+			Version:   *awsConfig.Version,
 		}
 
 		for _, r := range awsConfig.AdditionalRegions {
@@ -455,9 +459,10 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 				AWSProvider{
 					AccountID: *awsConfig.AccountID,
 					Alias:     &region,
-					Profile:   *awsConfig.Profile,
-					Version:   *awsConfig.Version,
+					Profile:   awsConfig.Profile,
 					Region:    region,
+					Role:      awsConfig.Role,
+					Version:   *awsConfig.Version,
 				})
 		}
 	}

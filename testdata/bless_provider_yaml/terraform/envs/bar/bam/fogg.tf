@@ -79,7 +79,6 @@ variable component {
 
 
 
-
 variable owner {
   type    = string
   default = "foo@example.com"

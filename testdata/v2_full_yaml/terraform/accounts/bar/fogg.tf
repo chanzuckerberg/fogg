@@ -5,9 +5,14 @@
 
 provider aws {
 
-  version             = "~> 0.12.0"
-  region              = "us-west-2"
-  profile             = "profile"
+  version = "~> 0.12.0"
+  region  = "us-west-2"
+
+
+  assume_role {
+    role_arn = "arn:aws:iam::456:role/foo"
+  }
+
   allowed_account_ids = [456]
 }
 
@@ -15,20 +20,30 @@ provider aws {
 
 
 provider aws {
-  alias               = "us-east-1"
-  version             = "~> 0.12.0"
-  region              = "us-east-1"
-  profile             = "profile"
+  alias   = "us-east-1"
+  version = "~> 0.12.0"
+  region  = "us-east-1"
+
+
+  assume_role {
+    role_arn = "arn:aws:iam::456:role/foo"
+  }
+
   allowed_account_ids = [456]
 }
 
 
 
 provider aws {
-  alias               = "us-east-2"
-  version             = "~> 0.12.0"
-  region              = "us-east-2"
-  profile             = "profile"
+  alias   = "us-east-2"
+  version = "~> 0.12.0"
+  region  = "us-east-2"
+
+
+  assume_role {
+    role_arn = "arn:aws:iam::456:role/foo"
+  }
+
   allowed_account_ids = [456]
 }
 
@@ -78,11 +93,6 @@ variable region {
 }
 
 
-
-variable aws_profile {
-  type    = string
-  default = "profile"
-}
 
 
 variable owner {

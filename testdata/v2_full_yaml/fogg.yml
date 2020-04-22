@@ -6,6 +6,7 @@ accounts:
         additional_regions:
           - us-east-1
           - us-east-2
+        role: foo
   foo:
     providers:
       aws:

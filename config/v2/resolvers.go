@@ -30,18 +30,6 @@ func lastNonNilInt64(getter func(Common) *int64, commons ...Common) *int64 {
 	return s
 }
 
-// lastNonNilJsonNumber, despite its name can return nil if all results are nil
-func lastNonNilJsonNumber(getter func(Common) *json.Number, commons ...Common) *json.Number {
-	var jsonNumber *json.Number
-	for _, c := range commons {
-		j := getter(c)
-		if j != nil {
-			jsonNumber = j
-		}
-	}
-	return jsonNumber
-}
-
 // lastNonNilStringSlice, despite its name can return nil if all results are nil
 func lastNonNilStringSlice(getter func(Common) []string, commons ...Common) []string {
 	var s []string
@@ -91,24 +79,57 @@ func ResolveStringMap(getter func(Common) map[string]string, commons ...Common) 
 	return resolved
 }
 
-// ResolveAWSProvider will return an AWSProvder iff one of the required fields is set somewhere in the set of Common
-// config objects passed in. Otherwise it will return nil.
+// ResolveAWSProvider will return an AWSProvder iff one of the required fields is set somewhere in
+// the set of Common config objects passed in. Otherwise it will return nil.
 func ResolveAWSProvider(commons ...Common) *AWSProvider {
 
-	// we may in the future want invert this implementation and walk the structs first
-	profile := lastNonNil(AWSProviderProfileGetter, commons...)
-	region := lastNonNil(AWSProviderRegionGetter, commons...)
-	version := lastNonNil(AWSProviderVersionGetter, commons...)
+	var profile, region, role, version *string
+	var accountId *json.Number
+	var additionalRegions []string
 
-	if profile != nil || region != nil || version != nil {
+	for _, c := range commons {
+		if c.Providers != nil && c.Providers.AWS != nil {
+			p := c.Providers.AWS
+
+			// Profile and Role are mutually exclusive, so if one is set then we set the other to
+			// nil Our validations in validateAWSProviderAuth will assure that they are not
+			// both set in the same stuct.
+			if p.Profile != nil {
+				profile = p.Profile
+				role = nil
+			} else if p.Role != nil {
+				role = p.Role
+				profile = nil
+			}
+
+			if p.Region != nil {
+				region = p.Region
+			}
+
+			if p.Version != nil {
+				version = p.Version
+			}
+
+			if p.AccountID != nil {
+				accountId = p.AccountID
+			}
+
+			if p.AdditionalRegions != nil {
+				additionalRegions = p.AdditionalRegions
+			}
+		}
+	}
+
+	if profile != nil || role != nil || region != nil || version != nil {
 		return &AWSProvider{
 			Profile: profile,
 			Region:  region,
+			Role:    role,
 			Version: version,
 
 			// optional fields
-			AccountID:         lastNonNilJsonNumber(AWSProviderAccountIdGetter, commons...),
-			AdditionalRegions: ResolveOptionalStringSlice(AWSProviderAdditionalRegionsGetter, commons...),
+			AccountID:         accountId,
+			AdditionalRegions: additionalRegions,
 		}
 	}
 	return nil
@@ -436,41 +457,6 @@ func BackendDynamoTableGetter(comm Common) *string {
 func BackendProfileGetter(comm Common) *string {
 	if comm.Backend != nil {
 		return comm.Backend.Profile
-	}
-	return nil
-}
-
-func AWSProviderRegionGetter(comm Common) *string {
-	if comm.Providers != nil && comm.Providers.AWS != nil {
-		return comm.Providers.AWS.Region
-	}
-	return nil
-}
-
-func AWSProviderVersionGetter(comm Common) *string {
-	if comm.Providers != nil && comm.Providers.AWS != nil {
-		return comm.Providers.AWS.Version
-	}
-	return nil
-}
-
-func AWSProviderProfileGetter(comm Common) *string {
-	if comm.Providers != nil && comm.Providers.AWS != nil {
-		return comm.Providers.AWS.Profile
-	}
-	return nil
-}
-
-func AWSProviderAccountIdGetter(comm Common) *json.Number {
-	if comm.Providers != nil && comm.Providers.AWS != nil {
-		return comm.Providers.AWS.AccountID
-	}
-	return nil
-}
-
-func AWSProviderAdditionalRegionsGetter(comm Common) []string {
-	if comm.Providers != nil && comm.Providers.AWS != nil {
-		return comm.Providers.AWS.AdditionalRegions
 	}
 	return nil
 }

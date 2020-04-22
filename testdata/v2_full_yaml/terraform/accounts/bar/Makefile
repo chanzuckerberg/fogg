@@ -7,8 +7,6 @@ export TF_PLUGIN_CACHE_DIR := ../../..//.terraform.d/plugin-cache
 export TF_BACKEND_KIND := s3
 export AWS_BACKEND_PROFILE := profile
 
-export AWS_PROVIDER_PROFILE := profile
-
 
 
 include ../../..//scripts/component.mk

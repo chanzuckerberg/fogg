@@ -44,6 +44,7 @@ func (c *Config) Validate() ([]string, error) {
 	errs = multierror.Append(errs, c.validateInheritedStringField("project", ProjectGetter, nonEmptyString))
 	errs = multierror.Append(errs, c.validateInheritedStringField("terraform version", TerraformVersionGetter, nonEmptyString))
 	errs = multierror.Append(errs, c.ValidateBackends())
+	errs = multierror.Append(errs, c.validateAWSProviderAuth())
 	errs = multierror.Append(errs, c.ValidateAWSProviders())
 	errs = multierror.Append(errs, c.ValidateSnowflakeProviders())
 	errs = multierror.Append(errs, c.ValidateBlessProviders())
@@ -73,8 +74,8 @@ func ValidateAWSProvider(p *AWSProvider, component string) error {
 		errs = multierror.Append(errs, fmt.Errorf("aws provider region for %s", component))
 	}
 
-	if p.Profile == nil {
-		errs = multierror.Append(errs, fmt.Errorf("aws provider profile %s ", component))
+	if (p.Profile == nil) == (p.Role == nil) {
+		errs = multierror.Append(errs, fmt.Errorf("aws provider must have exactly one of profile or role %s ", component))
 	}
 
 	if p.Version == nil {
@@ -84,7 +85,7 @@ func ValidateAWSProvider(p *AWSProvider, component string) error {
 	if p.AccountID == nil || *p.AccountID == "" {
 		errs = multierror.Append(errs, fmt.Errorf("aws provider account id for %s", component))
 	}
-	return errs
+	return errs.ErrorOrNil()
 }
 
 // ValidateBackend will check the resolved configuration for a backend and return any errors it
@@ -357,6 +358,42 @@ func (c *Config) validateExtraVars() error {
 		return errs.WrapUser(err.ErrorOrNil(), "extra_vars contains reserved variable names")
 	}
 	return nil
+}
+
+func (c *Config) validateAWSProviderAuth() error {
+	var err *multierror.Error
+	validate := func(p *AWSProvider) {
+		if p != nil && (p.Profile != nil && p.Role != nil) {
+			err = multierror.Append(err, fmt.Errorf("aws provider must have only one of profile or role set"))
+		}
+	}
+
+	if c.Defaults.Providers != nil {
+		validate(c.Defaults.Providers.AWS)
+	}
+
+	if c.Global.Providers != nil {
+		validate(c.Global.Providers.AWS)
+	}
+
+	for _, env := range c.Envs {
+		if env.Providers != nil {
+			validate(env.Providers.AWS)
+		}
+		for _, component := range env.Components {
+			if component.Providers != nil {
+				validate(component.Providers.AWS)
+			}
+		}
+	}
+
+	for _, acct := range c.Accounts {
+		if acct.Providers != nil {
+			validate(acct.Providers.AWS)
+		}
+	}
+
+	return err.ErrorOrNil()
 }
 
 func (c *Config) validateModules() error {
