@@ -456,7 +456,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 					Alias:     &r,
 					Profile:   *awsConfig.Profile,
 					Version:   *awsConfig.Version,
-					Region:    *awsConfig.Region,
+					Region:    r,
 				})
 		}
 	}
