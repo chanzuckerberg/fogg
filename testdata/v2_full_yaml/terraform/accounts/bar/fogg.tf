@@ -2,8 +2,9 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 
-# Default Provider
+
 provider aws {
+
   version             = "~> 0.12.0"
   region              = "us-west-2"
   profile             = "profile"
@@ -11,6 +12,26 @@ provider aws {
 }
 
 # Aliased Providers (for doing things in every region).
+
+
+provider aws {
+  alias               = "us-east-1"
+  version             = "~> 0.12.0"
+  region              = "us-east-1"
+  profile             = "profile"
+  allowed_account_ids = [456]
+}
+
+
+
+provider aws {
+  alias               = "us-east-2"
+  version             = "~> 0.12.0"
+  region              = "us-east-2"
+  profile             = "profile"
+  allowed_account_ids = [456]
+}
+
 
 
 

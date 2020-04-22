@@ -1,0 +1,9 @@
+{{ define "aws_provider" }}
+provider aws {
+  {{ if .Alias }}alias = "{{ .Alias }}"{{ end }}
+  version = "~> {{ .Version }}"
+  region = "{{ .Region }}"
+  profile = "{{ .Profile }}"
+  allowed_account_ids = [{{ .AccountID }}]
+}
+{{ end }}

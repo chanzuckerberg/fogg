@@ -3,6 +3,9 @@ accounts:
     providers:
       aws:
         account_id: 456
+        additional_regions:
+          - us-east-1
+          - us-east-2
   foo:
     providers:
       aws:

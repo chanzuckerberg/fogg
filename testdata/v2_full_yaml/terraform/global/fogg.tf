@@ -2,7 +2,9 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 
+
 provider aws {
+
   version             = "~> 0.12.0"
   region              = "us-west-2"
   profile             = "profile"
@@ -10,8 +12,6 @@ provider aws {
 }
 
 # Aliased Providers (for doing things in every region).
-
-
 
 
 
