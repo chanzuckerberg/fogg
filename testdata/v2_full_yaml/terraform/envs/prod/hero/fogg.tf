@@ -4,6 +4,7 @@
 
 
 provider aws {
+
   version             = "~> 0.12.0"
   region              = "us-west-2"
   profile             = "profile"

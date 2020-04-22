@@ -111,23 +111,25 @@ func (c CIComponent) generateCIConfig(
 }
 
 type Providers struct {
-	AWS       *AWSProvider       `yaml:"aws"`
-	Github    *GithubProvider    `yaml:"github"`
-	Heroku    *HerokuProvider    `yaml:"heroku"`
-	Snowflake *SnowflakeProvider `yaml:"snowflake"`
-	Bless     *BlessProvider     `yaml:"bless"`
-	Okta      *OktaProvider      `yaml:"okta"`
-	Datadog   *DatadogProvider   `yaml:"datadog"`
-	Tfe       *TfeProvider       `yaml:"tfe"`
+	AWS                    *AWSProvider       `yaml:"aws"`
+	AWSAdditionalProviders []AWSProvider      `yaml:"aws_regional_providers"`
+	Github                 *GithubProvider    `yaml:"github"`
+	Heroku                 *HerokuProvider    `yaml:"heroku"`
+	Snowflake              *SnowflakeProvider `yaml:"snowflake"`
+	Bless                  *BlessProvider     `yaml:"bless"`
+	Okta                   *OktaProvider      `yaml:"okta"`
+	Datadog                *DatadogProvider   `yaml:"datadog"`
+	Tfe                    *TfeProvider       `yaml:"tfe"`
 }
 
 //AWSProvider represents AWS provider configuration
 type AWSProvider struct {
 	AccountID         json.Number `yaml:"account_id"`
-	Profile           string      `yaml:"profile"`
-	Version           string      `yaml:"version"`
-	Region            string      `yaml:"region"`
 	AdditionalRegions []string    `yaml:"additional_regions"`
+	Alias             *string     `yaml:"alias"`
+	Profile           string      `yaml:"profile"`
+	Region            string      `yaml:"region"`
+	Version           string      `yaml:"version"`
 }
 
 // GithubProvider represents a configuration of a github provider
@@ -437,14 +439,25 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	var awsPlan *AWSProvider
 	awsConfig := v2.ResolveAWSProvider(commons...)
+	additionalProviders := []AWSProvider{}
 
 	if awsConfig != nil {
 		awsPlan = &AWSProvider{
-			AccountID:         *awsConfig.AccountID,
-			Profile:           *awsConfig.Profile,
-			Version:           *awsConfig.Version,
-			Region:            *awsConfig.Region,
-			AdditionalRegions: awsConfig.AdditionalRegions,
+			AccountID: *awsConfig.AccountID,
+			Profile:   *awsConfig.Profile,
+			Version:   *awsConfig.Version,
+			Region:    *awsConfig.Region,
+		}
+
+		for _, r := range awsConfig.AdditionalRegions {
+			additionalProviders = append(additionalProviders,
+				AWSProvider{
+					AccountID: *awsConfig.AccountID,
+					Alias:     &r,
+					Profile:   *awsConfig.Profile,
+					Version:   *awsConfig.Version,
+					Region:    *awsConfig.Region,
+				})
 		}
 	}
 
@@ -593,14 +606,15 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	return ComponentCommon{
 		Backend: backend,
 		Providers: Providers{
-			AWS:       awsPlan,
-			Github:    githubPlan,
-			Heroku:    herokuPlan,
-			Snowflake: snowflakePlan,
-			Bless:     blessPlan,
-			Okta:      oktaPlan,
-			Datadog:   datadogPlan,
-			Tfe:       tfePlan,
+			AWS:                    awsPlan,
+			AWSAdditionalProviders: additionalProviders,
+			Github:                 githubPlan,
+			Heroku:                 herokuPlan,
+			Snowflake:              snowflakePlan,
+			Bless:                  blessPlan,
+			Okta:                   oktaPlan,
+			Datadog:                datadogPlan,
+			Tfe:                    tfePlan,
 		},
 		TfLint:          tfLintPlan,
 		ExtraVars:       v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),

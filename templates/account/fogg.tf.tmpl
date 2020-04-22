@@ -5,14 +5,8 @@
 {{ template "aws_provider" .Providers.AWS}}
   # Aliased Providers (for doing things in every region).
   {{ $outer := . -}}
-  {{ range $region := .Providers.AWS.AdditionalRegions }}
-    provider aws {
-      alias = "{{ $region }}"
-      version = "~> {{ $outer.Providers.AWS.Version }}"
-      region = "{{ $region }}"
-      profile = "{{ $outer.Providers.AWS.Profile }}"
-      allowed_account_ids = [{{ $outer.Providers.AWS.AccountID }}]
-    }
+  {{ range $p := .Providers.AWSAdditionalProviders }}
+    {{ template "aws_provider" $p}}
   {{ end }}
 {{ end }}
 
