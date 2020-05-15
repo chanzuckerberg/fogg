@@ -137,20 +137,54 @@ func ResolveAWSProvider(commons ...Common) *AWSProvider {
 
 // ResolveBackend returns the Backend configuration for a given component, after applying all inheritance rules
 func ResolveBackend(commons ...Common) *Backend {
-	kind := lastNonNil(BackendKindGetter, commons...)
 
-	// This feels like a somewhat hacky way to do this, but not sure of a better place yet
-	if kind == nil {
-		kind = util.StrPtr("s3")
+	var kind, accountID, bucket, dynamoTable, profile, region, hostName, organization, role *string
+
+	kind = util.StrPtr("s3")
+
+	for _, c := range commons {
+		if c.Backend != nil {
+			b := c.Backend
+			if b.Kind != nil {
+				kind = b.Kind
+			}
+
+			if b.AccountID != nil {
+				accountID = b.AccountID
+			}
+
+			if b.Bucket != nil {
+				bucket = b.Bucket
+			}
+
+			if b.DynamoTable != nil {
+				dynamoTable = b.DynamoTable
+			}
+
+			if b.Region != nil {
+				region = b.Region
+			}
+
+			// Profile and Role are mutually exclusive, so if one is set then we set the other to
+			// nil Our validations in validateBackend will assure that they are not both set in the
+			// same stuct.
+			if b.Profile != nil {
+				profile = b.Profile
+				role = nil
+			} else if b.Role != nil {
+				role = b.Role
+				profile = nil
+			}
+
+			if b.HostName != nil {
+				hostName = b.HostName
+			}
+
+			if b.Organization != nil {
+				organization = b.Organization
+			}
+		}
 	}
-
-	accountID := lastNonNil(BackendAccountIDGetter, commons...)
-	bucket := lastNonNil(BackendBucketGetter, commons...)
-	dynamoTable := lastNonNil(BackendDynamoTableGetter, commons...)
-	profile := lastNonNil(BackendProfileGetter, commons...)
-	region := lastNonNil(BackendRegionGetter, commons...)
-	hostName := lastNonNil(BackendHostNameGetter, commons...)
-	organization := lastNonNil(BackendOrganizationGetter, commons...)
 
 	return &Backend{
 		Kind: kind,
@@ -162,6 +196,7 @@ func ResolveBackend(commons ...Common) *Backend {
 		Region:       region,
 		HostName:     hostName,
 		Organization: organization,
+		Role:         role,
 	}
 }
 

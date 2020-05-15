@@ -94,8 +94,9 @@ func (c CIComponent) generateCIConfig(
 		Command: c.Command,
 	})
 
-	if backend.S3 != nil && backend.S3.AccountID != nil {
-		ciConfig.AWSProfiles[backend.S3.Profile] = AWSRole{
+	if backend.S3 != nil && backend.S3.AccountID != nil && backend.S3.Profile != nil {
+		p := *backend.S3.Profile
+		ciConfig.AWSProfiles[p] = AWSRole{
 			AccountID: *backend.S3.AccountID,
 			RoleName:  c.AWSRoleName,
 		}
@@ -198,11 +199,12 @@ type Backend struct {
 type S3Backend struct {
 	AccountID   *string `yaml:"account_id,omitempty"`
 	AccountName string  `yaml:"account_name"`
-	Profile     string  `yaml:"profile"`
-	Region      string  `yaml:"region"`
 	Bucket      string  `yaml:"bucket"`
 	DynamoTable *string `yaml:"dynamo_table"`
 	KeyPath     string  `yaml:"key_path"`
+	Profile     *string `yaml:"profile"`
+	Region      string  `yaml:"region"`
+	RoleArn     *string `yaml:"role_arn"`
 }
 
 // RemoteBackend represents a plan to configure a terraform remote backend
@@ -588,12 +590,19 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	var backend Backend
 
 	if *backendConf.Kind == "s3" {
+		var roleArn *string
+		if backendConf.Role != nil {
+			// we know from our validations that if role is set, then account id must also be set
+			tmp := fmt.Sprintf("arn:aws:iam::%s:role/%s", *backendConf.AccountID, *backendConf.Role)
+			roleArn = &tmp
+		}
 		backend = Backend{
 			Kind: BackendKindS3,
 			S3: &S3Backend{
 				Region:  *backendConf.Region,
-				Profile: *backendConf.Profile,
+				Profile: backendConf.Profile,
 				Bucket:  *backendConf.Bucket,
+				RoleArn: roleArn,
 
 				AccountID:   backendConf.AccountID,
 				DynamoTable: backendConf.DynamoTable,

@@ -6,7 +6,8 @@
     key            = "{{ .S3.KeyPath }}"
     encrypt = true
     region = "{{ .S3.Region }}"
-    profile = "{{ .S3.Profile }}"
+    {{if .S3.Profile}}profile = "{{ .S3.Profile }}"{{end }}
+    {{if .S3.RoleArn}}role_arn = "{{ .S3.Role }}"{{end }}
   {{ else if eq .Kind "remote" }}
     hostname = "{{ .Remote.HostName }}"
     organization = "{{ .Remote.Organization }}"
@@ -23,7 +24,8 @@
     {{ if .S3.DynamoTable }}dynamodb_table = "{{ .S3.DynamoTable }}"{{ end }}
     key            = "{{ .S3.KeyPath }}"
     region = "{{ .S3.Region }}"
-    profile = "{{ .S3.Profile }}"
+    {{if .S3.Profile}}profile = "{{ .S3.Profile }}"{{end }}
+    {{if .S3.RoleArn}}role_arn = "{{ .S3.Role }}"{{end }}
   {{ else if eq .Kind "remote" }}
     hostname = "{{ .Remote.HostName }}"
     organization = "{{ .Remote.Organization }}"

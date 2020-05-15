@@ -113,8 +113,13 @@ func ValidateBackend(backend *Backend, component string) error {
 			errs = multierror.Append(errs, fmt.Errorf("when backend kind == 's3', region is required (component %s)", component))
 		}
 
-		if backend.Profile == nil {
-			errs = multierror.Append(errs, fmt.Errorf("when backend kind == 's3', profile is required (component %s)", component))
+		if (backend.Profile != nil && backend.Role != nil) ||
+			(backend.Profile == nil && backend.Role == nil) {
+			errs = multierror.Append(errs, fmt.Errorf("when backend kind == 's3', exactly one of profile or role must be set (component %s)", component))
+		}
+
+		if backend.Role != nil && backend.AccountID == nil {
+			errs = multierror.Append(errs, fmt.Errorf("when backend kind == 's3' and role is set, account_id must also be set (component %s)", component))
 		}
 
 		return errs.ErrorOrNil()
