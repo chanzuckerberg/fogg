@@ -262,7 +262,7 @@ func applyTree(dest afero.Fs, source *packr.Box, common *packr.Box, targetBasePa
 }
 
 func collapseLines(in []byte) []byte {
-	fmtRegex := regexp.MustCompile(`\n{2,}`)
+	fmtRegex := regexp.MustCompile(`\n+`)
 	return fmtRegex.ReplaceAll(in, []byte("\n"))
 }
 
