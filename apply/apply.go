@@ -261,12 +261,17 @@ func applyTree(dest afero.Fs, source *packr.Box, common *packr.Box, targetBasePa
 	})
 }
 
+func collapseLines(in []byte) []byte {
+	fmtRegex := regexp.MustCompile(`\n{2,}`)
+	return fmtRegex.ReplaceAll(in, []byte("\n"))
+}
+
 func fmtHcl(fs afero.Fs, path string) error {
 	in, e := afero.ReadFile(fs, path)
 	if e != nil {
 		return errs.WrapUserf(e, "unable to read file %s", path)
 	}
-	out := hclwrite.Format(in)
+	out := hclwrite.Format(collapseLines(in))
 	return afero.WriteReader(fs, path, bytes.NewReader(out))
 }
 

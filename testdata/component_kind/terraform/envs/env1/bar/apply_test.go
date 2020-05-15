@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -442,6 +443,28 @@ func Test_filepathRel(t *testing.T) {
 			}
 			if got != tt.want {
 				t.Errorf("filepathRel() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_collapseLines(t *testing.T) {
+	empty := []byte{}
+
+	type args struct {
+		in []byte
+	}
+	tests := []struct {
+		name string
+		args args
+		want []byte
+	}{
+		{"empty", args{empty}, empty},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := collapseLines(tt.args.in); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("collapseLines() = %v, want %v", got, tt.want)
 			}
 		})
 	}
