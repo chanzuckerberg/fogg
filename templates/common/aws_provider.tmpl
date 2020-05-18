@@ -4,9 +4,9 @@ provider aws {
   version = "~> {{ .Version }}"
   region = "{{ .Region }}"
   {{ if .Profile }} profile = "{{ .Profile }}"{{ end }}
-  {{ if .Role }}
+  {{ if .RoleArn }}
   assume_role {
-    role_arn     = "arn:aws:iam::{{ .AccountID }}:role/{{ .Role }}"
+    role_arn     = "{{ .RoleArn }}"
   }
   {{ end }}
   allowed_account_ids = [{{ .AccountID }}]

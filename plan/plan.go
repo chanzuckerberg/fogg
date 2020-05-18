@@ -131,7 +131,7 @@ type AWSProvider struct {
 	Alias     *string     `yaml:"alias"`
 	Profile   *string     `yaml:"profile"`
 	Region    string      `yaml:"region"`
-	Role      *string     `yaml:"role"`
+	RoleArn   *string     `yaml:"role_arn"`
 	Version   string      `yaml:"version"`
 }
 
@@ -444,13 +444,18 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	var awsPlan *AWSProvider
 	awsConfig := v2.ResolveAWSProvider(commons...)
 	additionalProviders := []AWSProvider{}
+	var roleArn *string
 
 	if awsConfig != nil {
+		if awsConfig.Role != nil {
+			tmp := fmt.Sprintf("arn:aws:iam::%s:role/%s", *awsConfig.AccountID, *awsConfig.Role)
+			roleArn = &tmp
+		}
 		awsPlan = &AWSProvider{
 			AccountID: *awsConfig.AccountID,
 			Profile:   awsConfig.Profile,
 			Region:    *awsConfig.Region,
-			Role:      awsConfig.Role,
+			RoleArn:   roleArn,
 			Version:   *awsConfig.Version,
 		}
 
@@ -463,7 +468,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 					Alias:     &region,
 					Profile:   awsConfig.Profile,
 					Region:    region,
-					Role:      awsConfig.Role,
+					RoleArn:   awsConfig.Role,
 					Version:   *awsConfig.Version,
 				})
 		}

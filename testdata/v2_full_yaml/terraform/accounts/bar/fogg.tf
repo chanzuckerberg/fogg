@@ -22,7 +22,7 @@ provider aws {
 
 
   assume_role {
-    role_arn = "arn:aws:iam::456:role/foo"
+    role_arn = "foo"
   }
 
   allowed_account_ids = [456]
@@ -36,7 +36,7 @@ provider aws {
 
 
   assume_role {
-    role_arn = "arn:aws:iam::456:role/foo"
+    role_arn = "foo"
   }
 
   allowed_account_ids = [456]

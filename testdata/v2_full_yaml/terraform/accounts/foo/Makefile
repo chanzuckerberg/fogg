@@ -9,6 +9,8 @@ export TF_BACKEND_KIND := s3
 export AWS_BACKEND_PROFILE := profile
 
 
+export AWS_PROVIDER_ROLE_ARN := arn:aws:iam::123:role/roll
+
 
 include ../../..//scripts/component.mk
 
