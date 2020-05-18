@@ -263,6 +263,9 @@ func applyTree(dest afero.Fs, source *packr.Box, common *packr.Box, targetBasePa
 	})
 }
 
+// collapseLines will convert \n+ to \n to reduce spurious diffs in generated output
+// post 0.12 terraform fmt will not manage vertical whitespace
+// https://github.com/hashicorp/terraform/issues/23223#issuecomment-547519852
 func collapseLines(in []byte) []byte {
 	fmtRegex := regexp.MustCompile(`\n+`)
 	return fmtRegex.ReplaceAll(in, []byte("\n"))
