@@ -15,6 +15,7 @@ terraform {
     region  = "region"
     profile = "foo"
 
+
   }
 }
 variable project {
@@ -44,6 +45,7 @@ data terraform_remote_state global {
     key     = "terraform/foo/global.tfstate"
     region  = "region"
     profile = "foo"
+
 
   }
 }

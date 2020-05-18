@@ -21,6 +21,7 @@ terraform {
     region  = "us-west-2"
     profile = "profile"
 
+
   }
 }
 variable project {
@@ -69,6 +70,7 @@ data terraform_remote_state global {
     region  = "us-west-2"
     profile = "profile"
 
+
   }
 }
 data terraform_remote_state bar {
@@ -81,6 +83,7 @@ data terraform_remote_state bar {
     key     = "terraform/proj/accounts/bar.tfstate"
     region  = "us-west-2"
     profile = "profile"
+
 
   }
 }

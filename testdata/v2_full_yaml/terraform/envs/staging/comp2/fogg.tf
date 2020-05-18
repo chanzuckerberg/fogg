@@ -22,6 +22,7 @@ terraform {
     region  = "us-west-2"
     profile = "profile"
 
+
   }
 }
 variable env {
@@ -73,6 +74,7 @@ data terraform_remote_state global {
     region  = "us-west-2"
     profile = "profile"
 
+
   }
 }
 data terraform_remote_state comp1 {
@@ -86,6 +88,7 @@ data terraform_remote_state comp1 {
     region  = "us-west-2"
     profile = "comp1"
 
+
   }
 }
 data terraform_remote_state vpc {
@@ -98,6 +101,7 @@ data terraform_remote_state vpc {
     key     = "terraform/proj/envs/staging/components/vpc.tfstate"
     region  = "us-west-2"
     profile = "profile"
+
 
   }
 }
@@ -113,6 +117,7 @@ data terraform_remote_state bar {
     region  = "us-west-2"
     profile = "profile"
 
+
   }
 }
 data terraform_remote_state foo {
@@ -125,6 +130,7 @@ data terraform_remote_state foo {
     key     = "terraform/proj/accounts/foo.tfstate"
     region  = "us-west-2"
     profile = "profile"
+
 
   }
 }
