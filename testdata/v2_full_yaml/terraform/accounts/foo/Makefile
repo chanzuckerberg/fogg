@@ -2,7 +2,6 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 
-
 export TERRAFORM_VERSION := 0.100.0
 export TFLINT_ENABLED := 0
 export TF_PLUGIN_CACHE_DIR := ../../..//.terraform.d/plugin-cache
@@ -12,7 +11,6 @@ export AWS_BACKEND_PROFILE := profile
 
 
 include ../../..//scripts/component.mk
-
 
 
 help: ## display help for this makefile
