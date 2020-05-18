@@ -11,6 +11,7 @@ accounts:
     providers:
       aws:
         account_id: 123
+        role: roll
 defaults:
   backend:
     bucket: buck
