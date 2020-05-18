@@ -32,7 +32,6 @@ func TestIntegration(t *testing.T) {
 		{"v2_no_aws_provider_yaml"},
 		{"github_actions"},
 		{"circleci"},
-		{"component_kind"},
 		{"tfe_provider_yaml"},
 	}
 
