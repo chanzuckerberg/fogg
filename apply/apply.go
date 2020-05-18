@@ -213,6 +213,14 @@ func applyTree(dest afero.Fs, source *packr.Box, common *packr.Box, targetBasePa
 			if e != nil {
 				return errs.WrapUser(e, "unable to apply template")
 			}
+
+			if targetExtension == ".tf" {
+				e = fmtHcl(dest, target, true)
+				if e != nil {
+					return errs.WrapUser(e, "unable to format HCL")
+				}
+			}
+
 		} else if extension == ".touch" {
 			e = touchFile(dest, target)
 			if e != nil {
@@ -251,12 +259,6 @@ func applyTree(dest afero.Fs, source *packr.Box, common *packr.Box, targetBasePa
 			logrus.Infof("%s copied", target)
 		}
 
-		if targetExtension == ".tf" {
-			e = fmtHcl(dest, target, true)
-			if e != nil {
-				return errs.WrapUser(e, "unable to format HCL")
-			}
-		}
 		return nil
 	})
 }
