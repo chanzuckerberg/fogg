@@ -213,6 +213,14 @@ func applyTree(dest afero.Fs, source *packr.Box, common *packr.Box, targetBasePa
 			if e != nil {
 				return errs.WrapUser(e, "unable to apply template")
 			}
+
+			if targetExtension == ".tf" {
+				e = fmtHcl(dest, target, true)
+				if e != nil {
+					return errs.WrapUser(e, "unable to format HCL")
+				}
+			}
+
 		} else if extension == ".touch" {
 			e = touchFile(dest, target)
 			if e != nil {
@@ -251,20 +259,25 @@ func applyTree(dest afero.Fs, source *packr.Box, common *packr.Box, targetBasePa
 			logrus.Infof("%s copied", target)
 		}
 
-		if targetExtension == ".tf" {
-			e = fmtHcl(dest, target)
-			if e != nil {
-				return errs.WrapUser(e, "unable to format HCL")
-			}
-		}
 		return nil
 	})
 }
 
-func fmtHcl(fs afero.Fs, path string) error {
+// collapseLines will convert \n+ to \n to reduce spurious diffs in generated output
+// post 0.12 terraform fmt will not manage vertical whitespace
+// https://github.com/hashicorp/terraform/issues/23223#issuecomment-547519852
+func collapseLines(in []byte) []byte {
+	fmtRegex := regexp.MustCompile(`\n+`)
+	return fmtRegex.ReplaceAll(in, []byte("\n"))
+}
+
+func fmtHcl(fs afero.Fs, path string, collapse bool) error {
 	in, e := afero.ReadFile(fs, path)
 	if e != nil {
 		return errs.WrapUserf(e, "unable to read file %s", path)
+	}
+	if collapse {
+		in = collapseLines(in)
 	}
 	out := hclwrite.Format(in)
 	return afero.WriteReader(fs, path, bytes.NewReader(out))
@@ -377,7 +390,7 @@ func applyModuleInvocation(fs afero.Fs, path, moduleAddress string, box packr.Bo
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply template for main.tf")
 	}
-	e = fmtHcl(fs, filepath.Join(path, "main.tf"))
+	e = fmtHcl(fs, filepath.Join(path, "main.tf"), false)
 	if e != nil {
 		return errs.WrapUser(e, "unable to format main.tf")
 	}
@@ -393,7 +406,7 @@ func applyModuleInvocation(fs afero.Fs, path, moduleAddress string, box packr.Bo
 		return errs.WrapUser(e, "unable to apply template for outputs.tf")
 	}
 
-	e = fmtHcl(fs, filepath.Join(path, "outputs.tf"))
+	e = fmtHcl(fs, filepath.Join(path, "outputs.tf"), false)
 	if e != nil {
 		return errs.WrapUser(e, "unable to format outputs.tf")
 	}
