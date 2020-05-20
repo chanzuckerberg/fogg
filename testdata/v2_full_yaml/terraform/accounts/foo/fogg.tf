@@ -4,7 +4,11 @@ provider aws {
 
   version = "~> 0.12.0"
   region  = "us-west-2"
-  profile = "profile"
+
+
+  assume_role {
+    role_arn = "arn:aws:iam::123:role/roll"
+  }
 
   allowed_account_ids = [123]
 }
@@ -21,6 +25,7 @@ terraform {
     region  = "us-west-2"
     profile = "profile"
 
+
   }
 }
 variable project {
@@ -30,10 +35,6 @@ variable project {
 variable region {
   type    = string
   default = "us-west-2"
-}
-variable aws_profile {
-  type    = string
-  default = "profile"
 }
 variable owner {
   type    = string
@@ -69,6 +70,7 @@ data terraform_remote_state global {
     region  = "us-west-2"
     profile = "profile"
 
+
   }
 }
 data terraform_remote_state bar {
@@ -81,6 +83,7 @@ data terraform_remote_state bar {
     key     = "terraform/proj/accounts/bar.tfstate"
     region  = "us-west-2"
     profile = "profile"
+
 
   }
 }

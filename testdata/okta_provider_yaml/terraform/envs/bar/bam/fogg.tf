@@ -18,6 +18,7 @@ terraform {
     region  = "region"
     profile = "foofoo"
 
+
   }
 }
 variable env {
@@ -57,6 +58,7 @@ data terraform_remote_state global {
     region  = "region"
     profile = "foofoo"
 
+
   }
 }
 # remote state for accounts
@@ -70,6 +72,7 @@ data terraform_remote_state foo {
     key     = "terraform/foofoo/accounts/foo.tfstate"
     region  = "region"
     profile = "foofoo"
+
 
   }
 }

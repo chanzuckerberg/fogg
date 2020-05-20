@@ -180,6 +180,7 @@ type Backend struct {
 	DynamoTable *string `yaml:"dynamodb_table,omitempty"`
 	Profile     *string `yaml:"profile,omitempty"`
 	Region      *string `yaml:"region,omitempty"`
+	Role        *string `yaml:"role,omitempty"`
 
 	// fields used for remote backend
 	HostName     *string `yaml:"host_name,omitempty"`
@@ -358,10 +359,22 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 	}
 
 	randCommon := func(r *rand.Rand, s int) Common {
+		var backendRole, backendProfile *string
+
+		if r.Float32() < 0.5 {
+			backendRole = randStringPtr(r, s)
+		}
+
+		if r.Float32() < 0.5 {
+			backendProfile = randStringPtr(r, s)
+		}
+
 		c := Common{
 			Backend: &Backend{
-				Bucket: randStringPtr(r, s),
-				Region: randStringPtr(r, s),
+				Bucket:  randStringPtr(r, s),
+				Region:  randStringPtr(r, s),
+				Role:    backendRole,
+				Profile: backendProfile,
 			},
 			ExtraVars: randStringMap(r, s),
 			Owner:     randStringPtr(r, s),

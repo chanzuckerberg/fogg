@@ -12,6 +12,7 @@ terraform {
     region  = "us-west-2"
     profile = "profile"
 
+
   }
 }
 variable env {
@@ -54,6 +55,7 @@ data terraform_remote_state global {
     key     = "terraform/proj/global.tfstate"
     region  = "us-west-2"
     profile = "profile"
+
 
   }
 }

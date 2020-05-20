@@ -22,7 +22,7 @@ provider aws {
 
 
   assume_role {
-    role_arn = "arn:aws:iam::456:role/foo"
+    role_arn = "foo"
   }
 
   allowed_account_ids = [456]
@@ -36,7 +36,7 @@ provider aws {
 
 
   assume_role {
-    role_arn = "arn:aws:iam::456:role/foo"
+    role_arn = "foo"
   }
 
   allowed_account_ids = [456]
@@ -52,6 +52,7 @@ terraform {
     encrypt = true
     region  = "us-west-2"
     profile = "profile"
+
 
   }
 }
@@ -97,6 +98,7 @@ data terraform_remote_state global {
     region  = "us-west-2"
     profile = "profile"
 
+
   }
 }
 data terraform_remote_state foo {
@@ -109,6 +111,7 @@ data terraform_remote_state foo {
     key     = "terraform/proj/accounts/foo.tfstate"
     region  = "us-west-2"
     profile = "profile"
+
 
   }
 }
