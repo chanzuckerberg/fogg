@@ -49,7 +49,7 @@ check-auth-aws:
 		aws --profile $$p sts get-caller-identity > /dev/null || (echo "AWS AUTH error. This component is configured to use a profile named '$$p'. Please add one to your ~/.aws/config" && exit -1); \
 	done
 	@for r in $(AWS_BACKEND_ROLE_ARN) $(AWS_PROVIDER_ROLE_ARN); do \
-		aws sts assume-role --role-arn $$r --session-name fogg-auth-test > /dev/null || (echo "AWS AUTH error. This component is configured to use a role named '$$r'." && exit -1); \
+		aws sts assume-role --role-arn $$r --role-session-name fogg-auth-test > /dev/null || (echo "AWS AUTH error. This component is configured to use a role named '$$r'." && exit -1); \
 	done
 .PHONY: check-auth-aws
 
