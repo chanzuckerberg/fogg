@@ -166,7 +166,7 @@ func ResolveBackend(commons ...Common) *Backend {
 			}
 
 			// Profile and Role are mutually exclusive, so if one is set then we set the other to
-			// nil Our validations in validateBackend will assure that they are not both set in the
+			// nil Our validations in validateBackend will assure that they are not both set or missing in the
 			// same stuct.
 			if b.Profile != nil {
 				profile = b.Profile
