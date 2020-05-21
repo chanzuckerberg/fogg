@@ -468,7 +468,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 					Alias:     &region,
 					Profile:   awsConfig.Profile,
 					Region:    region,
-					RoleArn:   awsConfig.Role,
+					RoleArn:   roleArn,
 					Version:   *awsConfig.Version,
 				})
 		}
