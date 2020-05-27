@@ -24,12 +24,12 @@ lint: ## run the fast go linters
 .PHONY: lint
 
 lint-ci: ## run the fast go linters
-	./bin/reviewdog -conf .reviewdog.yml  -reporter=github-pr-review -tee
+	./bin/reviewdog -conf .reviewdog.yml  -reporter=github-pr-review -tee -level=info
 .PHONY: lint-ci
 
 lint-all: ## run the fast go linters
 	# doesn't seem to be a way to get reviewdog to not filter by diff
-	golangci-lint run
+	./bin/golangci-lint run
 .PHONY: lint
 
 TEMPLATES := $(shell find templates -not -name "*.go")

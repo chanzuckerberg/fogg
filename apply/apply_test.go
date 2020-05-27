@@ -315,7 +315,7 @@ func TestFmtHcl(t *testing.T) {
 	in := strings.NewReader(before)
 	e := afero.WriteReader(fs, "foo.tf", in)
 	r.Nil(e)
-	e = fmtHcl(fs, "foo.tf")
+	e = fmtHcl(fs, "foo.tf", false)
 	r.Nil(e)
 	out, e := afero.ReadFile(fs, "foo.tf")
 	r.Nil(e)

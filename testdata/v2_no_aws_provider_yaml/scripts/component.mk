@@ -48,6 +48,9 @@ check-auth-aws:
 	@for p in $(AWS_BACKEND_PROFILE) $(AWS_PROVIDER_PROFILE); do \
 		aws --profile $$p sts get-caller-identity > /dev/null || (echo "AWS AUTH error. This component is configured to use a profile named '$$p'. Please add one to your ~/.aws/config" && exit -1); \
 	done
+	@for r in $(AWS_BACKEND_ROLE_ARN) $(AWS_PROVIDER_ROLE_ARN); do \
+		aws sts assume-role --role-arn $$r --role-session-name fogg-auth-test > /dev/null || (echo "AWS AUTH error. This component is configured to use a role named '$$r'." && exit -1); \
+	done
 .PHONY: check-auth-aws
 
 check-auth-heroku:
@@ -71,7 +74,7 @@ refresh:
 .PHONY: refresh
 
 refresh-cached:
-	@last_refresh=`cat .terraform/refreshed_at || echo '0'`; \
+	@last_refresh=`cat .terraform/refreshed_at 2>/dev/null || echo '0'`; \
 	current_time=`date +%s`; \
 	if (( current_time - last_refresh > 600 )); then \
 		echo "It has been awhile since the last refresh. It is time."; \
@@ -106,8 +109,17 @@ init: terraform check-auth ## run terraform init for this component
 .PHONY: init
 
 check-plan: check-auth init refresh-cached ## run a terraform plan and check that it does not fail
-	@$(terraform_command) plan $(TF_ARGS) -detailed-exitcode -lock=false -out=$(CHECK_PLANFILE_PATH) ; \
-	ERR=$$?; \
+	@if [ "$(TF_BACKEND_KIND)" != "remote" ]; then \
+		$(terraform_command) plan $(TF_ARGS) -detailed-exitcode -lock=false -out=$(CHECK_PLANFILE_PATH) ; \
+		ERR=$$?; \
+		if [ -n "$(BUILDEVENT_FILE)" ]; then \
+			fogg exp entropy -f $(CHECK_PLANFILE_PATH) -o $(BUILDEVENT_FILE) ; \
+		fi; \
+		rm $(CHECK_PLANFILE_PATH) 2>/dev/null; \
+	else \
+		$(terraform_command) plan $(TF_ARGS) -detailed-exitcode -lock=false; \
+		ERR=$$?; \
+	fi; \
 	if [ $$ERR -eq 0 ] ; then \
 		echo "Success"; \
 	elif [ $$ERR -eq 1 ] ; then \
@@ -115,11 +127,7 @@ check-plan: check-auth init refresh-cached ## run a terraform plan and check tha
 		exit 1; \
 	elif [ $$ERR -eq 2 ] ; then \
 		echo "Diff";  \
-	fi ; \
-	if [ -n "$(BUILDEVENT_FILE)" ]; then \
-		fogg exp entropy -f $(CHECK_PLANFILE_PATH) -o $(BUILDEVENT_FILE) ; \
-	fi
-	rm $(CHECK_PLANFILE_PATH)
+	fi;
 .PHONY: check-plan
 
 run: check-auth ## run an arbitrary terraform command, CMD. ex `make run CMD='show'`

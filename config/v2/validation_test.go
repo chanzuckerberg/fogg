@@ -215,6 +215,54 @@ func TestResolveStringArray(t *testing.T) {
 	r.Equal("foo", result2[0])
 }
 
+func TestValidateAWSProvider(t *testing.T) {
+
+	validProfile := &AWSProvider{
+		AccountID: util.JsonNumberPtr(123456),
+		Profile:   util.StrPtr("my-profile"),
+		Region:    util.StrPtr("us-sw-12"),
+		Version:   util.StrPtr("1.1.1"),
+	}
+
+	invalidNothing := &AWSProvider{}
+	invalidBoth := &AWSProvider{
+		AccountID: util.JsonNumberPtr(123456),
+		Profile:   util.StrPtr("my-profile-name"),
+		Role:      util.StrPtr("my-role-name"),
+		Region:    util.StrPtr("us-sw-12"),
+		Version:   util.StrPtr("1.1.1"),
+	}
+
+	validRole := &AWSProvider{
+		AccountID: util.JsonNumberPtr(123456),
+		Role:      util.StrPtr("my-role-name"),
+		Region:    util.StrPtr("us-sw-12"),
+		Version:   util.StrPtr("1.1.1"),
+	}
+
+	type args struct {
+		p         *AWSProvider
+		component string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{"valid profile", args{validProfile, "valid"}, false},
+		{"invalid", args{invalidNothing, "invalid"}, true},
+		{"valid role", args{validRole, "valid-role"}, false},
+		{"invalid both", args{invalidBoth, "invalid-both"}, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := ValidateAWSProvider(tt.args.p, tt.args.component); (err != nil) != tt.wantErr {
+				t.Errorf("ValidateAWSProvider() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
 func TestConfig_ValidateAWSProviders(t *testing.T) {
 
 	tests := []struct {

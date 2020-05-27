@@ -94,40 +94,45 @@ func (c CIComponent) generateCIConfig(
 		Command: c.Command,
 	})
 
-	if backend.S3 != nil && backend.S3.AccountID != nil {
-		ciConfig.AWSProfiles[backend.S3.Profile] = AWSRole{
+	if backend.S3 != nil && backend.S3.AccountID != nil && backend.S3.Profile != nil {
+		p := *backend.S3.Profile
+		ciConfig.AWSProfiles[p] = AWSRole{
 			AccountID: *backend.S3.AccountID,
 			RoleName:  c.AWSRoleName,
 		}
 	}
 
 	if provider != nil {
-		ciConfig.AWSProfiles[provider.Profile] = AWSRole{
-			AccountID: provider.AccountID.String(),
-			RoleName:  c.AWSRoleName,
+		if provider.Profile != nil {
+			ciConfig.AWSProfiles[*provider.Profile] = AWSRole{
+				AccountID: provider.AccountID.String(),
+				RoleName:  c.AWSRoleName,
+			}
 		}
 	}
 	return ciConfig
 }
 
 type Providers struct {
-	AWS       *AWSProvider       `yaml:"aws"`
-	Github    *GithubProvider    `yaml:"github"`
-	Heroku    *HerokuProvider    `yaml:"heroku"`
-	Snowflake *SnowflakeProvider `yaml:"snowflake"`
-	Bless     *BlessProvider     `yaml:"bless"`
-	Okta      *OktaProvider      `yaml:"okta"`
-	Datadog   *DatadogProvider   `yaml:"datadog"`
-	Tfe       *TfeProvider       `yaml:"tfe"`
+	AWS                    *AWSProvider       `yaml:"aws"`
+	AWSAdditionalProviders []AWSProvider      `yaml:"aws_regional_providers"`
+	Github                 *GithubProvider    `yaml:"github"`
+	Heroku                 *HerokuProvider    `yaml:"heroku"`
+	Snowflake              *SnowflakeProvider `yaml:"snowflake"`
+	Bless                  *BlessProvider     `yaml:"bless"`
+	Okta                   *OktaProvider      `yaml:"okta"`
+	Datadog                *DatadogProvider   `yaml:"datadog"`
+	Tfe                    *TfeProvider       `yaml:"tfe"`
 }
 
 //AWSProvider represents AWS provider configuration
 type AWSProvider struct {
-	AccountID         json.Number `yaml:"account_id"`
-	Profile           string      `yaml:"profile"`
-	Version           string      `yaml:"version"`
-	Region            string      `yaml:"region"`
-	AdditionalRegions []string    `yaml:"additional_regions"`
+	AccountID json.Number `yaml:"account_id"`
+	Alias     *string     `yaml:"alias"`
+	Profile   *string     `yaml:"profile"`
+	Region    string      `yaml:"region"`
+	RoleArn   *string     `yaml:"role_arn"`
+	Version   string      `yaml:"version"`
 }
 
 // GithubProvider represents a configuration of a github provider
@@ -194,11 +199,12 @@ type Backend struct {
 type S3Backend struct {
 	AccountID   *string `yaml:"account_id,omitempty"`
 	AccountName string  `yaml:"account_name"`
-	Profile     string  `yaml:"profile"`
-	Region      string  `yaml:"region"`
 	Bucket      string  `yaml:"bucket"`
 	DynamoTable *string `yaml:"dynamo_table"`
 	KeyPath     string  `yaml:"key_path"`
+	Profile     *string `yaml:"profile"`
+	Region      string  `yaml:"region"`
+	RoleArn     *string `yaml:"role_arn"`
 }
 
 // RemoteBackend represents a plan to configure a terraform remote backend
@@ -437,14 +443,34 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	var awsPlan *AWSProvider
 	awsConfig := v2.ResolveAWSProvider(commons...)
+	additionalProviders := []AWSProvider{}
+	var roleArn *string
 
 	if awsConfig != nil {
+		if awsConfig.Role != nil {
+			tmp := fmt.Sprintf("arn:aws:iam::%s:role/%s", *awsConfig.AccountID, *awsConfig.Role)
+			roleArn = &tmp
+		}
 		awsPlan = &AWSProvider{
-			AccountID:         *awsConfig.AccountID,
-			Profile:           *awsConfig.Profile,
-			Version:           *awsConfig.Version,
-			Region:            *awsConfig.Region,
-			AdditionalRegions: awsConfig.AdditionalRegions,
+			AccountID: *awsConfig.AccountID,
+			Profile:   awsConfig.Profile,
+			Region:    *awsConfig.Region,
+			RoleArn:   roleArn,
+			Version:   *awsConfig.Version,
+		}
+
+		for _, r := range awsConfig.AdditionalRegions {
+			// we have to take a reference here otherwise it gets overwritten by the loop
+			region := r
+			additionalProviders = append(additionalProviders,
+				AWSProvider{
+					AccountID: *awsConfig.AccountID,
+					Alias:     &region,
+					Profile:   awsConfig.Profile,
+					Region:    region,
+					RoleArn:   roleArn,
+					Version:   *awsConfig.Version,
+				})
 		}
 	}
 
@@ -569,12 +595,19 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	var backend Backend
 
 	if *backendConf.Kind == "s3" {
+		var roleArn *string
+		if backendConf.Role != nil {
+			// we know from our validations that if role is set, then account id must also be set
+			tmp := fmt.Sprintf("arn:aws:iam::%s:role/%s", *backendConf.AccountID, *backendConf.Role)
+			roleArn = &tmp
+		}
 		backend = Backend{
 			Kind: BackendKindS3,
 			S3: &S3Backend{
 				Region:  *backendConf.Region,
-				Profile: *backendConf.Profile,
+				Profile: backendConf.Profile,
 				Bucket:  *backendConf.Bucket,
+				RoleArn: roleArn,
 
 				AccountID:   backendConf.AccountID,
 				DynamoTable: backendConf.DynamoTable,
@@ -593,14 +626,15 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	return ComponentCommon{
 		Backend: backend,
 		Providers: Providers{
-			AWS:       awsPlan,
-			Github:    githubPlan,
-			Heroku:    herokuPlan,
-			Snowflake: snowflakePlan,
-			Bless:     blessPlan,
-			Okta:      oktaPlan,
-			Datadog:   datadogPlan,
-			Tfe:       tfePlan,
+			AWS:                    awsPlan,
+			AWSAdditionalProviders: additionalProviders,
+			Github:                 githubPlan,
+			Heroku:                 herokuPlan,
+			Snowflake:              snowflakePlan,
+			Bless:                  blessPlan,
+			Okta:                   oktaPlan,
+			Datadog:                datadogPlan,
+			Tfe:                    tfePlan,
 		},
 		TfLint:          tfLintPlan,
 		ExtraVars:       v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),

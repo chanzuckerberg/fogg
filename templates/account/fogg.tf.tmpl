@@ -2,24 +2,10 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 {{if .Providers.AWS}}
-  # Default Provider
-  provider aws {
-    version = "~> {{ .Providers.AWS.Version }}"
-    region = "{{ .Providers.AWS.Region }}"
-    profile = "{{ .Providers.AWS.Profile }}"
-    allowed_account_ids = [{{ .Providers.AWS.AccountID }}]
-  }
-
+{{ template "aws_provider" .Providers.AWS}}
   # Aliased Providers (for doing things in every region).
-  {{ $outer := . -}}
-  {{ range $region := .Providers.AWS.AdditionalRegions }}
-    provider aws {
-      alias = "{{ $region }}"
-      version = "~> {{ $outer.Providers.AWS.Version }}"
-      region = "{{ $region }}"
-      profile = "{{ $outer.Providers.AWS.Profile }}"
-      allowed_account_ids = [{{ $outer.Providers.AWS.AccountID }}]
-    }
+  {{ range $p := .Providers.AWSAdditionalProviders }}
+    {{ template "aws_provider" $p}}
   {{ end }}
 {{ end }}
 
@@ -69,12 +55,12 @@ variable project {
   }
 {{ end }}
 
-{{if .Providers.AWS}}
+{{ if .Providers.AWS }}{{ if .Providers.AWS.Profile }}
   variable aws_profile {
     type =  string
     default =  "{{ .Providers.AWS.Profile }}"
   }
-{{ end }}
+{{ end }}{{ end }}
 
 variable owner {
   type =  string
