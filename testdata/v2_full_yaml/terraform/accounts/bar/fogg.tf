@@ -70,70 +70,70 @@ variable owner {
 }
 variable account {
   type    = string
-  default = "bar
+  default = "bar"
 }
 # map of aws_accounts
 variable aws_accounts {
-  type =  map
+  type = map
   default = {
-  
-    
-        bar = 456
-    
-  
-    
-        foo = 123
-    
-  
+
+
+    bar = 456
+
+
+
+    foo = 123
+
+
   }
 }
 variable foo {
-  type =  string
-  default = " bar1 "
+  type    = string
+  default = "bar1"
 }
 data terraform_remote_state global {
-  backend = " s3 "
+  backend = "s3"
   config = {
-    
-  
-    bucket         = " buck "
-    
-    key            = " terraform / proj / global.tfstate "
-    region = " us-west-2 "
-    profile = " profile "
-    
-  
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/global.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
   }
 }
 data terraform_remote_state foo {
-  backend = " s3 "
+  backend = "s3"
   config = {
-    
-  
-    bucket         = " buck "
-    
-    key            = " terraform / proj / accounts / foo.tfstate "
-    region = " us-west-2 "
-    profile = " profile "
-    
-  
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/accounts/foo.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
   }
 }
 provider random {
-  version = " ~ > 2.2 "
+  version = "~> 2.2"
 }
 provider template {
-  version = " ~ > 2.1 "
+  version = "~> 2.1"
 }
 provider archive {
-  version = " ~ > 1.3 "
+  version = "~> 1.3"
 }
 provider null {
-  version = " ~ > 2.1 "
+  version = "~> 2.1"
 }
 provider local {
-  version = " ~ > 1.4 "
+  version = "~> 1.4"
 }
 provider tls {
-  version = " ~ > 2.1 "
+  version = "~> 2.1"
 }
