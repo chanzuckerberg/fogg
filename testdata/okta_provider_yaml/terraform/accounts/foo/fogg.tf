@@ -28,44 +28,48 @@ variable owner {
   type    = string
   default = "foo@example.com"
 }
+variable account {
+  type    = string
+  default = "foo
+}
 # map of aws_accounts
 variable aws_accounts {
-  type = map
+  type =  map
   default = {
-
-
-
+  
+    
+  
   }
 }
 data terraform_remote_state global {
-  backend = "s3"
+  backend = " s3 "
   config = {
-
-
-    bucket = "bucket"
-
-    key     = "terraform/foofoo/global.tfstate"
-    region  = "region"
-    profile = "foofoo"
-
-
+    
+  
+    bucket         = " bucket "
+    
+    key            = " terraform / foofoo / global.tfstate "
+    region = " region "
+    profile = " foofoo "
+    
+  
   }
 }
 provider random {
-  version = "~> 2.2"
+  version = " ~ > 2.2 "
 }
 provider template {
-  version = "~> 2.1"
+  version = " ~ > 2.1 "
 }
 provider archive {
-  version = "~> 1.3"
+  version = " ~ > 1.3 "
 }
 provider null {
-  version = "~> 2.1"
+  version = " ~ > 2.1 "
 }
 provider local {
-  version = "~> 1.4"
+  version = " ~ > 1.4 "
 }
 provider tls {
-  version = "~> 2.1"
+  version = " ~ > 2.1 "
 }
