@@ -110,7 +110,7 @@ init: terraform check-auth ## run terraform init for this component
 
 check-plan: check-auth init refresh-cached ## run a terraform plan and check that it does not fail
 	@if [ "$(TF_BACKEND_KIND)" != "remote" ]; then \
-		$(terraform_command) plan $(TF_ARGS) -detailed-exitcode -lock=false -out=$(CHECK_PLANFILE_PATH) ; \
+		$(terraform_command) plan $(TF_ARGS) -detailed-exitcode -lock=false -refresh=$(REFRESH) -out=$(CHECK_PLANFILE_PATH) ; \
 		ERR=$$?; \
 		if [ -n "$(BUILDEVENT_FILE)" ]; then \
 			fogg exp entropy -f $(CHECK_PLANFILE_PATH) -o $(BUILDEVENT_FILE) ; \

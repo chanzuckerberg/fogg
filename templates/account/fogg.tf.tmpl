@@ -67,6 +67,11 @@ variable owner {
   default = "{{ .Owner }}"
 }
 
+variable account {
+    type = string
+    default = "{{ .AccountName }}"
+}
+
 # map of aws_accounts
 variable aws_accounts {
   type =  map

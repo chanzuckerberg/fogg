@@ -68,6 +68,10 @@ variable owner {
   type    = string
   default = "foo@example.com"
 }
+variable account {
+  type    = string
+  default = "bar"
+}
 # map of aws_accounts
 variable aws_accounts {
   type = map
