@@ -44,24 +44,3 @@ jobs:
         run:
           buildevents cmd $TRACE_ID $STEP_ID codecov-upload -- bash <(curl -s https://codecov.io/bash)
           buildevents step $TRACE_ID $STEP_ID $STEP_START after_success
-  # Disabling snyk - had to cancel run after waiting over an hour. Unreasonable run time also seen when running
-  # snyk/snyk:golang image locally on laptop; Docker image appears broken.
-  # snyk:
-  #   # Must be run separately from main tests, because actions/setup-go sets the GOROOT env, which messes up
-  #   # the snyk container.
-  #   runs-on: ubuntu-18.04
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Run Snyk to check for vulnerabilities
-  #       uses: snyk/actions/golang@master
-  #       env:
-  #         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-  #       with:
-  #         args: --org=czi
-  #     - name: Run Snyk to continuously monitor for vulnerabilities
-  #       uses: snyk/actions/golang@master
-  #       env:
-  #         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-  #       with:
-  #         command: monitor
-  #         args: --org=czi
