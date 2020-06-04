@@ -31,6 +31,8 @@ jobs:
           echo ::set-env name=STEP_START::$(date +%s)
           echo ::set-env name=STEP_ID::$(echo script | sum | cut -f 1 -d \ )
       - name: Run tests
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.REVIEWDOG_GITHUB_API_TOKEN }}
         run: |
           buildevents cmd $TRACE_ID $STEP_ID codecov-validate -- curl --data-binary @codecov.yml https://codecov.io/validate
           buildevents cmd $TRACE_ID $STEP_ID make-lint-ci -- make lint-ci
