@@ -1,0 +1,48 @@
+
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.14.0'
+      - run: go version
+      - name: Setup buildevents
+        uses: kvrhdn/gha-buildevents@master
+        with:
+          apikey: ${{ secrets.BUILDEVENTS_APIKEY }}
+          dataset: buildevents
+          # Required: the job status, this will be used in the post section and sent
+          # as status of the trace. Must always be ${{ job.status }}.
+          job-status: ${{ job.status }}
+
+      - run: |
+          echo ::set-env name=STEP_START::$(date +%s)
+          echo ::set-env name=STEP_ID::$(echo install | sum | cut -f 1 -d \ )
+      - name: Install dependencies
+        run: |
+          buildevents cmd $TRACE_ID $STEP_ID make-setup -- make setup
+          buildevents step $TRACE_ID $STEP_ID $STEP_START install
+
+      - run: |
+          echo ::set-env name=STEP_START::$(date +%s)
+          echo ::set-env name=STEP_ID::$(echo script | sum | cut -f 1 -d \ )
+      - name: Run tests
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.REVIEWDOG_GITHUB_API_TOKEN }}
+        run: |
+          buildevents cmd $TRACE_ID $STEP_ID codecov-validate -- curl --data-binary @codecov.yml https://codecov.io/validate
+          buildevents cmd $TRACE_ID $STEP_ID make-lint-ci -- make lint-ci
+          buildevents cmd $TRACE_ID $STEP_ID make-test-ci -- make test-ci
+          buildevents step $TRACE_ID $STEP_ID $STEP_START script
+
+      - run: |
+          echo ::set-env name=STEP_START::$(date +%s)
+          echo ::set-env name=STEP_ID::$(echo after_success | sum | cut -f 1 -d \ )
+      - name: Run codecov
+        run:
+          buildevents cmd $TRACE_ID $STEP_ID codecov-upload -- bash <(curl -s https://codecov.io/bash)
+          buildevents step $TRACE_ID $STEP_ID $STEP_START after_success
