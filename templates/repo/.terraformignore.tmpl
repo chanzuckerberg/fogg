@@ -1,4 +1,7 @@
 {{ template "fogg_header" }}
-{{ range $i := .TerraformIgnore | sortAlpha }}
-{{ $i }}{{ end }}
 
+.fogg/
+**/terraform.d/**
+**/.terraform.d/**
+**/.terraform/**
+**/.git/**

@@ -3,14 +3,7 @@
 
 
 .fogg/
-.git/
-.terraform.d/
-terraform/accounts/bar/.terraform/plugins/
-terraform/accounts/foo/.terraform/plugins/
-terraform/envs/prod/datadog/.terraform/plugins/
-terraform/envs/prod/hero/.terraform/plugins/
-terraform/envs/staging/comp1/.terraform/plugins/
-terraform/envs/staging/comp2/.terraform/plugins/
-terraform/envs/staging/vpc/.terraform/plugins/
-terraform/global/.terraform/plugins/
-
+**/terraform.d/**
+**/.terraform.d/**
+**/.terraform/**
+**/.git/**
