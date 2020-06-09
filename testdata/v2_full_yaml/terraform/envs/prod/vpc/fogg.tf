@@ -10,9 +10,6 @@ provider aws {
 }
 # Aliased Providers (for doing things in every region).
 
-
-provider heroku {
-}
 terraform {
   required_version = "~>0.100.0"
 
@@ -20,7 +17,7 @@ terraform {
 
     bucket = "buck"
 
-    key     = "terraform/proj/envs/prod/components/hero.tfstate"
+    key     = "terraform/proj/envs/prod/components/vpc.tfstate"
     encrypt = true
     region  = "us-west-2"
     profile = "profile"
@@ -42,7 +39,7 @@ variable region {
 }
 variable component {
   type    = string
-  default = "hero"
+  default = "vpc"
 }
 variable aws_profile {
   type    = string
@@ -57,7 +54,7 @@ variable tags {
   default = {
     project   = "proj"
     env       = "prod"
-    service   = "hero"
+    service   = "vpc"
     owner     = "foo@example.com"
     managedBy = "terraform"
   }
@@ -94,14 +91,14 @@ data terraform_remote_state datadog {
 
   }
 }
-data terraform_remote_state vpc {
+data terraform_remote_state hero {
   backend = "s3"
   config = {
 
 
     bucket = "buck"
 
-    key     = "terraform/proj/envs/prod/components/vpc.tfstate"
+    key     = "terraform/proj/envs/prod/components/hero.tfstate"
     region  = "us-west-2"
     profile = "profile"
 

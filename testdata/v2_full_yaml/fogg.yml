@@ -37,6 +37,9 @@ envs:
       datadog:
         providers:
           datadog: {}
+      vpc:
+        module_source: github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0
+        module_name: prod-vpc
   staging:
     components:
       comp_helm_template:

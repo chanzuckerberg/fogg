@@ -239,6 +239,7 @@ type Component struct {
 
 	Kind              *v2.ComponentKind  `yaml:"kind,omitempty"`
 	ModuleSource      *string            `yaml:"module_source"`
+	ModuleName        *string            `yaml:"module_name"`
 	ComponentBackends map[string]Backend `yaml:"component_backends"`
 	Global            *Component         `yaml:"global"`
 }
@@ -409,6 +410,7 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			componentPlan.Env = envName
 			componentPlan.Component = componentName
 			componentPlan.ModuleSource = componentConf.ModuleSource
+			componentPlan.ModuleName = componentConf.ModuleName
 			componentPlan.PathToRepoRoot = "../../../../"
 
 			componentPlan.Global = &p.Global

@@ -190,7 +190,7 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBoxes map[
 			}
 
 			if componentPlan.ModuleSource != nil {
-				e := applyModuleInvocation(fs, path, *componentPlan.ModuleSource, templates.Templates.ModuleInvocation, commonBox)
+				e := applyModuleInvocation(fs, path, *componentPlan.ModuleSource, componentPlan.ModuleName, templates.Templates.ModuleInvocation, commonBox)
 				if e != nil {
 					return errs.WrapUser(e, "unable to apply module invocation")
 				}
@@ -352,7 +352,7 @@ type moduleData struct {
 	Outputs      []string
 }
 
-func applyModuleInvocation(fs afero.Fs, path, moduleAddress string, box packr.Box, commonBox *packr.Box) error {
+func applyModuleInvocation(fs afero.Fs, path, moduleAddress string, inModuleName *string, box packr.Box, commonBox *packr.Box) error {
 	e := fs.MkdirAll(path, 0755)
 	if e != nil {
 		return errs.WrapUserf(e, "couldn't create %s directory", path)
@@ -376,9 +376,16 @@ func applyModuleInvocation(fs afero.Fs, path, moduleAddress string, box packr.Bo
 		outputs = append(outputs, o.Name)
 	}
 	sort.Strings(outputs)
-	moduleName := filepath.Base(moduleAddress)
-	re := regexp.MustCompile(`\?ref=.*`)
-	moduleName = re.ReplaceAllString(moduleName, "")
+
+	moduleName := ""
+	if inModuleName != nil {
+		moduleName = *inModuleName
+	}
+	if moduleName == "" {
+		moduleName = filepath.Base(moduleAddress)
+		re := regexp.MustCompile(`\?ref=.*`)
+		moduleName = re.ReplaceAllString(moduleName, "")
+	}
 
 	moduleAddressForSource, _ := calculateModuleAddressForSource(path, moduleAddress)
 	// MAIN
