@@ -91,6 +91,7 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 	logrus.Debugf("%#v\n", plan.Envs["staging"].Components["vpc"].ModuleSource)
 	r.NotNil(*plan.Envs["staging"].Components["vpc"].ModuleSource)
 	r.Equal("github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0", *plan.Envs["staging"].Components["vpc"].ModuleSource)
+	r.Nil(plan.Envs["staging"].Components["vpc"].ModuleName)
 
 	r.NotNil(plan.Envs["staging"].Components["comp1"])
 	r.Equal("0.100.0", plan.Envs["staging"].Components["comp1"].TerraformVersion)
@@ -107,6 +108,12 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 	r.NotNil(plan.Envs["prod"].Components["datadog"])
 	r.NotNil(plan.Envs["prod"].Components["datadog"].Providers)
 	r.NotNil(plan.Envs["prod"].Components["datadog"].Providers.Datadog)
+
+	r.NotNil(plan.Envs["prod"])
+	r.NotNil(plan.Envs["prod"].Components["vpc"])
+	r.NotNil(*plan.Envs["prod"].Components["vpc"].ModuleSource)
+	r.Equal("github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0", *plan.Envs["staging"].Components["vpc"].ModuleSource)
+	r.Equal(*plan.Envs["prod"].Components["vpc"].ModuleName, "prod-vpc")
 
 	// accts inherit defaults
 	r.Equal("bar1", plan.Accounts["foo"].ExtraVars["foo"])

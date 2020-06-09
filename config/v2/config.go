@@ -97,6 +97,7 @@ type Component struct {
 	EKS          *EKSConfig     `yaml:"eks,omitempty"`
 	Kind         *ComponentKind `yaml:"kind,omitempty"`
 	ModuleSource *string        `yaml:"module_source,omitempty"`
+	ModuleName   *string        `yaml:"module_name,omitempty"`
 }
 
 type Providers struct {
