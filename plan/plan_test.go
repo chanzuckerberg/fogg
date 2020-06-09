@@ -176,30 +176,6 @@ func buildPlan(t *testing.T, testfile string) *Plan {
 	return plan
 }
 
-func Test_buildTerraformIgnore(t *testing.T) {
-	r := require.New(t)
-
-	p := buildPlan(t, "v2_full_yaml")
-
-	r.NotNil(p)
-
-	expected := []string{
-		".git/",
-		".fogg/",
-		".terraform.d/",
-		"terraform/global/.terraform/plugins/",
-		"terraform/accounts/foo/.terraform/plugins/",
-		"terraform/accounts/bar/.terraform/plugins/",
-		"terraform/envs/prod/hero/.terraform/plugins/",
-		"terraform/envs/prod/datadog/.terraform/plugins/",
-		"terraform/envs/staging/comp1/.terraform/plugins/",
-		"terraform/envs/staging/comp2/.terraform/plugins/",
-		"terraform/envs/staging/vpc/.terraform/plugins/",
-	}
-
-	r.ElementsMatch(expected, p.TerraformIgnore)
-}
-
 func TestTfeProvider(t *testing.T) {
 	r := require.New(t)
 
