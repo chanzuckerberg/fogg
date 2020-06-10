@@ -11,9 +11,9 @@ jobs:
           go-version: '1.14.0'
       - run: go version
       - name: Setup buildevents
-        uses: kvrhdn/gha-buildevents@master
+        uses: kvrhdn/gha-buildevents@44a0f39
         with:
-          apikey: ${{ secrets.BUILDEVENTS_APIKEY }}
+          apikey: ${{ secrets.BUILDEVENT_APIKEY }}
           dataset: buildevents
           # Required: the job status, this will be used in the post section and sent
           # as status of the trace. Must always be ${{ job.status }}.
