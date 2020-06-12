@@ -253,7 +253,8 @@ type Env struct {
 
 // TfLint containts a plan for running tflint
 type TfLint struct {
-	Enabled bool `yaml:"enabled"`
+	Enabled bool   `yaml:"enabled"`
+	Options string `yaml:"options"`
 }
 
 // Eval evaluates a config
@@ -547,6 +548,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	tfLintPlan := TfLint{
 		Enabled: *tflintConfig.Enabled,
+		Options: *tflintConfig.Options,
 	}
 
 	travisConfig := v2.ResolveTravis(commons...)

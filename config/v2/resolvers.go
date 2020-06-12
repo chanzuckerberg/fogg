@@ -342,14 +342,21 @@ func ResolveTfeProvider(commons ...Common) *TfeProvider {
 
 func ResolveTfLint(commons ...Common) TfLint {
 	enabled := false
+	options := ""
 	for _, c := range commons {
-		if c.Tools != nil && c.Tools.TfLint != nil && c.Tools.TfLint.Enabled != nil {
-			enabled = *c.Tools.TfLint.Enabled
+		if c.Tools != nil && c.Tools.TfLint != nil {
+			if c.Tools.TfLint.Enabled != nil {
+				enabled = *c.Tools.TfLint.Enabled
+			}
+			if c.Tools.TfLint.Options != nil && len(*c.Tools.TfLint.Options) > 0 {
+				options = *c.Tools.TfLint.Options
+			}
 		}
 	}
 
 	return TfLint{
 		Enabled: &enabled,
+		Options: &options,
 	}
 }
 

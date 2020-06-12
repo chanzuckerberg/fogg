@@ -217,7 +217,8 @@ type CIProviderConfig struct {
 }
 
 type TfLint struct {
-	Enabled *bool `yaml:"enabled,omitempty"`
+	Enabled *bool   `yaml:"enabled,omitempty"`
+	Options *string `yaml:"options,omitempty"`
 }
 
 // EKSConfig is the configuration for an eks cluster
@@ -405,6 +406,7 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 				p := r.Float32() < 0.5
 				c.Tools.TfLint = &TfLint{
 					Enabled: &p,
+					Options: randStringPtr(r, s),
 				}
 			}
 		}

@@ -28,6 +28,10 @@ defaults:
       region: us-west-2
       version: 0.12.0
   terraform_version: 0.100.0
+  tools:
+    tflint:
+      enabled: true
+      options: --deep --modules
 envs:
   prod:
     components:
