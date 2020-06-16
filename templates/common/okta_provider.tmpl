@@ -6,5 +6,8 @@ provider okta {
   version = "~>{{ .Version }}"
   {{ end -}}
   org_name = "{{ .OrgName }}"
+  {{ if .BaseURL -}}
+  base_url = "{{ .BaseURL }}"
+  {{ end -}}
 }
 {{ end }}

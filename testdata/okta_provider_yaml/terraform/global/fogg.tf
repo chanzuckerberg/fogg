@@ -5,6 +5,7 @@
 provider okta {
   version  = "~>aversion"
   org_name = "orgname"
+  base_url = "oktapreview.com"
 }
 terraform {
   required_version = "~>1.1.1"

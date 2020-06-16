@@ -152,6 +152,7 @@ type SnowflakeProvider struct {
 //OktaProvider represents Okta configuration
 type OktaProvider struct {
 	OrgName string  `yaml:"org_name,omitempty"`
+	BaseURL *string `yaml:"base_url,omitempty"`
 	Version *string `yaml:"version,omitempty"`
 }
 
@@ -502,6 +503,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		oktaPlan = &OktaProvider{
 			OrgName: *oktaConfig.OrgName,
 			Version: oktaConfig.Version,
+			BaseURL: oktaConfig.BaseURL,
 		}
 	}
 

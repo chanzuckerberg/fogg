@@ -4,7 +4,8 @@
         "providers": {
             "okta": {
                 "version": "aversion",
-                "org_name": "orgname"
+                "org_name": "orgname",
+                "base_url": "oktapreview.com",
             }
         },
         "backend": {
