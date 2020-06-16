@@ -123,6 +123,7 @@ type OktaProvider struct {
 	// the okta provider is optional (above) but if supplied you must set an OrgName
 	OrgName *string `yaml:"org_name,omitempty"`
 	Version *string `yaml:"version,omitempty"`
+	BaseURL *string `yaml:"base_url,omitempty"`
 }
 
 // BlessProvider allows for terraform-provider-bless configuration
