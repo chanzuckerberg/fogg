@@ -72,6 +72,17 @@ variable account {
     default = "{{ .AccountName }}"
 }
 
+variable tags {
+  type =  map(string)
+  default = {
+    project   = "{{ .Project }}"
+    env       = "accounts"
+    service   = "{{ .AccountName }}"
+    owner     = "{{ .Owner }}"
+    managedBy = "terraform"
+  }
+}
+
 # map of aws_accounts
 variable aws_accounts {
   type =  map

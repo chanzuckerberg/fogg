@@ -44,6 +44,16 @@ variable account {
   type    = string
   default = "foo"
 }
+variable tags {
+  type = map(string)
+  default = {
+    project   = "foofoo"
+    env       = "accounts"
+    service   = "foo"
+    owner     = "foo@example.com"
+    managedBy = "terraform"
+  }
+}
 # map of aws_accounts
 variable aws_accounts {
   type = map
