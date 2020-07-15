@@ -1,1 +1,10 @@
-theme: jekyll-theme-minimal
+remote_theme: pmarsceill/just-the-docs
+repository: chanzuckerberg/fogg
+logo: "assets/img/fogglogo.svg"
+url: https://chanzuckerberg.github.io/fogg/
+kramdown:
+  auto_id_stripping: true
+# Aux links for the upper right navigation
+aux_links:
+  "fogg on GitHub":
+    - "//github.com/chanzuckerberg/fogg"

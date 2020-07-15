@@ -15,7 +15,7 @@ We built fogg to automate these practices and scale to a larger pool of engineer
 A few of the things fogg standardizes–
 
 * repository layout
-* remote state (locking coming soon)
+* remote state
 * resource naming
 * resource isolation
 

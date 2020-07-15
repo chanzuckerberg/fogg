@@ -1,4 +1,4 @@
-# fogg design
+# Design
 
 Fogg is designed around a few principles– convention over configuration and transparency.
 
@@ -13,7 +13,7 @@ With fogg we provide a set of answers to questions like "how should I organize m
 Some things we standardize–
 
 * repository layout
-* remote state (locking coming soon)
+* remote state
 * resource naming
 * resource isolation
 
