@@ -2,6 +2,7 @@ remote_theme: pmarsceill/just-the-docs
 repository: chanzuckerberg/fogg
 logo: "assets/img/fogglogo.svg"
 url: https://chanzuckerberg.github.io/fogg/
+baseurl: "/fogg" # the subpath of your site, e.g. /blog
 kramdown:
   auto_id_stripping: true
 # Aux links for the upper right navigation
