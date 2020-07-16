@@ -1,0 +1,15 @@
+## Run `docker-compose up` to start up a local dev environment for this jekyll docs site.
+#
+# NOTE - some changes, such as changes to the _config.yml or Gemfile require a restart to the service!
+#
+version: '2.4'
+services:
+  jekyll:
+    image: jekyll/jekyll:latest
+    command: jekyll serve --watch
+    environment:
+      PAGES_REPO_NWO: chanzuckerberg/fogg
+    ports:
+      - 4000:4000
+    volumes:
+      - .:/srv/jekyll

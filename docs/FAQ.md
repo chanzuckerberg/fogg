@@ -1,4 +1,9 @@
-# fogg FAQ
+---
+layout: default
+nav_order: 3
+---
+
+# FAQ
 
 ## Where did the name come from?
 
