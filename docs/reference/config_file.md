@@ -17,7 +17,8 @@ Fogg reads its configuration from a fogg.yml file in the root of your terraform 
 
 ## Example fogg.yml
 
-```
+```yaml
+version: 2
 accounts:
   logging-account:
     providers:
@@ -82,6 +83,7 @@ modules:
 ```
 
 ## Top Level Arguments
+- `version` - Required, the current fogg config version is 2
 - `accounts` - Specify a map of workspaces to manage in `terraform/accounts` whose state outputs are available to all other workspaces.
 - `defaults` - Default workspace arguments that are applied to every workspace unless overridden by that workspace.
 - `envs` - Create separate environments that don't share config

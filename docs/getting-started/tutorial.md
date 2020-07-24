@@ -149,7 +149,6 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     ├── Makefile
     ├── README.md
     ├── fogg.yml
-    ├── fogg.yml~
     ├── scripts
     │   ├── common.mk
     │   ├── component.mk
@@ -258,7 +257,6 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     ├── Makefile
     ├── README.md
     ├── fogg.yml
-    ├── fogg.yml~
     ├── scripts
     │   ├── common.mk
     │   ├── component.mk
@@ -329,7 +327,6 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     ├── Makefile
     ├── README.md
     ├── fogg.yml
-    ├── fogg.yml~
     ├── scripts
     │   ├── common.mk
     │   ├── component.mk
@@ -423,7 +420,6 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     ├── Makefile
     ├── README.md
     ├── fogg.yml
-    ├── fogg.yml~
     ├── scripts
     │   ├── common.mk
     │   ├── component.mk
@@ -508,7 +504,6 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     ├── Makefile
     ├── README.md
     ├── fogg.yml
-    ├── fogg.yml~
     ├── scripts
     │   ├── common.mk
     │   ├── component.mk
