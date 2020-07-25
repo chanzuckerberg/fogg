@@ -13,3 +13,4 @@ services:
       - 4000:4000
     volumes:
       - .:/srv/jekyll
+      - ./_config_docker.yml:/srv/jekyll/_config.yml
