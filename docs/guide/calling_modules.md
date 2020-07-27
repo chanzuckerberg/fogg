@@ -25,7 +25,7 @@ Will produce the following directory structure:
 └── terraform
     <snip>
     └── modules
-        ├── rds_instance
+        ├── database
         │   ├── Makefile
         │   ├── README.md
         │   ├── fogg.tf
@@ -43,9 +43,8 @@ Will produce the following directory structure:
 
 To reference these modules in a fogg-managed workspace, invoke the module with a `module` resource and a `source` parameter that refers to the appropriate module directory:
 ```hcl
-module database {
-  source           = "../../../modules/webserver"
-  postgres_version = local.postgres_version
+module webserver {
+  source   = "../../../modules/webserver"
 }
 ```
 
