@@ -32,7 +32,7 @@ variable owner {
   default = "foo@example.com"
 }
 variable tags {
-  type = map(string)
+  type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
   default = {
     project   = "proj"
     env       = "staging"
