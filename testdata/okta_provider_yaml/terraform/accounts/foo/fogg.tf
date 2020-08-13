@@ -34,7 +34,7 @@ variable account {
   default = "foo"
 }
 variable tags {
-  type = map(string)
+  type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
   default = {
     project   = "foofoo"
     env       = "accounts"
