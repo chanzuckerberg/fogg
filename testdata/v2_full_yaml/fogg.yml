@@ -7,11 +7,19 @@ accounts:
           - us-east-1
           - us-east-2
         role: foo
+      bless:
+        role_arn: arn:aws:iam::1234567890:role/roll
+        version: 0.4.2
+        aws_region: us-west-2
   foo:
     providers:
       aws:
         account_id: 123
         role: roll
+      bless:
+        aws_profile: prof
+        version: 0.4.2
+        aws_region: us-west-2
 defaults:
   backend:
     bucket: buck

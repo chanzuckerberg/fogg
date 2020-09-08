@@ -253,16 +253,18 @@ func ResolveOktaProvider(commons ...Common) *OktaProvider {
 
 func ResolveBlessProvider(commons ...Common) *BlessProvider {
 	profile := lastNonNil(BlessProviderProfileGetter, commons...)
+	roleArn := lastNonNil(BlessProviderRoleArnGetter, commons...)
 	region := lastNonNil(BlessProviderRegionGetter, commons...)
 
 	// required fields
-	if profile == nil || region == nil {
+	if (profile == nil && roleArn == nil) || region == nil {
 		return nil
 	}
 
 	return &BlessProvider{
 		AWSProfile: profile,
 		AWSRegion:  region,
+		RoleArn:    roleArn,
 
 		Version:           lastNonNil(BlessProviderVersionGetter, commons...),
 		AdditionalRegions: ResolveOptionalStringSlice(BlessProviderAdditionalRegionsGetter, commons...),
@@ -596,6 +598,14 @@ func BlessProviderProfileGetter(comm Common) *string {
 	}
 	return comm.Providers.Bless.AWSProfile
 }
+
+func BlessProviderRoleArnGetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.Bless == nil {
+		return nil
+	}
+	return comm.Providers.Bless.RoleArn
+}
+
 func BlessProviderRegionGetter(comm Common) *string {
 	if comm.Providers == nil || comm.Providers.Bless == nil {
 		return nil

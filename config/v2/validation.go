@@ -174,8 +174,9 @@ func (p *BlessProvider) Validate(component string) error {
 	if p == nil {
 		return nil // nothing to do
 	}
-	if p.AWSProfile == nil {
-		errs = multierror.Append(errs, fmt.Errorf("bless provider aws_profile required in %s", component))
+
+	if p.AWSProfile == nil && p.RoleArn == nil {
+		errs = multierror.Append(errs, fmt.Errorf("bless provider requires aws_profile or role_arn in %s", component))
 	}
 	if p.AWSRegion == nil {
 		errs = multierror.Append(errs, fmt.Errorf("bless provider aws_region required in %s", component))

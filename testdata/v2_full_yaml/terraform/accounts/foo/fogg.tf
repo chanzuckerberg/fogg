@@ -14,6 +14,12 @@ provider aws {
 }
 # Aliased Providers (for doing things in every region).
 
+
+provider bless {
+  version = "~>0.4.2"
+  region  = "us-west-2"
+  profile = "prof"
+}
 terraform {
   required_version = "=0.100.0"
   backend s3 {

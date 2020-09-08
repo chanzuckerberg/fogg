@@ -132,6 +132,7 @@ type BlessProvider struct {
 	AdditionalRegions []string `yaml:"additional_regions,omitempty"`
 	AWSProfile        *string  `yaml:"aws_profile,omitempty"`
 	AWSRegion         *string  `yaml:"aws_region,omitempty"`
+	RoleArn           *string  `yaml:"role_arn,omitempty"`
 	Version           *string  `yaml:"version,omitempty"`
 }
 

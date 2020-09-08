@@ -5,7 +5,12 @@ provider bless {
   version = "~>{{ .Version }}"
   {{ end -}}
   region  = "{{ .AWSRegion }}"
+  {{ if .AWSProfile -}}
   profile = "{{ .AWSProfile }}"
+  {{ end -}}
+  {{ if .RoleArn -}}
+  role_arn = "{{ .RoleArn }}"
+  {{ end -}}
 }
 
 {{ $outer := . -}}
@@ -15,8 +20,13 @@ provider bless {
   {{ if $outer.Version -}}
   version = "~>{{ $outer.Version }}"
   {{ end -}}
-  region = "{{ $region }}"
+  region  = "{{ $region }}"
+  {{ if $outer.AWSProfile}}
   profile = "{{ $outer.AWSProfile }}"
+  {{ end -}}
+  {{ if $outer.RoleArn}}
+  role_arn = "{{ $outer.RoleArn }}"
+  {{ end -}}
 }
 {{ end }}
 {{ end }}
