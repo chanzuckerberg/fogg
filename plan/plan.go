@@ -159,8 +159,9 @@ type OktaProvider struct {
 //BlessProvider represents Bless ssh provider configuration
 type BlessProvider struct {
 	AdditionalRegions []string `yaml:"additional_regions,omitempty"`
-	AWSProfile        string   `yaml:"aws_profile,omitempty"`
+	AWSProfile        *string  `yaml:"aws_profile,omitempty"`
 	AWSRegion         string   `yaml:"aws_region,omitempty"`
+	RoleArn           *string  `yaml:"role_arn,omitempty"`
 	Version           *string  `yaml:"version,omitempty"`
 }
 
@@ -509,11 +510,12 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	var blessPlan *BlessProvider
 	blessConfig := v2.ResolveBlessProvider(commons...)
-	if blessConfig != nil && blessConfig.AWSProfile != nil && blessConfig.AWSRegion != nil {
+	if blessConfig != nil && (blessConfig.AWSProfile != nil || blessConfig.RoleArn != nil) && blessConfig.AWSRegion != nil {
 		blessPlan = &BlessProvider{
-			AWSProfile:        *blessConfig.AWSProfile,
+			AWSProfile:        blessConfig.AWSProfile,
 			AWSRegion:         *blessConfig.AWSRegion,
 			AdditionalRegions: blessConfig.AdditionalRegions,
+			RoleArn:           blessConfig.RoleArn,
 			Version:           blessConfig.Version,
 		}
 	}

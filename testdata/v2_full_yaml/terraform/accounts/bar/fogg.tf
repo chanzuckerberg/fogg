@@ -42,6 +42,12 @@ provider aws {
   allowed_account_ids = [456]
 }
 
+
+provider bless {
+  version  = "~>0.4.2"
+  region   = "us-west-2"
+  role_arn = "arn:aws:iam::1234567890:role/roll"
+}
 terraform {
   required_version = "=0.100.0"
   backend s3 {

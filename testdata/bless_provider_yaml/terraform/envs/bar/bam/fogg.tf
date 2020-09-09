@@ -10,12 +10,14 @@ provider bless {
   alias   = "a"
   version = "~>0.0.0"
   region  = "a"
+
   profile = "foofoofoo"
 }
 provider bless {
   alias   = "b"
   version = "~>0.0.0"
   region  = "b"
+
   profile = "foofoofoo"
 }
 terraform {
