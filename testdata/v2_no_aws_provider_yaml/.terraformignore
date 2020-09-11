@@ -3,7 +3,8 @@
 
 
 .fogg/
-**/terraform.d/**
+terraform.d/**
+**/terraform.d
 **/.terraform.d/**
 **/.terraform/**
 **/.git/**
