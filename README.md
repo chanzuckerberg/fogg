@@ -1,6 +1,6 @@
 # fogg
 
-[![Build Status](https://travis-ci.com/chanzuckerberg/fogg.svg?token=JNM9vNLfRsFzCcF1uEgc&branch=master)](https://travis-ci.com/chanzuckerberg/fogg) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/chanzuckerberg/fogg)
+[![Build Status](https://travis-ci.com/chanzuckerberg/fogg.svg?token=JNM9vNLfRsFzCcF1uEgc&branch=main)](https://travis-ci.com/chanzuckerberg/fogg) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/chanzuckerberg/fogg)
 
 **Please note**: If you believe you have found a security issue, _please responsibly disclose_ by contacting us at [security@chanzuckerberg.com](mailto:security@chanzuckerberg.com).
 
