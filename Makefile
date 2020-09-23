@@ -10,7 +10,7 @@ all: test install
 
 setup: ## setup development dependencies
 	./.godownloader-packr.sh -d v1.24.1
-	curl -sfL https://raw.githubusercontent.com/chanzuckerberg/bff/master/download.sh | sh
+	curl -sfL https://raw.githubusercontent.com/chanzuckerberg/bff/main/download.sh | sh
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh
 	curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh
 .PHONY: setup
