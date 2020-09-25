@@ -61,6 +61,8 @@ func Run(fs afero.Fs, configFile, path string) error {
 		return fmt.Errorf("could not figure out component for path %s", path)
 	}
 
+	logrus.Debugf("componentType: %s", componentType)
+
 	// collect remote state references
 	references, _ := collectRemoteStateReferences(path)
 	logrus.Debugf("in %s found references %#v", path, references)
@@ -69,6 +71,7 @@ func Run(fs afero.Fs, configFile, path string) error {
 	accounts := []string{}
 	components := []string{}
 
+	// we do accounts for both accounts and env components
 	for _, r := range references {
 		if _, found := conf.Accounts[r]; found {
 			accounts = append(accounts, r)
@@ -129,8 +132,10 @@ func collectRemoteStateReferences(path string) ([]string, error) {
 	parser := hclparse.NewParser()
 
 	for _, filename := range primaryPaths {
+		logrus.Debugf("reading file %s", filename)
 		b, err := fs.ReadFile(filename)
 		if err != nil {
+			logrus.Errorf("unable to read file %s", filename)
 			diags = append(diags, &hcl.Diagnostic{
 				Severity: hcl.DiagError,
 				Summary:  "Failed to read file",
@@ -155,7 +160,9 @@ func collectRemoteStateReferences(path string) ([]string, error) {
 		content, _, contentDiags := file.Body.PartialContent(rootSchema)
 		diags = append(diags, contentDiags...)
 
+		logrus.Debugf("len(content.Blocks) %v", len(content.Blocks))
 		for _, block := range content.Blocks {
+			logrus.Debugf("block type: %v", block.Type)
 
 			attrs, _ := block.Body.JustAttributes()
 
@@ -164,6 +171,7 @@ func collectRemoteStateReferences(path string) ([]string, error) {
 
 				for _, r := range refs {
 					if r != nil {
+						logrus.Debugf("ref: %v", r)
 						if resource, ok := r.Subject.(addrs.ResourceInstance); ok {
 							if resource.Resource.Type == "terraform_remote_state" {
 								references[resource.Resource.Name] = true
