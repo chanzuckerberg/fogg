@@ -29,18 +29,34 @@ func Run(fs afero.Fs, configFile, path string) error {
 
 	pathParts := strings.Split(path, "/")
 
-	// var componentType string
+	var componentType string
 	var componentName string
-	// var envName string
+	var envName string
 
 	switch len(pathParts) {
 	case 3:
-		if _, found := conf.Accounts[pathParts[2]]; !found {
+		componentType = "accounts"
+		componentName = pathParts[2]
+		if _, found := conf.Accounts[componentName]; !found {
 			return fmt.Errorf("could not find account %s", pathParts[2])
 		}
-		// componentType = "accounts"
-		componentName = pathParts[2]
 	case 4:
+		componentType = "env"
+		envName = pathParts[2]
+		componentName = pathParts[3]
+
+		env, envFound := conf.Envs[envName]
+
+		if !envFound {
+			return fmt.Errorf("could not find env %s", envName)
+		}
+
+		_, componentFound := env.Components[componentName]
+
+		if !componentFound {
+			return fmt.Errorf("could not find component %s in env %s", componentName, envName)
+		}
+
 	default:
 		return fmt.Errorf("could not figure out component for path %s", path)
 	}
@@ -51,7 +67,7 @@ func Run(fs afero.Fs, configFile, path string) error {
 
 	// for each reference, figure out if it is an account or component
 	accounts := []string{}
-	// components := []string{}
+	components := []string{}
 
 	for _, r := range references {
 		if _, found := conf.Accounts[r]; found {
@@ -59,16 +75,41 @@ func Run(fs afero.Fs, configFile, path string) error {
 		}
 	}
 
-	logrus.Debugf("found accounts %#v", accounts)
-	// update fogg.yml with new references
+	if componentType == "env" {
+		env := conf.Envs[envName]
 
-	c := conf.Accounts[componentName]
-	if c.Common.DependsOn == nil {
-		c.Common.DependsOn = &v2.DependsOn{}
+		for _, r := range references {
+			if _, found := env.Components[r]; found {
+				components = append(components, r)
+			}
+		}
 	}
 
-	c.DependsOn.Accounts = accounts
-	conf.Accounts[componentName] = c
+	// update fogg.yml with new references
+	logrus.Debugf("found accounts %#v", accounts)
+	logrus.Debugf("found components %#v", components)
+
+	if componentType == "accounts" {
+		c := conf.Accounts[componentName]
+
+		if c.Common.DependsOn == nil {
+			c.Common.DependsOn = &v2.DependsOn{}
+		}
+
+		c.DependsOn.Accounts = accounts
+		conf.Accounts[componentName] = c
+	} else if componentType == "env" {
+		c := conf.Envs[envName].Components[componentName]
+
+		if c.Common.DependsOn == nil {
+			c.Common.DependsOn = &v2.DependsOn{}
+		}
+
+		c.DependsOn.Accounts = accounts
+		c.DependsOn.Components = components
+
+		conf.Envs[envName].Components[componentName] = c
+	}
 
 	conf.Write(fs, configFile)
 

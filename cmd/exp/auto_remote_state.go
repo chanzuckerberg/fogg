@@ -29,8 +29,13 @@ func init() {
 
 var autoRemoteStateCmd = &cobra.Command{
 	Use:   "auto-remote-state",
-	Short: "",
-	Long:  ``,
+	Short: "Read all the code in a given directory and update fogg.yml with depends_on configuration.",
+	Long: `Read all the code in a given directory and update fogg.yml with depends_on configuration.
+
+	Example usage- fogg exp auto-remote-state --path terraform/envs/prod/snowalert
+
+	BEWARE– This is a very experimental feature, not well tested and with rough edges.
+	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		setupDebug(debug)
 		// Set up fs
