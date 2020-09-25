@@ -56,6 +56,7 @@ type Common struct {
 	Owner            *string           `yaml:"owner,omitempty"`
 	Project          *string           `yaml:"project,omitempty"`
 	Providers        *Providers        `yaml:"providers,omitempty"`
+	RemoteStates     []string          `yaml:"remote_states,omitempty"`
 	TerraformVersion *string           `yaml:"terraform_version,omitempty"`
 	Tools            *Tools            `yaml:"tools,omitempty"`
 }

@@ -687,3 +687,7 @@ func CircleCISSHFingerprintsGetter(comm Common) []string {
 	}
 	return comm.Tools.CircleCI.SSHKeyFingerprints
 }
+
+func RemoteStatesGetter(comm Common) []string {
+	return comm.RemoteStates
+}
