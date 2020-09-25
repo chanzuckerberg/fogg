@@ -1,7 +1,6 @@
 package state
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -36,7 +35,6 @@ func Run(fs afero.Fs, configFile, path string) error {
 	if err != nil {
 		return err
 	}
-
 	logrus.Debugf("in %s found references %#v", path, references)
 
 	// for each reference, figure out if it is an account or component, since those are separate in our configs
@@ -99,7 +97,10 @@ func collectRemoteStateReferences(path string) ([]string, error) {
 
 	references := map[string]bool{}
 
-	primaryPaths, diags := dirFiles(fs, path)
+	primaryPaths, err := dirFiles(fs, path)
+	if err != nil {
+		return nil, err
+	}
 
 	parser := hclparse.NewParser()
 
@@ -107,13 +108,7 @@ func collectRemoteStateReferences(path string) ([]string, error) {
 		logrus.Debugf("reading file %s", filename)
 		b, err := fs.ReadFile(filename)
 		if err != nil {
-			logrus.Errorf("unable to read file %s", filename)
-			diags = append(diags, &hcl.Diagnostic{
-				Severity: hcl.DiagError,
-				Summary:  "Failed to read file",
-				Detail:   fmt.Sprintf("The configuration file %q could not be read.", filename),
-			})
-			continue
+			return nil, err
 		}
 
 		var file *hcl.File
@@ -124,13 +119,18 @@ func collectRemoteStateReferences(path string) ([]string, error) {
 		} else {
 			file, fileDiags = parser.ParseHCL(b, filename)
 		}
-		diags = append(diags, fileDiags...)
+		if fileDiags.HasErrors() {
+			return nil, fileDiags
+		}
+
 		if file == nil {
 			continue
 		}
 
 		content, _, contentDiags := file.Body.PartialContent(rootSchema)
-		diags = append(diags, contentDiags...)
+		if contentDiags.HasErrors() {
+			return nil, contentDiags
+		}
 
 		logrus.Debugf("len(content.Blocks) %v", len(content.Blocks))
 		for _, block := range content.Blocks {
@@ -155,7 +155,6 @@ func collectRemoteStateReferences(path string) ([]string, error) {
 		}
 	}
 
-	// FIXME return diags and make it work with error reporting
 	var refNames []string
 	for k := range references {
 		refNames = append(refNames, k)
@@ -164,15 +163,12 @@ func collectRemoteStateReferences(path string) ([]string, error) {
 }
 
 // taken from https://github.com/hashicorp/terraform-config-inspect/blob/c481b8bfa41ea9dca417c2a8a98fd21bd0399e14/tfconfig/load.go#L81
-func dirFiles(fs FS, dir string) (primary []string, diags hcl.Diagnostics) {
+func dirFiles(fs FS, dir string) ([]string, error) {
+	var primary []string
+
 	infos, err := fs.ReadDir(dir)
 	if err != nil {
-		diags = append(diags, &hcl.Diagnostic{
-			Severity: hcl.DiagError,
-			Summary:  "Failed to read module directory",
-			Detail:   fmt.Sprintf("Module directory %s does not exist or cannot be read.", dir),
-		})
-		return
+		return nil, err
 	}
 
 	var override []string
@@ -203,7 +199,7 @@ func dirFiles(fs FS, dir string) (primary []string, diags hcl.Diagnostics) {
 	// and processing the files in alphabetical order. Primaries first, then overrides.
 	primary = append(primary, override...)
 
-	return
+	return primary, nil
 }
 
 // fileExt returns the Terraform configuration extension of the given
