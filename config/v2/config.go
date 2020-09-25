@@ -56,6 +56,7 @@ type Common struct {
 	Owner            *string           `yaml:"owner,omitempty"`
 	Project          *string           `yaml:"project,omitempty"`
 	Providers        *Providers        `yaml:"providers,omitempty"`
+	DependsOn        *DependsOn        `yaml:"depends_on,omitempty"`
 	TerraformVersion *string           `yaml:"terraform_version,omitempty"`
 	Tools            *Tools            `yaml:"tools,omitempty"`
 }
@@ -212,6 +213,11 @@ type CommonCI struct {
 	Command        *string                     `yaml:"command,omitempty"`
 	Buildevents    *bool                       `yaml:"buildevents,omitempty"`
 	Providers      map[string]CIProviderConfig `yaml:"providers,omitempty"`
+}
+
+type DependsOn struct {
+	Accounts   []string `yaml:"accounts,omitempty"`
+	Components []string `yaml:"components,omitempty"`
 }
 
 type CIProviderConfig struct {

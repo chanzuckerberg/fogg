@@ -119,12 +119,12 @@ data terraform_remote_state {{ $component }} {
 {{ end }}
 
 # remote state for accounts
-{{ range $accountName, $account := .Accounts }}
-data terraform_remote_state {{ $accountName }} {
-  backend = "{{ $account.Backend.Kind }}"
+{{ range $name, $backend := .AccountBackends }}
+data terraform_remote_state {{ $name }} {
+  backend = "{{ $backend.Kind }}"
 
   config = {
-    {{ template "remote_backend" $account.Backend }}
+    {{ template "remote_backend" $backend }}
   }
 }
 {{ end }}
