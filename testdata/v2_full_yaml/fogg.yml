@@ -20,7 +20,9 @@ accounts:
         aws_profile: prof
         version: 0.4.2
         aws_region: us-west-2
-    depends_on: {}
+    depends_on:
+      accounts: []
+      components: []
 defaults:
   backend:
     bucket: buck
