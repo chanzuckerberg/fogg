@@ -7,19 +7,78 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/chanzuckerberg/fogg/util"
+	"github.com/chanzuckerberg/fogg/config"
+	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclparse"
+	"github.com/hashicorp/terraform/addrs"
 	"github.com/hashicorp/terraform/lang"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
 
 // liberal borrowing from https://github.com/hashicorp/terraform-config-inspect/blob/c481b8bfa41ea9dca417c2a8a98fd21bd0399e14/tfconfig/load_hcl.go#L16
-func Run(_ afero.Fs, path string) error {
+func Run(fs afero.Fs, configFile, path string) error {
+	// figure out which component or account we are talking about
+	conf, err := config.FindAndReadConfig(fs, configFile)
+	if err != nil {
+		return err
+	}
 
-	fmt.Println("start")
+	// warnings, e := conf.Validate()
+
+	pathParts := strings.Split(path, "/")
+
+	// var componentType string
+	var componentName string
+	// var envName string
+
+	switch len(pathParts) {
+	case 3:
+		if _, found := conf.Accounts[pathParts[2]]; !found {
+			return fmt.Errorf("could not find account %s", pathParts[2])
+		}
+		// componentType = "accounts"
+		componentName = pathParts[2]
+	case 4:
+	default:
+		return fmt.Errorf("could not figure out component for path %s", path)
+	}
+
+	// collect remote state references
+	references, _ := collectRemoteStateReferences(path)
+	logrus.Debugf("in %s found references %#v", path, references)
+
+	// for each reference, figure out if it is an account or component
+	accounts := []string{}
+	// components := []string{}
+
+	for _, r := range references {
+		if _, found := conf.Accounts[r]; found {
+			accounts = append(accounts, r)
+		}
+	}
+
+	logrus.Debugf("found accounts %#v", accounts)
+	// update fogg.yml with new references
+
+	c := conf.Accounts[componentName]
+	if c.Common.DependsOn == nil {
+		c.Common.DependsOn = &v2.DependsOn{}
+	}
+
+	c.DependsOn.Accounts = accounts
+	conf.Accounts[componentName] = c
+
+	conf.Write(fs, configFile)
+
+	return nil
+}
+
+func collectRemoteStateReferences(path string) ([]string, error) {
 	fs := NewOsFs()
-	fmt.Printf("fs: %#v\n", fs)
+
+	references := map[string]bool{}
 
 	primaryPaths, diags := dirFiles(fs, path)
 
@@ -54,43 +113,30 @@ func Run(_ afero.Fs, path string) error {
 
 		for _, block := range content.Blocks {
 
-			switch block.Type {
+			attrs, _ := block.Body.JustAttributes()
 
-			case "output":
-				name := block.Labels[0]
+			for _, v := range attrs {
+				refs, _ := lang.ReferencesInExpr(v.Expr)
 
-				c, _, contentDiags := block.Body.PartialContent(outputSchema)
-				diags = append(diags, contentDiags...)
-
-				fmt.Println("name", name)
-
-				if attr, defined := c.Attributes["value"]; defined {
-					refs, _ := lang.ReferencesInExpr(attr.Expr)
-					for _, r := range refs {
-						util.Dump(r.Subject)
+				for _, r := range refs {
+					if r != nil {
+						if resource, ok := r.Subject.(addrs.ResourceInstance); ok {
+							if resource.Resource.Type == "terraform_remote_state" {
+								references[resource.Resource.Name] = true
+							}
+						}
 					}
 				}
-
-			case "module":
-				name := block.Labels[0]
-				fmt.Println("module", name)
-
-				attrs, _ := block.Body.JustAttributes()
-
-				for _, v := range attrs {
-					refs, _ := lang.ReferencesInExpr(v.Expr)
-					util.Dump(refs)
-				}
-
-			default:
-
-				fmt.Println("unhandled", block.Type)
 			}
-
 		}
 	}
 
-	return nil
+	// FIXME return diags and make it work with error reporting
+	var refNames []string
+	for k := range references {
+		refNames = append(refNames, k)
+	}
+	return refNames, nil
 }
 
 // taken from https://github.com/hashicorp/terraform-config-inspect/blob/c481b8bfa41ea9dca417c2a8a98fd21bd0399e14/tfconfig/load.go#L81

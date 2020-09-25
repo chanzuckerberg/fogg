@@ -39,6 +39,20 @@ func ReadConfig(fs afero.Fs, b []byte, configFile string) (*Config, error) {
 	return c, e
 }
 
+func (c *Config) Write(fs afero.Fs, path string) error {
+	yaml, err := yaml.Marshal(c)
+	if err != nil {
+		return errs.WrapInternal(err, "unable to marshal yaml")
+	}
+
+	yamlConfigFile, err := fs.Create("fogg.yml")
+	if err != nil {
+		return errs.WrapInternal(err, "unable to create config file fogg.yml")
+	}
+	_, err = yamlConfigFile.Write(yaml)
+	return err
+}
+
 type Config struct {
 	Accounts map[string]Account `yaml:"accounts,omitempty"`
 	Defaults Defaults           `yaml:"defaults" validate:"required"`
@@ -79,7 +93,7 @@ type Tools struct {
 type CircleCI struct {
 	CommonCI `yaml:",inline"`
 
-	SSHKeyFingerprints []string `yaml:"ssh_key_fingerprints"`
+	SSHKeyFingerprints []string `yaml:"ssh_key_fingerprints,omitempty"`
 }
 
 type GitHubActionsCI struct {
