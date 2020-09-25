@@ -3,9 +3,11 @@ package v2
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"math/rand"
 	"path/filepath"
 	"reflect"
+	"strings"
 
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plugins"
@@ -256,6 +258,38 @@ func (ck *ComponentKind) GetOrDefault() ComponentKind {
 		return DefaultComponentKind
 	}
 	return *ck
+}
+
+// PathToComponentType given a path, return information about that component
+func (c Config) PathToComponentType(path string) (string, string, string, error) {
+	path = strings.TrimRight(path, "/")
+	pathParts := strings.Split(path, "/")
+	switch len(pathParts) {
+	case 3:
+		accountName := pathParts[2]
+		if _, found := c.Accounts[accountName]; !found {
+			return "", "", "", fmt.Errorf("could not find account %s", accountName)
+		}
+		return "accounts", accountName, "", nil
+	case 4:
+		envName := pathParts[2]
+		componentName := pathParts[3]
+
+		env, envFound := c.Envs[envName]
+
+		if !envFound {
+			return "", "", "", fmt.Errorf("could not find env %s", envName)
+		}
+
+		_, componentFound := env.Components[componentName]
+
+		if !componentFound {
+			return "", "", "", fmt.Errorf("could not find component %s in env %s", componentName, envName)
+		}
+		return "env", componentName, envName, nil
+	default:
+		return "", "", "", fmt.Errorf("could not figure out component for path %s", path)
+	}
 }
 
 const (

@@ -25,49 +25,21 @@ func Run(fs afero.Fs, configFile, path string) error {
 		return err
 	}
 
-	// warnings, e := conf.Validate()
-
-	pathParts := strings.Split(path, "/")
-
-	var componentType string
-	var componentName string
-	var envName string
-
-	switch len(pathParts) {
-	case 3:
-		componentType = "accounts"
-		componentName = pathParts[2]
-		if _, found := conf.Accounts[componentName]; !found {
-			return fmt.Errorf("could not find account %s", pathParts[2])
-		}
-	case 4:
-		componentType = "env"
-		envName = pathParts[2]
-		componentName = pathParts[3]
-
-		env, envFound := conf.Envs[envName]
-
-		if !envFound {
-			return fmt.Errorf("could not find env %s", envName)
-		}
-
-		_, componentFound := env.Components[componentName]
-
-		if !componentFound {
-			return fmt.Errorf("could not find component %s in env %s", componentName, envName)
-		}
-
-	default:
-		return fmt.Errorf("could not figure out component for path %s", path)
+	componentType, componentName, envName, err := conf.PathToComponentType(path)
+	if err != nil {
+		return err
 	}
-
 	logrus.Debugf("componentType: %s", componentType)
 
 	// collect remote state references
-	references, _ := collectRemoteStateReferences(path)
+	references, err := collectRemoteStateReferences(path)
+	if err != nil {
+		return err
+	}
+
 	logrus.Debugf("in %s found references %#v", path, references)
 
-	// for each reference, figure out if it is an account or component
+	// for each reference, figure out if it is an account or component, since those are separate in our configs
 	accounts := []string{}
 	components := []string{}
 
