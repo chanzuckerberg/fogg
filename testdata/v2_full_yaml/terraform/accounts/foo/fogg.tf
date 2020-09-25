@@ -93,6 +93,20 @@ data terraform_remote_state global {
 
   }
 }
+data terraform_remote_state bar {
+  backend = "s3"
+  config = {
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/accounts/bar.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
+  }
+}
 provider random {
   version = "~> 2.2"
 }
