@@ -327,13 +327,14 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 	}
 
 	for name, acct := range c.Accounts {
-		remoteStates := v2.ResolveOptionalStringSlice(v2.RemoteStatesGetter, defaults.Common, acct.Common)
+
+		accountRemoteStates := v2.ResolveOptionalStringSlice(v2.DependsOnAccountsGetter, defaults.Common, acct.Common)
 		a := accountPlans[name]
 		filtered := map[string]Backend{}
 
-		if remoteStates != nil {
+		if accountRemoteStates != nil {
 			for k, v := range accountBackends {
-				if util.SliceContainsString(remoteStates, k) {
+				if util.SliceContainsString(accountRemoteStates, k) {
 					filtered[k] = v
 				}
 			}
@@ -399,7 +400,7 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 		envPlan.Env = envName
 
 		for componentName, componentConf := range conf.Envs[envName].Components {
-			remoteStates := v2.ResolveOptionalStringSlice(v2.RemoteStatesGetter, defaults.Common, envConf.Common, componentConf.Common)
+			accountRemoteStates := v2.ResolveOptionalStringSlice(v2.DependsOnComponentsGetter, defaults.Common, envConf.Common, componentConf.Common)
 
 			componentPlan := Component{
 				Kind: componentConf.Kind,
@@ -415,7 +416,7 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 
 			accountBackends := map[string]Backend{}
 			for k, v := range p.Accounts {
-				if remoteStates == nil || util.SliceContainsString(remoteStates, k) {
+				if accountRemoteStates == nil || util.SliceContainsString(accountRemoteStates, k) {
 					accountBackends[k] = v.Backend
 				}
 			}
@@ -456,13 +457,13 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 		}
 
 		for name, componentConf := range conf.Envs[envName].Components {
-			remoteStates := v2.ResolveOptionalStringSlice(v2.RemoteStatesGetter, defaults.Common, envConf.Common, componentConf.Common)
+			componentRemoteStates := v2.ResolveOptionalStringSlice(v2.DependsOnComponentsGetter, defaults.Common, envConf.Common, componentConf.Common)
 			c := envPlan.Components[name]
 			filtered := map[string]Backend{}
 
-			if remoteStates != nil {
+			if componentRemoteStates != nil {
 				for k, v := range componentBackends {
-					if util.SliceContainsString(remoteStates, k) {
+					if util.SliceContainsString(componentRemoteStates, k) {
 						filtered[k] = v
 					}
 				}
