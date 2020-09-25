@@ -87,9 +87,7 @@ func Run(fs afero.Fs, configFile, path string) error {
 		}
 	}
 
-	conf.Write(fs, configFile)
-
-	return nil
+	return conf.Write(fs, configFile)
 }
 
 func collectRemoteStateReferences(path string) ([]string, error) {
