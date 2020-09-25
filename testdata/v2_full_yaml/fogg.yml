@@ -20,6 +20,7 @@ accounts:
         aws_profile: prof
         version: 0.4.2
         aws_region: us-west-2
+    remote_states: []
 defaults:
   backend:
     bucket: buck
@@ -42,9 +43,13 @@ envs:
       hero:
         providers:
           heroku: {}
+        remote_states: []
       datadog:
         providers:
           datadog: {}
+        remote_states:
+          - foo
+          - hero
       vpc:
         module_source: github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0
         module_name: prod-vpc
