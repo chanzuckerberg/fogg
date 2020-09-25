@@ -1,13 +1,10 @@
 package exp
 
 import (
-	"net/http"
-	"net/http/pprof"
 	"os"
 
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/exp/state"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
@@ -37,7 +34,6 @@ var autoRemoteStateCmd = &cobra.Command{
 	BEWARE– This is a very experimental feature, not well tested and with rough edges.
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		setupDebug(debug)
 		// Set up fs
 		pwd, err := os.Getwd()
 		if err != nil {
@@ -55,18 +51,4 @@ var autoRemoteStateCmd = &cobra.Command{
 		path, _ := cmd.Flags().GetString("path")
 		return state.Run(fs, configFile, path)
 	},
-}
-
-func setupDebug(debug bool) {
-	logLevel := logrus.InfoLevel
-	if debug { // debug overrides quiet
-		logLevel = logrus.DebugLevel
-		go func() {
-			logrus.Println(http.ListenAndServe("localhost:6060", nil))
-			http.HandleFunc("/", pprof.Index)
-		}()
-	} else if quiet {
-		logLevel = logrus.FatalLevel
-	}
-	logrus.SetLevel(logLevel)
 }

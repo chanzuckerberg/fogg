@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"net/http"
-	"net/http/pprof"
 	"os"
 	"strings"
 
@@ -55,20 +53,6 @@ func mergeConfigValidationErrors(err error) error {
 	return nil
 }
 
-func setupDebug(debug bool) {
-	logLevel := logrus.InfoLevel
-	if debug { // debug overrides quiet
-		logLevel = logrus.DebugLevel
-		go func() {
-			logrus.Println(http.ListenAndServe("localhost:6060", nil))
-			http.HandleFunc("/", pprof.Index)
-		}()
-	} else if quiet {
-		logLevel = logrus.FatalLevel
-	}
-	logrus.SetLevel(logLevel)
-}
-
 func openFs() (afero.Fs, error) {
 	pwd, e := os.Getwd()
 	if e != nil {
@@ -78,8 +62,7 @@ func openFs() (afero.Fs, error) {
 	return fs, nil
 }
 
-func bootstrapCmd(cmd *cobra.Command, debug bool) (afero.Fs, *v2.Config, error) {
-	setupDebug(debug)
+func bootstrapCmd(cmd *cobra.Command) (afero.Fs, *v2.Config, error) {
 
 	fs, err := openFs()
 	if err != nil {

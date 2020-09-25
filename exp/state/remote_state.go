@@ -90,25 +90,28 @@ func Run(fs afero.Fs, configFile, path string) error {
 	logrus.Debugf("found components %#v", components)
 
 	if componentType == "accounts" {
-		c := conf.Accounts[componentName]
+		if len(accounts) > 0 {
+			c := conf.Accounts[componentName]
+			if c.Common.DependsOn == nil {
+				c.Common.DependsOn = &v2.DependsOn{}
+			}
 
-		if c.Common.DependsOn == nil {
-			c.Common.DependsOn = &v2.DependsOn{}
+			c.DependsOn.Accounts = accounts
+			conf.Accounts[componentName] = c
 		}
-
-		c.DependsOn.Accounts = accounts
-		conf.Accounts[componentName] = c
 	} else if componentType == "env" {
-		c := conf.Envs[envName].Components[componentName]
+		if len(accounts) > 0 || len(components) > 0 {
+			c := conf.Envs[envName].Components[componentName]
 
-		if c.Common.DependsOn == nil {
-			c.Common.DependsOn = &v2.DependsOn{}
+			if c.Common.DependsOn == nil {
+				c.Common.DependsOn = &v2.DependsOn{}
+			}
+
+			c.DependsOn.Accounts = accounts
+			c.DependsOn.Components = components
+
+			conf.Envs[envName].Components[componentName] = c
 		}
-
-		c.DependsOn.Accounts = accounts
-		c.DependsOn.Components = components
-
-		conf.Envs[envName].Components[componentName] = c
 	}
 
 	conf.Write(fs, configFile)

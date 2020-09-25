@@ -24,7 +24,7 @@ func TestInit(t *testing.T) {
 	r.NotNil(conf)
 	r.Equal(config.DefaultFoggVersion, conf.Version)
 
-	err = writeConfig(fs, conf)
+	err = conf.Write(fs, "fogg.yml")
 	r.NoError(err)
 
 	exists, err := afero.Exists(fs, "fogg.yml")

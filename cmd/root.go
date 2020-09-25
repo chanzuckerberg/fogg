@@ -13,14 +13,12 @@ import (
 )
 
 var (
-	debug      bool
-	quiet      bool
 	cpuprofile string
 )
 
 func init() {
-	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "enable verbose output")
-	rootCmd.PersistentFlags().BoolVarP(&quiet, "quiet", "q", false, "do not output to console; use return code to determine success/failure")
+	rootCmd.PersistentFlags().BoolP("debug", "d", false, "enable verbose output")
+	rootCmd.PersistentFlags().BoolP("quiet", "q", false, "do not output to console; use return code to determine success/failure")
 	rootCmd.PersistentFlags().StringVarP(&cpuprofile, "cpuprofile", "p", "", "activate cpu profiling via pprof and write to file")
 	rootCmd.AddCommand(exp.ExpCmd)
 }
@@ -38,6 +36,24 @@ var rootCmd = &cobra.Command{
 			}
 			return pprof.StartCPUProfile(f)
 		}
+
+		debug, err := cmd.Flags().GetBool("debug")
+		if err != nil {
+			return err
+		}
+		quiet, err := cmd.Flags().GetBool("quiet")
+		if err != nil {
+			return err
+		}
+
+		logLevel := logrus.InfoLevel
+		if debug { // debug overrides quiet
+			logLevel = logrus.DebugLevel
+		} else if quiet {
+			logLevel = logrus.FatalLevel
+		}
+		logrus.SetLevel(logLevel)
+
 		return nil
 	},
 	PersistentPostRunE: func(cmd *cobra.Command, args []string) error {

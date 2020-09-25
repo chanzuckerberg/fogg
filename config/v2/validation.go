@@ -12,8 +12,8 @@ import (
 )
 
 var validTravisCommands = map[string]struct{}{
-	"check": struct{}{},
-	"lint":  struct{}{},
+	"check": {},
+	"lint":  {},
 }
 
 // Validate validates the config
