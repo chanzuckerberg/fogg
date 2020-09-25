@@ -9,16 +9,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	debug bool
-	quiet bool
-)
-
 func init() {
 	autoRemoteStateCmd.Flags().String("path", "", "path to a working directory")
-	autoRemoteStateCmd.PersistentFlags().BoolVar(&debug, "debug", false, "enable verbose output")
-	autoRemoteStateCmd.PersistentFlags().BoolVarP(&quiet, "quiet", "q", false, "do not output to console; use return code to determine success/failure")
-
 	autoRemoteStateCmd.Flags().StringP("config", "c", "fogg.yml", "Use this to override the fogg config file.")
 
 	ExpCmd.AddCommand(autoRemoteStateCmd)
