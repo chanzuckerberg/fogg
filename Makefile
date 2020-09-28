@@ -20,7 +20,7 @@ fmt:
 .PHONY: fmt
 
 lint: ## run the fast go linters
-	./bin/reviewdog -conf .reviewdog.yml  -diff "git diff master" -tee
+	./bin/reviewdog -conf .reviewdog.yml  -diff "git diff main" -tee
 .PHONY: lint
 
 lint-ci: ## run the fast go linters
@@ -55,8 +55,8 @@ release-prerelease: setup ## release to github as a 'pre-release'
 	go build ${LDFLAGS} .
 	version=`./fogg version`; \
 	git tag v"$$version"; \
-	git push
-	git push --tags
+	git push; \
+	git push origin v"$$version";
 	goreleaser release -f .goreleaser.prerelease.yml --debug
 .PHONY: release-prerelease
 
