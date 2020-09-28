@@ -153,7 +153,7 @@ func collectRemoteStateReferences(path string) ([]string, error) {
 		}
 	}
 
-	var refNames []string
+	refNames := []string{}
 	for k := range references {
 		refNames = append(refNames, k)
 	}
