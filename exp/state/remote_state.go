@@ -1,15 +1,15 @@
 package state
 
 import (
-	"io/ioutil"
-	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/chanzuckerberg/fogg/config"
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclparse"
+	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/hashicorp/terraform/addrs"
 	"github.com/hashicorp/terraform/lang"
 	"github.com/sirupsen/logrus"
@@ -91,7 +91,7 @@ func Run(fs afero.Fs, configFile, path string) error {
 }
 
 func collectRemoteStateReferences(path string) ([]string, error) {
-	fs := NewOsFs()
+	fs := tfconfig.NewOsFs()
 
 	references := map[string]bool{}
 
@@ -157,11 +157,13 @@ func collectRemoteStateReferences(path string) ([]string, error) {
 	for k := range references {
 		refNames = append(refNames, k)
 	}
+
+	sort.Strings(refNames)
 	return refNames, nil
 }
 
 // taken from https://github.com/hashicorp/terraform-config-inspect/blob/c481b8bfa41ea9dca417c2a8a98fd21bd0399e14/tfconfig/load.go#L81
-func dirFiles(fs FS, dir string) ([]string, error) {
+func dirFiles(fs tfconfig.FS, dir string) ([]string, error) {
 	var primary []string
 
 	infos, err := fs.ReadDir(dir)
@@ -218,41 +220,4 @@ func isIgnoredFile(name string) bool {
 	return strings.HasPrefix(name, ".") || // Unix-like hidden files
 		strings.HasSuffix(name, "~") || // vim
 		strings.HasPrefix(name, "#") && strings.HasSuffix(name, "#") // emacs
-}
-
-// taken from https://github.com/hashicorp/terraform-config-inspect/blob/c481b8bfa41ea9dca417c2a8a98fd21bd0399e14/tfconfig/filesystem.go
-
-// FS represents a minimal filesystem implementation
-// See io/fs.FS in http://golang.org/s/draft-iofs-design
-type FS interface {
-	Open(name string) (File, error)
-	ReadFile(name string) ([]byte, error)
-	ReadDir(dirname string) ([]os.FileInfo, error)
-}
-
-// File represents an open file in FS
-// See io/fs.File in http://golang.org/s/draft-iofs-design
-type File interface {
-	Stat() (os.FileInfo, error)
-	Read([]byte) (int, error)
-	Close() error
-}
-
-type osFs struct{}
-
-func (fs *osFs) Open(name string) (File, error) {
-	return os.Open(name)
-}
-
-func (fs *osFs) ReadFile(name string) ([]byte, error) {
-	return ioutil.ReadFile(name)
-}
-
-func (fs *osFs) ReadDir(dirname string) ([]os.FileInfo, error) {
-	return ioutil.ReadDir(dirname)
-}
-
-// NewOsFs provides a basic implementation of FS for an OS filesystem
-func NewOsFs() FS {
-	return &osFs{}
 }

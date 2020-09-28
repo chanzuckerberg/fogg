@@ -1,8 +1,9 @@
 package state
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func Test_collectRemoteStateReferences(t *testing.T) {
@@ -19,14 +20,14 @@ func Test_collectRemoteStateReferences(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			r := require.New(t)
 			got, err := collectRemoteStateReferences(tt.args.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("collectRemoteStateReferences() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("collectRemoteStateReferences() = %v, want %v", got, tt.want)
-			}
+
+			r.ElementsMatch(got, tt.want)
 		})
 	}
 }

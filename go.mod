@@ -22,17 +22,18 @@ require (
 	github.com/gobuffalo/envy v1.9.0 // indirect
 	github.com/gobuffalo/packd v1.0.0 // indirect
 	github.com/gobuffalo/packr v1.30.1
+	github.com/google/go-cmp v0.5.2 // indirect
 	github.com/google/go-github/v27 v27.0.6
 	github.com/hashicorp/go-getter v1.4.2-0.20200106182914-9813cbd4eb02
 	github.com/hashicorp/go-multierror v1.1.0
 	github.com/hashicorp/go-retryablehttp v0.6.6 // indirect
 	github.com/hashicorp/go-uuid v1.0.2 // indirect
 	github.com/hashicorp/go-version v1.2.0
-	github.com/hashicorp/hcl/v2 v2.4.0
+	github.com/hashicorp/hcl/v2 v2.6.0
 	github.com/hashicorp/hcl2 v0.0.0-20191002203319-fb75b3253c80
 	github.com/hashicorp/hil v0.0.0-20190212132231-97b3a9cdfa93 // indirect
 	github.com/hashicorp/terraform v0.12.24
-	github.com/hashicorp/terraform-config-inspect v0.0.0-20200413172006-36d6f40eb7d7
+	github.com/hashicorp/terraform-config-inspect v0.0.0-20200806211835-c481b8bfa41e
 	github.com/hashicorp/terraform-svchost v0.0.0-20191119180714-d2e4933b9136 // indirect
 	github.com/howeyc/gopass v0.0.0-20190910152052-7cb4b85ec19c // indirect
 	github.com/huandu/xstrings v1.3.1 // indirect
@@ -44,6 +45,7 @@ require (
 	github.com/mitchellh/cli v1.1.1 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mitchellh/go-testing-interface v1.14.0 // indirect
+	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/mitchellh/mapstructure v1.2.2 // indirect
 	github.com/mitchellh/reflectwalk v1.0.1 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible
@@ -57,10 +59,10 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/testify v1.5.1
 	github.com/ulikunitz/xz v0.5.7 // indirect
-	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
-	github.com/zclconf/go-cty v1.4.0 // indirect
+	github.com/zclconf/go-cty v1.6.1 // indirect
 	golang.org/x/crypto v0.0.0-20200422194213-44a606286825 // indirect
 	golang.org/x/net v0.0.0-20200421231249-e086a090c8fd // indirect
+	golang.org/x/text v0.3.3 // indirect
 	golang.org/x/tools v0.0.0-20200609060408-6eec81c74686 // indirect
 	google.golang.org/api v0.22.0 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
