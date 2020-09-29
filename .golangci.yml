@@ -1,7 +1,6 @@
 run:
   skip-dirs:
     - exp/examine
-    # - cmd/exp
   skip-files:
     - cmd/exp/entropy.go
     - exp/examine/local.go
