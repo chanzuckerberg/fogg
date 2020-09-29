@@ -260,17 +260,28 @@ func (ck *ComponentKind) GetOrDefault() ComponentKind {
 	return *ck
 }
 
+type componentInfo struct {
+	Kind string
+	Name string
+	Env  string
+}
+
 // PathToComponentType given a path, return information about that component
-func (c Config) PathToComponentType(path string) (string, string, string, error) {
+func (c Config) PathToComponentType(path string) (componentInfo, error) {
+	t := componentInfo{}
+
 	path = strings.TrimRight(path, "/")
 	pathParts := strings.Split(path, "/")
 	switch len(pathParts) {
 	case 3:
 		accountName := pathParts[2]
 		if _, found := c.Accounts[accountName]; !found {
-			return "", "", "", fmt.Errorf("could not find account %s", accountName)
+			return t, fmt.Errorf("could not find account %s", accountName)
 		}
-		return "accounts", accountName, "", nil
+		t.Kind = "accounts"
+		t.Name = accountName
+
+		return t, nil
 	case 4:
 		envName := pathParts[2]
 		componentName := pathParts[3]
@@ -278,17 +289,20 @@ func (c Config) PathToComponentType(path string) (string, string, string, error)
 		env, envFound := c.Envs[envName]
 
 		if !envFound {
-			return "", "", "", fmt.Errorf("could not find env %s", envName)
+			return t, fmt.Errorf("could not find env %s", envName)
 		}
 
 		_, componentFound := env.Components[componentName]
 
 		if !componentFound {
-			return "", "", "", fmt.Errorf("could not find component %s in env %s", componentName, envName)
+			return t, fmt.Errorf("could not find component %s in env %s", componentName, envName)
 		}
-		return "env", componentName, envName, nil
+		t.Kind = "envs"
+		t.Name = componentName
+		t.Env = envName
+		return t, nil
 	default:
-		return "", "", "", fmt.Errorf("could not figure out component for path %s", path)
+		return t, fmt.Errorf("could not figure out component for path %s", path)
 	}
 }
 

@@ -19,18 +19,18 @@ fmt:
 	goimports -w -d $$(find . -type f -name '*.go' -not -path "./vendor/*" -not -path "./dist/*")
 .PHONY: fmt
 
-lint: ## run the fast go linters
+lint: ## run lint andn print results
 	./bin/reviewdog -conf .reviewdog.yml  -diff "git diff main" -tee
 .PHONY: lint
 
-lint-ci: ## run the fast go linters
+lint-ci: ## run lint in CI, posting to PRs
 	./bin/reviewdog -conf .reviewdog.yml  -reporter=github-pr-review -tee -level=info
 .PHONY: lint-ci
 
 lint-all: ## run the fast go linters
 	# doesn't seem to be a way to get reviewdog to not filter by diff
-	./bin/golangci-lint run
-.PHONY: lint
+	./bin/reviewdog -conf .reviewdog.yml  -filter-mode nofilter -tee
+.PHONY: lint-all
 
 TEMPLATES := $(shell find templates -not -name "*.go")
 

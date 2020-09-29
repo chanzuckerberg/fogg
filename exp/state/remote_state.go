@@ -1,12 +1,14 @@
 package state
 
 import (
+	"fmt"
 	"path/filepath"
 	"sort"
 	"strings"
 
 	"github.com/chanzuckerberg/fogg/config"
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
+	"github.com/chanzuckerberg/go-misc/sets"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclparse"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
@@ -24,11 +26,11 @@ func Run(fs afero.Fs, configFile, path string) error {
 		return err
 	}
 
-	componentType, componentName, envName, err := conf.PathToComponentType(path)
+	component, err := conf.PathToComponentType(path)
 	if err != nil {
 		return err
 	}
-	logrus.Debugf("componentType: %s", componentType)
+	logrus.Debugf("component kind %s", component.Kind)
 
 	// collect remote state references
 	references, err := collectRemoteStateReferences(path)
@@ -48,8 +50,8 @@ func Run(fs afero.Fs, configFile, path string) error {
 		}
 	}
 
-	if componentType == "env" {
-		env := conf.Envs[envName]
+	if component.Kind == "envs" {
+		env := conf.Envs[component.Env]
 
 		for _, r := range references {
 			if _, found := env.Components[r]; found {
@@ -62,19 +64,21 @@ func Run(fs afero.Fs, configFile, path string) error {
 	logrus.Debugf("found accounts %#v", accounts)
 	logrus.Debugf("found components %#v", components)
 
-	if componentType == "accounts" {
+	switch component.Kind {
+	case "accounts":
 		if len(accounts) > 0 {
-			c := conf.Accounts[componentName]
+			c := conf.Accounts[component.Name]
 			if c.Common.DependsOn == nil {
 				c.Common.DependsOn = &v2.DependsOn{}
 			}
 
 			c.DependsOn.Accounts = accounts
-			conf.Accounts[componentName] = c
+			conf.Accounts[component.Name] = c
 		}
-	} else if componentType == "env" {
+
+	case "env":
 		if len(accounts) > 0 || len(components) > 0 {
-			c := conf.Envs[envName].Components[componentName]
+			c := conf.Envs[component.Env].Components[component.Name]
 
 			if c.Common.DependsOn == nil {
 				c.Common.DependsOn = &v2.DependsOn{}
@@ -83,8 +87,11 @@ func Run(fs afero.Fs, configFile, path string) error {
 			c.DependsOn.Accounts = accounts
 			c.DependsOn.Components = components
 
-			conf.Envs[envName].Components[componentName] = c
+			conf.Envs[component.Env].Components[component.Name] = c
 		}
+
+	default:
+		return fmt.Errorf("unknown component.Kind: %s", component.Kind)
 	}
 
 	return conf.Write(fs, configFile)
@@ -93,7 +100,7 @@ func Run(fs afero.Fs, configFile, path string) error {
 func collectRemoteStateReferences(path string) ([]string, error) {
 	fs := tfconfig.NewOsFs()
 
-	references := map[string]bool{}
+	references := sets.StringSet{}
 
 	primaryPaths, err := dirFiles(fs, path)
 	if err != nil {
@@ -140,12 +147,13 @@ func collectRemoteStateReferences(path string) ([]string, error) {
 				refs, _ := lang.ReferencesInExpr(v.Expr)
 
 				for _, r := range refs {
-					if r != nil {
-						logrus.Debugf("ref: %v", r)
-						if resource, ok := r.Subject.(addrs.ResourceInstance); ok {
-							if resource.Resource.Type == "terraform_remote_state" {
-								references[resource.Resource.Name] = true
-							}
+					if r == nil {
+						continue
+					}
+					logrus.Debugf("ref: %v", r)
+					if resource, ok := r.Subject.(addrs.ResourceInstance); ok {
+						if resource.Resource.Type == "terraform_remote_state" {
+							references.Add(resource.Resource.Name)
 						}
 					}
 				}
@@ -153,10 +161,7 @@ func collectRemoteStateReferences(path string) ([]string, error) {
 		}
 	}
 
-	refNames := []string{}
-	for k := range references {
-		refNames = append(refNames, k)
-	}
+	refNames := references.List()
 
 	sort.Strings(refNames)
 	return refNames, nil

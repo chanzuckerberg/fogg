@@ -16,7 +16,7 @@ jobs:
       - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
       - run: aws --version
-      - run: FOGG_VERSION="vundefined+undefined+dirty" make setup
+      - run: FOGG_VERSION="vundefined-pre+undefined.dirty" make setup
       - run: |
           .fogg/bin/fogg apply
           if [ "$(git status --porcelain)" != "" ]; then
@@ -40,7 +40,7 @@ jobs:
       - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
       - run: aws --version
-      - run: FOGG_VERSION="vundefined+undefined+dirty" make setup
+      - run: FOGG_VERSION="vundefined-pre+undefined.dirty" make setup
       - run: |
           .fogg/bin/fogg apply
           if [ "$(git status --porcelain)" != "" ]; then
@@ -61,7 +61,7 @@ jobs:
       - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
       - run: aws --version
-      - run: FOGG_VERSION="vundefined+undefined+dirty" make setup
+      - run: FOGG_VERSION="vundefined-pre+undefined.dirty" make setup
       - run: |
           .fogg/bin/fogg apply
           if [ "$(git status --porcelain)" != "" ]; then
@@ -82,7 +82,7 @@ jobs:
       - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
       - run: aws --version
-      - run: FOGG_VERSION="vundefined+undefined+dirty" make setup
+      - run: FOGG_VERSION="vundefined-pre+undefined.dirty" make setup
       - run: |
           .fogg/bin/fogg apply
           if [ "$(git status --porcelain)" != "" ]; then
@@ -103,7 +103,7 @@ jobs:
       - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
       - run: aws --version
-      - run: FOGG_VERSION="vundefined+undefined+dirty" make setup
+      - run: FOGG_VERSION="vundefined-pre+undefined.dirty" make setup
       - run: |
           .fogg/bin/fogg apply
           if [ "$(git status --porcelain)" != "" ]; then
@@ -124,7 +124,7 @@ jobs:
       - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
       - run: aws --version
-      - run: FOGG_VERSION="vundefined+undefined+dirty" make setup
+      - run: FOGG_VERSION="vundefined-pre+undefined.dirty" make setup
       - run: |
           .fogg/bin/fogg apply
           if [ "$(git status --porcelain)" != "" ]; then
@@ -145,7 +145,7 @@ jobs:
       - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
       - run: aws --version
-      - run: FOGG_VERSION="vundefined+undefined+dirty" make setup
+      - run: FOGG_VERSION="vundefined-pre+undefined.dirty" make setup
       - run: |
           .fogg/bin/fogg apply
           if [ "$(git status --porcelain)" != "" ]; then
