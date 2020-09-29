@@ -16,7 +16,7 @@ var setupCmd = &cobra.Command{
 	Short:         "Setup dependencies for curent working directory",
 	SilenceErrors: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fs, config, err := bootstrapCmd(cmd, debug)
+		fs, config, err := bootstrapCmd(cmd)
 
 		if err != nil {
 			return err
