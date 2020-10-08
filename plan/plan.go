@@ -19,8 +19,8 @@ type Plan struct {
 	Global          Component             `yaml:"global"`
 	Modules         map[string]Module     `yaml:"modules"`
 	TravisCI        TravisCIConfig        `yaml:"travis_ci"`
-	CircleCI        CircleCIConfig        `yaml:"github_actions_ci"`
-	GitHubActionsCI GitHubActionsCIConfig `yaml:"circle_ci"`
+	CircleCI        CircleCIConfig        `yaml:"circleci_ci"`
+	GitHubActionsCI GitHubActionsCIConfig `yaml:"github_actions_ci"`
 	Version         string                `yaml:"version"`
 }
 
