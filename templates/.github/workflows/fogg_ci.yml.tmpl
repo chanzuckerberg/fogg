@@ -4,6 +4,13 @@
 
 on: push
 
+{{- if $githubActionsCI.Env }}
+env:
+{{- range $k, $v := .Env }}
+    {{ $k }}: {{ $v }}
+{{- end }}
+{{- end }}
+
 jobs:
 {{- range $idx, $testBucket := $githubActionsCI.TestBuckets }}
   terraform_{{$idx}}:

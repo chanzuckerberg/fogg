@@ -391,15 +391,18 @@ func ResolveGitHubActionsCI(commons ...Common) *GitHubActionsCI {
 	enabled := false
 	buildevents := false
 	testCommand := "check"
+
 	for _, c := range commons {
-		if c.Tools != nil && c.Tools.GitHubActionsCI != nil && c.Tools.GitHubActionsCI.Enabled != nil {
-			enabled = *c.Tools.GitHubActionsCI.Enabled
-		}
-		if c.Tools != nil && c.Tools.GitHubActionsCI != nil && c.Tools.GitHubActionsCI.Command != nil {
-			testCommand = *c.Tools.GitHubActionsCI.Command
-		}
-		if c.Tools != nil && c.Tools.GitHubActionsCI != nil && c.Tools.GitHubActionsCI.Buildevents != nil {
-			buildevents = *c.Tools.GitHubActionsCI.Buildevents
+		if c.Tools != nil && c.Tools.GitHubActionsCI != nil {
+			if c.Tools.GitHubActionsCI.Enabled != nil {
+				enabled = *c.Tools.GitHubActionsCI.Enabled
+			}
+			if c.Tools.GitHubActionsCI.Command != nil {
+				testCommand = *c.Tools.GitHubActionsCI.Command
+			}
+			if c.Tools.GitHubActionsCI.Buildevents != nil {
+				buildevents = *c.Tools.GitHubActionsCI.Buildevents
+			}
 		}
 	}
 
