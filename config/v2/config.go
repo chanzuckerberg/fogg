@@ -229,6 +229,7 @@ type CommonCI struct {
 	Command        *string                     `yaml:"command,omitempty"`
 	Buildevents    *bool                       `yaml:"buildevents,omitempty"`
 	Providers      map[string]CIProviderConfig `yaml:"providers,omitempty"`
+	Env            map[string]string           `yaml:"env,omitempty"`
 }
 
 type DependsOn struct {
