@@ -7,8 +7,8 @@ runner:
       - '%C%.%#'
     level: warning
   markdownlint:
-    cmd: markdownlint .
+    cmd: "markdownlint -c .markdownlint.json . 2>&1"
     errorformat:
-      - "%s:%l:%c:%m"
+      - '%f:%l:%c %m'
     level: warning
 

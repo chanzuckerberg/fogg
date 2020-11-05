@@ -21,7 +21,7 @@ fmt:
 .PHONY: fmt
 
 lint: ## run lint andn print results
-	./bin/reviewdog -conf .reviewdog.yml  -diff "git diff main" -tee
+	./bin/reviewdog -conf .reviewdog.yml  -diff "git diff main"
 .PHONY: lint
 
 lint-ci: ## run lint in CI, posting to PRs
@@ -30,7 +30,7 @@ lint-ci: ## run lint in CI, posting to PRs
 
 lint-all: ## run the fast go linters
 	# doesn't seem to be a way to get reviewdog to not filter by diff
-	./bin/reviewdog -conf .reviewdog.yml  -filter-mode nofilter -tee
+	./bin/reviewdog -conf .reviewdog.yml  -filter-mode nofilter
 .PHONY: lint-all
 
 TEMPLATES := $(shell find templates -not -name "*.go")
