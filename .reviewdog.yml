@@ -6,3 +6,9 @@ runner:
       - '%E%f:%l: %m'
       - '%C%.%#'
     level: warning
+  markdownlint:
+    cmd: markdownlint .
+    errorformat:
+      - "%s:%l:%c:%m"
+    level: warning
+

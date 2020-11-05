@@ -25,6 +25,15 @@ jobs:
       - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
       - run: aws --version
+      {{- if not (eq (len $githubActionsCI.SSHKeySecrets) 0) }}
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.4.1
+        with:
+          ssh-private-key: |
+          {{ range $idx, $secret := $githubActionsCI.SSHKeySecrets }}
+            {{`${{`}} secrets.{{ $secret }} {{`}}`}}
+          {{ end }}
+      {{ end }}
       - run: FOGG_VERSION="v{{ $githubActionsCI.FoggVersion }}" make setup
       - run: |
           .fogg/bin/fogg apply

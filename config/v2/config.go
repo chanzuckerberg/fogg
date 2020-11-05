@@ -100,6 +100,8 @@ type CircleCI struct {
 
 type GitHubActionsCI struct {
 	CommonCI `yaml:",inline"`
+
+	SSHKeySecrets []string `yaml:"ssh_key_secrets"`
 }
 
 type Env struct {
