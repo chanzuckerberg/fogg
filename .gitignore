@@ -9,4 +9,5 @@ dist
 coverage.txt
 
 bin
-apply/newdir
+node_modules/
+package-lock.json
