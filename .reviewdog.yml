@@ -7,7 +7,7 @@ runner:
       - '%C%.%#'
     level: warning
   markdownlint:
-    cmd: "markdownlint -c .markdownlint.json . 2>&1"
+    cmd: "node_modules/.bin/markdownlint -c .markdownlint.json . 2>&1"
     errorformat:
       - '%f:%l:%c %m'
     level: warning
