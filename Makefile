@@ -13,7 +13,7 @@ setup: ## setup development dependencies
 	curl -sfL https://raw.githubusercontent.com/chanzuckerberg/bff/main/download.sh | sh
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh
 	curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh
-	npm install markdownlint
+	npm install -g markdownlint-cli
 .PHONY: setup
 
 fmt:
