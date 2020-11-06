@@ -6,3 +6,9 @@ runner:
       - '%E%f:%l: %m'
       - '%C%.%#'
     level: warning
+  markdownlint:
+    cmd: "node_modules/.bin/markdownlint -p .gitignore -c .markdownlint.json . 2>&1"
+    errorformat:
+      - '%f:%l:%c %m'
+    level: warning
+

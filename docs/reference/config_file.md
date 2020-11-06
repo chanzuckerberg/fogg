@@ -155,9 +155,11 @@ The currently supported providers are:
   - `version` - Version of the provider to use
 
 ### `tools`
+
 Define CI integrations.
 
 The currently supported CI tools are:
+
 - `travis_ci`
   - `aws_iam_role_name` - Configure the CI toole to assume this role before running checks
   - `test_buckets` - Whether to run checks
@@ -174,6 +176,7 @@ The currently supported CI tools are:
   - `test_buckets` -
   - `command` -
   - `enabled` - boolean, enable this CI tool
+  - `ssh_key_secrets` - list of strings, github actions secrets containing ssh keys for pulling code from private repos
 - `tflint`
   - `enabled` - boolean, enable this CI tool
 
