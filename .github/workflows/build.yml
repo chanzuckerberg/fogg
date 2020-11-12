@@ -43,6 +43,6 @@ jobs:
           echo ::set-env name=STEP_START::$(date +%s)
           echo ::set-env name=STEP_ID::$(echo after_success | sum | cut -f 1 -d \ )
       - name: Run codecov
-        run:
+        run: |
           buildevents cmd $TRACE_ID $STEP_ID codecov-upload -- bash <(curl -s https://codecov.io/bash)
           buildevents step $TRACE_ID $STEP_ID $STEP_START after_success
