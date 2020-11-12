@@ -76,7 +76,7 @@ func Run(fs afero.Fs, configFile, path string) error {
 			conf.Accounts[component.Name] = c
 		}
 
-	case "env":
+	case "envs":
 		if len(accounts) > 0 || len(components) > 0 {
 			c := conf.Envs[component.Env].Components[component.Name]
 
