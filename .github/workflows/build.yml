@@ -11,7 +11,7 @@ jobs:
           go-version: '1.14.0'
       - run: go version
       - name: Setup buildevents
-        uses: kvrhdn/gha-buildevents@44a0f39
+        uses: kvrhdn/gha-buildevents@v1
         with:
           apikey: ${{ secrets.BUILDEVENT_APIKEY }}
           dataset: buildevents
