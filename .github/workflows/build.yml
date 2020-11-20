@@ -11,7 +11,7 @@ jobs:
           go-version: '1.14.0'
       - run: go version
       - name: Setup buildevents
-        uses: kvrhdn/gha-buildevents@44a0f39
+        uses: kvrhdn/gha-buildevents@v1
         with:
           apikey: ${{ secrets.BUILDEVENT_APIKEY }}
           dataset: buildevents
@@ -19,17 +19,19 @@ jobs:
           # as status of the trace. Must always be ${{ job.status }}.
           job-status: ${{ job.status }}
 
+      # echo "{name}={value}" >> $GITHUB_ENV
       - run: |
-          echo ::set-env name=STEP_START::$(date +%s)
-          echo ::set-env name=STEP_ID::$(echo install | sum | cut -f 1 -d \ )
+
+          echo STEP_START=$(date +%s) >> $GITHUB_ENV
+          echo STEP_ID=$(echo install | sum | cut -f 1 -d \ ) >> $GITHUB_ENV
       - name: Install dependencies
         run: |
           buildevents cmd $TRACE_ID $STEP_ID make-setup -- make setup
           buildevents step $TRACE_ID $STEP_ID $STEP_START install
 
       - run: |
-          echo ::set-env name=STEP_START::$(date +%s)
-          echo ::set-env name=STEP_ID::$(echo script | sum | cut -f 1 -d \ )
+          echo STEP_START=$(date +%s) >> $GITHUB_ENV
+          echo STEP_ID=$(echo script | sum | cut -f 1 -d \ ) >> $GITHUB_ENV
       - name: Run tests
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.REVIEWDOG_GITHUB_API_TOKEN }}
@@ -40,8 +42,8 @@ jobs:
           buildevents step $TRACE_ID $STEP_ID $STEP_START script
 
       - run: |
-          echo ::set-env name=STEP_START::$(date +%s)
-          echo ::set-env name=STEP_ID::$(echo after_success | sum | cut -f 1 -d \ )
+          echo STEP_START=$(date +%s) >> $GITHUB_ENV
+          echo STEP_ID=$(echo after_success | sum | cut -f 1 -d \ ) >> $GITHUB_ENV
       - name: Run codecov
         run: |
           buildevents cmd $TRACE_ID $STEP_ID codecov-upload -- bash <(curl -s https://codecov.io/bash)
