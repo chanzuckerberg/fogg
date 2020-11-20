@@ -22,16 +22,16 @@ jobs:
       # echo "{name}={value}" >> $GITHUB_ENV
       - run: |
 
-          echo name=STEP_START::$(date +%s) >> $GITHUB_ENV
-          echo name=STEP_ID::$(echo install | sum | cut -f 1 -d \ ) >> $GITHUB_ENV
+          echo STEP_START=$(date +%s) >> $GITHUB_ENV
+          echo STEP_ID=$(echo install | sum | cut -f 1 -d \ ) >> $GITHUB_ENV
       - name: Install dependencies
         run: |
           buildevents cmd $TRACE_ID $STEP_ID make-setup -- make setup
           buildevents step $TRACE_ID $STEP_ID $STEP_START install
 
       - run: |
-          echo name=STEP_START::$(date +%s) >> $GITHUB_ENV
-          echo name=STEP_ID::$(echo script | sum | cut -f 1 -d \ ) >> $GITHUB_ENV
+          echo STEP_START=$(date +%s) >> $GITHUB_ENV
+          echo STEP_ID=$(echo script | sum | cut -f 1 -d \ ) >> $GITHUB_ENV
       - name: Run tests
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.REVIEWDOG_GITHUB_API_TOKEN }}
@@ -42,8 +42,8 @@ jobs:
           buildevents step $TRACE_ID $STEP_ID $STEP_START script
 
       - run: |
-          echo name=STEP_START::$(date +%s) >> $GITHUB_ENV
-          echo name=STEP_ID::$(echo after_success | sum | cut -f 1 -d \ ) >> $GITHUB_ENV
+          echo STEP_START=$(date +%s) >> $GITHUB_ENV
+          echo STEP_ID=$(echo after_success | sum | cut -f 1 -d \ ) >> $GITHUB_ENV
       - name: Run codecov
         run: |
           buildevents cmd $TRACE_ID $STEP_ID codecov-upload -- bash <(curl -s https://codecov.io/bash)
