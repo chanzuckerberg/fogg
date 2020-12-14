@@ -151,7 +151,7 @@ func confAcctOwner(def, acct string) Config {
 			},
 		},
 		Accounts: map[string]Account{
-			"foo": Account{
+			"foo": {
 				Common{
 					Owner: util.StrPtr(acct),
 				},
@@ -178,12 +178,12 @@ func confComponentOwner(def, env, component string) Config {
 			},
 		},
 		Envs: map[string]Env{
-			"bar": Env{
+			"bar": {
 				Common: Common{
 					Owner: util.StrPtr(env),
 				},
 				Components: map[string]Component{
-					"bam": Component{
+					"bam": {
 						Common: Common{
 							Owner: util.StrPtr(component),
 						},

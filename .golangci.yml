@@ -1,4 +1,13 @@
 run:
   skip-dirs:
-    - exp
-    - cmd/exp
+    - exp/examine
+  skip-files:
+    - cmd/exp/entropy.go
+    - exp/examine/local.go
+    - exp/examine/util.go
+  linters:
+    enable:
+      - gofmt
+      - whitespace
+      - unparam
+      - scopelint

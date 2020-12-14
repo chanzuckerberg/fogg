@@ -125,11 +125,14 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 	r.Equal("terraform/proj/accounts/bar.tfstate", plan.Accounts["bar"].Backend.S3.KeyPath)
 	r.Equal("terraform/proj/accounts/foo.tfstate", plan.Accounts["foo"].Backend.S3.KeyPath)
 
-	r.Len(plan.Accounts["foo"].AccountBackends, 2)
-	r.NotNil(plan.Accounts["foo"].AccountBackends["bar"])
-	r.Equal(BackendKindS3, plan.Accounts["foo"].AccountBackends["bar"].Kind)
-	r.NotNil(plan.Accounts["foo"].AccountBackends["bar"].S3)
-	r.Equal("terraform/proj/accounts/bar.tfstate", plan.Accounts["foo"].AccountBackends["bar"].S3.KeyPath)
+	r.Len(plan.Accounts["bar"].AccountBackends, 2)
+	r.NotNil(plan.Accounts["bar"].AccountBackends["foo"])
+	r.Equal(BackendKindS3, plan.Accounts["bar"].AccountBackends["foo"].Kind)
+	r.NotNil(plan.Accounts["bar"].AccountBackends["foo"].S3)
+	r.Equal("terraform/proj/accounts/foo.tfstate", plan.Accounts["bar"].AccountBackends["foo"].S3.KeyPath)
+
+	r.NotNil(plan.GitHubActionsCI)
+	r.True(plan.GitHubActionsCI.Enabled)
 }
 
 func TestResolveEKSConfig(t *testing.T) {

@@ -50,17 +50,17 @@ provider random {
   version = "~> 2.2"
 }
 provider template {
-  version = "~> 2.1"
+  version = "~> 2.2"
 }
 provider archive {
-  version = "~> 1.3"
+  version = "~> 2.0"
 }
 provider null {
-  version = "~> 2.1"
+  version = "~> 3.0"
 }
 provider local {
-  version = "~> 1.4"
+  version = "~> 2.0"
 }
 provider tls {
-  version = "~> 2.1"
+  version = "~> 3.0"
 }

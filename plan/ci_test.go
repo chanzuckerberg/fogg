@@ -80,7 +80,7 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 			},
 		},
 		Accounts: map[string]v2.Account{
-			"foo": v2.Account{
+			"foo": {
 				Common: v2.Common{Providers: &v2.Providers{AWS: &v2.AWSProvider{AccountID: &id1}}},
 			},
 		},
@@ -135,10 +135,10 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 			},
 		},
 		Accounts: map[string]v2.Account{
-			"foo": v2.Account{
+			"foo": {
 				Common: v2.Common{Providers: &v2.Providers{AWS: &v2.AWSProvider{AccountID: &id1}}},
 			},
-			"bar": v2.Account{
+			"bar": {
 				Common: v2.Common{Providers: &v2.Providers{AWS: &v2.AWSProvider{AccountID: &id2}}},
 			},
 		},
@@ -192,7 +192,7 @@ func Test_buildCircleCI_Profiles(t *testing.T) {
 			},
 		},
 		Accounts: map[string]v2.Account{
-			"foo": v2.Account{
+			"foo": {
 				Common: v2.Common{Providers: &v2.Providers{AWS: &v2.AWSProvider{AccountID: &id1}}},
 			},
 		},
@@ -243,7 +243,7 @@ func Test_buildCircleCI_ProfilesDisabled(t *testing.T) {
 							Enabled:        &tr,
 							AWSIAMRoleName: util.StrPtr("rollin"),
 							Providers: map[string]v2.CIProviderConfig{
-								"aws": v2.CIProviderConfig{
+								"aws": {
 									Disabled: true,
 								},
 							},
@@ -252,7 +252,7 @@ func Test_buildCircleCI_ProfilesDisabled(t *testing.T) {
 			},
 		},
 		Accounts: map[string]v2.Account{
-			"foo": v2.Account{
+			"foo": {
 				Common: v2.Common{Providers: &v2.Providers{AWS: &v2.AWSProvider{AccountID: &id1}}},
 			},
 		},

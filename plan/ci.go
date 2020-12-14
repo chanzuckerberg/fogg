@@ -15,6 +15,7 @@ type CIProject struct {
 type CIConfig struct {
 	Enabled     bool
 	FoggVersion string
+	Env         map[string]string
 	projects    []CIProject
 
 	TestBuckets [][]CIProject
@@ -29,6 +30,7 @@ type CircleCIConfig struct {
 
 type GitHubActionsCIConfig struct {
 	CIConfig
+	SSHKeySecrets []string
 }
 
 type TravisCIConfig struct {
@@ -256,8 +258,16 @@ func (p *Plan) buildCircleCIConfig(c *v2.Config, foggVersion string) CircleCICon
 }
 
 func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHubActionsCIConfig {
+
+	var env map[string]string
+
+	if c.Defaults.Tools != nil && c.Defaults.Tools.GitHubActionsCI != nil {
+		env = c.Defaults.Tools.GitHubActionsCI.Env
+	}
+
 	ciConfig := &CIConfig{
 		FoggVersion: foggVersion,
+		Env:         env,
 	}
 
 	var awsProvider v2.CIProviderConfig
@@ -328,8 +338,15 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 		}
 	}
 
+	var sshKeySecrets []string
+
+	if c.Defaults.Tools != nil && c.Defaults.Tools.GitHubActionsCI != nil {
+		sshKeySecrets = c.Defaults.Tools.GitHubActionsCI.SSHKeySecrets
+	}
+
 	ciConfig = ciConfig.populateBuckets(numBuckets)
 	return GitHubActionsCIConfig{
-		CIConfig: *ciConfig,
+		CIConfig:      *ciConfig,
+		SSHKeySecrets: sshKeySecrets,
 	}
 }

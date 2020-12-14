@@ -11,9 +11,9 @@ import (
 	validator "gopkg.in/go-playground/validator.v9"
 )
 
-var validTravisCommands = map[string]struct{}{
-	"check": struct{}{},
-	"lint":  struct{}{},
+var validCICommands = map[string]struct{}{
+	"check": {},
+	"lint":  {},
 }
 
 // Validate validates the config
@@ -51,6 +51,7 @@ func (c *Config) Validate() ([]string, error) {
 	errs = multierror.Append(errs, c.ValidateOktaProviders())
 	errs = multierror.Append(errs, c.validateModules())
 	errs = multierror.Append(errs, c.ValidateTravis())
+	errs = multierror.Append(errs, c.ValidateGithubActionsCI())
 
 	// refactor to make it easier to manage these
 	w, e := c.ValidateToolsTfLint()
@@ -262,9 +263,32 @@ func (c *Config) ValidateTravis() error {
 		}
 
 		if t.Command != nil {
-			_, ok := validTravisCommands[*t.Command]
+			_, ok := validCICommands[*t.Command]
 			if !ok {
 				errs = multierror.Append(errs, fmt.Errorf("unrecognized travisci command %s (%s)", *t.Command, component))
+			}
+		}
+	})
+
+	return errs
+}
+
+func (c *Config) ValidateGithubActionsCI() error {
+	var errs *multierror.Error
+	c.WalkComponents(func(component string, comms ...Common) {
+		t := ResolveGitHubActionsCI(comms...)
+		if t.Enabled == nil || !*t.Enabled {
+			return // nothing to do
+		}
+
+		if t.AWSIAMRoleName == nil || *t.AWSIAMRoleName == "" {
+			errs = multierror.Append(errs, fmt.Errorf("if github_actions_ci is enabled, aws_role_name must be set"))
+		}
+
+		if t.Command != nil {
+			_, ok := validCICommands[*t.Command]
+			if !ok {
+				errs = multierror.Append(errs, fmt.Errorf("unrecognized github_actions_ci command %s (%s)", *t.Command, component))
 			}
 		}
 	})

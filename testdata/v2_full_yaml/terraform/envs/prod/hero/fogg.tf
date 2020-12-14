@@ -80,63 +80,7 @@ data terraform_remote_state global {
 
   }
 }
-data terraform_remote_state datadog {
-  backend = "s3"
-  config = {
-
-
-    bucket = "buck"
-
-    key     = "terraform/proj/envs/prod/components/datadog.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
-
-
-  }
-}
-data terraform_remote_state vpc {
-  backend = "s3"
-  config = {
-
-
-    bucket = "buck"
-
-    key     = "terraform/proj/envs/prod/components/vpc.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
-
-
-  }
-}
 # remote state for accounts
-data terraform_remote_state bar {
-  backend = "s3"
-  config = {
-
-
-    bucket = "buck"
-
-    key     = "terraform/proj/accounts/bar.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
-
-
-  }
-}
-data terraform_remote_state foo {
-  backend = "s3"
-  config = {
-
-
-    bucket = "buck"
-
-    key     = "terraform/proj/accounts/foo.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
-
-
-  }
-}
 # map of aws_accounts
 variable aws_accounts {
   type = map
@@ -156,17 +100,17 @@ provider random {
   version = "~> 2.2"
 }
 provider template {
-  version = "~> 2.1"
+  version = "~> 2.2"
 }
 provider archive {
-  version = "~> 1.3"
+  version = "~> 2.0"
 }
 provider null {
-  version = "~> 2.1"
+  version = "~> 3.0"
 }
 provider local {
-  version = "~> 1.4"
+  version = "~> 2.0"
 }
 provider tls {
-  version = "~> 2.1"
+  version = "~> 3.0"
 }

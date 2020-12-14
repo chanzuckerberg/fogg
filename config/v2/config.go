@@ -3,9 +3,11 @@ package v2
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"math/rand"
 	"path/filepath"
 	"reflect"
+	"strings"
 
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plugins"
@@ -39,6 +41,20 @@ func ReadConfig(fs afero.Fs, b []byte, configFile string) (*Config, error) {
 	return c, e
 }
 
+func (c *Config) Write(fs afero.Fs, path string) error {
+	yaml, err := yaml.Marshal(c)
+	if err != nil {
+		return errs.WrapInternal(err, "unable to marshal yaml")
+	}
+
+	yamlConfigFile, err := fs.Create("fogg.yml")
+	if err != nil {
+		return errs.WrapInternal(err, "unable to create config file fogg.yml")
+	}
+	_, err = yamlConfigFile.Write(yaml)
+	return err
+}
+
 type Config struct {
 	Accounts map[string]Account `yaml:"accounts,omitempty"`
 	Defaults Defaults           `yaml:"defaults" validate:"required"`
@@ -56,6 +72,7 @@ type Common struct {
 	Owner            *string           `yaml:"owner,omitempty"`
 	Project          *string           `yaml:"project,omitempty"`
 	Providers        *Providers        `yaml:"providers,omitempty"`
+	DependsOn        *DependsOn        `yaml:"depends_on,omitempty"`
 	TerraformVersion *string           `yaml:"terraform_version,omitempty"`
 	Tools            *Tools            `yaml:"tools,omitempty"`
 }
@@ -78,11 +95,13 @@ type Tools struct {
 type CircleCI struct {
 	CommonCI `yaml:",inline"`
 
-	SSHKeyFingerprints []string `yaml:"ssh_key_fingerprints"`
+	SSHKeyFingerprints []string `yaml:"ssh_key_fingerprints,omitempty"`
 }
 
 type GitHubActionsCI struct {
 	CommonCI `yaml:",inline"`
+
+	SSHKeySecrets []string `yaml:"ssh_key_secrets"`
 }
 
 type Env struct {
@@ -212,6 +231,12 @@ type CommonCI struct {
 	Command        *string                     `yaml:"command,omitempty"`
 	Buildevents    *bool                       `yaml:"buildevents,omitempty"`
 	Providers      map[string]CIProviderConfig `yaml:"providers,omitempty"`
+	Env            map[string]string           `yaml:"env,omitempty"`
+}
+
+type DependsOn struct {
+	Accounts   []string `yaml:"accounts,omitempty"`
+	Components []string `yaml:"components,omitempty"`
 }
 
 type CIProviderConfig struct {
@@ -236,6 +261,52 @@ func (ck *ComponentKind) GetOrDefault() ComponentKind {
 		return DefaultComponentKind
 	}
 	return *ck
+}
+
+type componentInfo struct {
+	Kind string
+	Name string
+	Env  string
+}
+
+// PathToComponentType given a path, return information about that component
+func (c Config) PathToComponentType(path string) (componentInfo, error) {
+	t := componentInfo{}
+
+	path = strings.TrimRight(path, "/")
+	pathParts := strings.Split(path, "/")
+	switch len(pathParts) {
+	case 3:
+		accountName := pathParts[2]
+		if _, found := c.Accounts[accountName]; !found {
+			return t, fmt.Errorf("could not find account %s", accountName)
+		}
+		t.Kind = "accounts"
+		t.Name = accountName
+
+		return t, nil
+	case 4:
+		envName := pathParts[2]
+		componentName := pathParts[3]
+
+		env, envFound := c.Envs[envName]
+
+		if !envFound {
+			return t, fmt.Errorf("could not find env %s", envName)
+		}
+
+		_, componentFound := env.Components[componentName]
+
+		if !componentFound {
+			return t, fmt.Errorf("could not find component %s in env %s", componentName, envName)
+		}
+		t.Kind = "envs"
+		t.Name = componentName
+		t.Env = envName
+		return t, nil
+	default:
+		return t, fmt.Errorf("could not figure out component for path %s", path)
+	}
 }
 
 const (

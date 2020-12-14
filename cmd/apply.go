@@ -18,8 +18,6 @@ var applyCmd = &cobra.Command{
 	Long:          "This command will take the model defined in fogg.yml, build a plan and generate the appropriate files from templates.",
 	SilenceErrors: true, // If we don't silence here, cobra will print them. But we want to do that in cmd/root.go
 	RunE: func(cmd *cobra.Command, args []string) error {
-		setupDebug(debug)
-
 		var e error
 		fs, e := openFs()
 		if e != nil {

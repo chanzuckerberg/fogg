@@ -19,8 +19,8 @@ type Plan struct {
 	Global          Component             `yaml:"global"`
 	Modules         map[string]Module     `yaml:"modules"`
 	TravisCI        TravisCIConfig        `yaml:"travis_ci"`
-	CircleCI        CircleCIConfig        `yaml:"github_actions_ci"`
-	GitHubActionsCI GitHubActionsCIConfig `yaml:"circle_ci"`
+	CircleCI        CircleCIConfig        `yaml:"circleci_ci"`
+	GitHubActionsCI GitHubActionsCIConfig `yaml:"github_actions_ci"`
 	Version         string                `yaml:"version"`
 }
 
@@ -234,10 +234,11 @@ type Account struct {
 type Component struct {
 	ComponentCommon `yaml:",inline"`
 
-	Accounts  map[string]Account `yaml:"accounts"` // Reference accounts for remote state
-	Component string             `yaml:"component"`
-	EKS       *v2.EKSConfig      `yaml:"eks,omitempty"`
-	Env       string
+	Accounts        map[string]Account `yaml:"accounts"` // Reference accounts for remote state
+	AccountBackends map[string]Backend `yaml:"account_backends"`
+	Component       string             `yaml:"component"`
+	EKS             *v2.EKSConfig      `yaml:"eks,omitempty"`
+	Env             string
 
 	Kind              *v2.ComponentKind  `yaml:"kind,omitempty"`
 	ModuleSource      *string            `yaml:"module_source"`
@@ -325,10 +326,23 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 		accountBackends[acctName] = acct.Backend
 	}
 
-	for acctName := range accountPlans {
-		a := accountPlans[acctName]
-		a.AccountBackends = accountBackends
-		accountPlans[acctName] = a
+	for name, acct := range c.Accounts {
+
+		accountRemoteStates := v2.ResolveOptionalStringSlice(v2.DependsOnAccountsGetter, defaults.Common, acct.Common)
+		a := accountPlans[name]
+		filtered := map[string]Backend{}
+
+		if accountRemoteStates != nil {
+			for k, v := range accountBackends {
+				if util.SliceContainsString(accountRemoteStates, k) {
+					filtered[k] = v
+				}
+			}
+		} else {
+			filtered = accountBackends
+		}
+		a.AccountBackends = filtered
+		accountPlans[name] = a
 	}
 
 	return accountPlans
@@ -386,6 +400,8 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 		envPlan.Env = envName
 
 		for componentName, componentConf := range conf.Envs[envName].Components {
+			accountRemoteStates := v2.ResolveOptionalStringSlice(v2.DependsOnComponentsGetter, defaults.Common, envConf.Common, componentConf.Common)
+
 			componentPlan := Component{
 				Kind: componentConf.Kind,
 			}
@@ -397,6 +413,15 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			if componentConf.Kind.GetOrDefault() == v2.ComponentKindHelmTemplate {
 				componentPlan.EKS = resolveEKSConfig(envPlan.EKS, componentConf.EKS)
 			}
+
+			accountBackends := map[string]Backend{}
+			for k, v := range p.Accounts {
+				if accountRemoteStates == nil || util.SliceContainsString(accountRemoteStates, k) {
+					accountBackends[k] = v.Backend
+				}
+			}
+			componentPlan.AccountBackends = accountBackends
+
 			componentPlan.Accounts = p.Accounts
 
 			componentPlan.ComponentCommon = resolveComponentCommon(defaults.Common, envConf.Common, componentConf.Common)
@@ -431,10 +456,23 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			componentBackends[componentName] = component.Backend
 		}
 
-		for componentName := range envPlan.Components {
-			c := envPlan.Components[componentName]
-			c.ComponentBackends = componentBackends
-			envPlan.Components[componentName] = c
+		for name, componentConf := range conf.Envs[envName].Components {
+			componentRemoteStates := v2.ResolveOptionalStringSlice(v2.DependsOnComponentsGetter, defaults.Common, envConf.Common, componentConf.Common)
+			c := envPlan.Components[name]
+			filtered := map[string]Backend{}
+
+			if componentRemoteStates != nil {
+				for k, v := range componentBackends {
+					if util.SliceContainsString(componentRemoteStates, k) {
+						filtered[k] = v
+					}
+				}
+			} else {
+				filtered = componentBackends
+			}
+
+			c.ComponentBackends = filtered
+			envPlan.Components[name] = c
 		}
 
 		envPlans[envName] = envPlan
