@@ -1,4 +1,4 @@
-package exp
+package cmd
 
 import (
 	"github.com/chanzuckerberg/fogg/exp/migrate"
@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	ExpCmd.AddCommand(migrateCmd)
+	expCmd.AddCommand(migrateCmd)
 }
 
 var migrateCmd = &cobra.Command{
