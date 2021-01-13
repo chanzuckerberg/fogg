@@ -14,7 +14,6 @@ import (
 func init() {
 	componentsCmd.AddCommand(componentsListCmd)
 	componentsListCmd.Flags().StringP("config", "c", "fogg.yml", "Use this to override the fogg config file.")
-
 }
 
 var componentsListCmd = &cobra.Command{
