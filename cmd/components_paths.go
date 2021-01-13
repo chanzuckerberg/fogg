@@ -21,9 +21,8 @@ var componentsListCmd = &cobra.Command{
 	Short:         "List paths for all configured components.",
 	SilenceErrors: true, // If we don't silence here, cobra will print them. But we want to do that in cmd/root.go
 	RunE: func(cmd *cobra.Command, args []string) error {
-		var e error
 		// Set up fs
-		pwd, e := os.Getwd()
+		pwd, err := os.Getwd()
 		if e != nil {
 			return errs.WrapUser(e, "can't get pwd")
 		}
