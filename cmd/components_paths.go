@@ -17,8 +17,9 @@ func init() {
 }
 
 var componentsListCmd = &cobra.Command{
-	Use:   "paths",
-	Short: "List paths for all configured components.",
+	Use:           "paths",
+	Short:         "List paths for all configured components.",
+	SilenceErrors: true, // If we don't silence here, cobra will print them. But we want to do that in cmd/root.go
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var e error
 		// Set up fs
