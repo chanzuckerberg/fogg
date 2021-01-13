@@ -5,7 +5,6 @@ import (
 	"os"
 	"runtime/pprof"
 
-	"github.com/chanzuckerberg/fogg/cmd/exp"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/fatih/color"
 	"github.com/sirupsen/logrus"
@@ -20,7 +19,6 @@ func init() {
 	rootCmd.PersistentFlags().BoolP("debug", "d", false, "enable verbose output")
 	rootCmd.PersistentFlags().BoolP("quiet", "q", false, "do not output to console; use return code to determine success/failure")
 	rootCmd.PersistentFlags().StringVarP(&cpuprofile, "cpuprofile", "p", "", "activate cpu profiling via pprof and write to file")
-	rootCmd.AddCommand(exp.ExpCmd)
 }
 
 var rootCmd = &cobra.Command{
