@@ -18,9 +18,8 @@ func init() {
 }
 
 var componentsListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "",
-	Long:  ``,
+	Use:   "paths",
+	Short: "List paths for all configured components.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var e error
 		// Set up fs
@@ -39,15 +38,6 @@ var componentsListCmd = &cobra.Command{
 		// check that we are at root of initialized git repo
 		openGitOrExit(fs)
 
-		// TODO refactor to make this work
-		// config, warnings, err := readAndValidateConfig(fs, configFile)
-		// printWarnings(warnings)
-
-		// e = mergeConfigValidationErrors(err)
-		// if e != nil {
-		// 	return e
-		// }
-
 		config, err := config.FindAndReadConfig(fs, configFile)
 		if err != nil {
 			return errs.WrapUser(err, "unable to parse config file")
@@ -59,6 +49,7 @@ var componentsListCmd = &cobra.Command{
 		}
 
 		fmt.Println("terraform/global")
+
 		for _, a := range p.Accounts {
 			fmt.Printf("terraform/%s\n", a.AccountName)
 		}
