@@ -23,15 +23,15 @@ var componentsListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Set up fs
 		pwd, err := os.Getwd()
-		if e != nil {
-			return errs.WrapUser(e, "can't get pwd")
+		if err != nil {
+			return errs.WrapUser(err, "can't get pwd")
 		}
 		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
 
 		// handle flags
-		configFile, e := cmd.Flags().GetString("config")
-		if e != nil {
-			return errs.WrapInternal(e, "couldn't parse config flag")
+		configFile, err := cmd.Flags().GetString("config")
+		if err != nil {
+			return errs.WrapInternal(err, "couldn't parse config flag")
 		}
 
 		// check that we are at root of initialized git repo
@@ -42,9 +42,9 @@ var componentsListCmd = &cobra.Command{
 			return errs.WrapUser(err, "unable to parse config file")
 		}
 
-		p, e := plan.Eval(config)
-		if e != nil {
-			return e
+		p, err := plan.Eval(config)
+		if err != nil {
+			return err
 		}
 
 		fmt.Println("terraform/global")
