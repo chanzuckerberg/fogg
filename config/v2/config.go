@@ -235,8 +235,8 @@ type CommonCI struct {
 }
 
 type DependsOn struct {
-	Accounts   []string `yaml:"accounts,omitempty"`
-	Components []string `yaml:"components,omitempty"`
+	Accounts   []string `yaml:"accounts"`
+	Components []string `yaml:"components"`
 }
 
 type CIProviderConfig struct {
