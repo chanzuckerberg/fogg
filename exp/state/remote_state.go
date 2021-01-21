@@ -63,30 +63,24 @@ func Run(fs afero.Fs, configFile, path string) error {
 
 	switch component.Kind {
 	case "accounts":
-		if len(accounts) > 0 {
-			c := conf.Accounts[component.Name]
-			if c.Common.DependsOn == nil {
-				c.Common.DependsOn = &v2.DependsOn{}
-			}
-
-			c.DependsOn.Accounts = accounts
-			conf.Accounts[component.Name] = c
+		c := conf.Accounts[component.Name]
+		if c.Common.DependsOn == nil {
+			c.Common.DependsOn = &v2.DependsOn{}
 		}
 
+		c.DependsOn.Accounts = accounts
+		conf.Accounts[component.Name] = c
 	case "envs":
-		if len(accounts) > 0 || len(components) > 0 {
-			c := conf.Envs[component.Env].Components[component.Name]
+		c := conf.Envs[component.Env].Components[component.Name]
 
-			if c.Common.DependsOn == nil {
-				c.Common.DependsOn = &v2.DependsOn{}
-			}
-
-			c.DependsOn.Accounts = accounts
-			c.DependsOn.Components = components
-
-			conf.Envs[component.Env].Components[component.Name] = c
+		if c.Common.DependsOn == nil {
+			c.Common.DependsOn = &v2.DependsOn{}
 		}
 
+		c.DependsOn.Accounts = accounts
+		c.DependsOn.Components = components
+
+		conf.Envs[component.Env].Components[component.Name] = c
 	default:
 		return fmt.Errorf("unknown component.Kind: %s", component.Kind)
 	}

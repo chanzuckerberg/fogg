@@ -95,20 +95,6 @@ data terraform_remote_state hero {
   }
 }
 # remote state for accounts
-data terraform_remote_state foo {
-  backend = "s3"
-  config = {
-
-
-    bucket = "buck"
-
-    key     = "terraform/proj/accounts/foo.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
-
-
-  }
-}
 # map of aws_accounts
 variable aws_accounts {
   type = map

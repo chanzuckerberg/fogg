@@ -1,4 +1,4 @@
-package exp
+package cmd
 
 import (
 	"fmt"
@@ -14,20 +14,12 @@ func init() {
 	entropyCmd.Flags().StringP("plan-file", "f", "TODO", "Path to Terraform Plan file to parse.")
 	entropyCmd.Flags().StringP("output-file", "o", "TODO", "Path to write instrumentation to")
 
-	ExpCmd.AddCommand(entropyCmd)
+	expCmd.AddCommand(entropyCmd)
 }
 
 const (
 	allActions = "AllActions"
 )
-
-type terraformDiff struct {
-	Address      string `logfmt:"address,omitempty"`
-	ResourceMode string `logfmt:"resource_mode,omitempty"`
-	Action       string `logfmt:"action,omitempty"`
-	Project      string `logfmt:"project,omitempty"`
-	Component    string `logfmt:"component,omitempty"`
-}
 
 var entropyCmd = &cobra.Command{
 	Use:   "entropy",

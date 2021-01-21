@@ -1,4 +1,4 @@
-package exp
+package cmd
 
 import (
 	"fmt"
@@ -23,7 +23,7 @@ func init() {
 	awsConfigCmd.Flags().String("fogg-config", "fogg.yml", "Use this to override the fogg config file.")
 	awsConfigCmd.Flags().String("aws-config", "~/.aws/config", "Path to your AWS config")
 
-	ExpCmd.AddCommand(awsConfigCmd)
+	expCmd.AddCommand(awsConfigCmd)
 }
 
 var awsConfigCmd = &cobra.Command{

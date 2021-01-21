@@ -1,4 +1,4 @@
-package exp
+package cmd
 
 import (
 	"os"
@@ -13,7 +13,7 @@ func init() {
 	moduleMapCmd.Flags().String("path", "", "path to a working directory")
 	moduleMapCmd.Flags().StringP("config", "c", "fogg.yml", "Use this to override the fogg config file.")
 
-	ExpCmd.AddCommand(moduleMapCmd)
+	expCmd.AddCommand(moduleMapCmd)
 }
 
 var moduleMapCmd = &cobra.Command{

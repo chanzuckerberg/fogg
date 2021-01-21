@@ -327,7 +327,6 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 	}
 
 	for name, acct := range c.Accounts {
-
 		accountRemoteStates := v2.ResolveOptionalStringSlice(v2.DependsOnAccountsGetter, defaults.Common, acct.Common)
 		a := accountPlans[name]
 		filtered := map[string]Backend{}
@@ -400,7 +399,7 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 		envPlan.Env = envName
 
 		for componentName, componentConf := range conf.Envs[envName].Components {
-			accountRemoteStates := v2.ResolveOptionalStringSlice(v2.DependsOnComponentsGetter, defaults.Common, envConf.Common, componentConf.Common)
+			accountRemoteStates := v2.ResolveOptionalStringSlice(v2.DependsOnAccountsGetter, defaults.Common, envConf.Common, componentConf.Common)
 
 			componentPlan := Component{
 				Kind: componentConf.Kind,
