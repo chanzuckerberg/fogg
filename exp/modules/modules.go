@@ -9,9 +9,7 @@ import (
 	"github.com/chanzuckerberg/fogg/config"
 	fogg_hcl "github.com/chanzuckerberg/fogg/exp/hcl"
 	"github.com/chanzuckerberg/go-misc/sets"
-	getter "github.com/hashicorp/go-getter"
 	"github.com/hashicorp/hcl/v2"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
@@ -69,12 +67,7 @@ func extractLocalModules(path string) (sets.StringSet, error) {
 						return err
 					}
 
-					// we only want local modules, so use go-getter to detect "file:" type
-					str, err2 := getter.Detect(v.AsString(), path, getter.Detectors)
-					if err2 != nil {
-						return errors.Wrap(err2, "unable to detect module type")
-					}
-					if strings.HasPrefix(str, "file:") {
+					if strings.HasPrefix(v.AsString(), "./") || strings.HasPrefix(v.AsString(), "../") {
 						references.Add(v.AsString())
 					}
 				}
