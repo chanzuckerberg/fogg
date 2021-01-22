@@ -56,14 +56,14 @@ func (c *Config) Write(fs afero.Fs, path string) error {
 }
 
 type Config struct {
-	Accounts map[string]Account `yaml:"accounts,omitempty"`
+	Version  int                `validate:"required,eq=2"`
 	Defaults Defaults           `yaml:"defaults" validate:"required"`
-	Docker   bool               `yaml:"docker,omitempty"`
-	Envs     map[string]Env     `yaml:"envs,omitempty"`
 	Global   Component          `yaml:"global,omitempty"`
+	Accounts map[string]Account `yaml:"accounts,omitempty"`
+	Envs     map[string]Env     `yaml:"envs,omitempty"`
 	Modules  map[string]Module  `yaml:"modules,omitempty"`
 	Plugins  Plugins            `yaml:"plugins,omitempty"`
-	Version  int                `validate:"required,eq=2"`
+	Docker   bool               `yaml:"docker,omitempty"`
 }
 
 type Common struct {

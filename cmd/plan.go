@@ -1,11 +1,8 @@
 package cmd
 
 import (
-	"os"
-
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plan"
-	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
 
@@ -23,12 +20,10 @@ var planCmd = &cobra.Command{
 
 		var e error
 		// Set up fs
-		pwd, e := os.Getwd()
+		fs, e := pwdFs()
 		if e != nil {
-			return errs.WrapUser(e, "can't get pwd")
+			return e
 		}
-		fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
-
 		// handle flags
 		configFile, e := cmd.Flags().GetString("config")
 		if e != nil {
