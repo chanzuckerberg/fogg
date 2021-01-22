@@ -1,12 +1,13 @@
 package cmd
 
 import (
+	"io/ioutil"
 	"os"
 
-	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
 )
 
 func init() {
@@ -28,11 +29,29 @@ var fmtCmd = &cobra.Command{
 
 		// if fogg.yml exists, read and format it
 		if fileExists("fogg.yml") {
-			c, err := config.FindAndReadConfig(fs, "fogg.yml")
+			n := &yaml.Node{}
+
+			f, err := fs.Open("fogg.yml")
 			if err != nil {
-				return err
+				return errs.NewUser("could not open fogg.yml")
 			}
-			err = c.Write(fs, "fogg.yml")
+			defer f.Close()
+
+			b, err := ioutil.ReadAll(f)
+			if err != nil {
+				return errs.WrapUser(err, "could not read fogg.yml")
+			}
+
+			err = yaml.Unmarshal(b, n)
+			if err != nil {
+				return errs.WrapUser(err, "unable to parse yaml")
+			}
+
+			out, err := yaml.Marshal(n)
+			if err != nil {
+				return errs.WrapUser(err, "unable to marshal yaml")
+			}
+			err = afero.WriteFile(fs, "fogg.yml", out, 0755)
 			if err != nil {
 				return err
 			}
