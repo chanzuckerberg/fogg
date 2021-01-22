@@ -18,9 +18,7 @@ import (
 //ReadConfig take a byte array as input and outputs a json or yaml config struct
 func ReadConfig(fs afero.Fs, b []byte, configFile string) (*Config, error) {
 	var e error
-	c := &Config{
-		Docker: false,
-	}
+	c := &Config{}
 
 	info, e := fs.Stat(configFile)
 	if e != nil {
@@ -58,7 +56,6 @@ func (c *Config) Write(fs afero.Fs, path string) error {
 type Config struct {
 	Accounts map[string]Account `yaml:"accounts,omitempty"`
 	Defaults Defaults           `yaml:"defaults" validate:"required"`
-	Docker   bool               `yaml:"docker,omitempty"`
 	Envs     map[string]Env     `yaml:"envs,omitempty"`
 	Global   Component          `yaml:"global,omitempty"`
 	Modules  map[string]Module  `yaml:"modules,omitempty"`

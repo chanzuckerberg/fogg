@@ -42,7 +42,6 @@ func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVe
 			},
 		},
 		Accounts: map[string]v2.Account{},
-		Docker:   false,
 		Envs:     map[string]v2.Env{},
 		Modules:  map[string]v2.Module{},
 		Version:  DefaultFoggVersion,
