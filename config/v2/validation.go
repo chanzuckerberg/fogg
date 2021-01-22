@@ -58,10 +58,6 @@ func (c *Config) Validate() ([]string, error) {
 	warnings = append(warnings, w...)
 	errs = multierror.Append(errs, e)
 
-	if c.Docker {
-		warnings = append(warnings, "Docker support is no longer supported and the config entry is ignored.")
-	}
-
 	return warnings, errs.ErrorOrNil()
 }
 

@@ -16,14 +16,14 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     Create a new directory for this tutorial and `cd` into it.
 
     ```shell
-    $ mkdir terraform_project
-    $ cd terraform_project
+    mkdir terraform_project
+    cd terraform_project
     ```
 
 1. *setup git*
 
     ```shell
-    $ git init
+    git init
     ```
 
    Fogg depends on working from the root of a git repository. The git repo doesn't need to be pushed anywhere, so `git init` is enough. After this, your directory should look like this–
@@ -99,6 +99,7 @@ Note that fogg works by generating Terraform and Make files. It does not run any
 
     1. edit `fogg.yml`
         - Add an `account_id` to the aws provider
+
         ```yaml
         providers:
             aws:
@@ -108,6 +109,7 @@ Note that fogg works by generating Terraform and Make files. It does not run any
                 version: 1.27.0
         terraform_version: 0.12.5
         ```
+
     2. run `fogg apply`
 
     Apply is the command that actually writes out all the changes we've specified in `fogg.yml`.
@@ -118,13 +120,11 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     $ fogg apply
     INFO README.md touched
     INFO scripts/dependencies.mk removed
-    INFO scripts/docker-ssh-forward.sh removed
     INFO scripts/module.mk copied
     INFO scripts/ssh_config.tmpl removed
     INFO scripts/update-readme.sh copied
     INFO Makefile templated
     INFO scripts/component.mk copied
-    INFO scripts/docker-ssh-mount.sh removed
     INFO scripts/failed_output_only copied
     INFO .fogg-version templated
     INFO .gitattributes copied
@@ -224,7 +224,6 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     INFO terraform.d/plugins/linux_amd64/.gitignore copied
     INFO .gitattributes copied
     INFO README.md skipped touch
-    INFO scripts/docker-ssh-forward.sh removed
     INFO scripts/module.mk copied
     INFO scripts/update-readme.sh copied
     INFO scripts/bless_ssh_config removed
@@ -233,7 +232,6 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     INFO .fogg-version templated
     INFO .gitignore copied
     INFO scripts/common.mk copied
-    INFO scripts/docker-ssh-mount.sh removed
     INFO scripts/failed_output_only copied
     INFO .terraform.d/plugin-cache/.gitignore copied
     INFO Makefile templated
@@ -285,7 +283,7 @@ Note that fogg works by generating Terraform and Make files. It does not run any
 
     A `terraform/staging` directory has been creaded with a few files in it, but nowhere to put terraform files yet– those go in components which are nested in envs. So let's create a component–
 
-1. *create vpc component*
+2. *create vpc component*
 
     We need a VPC to run the resources we're about to build. Creating a VPC is a great use-case for Terraform modules. Terraform modules are very useful, but can become tedious if you have to create the same ones repeatedly. Fogg helps with this by allowing you to specify a module source and then code-generating all the parameters and outputs. All that is left for you is to define some `locals` for the parameters.
 
@@ -381,7 +379,7 @@ Note that fogg works by generating Terraform and Make files. It does not run any
 
     Fogg has taken care of the drudgery of figuring out what variables and outputs this module supports. All you have left to do is define some `locals` to specify the inputs to the module. Create a `locals.tf` file in that same directory defining the values we need and we're good to go.
 
-1. *create database component*
+3. *create database component*
 
     As we said at the beginning, our goal here is to set up a database and server in a VPC, so next let's set up the database. Let's edit the `fogg.yml` file to look like so–
 
@@ -464,7 +462,7 @@ Note that fogg works by generating Terraform and Make files. It does not run any
 
     Note that since we didn't specify a module_source here, the main.tf file in the database component is empty, Fogg is just creating the scaffolding, not any infrastructure for the database. You can then edit that main.tf file to create the infrastructure you want in that component.
 
-1. create server component
+4. create server component
 
     Now let's do the same thing for a server component. Edit `fogg.yaml` like so–
 
@@ -556,6 +554,6 @@ Note that fogg works by generating Terraform and Make files. It does not run any
 
     Now you have separate components for your VPC, database and server, in which you can create infrastructure which is managed by isolated Terraform state files.
 
-1. TODO create prod
-1. TODO refactor to module
-1. TODO create module
+5. TODO create prod
+6. TODO refactor to module
+7. TODO create module
