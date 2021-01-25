@@ -1,0 +1,80 @@
+package cmd
+
+import (
+	"io/ioutil"
+	"os"
+
+	"github.com/chanzuckerberg/fogg/errs"
+	"github.com/spf13/afero"
+	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
+)
+
+func init() {
+	// planCmd.Flags().StringP("config", "c", "fogg.yml", "Use this to override the fogg config file.")
+	rootCmd.AddCommand(fmtCmd)
+}
+
+var fmtCmd = &cobra.Command{
+	Use:           "fmt",
+	Short:         "format",
+	Long:          "",
+	SilenceErrors: true, // If we don't silence here, cobra will print them. But we want to do that in cmd/root.go
+	RunE: func(cmd *cobra.Command, args []string) error {
+
+		fs, err := pwdFs()
+		if err != nil {
+			return err
+		}
+
+		// if fogg.yml exists, read and format it
+		if fileExists("fogg.yml") {
+			n := &yaml.Node{}
+
+			f, err := fs.Open("fogg.yml")
+			if err != nil {
+				return errs.NewUser("could not open fogg.yml")
+			}
+			defer f.Close()
+
+			b, err := ioutil.ReadAll(f)
+			if err != nil {
+				return errs.WrapUser(err, "could not read fogg.yml")
+			}
+
+			err = yaml.Unmarshal(b, n)
+			if err != nil {
+				return errs.WrapUser(err, "unable to parse yaml")
+			}
+
+			out, err := yaml.Marshal(n)
+			if err != nil {
+				return errs.WrapUser(err, "unable to marshal yaml")
+			}
+			err = afero.WriteFile(fs, "fogg.yml", out, 0755)
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	},
+}
+
+func fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
+}
+
+func pwdFs() (afero.Fs, error) {
+	// Set up fs
+	pwd, e := os.Getwd()
+	if e != nil {
+		return nil, errs.WrapUser(e, "can't get pwd")
+	}
+	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
+	return fs, nil
+}

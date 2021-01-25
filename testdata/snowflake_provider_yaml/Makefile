@@ -39,8 +39,12 @@ lint-modules: ## lint the terraform code in terraform/modules
 	done
 .PHONY: lint-modules
 
-fmt: fmt-accounts fmt-envs fmt-global fmt-modules ## format code in this repo
+fmt: fmt-fogg fmt-accounts fmt-envs fmt-global fmt-modules ## format code in this repo
 .PHONY: fmt
+
+fmt-fogg:
+	.fogg/bin/fogg fmt
+.PHONY: fmt-fogg
 
 fmt-accounts: ## format code in terraform/accounts
 	@for account in $(ACCOUNTS); do \
