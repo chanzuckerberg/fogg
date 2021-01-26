@@ -14,6 +14,9 @@ import (
 	"github.com/spf13/afero"
 )
 
+// Run will read all terraform files in `path` and return repository-local module references
+// The references will be relative to the root of the repository.
+// fs is assumed to be rooted at the root of the repository.
 func Run(fs afero.Fs, configFile, path string) error {
 	// figure out which component or account we are talking about
 	conf, err := config.FindAndReadConfig(fs, configFile)
@@ -46,7 +49,16 @@ func collectModuleSources(path string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	refNames := references.List()
+
+	// make paths relative to repository root
+	absoluteReferences := sets.StringSet{}
+
+	for _, r := range references.List() {
+		p := filepath.Join(path, r)
+		absoluteReferences.Add(p)
+	}
+
+	refNames := absoluteReferences.List()
 	sort.Strings(refNames)
 	return refNames, nil
 }
