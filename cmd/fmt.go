@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/chanzuckerberg/fogg/errs"
+	"github.com/pkg/errors"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
@@ -47,14 +48,13 @@ var fmtCmd = &cobra.Command{
 				return errs.WrapUser(err, "unable to parse yaml")
 			}
 
-			out, err := yaml.Marshal(n)
-			if err != nil {
-				return errs.WrapUser(err, "unable to marshal yaml")
+			f, e := fs.OpenFile("fogg.yml", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+			if e != nil {
+				return errors.Wrap(e, "Unable to open fogg.yml for writing")
 			}
-			err = afero.WriteFile(fs, "fogg.yml", out, 0755)
-			if err != nil {
-				return err
-			}
+			enc := yaml.NewEncoder(f)
+			enc.SetIndent(2)
+			return enc.Encode(n)
 		}
 
 		return nil
