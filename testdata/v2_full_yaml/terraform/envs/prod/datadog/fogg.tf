@@ -94,6 +94,12 @@ data terraform_remote_state hero {
 
   }
 }
+variable aws_accounts {
+  type = map
+  default = {
+
+  }
+}
 provider random {
   version = "~> 2.2"
 }

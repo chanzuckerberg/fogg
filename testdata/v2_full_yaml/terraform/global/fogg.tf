@@ -63,6 +63,12 @@ variable foo {
   type    = string
   default = "bar1"
 }
+variable aws_accounts {
+  type = map
+  default = {
+
+  }
+}
 provider random {
   version = "~> 2.2"
 }
