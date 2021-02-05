@@ -21,7 +21,5 @@ tags:
 
 aws_accounts:
 {{- range $accountName, $accountID := .Accounts -}}
-{{ if $accountID }}
   {{ $accountName }}: {{ $accountID -}}
-{{ end -}}
 {{ end }}
