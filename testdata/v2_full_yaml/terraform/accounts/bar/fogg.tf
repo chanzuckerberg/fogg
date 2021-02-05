@@ -50,6 +50,7 @@ provider bless {
 }
 terraform {
   required_version = "=0.100.0"
+
   backend s3 {
 
     bucket = "buck"
@@ -62,6 +63,10 @@ terraform {
 
   }
 }
+variable env {
+  type    = string
+  default = "accounts"
+}
 variable project {
   type    = string
   default = "proj"
@@ -70,13 +75,13 @@ variable region {
   type    = string
   default = "us-west-2"
 }
+variable component {
+  type    = string
+  default = "bar"
+}
 variable owner {
   type    = string
   default = "foo@example.com"
-}
-variable account {
-  type    = string
-  default = "bar"
 }
 variable tags {
   type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
@@ -86,21 +91,6 @@ variable tags {
     service   = "bar"
     owner     = "foo@example.com"
     managedBy = "terraform"
-  }
-}
-# map of aws_accounts
-variable aws_accounts {
-  type = map
-  default = {
-
-
-    bar = 456
-
-
-
-    foo = 123
-
-
   }
 }
 variable foo {
@@ -121,6 +111,20 @@ data terraform_remote_state global {
 
   }
 }
+data terraform_remote_state bar {
+  backend = "s3"
+  config = {
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/accounts/bar.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
+  }
+}
 data terraform_remote_state foo {
   backend = "s3"
   config = {
@@ -132,6 +136,16 @@ data terraform_remote_state foo {
     region  = "us-west-2"
     profile = "profile"
 
+
+  }
+}
+variable aws_accounts {
+  type = map
+  default = {
+
+    bar = 456
+
+    foo = 123
 
   }
 }

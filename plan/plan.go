@@ -34,12 +34,18 @@ type Common struct {
 type ComponentCommon struct {
 	Common `yaml:",inline"`
 
-	Backend   Backend           `yaml:"backend"`
-	ExtraVars map[string]string `yaml:"extra_vars"`
-	Owner     string            `yaml:"owner"`
-	Project   string            `yaml:"project"`
-	Providers Providers         `yaml:"providers"`
-	TfLint    TfLint            `yaml:"tf_lint"`
+	AccountBackends   map[string]Backend      `yaml:"account_backends"`
+	Accounts          map[string]*json.Number `yaml:"all_accounts"`
+	Backend           Backend                 `yaml:"backend"`
+	ComponentBackends map[string]Backend      `yaml:"comonent_backends"`
+	Env               string                  ` yaml:"env"`
+	ExtraVars         map[string]string       `yaml:"extra_vars"`
+	Name              string                  `yaml:"name"`
+	Owner             string                  `yaml:"owner"`
+	Project           string                  `yaml:"project"`
+	Providers         Providers               `yaml:"providers"`
+
+	TfLint TfLint `yaml:"tf_lint"`
 
 	TravisCI        TravisCIComponent
 	CircleCI        CircleCIComponent
@@ -224,27 +230,19 @@ type Module struct {
 type Account struct {
 	ComponentCommon `yaml:",inline"`
 
-	AccountBackends map[string]Backend      `yaml:"account_backends"` // Reference accounts for remote state
-	AllAccounts     map[string]*json.Number `yaml:"all_accounts"`
-	AccountName     string                  `yaml:"account_name"`
-	Global          *Component
+	Global *Component
 }
 
 // Component is a component
 type Component struct {
 	ComponentCommon `yaml:",inline"`
 
-	Accounts        map[string]Account `yaml:"accounts"` // Reference accounts for remote state
 	AccountBackends map[string]Backend `yaml:"account_backends"`
-	Component       string             `yaml:"component"`
 	EKS             *v2.EKSConfig      `yaml:"eks,omitempty"`
-	Env             string
-
-	Kind              *v2.ComponentKind  `yaml:"kind,omitempty"`
-	ModuleSource      *string            `yaml:"module_source"`
-	ModuleName        *string            `yaml:"module_name"`
-	ComponentBackends map[string]Backend `yaml:"component_backends"`
-	Global            *Component         `yaml:"global"`
+	Kind            *v2.ComponentKind  `yaml:"kind,omitempty"`
+	ModuleSource    *string            `yaml:"module_source"`
+	ModuleName      *string            `yaml:"module_name"`
+	Global          *Component         `yaml:"global"`
 }
 
 // Env is an env
@@ -304,8 +302,9 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 	for name, acct := range c.Accounts {
 		accountPlan := Account{}
 
-		accountPlan.AccountName = name
 		accountPlan.ComponentCommon = resolveComponentCommon(defaults.Common, acct.Common)
+		accountPlan.Name = name
+		accountPlan.Env = "accounts"
 
 		if accountPlan.ComponentCommon.Backend.Kind == BackendKindS3 {
 			accountPlan.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/accounts/%s.tfstate", accountPlan.ComponentCommon.Project, name)
@@ -315,7 +314,7 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 			panic(fmt.Sprintf("Invalid backend kind of %s", accountPlan.ComponentCommon.Backend.Kind))
 		}
 
-		accountPlan.AllAccounts = resolveAccounts(c.Accounts) //FIXME this needs to run as a second phase, not directly from the config
+		accountPlan.Accounts = resolveAccounts(c.Accounts) //FIXME this needs to run as a second phase, not directly from the config
 		accountPlan.PathToRepoRoot = "../../../"
 		accountPlan.Global = &p.Global
 		accountPlans[name] = accountPlan
@@ -368,7 +367,7 @@ func newEnvPlan() Env {
 func (p *Plan) buildGlobal(conf *v2.Config) Component {
 	// Global just uses defaults because that's the way sicc worked. We should make it directly configurable.
 	componentPlan := Component{}
-	componentPlan.Accounts = p.Accounts
+	componentPlan.Accounts = resolveAccounts(conf.Accounts)
 	defaults := conf.Defaults
 	global := conf.Global
 
@@ -382,7 +381,7 @@ func (p *Plan) buildGlobal(conf *v2.Config) Component {
 		panic(fmt.Sprintf("Invalid backend kind of %s", componentPlan.ComponentCommon.Backend.Kind))
 	}
 
-	componentPlan.Component = "global"
+	componentPlan.Name = "global"
 	componentPlan.ExtraVars = resolveExtraVars(defaults.ExtraVars, global.ExtraVars)
 	componentPlan.PathToRepoRoot = "../../"
 
@@ -421,7 +420,7 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			}
 			componentPlan.AccountBackends = accountBackends
 
-			componentPlan.Accounts = p.Accounts
+			componentPlan.Accounts = resolveAccounts(conf.Accounts)
 
 			componentPlan.ComponentCommon = resolveComponentCommon(defaults.Common, envConf.Common, componentConf.Common)
 
@@ -434,7 +433,7 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			}
 
 			componentPlan.Env = envName
-			componentPlan.Component = componentName
+			componentPlan.Name = componentName
 			componentPlan.ModuleSource = componentConf.ModuleSource
 			componentPlan.ModuleName = componentConf.ModuleName
 			componentPlan.PathToRepoRoot = "../../../../"
@@ -713,11 +712,11 @@ func resolveExtraVars(vars ...map[string]string) map[string]string {
 func resolveAccounts(accounts map[string]v2.Account) map[string]*json.Number {
 	a := make(map[string]*json.Number)
 	for name, account := range accounts {
-		var acctID *json.Number
-		if account.Providers != nil && account.Providers.AWS != nil {
+		if account.Providers != nil && account.Providers.AWS != nil && account.Providers.AWS.AccountID != nil {
+			var acctID *json.Number
 			acctID = account.Providers.AWS.AccountID
+			a[name] = acctID
 		}
-		a[name] = acctID
 	}
 	return a
 }

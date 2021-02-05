@@ -19,5 +19,3 @@ foo: bar2
 
 
 aws_accounts:
-  bar: 456
-  foo: 123

@@ -53,7 +53,6 @@ func OpenTemplate(label string, source io.Reader, commonTemplates *packr.Box) (*
 	}
 
 	err = commonTemplates.Walk(func(path string, file packr.File) error {
-		logrus.Debugf("parsing common template %s", path)
 		s, err := readTemplate(file)
 		if err != nil {
 			return err

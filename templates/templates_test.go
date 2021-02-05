@@ -3,6 +3,7 @@ package templates
 import (
 	"testing"
 
+	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/gobuffalo/packr"
 	"github.com/stretchr/testify/require"
@@ -20,7 +21,7 @@ func TestOpenTemplate(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"foo", args{temps.Account, "Makefile.tmpl"}, false},
+		{"foo", args{temps.Components[v2.ComponentKindTerraform], "Makefile.tmpl"}, false},
 	}
 
 	for _, tt := range tests {

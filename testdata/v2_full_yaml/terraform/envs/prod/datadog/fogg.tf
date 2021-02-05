@@ -14,7 +14,7 @@ provider aws {
 provider datadog {
 }
 terraform {
-  required_version = "~>0.100.0"
+  required_version = "=0.100.0"
 
   backend s3 {
 
@@ -90,22 +90,6 @@ data terraform_remote_state hero {
     key     = "terraform/proj/envs/prod/components/hero.tfstate"
     region  = "us-west-2"
     profile = "profile"
-
-
-  }
-}
-# remote state for accounts
-# map of aws_accounts
-variable aws_accounts {
-  type = map
-  default = {
-
-
-    bar = 456
-
-
-
-    foo = 123
 
 
   }

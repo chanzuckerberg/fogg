@@ -11,7 +11,7 @@ provider aws {
 # Aliased Providers (for doing things in every region).
 
 terraform {
-  required_version = "~>0.100.0"
+  required_version = "=0.100.0"
 
   backend s3 {
 
@@ -105,7 +105,6 @@ data terraform_remote_state comp2 {
 
   }
 }
-# remote state for accounts
 data terraform_remote_state bar {
   backend = "s3"
   config = {
@@ -130,21 +129,6 @@ data terraform_remote_state foo {
     key     = "terraform/proj/accounts/foo.tfstate"
     region  = "us-west-2"
     profile = "profile"
-
-
-  }
-}
-# map of aws_accounts
-variable aws_accounts {
-  type = map
-  default = {
-
-
-    bar = 456
-
-
-
-    foo = 123
 
 
   }

@@ -21,7 +21,7 @@ provider bless {
   profile = "foofoofoo"
 }
 terraform {
-  required_version = "~>1.1.1"
+  required_version = "=1.1.1"
 
   backend s3 {
 
