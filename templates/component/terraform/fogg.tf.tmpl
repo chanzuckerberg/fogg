@@ -130,7 +130,6 @@ data terraform_remote_state {{ $name }} {
 }
 {{ end }}
 
-{{ if not (eq (len .Accounts) 0) }}
 variable aws_accounts {
   type =  map
   default = {
@@ -139,6 +138,5 @@ variable aws_accounts {
   {{ end }}
   }
 }
-{{ end }}
 
 {{ template "common_providers" }}
