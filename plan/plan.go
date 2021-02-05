@@ -713,9 +713,7 @@ func resolveAccounts(accounts map[string]v2.Account) map[string]*json.Number {
 	a := make(map[string]*json.Number)
 	for name, account := range accounts {
 		if account.Providers != nil && account.Providers.AWS != nil && account.Providers.AWS.AccountID != nil {
-			var acctID *json.Number
-			acctID = account.Providers.AWS.AccountID
-			a[name] = acctID
+			a[name] = account.Providers.AWS.AccountID
 		}
 	}
 	return a
