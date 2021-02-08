@@ -67,6 +67,13 @@ variable component {
   default = "{{ .Name }}"
 }
 
+{{ if (avail "Account" .) }}
+variable account {
+  type =  string
+  default = "{{ .Account }}"
+}
+{{ end }}
+
 {{ if .Providers.AWS }}{{ if .Providers.AWS.Profile }}
   variable aws_profile {
     type =  string

@@ -26,6 +26,18 @@ func dict(in interface{}) map[string]interface{} {
 	return nil
 }
 
+// https://stackoverflow.com/questions/44675087/golang-template-variable-isset
+func avail(name string, data interface{}) bool {
+	v := reflect.ValueOf(data)
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
+	if v.Kind() != reflect.Struct {
+		return false
+	}
+	return v.FieldByName(name).IsValid()
+}
+
 // OpenTemplate will read `source` for a template, parse, configure and return a template.Template
 func OpenTemplate(label string, source io.Reader, commonTemplates *packr.Box) (*template.Template, error) {
 	// TODO we should probably cache these rather than open and parse them for every apply
@@ -46,6 +58,7 @@ func OpenTemplate(label string, source io.Reader, commonTemplates *packr.Box) (*
 
 	funcs := sprig.TxtFuncMap()
 	funcs["dict"] = dict
+	funcs["avail"] = avail
 
 	t, err := template.New(label).Funcs(funcs).Parse(s)
 	if err != nil {
