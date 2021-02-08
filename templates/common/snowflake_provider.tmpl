@@ -1,20 +1,7 @@
 {{define "snowflake_provider"}}
-
-terraform {
-  required_providers {
-    snowflake = {
-      source = "chanzuckerberg/snowflake"
-      {{ if .Version -}}
-      version = "{{ .Version }}"
-      {{ end -}}
-    }
-  }
-}
-
 provider snowflake {
   account = "{{ .Account }}"
   role    = "{{ .Role }}"
   region  = "{{ .Region }}"
 }
-
 {{ end }}

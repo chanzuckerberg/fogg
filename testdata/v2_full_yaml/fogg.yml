@@ -58,6 +58,7 @@ envs:
       datadog:
         providers:
           datadog: {}
+          sentry: {}
         depends_on:
           accounts: []
           components:

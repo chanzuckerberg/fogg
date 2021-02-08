@@ -2,8 +2,7 @@
 # Make improvements in fogg, so that everyone can benefit.
 provider aws {
 
-  version = "~> 0.12.0"
-  region  = "us-west-2"
+  region = "us-west-2"
 
 
   assume_role {
@@ -16,9 +15,8 @@ provider aws {
 
 
 provider aws {
-  alias   = "us-east-1"
-  version = "~> 0.12.0"
-  region  = "us-east-1"
+  alias  = "us-east-1"
+  region = "us-east-1"
 
 
   assume_role {
@@ -30,9 +28,8 @@ provider aws {
 
 
 provider aws {
-  alias   = "us-east-2"
-  version = "~> 0.12.0"
-  region  = "us-east-2"
+  alias  = "us-east-2"
+  region = "us-east-2"
 
 
   assume_role {
@@ -44,7 +41,6 @@ provider aws {
 
 
 provider bless {
-  version  = "~>0.4.2"
   region   = "us-west-2"
   role_arn = "arn:aws:iam::1234567890:role/roll"
 }
@@ -61,6 +57,50 @@ terraform {
     profile = "profile"
 
 
+  }
+  required_providers {
+
+    aws = {
+      source  = "hashicorp/aws"
+      version = "0.12.0"
+    }
+
+
+
+    bless = {
+      source  = "chanzuckerberg/bless"
+      version = "0.4.2"
+    }
+
+
+
+
+
+
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 2.2"
+    }
+    template = {
+      source  = "hashicorp/template"
+      version = "~> 2.2"
+    }
+    archive = {
+      source  = "hashicorp/archive"
+      version = "~> 2.0"
+    }
+    null = {
+      source  = "hashicorp/null"
+      version = "~> 3.0"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.0"
+    }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "~> 3.0"
+    }
   }
 }
 variable env {
@@ -148,22 +188,4 @@ variable aws_accounts {
     foo = 123
 
   }
-}
-provider random {
-  version = "~> 2.2"
-}
-provider template {
-  version = "~> 2.2"
-}
-provider archive {
-  version = "~> 2.0"
-}
-provider null {
-  version = "~> 3.0"
-}
-provider local {
-  version = "~> 2.0"
-}
-provider tls {
-  version = "~> 3.0"
 }

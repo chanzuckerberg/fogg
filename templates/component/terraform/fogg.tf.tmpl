@@ -43,6 +43,104 @@ terraform {
   required_version = "={{ .TerraformVersion }}"
 
   {{ template "backend" .Backend }}
+
+  required_providers {
+
+  {{ if .Providers.AWS }}
+    aws = {
+      source = "hashicorp/aws"
+      version = "{{ .Providers.AWS.Version }}"
+    }
+  {{ end }}
+
+  {{ if .Providers.Snowflake }}
+      snowflake = {
+        source = "chanzuckerberg/snowflake"
+        {{ if .Providers.Snowflake.Version -}}
+        version = "{{ .Providers.Snowflake.Version }}"
+        {{ end -}}
+      }
+  {{ end }}
+
+  {{ if .Providers.Bless }}
+    bless = {
+      source = "chanzuckerberg/bless"
+      version = "{{ .Providers.Bless.Version }}"
+    }
+  {{ end }}
+
+  {{ if .Providers.Okta}}
+    okta = {
+      source = "oktadeveloper/okta"
+      version = "{{ .Providers.Okta.Version }}"
+    }
+  {{ end }}
+
+  {{ if .Providers.Github}}
+    githhb = {
+      source = "integrations/github"
+      version = "{{ .Providers.Github.Version }}"
+    }
+  {{ end }}
+
+  {{ if .Providers.Heroku }}
+      heroku = {
+      source = "heroku/heroku"
+      version = "{{ .Providers.Heroku.Version }}"
+    }
+  {{ end }}
+
+  {{ if .Providers.Datadog }}
+    datadog = {
+      source = "datadog/datadog"
+      version = "{{ .Providers.Datadog.Version }}"
+    }
+  {{ end }}
+
+  {{ if .Providers.Sentry }}
+    sentry = {
+      source = "jianyuan/sentry"
+      version = "{{ .Providers.Sentry.Version }}"
+    }
+  {{ end }}
+
+  {{ if .Providers.Tfe }}{{ if .Providers.Tfe.Enabled }}
+    tfe = {
+      source = "hashicorp/tfe"
+      version = "{{ .Providers.Tfe.Version }}"
+    }
+  {{ end }}{{ end }}
+
+    random = {
+      source="hashicorp/random"
+      version = "~> 2.2"
+    }
+
+    template = {
+    source="hashicorp/template"
+      version = "~> 2.2"
+    }
+
+    archive = {
+    source="hashicorp/archive"
+      version = "~> 2.0"
+    }
+
+    null = {
+    source="hashicorp/null"
+      version = "~> 3.0"
+    }
+
+    local = {
+    source="hashicorp/local"
+      version = "~> 2.0"
+    }
+
+    tls = {
+    source="hashicorp/tls"
+      version = "~> 3.0"
+    }
+  }
 }
 
 variable env {

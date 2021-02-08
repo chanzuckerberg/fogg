@@ -127,6 +127,7 @@ type Providers struct {
 	Bless                  *BlessProvider     `yaml:"bless"`
 	Okta                   *OktaProvider      `yaml:"okta"`
 	Datadog                *DatadogProvider   `yaml:"datadog"`
+	Sentry                 *SentryProvider    `yaml:"sentry"`
 	Tfe                    *TfeProvider       `yaml:"tfe"`
 }
 
@@ -177,6 +178,11 @@ type HerokuProvider struct {
 
 type DatadogProvider struct {
 	Version *string `yaml:"version,omitempty"`
+}
+
+type SentryProvider struct {
+	Version *string `yaml:"version,omitempty"`
+	BaseURL *string `yaml:"base_url,omitempty"`
 }
 
 type TfeProvider struct {
@@ -572,6 +578,14 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
+	var sentryPlan *SentryProvider
+	sentryConfig := v2.ResolveSentryProvider(commons...)
+	if sentryConfig != nil {
+		sentryPlan = &SentryProvider{
+			Version: sentryConfig.Version,
+		}
+	}
+
 	var tfePlan *TfeProvider
 
 	tfeConfig := v2.ResolveTfeProvider(commons...)
@@ -674,6 +688,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Bless:                  blessPlan,
 			Okta:                   oktaPlan,
 			Datadog:                datadogPlan,
+			Sentry:                 sentryPlan,
 			Tfe:                    tfePlan,
 		},
 		TfLint:          tfLintPlan,

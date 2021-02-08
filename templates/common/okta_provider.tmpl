@@ -1,10 +1,5 @@
 {{define "okta_provider"}}
-
-// https://github.com/articulate/terraform-provider-okta
 provider okta {
-  {{ if .Version -}}
-  version = "~>{{ .Version }}"
-  {{ end -}}
   org_name = "{{ .OrgName }}"
   {{ if .BaseURL -}}
   base_url = "{{ .BaseURL }}"

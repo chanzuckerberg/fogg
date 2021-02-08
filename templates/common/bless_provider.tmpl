@@ -1,9 +1,6 @@
 {{define "bless_provider"}}
 
 provider bless {
-  {{ if .Version -}}
-  version = "~>{{ .Version }}"
-  {{ end -}}
   region  = "{{ .AWSRegion }}"
   {{ if .AWSProfile -}}
   profile = "{{ .AWSProfile }}"

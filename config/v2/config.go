@@ -124,6 +124,7 @@ type Providers struct {
 	Okta      *OktaProvider      `yaml:"okta,omitempty"`
 	Snowflake *SnowflakeProvider `yaml:"snowflake,omitempty"`
 	Datadog   *DatadogProvider   `yaml:"datadog,omitempty"`
+	Sentry    *SentryProvider    `yaml:"sentry,omitempty"`
 	Tfe       *TfeProvider       `yaml:"tfe,omitempty"`
 }
 
@@ -181,6 +182,11 @@ type HerokuProvider struct {
 
 type DatadogProvider struct {
 	Version *string `yaml:"version,omitempty"`
+}
+
+type SentryProvider struct {
+	Version *string `yaml:"version,omitempty"`
+	BaseUrl *string `yaml:"base_url,omitempty"`
 }
 
 type TfeProvider struct {
@@ -429,6 +435,13 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		return nil
 	}
 
+	randSentryProvider := func(r *rand.Rand, s int) *SentryProvider {
+		if r.Float32() < 0.5 {
+			return &SentryProvider{}
+		}
+		return nil
+	}
+
 	randCommon := func(r *rand.Rand, s int) Common {
 		var backendRole, backendProfile *string
 
@@ -457,6 +470,7 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 				Bless:     randBlessProvider(r, s),
 				Heroku:    randHerokuProvider(r, s),
 				Datadog:   randDatadogProvider(r, s),
+				Sentry:    randSentryProvider(r, s),
 			},
 			TerraformVersion: randStringPtr(r, s),
 		}

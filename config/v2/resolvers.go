@@ -311,6 +311,28 @@ func ResolveDatadogProvider(commons ...Common) *DatadogProvider {
 	}
 }
 
+func ResolveSentryProvider(commons ...Common) *SentryProvider {
+	var p *SentryProvider
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.Datadog == nil {
+			continue
+		}
+		p = c.Providers.Sentry
+	}
+
+	version := lastNonNil(SentryProviderVersionGetter, commons...)
+	baseURL := lastNonNil(SentryProviderBaseURLGetter, commons...)
+
+	if version != nil {
+		return &SentryProvider{
+			Version: version,
+			BaseUrl: baseURL,
+		}
+	} else {
+		return p
+	}
+}
+
 func ResolveTfeProvider(commons ...Common) *TfeProvider {
 	var version *string
 	var enabled *bool
@@ -640,6 +662,20 @@ func DatadogProviderVersionGetter(comm Common) *string {
 		return nil
 	}
 	return comm.Providers.Datadog.Version
+}
+
+func SentryProviderVersionGetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.Sentry == nil {
+		return nil
+	}
+	return comm.Providers.Sentry.Version
+}
+
+func SentryProviderBaseURLGetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.Sentry == nil {
+		return nil
+	}
+	return comm.Providers.Sentry.BaseUrl
 }
 
 func OktaProviderVersionGetter(comm Common) *string {
