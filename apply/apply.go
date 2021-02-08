@@ -80,8 +80,8 @@ func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade bool) error {
 		return errs.WrapUser(e, "unable to apply envs")
 	}
 
-	x := tmp.Components[v2.ComponentKindTerraform]
-	e = applyGlobal(fs, p.Global, &x, &tmp.Common)
+	tfBox = tmp.Components[v2.ComponentKindTerraform]
+	e = applyGlobal(fs, p.Global, &tfBox, &tmp.Common)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply global")
 	}
