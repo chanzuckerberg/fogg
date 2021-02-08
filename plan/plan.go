@@ -236,19 +236,19 @@ type Module struct {
 type Account struct {
 	ComponentCommon `yaml:",inline"`
 
-	Global *Component
+	Account string
+	Global  *Component
 }
 
 // Component is a component
 type Component struct {
 	ComponentCommon `yaml:",inline"`
 
-	AccountBackends map[string]Backend `yaml:"account_backends"`
-	EKS             *v2.EKSConfig      `yaml:"eks,omitempty"`
-	Kind            *v2.ComponentKind  `yaml:"kind,omitempty"`
-	ModuleSource    *string            `yaml:"module_source"`
-	ModuleName      *string            `yaml:"module_name"`
-	Global          *Component         `yaml:"global"`
+	EKS          *v2.EKSConfig     `yaml:"eks,omitempty"`
+	Kind         *v2.ComponentKind `yaml:"kind,omitempty"`
+	ModuleSource *string           `yaml:"module_source"`
+	ModuleName   *string           `yaml:"module_name"`
+	Global       *Component        `yaml:"global"`
 }
 
 // Env is an env
@@ -310,6 +310,7 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 
 		accountPlan.ComponentCommon = resolveComponentCommon(defaults.Common, acct.Common)
 		accountPlan.Name = name
+		accountPlan.Account = name // for backwards compat
 		accountPlan.Env = "accounts"
 
 		if accountPlan.ComponentCommon.Backend.Kind == BackendKindS3 {
@@ -404,7 +405,6 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 		envPlan.Env = envName
 
 		for componentName, componentConf := range conf.Envs[envName].Components {
-			accountRemoteStates := v2.ResolveOptionalStringSlice(v2.DependsOnAccountsGetter, defaults.Common, envConf.Common, componentConf.Common)
 
 			componentPlan := Component{
 				Kind: componentConf.Kind,
@@ -418,6 +418,8 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 				componentPlan.EKS = resolveEKSConfig(envPlan.EKS, componentConf.EKS)
 			}
 
+			componentPlan.ComponentCommon = resolveComponentCommon(defaults.Common, envConf.Common, componentConf.Common)
+			accountRemoteStates := v2.ResolveOptionalStringSlice(v2.DependsOnAccountsGetter, defaults.Common, envConf.Common, componentConf.Common)
 			accountBackends := map[string]Backend{}
 			for k, v := range p.Accounts {
 				if accountRemoteStates == nil || util.SliceContainsString(accountRemoteStates, k) {
@@ -427,8 +429,6 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			componentPlan.AccountBackends = accountBackends
 
 			componentPlan.Accounts = resolveAccounts(conf.Accounts)
-
-			componentPlan.ComponentCommon = resolveComponentCommon(defaults.Common, envConf.Common, componentConf.Common)
 
 			if componentPlan.ComponentCommon.Backend.Kind == BackendKindS3 {
 				componentPlan.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/envs/%s/components/%s.tfstate", componentPlan.ComponentCommon.Project, envName, componentName)
