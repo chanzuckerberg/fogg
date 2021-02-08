@@ -47,6 +47,10 @@ variable component {
   type    = string
   default = "foo"
 }
+variable account {
+  type    = string
+  default = "foo"
+}
 variable owner {
   type    = string
   default = "foo@example.com"

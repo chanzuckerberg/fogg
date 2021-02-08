@@ -137,6 +137,10 @@ variable aws_accounts {
   type = map
   default = {
 
+    bar = 456
+
+    foo = 123
+
   }
 }
 provider random {
