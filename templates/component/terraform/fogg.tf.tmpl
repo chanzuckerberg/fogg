@@ -111,6 +111,13 @@ terraform {
     }
   {{ end }}{{ end }}
 
+  {{ if .Providers.Kubernetes }}{{ if .Providers.Kubernetes.Enabled }}
+    kubernetes = {
+      source = "hashicorp/kubernetes"
+      version = "{{ .Providers.Kubernetes.Version }}"
+    }
+  {{ end }}{{ end }}
+
     random = {
       source="hashicorp/random"
       version = "~> 2.2"

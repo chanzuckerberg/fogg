@@ -117,15 +117,16 @@ type Component struct {
 }
 
 type Providers struct {
-	AWS       *AWSProvider       `yaml:"aws,omitempty"`
-	Bless     *BlessProvider     `yaml:"bless,omitempty"`
-	Github    *GithubProvider    `yaml:"github,omitempty"`
-	Heroku    *HerokuProvider    `yaml:"heroku,omitempty"`
-	Okta      *OktaProvider      `yaml:"okta,omitempty"`
-	Snowflake *SnowflakeProvider `yaml:"snowflake,omitempty"`
-	Datadog   *DatadogProvider   `yaml:"datadog,omitempty"`
-	Sentry    *SentryProvider    `yaml:"sentry,omitempty"`
-	Tfe       *TfeProvider       `yaml:"tfe,omitempty"`
+	AWS        *AWSProvider        `yaml:"aws,omitempty"`
+	Bless      *BlessProvider      `yaml:"bless,omitempty"`
+	Datadog    *DatadogProvider    `yaml:"datadog,omitempty"`
+	Github     *GithubProvider     `yaml:"github,omitempty"`
+	Heroku     *HerokuProvider     `yaml:"heroku,omitempty"`
+	Kubernetes *KubernetesProvider `yaml:"kubernetes,omitempty"`
+	Okta       *OktaProvider       `yaml:"okta,omitempty"`
+	Sentry     *SentryProvider     `yaml:"sentry,omitempty"`
+	Snowflake  *SnowflakeProvider  `yaml:"snowflake,omitempty"`
+	Tfe        *TfeProvider        `yaml:"tfe,omitempty"`
 }
 
 // CommonProvider encapsulates common properties across providers
@@ -193,6 +194,10 @@ type TfeProvider struct {
 	CommonProvider `yaml:",inline"`
 
 	Hostname *string `yaml:"hostname,omitempty"`
+}
+
+type KubernetesProvider struct {
+	CommonProvider `yaml:",inline"`
 }
 
 //Backend is used to configure a terraform backend
@@ -435,6 +440,13 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		return nil
 	}
 
+	randKubernetesProvider := func(r *rand.Rand, s int) *KubernetesProvider {
+		if r.Float32() < 0.5 {
+			return &KubernetesProvider{}
+		}
+		return nil
+	}
+
 	randSentryProvider := func(r *rand.Rand, s int) *SentryProvider {
 		if r.Float32() < 0.5 {
 			return &SentryProvider{}
@@ -464,13 +476,14 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 			Owner:     randStringPtr(r, s),
 			Project:   randStringPtr(r, s),
 			Providers: &Providers{
-				AWS:       randAWSProvider(r, s),
-				Snowflake: randSnowflakeProvider(r, s),
-				Okta:      randOktaProvider(r, s),
-				Bless:     randBlessProvider(r, s),
-				Heroku:    randHerokuProvider(r, s),
-				Datadog:   randDatadogProvider(r, s),
-				Sentry:    randSentryProvider(r, s),
+				AWS:        randAWSProvider(r, s),
+				Bless:      randBlessProvider(r, s),
+				Datadog:    randDatadogProvider(r, s),
+				Heroku:     randHerokuProvider(r, s),
+				Kubernetes: randKubernetesProvider(r, s),
+				Okta:       randOktaProvider(r, s),
+				Sentry:     randSentryProvider(r, s),
+				Snowflake:  randSnowflakeProvider(r, s),
 			},
 			TerraformVersion: randStringPtr(r, s),
 		}

@@ -119,16 +119,17 @@ func (c CIComponent) generateCIConfig(
 }
 
 type Providers struct {
-	AWS                    *AWSProvider       `yaml:"aws"`
-	AWSAdditionalProviders []AWSProvider      `yaml:"aws_regional_providers"`
-	Github                 *GithubProvider    `yaml:"github"`
-	Heroku                 *HerokuProvider    `yaml:"heroku"`
-	Snowflake              *SnowflakeProvider `yaml:"snowflake"`
-	Bless                  *BlessProvider     `yaml:"bless"`
-	Okta                   *OktaProvider      `yaml:"okta"`
-	Datadog                *DatadogProvider   `yaml:"datadog"`
-	Sentry                 *SentryProvider    `yaml:"sentry"`
-	Tfe                    *TfeProvider       `yaml:"tfe"`
+	AWS                    *AWSProvider        `yaml:"aws"`
+	AWSAdditionalProviders []AWSProvider       `yaml:"aws_regional_providers"`
+	Bless                  *BlessProvider      `yaml:"bless"`
+	Datadog                *DatadogProvider    `yaml:"datadog"`
+	Github                 *GithubProvider     `yaml:"github"`
+	Heroku                 *HerokuProvider     `yaml:"heroku"`
+	Kubernetes             *KubernetesProvider `yaml:"kubernetes"`
+	Okta                   *OktaProvider       `yaml:"okta"`
+	Sentry                 *SentryProvider     `yaml:"sentry"`
+	Snowflake              *SnowflakeProvider  `yaml:"snowflake"`
+	Tfe                    *TfeProvider        `yaml:"tfe"`
 }
 
 //AWSProvider represents AWS provider configuration
@@ -189,6 +190,11 @@ type TfeProvider struct {
 	Enabled  bool    `yaml:"enabled,omitempty"`
 	Version  *string `yaml:"version,omitempty"`
 	Hostname *string `yaml:"hostname,omitempty"`
+}
+
+type KubernetesProvider struct {
+	Enabled bool    `yaml:"enabled,omitempty"`
+	Version *string `yaml:"version,omitempty"`
 }
 
 // BackendKind is a enum of backends we support
@@ -597,6 +603,16 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
+	var k8sPlan *KubernetesProvider
+
+	k8sConfig := v2.ResolveKubernetesProvider(commons...)
+	if k8sConfig.Enabled != nil && *k8sConfig.Enabled {
+		k8sPlan = &KubernetesProvider{
+			Enabled: true,
+			Version: k8sConfig.Version,
+		}
+	}
+
 	tflintConfig := v2.ResolveTfLint(commons...)
 
 	tfLintPlan := TfLint{
@@ -682,13 +698,14 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		Providers: Providers{
 			AWS:                    awsPlan,
 			AWSAdditionalProviders: additionalProviders,
+			Bless:                  blessPlan,
+			Datadog:                datadogPlan,
 			Github:                 githubPlan,
 			Heroku:                 herokuPlan,
-			Snowflake:              snowflakePlan,
-			Bless:                  blessPlan,
+			Kubernetes:             k8sPlan,
 			Okta:                   oktaPlan,
-			Datadog:                datadogPlan,
 			Sentry:                 sentryPlan,
+			Snowflake:              snowflakePlan,
 			Tfe:                    tfePlan,
 		},
 		TfLint:          tfLintPlan,
