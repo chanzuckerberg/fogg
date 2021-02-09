@@ -3,14 +3,14 @@
 
 env: {{ .Env }}
 project: {{ .Project }}
-region: {{ .Providers.AWS.Region }}
+region: {{ .ProviderConfiguration.AWS.Region }}
 component: {{ .Name }}
 owner: {{ .Owner }}
-aws_profile: {{ .Providers.AWS.Profile }}
+aws_profile: {{ .ProviderConfiguration.AWS.Profile }}
 tags:
   env: {{ .Env }}
   project: {{ .Project }}
-  region: {{ .Providers.AWS.Region }}
+  region: {{ .ProviderConfiguration.AWS.Region }}
   component: {{ .Name }}
   owner: {{ .Owner }}
   managedBy: kubectl

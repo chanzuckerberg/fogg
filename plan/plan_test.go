@@ -100,13 +100,13 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 
 	r.NotNil(plan.Envs["prod"])
 	r.NotNil(plan.Envs["prod"].Components["hero"])
-	r.NotNil(plan.Envs["prod"].Components["hero"].Providers)
-	r.NotNil(plan.Envs["prod"].Components["hero"].Providers.Heroku)
+	r.NotNil(plan.Envs["prod"].Components["hero"].ProviderConfiguration)
+	r.NotNil(plan.Envs["prod"].Components["hero"].ProviderConfiguration.Heroku)
 
 	r.NotNil(plan.Envs["prod"])
 	r.NotNil(plan.Envs["prod"].Components["datadog"])
-	r.NotNil(plan.Envs["prod"].Components["datadog"].Providers)
-	r.NotNil(plan.Envs["prod"].Components["datadog"].Providers.Datadog)
+	r.NotNil(plan.Envs["prod"].Components["datadog"].ProviderConfiguration)
+	r.NotNil(plan.Envs["prod"].Components["datadog"].ProviderConfiguration.Datadog)
 
 	r.NotNil(plan.Envs["prod"])
 	r.NotNil(plan.Envs["prod"].Components["vpc"])
@@ -192,13 +192,13 @@ func TestTfeProvider(t *testing.T) {
 
 	enabled := func(c ComponentCommon) {
 		r.NotNil(c)
-		r.NotNil(c.Providers.Tfe)
-		r.True(c.Providers.Tfe.Enabled)
+		r.NotNil(c.ProviderConfiguration.Tfe)
+		r.True(c.ProviderConfiguration.Tfe.Enabled)
 	}
 
 	disabled := func(c ComponentCommon, enabled bool) {
 		r.NotNil(c)
-		r.Nil(c.Providers.Tfe)
+		r.Nil(c.ProviderConfiguration.Tfe)
 	}
 
 	enabled(plan.Global.ComponentCommon)

@@ -34,16 +34,17 @@ type Common struct {
 type ComponentCommon struct {
 	Common `yaml:",inline"`
 
-	AccountBackends   map[string]Backend      `yaml:"account_backends"`
-	Accounts          map[string]*json.Number `yaml:"all_accounts"`
-	Backend           Backend                 `yaml:"backend"`
-	ComponentBackends map[string]Backend      `yaml:"comonent_backends"`
-	Env               string                  ` yaml:"env"`
-	ExtraVars         map[string]string       `yaml:"extra_vars"`
-	Name              string                  `yaml:"name"`
-	Owner             string                  `yaml:"owner"`
-	Project           string                  `yaml:"project"`
-	Providers         Providers               `yaml:"providers"`
+	AccountBackends       map[string]Backend         `yaml:"account_backends"`
+	Accounts              map[string]*json.Number    `yaml:"all_accounts"`
+	Backend               Backend                    `yaml:"backend"`
+	ComponentBackends     map[string]Backend         `yaml:"comonent_backends"`
+	Env                   string                     ` yaml:"env"`
+	ExtraVars             map[string]string          `yaml:"extra_vars"`
+	Name                  string                     `yaml:"name"`
+	Owner                 string                     `yaml:"owner"`
+	Project               string                     `yaml:"project"`
+	ProviderConfiguration ProviderConfiguration      `yaml:"providers_configuration"`
+	ProviderVersions      map[string]ProviderVersion `yaml:"provider_versions"`
 
 	TfLint TfLint `yaml:"tf_lint"`
 
@@ -118,7 +119,7 @@ func (c CIComponent) generateCIConfig(
 	return ciConfig
 }
 
-type Providers struct {
+type ProviderConfiguration struct {
 	AWS                    *AWSProvider        `yaml:"aws"`
 	AWSAdditionalProviders []AWSProvider       `yaml:"aws_regional_providers"`
 	Bless                  *BlessProvider      `yaml:"bless"`
@@ -130,6 +131,11 @@ type Providers struct {
 	Sentry                 *SentryProvider     `yaml:"sentry"`
 	Snowflake              *SnowflakeProvider  `yaml:"snowflake"`
 	Tfe                    *TfeProvider        `yaml:"tfe"`
+}
+
+type ProviderVersion struct {
+	Source  string `yaml:"source"`
+	Version string `yaml:"version"`
 }
 
 //AWSProvider represents AWS provider configuration
@@ -491,11 +497,11 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 }
 
 func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
+	providerVersions := map[string]ProviderVersion{}
 	var awsPlan *AWSProvider
 	awsConfig := v2.ResolveAWSProvider(commons...)
 	additionalProviders := []AWSProvider{}
 	var roleArn *string
-
 	if awsConfig != nil {
 		if awsConfig.Role != nil {
 			tmp := fmt.Sprintf("arn:aws:iam::%s:role/%s", *awsConfig.AccountID, *awsConfig.Role)
@@ -695,7 +701,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	return ComponentCommon{
 		Backend: backend,
-		Providers: Providers{
+		ProviderConfiguration: ProviderConfiguration{
 			AWS:                    awsPlan,
 			AWSAdditionalProviders: additionalProviders,
 			Bless:                  blessPlan,
@@ -708,14 +714,15 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Snowflake:              snowflakePlan,
 			Tfe:                    tfePlan,
 		},
-		TfLint:          tfLintPlan,
-		ExtraVars:       v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),
-		Owner:           v2.ResolveRequiredString(v2.OwnerGetter, commons...),
-		Project:         project,
-		Common:          Common{TerraformVersion: v2.ResolveRequiredString(v2.TerraformVersionGetter, commons...)},
-		TravisCI:        travisPlan,
-		CircleCI:        circlePlan,
-		GitHubActionsCI: githubActionsPlan,
+		ProviderVersions: providerVersions,
+		TfLint:           tfLintPlan,
+		ExtraVars:        v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),
+		Owner:            v2.ResolveRequiredString(v2.OwnerGetter, commons...),
+		Project:          project,
+		Common:           Common{TerraformVersion: v2.ResolveRequiredString(v2.TerraformVersionGetter, commons...)},
+		TravisCI:         travisPlan,
+		CircleCI:         circlePlan,
+		GitHubActionsCI:  githubActionsPlan,
 	}
 }
 
