@@ -79,7 +79,6 @@ variable region {
 variable component {
   type    = string
   default = "global"
-  < < < < < < < HEAD
 }
 variable aws_profile {
   type    = string

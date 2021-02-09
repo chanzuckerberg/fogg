@@ -92,7 +92,6 @@ variable region {
 variable component {
   type    = string
   default = "datadog"
-  < < < < < < < HEAD
 }
 variable aws_profile {
   type    = string

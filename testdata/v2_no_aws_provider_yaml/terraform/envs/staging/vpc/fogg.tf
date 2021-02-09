@@ -61,7 +61,6 @@ variable project {
 variable component {
   type    = string
   default = "vpc"
-  < < < < < < < HEAD
 }
 variable owner {
   type    = string

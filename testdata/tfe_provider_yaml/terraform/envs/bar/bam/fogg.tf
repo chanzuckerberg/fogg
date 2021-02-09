@@ -61,7 +61,6 @@ variable project {
 variable component {
   type    = string
   default = "bam"
-  < < < < < < < HEAD
 }
 variable owner {
   type    = string

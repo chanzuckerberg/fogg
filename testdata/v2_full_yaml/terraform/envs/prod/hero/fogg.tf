@@ -87,7 +87,6 @@ variable region {
 variable component {
   type    = string
   default = "hero"
-  < < < < < < < HEAD
 }
 variable aws_profile {
   type    = string

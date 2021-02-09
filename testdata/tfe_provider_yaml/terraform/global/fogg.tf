@@ -69,7 +69,6 @@ variable project {
 variable component {
   type    = string
   default = "global"
-  < < < < < < < HEAD
 }
 variable owner {
   type    = string

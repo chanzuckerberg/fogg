@@ -119,13 +119,6 @@ variable region {
 variable component {
   type    = string
   default = "bar"
-  < < < < < < < HEAD
-}
-variable account {
-  type     = string
-  default  = "bar"
-  == == == =
-  > > > > > > > origin / main
 }
 variable account {
   type    = string
