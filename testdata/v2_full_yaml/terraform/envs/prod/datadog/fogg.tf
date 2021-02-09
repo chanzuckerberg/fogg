@@ -45,6 +45,12 @@ terraform {
     }
 
 
+    sentry = {
+      source  = "jianyuan/sentry"
+      version = "<nil>"
+    }
+
+
     random = {
       source  = "hashicorp/random"
       version = "~> 2.2"
@@ -86,6 +92,7 @@ variable region {
 variable component {
   type    = string
   default = "datadog"
+  < < < < < < < HEAD
 }
 variable aws_profile {
   type    = string
@@ -140,6 +147,10 @@ data terraform_remote_state hero {
 variable aws_accounts {
   type = map
   default = {
+
+    bar = 456
+
+    foo = 123
 
   }
 }

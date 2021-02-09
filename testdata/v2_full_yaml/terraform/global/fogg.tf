@@ -37,6 +37,7 @@ terraform {
 
 
 
+
     random = {
       source  = "hashicorp/random"
       version = "~> 2.2"
@@ -78,6 +79,7 @@ variable region {
 variable component {
   type    = string
   default = "global"
+  < < < < < < < HEAD
 }
 variable aws_profile {
   type    = string

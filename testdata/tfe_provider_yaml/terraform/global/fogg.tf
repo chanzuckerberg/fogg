@@ -26,6 +26,7 @@ terraform {
 
 
 
+
     tfe = {
       source  = "hashicorp/tfe"
       version = "1.1.1"
@@ -68,6 +69,7 @@ variable project {
 variable component {
   type    = string
   default = "global"
+  < < < < < < < HEAD
 }
 variable owner {
   type    = string

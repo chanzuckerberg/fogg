@@ -37,6 +37,7 @@ terraform {
 
 
 
+
     random = {
       source  = "hashicorp/random"
       version = "~> 2.2"
@@ -78,6 +79,7 @@ variable region {
 variable component {
   type    = string
   default = "comp2"
+  < < < < < < < HEAD
 }
 variable aws_profile {
   type    = string
@@ -174,6 +176,10 @@ data terraform_remote_state foo {
 variable aws_accounts {
   type = map
   default = {
+
+    bar = 456
+
+    foo = 123
 
   }
 }

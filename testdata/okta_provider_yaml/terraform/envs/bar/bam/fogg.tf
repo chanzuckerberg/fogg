@@ -33,6 +33,7 @@ terraform {
 
 
 
+
     random = {
       source  = "hashicorp/random"
       version = "~> 2.2"
@@ -70,6 +71,7 @@ variable project {
 variable component {
   type    = string
   default = "bam"
+  < < < < < < < HEAD
 }
 variable owner {
   type    = string

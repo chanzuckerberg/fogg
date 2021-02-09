@@ -163,7 +163,17 @@ variable project {
 variable component {
   type =  string
   default = "{{ .Name }}"
+<<<<<<< HEAD
 }
+
+{{ if (avail "Account" .) }}
+variable account {
+  type =  string
+  default = "{{ .Account }}"
+=======
+>>>>>>> origin/main
+}
+{{ end }}
 
 {{ if (avail "Account" .) }}
 variable account {

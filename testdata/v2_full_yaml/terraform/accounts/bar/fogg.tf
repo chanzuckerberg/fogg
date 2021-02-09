@@ -77,6 +77,7 @@ terraform {
 
 
 
+
     random = {
       source  = "hashicorp/random"
       version = "~> 2.2"
@@ -116,6 +117,17 @@ variable region {
   default = "us-west-2"
 }
 variable component {
+  type    = string
+  default = "bar"
+  < < < < < < < HEAD
+}
+variable account {
+  type     = string
+  default  = "bar"
+  == == == =
+  > > > > > > > origin / main
+}
+variable account {
   type    = string
   default = "bar"
 }

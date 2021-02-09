@@ -33,6 +33,7 @@ terraform {
 
 
 
+
     random = {
       source  = "hashicorp/random"
       version = "~> 2.2"
@@ -68,6 +69,17 @@ variable project {
   default = "foo"
 }
 variable component {
+  type    = string
+  default = "foo"
+  < < < < < < < HEAD
+}
+variable account {
+  type     = string
+  default  = "foo"
+  == == == =
+  > > > > > > > origin / main
+}
+variable account {
   type    = string
   default = "foo"
 }

@@ -236,8 +236,8 @@ type Module struct {
 type Account struct {
 	ComponentCommon `yaml:",inline"`
 
-	Account string
-	Global  *Component
+	Account string     `yaml:"account"`
+	Global  *Component `yaml:"global"`
 }
 
 // Component is a component

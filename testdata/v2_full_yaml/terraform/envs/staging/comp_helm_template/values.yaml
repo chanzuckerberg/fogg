@@ -18,4 +18,4 @@ tags:
 foo: bar2
 
 
-aws_accounts:
+aws_accounts:bar: 456foo: 123
