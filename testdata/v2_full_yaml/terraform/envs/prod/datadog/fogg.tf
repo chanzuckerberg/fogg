@@ -14,7 +14,7 @@ provider aws {
 provider datadog {
 }
 terraform {
-  required_version = "~>0.100.0"
+  required_version = "=0.100.0"
 
   backend s3 {
 
@@ -94,19 +94,13 @@ data terraform_remote_state hero {
 
   }
 }
-# remote state for accounts
-# map of aws_accounts
 variable aws_accounts {
   type = map
   default = {
 
-
     bar = 456
 
-
-
     foo = 123
-
 
   }
 }

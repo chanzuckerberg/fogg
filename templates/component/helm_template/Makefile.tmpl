@@ -5,7 +5,7 @@ SHELL := /bin/bash
 include {{ .PathToRepoRoot }}/scripts/common.mk
 export PATH := $(REPO_ROOT)/.fogg/bin:$(PATH)
 
-KUBECTL_FLAGS := --wait=true --prune -l fogg/project={{ .Project }},fogg/env={{ .Env }},fogg/component={{ .Component }}
+KUBECTL_FLAGS := --wait=true --prune -l fogg/project={{ .Project }},fogg/env={{ .Env }},fogg/component={{ .Name }}
 
 # TODO(el): Replace with kubectl diff once that is supported (k8s >= 1.13)
 plan: set-eks-context

@@ -47,8 +47,7 @@ func TestResolveAccounts(t *testing.T) {
 
 	other := resolveAccounts(accounts)
 	r.NotNil(other)
-	var nilJsonNumber *json.Number
-	r.Equal(map[string]*json.Number{"bar": &bar, "foo": &foo, "baz": nilJsonNumber}, other)
+	r.Equal(map[string]*json.Number{"bar": &bar, "foo": &foo}, other)
 }
 
 func TestPlanBasicV2Yaml(t *testing.T) {

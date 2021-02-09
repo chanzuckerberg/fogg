@@ -9,6 +9,7 @@ provider okta {
 }
 terraform {
   required_version = "=1.1.1"
+
   backend s3 {
 
     bucket = "bucket"
@@ -21,17 +22,25 @@ terraform {
 
   }
 }
+variable env {
+  type    = string
+  default = "accounts"
+}
 variable project {
   type    = string
   default = "foofoo"
 }
-variable owner {
+variable component {
   type    = string
-  default = "foo@example.com"
+  default = "foo"
 }
 variable account {
   type    = string
   default = "foo"
+}
+variable owner {
+  type    = string
+  default = "foo@example.com"
 }
 variable tags {
   type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
@@ -41,15 +50,6 @@ variable tags {
     service   = "foo"
     owner     = "foo@example.com"
     managedBy = "terraform"
-  }
-}
-# map of aws_accounts
-variable aws_accounts {
-  type = map
-  default = {
-
-
-
   }
 }
 data terraform_remote_state global {
@@ -63,6 +63,26 @@ data terraform_remote_state global {
     region  = "region"
     profile = "foofoo"
 
+
+  }
+}
+data terraform_remote_state foo {
+  backend = "s3"
+  config = {
+
+
+    bucket = "bucket"
+
+    key     = "terraform/foofoo/accounts/foo.tfstate"
+    region  = "region"
+    profile = "foofoo"
+
+
+  }
+}
+variable aws_accounts {
+  type = map
+  default = {
 
   }
 }

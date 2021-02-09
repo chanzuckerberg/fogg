@@ -69,7 +69,8 @@ func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade bool) error {
 		}
 	}
 
-	e = applyAccounts(fs, p, &tmp.Account, &tmp.Common)
+	tfBox := tmp.Components[v2.ComponentKindTerraform]
+	e = applyAccounts(fs, p, &tfBox, &tmp.Common)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply accounts")
 	}
@@ -79,7 +80,8 @@ func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade bool) error {
 		return errs.WrapUser(e, "unable to apply envs")
 	}
 
-	e = applyGlobal(fs, p.Global, &tmp.Global, &tmp.Common)
+	tfBox = tmp.Components[v2.ComponentKindTerraform]
+	e = applyGlobal(fs, p.Global, &tfBox, &tmp.Common)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply global")
 	}

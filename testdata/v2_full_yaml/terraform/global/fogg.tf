@@ -11,7 +11,7 @@ provider aws {
 # Aliased Providers (for doing things in every region).
 
 terraform {
-  required_version = "~>0.100.0"
+  required_version = "=0.100.0"
 
   backend s3 {
 
@@ -62,6 +62,12 @@ variable tags {
 variable foo {
   type    = string
   default = "bar1"
+}
+variable aws_accounts {
+  type = map
+  default = {
+
+  }
 }
 provider random {
   version = "~> 2.2"

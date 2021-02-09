@@ -14,7 +14,7 @@ provider snowflake {
   region  = "us-west-2"
 }
 terraform {
-  required_version = "~>1.1.1"
+  required_version = "=1.1.1"
 
   backend s3 {
 
@@ -52,6 +52,12 @@ variable tags {
     service   = "global"
     owner     = "foo@example.com"
     managedBy = "terraform"
+  }
+}
+variable aws_accounts {
+  type = map
+  default = {
+
   }
 }
 provider random {

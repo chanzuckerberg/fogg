@@ -14,7 +14,7 @@ provider snowflake {
   region  = "us-west-2"
 }
 terraform {
-  required_version = "~>1.1.1"
+  required_version = "=1.1.1"
 
   backend s3 {
 
@@ -68,7 +68,6 @@ data terraform_remote_state global {
 
   }
 }
-# remote state for accounts
 data terraform_remote_state foo {
   backend = "s3"
   config = {
@@ -83,12 +82,9 @@ data terraform_remote_state foo {
 
   }
 }
-# map of aws_accounts
 variable aws_accounts {
   type = map
   default = {
-
-
 
   }
 }

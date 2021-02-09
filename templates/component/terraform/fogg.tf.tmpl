@@ -40,7 +40,7 @@
 
 
 terraform {
-  required_version = "~>{{ .TerraformVersion }}"
+  required_version = "={{ .TerraformVersion }}"
 
   {{ template "backend" .Backend }}
 }
@@ -64,8 +64,15 @@ variable project {
 
 variable component {
   type =  string
-  default = "{{ .Component }}"
+  default = "{{ .Name }}"
 }
+
+{{ if (avail "Account" .) }}
+variable account {
+  type =  string
+  default = "{{ .Account }}"
+}
+{{ end }}
 
 {{ if .Providers.AWS }}{{ if .Providers.AWS.Profile }}
   variable aws_profile {
@@ -84,7 +91,7 @@ variable tags {
   default = {
     project   = "{{ .Project }}"
     env       = "{{ .Env }}"
-    service   = "{{ .Component }}"
+    service   = "{{ .Name }}"
     owner     = "{{ .Owner }}"
     managedBy = "terraform"
   }
@@ -97,6 +104,7 @@ variable {{ $key }} {
 }
 {{ end }}
 
+{{ if .Global }}
 data terraform_remote_state global {
   backend = "{{ .Global.Backend.Kind }}"
 
@@ -104,10 +112,11 @@ data terraform_remote_state global {
     {{ template "remote_backend" .Global.Backend }}
   }
 }
+{{ end }}
 
 {{ $outer := . }}
 {{ range $component, $backend := .ComponentBackends  }}
-{{ if ne $component $outer.Component }}
+{{ if ne $component $outer.Name }}
 data terraform_remote_state {{ $component }} {
   backend = "{{ $backend.Kind }}"
 
@@ -118,7 +127,6 @@ data terraform_remote_state {{ $component }} {
 {{ end }}
 {{ end }}
 
-# remote state for accounts
 {{ range $name, $backend := .AccountBackends }}
 data terraform_remote_state {{ $name }} {
   backend = "{{ $backend.Kind }}"
@@ -129,14 +137,11 @@ data terraform_remote_state {{ $name }} {
 }
 {{ end }}
 
-# map of aws_accounts
 variable aws_accounts {
   type =  map
   default = {
-  {{ range $accountName, $account := .Accounts }}
-    {{ if $account.Providers.AWS }}
-        {{ $accountName }} = {{ $account.Providers.AWS.AccountID }}
-    {{ end }}
+  {{ range $account, $id := .Accounts }}
+    {{ $account }} = {{ $id }}
   {{ end }}
   }
 }

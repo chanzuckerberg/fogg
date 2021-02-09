@@ -50,12 +50,12 @@ var componentsListCmd = &cobra.Command{
 		fmt.Println("terraform/global")
 
 		for _, a := range p.Accounts {
-			fmt.Printf("terraform/accounts/%s\n", a.AccountName)
+			fmt.Printf("terraform/accounts/%s\n", a.Name)
 		}
 
 		for _, e := range p.Envs {
 			for _, c := range e.Components {
-				fmt.Printf("terraform/envs/%s/%s\n", e.Env, c.Component)
+				fmt.Printf("terraform/envs/%s/%s\n", e.Env, c.Name)
 			}
 		}
 		return nil
