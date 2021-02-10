@@ -27,7 +27,8 @@ func TestResolveTfLint(t *testing.T) {
 		{&fal, &tru, &tru},
 		{&fal, &fal, &fal},
 	}
-	for _, tt := range data {
+	for _, test := range data {
+		tt := test
 		t.Run("", func(t *testing.T) {
 			def := v2.Common{Tools: &v2.Tools{TfLint: &v2.TfLint{Enabled: tt.def}}}
 			over := v2.Common{Tools: &v2.Tools{TfLint: &v2.TfLint{Enabled: tt.over}}}

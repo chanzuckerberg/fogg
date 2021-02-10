@@ -17,7 +17,6 @@ var planCmd = &cobra.Command{
 	Long:          "plan will read fogg.yml or fogg.yml, use that to generate a plan and print that plan out. It will make no changes.",
 	SilenceErrors: true, // If we don't silence here, cobra will print them. But we want to do that in cmd/root.go
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		var e error
 		// Set up fs
 		fs, e := pwdFs()

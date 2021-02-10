@@ -22,7 +22,6 @@ var fmtCmd = &cobra.Command{
 	Long:          "",
 	SilenceErrors: true, // If we don't silence here, cobra will print them. But we want to do that in cmd/root.go
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		fs, err := pwdFs()
 		if err != nil {
 			return err

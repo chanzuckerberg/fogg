@@ -47,6 +47,7 @@ func (c *CIConfig) populateBuckets(numBuckets int) *CIConfig {
 		bucket := i % numBuckets
 		c.TestBuckets[bucket] = append(c.TestBuckets[bucket], proj)
 	}
+
 	return c
 }
 
@@ -160,7 +161,6 @@ func (p *Plan) buildTravisCIConfig(c *v2.Config, foggVersion string) TravisCICon
 	numBuckets := 1
 	if c.Defaults.Tools != nil &&
 		c.Defaults.Tools.TravisCI != nil {
-
 		if c.Defaults.Tools.TravisCI.TestBuckets != nil &&
 			*c.Defaults.Tools.TravisCI.TestBuckets > 0 {
 			numBuckets = *c.Defaults.Tools.TravisCI.TestBuckets
@@ -241,7 +241,6 @@ func (p *Plan) buildCircleCIConfig(c *v2.Config, foggVersion string) CircleCICon
 	sshFingerprints := []string{}
 
 	if c.Defaults.Tools != nil && c.Defaults.Tools.CircleCI != nil {
-
 		if c.Defaults.Tools.CircleCI.TestBuckets != nil &&
 			*c.Defaults.Tools.CircleCI.TestBuckets > 0 {
 			numBuckets = *c.Defaults.Tools.CircleCI.TestBuckets
@@ -258,7 +257,6 @@ func (p *Plan) buildCircleCIConfig(c *v2.Config, foggVersion string) CircleCICon
 }
 
 func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHubActionsCIConfig {
-
 	var env map[string]string
 
 	if c.Defaults.Tools != nil && c.Defaults.Tools.GitHubActionsCI != nil {
@@ -331,7 +329,6 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 
 	numBuckets := 1
 	if c.Defaults.Tools != nil && c.Defaults.Tools.GitHubActionsCI != nil {
-
 		if c.Defaults.Tools.GitHubActionsCI.TestBuckets != nil &&
 			*c.Defaults.Tools.GitHubActionsCI.TestBuckets > 0 {
 			numBuckets = *c.Defaults.Tools.GitHubActionsCI.TestBuckets

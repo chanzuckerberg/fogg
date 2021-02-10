@@ -24,7 +24,8 @@ func TestOpenTemplate(t *testing.T) {
 		{"foo", args{temps.Components[v2.ComponentKindTerraform], "Makefile.tmpl"}, false},
 	}
 
-	for _, tt := range tests {
+	for _, test := range tests {
+		tt := test
 		t.Run(tt.name, func(t *testing.T) {
 			r := require.New(t)
 			f, err := tt.args.box.Open(tt.args.path)

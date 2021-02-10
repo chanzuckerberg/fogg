@@ -103,23 +103,23 @@ func checkToolVersions(fs afero.Fs, current string) (bool, string, error) {
 		return false, "", errs.WrapUser(e, "unable to read .fogg-version file")
 	}
 	repoVersion := strings.TrimSpace(string(b))
-	changed, e := versionIsChanged(repoVersion, current)
-	return changed, repoVersion, e
+	changed := versionIsChanged(repoVersion, current)
+	return changed, repoVersion, nil
 }
 
-func versionIsChanged(repo string, tool string) (bool, error) {
+func versionIsChanged(repo string, tool string) bool {
 	repoVersion, repoSha, repoDirty := util.ParseVersion(repo)
 	toolVersion, toolSha, toolDirty := util.ParseVersion(tool)
 
 	if repoDirty || toolDirty {
-		return true, nil
+		return true
 	}
 
 	if (repoSha != "" || toolSha != "") && repoSha != toolSha {
-		return true, nil
+		return true
 	}
 
-	return toolVersion.NE(repoVersion), nil
+	return toolVersion.NE(repoVersion)
 }
 
 func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates, commonTemplates *packr.Box) error {
@@ -197,7 +197,6 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBoxes map[
 					return errs.WrapUser(e, "unable to apply module invocation")
 				}
 			}
-
 		}
 	}
 	return nil
@@ -205,7 +204,6 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBoxes map[
 
 func applyTree(dest afero.Fs, source *packr.Box, common *packr.Box, targetBasePath string, subst interface{}) (e error) {
 	return source.Walk(func(path string, sourceFile packr.File) error {
-
 		extension := filepath.Ext(path)
 		target := getTargetPath(targetBasePath, path)
 		targetExtension := filepath.Ext(target)
@@ -222,7 +220,6 @@ func applyTree(dest afero.Fs, source *packr.Box, common *packr.Box, targetBasePa
 					return errs.WrapUser(e, "unable to format HCL")
 				}
 			}
-
 		} else if extension == ".touch" {
 			e = touchFile(dest, target)
 			if e != nil {
@@ -240,7 +237,6 @@ func applyTree(dest afero.Fs, source *packr.Box, common *packr.Box, targetBasePa
 			}
 			logrus.Infof("%s removed", target)
 		} else if extension == ".ln" {
-
 			linkTargetBytes, err := ioutil.ReadAll(sourceFile)
 			if err != nil {
 				return errs.WrapUserf(err, "could not read source file %#v", sourceFile)
@@ -466,22 +462,19 @@ func linkFile(fs afero.Fs, name, target string) error {
 		return errs.NewInternal("can't cast to afero.SymLinker")
 	}
 
-	relativePath, err := filepathRel(name, target)
-	logrus.Debugf("relative link %s err %#v", relativePath, err)
-	if err != nil {
-		return err
-	}
+	relativePath := filepathRel(name, target)
+	logrus.Debugf("relative link %s", relativePath)
 
 	logrus.Debugf("removing link at %s", name)
-	err = fs.Remove(name)
+	err := fs.Remove(name)
 	logrus.Debugf("error removing file %s (probably ok): %s", name, err)
 
 	_, err = linker.SymlinkIfPossible(relativePath, name)
 	return err
 }
 
-func filepathRel(path, name string) (string, error) {
+func filepathRel(path, name string) string {
 	dirs := strings.Count(path, "/")
 	fullPath := fmt.Sprintf("%s/%s", strings.Repeat("../", dirs), name)
-	return filepath.Clean(fullPath), nil
+	return filepath.Clean(fullPath)
 }
