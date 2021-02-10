@@ -6,13 +6,13 @@ title: Calling modules
 has_toc: true
 ---
 
-# Calling Modules
 Terraform supports reusable resource definition code as [modules](https://www.terraform.io/docs/configuration/modules.html)
 
 Fogg encourages using modules to reduce code duplication. The top-level `fogg.yml` parameter, `modules`
  will generate a module directory with some boilerplate code to kickstart module management.
 
 This `fogg.yml` snippet:
+
  ```yaml
 <snip>
 modules:
@@ -21,6 +21,7 @@ modules:
  ```
 
 Will produce the following directory structure:
+
 ```bash
 └── terraform
     <snip>
@@ -41,14 +42,18 @@ Will produce the following directory structure:
             └── variables.tf
 ```
 
-To reference these modules in a fogg-managed workspace, invoke the module with a `module` resource and a `source` parameter that refers to the appropriate module directory:
+To reference these modules in a fogg-managed workspace, invoke the module with a `module` resource
+and a `source` parameter that refers to the appropriate module directory:
+
 ```hcl
 module webserver {
   source   = "../../../modules/webserver"
 }
 ```
 
-Fogg can also keep these module invocations up to date if a `module_source` is specified as part of a workspace configuration in `fogg.yml`:
+Fogg can also keep these module invocations up to date if a `module_source` is specified as part of
+a workspace configuration in `fogg.yml`:
+
 ```yaml
 <snip>
 envs:
@@ -76,7 +81,9 @@ module terraform-aws-vpc {
 ```
 
 ## Tip
+
 Terraform can also invoke remote module sources
+
 ```hcl
 # Module in a public GitHub repo
 module public_module_call {
@@ -88,4 +95,3 @@ module private_module_call {
    source = git@github.com:privateproject/privaterepo//path/to/module?ref=v0.31.1}
 }
 ```
-

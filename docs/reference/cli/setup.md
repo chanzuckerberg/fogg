@@ -5,12 +5,10 @@ layout: default
 title: setup
 ---
 
-# setup
-
 Download and install any custom terraform providers.
 
 ## Usage
 
 ```bash
-$ fogg apply
+fogg apply
 ```

@@ -6,14 +6,14 @@ title: Configuration file
 has_toc: true
 ---
 
-# Configuration file
+## Configuration file
+
 {: .no_toc }
 
 Fogg reads its configuration from a fogg.yml file in the root of your terraform repository.
 
 1. TOC
 {:toc}
-
 
 ## Example fogg.yml
 
@@ -83,19 +83,25 @@ modules:
 ```
 
 ## Top Level Arguments
+
 - `version` - Required, the current fogg config version is 2
-- `accounts` - Specify a map of workspaces to manage in `terraform/accounts` whose state outputs are available to all other workspaces.
+- `accounts` - Specify a map of workspaces to manage in `terraform/accounts` whose state outputs are
+  available to all other workspaces.
 - `defaults` - Default workspace arguments that are applied to every workspace unless overridden by that workspace.
 - `envs` - Create separate environments that don't share config
-- `modules` - Manage [modules](https://www.terraform.io/docs/modules/index.html) in `terraform/modules` that can be invoked in any workspace for better code reuse.
+- `modules` - Manage [modules](https://www.terraform.io/docs/modules/index.html) in
+  `terraform/modules` that can be invoked in any workspace for better code reuse.
 
 ## Common workspace arguments
-The following config paths all accept a standard `workspace` configuration spec:
- - `accounts.{accountname}`
- - `envs.{envname}.{component}`
- - `defaults`
 
-**Arguments**
+The following config paths all accept a standard `workspace` configuration spec:
+
+- `accounts.{accountname}`
+- `envs.{envname}.{component}`
+- `defaults`
+
+### Arguments
+
 - `backend` - Configure the terraform remote state backend
 - `extra_vars` - Any extra terraform variables to add to the workspace
 - `owner` - Set the `var.owner` terraform variable to this string (email address recommended)
@@ -105,9 +111,11 @@ The following config paths all accept a standard `workspace` configuration spec:
 - `tools` - En/Disable CI for this workspace
 
 ### `backend`
+
 Defines terraform remote state storage for a workspace
 
 For S3 backends:
+
 - `account_id` - AWS Account ID
 - `bucket` - Name of the S3 bucket for state storage
 - `dynamodb_table` - Name of the DynamoDB table for state locks
@@ -116,13 +124,16 @@ For S3 backends:
 - `region` - AWS region
 
 For Terraform Enterprise / Terraform Cloud backends
+
 - `host_name` - Hostname of the Terraform Cloud/Enterprise instance.
 - `organization` - Organization this repository belongs to.
 
 ### `providers`
+
 Providers is a map of provider names to provider configuration values.
 
 The currently supported providers are:
+
 - `aws`
   - `account_id` - AWS Account ID
   - `additional_regions` - List of regions to generate provider aliases for
@@ -181,16 +192,23 @@ The currently supported CI tools are:
   - `enabled` - boolean, enable this CI tool
 
 ## envs
-Fogg manages workspaces within environments (think "dev", "staging" and "prod" for example) that don't share state between them.
+
+Fogg manages workspaces within environments (think "dev", "staging" and "prod" for example) that
+don't share state between them.
 
 Each workspace within an environment is called a `component`
 
-### Arguments
+### env arguments
+
 - `components` - This is a map of workspace names to [workspace configurations](#common-workspace-arguments)
 
-### Component arguments
+### component arguments
+
 In addition to the common workspace arguments, components also support the following arguments:
+
 - `eks` - Object that contains a `cluster_name` key to point terraform to a kubectl context
-- `kind` - String, either `terraform` or `helm_template`
-- `module_source` - String, path to a terraform module to use for this component. If this is a relative path such as `terraform/modules/webserver`, fogg will generate a main.tf in this component with a full invocation to this module.
+- `kind` - String, either `terraform` or `helm_template` (DEPRECATED)
+- `module_source` - String, path to a terraform module to use for this component. If this is a
+  relative path such as `terraform/modules/webserver`, fogg will generate a main.tf in this
+  component with a full invocation to this module.
 - `module_name` - If module_source is supplied, this is the name to use for the module invocation resource.
