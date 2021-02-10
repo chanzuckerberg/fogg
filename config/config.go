@@ -13,7 +13,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-var defaultTerraformVersion = goVersion.Must(goVersion.NewVersion("0.12.20"))
+var defaultTerraformVersion = goVersion.Must(goVersion.NewVersion("0.13.5"))
 
 //DefaultFoggVersion is the version that fogg will generate by default
 const DefaultFoggVersion = 2
