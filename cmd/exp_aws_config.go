@@ -31,7 +31,6 @@ var awsConfigCmd = &cobra.Command{
 	Short: "Generates an ~/.aws/config from your fogg.yml",
 	Long:  "This command will help generate a ~/.aws/config from your fogg.yml",
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		// Set up fs
 		pwd, err := os.Getwd()
 		if err != nil {
@@ -92,6 +91,7 @@ var awsConfigCmd = &cobra.Command{
 			// No AWS provider, skip this account
 			if account.Providers == nil || account.Providers.AWS == nil {
 				logrus.Infof("Skipping %s because no AWS providers detected", name)
+
 				continue
 			}
 

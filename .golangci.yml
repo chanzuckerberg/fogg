@@ -1,12 +1,22 @@
-run:
-  skip-files:
-    - cmd/exp_examine.go
-    - cmd/exp_entropy.go
-    - exp/examine/local.go
-    - exp/examine/util.go
-  linters:
-    enable:
-      - gofmt
-      - whitespace
-      - unparam
-      - scopelint
+linters:
+  enable:
+    - asciicheck
+    - bodyclose
+    - deadcode
+    - dupl
+    - errcheck
+    - exportloopref
+    - gocyclo
+    - gofmt
+    - goimports
+    - golint
+    - megacheck
+    - misspell
+    - nolintlint
+    - rowserrcheck
+    - scopelint
+    - structcheck
+    - unconvert
+    - unparam
+    - varcheck
+    - whitespace

@@ -196,12 +196,12 @@ func TestTfeProvider(t *testing.T) {
 		r.True(c.Providers.Tfe.Enabled)
 	}
 
-	disabled := func(c ComponentCommon, enabled bool) {
+	disabled := func(c ComponentCommon) {
 		r.NotNil(c)
 		r.Nil(c.Providers.Tfe)
 	}
 
 	enabled(plan.Global.ComponentCommon)
 	enabled(plan.Accounts["foo"].ComponentCommon)
-	disabled(plan.Envs["bar"].Components["bam"].ComponentCommon, false)
+	disabled(plan.Envs["bar"].Components["bam"].ComponentCommon)
 }

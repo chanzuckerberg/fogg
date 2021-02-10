@@ -8,10 +8,6 @@ import (
 	"github.com/spf13/afero"
 )
 
-const apiHostname = "https://registry.terraform.io"
-const apiVersion = "/v1"
-const resourceType = "/modules/"
-
 //**Local refers to any files located within your local file system**
 
 //GetLocalModules retrieves all terraform modules within a given directory

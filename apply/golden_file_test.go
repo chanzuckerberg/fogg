@@ -19,7 +19,6 @@ import (
 var updateGoldenFiles = flag.Bool("update", false, "when set, rewrite the golden files")
 
 func TestIntegration(t *testing.T) {
-
 	var testCases = []struct {
 		fileName string
 	}{
@@ -35,11 +34,13 @@ func TestIntegration(t *testing.T) {
 		{"tfe_provider_yaml"},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.fileName, func(t *testing.T) {
+	for _, test := range testCases {
+		tt := test
+
+		t.Run(tt.fileName, func(t *testing.T) {
 			r := require.New(t)
 
-			testdataFs := afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(util.ProjectRoot(), "testdata", tc.fileName))
+			testdataFs := afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(util.ProjectRoot(), "testdata", tt.fileName))
 
 			if *updateGoldenFiles {
 				// delete all files except fogg.yml

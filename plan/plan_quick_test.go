@@ -11,7 +11,6 @@ import (
 )
 
 func TestValidConfigNoPanic(t *testing.T) {
-
 	// return false if valid + panic
 	assertion := func(conf *v2.Config) bool {
 		// fmt.Printf("GOT %#v\n\n", pretty.Sprint(conf))
@@ -34,7 +33,6 @@ func TestValidConfigNoPanic(t *testing.T) {
 			if err != nil {
 				panic(err)
 			}
-
 		} else {
 			fmt.Println("invalid")
 			fmt.Printf("err %s\n", err)
@@ -42,7 +40,6 @@ func TestValidConfigNoPanic(t *testing.T) {
 
 		// config isn't valid so we don't care if we panic or not
 		return true
-
 	}
 	if err := quick.Check(assertion, &quick.Config{MaxCount: 100}); err != nil {
 		t.Error(err)

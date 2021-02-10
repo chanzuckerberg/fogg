@@ -20,14 +20,15 @@ func TestParse(t *testing.T) {
 		{"0.1.0-abcdef", "0.1.0", "abcdef", false},
 		{"0.1.0-abcdef.dirty", "0.1.0", "abcdef", true},
 	}
-	for _, tc := range testCases {
+	for _, test := range testCases {
+		tt := test
 		t.Run("", func(t *testing.T) {
-			v, sha, dirty := ParseVersion(tc.input)
-			semVersion, e := semver.Parse(tc.version)
+			v, sha, dirty := ParseVersion(tt.input)
+			semVersion, e := semver.Parse(tt.version)
 			r.NoError(e)
 			r.Equal(semVersion, v)
-			r.Equal(tc.sha, sha)
-			r.Equal(tc.dirty, dirty)
+			r.Equal(tt.sha, sha)
+			r.Equal(tt.dirty, dirty)
 		})
 	}
 }

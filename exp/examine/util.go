@@ -60,9 +60,6 @@ type Submodule struct {
 }
 
 const githubURL = "github.com"
-const awsRegistry = "terraform-aws-modules/"
-const cztack = "/chanzuckerberg/cztack/"
-const protocol = "https://"
 const tagPattern = "ref="
 
 //GetFromGithub Retrieves modules that are available through github

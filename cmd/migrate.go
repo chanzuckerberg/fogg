@@ -20,7 +20,6 @@ var migrateCommand = &cobra.Command{
 	Short: "Runs all possible fogg migrations",
 	Long:  "This command will run all applicable updates to fogg configuration.",
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		// Set up fs
 		pwd, err := os.Getwd()
 		if err != nil {

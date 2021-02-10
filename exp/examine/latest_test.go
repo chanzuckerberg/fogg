@@ -35,7 +35,7 @@ func TestCreateGitUrl(t *testing.T) {
 	r.NoError(err)
 	r.NotNil(module)
 
-	url, err := createGitUrl(module.ModuleCalls["parameters-policy"])
+	url, err := createGitURL(module.ModuleCalls["parameters-policy"])
 	r.NoError(err)
 	r.NotEmpty(url)
 }

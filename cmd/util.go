@@ -63,7 +63,6 @@ func openFs() (afero.Fs, error) {
 }
 
 func bootstrapCmd(cmd *cobra.Command) (afero.Fs, *v2.Config, error) {
-
 	fs, err := openFs()
 	if err != nil {
 		return nil, nil, err
