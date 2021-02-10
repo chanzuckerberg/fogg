@@ -58,8 +58,8 @@ terraform {
       {{ end }}
     }
   {{ end}}
+  }
 }
-
 variable env {
   type    =  string
   default = "{{ .Env }}"

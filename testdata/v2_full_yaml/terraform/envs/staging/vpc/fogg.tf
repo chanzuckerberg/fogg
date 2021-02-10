@@ -75,121 +75,122 @@ terraform {
     }
 
   }
-  variable env {
-    type    = string
-    default = "staging"
+}
+variable env {
+  type    = string
+  default = "staging"
+}
+variable project {
+  type    = string
+  default = "proj"
+}
+variable region {
+  type    = string
+  default = "us-west-2"
+}
+variable component {
+  type    = string
+  default = "vpc"
+}
+variable aws_profile {
+  type    = string
+  default = "profile"
+}
+variable owner {
+  type    = string
+  default = "foo@example.com"
+}
+variable tags {
+  type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
+  default = {
+    project   = "proj"
+    env       = "staging"
+    service   = "vpc"
+    owner     = "foo@example.com"
+    managedBy = "terraform"
   }
-  variable project {
-    type    = string
-    default = "proj"
+}
+variable foo {
+  type    = string
+  default = "bar3"
+}
+data terraform_remote_state global {
+  backend = "s3"
+  config = {
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/global.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
   }
-  variable region {
-    type    = string
-    default = "us-west-2"
+}
+data terraform_remote_state comp1 {
+  backend = "s3"
+  config = {
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/envs/staging/components/comp1.tfstate"
+    region  = "us-west-2"
+    profile = "comp1"
+
+
   }
-  variable component {
-    type    = string
-    default = "vpc"
+}
+data terraform_remote_state comp2 {
+  backend = "s3"
+  config = {
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/envs/staging/components/comp2.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
   }
-  variable aws_profile {
-    type    = string
-    default = "profile"
+}
+data terraform_remote_state bar {
+  backend = "s3"
+  config = {
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/accounts/bar.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
   }
-  variable owner {
-    type    = string
-    default = "foo@example.com"
+}
+data terraform_remote_state foo {
+  backend = "s3"
+  config = {
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/accounts/foo.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
   }
-  variable tags {
-    type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
-    default = {
-      project   = "proj"
-      env       = "staging"
-      service   = "vpc"
-      owner     = "foo@example.com"
-      managedBy = "terraform"
-    }
+}
+variable aws_accounts {
+  type = map
+  default = {
+
+    bar = 456
+
+    foo = 123
+
   }
-  variable foo {
-    type    = string
-    default = "bar3"
-  }
-  data terraform_remote_state global {
-    backend = "s3"
-    config = {
-
-
-      bucket = "buck"
-
-      key     = "terraform/proj/global.tfstate"
-      region  = "us-west-2"
-      profile = "profile"
-
-
-    }
-  }
-  data terraform_remote_state comp1 {
-    backend = "s3"
-    config = {
-
-
-      bucket = "buck"
-
-      key     = "terraform/proj/envs/staging/components/comp1.tfstate"
-      region  = "us-west-2"
-      profile = "comp1"
-
-
-    }
-  }
-  data terraform_remote_state comp2 {
-    backend = "s3"
-    config = {
-
-
-      bucket = "buck"
-
-      key     = "terraform/proj/envs/staging/components/comp2.tfstate"
-      region  = "us-west-2"
-      profile = "profile"
-
-
-    }
-  }
-  data terraform_remote_state bar {
-    backend = "s3"
-    config = {
-
-
-      bucket = "buck"
-
-      key     = "terraform/proj/accounts/bar.tfstate"
-      region  = "us-west-2"
-      profile = "profile"
-
-
-    }
-  }
-  data terraform_remote_state foo {
-    backend = "s3"
-    config = {
-
-
-      bucket = "buck"
-
-      key     = "terraform/proj/accounts/foo.tfstate"
-      region  = "us-west-2"
-      profile = "profile"
-
-
-    }
-  }
-  variable aws_accounts {
-    type = map
-    default = {
-
-      bar = 456
-
-      foo = 123
-
-    }
-  }
+}

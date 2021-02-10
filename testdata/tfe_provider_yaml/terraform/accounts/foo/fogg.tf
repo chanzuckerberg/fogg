@@ -76,67 +76,68 @@ terraform {
     }
 
   }
-  variable env {
-    type    = string
-    default = "accounts"
+}
+variable env {
+  type    = string
+  default = "accounts"
+}
+variable project {
+  type    = string
+  default = "foo"
+}
+variable component {
+  type    = string
+  default = "foo"
+}
+variable account {
+  type    = string
+  default = "foo"
+}
+variable owner {
+  type    = string
+  default = "foo@example.com"
+}
+variable tags {
+  type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
+  default = {
+    project   = "foo"
+    env       = "accounts"
+    service   = "foo"
+    owner     = "foo@example.com"
+    managedBy = "terraform"
   }
-  variable project {
-    type    = string
-    default = "foo"
+}
+data terraform_remote_state global {
+  backend = "s3"
+  config = {
+
+
+    bucket = "bucket"
+
+    key     = "terraform/foo/global.tfstate"
+    region  = "region"
+    profile = "foo"
+
+
   }
-  variable component {
-    type    = string
-    default = "foo"
+}
+data terraform_remote_state foo {
+  backend = "s3"
+  config = {
+
+
+    bucket = "bucket"
+
+    key     = "terraform/foo/accounts/foo.tfstate"
+    region  = "region"
+    profile = "foo"
+
+
   }
-  variable account {
-    type    = string
-    default = "foo"
+}
+variable aws_accounts {
+  type = map
+  default = {
+
   }
-  variable owner {
-    type    = string
-    default = "foo@example.com"
-  }
-  variable tags {
-    type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
-    default = {
-      project   = "foo"
-      env       = "accounts"
-      service   = "foo"
-      owner     = "foo@example.com"
-      managedBy = "terraform"
-    }
-  }
-  data terraform_remote_state global {
-    backend = "s3"
-    config = {
-
-
-      bucket = "bucket"
-
-      key     = "terraform/foo/global.tfstate"
-      region  = "region"
-      profile = "foo"
-
-
-    }
-  }
-  data terraform_remote_state foo {
-    backend = "s3"
-    config = {
-
-
-      bucket = "bucket"
-
-      key     = "terraform/foo/accounts/foo.tfstate"
-      region  = "region"
-      profile = "foo"
-
-
-    }
-  }
-  variable aws_accounts {
-    type = map
-    default = {
-
-    }
-  }
+}

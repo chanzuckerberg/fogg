@@ -69,63 +69,64 @@ terraform {
     }
 
   }
-  variable env {
-    type    = string
-    default = "bar"
+}
+variable env {
+  type    = string
+  default = "bar"
+}
+variable project {
+  type    = string
+  default = "foo"
+}
+variable component {
+  type    = string
+  default = "bam"
+}
+variable owner {
+  type    = string
+  default = "foo@example.com"
+}
+variable tags {
+  type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
+  default = {
+    project   = "foo"
+    env       = "bar"
+    service   = "bam"
+    owner     = "foo@example.com"
+    managedBy = "terraform"
   }
-  variable project {
-    type    = string
-    default = "foo"
+}
+data terraform_remote_state global {
+  backend = "s3"
+  config = {
+
+
+    bucket = "bucket"
+
+    key     = "terraform/foo/global.tfstate"
+    region  = "region"
+    profile = "foo"
+
+
   }
-  variable component {
-    type    = string
-    default = "bam"
+}
+data terraform_remote_state foo {
+  backend = "s3"
+  config = {
+
+
+    bucket = "bucket"
+
+    key     = "terraform/foo/accounts/foo.tfstate"
+    region  = "region"
+    profile = "foo"
+
+
   }
-  variable owner {
-    type    = string
-    default = "foo@example.com"
+}
+variable aws_accounts {
+  type = map
+  default = {
+
   }
-  variable tags {
-    type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
-    default = {
-      project   = "foo"
-      env       = "bar"
-      service   = "bam"
-      owner     = "foo@example.com"
-      managedBy = "terraform"
-    }
-  }
-  data terraform_remote_state global {
-    backend = "s3"
-    config = {
-
-
-      bucket = "bucket"
-
-      key     = "terraform/foo/global.tfstate"
-      region  = "region"
-      profile = "foo"
-
-
-    }
-  }
-  data terraform_remote_state foo {
-    backend = "s3"
-    config = {
-
-
-      bucket = "bucket"
-
-      key     = "terraform/foo/accounts/foo.tfstate"
-      region  = "region"
-      profile = "foo"
-
-
-    }
-  }
-  variable aws_accounts {
-    type = map
-    default = {
-
-    }
-  }
+}
