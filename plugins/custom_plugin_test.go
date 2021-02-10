@@ -83,7 +83,7 @@ func TestCustomPluginTarStripComponents(t *testing.T) {
 	cache := plugins.GetPluginCache(cacheDir)
 
 	files := []string{"a/test.txt", "terraform-provider-testing"}
-	expected_files := []string{"test.txt", ""}
+	expectedFiles := []string{"test.txt", ""}
 	dirs := []string{"a"}
 	tarPath := generateTar(t, files, dirs)
 	defer os.Remove(tarPath)
@@ -111,7 +111,7 @@ func TestCustomPluginTarStripComponents(t *testing.T) {
 		return nil
 	}))
 
-	for idx, file := range expected_files {
+	for idx, file := range expectedFiles {
 		// files we expect to skip
 		if file == "" {
 			filePath := path.Join(plugins.CustomPluginDir, files[idx])
@@ -277,7 +277,6 @@ func generateZip(t *testing.T, files []string) string {
 	defer zipWriter.Close()
 
 	for _, file := range files {
-
 		header := &zip.FileHeader{
 			Name: file,
 		}
@@ -308,7 +307,8 @@ func TestTemplate(t *testing.T) {
 		{"os_arch", args{"{{.OS}}_{{.Arch}}", "bar", "bam"}, "bar_bam", false},
 		{"bad template", args{"{{.asdf", "bar", "bam"}, "", true},
 	}
-	for _, tt := range tests {
+	for _, test := range tests {
+		tt := test
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := plugins.Template(tt.args.url, tt.args.arch, tt.args.os)
 			if (err != nil) != tt.wantErr {

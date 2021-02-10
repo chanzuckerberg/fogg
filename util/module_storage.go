@@ -13,7 +13,6 @@ import (
 )
 
 func DownloadModule(fs afero.Fs, cacheDir, source string) (string, error) {
-
 	// We want to do these operations from the root of our working repository.
 	// In the case where we have a BaseFs we pull out its root. Otherwise use `pwd`.
 	var pwd string

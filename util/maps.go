@@ -6,7 +6,6 @@ import (
 )
 
 func SortedMapKeys(in interface{}) []string {
-
 	v := reflect.ValueOf(in)
 	if v.Kind() == reflect.Map {
 		var keys []string

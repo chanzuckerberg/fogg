@@ -18,7 +18,8 @@ func Test_collectRemoteStateReferences(t *testing.T) {
 	}{
 		{"main", args{"testdata"}, []string{"one", "two", "three", "four", "five", "six"}, false},
 	}
-	for _, tt := range tests {
+	for _, test := range tests {
+		tt := test
 		t.Run(tt.name, func(t *testing.T) {
 			r := require.New(t)
 			got, err := collectRemoteStateReferences(tt.args.path)

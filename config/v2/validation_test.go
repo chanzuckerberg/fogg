@@ -61,7 +61,8 @@ func TestValidateOwnersComponent(t *testing.T) {
 		{"all unset", "", "", "", false, 1},
 	}
 
-	for _, tt := range cases {
+	for _, test := range cases {
+		tt := test
 		t.Run(tt.label, func(t *testing.T) {
 			r := require.New(t)
 			c := confComponentOwner(tt.def, tt.env, tt.comp)
@@ -77,22 +78,21 @@ func TestValidateOwnersComponent(t *testing.T) {
 }
 
 func TestValidateBackends(t *testing.T) {
-
 	var cases = []struct {
-		kind     string
-		genValid bool
-		wantErr  bool
+		kind    string
+		wantErr bool
 	}{
-		{"invalid", false, true},
-		{"s3", true, false},
-		{"remote", true, false},
+		{"invalid", true},
+		{"s3", false},
+		{"remote", false},
 	}
 
-	for _, tt := range cases {
+	for _, test := range cases {
+		tt := test
 		t.Run(tt.kind, func(t *testing.T) {
 			r := require.New(t)
 
-			c := confBackendKind(t, tt.kind, tt.genValid)
+			c := confBackendKind(t, tt.kind)
 			_, err := c.Validate()
 			if tt.wantErr {
 				r.Error(err)
@@ -103,7 +103,7 @@ func TestValidateBackends(t *testing.T) {
 	}
 }
 
-func confBackendKind(t *testing.T, kind string, generateValid bool) Config {
+func confBackendKind(t *testing.T, kind string) Config {
 	r := require.New(t)
 	base := Config{
 		Version: 2,
@@ -216,9 +216,8 @@ func TestResolveStringArray(t *testing.T) {
 }
 
 func TestValidateAWSProvider(t *testing.T) {
-
 	validProfile := &AWSProvider{
-		AccountID: util.JsonNumberPtr(123456),
+		AccountID: util.JSONNumberPtr(123456),
 		Profile:   util.StrPtr("my-profile"),
 		Region:    util.StrPtr("us-sw-12"),
 		Version:   util.StrPtr("1.1.1"),
@@ -226,7 +225,7 @@ func TestValidateAWSProvider(t *testing.T) {
 
 	invalidNothing := &AWSProvider{}
 	invalidBoth := &AWSProvider{
-		AccountID: util.JsonNumberPtr(123456),
+		AccountID: util.JSONNumberPtr(123456),
 		Profile:   util.StrPtr("my-profile-name"),
 		Role:      util.StrPtr("my-role-name"),
 		Region:    util.StrPtr("us-sw-12"),
@@ -234,7 +233,7 @@ func TestValidateAWSProvider(t *testing.T) {
 	}
 
 	validRole := &AWSProvider{
-		AccountID: util.JsonNumberPtr(123456),
+		AccountID: util.JSONNumberPtr(123456),
 		Role:      util.StrPtr("my-role-name"),
 		Region:    util.StrPtr("us-sw-12"),
 		Version:   util.StrPtr("1.1.1"),
@@ -254,7 +253,8 @@ func TestValidateAWSProvider(t *testing.T) {
 		{"valid role", args{validRole, "valid-role"}, false},
 		{"invalid both", args{invalidBoth, "invalid-both"}, true},
 	}
-	for _, tt := range tests {
+	for _, test := range tests {
+		tt := test
 		t.Run(tt.name, func(t *testing.T) {
 			if err := ValidateAWSProvider(tt.args.p, tt.args.component); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateAWSProvider() error = %v, wantErr %v", err, tt.wantErr)
@@ -264,7 +264,6 @@ func TestValidateAWSProvider(t *testing.T) {
 }
 
 func TestConfig_ValidateAWSProviders(t *testing.T) {
-
 	tests := []struct {
 		fileName string
 		wantErr  bool
@@ -273,7 +272,8 @@ func TestConfig_ValidateAWSProviders(t *testing.T) {
 		{"v2_minimal_valid_yaml", false},
 		{"v2_invalid_aws_provider_yaml", true},
 	}
-	for _, tt := range tests {
+	for _, test := range tests {
+		tt := test
 		t.Run(tt.fileName, func(t *testing.T) {
 			r := require.New(t)
 			fs, _, e := util.TestFs()
@@ -302,7 +302,8 @@ func TestConfig_ValidateTravis(t *testing.T) {
 	}{
 		{"v2_invalid_travis_command_yaml", true},
 	}
-	for _, tt := range tests {
+	for _, test := range tests {
+		tt := test
 		t.Run(tt.fileName, func(t *testing.T) {
 			r := require.New(t)
 			fs, _, e := util.TestFs()
@@ -369,7 +370,8 @@ func TestValidateBackend(t *testing.T) {
 		{"valid-remote", validRemote, false},
 		{"invalid-remote", invalidRemote, true},
 	}
-	for _, tt := range tests {
+	for _, test := range tests {
+		tt := test
 		t.Run(tt.name, func(t *testing.T) {
 			if err := ValidateBackend(tt.backend, tt.name); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBackend() error = %v, wantErr %v", err, tt.wantErr)

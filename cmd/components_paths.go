@@ -58,6 +58,7 @@ var componentsListCmd = &cobra.Command{
 				fmt.Printf("terraform/envs/%s/%s\n", e.Env, c.Name)
 			}
 		}
+
 		return nil
 	},
 }

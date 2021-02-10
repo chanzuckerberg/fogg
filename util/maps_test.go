@@ -16,7 +16,8 @@ func TestSortedMapKeys(t *testing.T) {
 	}{
 		{"basic", args{map[string]string{"foo": "bar"}}, []string{"foo"}},
 	}
-	for _, tt := range tests {
+	for _, test := range tests {
+		tt := test
 		t.Run(tt.name, func(t *testing.T) {
 			if got := SortedMapKeys(tt.args.in); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("SortedMapKeys() = %v, want %v", got, tt.want)

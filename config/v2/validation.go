@@ -101,7 +101,6 @@ func ValidateBackend(backend *Backend, component string) error {
 	}
 
 	if *backend.Kind == "s3" {
-
 		if backend.Bucket == nil {
 			errs = multierror.Append(errs, fmt.Errorf("when backend kind == 's3', bucket is required (component %s)", component))
 		}
@@ -123,7 +122,6 @@ func ValidateBackend(backend *Backend, component string) error {
 	}
 
 	if *backend.Kind == "remote" {
-
 		if backend.HostName == nil {
 			errs = multierror.Append(errs, fmt.Errorf("when backend kind == 'remote', host_name is required (component %s)", component))
 		}

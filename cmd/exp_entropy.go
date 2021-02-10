@@ -36,7 +36,7 @@ output in LogFmt format.`,
 	},
 }
 
-func entropyRun(cmd *cobra.Command, args []string) error {
+func entropyRun(cmd *cobra.Command, _ []string) error {
 	planFilePath, err := cmd.Flags().GetString("plan-file")
 	if err != nil {
 		return fmt.Errorf("could not read plan-file flag: %w", err)

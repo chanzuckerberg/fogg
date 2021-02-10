@@ -74,7 +74,6 @@ func OpenTemplate(label string, source io.Reader, commonTemplates *packr.Box) (*
 		t, err = t.Parse(s)
 
 		return err
-
 	})
 
 	if err != nil {

@@ -90,7 +90,7 @@ func (cp *CustomPlugin) install(
 		return err
 	}
 
-	file, err := cp.fetch(pluginName, fullURL)
+	file, err := cp.fetch(fullURL)
 	if err != nil {
 		return err
 	}
@@ -131,7 +131,7 @@ func (cp *CustomPlugin) WithCache(cache *diskv.Diskv) *CustomPlugin {
 }
 
 // fetch fetches the custom plugin at URL
-func (cp *CustomPlugin) fetch(pluginName string, url string) (io.ReadCloser, error) {
+func (cp *CustomPlugin) fetch(url string) (io.ReadCloser, error) {
 	h := sha256.New()
 	_, err := h.Write([]byte(url))
 	if err != nil {
@@ -289,7 +289,7 @@ func (cp *CustomPlugin) processZip(fs afero.Fs, reader io.Reader, targetDir stri
 					return errs.WrapUser(err, "zip: could not mkdirs")
 				}
 			} else {
-				destFile, err := fs.OpenFile(fpath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, os.FileMode(f.Mode()))
+				destFile, err := fs.OpenFile(fpath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, f.Mode())
 				if err != nil {
 					return errs.WrapUserf(err, "zip: could not open destination file for %s", fpath)
 				}

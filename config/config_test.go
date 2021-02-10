@@ -40,7 +40,8 @@ func Test_detectVersion(t *testing.T) {
 	fs, _, err := util.TestFs()
 	r.NoError(err)
 
-	for _, tt := range tests {
+	for _, test := range tests {
+		tt := test
 		t.Run(tt.name, func(t *testing.T) {
 			var got int
 			var err error

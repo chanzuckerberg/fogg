@@ -329,10 +329,12 @@ func TestGetTargetPath(t *testing.T) {
 		{"foo", "fogg.tf.tmpl", "foo/fogg.tf"},
 	}
 	for _, test := range data {
+		tt := test
+
 		t.Run(test.source, func(t *testing.T) {
 			r := require.New(t)
-			out := getTargetPath(test.base, test.source)
-			r.Equal(test.output, out)
+			out := getTargetPath(tt.base, tt.source)
+			r.Equal(tt.output, out)
 		})
 	}
 }
@@ -378,11 +380,13 @@ func TestCalculateLocalPath(t *testing.T) {
 	}
 
 	for _, test := range data {
+		tt := test
+
 		t.Run("", func(t *testing.T) {
 			r := require.New(t)
-			p, e := calculateModuleAddressForSource(test.path, test.moduleAddress)
+			p, e := calculateModuleAddressForSource(tt.path, tt.moduleAddress)
 			r.Nil(e)
-			r.Equal(test.expected, p)
+			r.Equal(tt.expected, p)
 		})
 	}
 }
@@ -404,19 +408,21 @@ var versionTests = []struct {
 }
 
 func TestCheckToolVersions(t *testing.T) {
-	for _, tc := range versionTests {
+	for _, test := range versionTests {
+		tt := test
+
 		t.Run("", func(t *testing.T) {
 			r := require.New(t)
 			fs, d, err := util.TestFs()
 			r.NoError(err)
 			defer os.RemoveAll(d)
 
-			err = writeFile(fs, ".fogg-version", tc.current)
+			err = writeFile(fs, ".fogg-version", tt.current)
 			r.NoError(err)
 
-			v, _, e := checkToolVersions(fs, tc.tool)
+			v, _, e := checkToolVersions(fs, tt.tool)
 			r.NoError(e)
-			r.Equal(tc.result, v)
+			r.Equal(tt.result, v)
 		})
 	}
 }
@@ -425,10 +431,11 @@ func TestVersionIsChanged(t *testing.T) {
 	r := require.New(t)
 
 	for _, test := range versionTests {
+		tt := test
+
 		t.Run("", func(t *testing.T) {
-			b, e := versionIsChanged(test.current, test.tool)
-			r.NoError(e)
-			r.Equal(test.result, b)
+			b := versionIsChanged(tt.current, tt.tool)
+			r.Equal(tt.result, b)
 		})
 	}
 }
@@ -460,20 +467,16 @@ func Test_filepathRel(t *testing.T) {
 		path string
 	}
 	tests := []struct {
-		name    string
-		args    args
-		want    string
-		wantErr bool
+		name string
+		args args
+		want string
 	}{
-		{"terraform.d", args{"terraform/accounts/idseq/terraform.d", "terraform.d"}, "../../../terraform.d", false},
+		{"terraform.d", args{"terraform/accounts/idseq/terraform.d", "terraform.d"}, "../../../terraform.d"},
 	}
-	for _, tt := range tests {
+	for _, test := range tests {
+		tt := test
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := filepathRel(tt.args.name, tt.args.path)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("filepathRel() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			got := filepathRel(tt.args.name, tt.args.path)
 			if got != tt.want {
 				t.Errorf("filepathRel() = %v, want %v", got, tt.want)
 			}
