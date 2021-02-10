@@ -82,91 +82,66 @@ terraform {
 
     }
 
-    random = {
-      source  = "hashicorp/random"
-      version = "~> 2.2"
-    }
-    template = {
-      source  = "hashicorp/template"
-      version = "~> 2.2"
-    }
-    archive = {
-      source  = "hashicorp/archive"
-      version = "~> 2.0"
-    }
-    null = {
-      source  = "hashicorp/null"
-      version = "~> 3.0"
-    }
-    local = {
-      source  = "hashicorp/local"
-      version = "~> 2.0"
-    }
-    tls = {
-      source  = "hashicorp/tls"
-      version = "~> 3.0"
+  }
+  variable env {
+    type    = string
+    default = "prod"
+  }
+  variable project {
+    type    = string
+    default = "proj"
+  }
+  variable region {
+    type    = string
+    default = "us-west-2"
+  }
+  variable component {
+    type    = string
+    default = "hero"
+  }
+  variable aws_profile {
+    type    = string
+    default = "profile"
+  }
+  variable owner {
+    type    = string
+    default = "foo@example.com"
+  }
+  variable tags {
+    type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
+    default = {
+      project   = "proj"
+      env       = "prod"
+      service   = "hero"
+      owner     = "foo@example.com"
+      managedBy = "terraform"
     }
   }
-}
-variable env {
-  type    = string
-  default = "prod"
-}
-variable project {
-  type    = string
-  default = "proj"
-}
-variable region {
-  type    = string
-  default = "us-west-2"
-}
-variable component {
-  type    = string
-  default = "hero"
-}
-variable aws_profile {
-  type    = string
-  default = "profile"
-}
-variable owner {
-  type    = string
-  default = "foo@example.com"
-}
-variable tags {
-  type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
-  default = {
-    project   = "proj"
-    env       = "prod"
-    service   = "hero"
-    owner     = "foo@example.com"
-    managedBy = "terraform"
+  variable foo {
+    type    = string
+    default = "bar1"
   }
-}
-variable foo {
-  type    = string
-  default = "bar1"
-}
-data terraform_remote_state global {
-  backend = "s3"
-  config = {
+  data terraform_remote_state global {
+    backend = "s3"
+    config = {
 
 
-    bucket = "buck"
+      bucket = "buck"
 
-    key     = "terraform/proj/global.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
+      key     = "terraform/proj/global.tfstate"
+      region  = "us-west-2"
+      profile = "profile"
 
 
+    }
   }
-}
-variable aws_accounts {
-  type = map
-  default = {
+  variable aws_accounts {
+    type = map
+    default = {
 
-    bar = 456
+      bar = 456
 
-    foo = 123
+      foo = 123
 
+    }
   }
-}

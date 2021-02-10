@@ -209,7 +209,7 @@ func TestTfeProvider(t *testing.T) {
 func TestSentryProvider(t *testing.T) {
 	r := require.New(t)
 
-	plan := buildPlan(t, "v2_full_Yaml")
+	plan := buildPlan(t, "v2_full_yaml")
 
 	enabled := func(c ComponentCommon) {
 		r.NotNil(c)
