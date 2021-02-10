@@ -150,6 +150,20 @@ data terraform_remote_state hero {
 
   }
 }
+data terraform_remote_state okta {
+  backend = "s3"
+  config = {
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/envs/prod/components/okta.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
+  }
+}
 data terraform_remote_state sentry {
   backend = "s3"
   config = {

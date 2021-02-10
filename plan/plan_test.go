@@ -6,6 +6,7 @@ import (
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/util"
+	"github.com/chanzuckerberg/go-misc/ptr"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/require"
@@ -225,4 +226,25 @@ func TestSentryProvider(t *testing.T) {
 	disabled(plan.Global.ComponentCommon)
 	disabled(plan.Accounts["foo"].ComponentCommon)
 	enabled(plan.Envs["prod"].Components["sentry"].ComponentCommon)
+}
+
+func TestOktaProvider(t *testing.T) {
+	r := require.New(t)
+
+	plan := buildPlan(t, "v2_full_yaml")
+
+	enabled := func(c ComponentCommon) {
+		r.NotNil(c)
+		r.NotNil(c.ProviderConfiguration.Okta)
+		r.Equal(c.ProviderConfiguration.Okta.BaseURL, ptr.String("https://foo.okta.com/"))
+	}
+
+	disabled := func(c ComponentCommon) {
+		r.NotNil(c)
+		r.Nil(c.ProviderConfiguration.Sentry)
+	}
+
+	disabled(plan.Global.ComponentCommon)
+	disabled(plan.Accounts["foo"].ComponentCommon)
+	enabled(plan.Envs["prod"].Components["okta"].ComponentCommon)
 }

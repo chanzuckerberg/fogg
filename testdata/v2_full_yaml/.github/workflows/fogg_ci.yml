@@ -52,6 +52,9 @@ jobs:
           cd terraform/envs/prod/hero
           make  lint
       - run: |
+          cd terraform/envs/prod/okta
+          make  lint
+      - run: |
           cd terraform/envs/prod/sentry
           make  lint
       - run: |

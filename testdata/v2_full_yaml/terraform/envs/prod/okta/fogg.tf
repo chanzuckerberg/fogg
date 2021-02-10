@@ -9,6 +9,11 @@ provider aws {
 }
 # Aliased Providers (for doing things in every region).
 
+
+provider okta {
+  org_name = "foo"
+  base_url = "https://foo.okta.com/"
+}
 terraform {
   required_version = "=0.100.0"
 
@@ -16,7 +21,7 @@ terraform {
 
     bucket = "buck"
 
-    key     = "terraform/proj/envs/prod/components/vpc.tfstate"
+    key     = "terraform/proj/envs/prod/components/okta.tfstate"
     encrypt = true
     region  = "us-west-2"
     profile = "profile"
@@ -50,6 +55,11 @@ terraform {
       source = "hashicorp/null"
 
       version = "~> 3.0"
+
+    }
+
+    okta = {
+      source = "https://foo.okta.com//okta"
 
     }
 
@@ -90,7 +100,7 @@ variable region {
 }
 variable component {
   type    = string
-  default = "vpc"
+  default = "okta"
 }
 variable aws_profile {
   type    = string
@@ -105,7 +115,7 @@ variable tags {
   default = {
     project   = "proj"
     env       = "prod"
-    service   = "vpc"
+    service   = "okta"
     owner     = "foo@example.com"
     managedBy = "terraform"
   }
@@ -156,20 +166,6 @@ data terraform_remote_state hero {
 
   }
 }
-data terraform_remote_state okta {
-  backend = "s3"
-  config = {
-
-
-    bucket = "buck"
-
-    key     = "terraform/proj/envs/prod/components/okta.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
-
-
-  }
-}
 data terraform_remote_state sentry {
   backend = "s3"
   config = {
@@ -178,6 +174,20 @@ data terraform_remote_state sentry {
     bucket = "buck"
 
     key     = "terraform/proj/envs/prod/components/sentry.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
+  }
+}
+data terraform_remote_state vpc {
+  backend = "s3"
+  config = {
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/envs/prod/components/vpc.tfstate"
     region  = "us-west-2"
     profile = "profile"
 

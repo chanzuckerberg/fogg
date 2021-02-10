@@ -67,6 +67,12 @@ envs:
           components:
             - foo
             - hero
+      okta:
+        providers:
+          okta:
+            org_name: foo
+            base_url: https://foo.okta.com/
+            registry_namespace: acme
       vpc:
         module_source: github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0
         module_name: prod-vpc

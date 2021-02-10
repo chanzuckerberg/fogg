@@ -589,8 +589,15 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			BaseURL: oktaConfig.BaseURL,
 		}
 
+		var registryNamespace string
+
+		if oktaConfig.RegistryNamespace != nil && *oktaConfig.RegistryNamespace != "" {
+			registryNamespace = *oktaConfig.RegistryNamespace
+		} else {
+			registryNamespace = "oktadeveloper"
+		}
 		providerVersions["okta"] = ProviderVersion{
-			Source:  "oktadeveloper/okta",
+			Source:  fmt.Sprintf("%s/okta", registryNamespace),
 			Version: oktaConfig.Version,
 		}
 	}
