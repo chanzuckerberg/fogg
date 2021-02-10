@@ -38,6 +38,10 @@
     {{ template "tfe_provider" .ProviderConfiguration.Tfe }}
 {{ end }}{{ end }}
 
+{{ if .ProviderConfiguration.Sentry }}{{ if .ProviderConfiguration.Sentry.Enabled }}
+    {{ template "sentry_provider" .ProviderConfiguration.Sentry }}
+{{ end }}{{ end }}
+
 
 terraform {
   required_version = "={{ .TerraformVersion }}"
@@ -46,77 +50,14 @@ terraform {
 
   required_providers {
 
-  {{ if .ProviderConfiguration.AWS }}
-    aws = {
-      source = "hashicorp/aws"
-      version = "{{ .ProviderConfiguration.AWS.Version }}"
+  {{ range $k, $v := .ProviderVersions }}
+    {{ $k }} = {
+      source = "{{ $v.Source }}"
+      {{ if $v.Version }}
+      version = "{{ $v.Version }}"
+      {{ end }}
     }
-  {{ end }}
-
-  {{ if .ProviderConfiguration.Snowflake }}
-      snowflake = {
-        source = "chanzuckerberg/snowflake"
-        {{ if .ProviderConfiguration.Snowflake.Version -}}
-        version = "{{ .ProviderConfiguration.Snowflake.Version }}"
-        {{ end -}}
-      }
-  {{ end }}
-
-  {{ if .ProviderConfiguration.Bless }}
-    bless = {
-      source = "chanzuckerberg/bless"
-      version = "{{ .ProviderConfiguration.Bless.Version }}"
-    }
-  {{ end }}
-
-  {{ if .ProviderConfiguration.Okta}}
-    okta = {
-      source = "oktadeveloper/okta"
-      version = "{{ .ProviderConfiguration.Okta.Version }}"
-    }
-  {{ end }}
-
-  {{ if .ProviderConfiguration.Github}}
-    githhb = {
-      source = "integrations/github"
-      version = "{{ .ProviderConfiguration.Github.Version }}"
-    }
-  {{ end }}
-
-  {{ if .ProviderConfiguration.Heroku }}
-      heroku = {
-      source = "heroku/heroku"
-      version = "{{ .ProviderConfiguration.Heroku.Version }}"
-    }
-  {{ end }}
-
-  {{ if .ProviderConfiguration.Datadog }}
-    datadog = {
-      source = "datadog/datadog"
-      version = "{{ .ProviderConfiguration.Datadog.Version }}"
-    }
-  {{ end }}
-
-  {{ if .ProviderConfiguration.Sentry }}
-    sentry = {
-      source = "jianyuan/sentry"
-      version = "{{ .ProviderConfiguration.Sentry.Version }}"
-    }
-  {{ end }}
-
-  {{ if .ProviderConfiguration.Tfe }}{{ if .ProviderConfiguration.Tfe.Enabled }}
-    tfe = {
-      source = "hashicorp/tfe"
-      version = "{{ .ProviderConfiguration.Tfe.Version }}"
-    }
-  {{ end }}{{ end }}
-
-  {{ if .ProviderConfiguration.Kubernetes }}{{ if .ProviderConfiguration.Kubernetes.Enabled }}
-    kubernetes = {
-      source = "hashicorp/kubernetes"
-      version = "{{ .ProviderConfiguration.Kubernetes.Version }}"
-    }
-  {{ end }}{{ end }}
+  {{ end}}
 
     random = {
       source="hashicorp/random"
@@ -124,27 +65,27 @@ terraform {
     }
 
     template = {
-    source="hashicorp/template"
+      source="hashicorp/template"
       version = "~> 2.2"
     }
 
     archive = {
-    source="hashicorp/archive"
+      source="hashicorp/archive"
       version = "~> 2.0"
     }
 
     null = {
-    source="hashicorp/null"
+      source="hashicorp/null"
       version = "~> 3.0"
     }
 
     local = {
-    source="hashicorp/local"
+      source="hashicorp/local"
       version = "~> 2.0"
     }
 
     tls = {
-    source="hashicorp/tls"
+      source="hashicorp/tls"
       version = "~> 3.0"
     }
   }

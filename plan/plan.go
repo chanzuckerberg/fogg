@@ -134,8 +134,8 @@ type ProviderConfiguration struct {
 }
 
 type ProviderVersion struct {
-	Source  string `yaml:"source"`
-	Version string `yaml:"version"`
+	Source  string  `yaml:"source"`
+	Version *string `yaml:"version"`
 }
 
 //AWSProvider represents AWS provider configuration
@@ -145,29 +145,25 @@ type AWSProvider struct {
 	Profile   *string     `yaml:"profile"`
 	Region    string      `yaml:"region"`
 	RoleArn   *string     `yaml:"role_arn"`
-	Version   string      `yaml:"version"`
 }
 
 // GithubProvider represents a configuration of a github provider
 type GithubProvider struct {
 	Organization string  `yaml:"organization"`
 	BaseURL      *string `yaml:"base_url"`
-	Version      *string `yaml:"version"`
 }
 
 //SnowflakeProvider represents Snowflake DB provider configuration
 type SnowflakeProvider struct {
-	Account string  `yaml:"account,omitempty"`
-	Role    string  `yaml:"role,omitempty"`
-	Region  string  `yaml:"region,omitempty"`
-	Version *string `yaml:"version,omitempty"`
+	Account string `yaml:"account,omitempty"`
+	Role    string `yaml:"role,omitempty"`
+	Region  string `yaml:"region,omitempty"`
 }
 
 //OktaProvider represents Okta configuration
 type OktaProvider struct {
 	OrgName string  `yaml:"org_name,omitempty"`
 	BaseURL *string `yaml:"base_url,omitempty"`
-	Version *string `yaml:"version,omitempty"`
 }
 
 //BlessProvider represents Bless ssh provider configuration
@@ -176,31 +172,25 @@ type BlessProvider struct {
 	AWSProfile        *string  `yaml:"aws_profile,omitempty"`
 	AWSRegion         string   `yaml:"aws_region,omitempty"`
 	RoleArn           *string  `yaml:"role_arn,omitempty"`
-	Version           *string  `yaml:"version,omitempty"`
 }
 
 type HerokuProvider struct {
-	Version *string `yaml:"version,omitempty"`
 }
 
 type DatadogProvider struct {
-	Version *string `yaml:"version,omitempty"`
 }
 
 type SentryProvider struct {
-	Version *string `yaml:"version,omitempty"`
+	Enabled bool
 	BaseURL *string `yaml:"base_url,omitempty"`
 }
 
 type TfeProvider struct {
 	Enabled  bool    `yaml:"enabled,omitempty"`
-	Version  *string `yaml:"version,omitempty"`
 	Hostname *string `yaml:"hostname,omitempty"`
 }
 
 type KubernetesProvider struct {
-	Enabled bool    `yaml:"enabled,omitempty"`
-	Version *string `yaml:"version,omitempty"`
 }
 
 // BackendKind is a enum of backends we support
@@ -512,7 +502,11 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Profile:   awsConfig.Profile,
 			Region:    *awsConfig.Region,
 			RoleArn:   roleArn,
-			Version:   *awsConfig.Version,
+		}
+
+		providerVersions["aws"] = ProviderVersion{
+			Source:  "hashicorp/aws",
+			Version: awsConfig.Version,
 		}
 
 		for _, r := range awsConfig.AdditionalRegions {
@@ -525,7 +519,6 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 					Profile:   awsConfig.Profile,
 					Region:    region,
 					RoleArn:   roleArn,
-					Version:   *awsConfig.Version,
 				})
 		}
 	}
@@ -537,7 +530,11 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		githubPlan = &GithubProvider{
 			Organization: *githubConfig.Organization,
 			BaseURL:      githubConfig.BaseURL,
-			Version:      githubConfig.Version,
+		}
+
+		providerVersions["github"] = ProviderVersion{
+			Source:  "integrations/github",
+			Version: githubConfig.Version,
 		}
 	}
 
@@ -548,6 +545,10 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Account: *snowflakeConfig.Account,
 			Role:    *snowflakeConfig.Role,
 			Region:  *snowflakeConfig.Region,
+		}
+
+		providerVersions["snowflake"] = ProviderVersion{
+			Source:  "chanzuckerberg/snowflake",
 			Version: snowflakeConfig.Version,
 		}
 	}
@@ -557,8 +558,12 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	if oktaConfig != nil {
 		oktaPlan = &OktaProvider{
 			OrgName: *oktaConfig.OrgName,
-			Version: oktaConfig.Version,
 			BaseURL: oktaConfig.BaseURL,
+		}
+
+		providerVersions["okta"] = ProviderVersion{
+			Source:  "oktadeveloper/okta",
+			Version: oktaConfig.Version,
 		}
 	}
 
@@ -570,14 +575,21 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			AWSRegion:         *blessConfig.AWSRegion,
 			AdditionalRegions: blessConfig.AdditionalRegions,
 			RoleArn:           blessConfig.RoleArn,
-			Version:           blessConfig.Version,
+		}
+
+		providerVersions["bless"] = ProviderVersion{
+			Source:  "chanzuckerberg/bless",
+			Version: blessConfig.Version,
 		}
 	}
 
 	var herokuPlan *HerokuProvider
 	herokuConfig := v2.ResolveHerokuProvider(commons...)
 	if herokuConfig != nil {
-		herokuPlan = &HerokuProvider{
+		herokuPlan = &HerokuProvider{}
+
+		providerVersions["herok"] = ProviderVersion{
+			Source:  "heroku/heroku",
 			Version: herokuConfig.Version,
 		}
 	}
@@ -585,7 +597,10 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	var datadogPlan *DatadogProvider
 	datadogConfig := v2.ResolveDatadogProvider(commons...)
 	if datadogConfig != nil {
-		datadogPlan = &DatadogProvider{
+		datadogPlan = &DatadogProvider{}
+
+		providerVersions["datadog"] = ProviderVersion{
+			Source:  "datadog/datadog",
 			Version: datadogConfig.Version,
 		}
 	}
@@ -594,7 +609,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	sentryConfig := v2.ResolveSentryProvider(commons...)
 	if sentryConfig != nil {
 		sentryPlan = &SentryProvider{
-			Version: sentryConfig.Version,
+			Enabled: true,
 		}
 	}
 
@@ -604,8 +619,12 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	if tfeConfig.Enabled != nil && *tfeConfig.Enabled {
 		tfePlan = &TfeProvider{
 			Enabled:  true,
-			Version:  tfeConfig.Version,
 			Hostname: tfeConfig.Hostname,
+		}
+
+		providerVersions["tfe"] = ProviderVersion{
+			Source:  "hashicorp/tfe",
+			Version: tfeConfig.Version,
 		}
 	}
 
@@ -613,8 +632,10 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	k8sConfig := v2.ResolveKubernetesProvider(commons...)
 	if k8sConfig.Enabled != nil && *k8sConfig.Enabled {
-		k8sPlan = &KubernetesProvider{
-			Enabled: true,
+		k8sPlan = &KubernetesProvider{}
+
+		providerVersions["kubernetes"] = ProviderVersion{
+			Source:  "hashicorp/kubernetes",
 			Version: k8sConfig.Version,
 		}
 	}

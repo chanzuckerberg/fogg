@@ -196,12 +196,33 @@ func TestTfeProvider(t *testing.T) {
 		r.True(c.ProviderConfiguration.Tfe.Enabled)
 	}
 
-	disabled := func(c ComponentCommon, enabled bool) {
+	disabled := func(c ComponentCommon) {
 		r.NotNil(c)
 		r.Nil(c.ProviderConfiguration.Tfe)
 	}
 
 	enabled(plan.Global.ComponentCommon)
 	enabled(plan.Accounts["foo"].ComponentCommon)
-	disabled(plan.Envs["bar"].Components["bam"].ComponentCommon, false)
+	disabled(plan.Envs["bar"].Components["bam"].ComponentCommon)
+}
+
+func TestSentryProvider(t *testing.T) {
+	r := require.New(t)
+
+	plan := buildPlan(t, "v2_full_Yaml")
+
+	enabled := func(c ComponentCommon) {
+		r.NotNil(c)
+		r.NotNil(c.ProviderConfiguration.Sentry)
+		r.True(c.ProviderConfiguration.Sentry.Enabled)
+	}
+
+	disabled := func(c ComponentCommon) {
+		r.NotNil(c)
+		r.Nil(c.ProviderConfiguration.Sentry)
+	}
+
+	disabled(plan.Global.ComponentCommon)
+	disabled(plan.Accounts["foo"].ComponentCommon)
+	enabled(plan.Envs["prod"].Components["sentry"].ComponentCommon)
 }

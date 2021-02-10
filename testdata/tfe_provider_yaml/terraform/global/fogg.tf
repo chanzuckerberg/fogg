@@ -19,23 +19,18 @@ terraform {
   }
   required_providers {
 
+    kubernetes = {
+      source = "hashicorp/kubernetes"
 
-
-
-
-
-
-
-
-    tfe = {
-      source  = "hashicorp/tfe"
       version = "1.1.1"
+
     }
 
+    tfe = {
+      source = "hashicorp/tfe"
 
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
       version = "1.1.1"
+
     }
 
     random = {

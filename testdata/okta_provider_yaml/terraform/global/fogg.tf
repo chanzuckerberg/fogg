@@ -21,19 +21,12 @@ terraform {
   }
   required_providers {
 
-
-
-
     okta = {
-      source  = "oktadeveloper/okta"
+      source = "oktadeveloper/okta"
+
       version = "aversion"
+
     }
-
-
-
-
-
-
 
     random = {
       source  = "hashicorp/random"

@@ -6,16 +6,14 @@ provider bless {
   profile = "foofoofoo"
 }
 provider bless {
-  alias   = "a"
-  version = "~>0.0.0"
-  region  = "a"
+  alias  = "a"
+  region = "a"
 
   profile = "foofoofoo"
 }
 provider bless {
-  alias   = "b"
-  version = "~>0.0.0"
-  region  = "b"
+  alias  = "b"
+  region = "b"
 
   profile = "foofoofoo"
 }
@@ -35,19 +33,12 @@ terraform {
   }
   required_providers {
 
-
-
     bless = {
-      source  = "chanzuckerberg/bless"
+      source = "chanzuckerberg/bless"
+
       version = "0.0.0"
+
     }
-
-
-
-
-
-
-
 
     random = {
       source  = "hashicorp/random"

@@ -14,9 +14,6 @@ provider bless {
 {{ range $region := .AdditionalRegions }}
 provider bless {
   alias = "{{ $region }}"
-  {{ if $outer.Version -}}
-  version = "~>{{ $outer.Version }}"
-  {{ end -}}
   region  = "{{ $region }}"
   {{ if $outer.AWSProfile}}
   profile = "{{ $outer.AWSProfile }}"

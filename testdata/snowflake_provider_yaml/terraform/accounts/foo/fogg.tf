@@ -22,18 +22,10 @@ terraform {
   }
   required_providers {
 
-
     snowflake = {
       source = "chanzuckerberg/snowflake"
+
     }
-
-
-
-
-
-
-
-
 
     random = {
       source  = "hashicorp/random"

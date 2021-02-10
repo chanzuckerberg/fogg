@@ -29,23 +29,16 @@ terraform {
   required_providers {
 
     aws = {
-      source  = "hashicorp/aws"
+      source = "hashicorp/aws"
+
       version = "0.12.0"
+
     }
 
+    herok = {
+      source = "heroku/heroku"
 
-
-
-
-
-    heroku = {
-      source  = "heroku/heroku"
-      version = "<nil>"
     }
-
-
-
-
 
     random = {
       source  = "hashicorp/random"

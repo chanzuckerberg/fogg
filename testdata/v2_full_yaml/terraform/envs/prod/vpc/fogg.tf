@@ -26,18 +26,11 @@ terraform {
   required_providers {
 
     aws = {
-      source  = "hashicorp/aws"
+      source = "hashicorp/aws"
+
       version = "0.12.0"
+
     }
-
-
-
-
-
-
-
-
-
 
     random = {
       source  = "hashicorp/random"
@@ -139,6 +132,20 @@ data terraform_remote_state hero {
     bucket = "buck"
 
     key     = "terraform/proj/envs/prod/components/hero.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
+  }
+}
+data terraform_remote_state sentry {
+  backend = "s3"
+  config = {
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/envs/prod/components/sentry.tfstate"
     region  = "us-west-2"
     profile = "profile"
 

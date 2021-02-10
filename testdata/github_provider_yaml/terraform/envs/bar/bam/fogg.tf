@@ -21,19 +21,10 @@ terraform {
   }
   required_providers {
 
+    github = {
+      source = "integrations/github"
 
-
-
-
-    githhb = {
-      source  = "integrations/github"
-      version = "<nil>"
     }
-
-
-
-
-
 
     random = {
       source  = "hashicorp/random"

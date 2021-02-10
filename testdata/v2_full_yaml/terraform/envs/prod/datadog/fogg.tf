@@ -29,28 +29,16 @@ terraform {
   required_providers {
 
     aws = {
-      source  = "hashicorp/aws"
+      source = "hashicorp/aws"
+
       version = "0.12.0"
+
     }
-
-
-
-
-
-
 
     datadog = {
-      source  = "datadog/datadog"
-      version = "<nil>"
+      source = "datadog/datadog"
+
     }
-
-
-    sentry = {
-      source  = "jianyuan/sentry"
-      version = "<nil>"
-    }
-
-
 
     random = {
       source  = "hashicorp/random"
@@ -138,6 +126,62 @@ data terraform_remote_state hero {
     bucket = "buck"
 
     key     = "terraform/proj/envs/prod/components/hero.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
+  }
+}
+data terraform_remote_state sentry {
+  backend = "s3"
+  config = {
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/envs/prod/components/sentry.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
+  }
+}
+data terraform_remote_state vpc {
+  backend = "s3"
+  config = {
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/envs/prod/components/vpc.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
+  }
+}
+data terraform_remote_state bar {
+  backend = "s3"
+  config = {
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/accounts/bar.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
+  }
+}
+data terraform_remote_state foo {
+  backend = "s3"
+  config = {
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/accounts/foo.tfstate"
     region  = "us-west-2"
     profile = "profile"
 
