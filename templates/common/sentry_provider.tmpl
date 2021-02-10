@@ -1,0 +1,7 @@
+{{define "sentry_provider"}}
+provider sentry {
+  {{ if .BaseURL -}}
+  base_url = "{{ .BaseURL }}"
+  {{ end -}}
+}
+{{ end }}
