@@ -8,6 +8,7 @@ import (
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/util"
+	"github.com/chanzuckerberg/go-misc/ptr"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
@@ -136,6 +137,33 @@ type ProviderConfiguration struct {
 type ProviderVersion struct {
 	Source  string  `yaml:"source"`
 	Version *string `yaml:"version"`
+}
+
+var utilityProviders = map[string]ProviderVersion{
+	"random": {
+		Source:  "hashicorp/random",
+		Version: ptr.String("~> 2.2"),
+	},
+	"template": {
+		Source:  "hashicorp/template",
+		Version: ptr.String("~> 2.2"),
+	},
+	"archive": {
+		Source:  "hashicorp/archive",
+		Version: ptr.String("~> 2.0"),
+	},
+	"null": {
+		Source:  "hashicorp/null",
+		Version: ptr.String("~> 3.0"),
+	},
+	"local": {
+		Source:  "hashicorp/local",
+		Version: ptr.String("~> 2.0"),
+	},
+	"tls": {
+		Source:  "hashicorp/tls",
+		Version: ptr.String("~> 3.0"),
+	},
 }
 
 //AWSProvider represents AWS provider configuration
@@ -487,7 +515,7 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 }
 
 func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
-	providerVersions := map[string]ProviderVersion{}
+	providerVersions := copyMap(utilityProviders)
 	var awsPlan *AWSProvider
 	awsConfig := v2.ResolveAWSProvider(commons...)
 	additionalProviders := []AWSProvider{}
@@ -777,4 +805,12 @@ func resolveAccounts(accounts map[string]v2.Account) map[string]*json.Number {
 		}
 	}
 	return a
+}
+
+func copyMap(in map[string]ProviderVersion) map[string]ProviderVersion {
+	out := map[string]ProviderVersion{}
+	for k, v := range in {
+		out[k] = v
+	}
+	return out
 }
