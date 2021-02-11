@@ -63,6 +63,13 @@ terraform {
 
     }
 
+    sentry = {
+      source = "jianyuan/tfe"
+
+      version = "1.2.3"
+
+    }
+
     template = {
       source = "hashicorp/template"
 
