@@ -1,7 +1,6 @@
 {{ define "aws_provider" }}
 provider aws {
   {{ if .Alias }}alias = "{{ .Alias }}"{{ end }}
-  version = "~> {{ .Version }}"
   region = "{{ .Region }}"
   {{ if .Profile }} profile = "{{ .Profile }}"{{ end }}
   {{ if .RoleArn }}

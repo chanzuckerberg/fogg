@@ -236,6 +236,7 @@ func ResolveSnowflakeProvider(commons ...Common) *SnowflakeProvider {
 func ResolveOktaProvider(commons ...Common) *OktaProvider {
 	orgName := lastNonNil(OktaProviderOrgNameGetter, commons...)
 	baseURL := lastNonNil(OktaProviderBaseURLGetter, commons...)
+	registryNamespace := lastNonNil(OktaProviderBaseURLGetter, commons...)
 
 	// required fields
 	if orgName == nil {
@@ -243,9 +244,10 @@ func ResolveOktaProvider(commons ...Common) *OktaProvider {
 	}
 
 	return &OktaProvider{
-		OrgName: orgName,
-		Version: lastNonNil(OktaProviderVersionGetter, commons...),
-		BaseURL: baseURL,
+		OrgName:           orgName,
+		Version:           lastNonNil(OktaProviderVersionGetter, commons...),
+		BaseURL:           baseURL,
+		RegistryNamespace: registryNamespace,
 	}
 }
 
@@ -307,7 +309,60 @@ func ResolveDatadogProvider(commons ...Common) *DatadogProvider {
 	return p
 }
 
+func ResolveSentryProvider(commons ...Common) *SentryProvider {
+	var p *SentryProvider
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.Datadog == nil {
+			continue
+		}
+		p = c.Providers.Sentry
+	}
+
+	version := lastNonNil(SentryProviderVersionGetter, commons...)
+	baseURL := lastNonNil(SentryProviderBaseURLGetter, commons...)
+
+	if version != nil {
+		return &SentryProvider{
+			Version: version,
+			BaseURL: baseURL,
+		}
+	}
+	return p
+}
+
 func ResolveTfeProvider(commons ...Common) *TfeProvider {
+	var version *string
+	var enabled *bool
+	var hostname *string
+
+	for _, c := range commons {
+		if c.Providers != nil && c.Providers.Tfe != nil {
+			t := c.Providers.Tfe
+
+			if t.Enabled != nil {
+				enabled = t.Enabled
+			}
+
+			if t.Version != nil {
+				version = t.Version
+			}
+
+			if t.Hostname != nil {
+				hostname = t.Hostname
+			}
+		}
+	}
+
+	return &TfeProvider{
+		CommonProvider: CommonProvider{
+			Enabled: enabled,
+			Version: version,
+		},
+		Hostname: hostname,
+	}
+}
+
+func ResolveKubernetesProvider(commons ...Common) *TfeProvider {
 	var version *string
 	var enabled *bool
 	var hostname *string
@@ -630,6 +685,20 @@ func DatadogProviderVersionGetter(comm Common) *string {
 	return comm.Providers.Datadog.Version
 }
 
+func SentryProviderVersionGetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.Sentry == nil {
+		return nil
+	}
+	return comm.Providers.Sentry.Version
+}
+
+func SentryProviderBaseURLGetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.Sentry == nil {
+		return nil
+	}
+	return comm.Providers.Sentry.BaseURL
+}
+
 func OktaProviderVersionGetter(comm Common) *string {
 	if comm.Providers == nil || comm.Providers.Okta == nil {
 		return nil
@@ -642,6 +711,13 @@ func OktaProviderBaseURLGetter(comm Common) *string {
 		return nil
 	}
 	return comm.Providers.Okta.BaseURL
+}
+
+func OktaProviderRegistryNamespacegetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.Okta == nil {
+		return nil
+	}
+	return comm.Providers.Okta.RegistryNamespace
 }
 
 func OktaProviderOrgNameGetter(comm Common) *string {

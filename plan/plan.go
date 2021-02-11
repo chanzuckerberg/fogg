@@ -8,6 +8,7 @@ import (
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/util"
+	"github.com/chanzuckerberg/go-misc/ptr"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
@@ -34,16 +35,17 @@ type Common struct {
 type ComponentCommon struct {
 	Common `yaml:",inline"`
 
-	AccountBackends   map[string]Backend      `yaml:"account_backends"`
-	Accounts          map[string]*json.Number `yaml:"all_accounts"`
-	Backend           Backend                 `yaml:"backend"`
-	ComponentBackends map[string]Backend      `yaml:"comonent_backends"`
-	Env               string                  ` yaml:"env"`
-	ExtraVars         map[string]string       `yaml:"extra_vars"`
-	Name              string                  `yaml:"name"`
-	Owner             string                  `yaml:"owner"`
-	Project           string                  `yaml:"project"`
-	Providers         Providers               `yaml:"providers"`
+	AccountBackends       map[string]Backend         `yaml:"account_backends"`
+	Accounts              map[string]*json.Number    `yaml:"all_accounts"`
+	Backend               Backend                    `yaml:"backend"`
+	ComponentBackends     map[string]Backend         `yaml:"comonent_backends"`
+	Env                   string                     ` yaml:"env"`
+	ExtraVars             map[string]string          `yaml:"extra_vars"`
+	Name                  string                     `yaml:"name"`
+	Owner                 string                     `yaml:"owner"`
+	Project               string                     `yaml:"project"`
+	ProviderConfiguration ProviderConfiguration      `yaml:"providers_configuration"`
+	ProviderVersions      map[string]ProviderVersion `yaml:"provider_versions"`
 
 	TfLint TfLint `yaml:"tf_lint"`
 
@@ -117,16 +119,50 @@ func (c CIComponent) generateCIConfig(
 	return ciConfig
 }
 
-type Providers struct {
-	AWS                    *AWSProvider       `yaml:"aws"`
-	AWSAdditionalProviders []AWSProvider      `yaml:"aws_regional_providers"`
-	Github                 *GithubProvider    `yaml:"github"`
-	Heroku                 *HerokuProvider    `yaml:"heroku"`
-	Snowflake              *SnowflakeProvider `yaml:"snowflake"`
-	Bless                  *BlessProvider     `yaml:"bless"`
-	Okta                   *OktaProvider      `yaml:"okta"`
-	Datadog                *DatadogProvider   `yaml:"datadog"`
-	Tfe                    *TfeProvider       `yaml:"tfe"`
+type ProviderConfiguration struct {
+	AWS                    *AWSProvider        `yaml:"aws"`
+	AWSAdditionalProviders []AWSProvider       `yaml:"aws_regional_providers"`
+	Bless                  *BlessProvider      `yaml:"bless"`
+	Datadog                *DatadogProvider    `yaml:"datadog"`
+	Github                 *GithubProvider     `yaml:"github"`
+	Heroku                 *HerokuProvider     `yaml:"heroku"`
+	Kubernetes             *KubernetesProvider `yaml:"kubernetes"`
+	Okta                   *OktaProvider       `yaml:"okta"`
+	Sentry                 *SentryProvider     `yaml:"sentry"`
+	Snowflake              *SnowflakeProvider  `yaml:"snowflake"`
+	Tfe                    *TfeProvider        `yaml:"tfe"`
+}
+
+type ProviderVersion struct {
+	Source  string  `yaml:"source"`
+	Version *string `yaml:"version"`
+}
+
+var utilityProviders = map[string]ProviderVersion{
+	"random": {
+		Source:  "hashicorp/random",
+		Version: ptr.String("~> 2.2"),
+	},
+	"template": {
+		Source:  "hashicorp/template",
+		Version: ptr.String("~> 2.2"),
+	},
+	"archive": {
+		Source:  "hashicorp/archive",
+		Version: ptr.String("~> 2.0"),
+	},
+	"null": {
+		Source:  "hashicorp/null",
+		Version: ptr.String("~> 3.0"),
+	},
+	"local": {
+		Source:  "hashicorp/local",
+		Version: ptr.String("~> 2.0"),
+	},
+	"tls": {
+		Source:  "hashicorp/tls",
+		Version: ptr.String("~> 3.0"),
+	},
 }
 
 //AWSProvider represents AWS provider configuration
@@ -136,29 +172,25 @@ type AWSProvider struct {
 	Profile   *string     `yaml:"profile"`
 	Region    string      `yaml:"region"`
 	RoleArn   *string     `yaml:"role_arn"`
-	Version   string      `yaml:"version"`
 }
 
 // GithubProvider represents a configuration of a github provider
 type GithubProvider struct {
 	Organization string  `yaml:"organization"`
 	BaseURL      *string `yaml:"base_url"`
-	Version      *string `yaml:"version"`
 }
 
 //SnowflakeProvider represents Snowflake DB provider configuration
 type SnowflakeProvider struct {
-	Account string  `yaml:"account,omitempty"`
-	Role    string  `yaml:"role,omitempty"`
-	Region  string  `yaml:"region,omitempty"`
-	Version *string `yaml:"version,omitempty"`
+	Account string `yaml:"account,omitempty"`
+	Role    string `yaml:"role,omitempty"`
+	Region  string `yaml:"region,omitempty"`
 }
 
 //OktaProvider represents Okta configuration
 type OktaProvider struct {
 	OrgName string  `yaml:"org_name,omitempty"`
 	BaseURL *string `yaml:"base_url,omitempty"`
-	Version *string `yaml:"version,omitempty"`
 }
 
 //BlessProvider represents Bless ssh provider configuration
@@ -167,21 +199,25 @@ type BlessProvider struct {
 	AWSProfile        *string  `yaml:"aws_profile,omitempty"`
 	AWSRegion         string   `yaml:"aws_region,omitempty"`
 	RoleArn           *string  `yaml:"role_arn,omitempty"`
-	Version           *string  `yaml:"version,omitempty"`
 }
 
 type HerokuProvider struct {
-	Version *string `yaml:"version,omitempty"`
 }
 
 type DatadogProvider struct {
-	Version *string `yaml:"version,omitempty"`
+}
+
+type SentryProvider struct {
+	Enabled bool
+	BaseURL *string `yaml:"base_url,omitempty"`
 }
 
 type TfeProvider struct {
 	Enabled  bool    `yaml:"enabled,omitempty"`
-	Version  *string `yaml:"version,omitempty"`
 	Hostname *string `yaml:"hostname,omitempty"`
+}
+
+type KubernetesProvider struct {
 }
 
 // BackendKind is a enum of backends we support
@@ -477,11 +513,11 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 }
 
 func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
+	providerVersions := copyMap(utilityProviders)
 	var awsPlan *AWSProvider
 	awsConfig := v2.ResolveAWSProvider(commons...)
 	additionalProviders := []AWSProvider{}
 	var roleArn *string
-
 	if awsConfig != nil {
 		if awsConfig.Role != nil {
 			tmp := fmt.Sprintf("arn:aws:iam::%s:role/%s", *awsConfig.AccountID, *awsConfig.Role)
@@ -492,7 +528,11 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Profile:   awsConfig.Profile,
 			Region:    *awsConfig.Region,
 			RoleArn:   roleArn,
-			Version:   *awsConfig.Version,
+		}
+
+		providerVersions["aws"] = ProviderVersion{
+			Source:  "hashicorp/aws",
+			Version: awsConfig.Version,
 		}
 
 		for _, r := range awsConfig.AdditionalRegions {
@@ -505,7 +545,6 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 					Profile:   awsConfig.Profile,
 					Region:    region,
 					RoleArn:   roleArn,
-					Version:   *awsConfig.Version,
 				})
 		}
 	}
@@ -517,7 +556,11 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		githubPlan = &GithubProvider{
 			Organization: *githubConfig.Organization,
 			BaseURL:      githubConfig.BaseURL,
-			Version:      githubConfig.Version,
+		}
+
+		providerVersions["github"] = ProviderVersion{
+			Source:  "integrations/github",
+			Version: githubConfig.Version,
 		}
 	}
 
@@ -528,6 +571,10 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Account: *snowflakeConfig.Account,
 			Role:    *snowflakeConfig.Role,
 			Region:  *snowflakeConfig.Region,
+		}
+
+		providerVersions["snowflake"] = ProviderVersion{
+			Source:  "chanzuckerberg/snowflake",
 			Version: snowflakeConfig.Version,
 		}
 	}
@@ -537,8 +584,19 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	if oktaConfig != nil {
 		oktaPlan = &OktaProvider{
 			OrgName: *oktaConfig.OrgName,
-			Version: oktaConfig.Version,
 			BaseURL: oktaConfig.BaseURL,
+		}
+
+		var registryNamespace string
+
+		if oktaConfig.RegistryNamespace != nil && *oktaConfig.RegistryNamespace != "" {
+			registryNamespace = *oktaConfig.RegistryNamespace
+		} else {
+			registryNamespace = "oktadeveloper"
+		}
+		providerVersions["okta"] = ProviderVersion{
+			Source:  fmt.Sprintf("%s/okta", registryNamespace),
+			Version: oktaConfig.Version,
 		}
 	}
 
@@ -550,14 +608,21 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			AWSRegion:         *blessConfig.AWSRegion,
 			AdditionalRegions: blessConfig.AdditionalRegions,
 			RoleArn:           blessConfig.RoleArn,
-			Version:           blessConfig.Version,
+		}
+
+		providerVersions["bless"] = ProviderVersion{
+			Source:  "chanzuckerberg/bless",
+			Version: blessConfig.Version,
 		}
 	}
 
 	var herokuPlan *HerokuProvider
 	herokuConfig := v2.ResolveHerokuProvider(commons...)
 	if herokuConfig != nil {
-		herokuPlan = &HerokuProvider{
+		herokuPlan = &HerokuProvider{}
+
+		providerVersions["herok"] = ProviderVersion{
+			Source:  "heroku/heroku",
 			Version: herokuConfig.Version,
 		}
 	}
@@ -565,8 +630,19 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	var datadogPlan *DatadogProvider
 	datadogConfig := v2.ResolveDatadogProvider(commons...)
 	if datadogConfig != nil {
-		datadogPlan = &DatadogProvider{
+		datadogPlan = &DatadogProvider{}
+
+		providerVersions["datadog"] = ProviderVersion{
+			Source:  "datadog/datadog",
 			Version: datadogConfig.Version,
+		}
+	}
+
+	var sentryPlan *SentryProvider
+	sentryConfig := v2.ResolveSentryProvider(commons...)
+	if sentryConfig != nil {
+		sentryPlan = &SentryProvider{
+			Enabled: true,
 		}
 	}
 
@@ -576,8 +652,24 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	if tfeConfig.Enabled != nil && *tfeConfig.Enabled {
 		tfePlan = &TfeProvider{
 			Enabled:  true,
-			Version:  tfeConfig.Version,
 			Hostname: tfeConfig.Hostname,
+		}
+
+		providerVersions["tfe"] = ProviderVersion{
+			Source:  "hashicorp/tfe",
+			Version: tfeConfig.Version,
+		}
+	}
+
+	var k8sPlan *KubernetesProvider
+
+	k8sConfig := v2.ResolveKubernetesProvider(commons...)
+	if k8sConfig.Enabled != nil && *k8sConfig.Enabled {
+		k8sPlan = &KubernetesProvider{}
+
+		providerVersions["kubernetes"] = ProviderVersion{
+			Source:  "hashicorp/kubernetes",
+			Version: k8sConfig.Version,
 		}
 	}
 
@@ -663,25 +755,28 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	return ComponentCommon{
 		Backend: backend,
-		Providers: Providers{
+		ProviderConfiguration: ProviderConfiguration{
 			AWS:                    awsPlan,
 			AWSAdditionalProviders: additionalProviders,
+			Bless:                  blessPlan,
+			Datadog:                datadogPlan,
 			Github:                 githubPlan,
 			Heroku:                 herokuPlan,
-			Snowflake:              snowflakePlan,
-			Bless:                  blessPlan,
+			Kubernetes:             k8sPlan,
 			Okta:                   oktaPlan,
-			Datadog:                datadogPlan,
+			Sentry:                 sentryPlan,
+			Snowflake:              snowflakePlan,
 			Tfe:                    tfePlan,
 		},
-		TfLint:          tfLintPlan,
-		ExtraVars:       v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),
-		Owner:           v2.ResolveRequiredString(v2.OwnerGetter, commons...),
-		Project:         project,
-		Common:          Common{TerraformVersion: v2.ResolveRequiredString(v2.TerraformVersionGetter, commons...)},
-		TravisCI:        travisPlan,
-		CircleCI:        circlePlan,
-		GitHubActionsCI: githubActionsPlan,
+		ProviderVersions: providerVersions,
+		TfLint:           tfLintPlan,
+		ExtraVars:        v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),
+		Owner:            v2.ResolveRequiredString(v2.OwnerGetter, commons...),
+		Project:          project,
+		Common:           Common{TerraformVersion: v2.ResolveRequiredString(v2.TerraformVersionGetter, commons...)},
+		TravisCI:         travisPlan,
+		CircleCI:         circlePlan,
+		GitHubActionsCI:  githubActionsPlan,
 	}
 }
 
@@ -715,4 +810,12 @@ func resolveAccounts(accounts map[string]v2.Account) map[string]*json.Number {
 		}
 	}
 	return a
+}
+
+func copyMap(in map[string]ProviderVersion) map[string]ProviderVersion {
+	out := map[string]ProviderVersion{}
+	for k, v := range in {
+		out[k] = v
+	}
+	return out
 }

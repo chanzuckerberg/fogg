@@ -2,21 +2,18 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 provider bless {
-  version = "~>0.0.0"
   region  = "bar"
   profile = "foofoofoo"
 }
 provider bless {
-  alias   = "a"
-  version = "~>0.0.0"
-  region  = "a"
+  alias  = "a"
+  region = "a"
 
   profile = "foofoofoo"
 }
 provider bless {
-  alias   = "b"
-  version = "~>0.0.0"
-  region  = "b"
+  alias  = "b"
+  region = "b"
 
   profile = "foofoofoo"
 }
@@ -32,6 +29,58 @@ terraform {
     region  = "region"
     profile = "foofoo"
 
+
+  }
+  required_providers {
+
+    archive = {
+      source = "hashicorp/archive"
+
+      version = "~> 2.0"
+
+    }
+
+    bless = {
+      source = "chanzuckerberg/bless"
+
+      version = "0.0.0"
+
+    }
+
+    local = {
+      source = "hashicorp/local"
+
+      version = "~> 2.0"
+
+    }
+
+    null = {
+      source = "hashicorp/null"
+
+      version = "~> 3.0"
+
+    }
+
+    random = {
+      source = "hashicorp/random"
+
+      version = "~> 2.2"
+
+    }
+
+    template = {
+      source = "hashicorp/template"
+
+      version = "~> 2.2"
+
+    }
+
+    tls = {
+      source = "hashicorp/tls"
+
+      version = "~> 3.0"
+
+    }
 
   }
 }
@@ -94,22 +143,4 @@ variable aws_accounts {
   default = {
 
   }
-}
-provider random {
-  version = "~> 2.2"
-}
-provider template {
-  version = "~> 2.2"
-}
-provider archive {
-  version = "~> 2.0"
-}
-provider null {
-  version = "~> 3.0"
-}
-provider local {
-  version = "~> 2.0"
-}
-provider tls {
-  version = "~> 3.0"
 }

@@ -107,7 +107,7 @@ func (p *Plan) buildTravisCIConfig(c *v2.Config, foggVersion string) TravisCICon
 
 	globalConfig := p.Global.TravisCI.generateCIConfig(
 		p.Global.Backend,
-		p.Global.Providers.AWS,
+		p.Global.ProviderConfiguration.AWS,
 		"global",
 		"terraform/global")
 
@@ -120,7 +120,7 @@ func (p *Plan) buildTravisCIConfig(c *v2.Config, foggVersion string) TravisCICon
 	for name, acct := range p.Accounts {
 		accountConfig := acct.TravisCI.generateCIConfig(
 			acct.Backend,
-			acct.Providers.AWS,
+			acct.ProviderConfiguration.AWS,
 			fmt.Sprintf("accounts/%s", name),
 			fmt.Sprintf("terraform/accounts/%s", name),
 		)
@@ -136,7 +136,7 @@ func (p *Plan) buildTravisCIConfig(c *v2.Config, foggVersion string) TravisCICon
 		for cName, d := range env.Components {
 			envConfig := d.TravisCI.generateCIConfig(
 				d.Backend,
-				d.Providers.AWS,
+				d.ProviderConfiguration.AWS,
 				fmt.Sprintf("%s/%s", envName, cName),
 				fmt.Sprintf("terraform/envs/%s/%s", envName, cName),
 			)
@@ -186,7 +186,7 @@ func (p *Plan) buildCircleCIConfig(c *v2.Config, foggVersion string) CircleCICon
 
 	globalConfig := p.Global.CircleCI.generateCIConfig(
 		p.Global.Backend,
-		p.Global.Providers.AWS,
+		p.Global.ProviderConfiguration.AWS,
 		"global",
 		"terraform/global")
 
@@ -199,7 +199,7 @@ func (p *Plan) buildCircleCIConfig(c *v2.Config, foggVersion string) CircleCICon
 	for name, acct := range p.Accounts {
 		accountConfig := acct.CircleCI.generateCIConfig(
 			acct.Backend,
-			acct.Providers.AWS,
+			acct.ProviderConfiguration.AWS,
 			fmt.Sprintf("accounts/%s", name),
 			fmt.Sprintf("terraform/accounts/%s", name),
 		)
@@ -215,7 +215,7 @@ func (p *Plan) buildCircleCIConfig(c *v2.Config, foggVersion string) CircleCICon
 		for cName, d := range env.Components {
 			envConfig := d.CircleCI.generateCIConfig(
 				d.Backend,
-				d.Providers.AWS,
+				d.ProviderConfiguration.AWS,
 				fmt.Sprintf("%s/%s", envName, cName),
 				fmt.Sprintf("terraform/envs/%s/%s", envName, cName),
 			)
@@ -276,7 +276,7 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 
 	globalConfig := p.Global.GitHubActionsCI.generateCIConfig(
 		p.Global.Backend,
-		p.Global.Providers.AWS,
+		p.Global.ProviderConfiguration.AWS,
 		"global",
 		"terraform/global")
 
@@ -289,7 +289,7 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 	for name, acct := range p.Accounts {
 		accountConfig := acct.GitHubActionsCI.generateCIConfig(
 			acct.Backend,
-			acct.Providers.AWS,
+			acct.ProviderConfiguration.AWS,
 			fmt.Sprintf("accounts/%s", name),
 			fmt.Sprintf("terraform/accounts/%s", name),
 		)
@@ -305,7 +305,7 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 		for cName, d := range env.Components {
 			envConfig := d.GitHubActionsCI.generateCIConfig(
 				d.Backend,
-				d.Providers.AWS,
+				d.ProviderConfiguration.AWS,
 				fmt.Sprintf("%s/%s", envName, cName),
 				fmt.Sprintf("terraform/envs/%s/%s", envName, cName),
 			)

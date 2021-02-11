@@ -152,8 +152,8 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 	accts := p.buildAccounts(c)
 	p.Accounts = accts
 	tr := p.buildTravisCIConfig(c, "0.1.0")
-	r.NotNil(p.Accounts["foo"].Providers.AWS)
-	r.Equal(id1, p.Accounts["foo"].Providers.AWS.AccountID)
+	r.NotNil(p.Accounts["foo"].ProviderConfiguration.AWS)
+	r.Equal(id1, p.Accounts["foo"].ProviderConfiguration.AWS.AccountID)
 	r.Len(tr.TestBuckets, 1)
 	r.Len(tr.TestBuckets[0], 2)
 }

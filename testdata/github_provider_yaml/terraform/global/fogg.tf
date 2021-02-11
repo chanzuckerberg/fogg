@@ -19,6 +19,56 @@ terraform {
 
 
   }
+  required_providers {
+
+    archive = {
+      source = "hashicorp/archive"
+
+      version = "~> 2.0"
+
+    }
+
+    github = {
+      source = "integrations/github"
+
+    }
+
+    local = {
+      source = "hashicorp/local"
+
+      version = "~> 2.0"
+
+    }
+
+    null = {
+      source = "hashicorp/null"
+
+      version = "~> 3.0"
+
+    }
+
+    random = {
+      source = "hashicorp/random"
+
+      version = "~> 2.2"
+
+    }
+
+    template = {
+      source = "hashicorp/template"
+
+      version = "~> 2.2"
+
+    }
+
+    tls = {
+      source = "hashicorp/tls"
+
+      version = "~> 3.0"
+
+    }
+
+  }
 }
 variable env {
   type    = string
@@ -51,22 +101,4 @@ variable aws_accounts {
   default = {
 
   }
-}
-provider random {
-  version = "~> 2.2"
-}
-provider template {
-  version = "~> 2.2"
-}
-provider archive {
-  version = "~> 2.0"
-}
-provider null {
-  version = "~> 3.0"
-}
-provider local {
-  version = "~> 2.0"
-}
-provider tls {
-  version = "~> 3.0"
 }

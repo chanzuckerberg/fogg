@@ -2,7 +2,6 @@
 # Make improvements in fogg, so that everyone can benefit.
 provider aws {
 
-  version = "~> 0.12.0"
   region  = "us-west-2"
   profile = "profile"
 
@@ -22,6 +21,58 @@ terraform {
     region  = "us-west-2"
     profile = "profile"
 
+
+  }
+  required_providers {
+
+    archive = {
+      source = "hashicorp/archive"
+
+      version = "~> 2.0"
+
+    }
+
+    aws = {
+      source = "hashicorp/aws"
+
+      version = "0.12.0"
+
+    }
+
+    local = {
+      source = "hashicorp/local"
+
+      version = "~> 2.0"
+
+    }
+
+    null = {
+      source = "hashicorp/null"
+
+      version = "~> 3.0"
+
+    }
+
+    random = {
+      source = "hashicorp/random"
+
+      version = "~> 2.2"
+
+    }
+
+    template = {
+      source = "hashicorp/template"
+
+      version = "~> 2.2"
+
+    }
+
+    tls = {
+      source = "hashicorp/tls"
+
+      version = "~> 3.0"
+
+    }
 
   }
 }
@@ -105,6 +156,34 @@ data terraform_remote_state hero {
 
   }
 }
+data terraform_remote_state okta {
+  backend = "s3"
+  config = {
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/envs/prod/components/okta.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
+  }
+}
+data terraform_remote_state sentry {
+  backend = "s3"
+  config = {
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/envs/prod/components/sentry.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
+  }
+}
 data terraform_remote_state bar {
   backend = "s3"
   config = {
@@ -142,22 +221,4 @@ variable aws_accounts {
     foo = 123
 
   }
-}
-provider random {
-  version = "~> 2.2"
-}
-provider template {
-  version = "~> 2.2"
-}
-provider archive {
-  version = "~> 2.0"
-}
-provider null {
-  version = "~> 3.0"
-}
-provider local {
-  version = "~> 2.0"
-}
-provider tls {
-  version = "~> 3.0"
 }

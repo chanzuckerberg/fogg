@@ -6,6 +6,7 @@ import (
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/util"
+	"github.com/chanzuckerberg/go-misc/ptr"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/require"
@@ -100,13 +101,13 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 
 	r.NotNil(plan.Envs["prod"])
 	r.NotNil(plan.Envs["prod"].Components["hero"])
-	r.NotNil(plan.Envs["prod"].Components["hero"].Providers)
-	r.NotNil(plan.Envs["prod"].Components["hero"].Providers.Heroku)
+	r.NotNil(plan.Envs["prod"].Components["hero"].ProviderConfiguration)
+	r.NotNil(plan.Envs["prod"].Components["hero"].ProviderConfiguration.Heroku)
 
 	r.NotNil(plan.Envs["prod"])
 	r.NotNil(plan.Envs["prod"].Components["datadog"])
-	r.NotNil(plan.Envs["prod"].Components["datadog"].Providers)
-	r.NotNil(plan.Envs["prod"].Components["datadog"].Providers.Datadog)
+	r.NotNil(plan.Envs["prod"].Components["datadog"].ProviderConfiguration)
+	r.NotNil(plan.Envs["prod"].Components["datadog"].ProviderConfiguration.Datadog)
 
 	r.NotNil(plan.Envs["prod"])
 	r.NotNil(plan.Envs["prod"].Components["vpc"])
@@ -192,16 +193,58 @@ func TestTfeProvider(t *testing.T) {
 
 	enabled := func(c ComponentCommon) {
 		r.NotNil(c)
-		r.NotNil(c.Providers.Tfe)
-		r.True(c.Providers.Tfe.Enabled)
+		r.NotNil(c.ProviderConfiguration.Tfe)
+		r.True(c.ProviderConfiguration.Tfe.Enabled)
 	}
 
 	disabled := func(c ComponentCommon) {
 		r.NotNil(c)
-		r.Nil(c.Providers.Tfe)
+		r.Nil(c.ProviderConfiguration.Tfe)
 	}
 
 	enabled(plan.Global.ComponentCommon)
 	enabled(plan.Accounts["foo"].ComponentCommon)
 	disabled(plan.Envs["bar"].Components["bam"].ComponentCommon)
+}
+
+func TestSentryProvider(t *testing.T) {
+	r := require.New(t)
+
+	plan := buildPlan(t, "v2_full_yaml")
+
+	enabled := func(c ComponentCommon) {
+		r.NotNil(c)
+		r.NotNil(c.ProviderConfiguration.Sentry)
+		r.True(c.ProviderConfiguration.Sentry.Enabled)
+	}
+
+	disabled := func(c ComponentCommon) {
+		r.NotNil(c)
+		r.Nil(c.ProviderConfiguration.Sentry)
+	}
+
+	disabled(plan.Global.ComponentCommon)
+	disabled(plan.Accounts["foo"].ComponentCommon)
+	enabled(plan.Envs["prod"].Components["sentry"].ComponentCommon)
+}
+
+func TestOktaProvider(t *testing.T) {
+	r := require.New(t)
+
+	plan := buildPlan(t, "v2_full_yaml")
+
+	enabled := func(c ComponentCommon) {
+		r.NotNil(c)
+		r.NotNil(c.ProviderConfiguration.Okta)
+		r.Equal(c.ProviderConfiguration.Okta.BaseURL, ptr.String("https://foo.okta.com/"))
+	}
+
+	disabled := func(c ComponentCommon) {
+		r.NotNil(c)
+		r.Nil(c.ProviderConfiguration.Sentry)
+	}
+
+	disabled(plan.Global.ComponentCommon)
+	disabled(plan.Accounts["foo"].ComponentCommon)
+	enabled(plan.Envs["prod"].Components["okta"].ComponentCommon)
 }

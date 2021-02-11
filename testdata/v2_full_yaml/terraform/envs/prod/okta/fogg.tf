@@ -9,6 +9,11 @@ provider aws {
 }
 # Aliased Providers (for doing things in every region).
 
+
+provider okta {
+  org_name = "foo"
+  base_url = "https://foo.okta.com/"
+}
 terraform {
   required_version = "=0.100.0"
 
@@ -16,7 +21,7 @@ terraform {
 
     bucket = "buck"
 
-    key     = "terraform/proj/envs/staging/components/vpc.tfstate"
+    key     = "terraform/proj/envs/prod/components/okta.tfstate"
     encrypt = true
     region  = "us-west-2"
     profile = "profile"
@@ -53,6 +58,11 @@ terraform {
 
     }
 
+    okta = {
+      source = "https://foo.okta.com//okta"
+
+    }
+
     random = {
       source = "hashicorp/random"
 
@@ -78,7 +88,7 @@ terraform {
 }
 variable env {
   type    = string
-  default = "staging"
+  default = "prod"
 }
 variable project {
   type    = string
@@ -90,7 +100,7 @@ variable region {
 }
 variable component {
   type    = string
-  default = "vpc"
+  default = "okta"
 }
 variable aws_profile {
   type    = string
@@ -104,15 +114,15 @@ variable tags {
   type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
   default = {
     project   = "proj"
-    env       = "staging"
-    service   = "vpc"
+    env       = "prod"
+    service   = "okta"
     owner     = "foo@example.com"
     managedBy = "terraform"
   }
 }
 variable foo {
   type    = string
-  default = "bar3"
+  default = "bar1"
 }
 data terraform_remote_state global {
   backend = "s3"
@@ -128,28 +138,56 @@ data terraform_remote_state global {
 
   }
 }
-data terraform_remote_state comp1 {
+data terraform_remote_state datadog {
   backend = "s3"
   config = {
 
 
     bucket = "buck"
 
-    key     = "terraform/proj/envs/staging/components/comp1.tfstate"
+    key     = "terraform/proj/envs/prod/components/datadog.tfstate"
     region  = "us-west-2"
-    profile = "comp1"
+    profile = "profile"
 
 
   }
 }
-data terraform_remote_state comp2 {
+data terraform_remote_state hero {
   backend = "s3"
   config = {
 
 
     bucket = "buck"
 
-    key     = "terraform/proj/envs/staging/components/comp2.tfstate"
+    key     = "terraform/proj/envs/prod/components/hero.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
+  }
+}
+data terraform_remote_state sentry {
+  backend = "s3"
+  config = {
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/envs/prod/components/sentry.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
+  }
+}
+data terraform_remote_state vpc {
+  backend = "s3"
+  config = {
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/envs/prod/components/vpc.tfstate"
     region  = "us-west-2"
     profile = "profile"
 
