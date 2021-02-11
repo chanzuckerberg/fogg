@@ -282,7 +282,7 @@ type componentInfo struct {
 }
 
 // PathToComponentType given a path, return information about that component
-func (c Config) PathToComponentType(path string) (componentInfo, error) {
+func (c Config) PathToComponentType(path string) (componentInfo, error) { //nolint
 	t := componentInfo{}
 
 	path = strings.TrimRight(path, "/")
@@ -356,7 +356,7 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		return &str
 	}
 
-	randBoolPtr := func(r *rand.Rand, s int) *bool {
+	randBoolPtr := func(r *rand.Rand) *bool {
 		b := r.Float32() > 0.5
 		return &b
 	}
@@ -407,13 +407,12 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 					Profile:   randStringPtr(r, s),
 					Version:   randStringPtr(r, s),
 				}
-			} else {
-				return &AWSProvider{
-					AccountID: &accountID,
-					Region:    randStringPtr(r, s),
-					Role:      randStringPtr(r, s),
-					Version:   randStringPtr(r, s),
-				}
+			}
+			return &AWSProvider{
+				AccountID: &accountID,
+				Region:    randStringPtr(r, s),
+				Role:      randStringPtr(r, s),
+				Version:   randStringPtr(r, s),
 			}
 		}
 		return nil
@@ -430,14 +429,14 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		return nil
 	}
 
-	randHerokuProvider := func(r *rand.Rand, s int) *HerokuProvider {
+	randHerokuProvider := func(r *rand.Rand) *HerokuProvider {
 		if r.Float32() < 0.5 {
 			return &HerokuProvider{}
 		}
 		return nil
 	}
 
-	randDatadogProvider := func(r *rand.Rand, s int) *DatadogProvider {
+	randDatadogProvider := func(r *rand.Rand) *DatadogProvider {
 		if r.Float32() < 0.5 {
 			return &DatadogProvider{}
 		}
@@ -482,8 +481,8 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 			Providers: &Providers{
 				AWS:        randAWSProvider(r, s),
 				Bless:      randBlessProvider(r, s),
-				Datadog:    randDatadogProvider(r, s),
-				Heroku:     randHerokuProvider(r, s),
+				Datadog:    randDatadogProvider(r),
+				Heroku:     randHerokuProvider(r),
 				Kubernetes: randKubernetesProvider(r, s),
 				Okta:       randOktaProvider(r, s),
 				Sentry:     randSentryProvider(r, s),
@@ -497,7 +496,7 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 			if r.Float32() < 0.5 {
 				c.Tools.TravisCI = &TravisCI{
 					CommonCI: CommonCI{
-						Enabled:     randBoolPtr(r, s),
+						Enabled:     randBoolPtr(r),
 						TestBuckets: randIntPtr(r, s),
 					},
 				}
@@ -529,7 +528,6 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		conf.Accounts[acctName] = Account{
 			Common: randCommon(r, size),
 		}
-
 	}
 
 	conf.Envs = map[string]Env{}
@@ -550,7 +548,6 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 			}
 		}
 		conf.Envs[envName] = e
-
 	}
 
 	return reflect.ValueOf(conf)

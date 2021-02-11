@@ -82,9 +82,8 @@ func ResolveStringMap(getter func(Common) map[string]string, commons ...Common) 
 // ResolveAWSProvider will return an AWSProvder iff one of the required fields is set somewhere in
 // the set of Common config objects passed in. Otherwise it will return nil.
 func ResolveAWSProvider(commons ...Common) *AWSProvider {
-
 	var profile, region, role, version *string
-	var accountId *json.Number
+	var accountID *json.Number
 	var additionalRegions []string
 
 	for _, c := range commons {
@@ -111,7 +110,7 @@ func ResolveAWSProvider(commons ...Common) *AWSProvider {
 			}
 
 			if p.AccountID != nil {
-				accountId = p.AccountID
+				accountID = p.AccountID
 			}
 
 			if p.AdditionalRegions != nil {
@@ -128,7 +127,7 @@ func ResolveAWSProvider(commons ...Common) *AWSProvider {
 			Version: version,
 
 			// optional fields
-			AccountID:         accountId,
+			AccountID:         accountID,
 			AdditionalRegions: additionalRegions,
 		}
 	}
@@ -137,7 +136,6 @@ func ResolveAWSProvider(commons ...Common) *AWSProvider {
 
 // ResolveBackend returns the Backend configuration for a given component, after applying all inheritance rules
 func ResolveBackend(commons ...Common) *Backend {
-
 	var kind, accountID, bucket, dynamoTable, profile, region, hostName, organization, role *string
 
 	kind = util.StrPtr("s3")
@@ -288,9 +286,8 @@ func ResolveHerokuProvider(commons ...Common) *HerokuProvider {
 		return &HerokuProvider{
 			Version: version,
 		}
-	} else {
-		return p
 	}
+	return p
 }
 
 func ResolveDatadogProvider(commons ...Common) *DatadogProvider {
@@ -308,9 +305,8 @@ func ResolveDatadogProvider(commons ...Common) *DatadogProvider {
 		return &DatadogProvider{
 			Version: version,
 		}
-	} else {
-		return p
 	}
+	return p
 }
 
 func ResolveSentryProvider(commons ...Common) *SentryProvider {
@@ -356,7 +352,6 @@ func ResolveTfeProvider(commons ...Common) *TfeProvider {
 				hostname = t.Hostname
 			}
 		}
-
 	}
 
 	return &TfeProvider{
@@ -528,13 +523,6 @@ func TerraformVersionGetter(comm Common) *string {
 func BackendBucketGetter(comm Common) *string {
 	if comm.Backend != nil {
 		return comm.Backend.Bucket
-	}
-	return nil
-}
-
-func BackendAccountIdGetter(comm Common) *string {
-	if comm.Backend != nil {
-		return comm.Backend.AccountID
 	}
 	return nil
 }

@@ -84,7 +84,6 @@ func (c CIComponent) generateCIConfig(
 	provider *AWSProvider,
 	projName string,
 	projDir string) *CIConfig {
-
 	if !c.Enabled {
 		return nil
 	}
@@ -288,7 +287,7 @@ type Env struct {
 	EKS        *v2.EKSConfig        `yaml:"eks"`
 }
 
-// TfLint containts a plan for running tflint
+// TfLint contains a plan for running tflint
 type TfLint struct {
 	Enabled bool `yaml:"enabled"`
 }
@@ -435,7 +434,6 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 		envPlan.Env = envName
 
 		for componentName, componentConf := range conf.Envs[envName].Components {
-
 			componentPlan := Component{
 				Kind: componentConf.Kind,
 			}

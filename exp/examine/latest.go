@@ -19,7 +19,7 @@ func LatestModuleVersions(fs afero.Fs, module *tfconfig.Module) ([]ModuleWrapper
 
 	for _, moduleCall := range module.ModuleCalls {
 		if strings.HasPrefix(moduleCall.Source, githubURL) { //If the resource is from github then retrieve from custom url
-			resource, err = createGitUrl(moduleCall)
+			resource, err = createGitURL(moduleCall)
 			if err != nil {
 				return nil, errs.WrapUserf(err, "Could not generate url for %s latest module", moduleCall.Source)
 			}
@@ -38,8 +38,8 @@ func LatestModuleVersions(fs afero.Fs, module *tfconfig.Module) ([]ModuleWrapper
 	return latestModules, nil
 }
 
-//createGitUrl retrieves the latest release version and creates an HTTP accessible link
-func createGitUrl(moduleCall *tfconfig.ModuleCall) (string, error) {
+//createGitURL retrieves the latest release version and creates an HTTP accessible link
+func createGitURL(moduleCall *tfconfig.ModuleCall) (string, error) {
 	splitString := strings.Split(moduleCall.Source, "/")
 	owner, repo := splitString[1], splitString[2]
 

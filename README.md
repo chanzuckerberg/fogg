@@ -1,6 +1,6 @@
 # fogg
 
-[![Build Status](https://travis-ci.com/chanzuckerberg/fogg.svg?token=JNM9vNLfRsFzCcF1uEgc&branch=main)](https://travis-ci.com/chanzuckerberg/fogg) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/chanzuckerberg/fogg)
+![.github/workflows/build.yml](https://github.com/chanzuckerberg/fogg/workflows/.github/workflows/build.yml/badge.svg)
 
 **Please note**: If you believe you have found a security issue, _please responsibly disclose_ by contacting us at [security@chanzuckerberg.com](mailto:security@chanzuckerberg.com).
 
@@ -10,9 +10,12 @@ Visit the fogg documentation for more details: [https://chanzuckerberg.github.io
 
 Fogg is an opinionated tool for managing infrastructure-as-code repositories using Terraform.
 
-Terraform is a powerful tool for managing infrastructure– great when things go right, but dangerous when they don't. Best practices are emerging for reducing this risk, but they require significant work and knowledge to apply consistently.
+Terraform is a powerful tool for managing infrastructure– great when things go right, but dangerous
+when they don't. Best practices are emerging for reducing this risk, but they require significant
+work and knowledge to apply consistently.
 
-We built fogg to automate these practices and scale to a larger pool of engineers who don't have to be terraform experts to use it safely.
+We built fogg to automate these practices and scale to a larger pool of engineers who don't have to
+be terraform experts to use it safely.
 
 A few of the things fogg standardizes–
 
@@ -21,9 +24,12 @@ A few of the things fogg standardizes–
 * resource naming
 * resource isolation
 
-It makes life easy for folks working with cloud infrastructure. We've been using fogg and its predecessor internally at CZI for ~10 months. It has made it possible for many developers without terraform experience to safely roll new infrastructure with less stress and higher quality.
+It makes life easy for folks working with cloud infrastructure. We've been using fogg and its
+predecessor internally at CZI for ~10 months. It has made it possible for many developers without
+terraform experience to safely roll new infrastructure with less stress and higher quality.
 
-"I hope one day you might consider open sourcing `fogg`, i really love it. This would have saved me so much time in the past." - @lenn0x
+"I hope one day you might consider open sourcing `fogg`, i really love it. This would have saved me
+so much time in the past." - @lenn0x
 
 ## Getting Help
 
@@ -40,7 +46,8 @@ brew tap chanzuckerberg/tap
 brew install fogg
 ```
 
-Note– if you installed fogg from homebrew before version 0.15.0, the tap location has changed. Run this, then install as above–
+Note– if you installed fogg from homebrew before version 0.15.0, the tap location has changed. Run
+this, then install as above–
 
 ```shell
 brew uninstall fogg
@@ -52,13 +59,18 @@ brew untap chanzuckerberg/fogg
 Binaries are available on the releases page. Download one for your architecture, put it in your path and make it executable.
 
 Instructions on downloading the binary:
-1. Go here: https://github.com/chanzuckerberg/fogg/releases to find which version of fogg you want.
-2. Run `rm -r WHICH_FOGG_PATH; curl -s https://raw.githubusercontent.com/chanzuckerberg/fogg/master/download.sh | bash -s -- -b FOGG_PATH VERSION` where FOGG_PATH is where you want to install fogg and VERSION is the specific release version you want to install (format is vx.yy.z). To find the path of your current fogg, you can run `which fogg`. Then use the path that is outputted as WHICH_FOGG_PATH in the command. The FOGG_PATH is the folder in which fogg will be installed.
+
+1. Go here: <https://github.com/chanzuckerberg/fogg/releases> to find which version of fogg you want.
+2. Run `curl -s https://raw.githubusercontent.com/chanzuckerberg/fogg/master/download.sh | bash -s -- -b FOGG_PATH VERSION`
+   1. FOGG_PATH is the directory where you want to install fogg
+   2. VERSION is the release you want
 3. To verify you installed the desired version, you can run `fogg version`.
 
 ## Usage
 
-Fogg works entirely by generating code (terraform and make). It will generate directories and files to organize and standardize your repo and then it gets out of your way for you to use terraform and make to manage your infrastructure.
+Fogg works entirely by generating code (terraform and make). It will generate directories and files
+to organize and standardize your repo and then it gets out of your way for you to use terraform and
+make to manage your infrastructure.
 
 The basic workflow is –
 
@@ -70,7 +82,7 @@ The basic workflow is –
 
 #### bash
 
-##### Linux
+##### Linux shell autocompletion
 
 ```shell
 # Might need to install bash-completion on CentOS
@@ -79,7 +91,7 @@ yum install bash-completion
 echo "source <(fogg completion bash)" >> ~/.bashrc
 ```
 
-##### Mac
+##### Mac shell autocompletion
 
 ```shell
 ## If running Bash 3.2 included with macOS
@@ -99,15 +111,20 @@ You can add the file generated by `fogg completion zsh` to a directory in your $
 
 ### Convention over Configuration
 
-Much like Ruby on Rails, we prefer to use conventions to organize our repos rather than a plethora of configuration. Our opinions might not be exactly the way you would do things, but our hope is that be having a set of clear opinions that are thoroughly applied will be productive.
+Much like Ruby on Rails, we prefer to use conventions to organize our repos rather than a plethora
+of configuration. Our opinions might not be exactly the way you would do things, but our hope is
+that be having a set of clear opinions that are thoroughly applied will be productive.
 
 ### Transparency
 
-Fogg tries to stay out of your way– it will do its work by generating Terraform and Make files, and then it step aside for you to manage your infrastructure. Everything that could effect your infrastructure is right there in your repository for you to read and understand.
+Fogg tries to stay out of your way– it will do its work by generating Terraform and Make files, and
+then it step aside for you to manage your infrastructure. Everything that could effect your
+infrastructure is right there in your repository for you to read and understand.
 
 There is no magic.
 
-And if you ever decide to stop using it, you have a working repo you can take in a different direction, just stop running `fogg apply` and go your own way.
+And if you ever decide to stop using it, you have a working repo you can take in a different
+direction, just stop running `fogg apply` and go your own way.
 
 ## Releasing
 
@@ -129,10 +146,11 @@ We use standard go tools + makefiles to build fogg. Getting started should be as
 1. `cd $GOPATH/src/github.com/chanzuckerberg/fogg`
 1. `make setup && make`
 
-If you would like to contribute some code: Read through the documents  located in the `/docs` folder, fork this repo, and send a pull request.
+If you would like to contribute some code: Read through the documents  located in the `/docs`
+folder, fork this repo, and send a pull request.
 
 ## Copyright
 
-Copyright 2017-2020, Chan Zuckerberg Initiative, LLC
+Copyright 2017-2021, Chan Zuckerberg Initiative, LLC
 
 For license, see [LICENSE](LICENSE).

@@ -13,7 +13,7 @@ func init() {
 
 var setupCmd = &cobra.Command{
 	Use:           "setup",
-	Short:         "Setup dependencies for curent working directory",
+	Short:         "Setup dependencies for current working directory",
 	SilenceErrors: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fs, config, err := bootstrapCmd(cmd)

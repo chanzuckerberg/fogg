@@ -15,7 +15,7 @@ func Intptr(i int64) *int64 {
 	return &i
 }
 
-func JsonNumberPtr(i int) *json.Number {
+func JSONNumberPtr(i int) *json.Number {
 	j := json.Number(strconv.Itoa(i))
 	return &j
 }

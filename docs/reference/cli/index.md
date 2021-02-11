@@ -6,8 +6,6 @@ has_children: true
 title: CLI commands
 ---
 
-# CLI commands
-
 Most fogg commands can be invoked with a -h or --help to get detailed help.
 
 To view a list of the available commands at any time, just run fogg with no arguments:
