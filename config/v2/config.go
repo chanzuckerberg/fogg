@@ -191,7 +191,7 @@ type DatadogProvider struct {
 
 type SentryProvider struct {
 	Version *string `yaml:"version,omitempty"`
-	BaseUrl *string `yaml:"base_url,omitempty"`
+	BaseURL *string `yaml:"base_url,omitempty"`
 }
 
 type TfeProvider struct {
@@ -443,14 +443,14 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		return nil
 	}
 
-	randKubernetesProvider := func(r *rand.Rand, s int) *KubernetesProvider {
+	randKubernetesProvider := func(r *rand.Rand) *KubernetesProvider {
 		if r.Float32() < 0.5 {
 			return &KubernetesProvider{}
 		}
 		return nil
 	}
 
-	randSentryProvider := func(r *rand.Rand, s int) *SentryProvider {
+	randSentryProvider := func(r *rand.Rand) *SentryProvider {
 		if r.Float32() < 0.5 {
 			return &SentryProvider{}
 		}
@@ -483,9 +483,9 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 				Bless:      randBlessProvider(r, s),
 				Datadog:    randDatadogProvider(r),
 				Heroku:     randHerokuProvider(r),
-				Kubernetes: randKubernetesProvider(r, s),
+				Kubernetes: randKubernetesProvider(r),
 				Okta:       randOktaProvider(r, s),
-				Sentry:     randSentryProvider(r, s),
+				Sentry:     randSentryProvider(r),
 				Snowflake:  randSnowflakeProvider(r, s),
 			},
 			TerraformVersion: randStringPtr(r, s),

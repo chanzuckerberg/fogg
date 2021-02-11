@@ -324,11 +324,10 @@ func ResolveSentryProvider(commons ...Common) *SentryProvider {
 	if version != nil {
 		return &SentryProvider{
 			Version: version,
-			BaseUrl: baseURL,
+			BaseURL: baseURL,
 		}
-	} else {
-		return p
 	}
+	return p
 }
 
 func ResolveTfeProvider(commons ...Common) *TfeProvider {
@@ -384,7 +383,6 @@ func ResolveKubernetesProvider(commons ...Common) *TfeProvider {
 				hostname = t.Hostname
 			}
 		}
-
 	}
 
 	return &TfeProvider{
@@ -698,7 +696,7 @@ func SentryProviderBaseURLGetter(comm Common) *string {
 	if comm.Providers == nil || comm.Providers.Sentry == nil {
 		return nil
 	}
-	return comm.Providers.Sentry.BaseUrl
+	return comm.Providers.Sentry.BaseURL
 }
 
 func OktaProviderVersionGetter(comm Common) *string {
