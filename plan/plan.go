@@ -644,6 +644,11 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		sentryPlan = &SentryProvider{
 			Enabled: true,
 		}
+
+		providerVersions["sentry"] = ProviderVersion{
+			Source:  "jianyuan/tfe",
+			Version: sentryConfig.Version,
+		}
 	}
 
 	var tfePlan *TfeProvider
