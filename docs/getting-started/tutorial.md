@@ -2,12 +2,13 @@
 parent: Getting Started
 nav_order: 2
 layout: default
+title: Tutorial
 ---
-# Tutorial
 
 This tutorial will walk you through using fogg to create a new infrastructure repository.
 
-Imagine that you are a company named Acme Corporation and want to deploy staging and production versions of your website where each one consists of a single server (let's keep it simple).
+Imagine that you are a company named Acme Corporation and want to deploy staging and production
+versions of your website where each one consists of a single server (let's keep it simple).
 
 Note that fogg works by generating Terraform and Make files. It does not run any Terraform commands for you.
 
@@ -26,7 +27,8 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     git init
     ```
 
-   Fogg depends on working from the root of a git repository. The git repo doesn't need to be pushed anywhere, so `git init` is enough. After this, your directory should look like this–
+   Fogg depends on working from the root of a git repository. The git repo doesn't need to be pushed
+   anywhere, so `git init` is enough. After this, your directory should look like this–
 
    ```
     $ tree -a -L 1
@@ -37,7 +39,8 @@ Note that fogg works by generating Terraform and Make files. It does not run any
 
 1. *initialize fogg*
 
-   Fogg uses a `fogg.yml` file in the root of your repository to define its structure. `fogg init` can help bootstrap this configuration file by asking some questions.
+   Fogg uses a `fogg.yml` file in the root of your repository to define its structure. `fogg init`
+   can help bootstrap this configuration file by asking some questions.
 
    ```shell
    $ fogg init
@@ -52,12 +55,19 @@ Note that fogg works by generating Terraform and Make files. It does not run any
 
     A bit about those questions–
 
-    * *project name* – we\'ve got to name things around here. This is a high level name for your site, infrastructure or product.
-    * *aws region* – our setup is super flexible to run things in any and/or multiple regions. To get started we need a single region that we will configure as a default. This is also the region for the s3 bucket that will hold state files, so maybe think about it a little bit.
-    * *infra bucket name* - we are going to store terraform\'s state files here. Fogg does not create this bucket, so you will need to do that ahead of time. Note that it should be in the same region you said above.
+    * *project name* – we\'ve got to name things around here. This is a high level name for your
+      site, infrastructure or product.
+    * *aws region* – our setup is super flexible to run things in any and/or multiple regions. To
+      get started we need a single region that we will configure as a default. This is also the
+      region for the s3 bucket that will hold state files, so maybe think about it a little bit.
+    * *infra bucket name* - we are going to store terraform\'s state files here. Fogg does not
+      create this bucket, so you will need to do that ahead of time. Note that it should be in the
+      same region you said above.
     * *infra dynamo table name* - TODO
-    * *auth profile* - we use aws authentication profiles, use this to specify the one to be used as a default. If you only have 1 profile set up, its probably called 'default'.
-    * *owner* – we make it easy to tag all your resources with their owner. If you put this here will will drop variables everywhere with the owner in it.
+    * *auth profile* - we use aws authentication profiles, use this to specify the one to be used as
+      a default. If you only have 1 profile set up, its probably called 'default'.
+    * *owner* – we make it easy to tag all your resources with their owner. If you put this here
+      will will drop variables everywhere with the owner in it.
 
     And now your directory should look like this–
 
@@ -98,7 +108,7 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     As we said before fogg works by generating code (terraform, make and bash) and the general workflow is–
 
     1. edit `fogg.yml`
-        - Add an `account_id` to the aws provider
+        * Add an `account_id` to the aws provider
 
         ```yaml
         providers:
@@ -171,24 +181,36 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     7 directories, 15 files
     ```
 
-    Fogg has created 7 directories and put some files in them – `scripts` which exists to hold a handful of shell scripts useful to our operations and `terraform` which will include all our terraform code, both reusable modules and live infrastructure.
+    Fogg has created 7 directories and put some files in them – `scripts` which exists to hold a
+    handful of shell scripts useful to our operations and `terraform` which will include all our
+    terraform code, both reusable modules and live infrastructure.
 
     Before we go on – a bit about how fogg organizes repos –
 
-    Fogg applies an opinionated repo organization. This serves to make it easy to factor your terraform code into many scopes/state-files and also provide some consistency and make working on a team a bit easier.
+    Fogg applies an opinionated repo organization. This serves to make it easy to factor your
+    terraform code into many scopes/state-files and also provide some consistency and make working
+    on a team a bit easier.
 
     Fogg organizes terraform code into `global`, `accounts`, `envs` and `components`.
 
-    * `global` - things are trying global across all your infrastructure. A good example is a Route53 zone, to which you want to add recrords from everywhere in your infra.
-    * `accounts` - things that are relavant at the account level (aws here) - most, but not all aws iam stuff goes here. Note that we make it easy to have multiple accounts with configs for each in `terraform/accounts/account-name`.
+    * `global` - things are trying global across all your infrastructure. A good example is a
+      Route53 zone, to which you want to add recrords from everywhere in your infra.
+    * `accounts` - things that are relavant at the account level (aws here) - most, but not all aws
+      iam stuff goes here. Note that we make it easy to have multiple accounts with configs for each
+      in `terraform/accounts/account-name`.
     * `envs` - think staging vs prod here. fogg makes it easy to keep your tf separate for each one
-    * `components` - in addition to separating environments we do one step further and make it easy to have multiple state files for each environment. In fogg we call those components. Each env can have many components and they all get their own statefile. On top of that each gets a `terrafom_remote_state` data source for all the other components in the same env.
+    * `components` - in addition to separating environments we do one step further and make it easy
+      to have multiple state files for each environment. In fogg we call those components. Each env
+      can have many components and they all get their own statefile. On top of that each gets a
+      `terrafom_remote_state` data source for all the other components in the same env.
 
     With that in mind, let's create a new env.
 
 1. *configure a staging env*
 
-    Fogg helps you organize your terraform code and the resources they create into separate environments. Think 'staging' vs 'production'. It is advisable to have them separate so that you can operate on them independently. Let's create a 'staging' environment.
+    Fogg helps you organize your terraform code and the resources they create into separate
+    environments. Think 'staging' vs 'production'. It is advisable to have them separate so that you
+    can operate on them independently. Let's create a 'staging' environment.
 
     To create a new env, edit your fogg.yaml to look like this–
 
@@ -281,11 +303,17 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     9 directories, 17 files
     ```
 
-    A `terraform/staging` directory has been creaded with a few files in it, but nowhere to put terraform files yet– those go in components which are nested in envs. So let's create a component–
+    A `terraform/staging` directory has been creaded with a few files in it, but nowhere to put
+    terraform files yet– those go in components which are nested in envs. So let's create a
+    component–
 
 2. *create vpc component*
 
-    We need a VPC to run the resources we're about to build. Creating a VPC is a great use-case for Terraform modules. Terraform modules are very useful, but can become tedious if you have to create the same ones repeatedly. Fogg helps with this by allowing you to specify a module source and then code-generating all the parameters and outputs. All that is left for you is to define some `locals` for the parameters.
+    We need a VPC to run the resources we're about to build. Creating a VPC is a great use-case for
+    Terraform modules. Terraform modules are very useful, but can become tedious if you have to
+    create the same ones repeatedly. Fogg helps with this by allowing you to specify a module source
+    and then code-generating all the parameters and outputs. All that is left for you is to define
+    some `locals` for the parameters.
 
     Edit your `fogg.yaml` like so–
 
@@ -315,7 +343,8 @@ Note that fogg works by generating Terraform and Make files. It does not run any
     version: 2
     ```
 
-    This is telling fogg to create a new component called 'vpc',  take the specified module source and code-generate an invocation of that module there.
+    This is telling fogg to create a new component called 'vpc',  take the specified module source
+    and code-generate an invocation of that module there.
 
     Run `fogg apply` and you'll see some new files–
 
