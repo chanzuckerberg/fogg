@@ -643,6 +643,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	if sentryConfig != nil {
 		sentryPlan = &SentryProvider{
 			Enabled: true,
+			BaseURL: sentryConfig.BaseURL,
 		}
 
 		providerVersions["sentry"] = ProviderVersion{

@@ -362,14 +362,13 @@ func ResolveTfeProvider(commons ...Common) *TfeProvider {
 	}
 }
 
-func ResolveKubernetesProvider(commons ...Common) *TfeProvider {
+func ResolveKubernetesProvider(commons ...Common) *KubernetesProvider {
 	var version *string
 	var enabled *bool
-	var hostname *string
 
 	for _, c := range commons {
-		if c.Providers != nil && c.Providers.Tfe != nil {
-			t := c.Providers.Tfe
+		if c.Providers != nil && c.Providers.Kubernetes != nil {
+			t := c.Providers.Kubernetes
 
 			if t.Enabled != nil {
 				enabled = t.Enabled
@@ -378,19 +377,14 @@ func ResolveKubernetesProvider(commons ...Common) *TfeProvider {
 			if t.Version != nil {
 				version = t.Version
 			}
-
-			if t.Hostname != nil {
-				hostname = t.Hostname
-			}
 		}
 	}
 
-	return &TfeProvider{
+	return &KubernetesProvider{
 		CommonProvider: CommonProvider{
 			Enabled: enabled,
 			Version: version,
 		},
-		Hostname: hostname,
 	}
 }
 
