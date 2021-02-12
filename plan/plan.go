@@ -646,7 +646,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 
 		providerVersions["sentry"] = ProviderVersion{
-			Source:  "jianyuan/tfe",
+			Source:  "jianyuan/sentry",
 			Version: sentryConfig.Version,
 		}
 	}
