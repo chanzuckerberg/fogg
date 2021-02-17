@@ -64,7 +64,7 @@ terraform {
     }
 
     sentry = {
-      source = "jianyuan/tfe"
+      source = "jianyuan/sentry"
 
       version = "1.2.3"
 

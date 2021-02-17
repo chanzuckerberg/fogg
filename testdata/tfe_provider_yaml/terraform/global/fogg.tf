@@ -26,13 +26,6 @@ terraform {
 
     }
 
-    kubernetes = {
-      source = "hashicorp/kubernetes"
-
-      version = "1.1.1"
-
-    }
-
     local = {
       source = "hashicorp/local"
 
