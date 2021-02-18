@@ -42,6 +42,13 @@ terraform {
 
     }
 
+    grafana = {
+      source = "grafana/grafana"
+
+      version = "1.1.1"
+
+    }
+
     herok = {
       source = "heroku/heroku"
 

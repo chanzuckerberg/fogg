@@ -248,3 +248,24 @@ func TestOktaProvider(t *testing.T) {
 	disabled(plan.Accounts["foo"].ComponentCommon)
 	enabled(plan.Envs["prod"].Components["okta"].ComponentCommon)
 }
+
+func TestGrafanaProvider(t *testing.T) {
+	r := require.New(t)
+
+	plan := buildPlan(t, "v2_full_yaml")
+
+	enabled := func(c ComponentCommon) {
+		r.NotNil(c)
+		r.NotNil(c.ProviderConfiguration.Grafana)
+		r.NotNil(c.ProviderVersions["grafana"])
+	}
+
+	// disabled := func(c ComponentCommon) {
+	// 	r.NotNil(c)
+	// 	r.Nil(c.ProviderConfiguration.Sentry)
+	// }
+
+	// disabled(plan.Global.ComponentCommon)
+	// disabled(plan.Accounts["foo"].ComponentCommon)
+	enabled(plan.Envs["prod"].Components["hero"].ComponentCommon)
+}
