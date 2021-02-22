@@ -48,7 +48,7 @@ require (
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/afero v1.2.2
 	github.com/spf13/cobra v1.1.3
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.7.0
 	github.com/ulikunitz/xz v0.5.7 // indirect
 	github.com/zclconf/go-cty v1.6.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.31.0
