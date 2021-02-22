@@ -10,7 +10,7 @@ require (
 	github.com/Masterminds/sprig v2.22.0+incompatible
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/antzucaro/matchr v0.0.0-20191224151129-ab6ba461ddec
-	github.com/aws/aws-sdk-go v1.36.30
+	github.com/aws/aws-sdk-go v1.37.15
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/bmatcuk/doublestar v1.2.4 // indirect
 	github.com/chanzuckerberg/go-misc v0.0.0-20210209191033-ae96c0409e3f
@@ -47,7 +47,7 @@ require (
 	github.com/segmentio/go-prompt v1.2.1-0.20161017233205-f0d19b6901ad
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/afero v1.2.2
-	github.com/spf13/cobra v1.0.0
+	github.com/spf13/cobra v1.1.3
 	github.com/stretchr/testify v1.6.1
 	github.com/ulikunitz/xz v0.5.7 // indirect
 	github.com/zclconf/go-cty v1.6.1 // indirect
