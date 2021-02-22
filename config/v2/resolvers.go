@@ -309,6 +309,25 @@ func ResolveDatadogProvider(commons ...Common) *DatadogProvider {
 	return p
 }
 
+func ResolvePagerdutyProvider(commons ...Common) *PagerdutyProvider {
+	var p *PagerdutyProvider
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.Pagerduty == nil {
+			continue
+		}
+		p = c.Providers.Pagerduty
+	}
+
+	version := lastNonNil(PagerdutyProviderVersionGetter, commons...)
+
+	if version != nil {
+		return &PagerdutyProvider{
+			Version: version,
+		}
+	}
+	return p
+}
+
 func ResolveSentryProvider(commons ...Common) *SentryProvider {
 	var p *SentryProvider
 	for _, c := range commons {
@@ -703,6 +722,13 @@ func DatadogProviderVersionGetter(comm Common) *string {
 		return nil
 	}
 	return comm.Providers.Datadog.Version
+}
+
+func PagerdutyProviderVersionGetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.Pagerduty == nil {
+		return nil
+	}
+	return comm.Providers.Pagerduty.Version
 }
 
 func SentryProviderVersionGetter(comm Common) *string {
