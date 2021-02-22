@@ -52,6 +52,6 @@ require (
 	github.com/ulikunitz/xz v0.5.7 // indirect
 	github.com/zclconf/go-cty v1.6.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.31.0
-	gopkg.in/ini.v1 v1.55.0
+	gopkg.in/ini.v1 v1.62.0
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776
 )
