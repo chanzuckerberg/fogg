@@ -388,6 +388,32 @@ func ResolveKubernetesProvider(commons ...Common) *KubernetesProvider {
 	}
 }
 
+func ResolveGrafanaProvider(commons ...Common) *GrafanaProvider {
+	var version *string
+	var enabled *bool
+
+	for _, c := range commons {
+		if c.Providers != nil && c.Providers.Grafana != nil {
+			t := c.Providers.Grafana
+
+			if t.Enabled != nil {
+				enabled = t.Enabled
+			}
+
+			if t.Version != nil {
+				version = t.Version
+			}
+		}
+	}
+
+	return &GrafanaProvider{
+		CommonProvider: CommonProvider{
+			Enabled: enabled,
+			Version: version,
+		},
+	}
+}
+
 func ResolveTfLint(commons ...Common) TfLint {
 	enabled := false
 	for _, c := range commons {

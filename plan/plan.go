@@ -125,6 +125,7 @@ type ProviderConfiguration struct {
 	Bless                  *BlessProvider      `yaml:"bless"`
 	Datadog                *DatadogProvider    `yaml:"datadog"`
 	Github                 *GithubProvider     `yaml:"github"`
+	Grafana                *GrafanaProvider    `yaml:"grafana"`
 	Heroku                 *HerokuProvider     `yaml:"heroku"`
 	Kubernetes             *KubernetesProvider `yaml:"kubernetes"`
 	Okta                   *OktaProvider       `yaml:"okta"`
@@ -218,6 +219,9 @@ type TfeProvider struct {
 }
 
 type KubernetesProvider struct {
+}
+
+type GrafanaProvider struct {
 }
 
 // BackendKind is a enum of backends we support
@@ -679,6 +683,18 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
+	var grafanaPlan *GrafanaProvider
+
+	grafanaConfig := v2.ResolveGrafanaProvider(commons...)
+	if grafanaConfig.Enabled != nil && *grafanaConfig.Enabled {
+		grafanaPlan = &GrafanaProvider{}
+
+		providerVersions["grafana"] = ProviderVersion{
+			Source:  "grafana/grafana",
+			Version: grafanaConfig.Version,
+		}
+	}
+
 	tflintConfig := v2.ResolveTfLint(commons...)
 
 	tfLintPlan := TfLint{
@@ -767,6 +783,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Bless:                  blessPlan,
 			Datadog:                datadogPlan,
 			Github:                 githubPlan,
+			Grafana:                grafanaPlan,
 			Heroku:                 herokuPlan,
 			Kubernetes:             k8sPlan,
 			Okta:                   oktaPlan,
