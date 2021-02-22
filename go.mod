@@ -29,7 +29,6 @@ require (
 	github.com/hashicorp/go-version v1.2.1
 	github.com/hashicorp/hcl/v2 v2.8.2
 	github.com/hashicorp/hcl2 v0.0.0-20191002203319-fb75b3253c80
-	github.com/hashicorp/hil v0.0.0-20190212132231-97b3a9cdfa93 // indirect
 	github.com/hashicorp/terraform v0.14.7
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20200806211835-c481b8bfa41e
 	github.com/howeyc/gopass v0.0.0-20190910152052-7cb4b85ec19c // indirect
@@ -39,7 +38,6 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mitchellh/go-testing-interface v1.14.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
-	github.com/mitchellh/mapstructure v1.2.2 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/rogpeppe/go-internal v1.5.2 // indirect
