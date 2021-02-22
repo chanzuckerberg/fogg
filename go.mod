@@ -15,7 +15,7 @@ require (
 	github.com/bmatcuk/doublestar v1.2.4 // indirect
 	github.com/chanzuckerberg/go-misc v0.0.0-20210209191033-ae96c0409e3f
 	github.com/davecgh/go-spew v1.1.1
-	github.com/fatih/color v1.9.0
+	github.com/fatih/color v1.10.0
 	github.com/go-errors/errors v1.1.1
 	github.com/go-logfmt/logfmt v0.5.0
 	github.com/gobuffalo/envy v1.9.0 // indirect
@@ -44,7 +44,7 @@ require (
 	github.com/segmentio/go-prompt v1.2.1-0.20161017233205-f0d19b6901ad
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/afero v1.2.2
-	github.com/spf13/cobra v1.0.0
+	github.com/spf13/cobra v1.1.3
 	github.com/stretchr/testify v1.6.1
 	gopkg.in/go-playground/validator.v9 v9.31.0
 	gopkg.in/ini.v1 v1.55.0
