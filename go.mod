@@ -15,7 +15,7 @@ require (
 	github.com/bmatcuk/doublestar v1.2.4 // indirect
 	github.com/chanzuckerberg/go-misc v0.0.0-20210209191033-ae96c0409e3f
 	github.com/davecgh/go-spew v1.1.1
-	github.com/fatih/color v1.9.0
+	github.com/fatih/color v1.10.0
 	github.com/go-errors/errors v1.1.1
 	github.com/go-logfmt/logfmt v0.5.0
 	github.com/gobuffalo/envy v1.9.0 // indirect
