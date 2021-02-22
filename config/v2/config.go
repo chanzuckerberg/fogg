@@ -121,6 +121,7 @@ type Providers struct {
 	Bless      *BlessProvider      `yaml:"bless,omitempty"`
 	Datadog    *DatadogProvider    `yaml:"datadog,omitempty"`
 	Github     *GithubProvider     `yaml:"github,omitempty"`
+	Grafana    *GrafanaProvider    `yaml:"grafana,omitempty"`
 	Heroku     *HerokuProvider     `yaml:"heroku,omitempty"`
 	Kubernetes *KubernetesProvider `yaml:"kubernetes,omitempty"`
 	Okta       *OktaProvider       `yaml:"okta,omitempty"`
@@ -172,6 +173,10 @@ type GithubProvider struct {
 	Organization *string `yaml:"organization,omitempty"`
 	BaseURL      *string `yaml:"base_url,omitempty"`
 	Version      *string `yaml:"version,omitempty"`
+}
+
+type GrafanaProvider struct {
+	CommonProvider `yaml:",inline"`
 }
 
 type SnowflakeProvider struct {
@@ -450,6 +455,13 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		return nil
 	}
 
+	randGrafanaProvider := func(r *rand.Rand) *GrafanaProvider {
+		if r.Float32() < 0.5 {
+			return &GrafanaProvider{}
+		}
+		return nil
+	}
+
 	randSentryProvider := func(r *rand.Rand) *SentryProvider {
 		if r.Float32() < 0.5 {
 			return &SentryProvider{}
@@ -482,6 +494,7 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 				AWS:        randAWSProvider(r, s),
 				Bless:      randBlessProvider(r, s),
 				Datadog:    randDatadogProvider(r),
+				Grafana:    randGrafanaProvider(r),
 				Heroku:     randHerokuProvider(r),
 				Kubernetes: randKubernetesProvider(r),
 				Okta:       randOktaProvider(r, s),
