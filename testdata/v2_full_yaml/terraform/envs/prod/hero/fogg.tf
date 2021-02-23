@@ -49,7 +49,7 @@ terraform {
 
     }
 
-    herok = {
+    heroku = {
       source = "heroku/heroku"
 
     }
