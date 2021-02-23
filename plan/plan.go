@@ -625,7 +625,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	if herokuConfig != nil {
 		herokuPlan = &HerokuProvider{}
 
-		providerVersions["herok"] = ProviderVersion{
+		providerVersions["heroku"] = ProviderVersion{
 			Source:  "heroku/heroku",
 			Version: herokuConfig.Version,
 		}
@@ -639,6 +639,14 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		providerVersions["datadog"] = ProviderVersion{
 			Source:  "datadog/datadog",
 			Version: datadogConfig.Version,
+		}
+	}
+
+	pagerdutyConfig := v2.ResolvePagerdutyProvider(commons...)
+	if pagerdutyConfig != nil {
+		providerVersions["pagerduty"] = ProviderVersion{
+			Source:  "pagerduty/pagerduty",
+			Version: pagerdutyConfig.Version,
 		}
 	}
 
