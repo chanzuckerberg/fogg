@@ -650,6 +650,14 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
+	databricksConfig := v2.ResolveDatabricksProvider(commons...)
+	if databricksConfig != nil {
+		providerVersions["databricks"] = ProviderVersion{
+			Source:  "databricks/databricks",
+			Version: databricksConfig.Version,
+		}
+	}
+
 	var sentryPlan *SentryProvider
 	sentryConfig := v2.ResolveSentryProvider(commons...)
 	if sentryConfig != nil {
