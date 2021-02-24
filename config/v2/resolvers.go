@@ -236,7 +236,7 @@ func ResolveSnowflakeProvider(commons ...Common) *SnowflakeProvider {
 func ResolveOktaProvider(commons ...Common) *OktaProvider {
 	orgName := lastNonNil(OktaProviderOrgNameGetter, commons...)
 	baseURL := lastNonNil(OktaProviderBaseURLGetter, commons...)
-	registryNamespace := lastNonNil(OktaProviderBaseURLGetter, commons...)
+	registryNamespace := lastNonNil(OktaProviderRegistryNamespaceGetter, commons...)
 
 	// required fields
 	if orgName == nil {
@@ -783,6 +783,13 @@ func OktaProviderBaseURLGetter(comm Common) *string {
 		return nil
 	}
 	return comm.Providers.Okta.BaseURL
+}
+
+func OktaProviderRegistryNamespaceGetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.Okta == nil {
+		return nil
+	}
+	return comm.Providers.Okta.RegistryNamespace
 }
 
 func OktaProviderRegistryNamespacegetter(comm Common) *string {
