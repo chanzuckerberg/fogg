@@ -236,7 +236,7 @@ func ResolveSnowflakeProvider(commons ...Common) *SnowflakeProvider {
 func ResolveOktaProvider(commons ...Common) *OktaProvider {
 	orgName := lastNonNil(OktaProviderOrgNameGetter, commons...)
 	baseURL := lastNonNil(OktaProviderBaseURLGetter, commons...)
-	registryNamespace := lastNonNil(OktaProviderBaseURLGetter, commons...)
+	registryNamespace := lastNonNil(OktaProviderRegistryNamespaceGetter, commons...)
 
 	// required fields
 	if orgName == nil {
@@ -303,6 +303,44 @@ func ResolveDatadogProvider(commons ...Common) *DatadogProvider {
 
 	if version != nil {
 		return &DatadogProvider{
+			Version: version,
+		}
+	}
+	return p
+}
+
+func ResolvePagerdutyProvider(commons ...Common) *PagerdutyProvider {
+	var p *PagerdutyProvider
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.Pagerduty == nil {
+			continue
+		}
+		p = c.Providers.Pagerduty
+	}
+
+	version := lastNonNil(PagerdutyProviderVersionGetter, commons...)
+
+	if version != nil {
+		return &PagerdutyProvider{
+			Version: version,
+		}
+	}
+	return p
+}
+
+func ResolveDatabricksProvider(commons ...Common) *DatabricksProvider {
+	var p *DatabricksProvider
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.Databricks == nil {
+			continue
+		}
+		p = c.Providers.Databricks
+	}
+
+	version := lastNonNil(DatabricksProviderVersionGetter, commons...)
+
+	if version != nil {
+		return &DatabricksProvider{
 			Version: version,
 		}
 	}
@@ -705,6 +743,20 @@ func DatadogProviderVersionGetter(comm Common) *string {
 	return comm.Providers.Datadog.Version
 }
 
+func PagerdutyProviderVersionGetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.Pagerduty == nil {
+		return nil
+	}
+	return comm.Providers.Pagerduty.Version
+}
+
+func DatabricksProviderVersionGetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.Databricks == nil {
+		return nil
+	}
+	return comm.Providers.Databricks.Version
+}
+
 func SentryProviderVersionGetter(comm Common) *string {
 	if comm.Providers == nil || comm.Providers.Sentry == nil {
 		return nil
@@ -731,6 +783,13 @@ func OktaProviderBaseURLGetter(comm Common) *string {
 		return nil
 	}
 	return comm.Providers.Okta.BaseURL
+}
+
+func OktaProviderRegistryNamespaceGetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.Okta == nil {
+		return nil
+	}
+	return comm.Providers.Okta.RegistryNamespace
 }
 
 func OktaProviderRegistryNamespacegetter(comm Common) *string {

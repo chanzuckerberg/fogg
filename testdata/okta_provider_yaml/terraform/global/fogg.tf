@@ -43,7 +43,7 @@ terraform {
     }
 
     okta = {
-      source = "oktapreview.com/okta"
+      source = "oktadeveloper/okta"
 
       version = "aversion"
 
