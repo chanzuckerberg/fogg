@@ -59,7 +59,7 @@ terraform {
     }
 
     okta = {
-      source = "https://foo.okta.com//okta"
+      source = "acme/okta"
 
     }
 
