@@ -119,6 +119,7 @@ type Component struct {
 type Providers struct {
 	AWS        *AWSProvider        `yaml:"aws,omitempty"`
 	Bless      *BlessProvider      `yaml:"bless,omitempty"`
+	Databricks *DatabricksProvider `yaml:"databricks,omitempty"`
 	Datadog    *DatadogProvider    `yaml:"datadog,omitempty"`
 	Github     *GithubProvider     `yaml:"github,omitempty"`
 	Grafana    *GrafanaProvider    `yaml:"grafana,omitempty"`
@@ -196,6 +197,10 @@ type DatadogProvider struct {
 }
 
 type PagerdutyProvider struct {
+	Version *string `yaml:"version,omitempty"`
+}
+
+type DatabricksProvider struct {
 	Version *string `yaml:"version,omitempty"`
 }
 
@@ -460,6 +465,13 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		return nil
 	}
 
+	randDatabricksProvider := func(r *rand.Rand) *DatabricksProvider {
+		if r.Float32() < 0.5 {
+			return &DatabricksProvider{}
+		}
+		return nil
+	}
+
 	randKubernetesProvider := func(r *rand.Rand) *KubernetesProvider {
 		if r.Float32() < 0.5 {
 			return &KubernetesProvider{}
@@ -507,6 +519,7 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 				Bless:      randBlessProvider(r, s),
 				Datadog:    randDatadogProvider(r),
 				Pagerduty:  randPagerdutyProvider(r),
+				Databricks: randDatabricksProvider(r),
 				Grafana:    randGrafanaProvider(r),
 				Heroku:     randHerokuProvider(r),
 				Kubernetes: randKubernetesProvider(r),
