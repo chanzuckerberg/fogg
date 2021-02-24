@@ -328,6 +328,25 @@ func ResolvePagerdutyProvider(commons ...Common) *PagerdutyProvider {
 	return p
 }
 
+func ResolveDatabricksProvider(commons ...Common) *DatabricksProvider {
+	var p *DatabricksProvider
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.Databricks == nil {
+			continue
+		}
+		p = c.Providers.Databricks
+	}
+
+	version := lastNonNil(DatabricksProviderVersionGetter, commons...)
+
+	if version != nil {
+		return &DatabricksProvider{
+			Version: version,
+		}
+	}
+	return p
+}
+
 func ResolveSentryProvider(commons ...Common) *SentryProvider {
 	var p *SentryProvider
 	for _, c := range commons {
@@ -729,6 +748,13 @@ func PagerdutyProviderVersionGetter(comm Common) *string {
 		return nil
 	}
 	return comm.Providers.Pagerduty.Version
+}
+
+func DatabricksProviderVersionGetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.Databricks == nil {
+		return nil
+	}
+	return comm.Providers.Databricks.Version
 }
 
 func SentryProviderVersionGetter(comm Common) *string {
