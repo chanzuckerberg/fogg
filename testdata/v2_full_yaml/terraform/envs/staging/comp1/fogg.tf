@@ -12,15 +12,13 @@ provider aws {
 terraform {
   required_version = "=0.100.0"
 
-  backend s3 {
+  backend remote {
 
-    bucket = "buck"
-
-    key     = "terraform/proj/envs/staging/components/comp1.tfstate"
-    encrypt = true
-    region  = "us-west-2"
-    profile = "comp1"
-
+    hostname     = "example.com"
+    organization = "foo"
+    workspaces {
+      name = "staging-comp1"
+    }
 
   }
   required_providers {
@@ -129,30 +127,28 @@ data terraform_remote_state global {
   }
 }
 data terraform_remote_state comp2 {
-  backend = "s3"
+  backend = "remote"
   config = {
 
 
-    bucket = "buck"
-
-    key     = "terraform/proj/envs/staging/components/comp2.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
-
+    hostname     = "example.com"
+    organization = "foo"
+    workspaces = {
+      name = "staging-comp2"
+    }
 
   }
 }
 data terraform_remote_state vpc {
-  backend = "s3"
+  backend = "remote"
   config = {
 
 
-    bucket = "buck"
-
-    key     = "terraform/proj/envs/staging/components/vpc.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
-
+    hostname     = "example.com"
+    organization = "foo"
+    workspaces = {
+      name = "staging-vpc"
+    }
 
   }
 }

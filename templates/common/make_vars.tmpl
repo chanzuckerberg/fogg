@@ -3,11 +3,14 @@ export TERRAFORM_VERSION := {{ .TerraformVersion }}
 export TFLINT_ENABLED := {{ if .TfLint.Enabled }}1{{ else }}0{{ end }}
 export TF_PLUGIN_CACHE_DIR := {{ .PathToRepoRoot }}/.terraform.d/plugin-cache
 export TF_BACKEND_KIND := {{ .Backend.Kind }}
-{{ if .Backend.S3 }}{{ if .Backend.S3.Profile}}export AWS_BACKEND_PROFILE := {{ .Backend.S3.Profile }}{{ end }}{{end}}
-{{ if .Backend.S3 }}{{ if .Backend.S3.RoleArn }}export AWS_BACKEND_ROLE_ARN := {{ .Backend.S3.RoleArn }}{{ end }}{{end}}
-{{ if .ProviderConfiguration.AWS }}{{ if .ProviderConfiguration.AWS.Profile }}export AWS_PROVIDER_PROFILE := {{ .ProviderConfiguration.AWS.Profile }}{{ end }}{{ end }}
-{{ if .ProviderConfiguration.AWS }}{{ if .ProviderConfiguration.AWS.RoleArn }}export AWS_PROVIDER_ROLE_ARN := {{ .ProviderConfiguration.AWS.RoleArn }}{{ end }}{{ end }}
+{{ if .Backend.S3 }}
+{{ if .Backend.S3.Profile}}export AWS_BACKEND_PROFILE := {{ .Backend.S3.Profile }}{{ end }}
+{{ if .Backend.S3.RoleArn }}export AWS_BACKEND_ROLE_ARN := {{ .Backend.S3.RoleArn }}{{ end }}
+{{ if .ProviderConfiguration.AWS }}
+{{ if .ProviderConfiguration.AWS.Profile }}export AWS_PROVIDER_PROFILE := {{ .ProviderConfiguration.AWS.Profile }}{{ end }}
+{{ if .ProviderConfiguration.AWS.RoleArn }}export AWS_PROVIDER_ROLE_ARN := {{ .ProviderConfiguration.AWS.RoleArn }}{{ end }}
 {{if .ProviderConfiguration.Heroku}}export HEROKU_PROVIDER := 1{{end}}
-
+{{ end }}
+{{ end }}
 include {{ .PathToRepoRoot }}/scripts/component.mk
 {{ end }}
