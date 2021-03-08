@@ -80,6 +80,10 @@ envs:
         module_source: github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0
         module_name: prod-vpc
   staging:
+    backend:
+      kind: remote
+      host_name: example.com
+      organization: foo
     components:
       comp_helm_template:
         eks:
