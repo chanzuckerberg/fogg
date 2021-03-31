@@ -516,40 +516,46 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 	return envPlans, nil
 }
 
+func resolveAWSProvider(commons ...v2.Common) (plan *AWSProvider, providers []AWSProvider, version *string) {
+	awsConfig := v2.ResolveAWSProvider(commons...)
+	var roleArn *string
+	if awsConfig == nil {
+		return
+	}
+
+	if awsConfig.Role != nil {
+		tmp := fmt.Sprintf("arn:aws:iam::%s:role/%s", *awsConfig.AccountID, *awsConfig.Role)
+		roleArn = &tmp
+	}
+	plan = &AWSProvider{
+		AccountID: *awsConfig.AccountID,
+		Profile:   awsConfig.Profile,
+		Region:    *awsConfig.Region,
+		RoleArn:   roleArn,
+	}
+
+	for _, r := range awsConfig.AdditionalRegions {
+		// we have to take a reference here otherwise it gets overwritten by the loop
+		region := r
+		providers = append(providers,
+			AWSProvider{
+				AccountID: *awsConfig.AccountID,
+				Alias:     &region,
+				Profile:   awsConfig.Profile,
+				Region:    region,
+				RoleArn:   roleArn,
+			})
+	}
+	return
+}
+
 func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	providerVersions := copyMap(utilityProviders)
-	var awsPlan *AWSProvider
-	awsConfig := v2.ResolveAWSProvider(commons...)
-	additionalProviders := []AWSProvider{}
-	var roleArn *string
-	if awsConfig != nil {
-		if awsConfig.Role != nil {
-			tmp := fmt.Sprintf("arn:aws:iam::%s:role/%s", *awsConfig.AccountID, *awsConfig.Role)
-			roleArn = &tmp
-		}
-		awsPlan = &AWSProvider{
-			AccountID: *awsConfig.AccountID,
-			Profile:   awsConfig.Profile,
-			Region:    *awsConfig.Region,
-			RoleArn:   roleArn,
-		}
-
+	awsPlan, additionalProviders, awsVersion := resolveAWSProvider(commons...)
+	if awsVersion != nil {
 		providerVersions["aws"] = ProviderVersion{
 			Source:  "hashicorp/aws",
-			Version: awsConfig.Version,
-		}
-
-		for _, r := range awsConfig.AdditionalRegions {
-			// we have to take a reference here otherwise it gets overwritten by the loop
-			region := r
-			additionalProviders = append(additionalProviders,
-				AWSProvider{
-					AccountID: *awsConfig.AccountID,
-					Alias:     &region,
-					Profile:   awsConfig.Profile,
-					Region:    region,
-					RoleArn:   roleArn,
-				})
+			Version: awsVersion,
 		}
 	}
 

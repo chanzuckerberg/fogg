@@ -85,6 +85,7 @@ func ResolveAWSProvider(commons ...Common) *AWSProvider {
 	var profile, region, role, version *string
 	var accountID *json.Number
 	var additionalRegions []string
+	var additionalProviders map[string]*AWSProvider
 
 	for _, c := range commons {
 		if c.Providers != nil && c.Providers.AWS != nil {
@@ -116,6 +117,10 @@ func ResolveAWSProvider(commons ...Common) *AWSProvider {
 			if p.AdditionalRegions != nil {
 				additionalRegions = p.AdditionalRegions
 			}
+
+			if p.AdditionalProviders != nil {
+				additionalProviders = p.AdditionalProviders
+			}
 		}
 	}
 
@@ -127,8 +132,9 @@ func ResolveAWSProvider(commons ...Common) *AWSProvider {
 			Version: version,
 
 			// optional fields
-			AccountID:         accountID,
-			AdditionalRegions: additionalRegions,
+			AccountID:           accountID,
+			AdditionalRegions:   additionalRegions,
+			AdditionalProviders: additionalProviders,
 		}
 	}
 	return nil
