@@ -519,10 +519,15 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 func resolveAWSProvider(commons ...v2.Common) (plan *AWSProvider, providers []AWSProvider, version *string) {
 	awsConfig := v2.ResolveAWSProvider(commons...)
 	var roleArn *string
+	// nothing to do
 	if awsConfig == nil {
 		return
 	}
 
+	// set the version
+	version = awsConfig.Version
+
+	// configure the main provider
 	if awsConfig.Role != nil {
 		tmp := fmt.Sprintf("arn:aws:iam::%s:role/%s", *awsConfig.AccountID, *awsConfig.Role)
 		roleArn = &tmp
@@ -534,6 +539,7 @@ func resolveAWSProvider(commons ...v2.Common) (plan *AWSProvider, providers []AW
 		RoleArn:   roleArn,
 	}
 
+	// grab all aliased regions
 	for _, r := range awsConfig.AdditionalRegions {
 		// we have to take a reference here otherwise it gets overwritten by the loop
 		region := r
@@ -545,6 +551,31 @@ func resolveAWSProvider(commons ...v2.Common) (plan *AWSProvider, providers []AW
 				Region:    region,
 				RoleArn:   roleArn,
 			})
+	}
+
+	//HACK HACK(el): this is horrible: grab all extra accounts and configure aliased providers for them
+	for aliasPrefix, aws := range awsConfig.AdditionalProviders {
+		// HACK(el): we create this pseudo v2.Common for each additional provider and do the inheritance
+		pseudoCommon := v2.Common{
+			Providers: &v2.Providers{
+				AWS: aws,
+			},
+		}
+		extraCommons := []v2.Common{}
+		extraCommons = append(extraCommons, commons...)
+		extraCommons = append(extraCommons, pseudoCommon)
+
+		extraPlan, extraProviders, _ := resolveAWSProvider(extraCommons...)
+		if extraPlan != nil {
+			extraPlan.Alias = util.JoinStrPointers("-", &aliasPrefix, extraPlan.Alias)
+			providers = append(providers, *extraPlan)
+		}
+
+		for _, eP := range extraProviders {
+			extraProvider := eP
+			extraProvider.Alias = util.JoinStrPointers("-", &aliasPrefix, extraProvider.Alias)
+			providers = append(providers, extraProvider)
+		}
 	}
 	return
 }
