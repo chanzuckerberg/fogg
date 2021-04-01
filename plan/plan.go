@@ -560,7 +560,8 @@ func resolveAWSProvider(commons ...v2.Common) (plan *AWSProvider, providers []AW
 	}
 
 	//HACK HACK(el): this is horrible: grab all extra accounts and configure aliased providers for them
-	for aliasPrefix, aws := range awsConfig.AdditionalProviders {
+	for ap, aws := range awsConfig.AdditionalProviders {
+		aliasPrefix := ap
 		// HACK(el): we create this pseudo v2.Common for each additional provider and do the inheritance
 		pseudoCommon := v2.Common{
 			Providers: &v2.Providers{
