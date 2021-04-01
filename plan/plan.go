@@ -516,13 +516,7 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 	return envPlans, nil
 }
 
-var depth = 0
-
 func resolveAWSProvider(commons ...v2.Common) (plan *AWSProvider, providers []AWSProvider, version *string) {
-	depth++
-	if depth > 100 {
-		panic(commons)
-	}
 	awsConfig := v2.ResolveAWSProvider(commons...)
 	var roleArn *string
 	// nothing to do
