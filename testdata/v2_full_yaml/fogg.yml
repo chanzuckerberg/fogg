@@ -10,11 +10,11 @@ accounts:
         additional_providers:
           another_account_different_role:
             account_id: 789
-            role: bar
+            role: different_role
           another_account_same_role:
-            account_id: 111
+            account_id: different_account
           another_account_more_regions:
-            account_id: 222
+            account_id: another_different_account
             additional_regions:
               - eu-west-2
       bless:

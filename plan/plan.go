@@ -516,7 +516,13 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 	return envPlans, nil
 }
 
+var depth = 0
+
 func resolveAWSProvider(commons ...v2.Common) (plan *AWSProvider, providers []AWSProvider, version *string) {
+	depth++
+	if depth > 100 {
+		panic(commons)
+	}
 	awsConfig := v2.ResolveAWSProvider(commons...)
 	var roleArn *string
 	// nothing to do
@@ -561,10 +567,10 @@ func resolveAWSProvider(commons ...v2.Common) (plan *AWSProvider, providers []AW
 				AWS: aws,
 			},
 		}
-		extraCommons := []v2.Common{}
-		extraCommons = append(extraCommons, commons...)
-		extraCommons = append(extraCommons, pseudoCommon)
+		// set so not nil
+		pseudoCommon.Providers.AWS.AdditionalProviders = map[string]*v2.AWSProvider{}
 
+		extraCommons := append(commons[:], pseudoCommon)
 		extraPlan, extraProviders, _ := resolveAWSProvider(extraCommons...)
 		if extraPlan != nil {
 			extraPlan.Alias = util.JoinStrPointers("-", &aliasPrefix, extraPlan.Alias)
