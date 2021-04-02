@@ -9,10 +9,17 @@ export GO111MODULE=on
 all: test install
 
 setup: ## setup development dependencies
+	## Build dependencies
 	go get -u github.com/gobuffalo/packr/v2/packr2
+
+	## Release dependencies
 	curl -sfL https://raw.githubusercontent.com/chanzuckerberg/bff/main/download.sh | sh
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh
+
+	## Used by lint and lint-ci make commands
 	curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh
+
+	## Used by .reviewdog.yml to lint markdown files in this project
 	npm install markdownlint-cli
 .PHONY: setup
 
@@ -111,7 +118,7 @@ clean: ## clean the repo
 	go clean
 	go clean -testcache
 	rm -rf dist 2>/dev/null || true
-	./bin/packr clean
+	packr2 clean
 	rm coverage.out 2>/dev/null || true
 
 update-golden-files: clean deps ## update the golden files in testdata
