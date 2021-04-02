@@ -9,7 +9,7 @@ export GO111MODULE=on
 all: test install
 
 setup: ## setup development dependencies
-	./.godownloader-packr.sh -d v1.24.1
+	go get -u github.com/gobuffalo/packr/v2/packr2
 	curl -sfL https://raw.githubusercontent.com/chanzuckerberg/bff/main/download.sh | sh
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh
 	curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh
@@ -36,8 +36,8 @@ lint-all: ## run the fast go linters
 TEMPLATES := $(shell find templates -not -name "*.go")
 
 templates/a_templates-packr.go: $(TEMPLATES)
-	./bin/packr clean -v
-	./bin/packr -v
+	packr2 clean -v
+	packr2 build -v
 
 packr: templates/a_templates-packr.go ## run the packr tool to generate our static files
 .PHONY: packr
