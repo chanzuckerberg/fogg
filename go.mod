@@ -20,7 +20,7 @@ require (
 	github.com/go-logfmt/logfmt v0.5.0
 	github.com/gobuffalo/packr/v2 v2.8.1
 	github.com/google/go-github/v27 v27.0.6
-	github.com/hashicorp/go-getter v1.5.2
+	github.com/hashicorp/go-getter v1.5.3
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-retryablehttp v0.6.6 // indirect
 	github.com/hashicorp/go-uuid v1.0.2 // indirect
