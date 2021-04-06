@@ -8,7 +8,7 @@ import (
 
 	"github.com/Masterminds/sprig"
 	"github.com/chanzuckerberg/fogg/errs"
-	"github.com/gobuffalo/packr"
+	"github.com/gobuffalo/packr/v2"
 	"github.com/sirupsen/logrus"
 )
 

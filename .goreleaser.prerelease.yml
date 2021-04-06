@@ -12,15 +12,17 @@ builds:
       - linux
     goarch:
       - amd64
+      - arm64
     ldflags:
-      - '-w -s -X github.com/chanzuckerberg/fogg/util.GitSha={{.Commit}} -X github.com/chanzuckerberg/fogg/util.Version={{.Version}} -X github.com/chanzuckerberg/fogg/util.Dirty=false -X github.com/chanzuckerberg/fogg/util.Release=true'
+      - '-w -s -X main.Date={{.CommitDate}} -X github.com/chanzuckerberg/fogg/util.GitSha={{.Commit}} -X github.com/chanzuckerberg/fogg/util.Version={{.Version}} -X github.com/chanzuckerberg/fogg/util.Dirty=false -X github.com/chanzuckerberg/fogg/util.Release=true'
+    mod_timestamp: '{{ .CommitTimestamp }}'
 
 archives:
   - files:
       - none*
 
-release:
-  prerelease: true
-
 env_files:
   github_token: ~/.config/goreleaser/github_token
+
+release:
+  prerelease: true
