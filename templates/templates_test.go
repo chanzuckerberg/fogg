@@ -5,7 +5,7 @@ import (
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/util"
-	"github.com/gobuffalo/packr"
+	"github.com/gobuffalo/packr/v2"
 	"github.com/stretchr/testify/require"
 )
 
@@ -13,9 +13,10 @@ func TestOpenTemplate(t *testing.T) {
 	temps := Templates
 
 	type args struct {
-		box  packr.Box
+		box  *packr.Box
 		path string
 	}
+
 	tests := []struct {
 		name    string
 		args    args
@@ -31,7 +32,7 @@ func TestOpenTemplate(t *testing.T) {
 			f, err := tt.args.box.Open(tt.args.path)
 			r.NoError(err)
 
-			temp, err := util.OpenTemplate("foo", f, &temps.Common)
+			temp, err := util.OpenTemplate("foo", f, temps.Common)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("OpenTemplate() error = %v, wantErr %v", err, tt.wantErr)
 				return
