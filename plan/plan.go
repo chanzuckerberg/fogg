@@ -177,11 +177,11 @@ type AWSProvider struct {
 }
 
 func (a *AWSProvider) String() string {
-	accountId := a.AccountID.String()
+	accountID := a.AccountID.String()
 
 	joined := util.JoinStrPointers(
 		"-",
-		&accountId,
+		&accountID,
 		a.Alias,
 		a.Profile,
 		&a.Region,
