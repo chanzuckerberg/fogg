@@ -15,71 +15,6 @@ provider aws {
 
 
 provider aws {
-  alias  = "us-east-1"
-  region = "us-east-1"
-
-
-  assume_role {
-    role_arn = "arn:aws:iam::456:role/foo"
-  }
-
-  allowed_account_ids = [456]
-}
-
-
-provider aws {
-  alias  = "us-east-2"
-  region = "us-east-2"
-
-
-  assume_role {
-    role_arn = "arn:aws:iam::456:role/foo"
-  }
-
-  allowed_account_ids = [456]
-}
-
-
-provider aws {
-  alias  = "another_account_different_role"
-  region = "us-west-2"
-
-
-  assume_role {
-    role_arn = "arn:aws:iam::789:role/different_role"
-  }
-
-  allowed_account_ids = [789]
-}
-
-
-provider aws {
-  alias  = "another_account_different_role-us-east-1"
-  region = "us-east-1"
-
-
-  assume_role {
-    role_arn = "arn:aws:iam::789:role/different_role"
-  }
-
-  allowed_account_ids = [789]
-}
-
-
-provider aws {
-  alias  = "another_account_different_role-us-east-2"
-  region = "us-east-2"
-
-
-  assume_role {
-    role_arn = "arn:aws:iam::789:role/different_role"
-  }
-
-  allowed_account_ids = [789]
-}
-
-
-provider aws {
   alias  = "another_account_same_role"
   region = "us-west-2"
 
@@ -93,8 +28,8 @@ provider aws {
 
 
 provider aws {
-  alias  = "another_account_same_role-us-east-1"
-  region = "us-east-1"
+  alias  = "another_account_same_role-us-east-2"
+  region = "us-east-2"
 
 
   assume_role {
@@ -106,8 +41,8 @@ provider aws {
 
 
 provider aws {
-  alias  = "another_account_same_role-us-east-2"
-  region = "us-east-2"
+  alias  = "another_account_same_role-us-east-1"
+  region = "us-east-1"
 
 
   assume_role {
@@ -141,6 +76,71 @@ provider aws {
   }
 
   allowed_account_ids = [another_different_account]
+}
+
+
+provider aws {
+  alias  = "another_account_different_role"
+  region = "us-west-2"
+
+
+  assume_role {
+    role_arn = "arn:aws:iam::789:role/different_role"
+  }
+
+  allowed_account_ids = [789]
+}
+
+
+provider aws {
+  alias  = "another_account_different_role-us-east-2"
+  region = "us-east-2"
+
+
+  assume_role {
+    role_arn = "arn:aws:iam::789:role/different_role"
+  }
+
+  allowed_account_ids = [789]
+}
+
+
+provider aws {
+  alias  = "another_account_different_role-us-east-1"
+  region = "us-east-1"
+
+
+  assume_role {
+    role_arn = "arn:aws:iam::789:role/different_role"
+  }
+
+  allowed_account_ids = [789]
+}
+
+
+provider aws {
+  alias  = "us-east-2"
+  region = "us-east-2"
+
+
+  assume_role {
+    role_arn = "arn:aws:iam::456:role/foo"
+  }
+
+  allowed_account_ids = [456]
+}
+
+
+provider aws {
+  alias  = "us-east-1"
+  region = "us-east-1"
+
+
+  assume_role {
+    role_arn = "arn:aws:iam::456:role/foo"
+  }
+
+  allowed_account_ids = [456]
 }
 
 

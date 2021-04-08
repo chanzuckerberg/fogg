@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"sort"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
@@ -173,6 +174,23 @@ type AWSProvider struct {
 	Profile   *string     `yaml:"profile"`
 	Region    string      `yaml:"region"`
 	RoleArn   *string     `yaml:"role_arn"`
+}
+
+func (a *AWSProvider) String() string {
+	accountId := a.AccountID.String()
+
+	joined := util.JoinStrPointers(
+		"-",
+		&accountId,
+		a.Alias,
+		a.Profile,
+		&a.Region,
+		a.RoleArn,
+	)
+	if joined == nil {
+		return ""
+	}
+	return *joined
 }
 
 // GithubProvider represents a configuration of a github provider
@@ -578,6 +596,10 @@ func resolveAWSProvider(commons ...v2.Common) (plan *AWSProvider, providers []AW
 			providers = append(providers, extraProvider)
 		}
 	}
+
+	sort.Slice(providers, func(i, j int) bool {
+		return providers[i].String() > providers[j].String()
+	})
 	return
 }
 
