@@ -79,7 +79,12 @@ func ResolveStringMap(getter func(Common) map[string]string, commons ...Common) 
 	return resolved
 }
 
-// ResolveAWSProvider will return an AWSProvder iff one of the required fields is set somewhere in
+// TODO: implement
+func ResolveAuth0Provider(commons ...Common) *Auth0Provider {
+	return nil
+}
+
+// ResolveAWSProvider will return an AWSProvder if one of the required fields is set somewhere in
 // the set of Common config objects passed in. Otherwise it will return nil.
 func ResolveAWSProvider(commons ...Common) *AWSProvider {
 	var profile, region, role, version *string
@@ -568,6 +573,13 @@ func ResolveCircleCI(commons ...Common) *CircleCI {
 		},
 		SSHKeyFingerprints: sshFingerprints,
 	}
+}
+
+func Auth0VersionGetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.Auth0 == nil {
+		return nil
+	}
+	return comm.Providers.Auth0.Version
 }
 
 func OwnerGetter(comm Common) *string {

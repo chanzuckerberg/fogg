@@ -613,6 +613,14 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
+	auth0Config := v2.ResolveAuth0Provider(commons...)
+	if auth0Config != nil {
+		providerVersions["auth0"] = ProviderVersion{
+			Source:  "alexkappa/terraform-provider-auth0",
+			Version: auth0Config.Version,
+		}
+	}
+
 	var githubPlan *GithubProvider
 	githubConfig := v2.ResolveGithubProvider(commons...)
 
