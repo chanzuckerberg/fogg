@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"sort"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
@@ -173,6 +174,23 @@ type AWSProvider struct {
 	Profile   *string     `yaml:"profile"`
 	Region    string      `yaml:"region"`
 	RoleArn   *string     `yaml:"role_arn"`
+}
+
+func (a *AWSProvider) String() string {
+	accountID := a.AccountID.String()
+
+	joined := util.JoinStrPointers(
+		"-",
+		&accountID,
+		a.Alias,
+		a.Profile,
+		&a.Region,
+		a.RoleArn,
+	)
+	if joined == nil {
+		return ""
+	}
+	return *joined
 }
 
 // GithubProvider represents a configuration of a github provider
@@ -516,40 +534,82 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 	return envPlans, nil
 }
 
+func resolveAWSProvider(commons ...v2.Common) (plan *AWSProvider, providers []AWSProvider, version *string) {
+	awsConfig := v2.ResolveAWSProvider(commons...)
+	var roleArn *string
+	// nothing to do
+	if awsConfig == nil {
+		return
+	}
+
+	// set the version
+	version = awsConfig.Version
+
+	// configure the main provider
+	if awsConfig.Role != nil {
+		tmp := fmt.Sprintf("arn:aws:iam::%s:role/%s", *awsConfig.AccountID, *awsConfig.Role)
+		roleArn = &tmp
+	}
+	plan = &AWSProvider{
+		AccountID: *awsConfig.AccountID,
+		Profile:   awsConfig.Profile,
+		Region:    *awsConfig.Region,
+		RoleArn:   roleArn,
+	}
+
+	// grab all aliased regions
+	for _, r := range awsConfig.AdditionalRegions {
+		// we have to take a reference here otherwise it gets overwritten by the loop
+		region := r
+		providers = append(providers,
+			AWSProvider{
+				AccountID: *awsConfig.AccountID,
+				Alias:     &region,
+				Profile:   awsConfig.Profile,
+				Region:    region,
+				RoleArn:   roleArn,
+			})
+	}
+
+	//HACK HACK(el): this is horrible: grab all extra accounts and configure aliased providers for them
+	for ap, aws := range awsConfig.AdditionalProviders {
+		aliasPrefix := ap
+		// HACK(el): we create this pseudo v2.Common for each additional provider and do the inheritance
+		pseudoCommon := v2.Common{
+			Providers: &v2.Providers{
+				AWS: aws,
+			},
+		}
+		// set so not nil
+		pseudoCommon.Providers.AWS.AdditionalProviders = map[string]*v2.AWSProvider{}
+
+		extraCommons := append(commons[:], pseudoCommon)
+		extraPlan, extraProviders, _ := resolveAWSProvider(extraCommons...)
+		if extraPlan != nil {
+			extraPlan.Alias = util.JoinStrPointers("-", &aliasPrefix, extraPlan.Alias)
+			providers = append(providers, *extraPlan)
+		}
+
+		for _, eP := range extraProviders {
+			extraProvider := eP
+			extraProvider.Alias = util.JoinStrPointers("-", &aliasPrefix, extraProvider.Alias)
+			providers = append(providers, extraProvider)
+		}
+	}
+
+	sort.Slice(providers, func(i, j int) bool {
+		return providers[i].String() > providers[j].String()
+	})
+	return
+}
+
 func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	providerVersions := copyMap(utilityProviders)
-	var awsPlan *AWSProvider
-	awsConfig := v2.ResolveAWSProvider(commons...)
-	additionalProviders := []AWSProvider{}
-	var roleArn *string
-	if awsConfig != nil {
-		if awsConfig.Role != nil {
-			tmp := fmt.Sprintf("arn:aws:iam::%s:role/%s", *awsConfig.AccountID, *awsConfig.Role)
-			roleArn = &tmp
-		}
-		awsPlan = &AWSProvider{
-			AccountID: *awsConfig.AccountID,
-			Profile:   awsConfig.Profile,
-			Region:    *awsConfig.Region,
-			RoleArn:   roleArn,
-		}
-
+	awsPlan, additionalProviders, awsVersion := resolveAWSProvider(commons...)
+	if awsVersion != nil {
 		providerVersions["aws"] = ProviderVersion{
 			Source:  "hashicorp/aws",
-			Version: awsConfig.Version,
-		}
-
-		for _, r := range awsConfig.AdditionalRegions {
-			// we have to take a reference here otherwise it gets overwritten by the loop
-			region := r
-			additionalProviders = append(additionalProviders,
-				AWSProvider{
-					AccountID: *awsConfig.AccountID,
-					Alias:     &region,
-					Profile:   awsConfig.Profile,
-					Region:    region,
-					RoleArn:   roleArn,
-				})
+			Version: awsVersion,
 		}
 	}
 
