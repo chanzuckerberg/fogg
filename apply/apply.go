@@ -17,7 +17,7 @@ import (
 	"github.com/chanzuckerberg/fogg/plan"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
-	"github.com/gobuffalo/packr"
+	"github.com/gobuffalo/packr/v2"
 	getter "github.com/hashicorp/go-getter"
 	"github.com/hashicorp/hcl2/hclwrite"
 	"github.com/sirupsen/logrus"
@@ -43,50 +43,50 @@ func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade bool) error {
 		return errs.WrapUser(err, "unable to evaluate plan")
 	}
 
-	e := applyRepo(fs, p, &tmp.Repo, &tmp.Common)
+	e := applyRepo(fs, p, tmp.Repo, tmp.Common)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply repo")
 	}
 
 	if p.TravisCI.Enabled {
-		e = applyTree(fs, &tmp.TravisCI, &tmp.Common, "", p.TravisCI)
+		e = applyTree(fs, tmp.TravisCI, tmp.Common, "", p.TravisCI)
 		if e != nil {
 			return errs.WrapUser(e, "unable to apply travis ci")
 		}
 	}
 
 	if p.CircleCI.Enabled {
-		e = applyTree(fs, &tmp.CircleCI, &tmp.Common, "", p.CircleCI)
+		e = applyTree(fs, tmp.CircleCI, tmp.Common, "", p.CircleCI)
 		if e != nil {
 			return errs.WrapUser(e, "unable to apply CircleCI")
 		}
 	}
 
 	if p.GitHubActionsCI.Enabled {
-		e = applyTree(fs, &tmp.GitHubActionsCI, &tmp.Common, ".github", p.GitHubActionsCI)
+		e = applyTree(fs, tmp.GitHubActionsCI, tmp.Common, ".github", p.GitHubActionsCI)
 		if e != nil {
 			return errs.WrapUser(e, "unable to apply GitHub Actions CI")
 		}
 	}
 
 	tfBox := tmp.Components[v2.ComponentKindTerraform]
-	e = applyAccounts(fs, p, &tfBox, &tmp.Common)
+	e = applyAccounts(fs, p, tfBox, tmp.Common)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply accounts")
 	}
 
-	e = applyEnvs(fs, p, &tmp.Env, tmp.Components, &tmp.Common)
+	e = applyEnvs(fs, p, tmp.Env, tmp.Components, tmp.Common)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply envs")
 	}
 
 	tfBox = tmp.Components[v2.ComponentKindTerraform]
-	e = applyGlobal(fs, p.Global, &tfBox, &tmp.Common)
+	e = applyGlobal(fs, p.Global, tfBox, tmp.Common)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply global")
 	}
 
-	e = applyModules(fs, p.Modules, &tmp.Module, &tmp.Common)
+	e = applyModules(fs, p.Modules, tmp.Module, tmp.Common)
 	return errs.WrapUser(e, "unable to apply modules")
 }
 
@@ -166,7 +166,7 @@ func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox, commonBox *p
 	return nil
 }
 
-func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBoxes map[v2.ComponentKind]packr.Box, commonBox *packr.Box) (e error) {
+func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBoxes map[v2.ComponentKind]*packr.Box, commonBox *packr.Box) (e error) {
 	logrus.Debug("applying envs")
 	for env, envPlan := range p.Envs {
 		logrus.Debugf("applying %s", env)
@@ -186,7 +186,7 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBoxes map[
 				return errs.WrapUser(e, "unable to make directories for component")
 			}
 			componentBox := componentBoxes[componentPlan.Kind.GetOrDefault()]
-			e := applyTree(fs, &componentBox, commonBox, path, componentPlan)
+			e := applyTree(fs, componentBox, commonBox, path, componentPlan)
 			if e != nil {
 				return errs.WrapUser(e, "unable to apply templates for component")
 			}
@@ -350,7 +350,7 @@ type moduleData struct {
 	Outputs      []string
 }
 
-func applyModuleInvocation(fs afero.Fs, path, moduleAddress string, inModuleName *string, box packr.Box, commonBox *packr.Box) error {
+func applyModuleInvocation(fs afero.Fs, path, moduleAddress string, inModuleName *string, box *packr.Box, commonBox *packr.Box) error {
 	e := fs.MkdirAll(path, 0755)
 	if e != nil {
 		return errs.WrapUserf(e, "couldn't create %s directory", path)
