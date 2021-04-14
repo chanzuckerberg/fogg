@@ -1,4 +1,6 @@
 {{define "datadog_provider"}}
 provider datadog {
+  api_key = "{{ .dd_api_key }}"
+  app_key = "{{ .dd_app_key }}"
 }
 {{ end }}
