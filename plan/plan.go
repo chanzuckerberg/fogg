@@ -627,7 +627,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 
 		providerVersions["auth0"] = ProviderVersion{
-			Source:  "alexkappa/terraform-provider-auth0",
+			Source:  "alexkappa/auth0",
 			Version: auth0Config.Version,
 		}
 	}

@@ -42,6 +42,9 @@
     {{ template "sentry_provider" .ProviderConfiguration.Sentry }}
 {{ end }}{{ end }}
 
+{{ if .ProviderConfiguration.Auth0 }}
+  {{ template "auth0_provider" .ProviderConfiguration.Auth0 }}
+{{ end }}
 
 terraform {
   required_version = "={{ .TerraformVersion }}"

@@ -96,7 +96,7 @@ func ResolveAuth0Provider(commons ...Common) *Auth0Provider {
 	}
 
 	if domain != nil && version != nil {
-		return &Auth0Provider{domain, version}
+		return &Auth0Provider{Version: version, Domain: domain}
 	}
 	return nil
 }

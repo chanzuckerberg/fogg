@@ -142,7 +142,7 @@ type CommonProvider struct {
 
 //Auth0Provider is the terraform provider for the Auth0 service.
 type Auth0Provider struct {
-	Version *string `yaml:"version,omitempy"`
+	Version *string `yaml:"version,omitempty"`
 	Domain  *string `yaml:"domain,omitempty"`
 }
 
