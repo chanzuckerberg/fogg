@@ -142,7 +142,8 @@ type CommonProvider struct {
 
 //Auth0Provider is the terraform provider for the Auth0 service.
 type Auth0Provider struct {
-	Version *string `yaml:"version,omitempy`
+	Version *string `yaml:"version,omitempy"`
+	Domain  *string `yaml:"domain,omitempty"`
 }
 
 // OktaProvider is an okta provider
@@ -402,7 +403,10 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 
 	//TODO: what is this?
 	randAuth0Provider := func(r *rand.Rand, s int) *Auth0Provider {
-		return &Auth0Provider{}
+		return &Auth0Provider{
+			Version: randStringPtr(r, s),
+			Domain:  randStringPtr(r, s),
+		}
 	}
 
 	randOktaProvider := func(r *rand.Rand, s int) *OktaProvider {

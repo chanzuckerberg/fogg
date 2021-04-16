@@ -81,6 +81,23 @@ func ResolveStringMap(getter func(Common) map[string]string, commons ...Common) 
 
 // TODO: implement
 func ResolveAuth0Provider(commons ...Common) *Auth0Provider {
+	var domain, version *string
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.Auth0 == nil {
+			continue
+		}
+		if c.Providers.Auth0.Version != nil {
+			version = c.Providers.Auth0.Version
+		}
+
+		if c.Providers.Auth0.Domain != nil {
+			domain = c.Providers.Auth0.Domain
+		}
+	}
+
+	if domain != nil && version != nil {
+		return &Auth0Provider{domain, version}
+	}
 	return nil
 }
 
@@ -573,13 +590,6 @@ func ResolveCircleCI(commons ...Common) *CircleCI {
 		},
 		SSHKeyFingerprints: sshFingerprints,
 	}
-}
-
-func Auth0VersionGetter(comm Common) *string {
-	if comm.Providers == nil || comm.Providers.Auth0 == nil {
-		return nil
-	}
-	return comm.Providers.Auth0.Version
 }
 
 func OwnerGetter(comm Common) *string {

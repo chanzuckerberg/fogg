@@ -121,6 +121,7 @@ func (c CIComponent) generateCIConfig(
 }
 
 type ProviderConfiguration struct {
+	Auth0                  *Auth0Provider      `yaml:"auth0"`
 	AWS                    *AWSProvider        `yaml:"aws"`
 	AWSAdditionalProviders []AWSProvider       `yaml:"aws_regional_providers"`
 	Bless                  *BlessProvider      `yaml:"bless"`
@@ -197,6 +198,11 @@ func (a *AWSProvider) String() string {
 type GithubProvider struct {
 	Organization string  `yaml:"organization"`
 	BaseURL      *string `yaml:"base_url"`
+}
+
+//TODO: ?
+type Auth0Provider struct {
+	Domain string `yaml:"domain,omitempty"`
 }
 
 //SnowflakeProvider represents Snowflake DB provider configuration
@@ -613,8 +619,13 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
+	var auth0Plan *Auth0Provider
 	auth0Config := v2.ResolveAuth0Provider(commons...)
 	if auth0Config != nil {
+		auth0Plan = &Auth0Provider{
+			Domain: *auth0Config.Domain,
+		}
+
 		providerVersions["auth0"] = ProviderVersion{
 			Source:  "alexkappa/terraform-provider-auth0",
 			Version: auth0Config.Version,
@@ -862,6 +873,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	return ComponentCommon{
 		Backend: backend,
 		ProviderConfiguration: ProviderConfiguration{
+			Auth0:                  auth0Plan,
 			AWS:                    awsPlan,
 			AWSAdditionalProviders: additionalProviders,
 			Bless:                  blessPlan,
