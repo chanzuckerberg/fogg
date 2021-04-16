@@ -401,7 +401,6 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		return map[string]string{}
 	}
 
-	//TODO: what is this?
 	randAuth0Provider := func(r *rand.Rand, s int) *Auth0Provider {
 		return &Auth0Provider{
 			Version: randStringPtr(r, s),

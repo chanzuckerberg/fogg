@@ -200,7 +200,6 @@ type GithubProvider struct {
 	BaseURL      *string `yaml:"base_url"`
 }
 
-//TODO: ?
 type Auth0Provider struct {
 	Domain string `yaml:"domain,omitempty"`
 }

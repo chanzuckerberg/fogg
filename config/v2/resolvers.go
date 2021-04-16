@@ -79,7 +79,6 @@ func ResolveStringMap(getter func(Common) map[string]string, commons ...Common) 
 	return resolved
 }
 
-// TODO: implement
 func ResolveAuth0Provider(commons ...Common) *Auth0Provider {
 	var domain, version *string
 	for _, c := range commons {
