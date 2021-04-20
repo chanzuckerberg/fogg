@@ -1,0 +1,37 @@
+{
+    "version": 2,
+    "defaults": {
+        "providers": {},
+        "backend": {
+            "bucket": "bucket",
+            "region": "region",
+            "profile": "foo"
+        },
+        "project": "foo",
+        "owner": "foo@example.com",
+        "terraform_version": "1.1.1",
+        "tools": {
+            "circle_ci": {
+                "enabled": true,
+                "aws_iam_role_name": "test-role",
+                "command": "lint"
+            }
+        }
+    },
+    "accounts": {
+        "okta-czi-duo": {
+            "providers": {
+                "okta": {
+                    "org_name": "testo",
+                    "version": "v3.0.1"
+                }
+            },
+            "tools": {
+                "circle_ci": {
+                     "aws_iam_role_name": "test-role",
+                    "command": "cake"
+                }
+            }
+        }
+    }
+}

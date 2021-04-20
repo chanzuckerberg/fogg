@@ -324,6 +324,35 @@ func TestConfig_ValidateTravis(t *testing.T) {
 	}
 }
 
+func TestConfig_ValidateCircleCI(t *testing.T) {
+	tests := []struct {
+		fileName string
+		wantErr  bool
+	}{
+		{"v2_invalid_circle_ci_command_yaml", true},
+	}
+	for _, test := range tests {
+		tt := test
+		t.Run(tt.fileName, func(t *testing.T) {
+			r := require.New(t)
+			fs, _, e := util.TestFs()
+			r.NoError(e)
+
+			b, e := util.TestFile(tt.fileName)
+			r.NoError(e)
+			e = afero.WriteFile(fs, "fogg.yml", b, 0644)
+			r.NoError(e)
+
+			c, e := ReadConfig(fs, b, "fogg.yml")
+			r.NoError(e)
+
+			if err := c.ValidateCircleCI(); (err != nil) != tt.wantErr {
+				t.Errorf("Config.ValidateCircleCI() error = %v, wantErr %v (err != nil) %v", err, tt.wantErr, (err != nil))
+			}
+		})
+	}
+}
+
 func TestFailOnTF11(t *testing.T) {
 	r := require.New(t)
 
