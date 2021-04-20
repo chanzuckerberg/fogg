@@ -5,8 +5,6 @@ go 1.14
 replace github.com/spf13/afero v1.2.2 => github.com/chanzuckerberg/afero v0.0.0-20190514223411-36a9495a9b51
 
 require (
-	github.com/Masterminds/goutils v1.1.0 // indirect
-	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig v2.22.0+incompatible
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/antzucaro/matchr v0.0.0-20191224151129-ab6ba461ddec
@@ -27,10 +25,9 @@ require (
 	github.com/hashicorp/go-version v1.2.1
 	github.com/hashicorp/hcl/v2 v2.9.1
 	github.com/hashicorp/hcl2 v0.0.0-20191002203319-fb75b3253c80
-	github.com/hashicorp/terraform v0.14.9
-	github.com/hashicorp/terraform-config-inspect v0.0.0-20200806211835-c481b8bfa41e
+	github.com/hashicorp/terraform v0.15.0
+	github.com/hashicorp/terraform-config-inspect v0.0.0-20210209133302-4fd17a0faac2
 	github.com/howeyc/gopass v0.0.0-20190910152052-7cb4b85ec19c // indirect
-	github.com/huandu/xstrings v1.3.1 // indirect
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/karrick/godirwalk v1.16.1 // indirect
 	github.com/kr/pretty v0.2.1
@@ -45,7 +42,6 @@ require (
 	github.com/spf13/afero v1.2.2
 	github.com/spf13/cobra v1.1.3
 	github.com/stretchr/testify v1.7.0
-	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20210403161142-5e06dd20ab57 // indirect
 	golang.org/x/term v0.0.0-20210406210042-72f3dc4e9b72 // indirect
