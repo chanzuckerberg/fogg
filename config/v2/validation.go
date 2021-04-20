@@ -52,6 +52,7 @@ func (c *Config) Validate() ([]string, error) {
 	errs = multierror.Append(errs, c.validateModules())
 	errs = multierror.Append(errs, c.ValidateTravis())
 	errs = multierror.Append(errs, c.ValidateGithubActionsCI())
+	errs = multierror.Append(errs, c.ValidateCircleCI())
 
 	// refactor to make it easier to manage these
 	w, e := c.ValidateToolsTfLint()
@@ -283,6 +284,33 @@ func (c *Config) ValidateGithubActionsCI() error {
 			_, ok := validCICommands[*t.Command]
 			if !ok {
 				errs = multierror.Append(errs, fmt.Errorf("unrecognized github_actions_ci command %s (%s)", *t.Command, component))
+			}
+		}
+	})
+
+	return errs
+}
+
+func (c *Config) ValidateCircleCI() error {
+	var errs *multierror.Error
+	c.WalkComponents(func(component string, comms ...Common) {
+		t := ResolveCircleCI(comms...)
+		if t.Enabled == nil || !*t.Enabled {
+			return // nothing to do
+		}
+
+		if t.AWSIAMRoleName == nil || *t.AWSIAMRoleName == "" {
+			errs = multierror.Append(errs, fmt.Errorf("if circle_ci is enabled, aws_role_name must be set"))
+		}
+
+		if t.Command != nil {
+			_, ok := validCICommands[*t.Command]
+			if !ok {
+				errs = multierror.Append(errs, fmt.Errorf("unrecognized circle_ci command %s (%s)", *t.Command, component))
+			}
+		} else {
+			if t.Command == nil {
+				errs = multierror.Append(errs, fmt.Errorf("missing circle_ci command %s (%s)", *t.Command, component))
 			}
 		}
 	})
