@@ -13,7 +13,6 @@
         "tools": {
             "circle_ci": {
                 "enabled": true,
-                "aws_iam_role_name": "test-role",
                 "command": "lint"
             }
         }
@@ -28,7 +27,6 @@
             },
             "tools": {
                 "circle_ci": {
-                     "aws_iam_role_name": "test-role",
                     "command": "cake"
                 }
             }
