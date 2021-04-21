@@ -117,6 +117,7 @@ type Component struct {
 }
 
 type Providers struct {
+	Auth0      *Auth0Provider      `yaml:"auth0,omitempty"`
 	AWS        *AWSProvider        `yaml:"aws,omitempty"`
 	Bless      *BlessProvider      `yaml:"bless,omitempty"`
 	Databricks *DatabricksProvider `yaml:"databricks,omitempty"`
@@ -137,6 +138,12 @@ type Providers struct {
 type CommonProvider struct {
 	Enabled *bool   `yaml:"enabled,omitempty"`
 	Version *string `yaml:"version,omitempty"`
+}
+
+//Auth0Provider is the terraform provider for the Auth0 service.
+type Auth0Provider struct {
+	Version *string `yaml:"version,omitempty"`
+	Domain  *string `yaml:"domain,omitempty"`
 }
 
 // OktaProvider is an okta provider
@@ -169,6 +176,10 @@ type AWSProvider struct {
 	Region            *string      `yaml:"region,omitempty"`
 	Role              *string      `yaml:"role,omitempty"` // FIXME validate format
 	Version           *string      `yaml:"version,omitempty"`
+
+	// HACK HACK(el): we can configure additional, aliased, AWS providers for other accounts
+	// 								A map of alias_name to provider configuration
+	AdditionalProviders map[string]*AWSProvider `yaml:"additional_providers,omitempty"`
 }
 
 type GithubProvider struct {
@@ -390,6 +401,13 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		return map[string]string{}
 	}
 
+	randAuth0Provider := func(r *rand.Rand, s int) *Auth0Provider {
+		return &Auth0Provider{
+			Version: randStringPtr(r, s),
+			Domain:  randStringPtr(r, s),
+		}
+	}
+
 	randOktaProvider := func(r *rand.Rand, s int) *OktaProvider {
 		if r.Float32() < 0.5 {
 			return nil
@@ -515,6 +533,7 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 			Owner:     randStringPtr(r, s),
 			Project:   randStringPtr(r, s),
 			Providers: &Providers{
+				Auth0:      randAuth0Provider(r, s),
 				AWS:        randAWSProvider(r, s),
 				Bless:      randBlessProvider(r, s),
 				Datadog:    randDatadogProvider(r),

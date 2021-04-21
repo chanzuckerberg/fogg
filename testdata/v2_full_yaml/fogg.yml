@@ -7,6 +7,16 @@ accounts:
           - us-east-1
           - us-east-2
         role: foo
+        additional_providers:
+          another_account_different_role:
+            account_id: 789
+            role: different_role
+          another_account_same_role:
+            account_id: different_account
+          another_account_more_regions:
+            account_id: another_different_account
+            additional_regions:
+              - eu-west-2
       bless:
         role_arn: arn:aws:iam::1234567890:role/roll
         version: 0.4.2
