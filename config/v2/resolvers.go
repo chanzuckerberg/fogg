@@ -79,7 +79,28 @@ func ResolveStringMap(getter func(Common) map[string]string, commons ...Common) 
 	return resolved
 }
 
-// ResolveAWSProvider will return an AWSProvder iff one of the required fields is set somewhere in
+func ResolveAuth0Provider(commons ...Common) *Auth0Provider {
+	var domain, version *string
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.Auth0 == nil {
+			continue
+		}
+		if c.Providers.Auth0.Version != nil {
+			version = c.Providers.Auth0.Version
+		}
+
+		if c.Providers.Auth0.Domain != nil {
+			domain = c.Providers.Auth0.Domain
+		}
+	}
+
+	if domain != nil && version != nil {
+		return &Auth0Provider{Version: version, Domain: domain}
+	}
+	return nil
+}
+
+// ResolveAWSProvider will return an AWSProvder if one of the required fields is set somewhere in
 // the set of Common config objects passed in. Otherwise it will return nil.
 func ResolveAWSProvider(commons ...Common) *AWSProvider {
 	var profile, region, role, version *string

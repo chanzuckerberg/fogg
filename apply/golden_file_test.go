@@ -22,6 +22,7 @@ func TestIntegration(t *testing.T) {
 	var testCases = []struct {
 		fileName string
 	}{
+		{"auth0_provider_yaml"},
 		{"okta_provider_yaml"},
 		{"github_provider_yaml"},
 		{"bless_provider_yaml"},
