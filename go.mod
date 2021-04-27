@@ -8,7 +8,7 @@ require (
 	github.com/Masterminds/sprig v2.22.0+incompatible
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/antzucaro/matchr v0.0.0-20191224151129-ab6ba461ddec
-	github.com/aws/aws-sdk-go v1.38.11
+	github.com/aws/aws-sdk-go v1.38.21
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/bmatcuk/doublestar v1.2.4 // indirect
 	github.com/chanzuckerberg/go-misc v0.0.0-20210209191033-ae96c0409e3f
