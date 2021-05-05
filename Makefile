@@ -1,5 +1,4 @@
 SHA=$(shell git rev-parse --short HEAD)
-VERSION=$(shell cat VERSION)
 DIRTY=false
 # TODO add release flag
 GO_PACKAGE=$(shell go list)
@@ -14,28 +13,42 @@ setup: ## setup development dependencies
 
 	## Release dependencies
 	curl -sfL https://raw.githubusercontent.com/chanzuckerberg/bff/main/download.sh | sh
-	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh
-
-	## Used by lint and lint-ci make commands
-	curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh
-
-	## Used by .reviewdog.yml to lint markdown files in this project
-	npm install markdownlint-cli
 .PHONY: setup
 
 fmt:
 	goimports -w -d $$(find . -type f -name '*.go' -not -path "./vendor/*" -not -path "./dist/*")
 .PHONY: fmt
 
-lint: ## run lint andn print results
+lint-setup: ## setup linter dependencies
+	## See: https://github.com/igorshubovych/markdownlint-cli
+	## Used by ReviewDog via .reviewdog.yml configs to lint markdown files in this project
+	npm install markdownlint-cli
+
+	## See https://golangci-lint.run/usage/install/#ci-installation
+	## Used by ReviewDog
+	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh
+
+	## See https://github.com/reviewdog/reviewdog#installation
+	## Note: If yor're on Darwin with an ARM64 chip (Apple Silicon/Apple M1), know that
+	##   at this point in time reviewdog doesn't publish Darmwin/arm64 binaries. You can
+	##   get around this by either installing reviewdog manually or getting it via Homebrew
+	##   and using Rosetta 2: https://support.apple.com/en-us/HT211861
+ifeq (, $(shell command -v reviewdog --version))
+	curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh
+else
+	@echo "Reviewdog installed at $$(which reviewdog)"
+endif
+.PHONY: linter-setup
+
+lint: lint-setup ## run lint andn print results
 	./bin/reviewdog -conf .reviewdog.yml  -diff "git diff main"
 .PHONY: lint
 
-lint-ci: ## run lint in CI, posting to PRs
+lint-ci: lint-setup ## run lint in CI, posting to PRs
 	./bin/reviewdog -conf .reviewdog.yml  -reporter=github-pr-review -tee -level=info
 .PHONY: lint-ci
 
-lint-all: ## run the fast go linters
+lint-all: lint-setup ## run the fast go linters
 	# doesn't seem to be a way to get reviewdog to not filter by diff
 	./bin/reviewdog -conf .reviewdog.yml  -filter-mode nofilter
 .PHONY: lint-all
