@@ -1,4 +1,5 @@
 SHA=$(shell git rev-parse --short HEAD)
+VERSION=$(shell cat VERSION)
 DIRTY=false
 # TODO add release flag
 GO_PACKAGE=$(shell go list)
