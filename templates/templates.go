@@ -1,33 +1,60 @@
 package templates
 
 import (
+	"embed"
+
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
-	"github.com/gobuffalo/packr/v2"
 )
 
+// go:embed common
+var common embed.FS
+
+// go:embed component/terraform
+var componentTerraform embed.FS
+
+// go:embed env
+var env embed.FS
+
+// go:embed module
+var module embed.FS
+
+// go:embed module-invocation
+var moduleInvokation embed.FS
+
+// go:embed repo
+var repo embed.FS
+
+// go:embed travis-ci
+var travisCI embed.FS
+
+// go:embed circleci
+var circleCI embed.FS
+
+// go:embed .github
+var gitHubActionsCI embed.FS
+
 type T struct {
-	Common           *packr.Box
-	Components       map[v2.ComponentKind]*packr.Box
-	Env              *packr.Box
-	Module           *packr.Box
-	ModuleInvocation *packr.Box
-	Repo             *packr.Box
-	TravisCI         *packr.Box
-	CircleCI         *packr.Box
-	GitHubActionsCI  *packr.Box
+	Common           embed.FS
+	Components       map[v2.ComponentKind]embed.FS
+	Env              embed.FS
+	Module           embed.FS
+	ModuleInvocation embed.FS
+	Repo             embed.FS
+	TravisCI         embed.FS
+	CircleCI         embed.FS
+	GitHubActionsCI  embed.FS
 }
 
 var Templates = &T{
-	Common: packr.New("common", "./common"),
-	Components: map[v2.ComponentKind]*packr.Box{
-		v2.ComponentKindTerraform:    packr.New("component/terraform", "./component/terraform"),
-		v2.ComponentKindHelmTemplate: packr.New("component/helm_template", "./component/helm_template"),
+	Common: common,
+	Components: map[v2.ComponentKind]embed.FS{
+		v2.ComponentKindTerraform: componentTerraform,
 	},
-	Env:              packr.New("env", "./env"),
-	Module:           packr.New("module", "./module"),
-	ModuleInvocation: packr.New("module-invocation", "./module-invocation"),
-	Repo:             packr.New("repo", "./repo"),
-	TravisCI:         packr.New("travis-ci", "./travis-ci"),
-	CircleCI:         packr.New("circleci", "./circleci"),
-	GitHubActionsCI:  packr.New(".github", "./.github"),
+	Env:              env,
+	Module:           module,
+	ModuleInvocation: moduleInvokation,
+	Repo:             repo,
+	TravisCI:         travisCI,
+	CircleCI:         circleCI,
+	GitHubActionsCI:  gitHubActionsCI,
 }

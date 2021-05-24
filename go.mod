@@ -17,7 +17,6 @@ require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/fatih/color v1.10.0
 	github.com/go-errors/errors v1.1.1
-	github.com/go-logfmt/logfmt v0.5.0
 	github.com/gobuffalo/packr/v2 v2.8.1
 	github.com/google/go-github/v27 v27.0.6
 	github.com/hashicorp/go-getter v1.5.2
@@ -45,12 +44,9 @@ require (
 	github.com/spf13/afero v1.2.2
 	github.com/spf13/cobra v1.1.3
 	github.com/stretchr/testify v1.7.0
-	golang.org/x/crypto v0.0.0-20210503195802-e9a32991a82e // indirect
-	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.0.0-20210503173754-0981d6026fa6 // indirect
+	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a // indirect
+	golang.org/x/sys v0.0.0-20210521203332-0cec03c779c1 // indirect
 	golang.org/x/term v0.0.0-20210503060354-a79de5458b56 // indirect
-	golang.org/x/tools v0.1.0 // indirect
+	golang.org/x/tools v0.1.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.31.0
-	gopkg.in/ini.v1 v1.62.0
-	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776
 )

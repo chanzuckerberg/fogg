@@ -9,7 +9,6 @@ import (
 	"github.com/chanzuckerberg/fogg/config"
 	fogg_hcl "github.com/chanzuckerberg/fogg/exp/hcl"
 	"github.com/chanzuckerberg/go-misc/sets"
-	"github.com/hashicorp/hcl/v2"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )

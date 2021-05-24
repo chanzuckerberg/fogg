@@ -2,10 +2,6 @@ package hcl
 
 // taken from https://github.com/hashicorp/terraform-config-inspect/blob/17f92b0546e8602e4cecb14d2263f0b1746b9cc9/tfconfig/schema.go
 
-import (
-	"github.com/hashicorp/hcl/v2"
-)
-
 var rootSchema = &hcl.BodySchema{
 	Blocks: []hcl.BlockHeaderSchema{
 		{

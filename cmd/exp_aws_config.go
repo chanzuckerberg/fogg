@@ -8,11 +8,9 @@ import (
 	"github.com/aws/aws-sdk-go/aws/arn"
 	"github.com/chanzuckerberg/fogg/config"
 	"github.com/chanzuckerberg/fogg/errs"
-	"github.com/mitchellh/go-homedir"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
-	"gopkg.in/ini.v1"
 )
 
 func init() {
