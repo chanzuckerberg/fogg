@@ -207,7 +207,7 @@ Each workspace within an environment is called a `component`
 In addition to the common workspace arguments, components also support the following arguments:
 
 - `eks` - Object that contains a `cluster_name` key to point terraform to a kubectl context
-- `kind` - String, either `terraform` or `helm_template` (DEPRECATED)
+- `kind` - String,  only `terraform` is supported (DEPRECATED)
 - `module_source` - String, path to a terraform module to use for this component. If this is a
   relative path such as `terraform/modules/webserver`, fogg will generate a main.tf in this
   component with a full invocation to this module.

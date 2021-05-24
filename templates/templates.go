@@ -5,7 +5,6 @@ import (
 	"io/fs"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
-	"github.com/chanzuckerberg/fogg/util"
 	"github.com/sirupsen/logrus"
 )
 
@@ -42,9 +41,8 @@ type T struct {
 	GitHubActionsCI  fs.FS
 }
 
+// we control the inputs so should never panic
 func mustFSSub(dir string) fs.FS {
-	util.ListEmbeddedFiles(&templates)
-
 	fs, err := fs.Sub(templates, dir)
 	if err != nil {
 		logrus.Fatalf("could not find templates for %s: %s", dir, err)

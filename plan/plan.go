@@ -468,10 +468,6 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 				return nil, errs.WrapUser(fmt.Errorf("Component %s can't have same name as account", componentName), "Invalid component name")
 			}
 
-			if componentConf.Kind.GetOrDefault() == v2.ComponentKindHelmTemplate {
-				componentPlan.EKS = resolveEKSConfig(envPlan.EKS, componentConf.EKS)
-			}
-
 			componentPlan.ComponentCommon = resolveComponentCommon(defaults.Common, envConf.Common, componentConf.Common)
 			accountRemoteStates := v2.ResolveOptionalStringSlice(v2.DependsOnAccountsGetter, defaults.Common, envConf.Common, componentConf.Common)
 			accountBackends := map[string]Backend{}
@@ -895,17 +891,6 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		CircleCI:         circlePlan,
 		GitHubActionsCI:  githubActionsPlan,
 	}
-}
-
-func resolveEKSConfig(def *v2.EKSConfig, override *v2.EKSConfig) *v2.EKSConfig {
-	resolved := &v2.EKSConfig{}
-	if def != nil {
-		resolved.ClusterName = def.ClusterName
-	}
-	if override != nil {
-		resolved.ClusterName = override.ClusterName
-	}
-	return resolved
 }
 
 func resolveExtraVars(vars ...map[string]string) map[string]string {

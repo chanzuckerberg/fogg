@@ -95,10 +95,6 @@ envs:
       host_name: example.com
       organization: foo
     components:
-      comp_helm_template:
-        eks:
-          cluster_name: k8s
-        kind: helm_template
       comp1:
         backend:
           profile: comp1

@@ -1,6 +1,6 @@
 module github.com/chanzuckerberg/fogg
 
-go 1.14
+go 1.16
 
 replace github.com/spf13/afero v1.2.2 => github.com/chanzuckerberg/afero v0.0.0-20190514223411-36a9495a9b51
 
@@ -17,7 +17,6 @@ require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/fatih/color v1.10.0
 	github.com/go-errors/errors v1.1.1
-	github.com/gobuffalo/packr/v2 v2.8.1
 	github.com/google/go-github/v27 v27.0.6
 	github.com/hashicorp/go-getter v1.5.2
 	github.com/hashicorp/go-multierror v1.1.1
@@ -31,14 +30,12 @@ require (
 	github.com/howeyc/gopass v0.0.0-20190910152052-7cb4b85ec19c // indirect
 	github.com/huandu/xstrings v1.3.1 // indirect
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
-	github.com/karrick/godirwalk v1.16.1 // indirect
 	github.com/kr/pretty v0.2.1
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mitchellh/go-testing-interface v1.14.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible
 	github.com/pkg/errors v0.9.1
-	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	github.com/segmentio/go-prompt v1.2.1-0.20161017233205-f0d19b6901ad
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/afero v1.2.2
@@ -49,4 +46,5 @@ require (
 	golang.org/x/term v0.0.0-20210503060354-a79de5458b56 // indirect
 	golang.org/x/tools v0.1.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.31.0
+	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776
 )
