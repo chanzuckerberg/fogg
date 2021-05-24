@@ -2,59 +2,67 @@ package templates
 
 import (
 	"embed"
+	"io/fs"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
+	"github.com/chanzuckerberg/fogg/util"
+	"github.com/sirupsen/logrus"
 )
 
-// go:embed common
-var common embed.FS
-
-// go:embed component/terraform
-var componentTerraform embed.FS
-
-// go:embed env
-var env embed.FS
-
-// go:embed module
-var module embed.FS
-
-// go:embed module-invocation
-var moduleInvokation embed.FS
-
-// go:embed repo
-var repo embed.FS
-
-// go:embed travis-ci
-var travisCI embed.FS
-
-// go:embed circleci
-var circleCI embed.FS
-
-// go:embed .github
-var gitHubActionsCI embed.FS
+// NOTE(el): due to a design decision of go embed, we enumerate files starting with
+//           the following set of characters: {.}
+//go:embed templates/.github/*
+//go:embed templates/circleci/.circleci/*
+//go:embed templates/common/*
+//go:embed templates/component/*
+//go:embed templates/env/*
+//go:embed templates/module/*
+//go:embed templates/module/.update-readme.sh.rm
+//go:embed templates/module-invocation/*
+//go:embed templates/repo
+//go:embed templates/repo/scripts/*
+//go:embed templates/repo/.fogg-version.tmpl
+//go:embed templates/repo/.gitattributes
+//go:embed templates/repo/.gitignore
+//go:embed templates/repo/.terraformignore.tmpl
+//go:embed templates/repo/terraform.d/.keep.touch
+//go:embed templates/repo/.terraform.d/plugin-cache/.gitignore
+//go:embed templates/travis-ci/.travis.yml.tmpl
+var templates embed.FS
 
 type T struct {
-	Common           embed.FS
-	Components       map[v2.ComponentKind]embed.FS
-	Env              embed.FS
-	Module           embed.FS
-	ModuleInvocation embed.FS
-	Repo             embed.FS
-	TravisCI         embed.FS
-	CircleCI         embed.FS
-	GitHubActionsCI  embed.FS
+	Common           fs.FS
+	Components       map[v2.ComponentKind]fs.FS
+	Env              fs.FS
+	Module           fs.FS
+	ModuleInvocation fs.FS
+	Repo             fs.FS
+	TravisCI         fs.FS
+	CircleCI         fs.FS
+	GitHubActionsCI  fs.FS
+}
+
+func mustFSSub(dir string) fs.FS {
+	util.ListEmbeddedFiles(&templates)
+
+	fs, err := fs.Sub(templates, dir)
+	if err != nil {
+		logrus.Fatalf("could not find templates for %s: %s", dir, err)
+		return nil
+	}
+	return fs
 }
 
 var Templates = &T{
-	Common: common,
-	Components: map[v2.ComponentKind]embed.FS{
-		v2.ComponentKindTerraform: componentTerraform,
+	Common: mustFSSub("templates/common"),
+	Components: map[v2.ComponentKind]fs.FS{
+		v2.ComponentKindTerraform: mustFSSub("templates/component/terraform"),
 	},
-	Env:              env,
-	Module:           module,
-	ModuleInvocation: moduleInvokation,
-	Repo:             repo,
-	TravisCI:         travisCI,
-	CircleCI:         circleCI,
-	GitHubActionsCI:  gitHubActionsCI,
+	Env:              mustFSSub("templates/env"),
+	Module:           mustFSSub("templates/module"),
+	ModuleInvocation: mustFSSub("templates/module-invocation"),
+	Repo:             mustFSSub("templates/repo"),
+	TravisCI:         mustFSSub("templates/travis-ci"),
+	CircleCI:         mustFSSub("templates/circleci"),
+	GitHubActionsCI:  mustFSSub("templates/.github"),
 }
