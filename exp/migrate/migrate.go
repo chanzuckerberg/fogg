@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/pkg/errors"
+	prompt "github.com/segmentio/go-prompt"
 	"github.com/sirupsen/logrus"
 )
 

@@ -1,5 +1,7 @@
 package hcl
 
+import hcl "github.com/hashicorp/hcl/v2"
+
 // taken from https://github.com/hashicorp/terraform-config-inspect/blob/17f92b0546e8602e4cecb14d2263f0b1746b9cc9/tfconfig/schema.go
 
 var rootSchema = &hcl.BodySchema{

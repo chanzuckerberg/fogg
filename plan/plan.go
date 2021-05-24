@@ -11,6 +11,7 @@ import (
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/chanzuckerberg/go-misc/ptr"
 	"github.com/sirupsen/logrus"
+	yaml "gopkg.in/yaml.v3"
 )
 
 // Plan represents a set of actions to take

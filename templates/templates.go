@@ -9,7 +9,8 @@ import (
 )
 
 // NOTE(el): due to a design decision of go embed, we enumerate files starting with
-//           the following set of characters: {.}
+//           the following set of characters: {.} giving explicit attention to directories with ONLY
+//           files starting with said characters
 //go:embed templates/.github/*
 //go:embed templates/circleci/.circleci/*
 //go:embed templates/common/*

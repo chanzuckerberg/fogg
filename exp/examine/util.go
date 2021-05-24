@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/chanzuckerberg/fogg/errs"
+	getter "github.com/hashicorp/go-getter"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/spf13/afero"
 )

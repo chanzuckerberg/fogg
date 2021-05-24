@@ -8,10 +8,10 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
+	yaml "gopkg.in/yaml.v3"
 )
 
 func init() {
-	// planCmd.Flags().StringP("config", "c", "fogg.yml", "Use this to override the fogg config file.")
 	rootCmd.AddCommand(fmtCmd)
 }
 

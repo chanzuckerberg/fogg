@@ -418,8 +418,6 @@ func applyModuleInvocation(
 
 	moduleAddressForSource, _ := calculateModuleAddressForSource(path, moduleAddress)
 	// MAIN
-	util.ListEmbeddedFiles(box)
-
 	f, e := box.Open("main.tf.tmpl")
 	if e != nil {
 		return errs.WrapUser(e, "could not open template file")
