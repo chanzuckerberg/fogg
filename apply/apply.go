@@ -229,7 +229,6 @@ func applyTree(dest afero.Fs, source fs.FS, common fs.FS, targetBasePath string,
 			return errs.WrapInternal(err, "could not read source file")
 		}
 
-		// return source.Walk(func(path string, sourceFile packr.File) error {
 		extension := filepath.Ext(path)
 		target := getTargetPath(targetBasePath, path)
 		targetExtension := filepath.Ext(target)
