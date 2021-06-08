@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"io/fs"
 	"io/ioutil"
 	"net/url"
 	"os"
@@ -17,7 +18,6 @@ import (
 	"github.com/chanzuckerberg/fogg/plan"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
-	"github.com/gobuffalo/packr/v2"
 	getter "github.com/hashicorp/go-getter"
 	"github.com/hashicorp/hcl2/hclwrite"
 	"github.com/sirupsen/logrus"
@@ -122,11 +122,11 @@ func versionIsChanged(repo string, tool string) bool {
 	return toolVersion.NE(repoVersion)
 }
 
-func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates, commonTemplates *packr.Box) error {
+func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates, commonTemplates fs.FS) error {
 	return applyTree(fs, repoTemplates, commonTemplates, "", p)
 }
 
-func applyGlobal(fs afero.Fs, p plan.Component, repoBox, commonBox *packr.Box) error {
+func applyGlobal(fs afero.Fs, p plan.Component, repoBox, commonBox fs.FS) error {
 	logrus.Debug("applying global")
 	path := fmt.Sprintf("%s/global", rootPath)
 	e := fs.MkdirAll(path, 0755)
@@ -136,7 +136,7 @@ func applyGlobal(fs afero.Fs, p plan.Component, repoBox, commonBox *packr.Box) e
 	return applyTree(fs, repoBox, commonBox, path, p)
 }
 
-func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox, commonBox *packr.Box) (e error) {
+func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox, commonBox fs.FS) (e error) {
 	for account, accountPlan := range p.Accounts {
 		path := fmt.Sprintf("%s/accounts/%s", rootPath, account)
 		e = fs.MkdirAll(path, 0755)
@@ -151,7 +151,7 @@ func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox, commonBox *packr.Box) 
 	return nil
 }
 
-func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox, commonBox *packr.Box) (e error) {
+func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox, commonBox fs.FS) (e error) {
 	for module, modulePlan := range p {
 		path := fmt.Sprintf("%s/modules/%s", rootPath, module)
 		e = fs.MkdirAll(path, 0755)
@@ -166,29 +166,42 @@ func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox, commonBox *p
 	return nil
 }
 
-func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBoxes map[v2.ComponentKind]*packr.Box, commonBox *packr.Box) (e error) {
+func applyEnvs(
+	fs afero.Fs,
+	p *plan.Plan,
+	envBox fs.FS,
+	componentBoxes map[v2.ComponentKind]fs.FS,
+	commonBox fs.FS) (err error) {
 	logrus.Debug("applying envs")
 	for env, envPlan := range p.Envs {
 		logrus.Debugf("applying %s", env)
 		path := fmt.Sprintf("%s/envs/%s", rootPath, env)
-		e = fs.MkdirAll(path, 0755)
-		if e != nil {
-			return errs.WrapUserf(e, "unable to make directory %s", path)
+		err = fs.MkdirAll(path, 0755)
+		if err != nil {
+			return errs.WrapUserf(err, "unable to make directory %s", path)
 		}
-		e := applyTree(fs, envBox, commonBox, path, envPlan)
-		if e != nil {
-			return errs.WrapUser(e, "unable to apply templates to env")
+		err := applyTree(fs, envBox, commonBox, path, envPlan)
+		if err != nil {
+			return errs.WrapUser(err, "unable to apply templates to env")
 		}
 		for component, componentPlan := range envPlan.Components {
 			path = fmt.Sprintf("%s/envs/%s/%s", rootPath, env, component)
-			e = fs.MkdirAll(path, 0755)
-			if e != nil {
-				return errs.WrapUser(e, "unable to make directories for component")
+			err = fs.MkdirAll(path, 0755)
+			if err != nil {
+				return errs.WrapUser(err, "unable to make directories for component")
 			}
-			componentBox := componentBoxes[componentPlan.Kind.GetOrDefault()]
-			e := applyTree(fs, componentBox, commonBox, path, componentPlan)
-			if e != nil {
-				return errs.WrapUser(e, "unable to apply templates for component")
+
+			// NOTE(el): component kind only support TF now
+			// 					 add a dynamic check to make sure.
+			kind := componentPlan.Kind.GetOrDefault()
+			componentBox, ok := componentBoxes[kind]
+			if !ok {
+				return errs.NewUserf("component of kind '%s' not suppoerted, must be 'terraform'", kind)
+			}
+
+			err := applyTree(fs, componentBox, commonBox, path, componentPlan)
+			if err != nil {
+				return errs.WrapUser(err, "unable to apply templates for component")
 			}
 
 			if componentPlan.ModuleSource != nil {
@@ -202,8 +215,20 @@ func applyEnvs(fs afero.Fs, p *plan.Plan, envBox *packr.Box, componentBoxes map[
 	return nil
 }
 
-func applyTree(dest afero.Fs, source *packr.Box, common *packr.Box, targetBasePath string, subst interface{}) (e error) {
-	return source.Walk(func(path string, sourceFile packr.File) error {
+func applyTree(dest afero.Fs, source fs.FS, common fs.FS, targetBasePath string, subst interface{}) (e error) {
+	return fs.WalkDir(source, ".", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return errs.WrapInternal(err, "unable to walk dir")
+		}
+		if d.IsDir() {
+			return nil // skip dirs
+		}
+
+		sourceFile, err := source.Open(path)
+		if err != nil {
+			return errs.WrapInternal(err, "could not read source file")
+		}
+
 		extension := filepath.Ext(path)
 		target := getTargetPath(targetBasePath, path)
 		targetExtension := filepath.Ext(target)
@@ -320,7 +345,7 @@ func removeExtension(path string) string {
 	return strings.TrimSuffix(path, filepath.Ext(path))
 }
 
-func applyTemplate(sourceFile io.Reader, commonTemplates *packr.Box, dest afero.Fs, path string, overrides interface{}) error {
+func applyTemplate(sourceFile io.Reader, commonTemplates fs.FS, dest afero.Fs, path string, overrides interface{}) error {
 	dir, _ := filepath.Split(path)
 	ospath := filepath.FromSlash(dir)
 	err := dest.MkdirAll(ospath, 0775)
@@ -350,7 +375,12 @@ type moduleData struct {
 	Outputs      []string
 }
 
-func applyModuleInvocation(fs afero.Fs, path, moduleAddress string, inModuleName *string, box *packr.Box, commonBox *packr.Box) error {
+func applyModuleInvocation(
+	fs afero.Fs,
+	path, moduleAddress string,
+	inModuleName *string,
+	box fs.FS,
+	commonBox fs.FS) error {
 	e := fs.MkdirAll(path, 0755)
 	if e != nil {
 		return errs.WrapUserf(e, "couldn't create %s directory", path)
@@ -391,7 +421,12 @@ func applyModuleInvocation(fs afero.Fs, path, moduleAddress string, inModuleName
 	if e != nil {
 		return errs.WrapUser(e, "could not open template file")
 	}
-	e = applyTemplate(f, commonBox, fs, filepath.Join(path, "main.tf"), &moduleData{moduleName, moduleAddressForSource, variables, outputs})
+	e = applyTemplate(
+		f,
+		commonBox,
+		fs,
+		filepath.Join(path, "main.tf"),
+		&moduleData{moduleName, moduleAddressForSource, variables, outputs})
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply template for main.tf")
 	}

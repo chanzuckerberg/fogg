@@ -84,7 +84,7 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 	r.NotNil(plan.Envs["staging"])
 
 	r.NotNil(plan.Envs["staging"].Components)
-	r.Len(plan.Envs["staging"].Components, 4)
+	r.Len(plan.Envs["staging"].Components, 3)
 
 	r.NotNil(plan.Envs["staging"])
 	r.NotNil(plan.Envs["staging"].Components["vpc"])
@@ -95,9 +95,6 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 
 	r.NotNil(plan.Envs["staging"].Components["comp1"])
 	r.Equal("0.100.0", plan.Envs["staging"].Components["comp1"].TerraformVersion)
-
-	r.NotNil(plan.Envs["staging"].Components["comp_helm_template"])
-	r.Equal("k8s", plan.Envs["staging"].Components["comp_helm_template"].EKS.ClusterName)
 
 	r.NotNil(plan.Envs["prod"])
 	r.NotNil(plan.Envs["prod"].Components["hero"])
@@ -133,13 +130,6 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 
 	r.NotNil(plan.GitHubActionsCI)
 	r.True(plan.GitHubActionsCI.Enabled)
-}
-
-func TestResolveEKSConfig(t *testing.T) {
-	r := require.New(t)
-	r.Equal("", resolveEKSConfig(nil, nil).ClusterName)
-	r.Equal("a", resolveEKSConfig(&v2.EKSConfig{ClusterName: "a"}, nil).ClusterName)
-	r.Equal("b", resolveEKSConfig(&v2.EKSConfig{ClusterName: "a"}, &v2.EKSConfig{ClusterName: "b"}).ClusterName)
 }
 
 func TestRemoteBackendPlan(t *testing.T) {

@@ -112,9 +112,6 @@ check-plan: check-auth init refresh-cached ## run a terraform plan and check tha
 	@if [ "$(TF_BACKEND_KIND)" != "remote" ]; then \
 		$(terraform_command) plan $(TF_ARGS) -detailed-exitcode -lock=false -refresh=$(REFRESH) -out=$(CHECK_PLANFILE_PATH) ; \
 		ERR=$$?; \
-		if [ -n "$(BUILDEVENT_FILE)" ]; then \
-			fogg exp entropy -f $(CHECK_PLANFILE_PATH) -o $(BUILDEVENT_FILE) ; \
-		fi; \
 		rm $(CHECK_PLANFILE_PATH) 2>/dev/null; \
 	else \
 		$(terraform_command) plan $(TF_ARGS) -detailed-exitcode -lock=false; \

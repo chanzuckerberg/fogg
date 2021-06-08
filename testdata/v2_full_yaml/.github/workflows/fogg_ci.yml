@@ -67,8 +67,5 @@ jobs:
           cd terraform/envs/staging/comp2
           make  lint
       - run: |
-          cd terraform/envs/staging/comp_helm_template
-          make  lint
-      - run: |
           cd terraform/envs/staging/vpc
           make  lint

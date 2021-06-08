@@ -12,7 +12,7 @@ import (
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/spf13/afero"
-	"gopkg.in/yaml.v3"
+	yaml "gopkg.in/yaml.v3"
 )
 
 //ReadConfig take a byte array as input and outputs a json or yaml config struct
@@ -352,8 +352,6 @@ const (
 	DefaultComponentKind ComponentKind = "terraform"
 	// ComponentKindTerraform is a terraform component
 	ComponentKindTerraform = DefaultComponentKind
-	// ComponentKindHelmTemplate is a helm template component
-	ComponentKindHelmTemplate ComponentKind = "helm_template"
 )
 
 // Generate is used for test/quick integration. There are supposedly ways to do this without polluting the public

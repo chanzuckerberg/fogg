@@ -1,7 +1,6 @@
 before:
   hooks:
     - make clean
-    - make packr
 
 builds:
   - binary: fogg

@@ -9,7 +9,7 @@ jobs:
           token: ${{ secrets.CZIBUILDBOT_GITHUB_TOKEN }}
       - uses: actions/setup-go@v2
         with:
-          go-version: '1.15.2'
+          go-version: '1.16'
       - name: fix go modules
         run: |
           go mod tidy
@@ -18,4 +18,3 @@ jobs:
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "tidy modules" || true
           git push
-

@@ -9,15 +9,12 @@ export GO111MODULE=on
 all: test install
 
 setup: ## setup development dependencies
-	## Build dependencies
-	go get -u github.com/gobuffalo/packr/v2/packr2
-
 	## Release dependencies
 	curl -sfL https://raw.githubusercontent.com/chanzuckerberg/bff/main/download.sh | sh
 .PHONY: setup
 
 fmt:
-	goimports -w -d $$(find . -type f -name '*.go' -not -path "./vendor/*" -not -path "./dist/*")
+	goimports -w -l .
 .PHONY: fmt
 
 lint-setup: ## setup linter dependencies
@@ -56,13 +53,6 @@ lint-all: lint-setup ## run the fast go linters
 
 TEMPLATES := $(shell find templates -not -name "*.go")
 
-templates/a_templates-packr.go: $(TEMPLATES)
-	packr2 clean -v
-	packr2 build -v
-
-packr: templates/a_templates-packr.go ## run the packr tool to generate our static files
-.PHONY: packr
-
 docker: ## check to be sure docker is running
 	@docker ps
 .PHONY: docker
@@ -86,7 +76,7 @@ release-snapshot: setup ## run a release
 	goreleaser release --snapshot
 .PHONY: release-snapshot
 
-build: fmt packr ## build the binary
+build: fmt ## build the binary
 	go build ${LDFLAGS} .
 .PHONY: build
 
@@ -98,7 +88,7 @@ coverage: ## run the go coverage tool, reading file coverage.out
 	go tool cover -html=coverage.out
 .PHONY: coverage
 
-test: fmt deps packr ## run tests
+test: fmt deps ## run tests
  ifeq (, $(shell which gotest))
 	go test -failfast -cover ./...
  else
@@ -106,20 +96,20 @@ test: fmt deps packr ## run tests
  endif
 .PHONY: test
 
-test-ci: packr ## run tests
+test-ci: ## run tests
 	go test -race -coverprofile=coverage.out -covermode=atomic ./...
 .PHONY: test-ci
 
-test-offline: packr  ## run only tests that don't require internet
+test-offline: ## run only tests that don't require internet
 	go test -tags=offline ./...
 .PHONY: test-offline
 
-test-coverage: packr  ## run the test with proper coverage reporting
+test-coverage: ## run the test with proper coverage reporting
 	go test -race -coverprofile=coverage.out -covermode=atomic ./...
 	go tool cover -html=coverage.out
 .PHONY: test-coverage
 
-install: packr ## install the fogg binary in $GOPATH/bin
+install: ## install the fogg binary in $GOPATH/bin
 	go install ${LDFLAGS} .
 .PHONY: install
 
@@ -132,7 +122,6 @@ clean: ## clean the repo
 	go clean
 	go clean -testcache
 	rm -rf dist 2>/dev/null || true
-	packr2 clean
 	rm coverage.out 2>/dev/null || true
 
 update-golden-files: clean deps ## update the golden files in testdata
