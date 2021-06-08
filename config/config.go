@@ -10,7 +10,7 @@ import (
 	goVersion "github.com/hashicorp/go-version"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
-	"gopkg.in/yaml.v3"
+	yaml "gopkg.in/yaml.v3"
 )
 
 var defaultTerraformVersion = goVersion.Must(goVersion.NewVersion("0.13.5"))

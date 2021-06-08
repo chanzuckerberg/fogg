@@ -1,33 +1,67 @@
 package templates
 
 import (
+	"embed"
+	"io/fs"
+
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
-	"github.com/gobuffalo/packr/v2"
+	"github.com/sirupsen/logrus"
 )
 
+// NOTE(el): due to a design decision of go embed, we enumerate files starting with
+//           the following set of characters: {.} giving explicit attention to directories with ONLY
+//           files starting with said characters
+//go:embed templates/.github/*
+//go:embed templates/circleci/.circleci/*
+//go:embed templates/common/*
+//go:embed templates/component/*
+//go:embed templates/env/*
+//go:embed templates/module/*
+//go:embed templates/module/.update-readme.sh.rm
+//go:embed templates/module-invocation/*
+//go:embed templates/repo
+//go:embed templates/repo/scripts/*
+//go:embed templates/repo/.fogg-version.tmpl
+//go:embed templates/repo/.gitattributes
+//go:embed templates/repo/.gitignore
+//go:embed templates/repo/.terraformignore.tmpl
+//go:embed templates/repo/terraform.d/.keep.touch
+//go:embed templates/repo/.terraform.d/plugin-cache/.gitignore
+//go:embed templates/travis-ci/.travis.yml.tmpl
+var templates embed.FS
+
 type T struct {
-	Common           *packr.Box
-	Components       map[v2.ComponentKind]*packr.Box
-	Env              *packr.Box
-	Module           *packr.Box
-	ModuleInvocation *packr.Box
-	Repo             *packr.Box
-	TravisCI         *packr.Box
-	CircleCI         *packr.Box
-	GitHubActionsCI  *packr.Box
+	Common           fs.FS
+	Components       map[v2.ComponentKind]fs.FS
+	Env              fs.FS
+	Module           fs.FS
+	ModuleInvocation fs.FS
+	Repo             fs.FS
+	TravisCI         fs.FS
+	CircleCI         fs.FS
+	GitHubActionsCI  fs.FS
+}
+
+// we control the inputs so should never panic
+func mustFSSub(dir string) fs.FS {
+	fs, err := fs.Sub(templates, dir)
+	if err != nil {
+		logrus.Fatalf("could not find templates for %s: %s", dir, err)
+		return nil
+	}
+	return fs
 }
 
 var Templates = &T{
-	Common: packr.New("common", "./common"),
-	Components: map[v2.ComponentKind]*packr.Box{
-		v2.ComponentKindTerraform:    packr.New("component/terraform", "./component/terraform"),
-		v2.ComponentKindHelmTemplate: packr.New("component/helm_template", "./component/helm_template"),
+	Common: mustFSSub("templates/common"),
+	Components: map[v2.ComponentKind]fs.FS{
+		v2.ComponentKindTerraform: mustFSSub("templates/component/terraform"),
 	},
-	Env:              packr.New("env", "./env"),
-	Module:           packr.New("module", "./module"),
-	ModuleInvocation: packr.New("module-invocation", "./module-invocation"),
-	Repo:             packr.New("repo", "./repo"),
-	TravisCI:         packr.New("travis-ci", "./travis-ci"),
-	CircleCI:         packr.New("circleci", "./circleci"),
-	GitHubActionsCI:  packr.New(".github", "./.github"),
+	Env:              mustFSSub("templates/env"),
+	Module:           mustFSSub("templates/module"),
+	ModuleInvocation: mustFSSub("templates/module-invocation"),
+	Repo:             mustFSSub("templates/repo"),
+	TravisCI:         mustFSSub("templates/travis-ci"),
+	CircleCI:         mustFSSub("templates/circleci"),
+	GitHubActionsCI:  mustFSSub("templates/.github"),
 }

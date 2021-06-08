@@ -2,13 +2,13 @@ package util
 
 import (
 	"io"
-	"io/ioutil"
+	"io/fs"
 	"reflect"
 	"text/template"
 
 	"github.com/Masterminds/sprig"
 	"github.com/chanzuckerberg/fogg/errs"
-	"github.com/gobuffalo/packr/v2"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -39,46 +39,40 @@ func avail(name string, data interface{}) bool {
 }
 
 // OpenTemplate will read `source` for a template, parse, configure and return a template.Template
-func OpenTemplate(label string, source io.Reader, commonTemplates *packr.Box) (*template.Template, error) {
+func OpenTemplate(label string, source io.Reader, templates fs.FS) (*template.Template, error) {
 	// TODO we should probably cache these rather than open and parse them for every apply
-
-	var readTemplate = func(source io.Reader) (string, error) {
-		s, err := ioutil.ReadAll(source)
-
-		if err != nil {
-			return "", errs.WrapInternal(err, "could not read template")
-		}
-		return string(s), nil
-	}
-
-	s, err := readTemplate(source)
-	if err != nil {
-		return nil, err
-	}
-
 	funcs := sprig.TxtFuncMap()
 	funcs["dict"] = dict
 	funcs["avail"] = avail
 
-	t, err := template.New(label).Funcs(funcs).Parse(s)
+	s, err := io.ReadAll(source)
 	if err != nil {
-		return nil, err
+		return nil, errs.WrapInternal(err, "could not read template")
 	}
 
-	err = commonTemplates.Walk(func(path string, file packr.File) error {
-		s, err := readTemplate(file)
+	t, err := template.New(label).Funcs(funcs).Parse(string(s))
+	if err != nil {
+		return nil, errs.WrapInternal(err, "could not read template")
+	}
+
+	err = fs.WalkDir(templates, ".", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
+		if d.IsDir() {
+			return nil // nothing to do
+		}
 
-		t, err = t.Parse(s)
+		contents, err := fs.ReadFile(templates, path)
+		if err != nil {
+			return errors.Wrapf(err, "could not read contents at %s", path)
+		}
 
-		return err
+		t, err = t.Parse(string(contents))
+		return errors.Wrapf(err, "could not parse template at %s", path)
 	})
-
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "could not walk templates")
 	}
-
-	return t, err
+	return t, nil
 }

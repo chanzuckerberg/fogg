@@ -1,11 +1,11 @@
 package templates
 
 import (
+	"io/fs"
 	"testing"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/util"
-	"github.com/gobuffalo/packr/v2"
 	"github.com/stretchr/testify/require"
 )
 
@@ -13,7 +13,7 @@ func TestOpenTemplate(t *testing.T) {
 	temps := Templates
 
 	type args struct {
-		box  *packr.Box
+		box  fs.FS
 		path string
 	}
 
@@ -41,4 +41,5 @@ func TestOpenTemplate(t *testing.T) {
 			r.NotNil(temp.Templates())
 		})
 	}
+
 }
