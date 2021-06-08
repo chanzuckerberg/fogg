@@ -42,5 +42,4 @@ func TestOpenTemplate(t *testing.T) {
 		})
 	}
 
-	// t.FailNow()
 }
