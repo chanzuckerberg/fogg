@@ -35,7 +35,10 @@ jobs:
           {{ end }}
       {{ end }}
       - run: FOGG_VERSION="v{{ $githubActionsCI.FoggVersion }}" make setup
-      - run: |
+      - name: fogg apply
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
           .fogg/bin/fogg apply
           if [ "$(git status --porcelain)" != "" ]; then
             echo "git tree is dirty after running fogg apply"
