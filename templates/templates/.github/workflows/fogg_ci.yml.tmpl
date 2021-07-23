@@ -26,7 +26,7 @@ jobs:
           curl -sSLo ./terraform-docs.tar.gz https://terraform-docs.io/dl/v0.14.1/terraform-docs-v0.14.1-$(uname)-amd64.tar.gz
           tar -xzf terraform-docs.tar.gz
           chmod +x terraform-docs
-          echo "$PWD/terraform-docs" >> $GITHUB_PATH
+          echo "$PWD" >> $GITHUB_PATH
       - run: python3 -m venv venv
       - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
