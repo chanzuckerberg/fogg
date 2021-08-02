@@ -322,7 +322,7 @@ func touchFile(dest afero.Fs, path string) error {
 			return errs.WrapUser(err, "unable to touch file")
 		}
 	} else {
-		logrus.Tracef("%s skipped touch", path)
+		logrus.Debugf("%s skipped touch", path)
 	}
 	return nil
 }
