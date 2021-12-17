@@ -41,27 +41,15 @@ jobs:
       - run: aws --profile profile sts get-caller-identity
       - run: |
           echo "start"
-          cd terraform/accounts/bar
-          make  lint
-          cd terraform/accounts/foo
-          make  lint
-          cd terraform/global
-          make  lint
-          cd terraform/modules/my_module
-          make  check
-          cd terraform/envs/prod/datadog
-          make  lint
-          cd terraform/envs/prod/hero
-          make  lint
-          cd terraform/envs/prod/okta
-          make  lint
-          cd terraform/envs/prod/sentry
-          make  lint
-          cd terraform/envs/prod/vpc
-          make  lint
-          cd terraform/envs/staging/comp1
-          make  lint
-          cd terraform/envs/staging/comp2
-          make  lint
-          cd terraform/envs/staging/vpc
-          make  lint
+          ( cd terraform/accounts/bar && make  lint )
+          ( cd terraform/accounts/foo && make  lint )
+          ( cd terraform/global && make  lint )
+          ( cd terraform/modules/my_module && make  check )
+          ( cd terraform/envs/prod/datadog && make  lint )
+          ( cd terraform/envs/prod/hero && make  lint )
+          ( cd terraform/envs/prod/okta && make  lint )
+          ( cd terraform/envs/prod/sentry && make  lint )
+          ( cd terraform/envs/prod/vpc && make  lint )
+          ( cd terraform/envs/staging/comp1 && make  lint )
+          ( cd terraform/envs/staging/comp2 && make  lint )
+          ( cd terraform/envs/staging/vpc && make  lint )

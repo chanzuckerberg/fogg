@@ -33,8 +33,7 @@ jobs:
           fi
       - run: |
           echo "start"
-          cd terraform/global
-          make  lint
+          ( cd terraform/global && make  lint )
   terraform_1:
     runs-on: ubuntu-latest
     steps:

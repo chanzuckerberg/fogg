@@ -62,7 +62,6 @@ jobs:
       - run: |
           echo "start"
   {{- range $component := $testBucket }}
-          cd {{ $component.Dir }}
-          make  {{ $component.Command }}
+          ( cd {{ $component.Dir }} && make  {{ $component.Command }} )
   {{- end }}
 {{- end }}
