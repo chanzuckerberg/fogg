@@ -32,6 +32,7 @@ jobs:
             exit 1
           fi
       - run: |
+          echo "start"
           cd terraform/global
           make  lint
   terraform_1:
@@ -61,6 +62,8 @@ jobs:
             git status
             exit 1
           fi
+      - run: |
+          echo "start"
   terraform_2:
     runs-on: ubuntu-latest
     steps:
@@ -88,6 +91,8 @@ jobs:
             git status
             exit 1
           fi
+      - run: |
+          echo "start"
   terraform_3:
     runs-on: ubuntu-latest
     steps:
@@ -115,6 +120,8 @@ jobs:
             git status
             exit 1
           fi
+      - run: |
+          echo "start"
   terraform_4:
     runs-on: ubuntu-latest
     steps:
@@ -142,6 +149,8 @@ jobs:
             git status
             exit 1
           fi
+      - run: |
+          echo "start"
   terraform_5:
     runs-on: ubuntu-latest
     steps:
@@ -169,6 +178,8 @@ jobs:
             git status
             exit 1
           fi
+      - run: |
+          echo "start"
   terraform_6:
     runs-on: ubuntu-latest
     steps:
@@ -196,3 +207,5 @@ jobs:
             git status
             exit 1
           fi
+      - run: |
+          echo "start"

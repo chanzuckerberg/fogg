@@ -59,8 +59,9 @@ jobs:
       - run: aws configure set profile.{{ $profileName }}.source_profile _idacct
       - run: aws --profile {{ $profileName }} sts get-caller-identity
 {{- end }}
-  {{- range $component := $testBucket }}
       - run: |
+          echo "start"
+  {{- range $component := $testBucket }}
           cd {{ $component.Dir }}
           make  {{ $component.Command }}
   {{- end }}
