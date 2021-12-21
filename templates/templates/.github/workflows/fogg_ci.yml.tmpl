@@ -43,6 +43,8 @@ jobs:
       - run: FOGG_VERSION="v{{ $githubActionsCI.FoggVersion }}" make setup
       - run: |
           .fogg/bin/fogg apply
+          git status
+          git diff
           if [ "$(git status --porcelain)" != "" ]; then
             echo "git tree is dirty after running fogg apply"
             echo "ensure you run fogg apply on your branch"
