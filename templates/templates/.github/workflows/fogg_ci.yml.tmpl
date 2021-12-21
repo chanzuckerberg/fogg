@@ -27,6 +27,7 @@ jobs:
           tar -xzf terraform-docs.tar.gz
           chmod +x terraform-docs
           echo "$PWD" >> $GITHUB_PATH
+        working-directory: /tmp/terraform-docs/
       - run: python3 -m venv venv
       - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
