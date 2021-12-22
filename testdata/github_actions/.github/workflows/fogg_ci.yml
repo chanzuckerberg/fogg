@@ -12,8 +12,8 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: '3.6'
+      # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
       - run: |
-          # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
           curl -sSLo ./terraform-docs.tar.gz https://terraform-docs.io/dl/v0.14.1/terraform-docs-v0.14.1-$(uname)-amd64.tar.gz
           tar -xzf terraform-docs.tar.gz
           chmod +x terraform-docs
@@ -45,8 +45,8 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: '3.6'
+      # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
       - run: |
-          # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
           curl -sSLo ./terraform-docs.tar.gz https://terraform-docs.io/dl/v0.14.1/terraform-docs-v0.14.1-$(uname)-amd64.tar.gz
           tar -xzf terraform-docs.tar.gz
           chmod +x terraform-docs
@@ -77,8 +77,8 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: '3.6'
+      # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
       - run: |
-          # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
           curl -sSLo ./terraform-docs.tar.gz https://terraform-docs.io/dl/v0.14.1/terraform-docs-v0.14.1-$(uname)-amd64.tar.gz
           tar -xzf terraform-docs.tar.gz
           chmod +x terraform-docs
@@ -109,8 +109,8 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: '3.6'
+      # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
       - run: |
-          # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
           curl -sSLo ./terraform-docs.tar.gz https://terraform-docs.io/dl/v0.14.1/terraform-docs-v0.14.1-$(uname)-amd64.tar.gz
           tar -xzf terraform-docs.tar.gz
           chmod +x terraform-docs
@@ -141,8 +141,8 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: '3.6'
+      # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
       - run: |
-          # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
           curl -sSLo ./terraform-docs.tar.gz https://terraform-docs.io/dl/v0.14.1/terraform-docs-v0.14.1-$(uname)-amd64.tar.gz
           tar -xzf terraform-docs.tar.gz
           chmod +x terraform-docs
@@ -173,8 +173,8 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: '3.6'
+      # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
       - run: |
-          # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
           curl -sSLo ./terraform-docs.tar.gz https://terraform-docs.io/dl/v0.14.1/terraform-docs-v0.14.1-$(uname)-amd64.tar.gz
           tar -xzf terraform-docs.tar.gz
           chmod +x terraform-docs
@@ -205,8 +205,8 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: '3.6'
+      # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
       - run: |
-          # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
           curl -sSLo ./terraform-docs.tar.gz https://terraform-docs.io/dl/v0.14.1/terraform-docs-v0.14.1-$(uname)-amd64.tar.gz
           tar -xzf terraform-docs.tar.gz
           chmod +x terraform-docs
