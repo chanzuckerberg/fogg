@@ -39,7 +39,7 @@ check-docs: ## check that this module's docs are up-to-date
 	@bash $(REPO_ROOT)/scripts/update-readme.sh check; \
 	if [ ! $$? -eq 0 ];  then \
 		echo "Docs are out of date, run \`make docs\`"; \
-		exit $$? ; \
+		exit 1 ; \
 	fi
 .PHONY: check-docs
 
