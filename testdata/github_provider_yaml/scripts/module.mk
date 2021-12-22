@@ -28,7 +28,7 @@ lint-tf: terraform ## run terraform linters on this module
 	@echo
 .PHONY: lint-tf
 
-readme: ## update this module's README.md 
+readme: ## update this module's README.md
 	bash $(REPO_ROOT)/scripts/update-readme.sh update
 .PHONY: readme
 
@@ -39,6 +39,7 @@ check-docs: ## check that this module's docs are up-to-date
 	@bash $(REPO_ROOT)/scripts/update-readme.sh check; \
 	if [ ! $$? -eq 0 ];  then \
 		echo "Docs are out of date, run \`make docs\`"; \
+		exit $$? ; \
 	fi
 .PHONY: check-docs
 
