@@ -27,7 +27,7 @@ jobs:
           tar -xzf terraform-docs.tar.gz
           chmod +x terraform-docs
           echo "$PWD" >> $GITHUB_PATH
-        working-directory: /tmp/terraform-docs/
+        working-directory: .fogg
       - run: python3 -m venv venv
       - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
@@ -63,7 +63,7 @@ jobs:
       - run: aws --profile {{ $profileName }} sts get-caller-identity
 {{- end }}
       - run: |
-          echo "start"
+          echo "start all"
   {{- range $component := $testBucket }}
           ( cd {{ $component.Dir }} && make  {{ $component.Command }} )
   {{- end }}

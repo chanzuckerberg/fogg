@@ -18,7 +18,7 @@ jobs:
           tar -xzf terraform-docs.tar.gz
           chmod +x terraform-docs
           echo "$PWD" >> $GITHUB_PATH
-        working-directory: /tmp/terraform-docs/
+        working-directory: .fogg
       - run: python3 -m venv venv
       - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
@@ -35,7 +35,7 @@ jobs:
             exit 1
           fi
       - run: |
-          echo "start"
+          echo "start all"
           ( cd terraform/global && make  lint )
   terraform_1:
     runs-on: ubuntu-latest
@@ -51,7 +51,7 @@ jobs:
           tar -xzf terraform-docs.tar.gz
           chmod +x terraform-docs
           echo "$PWD" >> $GITHUB_PATH
-        working-directory: /tmp/terraform-docs/
+        working-directory: .fogg
       - run: python3 -m venv venv
       - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
@@ -68,7 +68,7 @@ jobs:
             exit 1
           fi
       - run: |
-          echo "start"
+          echo "start all"
   terraform_2:
     runs-on: ubuntu-latest
     steps:
@@ -83,7 +83,7 @@ jobs:
           tar -xzf terraform-docs.tar.gz
           chmod +x terraform-docs
           echo "$PWD" >> $GITHUB_PATH
-        working-directory: /tmp/terraform-docs/
+        working-directory: .fogg
       - run: python3 -m venv venv
       - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
@@ -100,7 +100,7 @@ jobs:
             exit 1
           fi
       - run: |
-          echo "start"
+          echo "start all"
   terraform_3:
     runs-on: ubuntu-latest
     steps:
@@ -115,7 +115,7 @@ jobs:
           tar -xzf terraform-docs.tar.gz
           chmod +x terraform-docs
           echo "$PWD" >> $GITHUB_PATH
-        working-directory: /tmp/terraform-docs/
+        working-directory: .fogg
       - run: python3 -m venv venv
       - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
@@ -132,7 +132,7 @@ jobs:
             exit 1
           fi
       - run: |
-          echo "start"
+          echo "start all"
   terraform_4:
     runs-on: ubuntu-latest
     steps:
@@ -147,7 +147,7 @@ jobs:
           tar -xzf terraform-docs.tar.gz
           chmod +x terraform-docs
           echo "$PWD" >> $GITHUB_PATH
-        working-directory: /tmp/terraform-docs/
+        working-directory: .fogg
       - run: python3 -m venv venv
       - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
@@ -164,7 +164,7 @@ jobs:
             exit 1
           fi
       - run: |
-          echo "start"
+          echo "start all"
   terraform_5:
     runs-on: ubuntu-latest
     steps:
@@ -179,7 +179,7 @@ jobs:
           tar -xzf terraform-docs.tar.gz
           chmod +x terraform-docs
           echo "$PWD" >> $GITHUB_PATH
-        working-directory: /tmp/terraform-docs/
+        working-directory: .fogg
       - run: python3 -m venv venv
       - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
@@ -196,7 +196,7 @@ jobs:
             exit 1
           fi
       - run: |
-          echo "start"
+          echo "start all"
   terraform_6:
     runs-on: ubuntu-latest
     steps:
@@ -211,7 +211,7 @@ jobs:
           tar -xzf terraform-docs.tar.gz
           chmod +x terraform-docs
           echo "$PWD" >> $GITHUB_PATH
-        working-directory: /tmp/terraform-docs/
+        working-directory: .fogg
       - run: python3 -m venv venv
       - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
@@ -228,4 +228,4 @@ jobs:
             exit 1
           fi
       - run: |
-          echo "start"
+          echo "start all"

@@ -20,7 +20,7 @@ jobs:
           tar -xzf terraform-docs.tar.gz
           chmod +x terraform-docs
           echo "$PWD" >> $GITHUB_PATH
-        working-directory: /tmp/terraform-docs/
+        working-directory: .fogg
       - run: python3 -m venv venv
       - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
@@ -43,7 +43,7 @@ jobs:
       - run: aws configure set profile.profile.source_profile _idacct
       - run: aws --profile profile sts get-caller-identity
       - run: |
-          echo "start"
+          echo "start all"
           ( cd terraform/accounts/bar && make  lint )
           ( cd terraform/accounts/foo && make  lint )
           ( cd terraform/global && make  lint )
