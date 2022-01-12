@@ -31,4 +31,3 @@ jobs:
         with:
           tool_name: terraform fmt
           fail_on_error: true
-        working-directory: testdata
