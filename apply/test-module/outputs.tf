@@ -1,7 +1,7 @@
 output "foo" {
-  value = "${var.foo}"
+  value = var.foo
 }
 
 output "bar" {
-  value = "${var.bar}"
+  value = var.bar
 }
