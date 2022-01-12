@@ -31,3 +31,11 @@ jobs:
         with:
           tool_name: terraform fmt
           fail_on_error: true
+      - name: golangci-lint
+        uses: reviewdog/action-golangci-lint@v2
+        with:
+          reporter: github-pr-review
+      - name: markdownlint
+        uses: reviewdog/action-markdownlint@v0.1
+        with:
+          reporter: github-pr-review
