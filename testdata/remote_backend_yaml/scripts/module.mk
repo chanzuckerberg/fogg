@@ -15,7 +15,7 @@ fmt: terraform ## run terraform fmt on this module
 check: lint check-docs ## run all checks on this module
 .PHONY: check
 
-lint: lint-tf ## run all linters on this module
+lint: lint-tf check-docs ## run all linters on this module
 .PHONY: lint
 
 lint-tf: terraform ## run terraform linters on this module
