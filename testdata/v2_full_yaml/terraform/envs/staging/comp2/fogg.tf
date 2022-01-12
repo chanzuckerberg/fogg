@@ -16,7 +16,7 @@ terraform {
 
     hostname     = "example.com"
     organization = "foo"
-    workspaces {
+    workspaces = {
       name = "staging-comp2"
     }
 
@@ -133,7 +133,7 @@ data terraform_remote_state comp1 {
 
     hostname     = "example.com"
     organization = "foo"
-    workspaces = {
+    ffffworkspaces = {
       name = "staging-comp1"
     }
 
@@ -146,7 +146,7 @@ data terraform_remote_state vpc {
 
     hostname     = "example.com"
     organization = "foo"
-    workspaces = {
+    ffffworkspaces = {
       name = "staging-vpc"
     }
 

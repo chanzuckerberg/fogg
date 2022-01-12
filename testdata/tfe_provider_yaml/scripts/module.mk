@@ -9,9 +9,7 @@ all: fmt lint doc
 .PHONY: all
 
 fmt: terraform ## run terraform fmt on this module
-	@printf "fmt: ";
-	@for f in $(TF); do printf .; $(terraform_command) fmt $(TF_ARGS) $$f; done
-	@echo
+	@$(terraform_command) fmt $(TF_ARGS)
 .PHONY: fmt
 
 check: lint check-docs ## run all checks on this module
@@ -21,11 +19,7 @@ lint: lint-tf ## run all linters on this module
 .PHONY: lint
 
 lint-tf: terraform ## run terraform linters on this module
-	@printf "fmt: ";
-	@for f in $(TF); do \
-	  printf .; $(terraform_command) fmt $(TF_ARGS) --check=true --diff=true || exit $$? ; \
-	done
-	@echo
+	$(terraform_command) fmt $(TF_ARGS) --check=true --diff=true
 .PHONY: lint-tf
 
 readme: ## update this module's README.md
