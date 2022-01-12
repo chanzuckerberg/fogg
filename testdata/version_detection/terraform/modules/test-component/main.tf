@@ -14,26 +14,26 @@ data "aws_iam_policy_document" "assume_role" {
 }
 
 resource "aws_iam_role" "role" {
-  name               = "${local.service_name}"
-  assume_role_policy = "${data.aws_iam_policy_document.assume_role.json}"
+  name               = local.service_name
+  assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
 module "parameters-policy" {
   source = "github.com/chanzuckerberg/cztack//aws-params-reader-policy?ref=v0.15.1"
 
-  project   = "${var.project}"
-  env       = "${var.env}"
-  service   = "${var.name}"
-  region    = "${var.region}"
-  role_name = "${aws_iam_role.role.name}"
+  project   = var.project
+  env       = var.env
+  service   = var.name
+  region    = var.region
+  role_name = aws_iam_role.role.name
 }
 
 module "container_environment" {
   source  = "github.com/chanzuckerberg/cztack//aws-params-writer?ref=v0.15.1"
-  project = "${var.project}"
-  env     = "${var.env}"
-  service = "${var.name}"
-  owner   = "${var.owner}"
+  project = var.project
+  env     = var.env
+  service = var.name
+  owner   = var.owner
 
   parameters = {
     AWS_REGION         = "${var.region}"

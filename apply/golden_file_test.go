@@ -33,6 +33,7 @@ func TestIntegration(t *testing.T) {
 		{"github_actions"},
 		{"circleci"},
 		{"tfe_provider_yaml"},
+		{"remote_backend_yaml"},
 	}
 
 	for _, test := range testCases {

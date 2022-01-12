@@ -1,5 +1,5 @@
 {{define "sentry_provider"}}
-provider sentry {
+provider "sentry" {
   {{ if .BaseURL -}}
   base_url = "{{ .BaseURL }}"
   {{ end -}}

@@ -33,12 +33,7 @@ endif
 .PHONY: lint-tflint
 
 lint-terraform-fmt: terraform ## run `terraform fmt` in check mode
-	@printf "fmt check: "
-	@for f in $(TF); do \
-		printf . \
-		$(terraform_command) fmt $(TF_ARGS) --check=true --diff=true $$f || exit $$? ; \
-	done
-	@echo
+	$(terraform_command) fmt $(TF_ARGS) --check=true --diff=true
 .PHONY: lint-terraform-fmt
 
 check-auth: check-auth-aws check-auth-heroku ## check that authentication is properly set up for this component

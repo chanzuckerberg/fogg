@@ -22,11 +22,15 @@
 *.swk
 
 .fogg
-/terraform.d
+/terraform.d/plugins
+/terraform.d/modules
 
 .DS_Store
 .vscode
 .envrc
+
+# Scala language server
+.metals
 
 buildevents.plan
 check-plan.output

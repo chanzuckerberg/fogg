@@ -22,8 +22,11 @@ jobs:
         with:
           python-version: '3.6'
       - run: |
+          mkdir /tmp/terraform-docs
+          cd /tmp/terraform-docs
+
           # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
-          curl -sSLo ./terraform-docs.tar.gz https://terraform-docs.io/dl/v0.14.1/terraform-docs-v0.14.1-$(uname)-amd64.tar.gz
+          curl -sSLo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-linux-amd64.tar.gz
           tar -xzf terraform-docs.tar.gz
           chmod +x terraform-docs
           echo "$PWD" >> $GITHUB_PATH

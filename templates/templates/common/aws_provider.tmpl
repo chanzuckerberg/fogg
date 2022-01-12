@@ -1,5 +1,5 @@
 {{ define "aws_provider" }}
-provider aws {
+provider "aws" {
   {{ if .Alias }}alias = "{{ .Alias }}"{{ end }}
   region = "{{ .Region }}"
   {{ if .Profile }} profile = "{{ .Profile }}"{{ end }}

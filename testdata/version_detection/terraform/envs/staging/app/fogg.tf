@@ -38,42 +38,42 @@ terraform {
 }
 
 variable "env" {
-  type    = "string"
+  type    = string
   default = "staging"
 }
 
 variable "project" {
-  type    = "string"
+  type    = string
   default = "acme"
 }
 
 
 variable "region" {
-  type    = "string"
+  type    = string
   default = "us-west-2"
 }
 
 
 variable "component" {
-  type    = "string"
+  type    = string
   default = "app"
 }
 
 
 variable "aws_profile" {
-  type    = "string"
+  type    = string
   default = "acme@infra.exmaple"
 }
 
 
 
 variable "owner" {
-  type    = "string"
+  type    = string
   default = "acme-infra"
 }
 
 variable "tags" {
-  type = "map"
+  type = map(string)
   default = {
     project   = "acme"
     env       = "staging"
@@ -105,7 +105,7 @@ data "terraform_remote_state" "global" {
 
 # map of aws_accounts
 variable "aws_accounts" {
-  type = "map"
+  type = map(string)
   default = {
 
   }

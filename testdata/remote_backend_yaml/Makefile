@@ -10,7 +10,7 @@ ACCOUNTS=acct1
 all: check
 
 setup: ## set up working directory by installing dependencies
-	curl -s https://raw.githubusercontent.com/chanzuckerberg/fogg/master/download.sh | bash -s -- -b .fogg/bin vundefined+undefined+dirty
+	curl -s https://raw.githubusercontent.com/chanzuckerberg/fogg/vundefined-pre+undefined.dirty/download.sh | bash -s -- -b .fogg/bin vundefined-pre+undefined.dirty
 	.fogg/bin/fogg setup
 .PHONY: setup
 
@@ -39,8 +39,12 @@ lint-modules: ## lint the terraform code in terraform/modules
 	done
 .PHONY: lint-modules
 
-fmt: fmt-accounts fmt-envs fmt-global fmt-modules ## format code in this repo
+fmt: fmt-fogg fmt-accounts fmt-envs fmt-global fmt-modules ## format code in this repo
 .PHONY: fmt
+
+fmt-fogg:
+	.fogg/bin/fogg fmt
+.PHONY: fmt-fogg
 
 fmt-accounts: ## format code in terraform/accounts
 	@for account in $(ACCOUNTS); do \

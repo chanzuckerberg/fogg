@@ -1,4 +1,3 @@
-
 on: pull_request
 
 jobs:
@@ -8,43 +7,46 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
         with:
-          go-version: '1.17'
-      - run: go version
-      - name: Setup buildevents
-        uses: kvrhdn/gha-buildevents@v1
-        with:
-          apikey: ${{ secrets.BUILDEVENT_APIKEY }}
-          dataset: buildevents
-          # Required: the job status, this will be used in the post section and sent
-          # as status of the trace. Must always be ${{ job.status }}.
-          job-status: ${{ job.status }}
-
-      # echo "{name}={value}" >> $GITHUB_ENV
-      - run: |
-
-          echo STEP_START=$(date +%s) >> $GITHUB_ENV
-          echo STEP_ID=$(echo install | sum | cut -f 1 -d \ ) >> $GITHUB_ENV
-      - name: Install dependencies
-        run: |
-          buildevents cmd $TRACE_ID $STEP_ID make-setup -- make setup
-          buildevents step $TRACE_ID $STEP_ID $STEP_START install
-
-      - run: |
-          echo STEP_START=$(date +%s) >> $GITHUB_ENV
-          echo STEP_ID=$(echo script | sum | cut -f 1 -d \ ) >> $GITHUB_ENV
+          go-version: "1.17"
       - name: Run tests
-        env:
-          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.REVIEWDOG_GITHUB_API_TOKEN }}
-        run: |
-          buildevents cmd $TRACE_ID $STEP_ID codecov-validate -- curl --data-binary @codecov.yml https://codecov.io/validate
-          buildevents cmd $TRACE_ID $STEP_ID make-lint-ci -- make lint-ci
-          buildevents cmd $TRACE_ID $STEP_ID make-test-ci -- make test-ci
-          buildevents step $TRACE_ID $STEP_ID $STEP_START script
+        run: make test-ci
+      - uses: codecov/codecov-action@v2
+        with:
+          name: fogg
+          fail_ci_if_error: false
 
-      - run: |
-          echo STEP_START=$(date +%s) >> $GITHUB_ENV
-          echo STEP_ID=$(echo after_success | sum | cut -f 1 -d \ ) >> $GITHUB_ENV
-      - name: Run codecov
-        run: |
-          buildevents cmd $TRACE_ID $STEP_ID codecov-upload -- bash <(curl -s https://codecov.io/bash)
-          buildevents step $TRACE_ID $STEP_ID $STEP_START after_success
+  lint:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: "1.17"
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.3
+
+      # - name: tflint
+      #   uses: reviewdog/action-tflint@master
+      #   with:
+      #     github_token: ${{ secrets.github_token }}
+      #     working_directory: "testdata" # Optional. Change working directory
+      #     reporter: github-pr-review # Optional. Change reporter
+      #     fail_on_error: "true" # Optional. Fail action if errors are found
+      #     filter_mode: "nofilter" # Optional. Check all files, not just the diff
+      #     tflint_rulesets: "aws" # Optional. Extra official rulesets to install
+      #     # flags: "--module" # Optional. Add custom tflint flags
+
+      - name: golangci-lint
+        uses: reviewdog/action-golangci-lint@v2
+        with:
+          reporter: github-pr-review
+
+      - name: markdownlint
+        uses: reviewdog/action-markdownlint@v0.1
+        with:
+          reporter: github-pr-review
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: terraform fmt
+        run: terraform fmt -check -diff -recursive testdata

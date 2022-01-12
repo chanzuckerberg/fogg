@@ -37,41 +37,41 @@ terraform {
 }
 
 variable "env" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
 variable "project" {
-  type    = "string"
+  type    = string
   default = "acme"
 }
 
 
 variable "region" {
-  type    = "string"
+  type    = string
   default = "us-west-2"
 }
 
 
 variable "component" {
-  type    = "string"
+  type    = string
   default = "global"
 }
 
 
 variable "aws_profile" {
-  type    = "string"
+  type    = string
   default = "acme@infra.exmaple"
 }
 
 
 variable "owner" {
-  type    = "string"
+  type    = string
   default = "acme-infra"
 }
 
 variable "tags" {
-  type = "map"
+  type = map(string)
   default = {
     project   = "acme"
     env       = ""

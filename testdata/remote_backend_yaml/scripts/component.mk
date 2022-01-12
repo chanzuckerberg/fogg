@@ -33,12 +33,7 @@ endif
 .PHONY: lint-tflint
 
 lint-terraform-fmt: terraform ## run `terraform fmt` in check mode
-	@printf "fmt check: "
-	@for f in $(TF); do \
-		printf . \
-		$(terraform_command) fmt $(TF_ARGS) --check=true --diff=true $$f || exit $$? ; \
-	done
-	@echo
+	$(terraform_command) fmt $(TF_ARGS) --check=true --diff=true
 .PHONY: lint-terraform-fmt
 
 check-auth: check-auth-aws check-auth-heroku ## check that authentication is properly set up for this component
@@ -48,13 +43,16 @@ check-auth-aws:
 	@for p in $(AWS_BACKEND_PROFILE) $(AWS_PROVIDER_PROFILE); do \
 		aws --profile $$p sts get-caller-identity > /dev/null || (echo "AWS AUTH error. This component is configured to use a profile named '$$p'. Please add one to your ~/.aws/config" && exit -1); \
 	done
+	@for r in $(AWS_BACKEND_ROLE_ARN) $(AWS_PROVIDER_ROLE_ARN); do \
+		aws sts assume-role --role-arn $$r --role-session-name fogg-auth-test > /dev/null || (echo "AWS AUTH error. This component is configured to use a role named '$$r'." && exit -1); \
+	done
 .PHONY: check-auth-aws
 
 check-auth-heroku:
 ifeq ($(HEROKU_PROVIDER),1)
 	@echo "Checking heroku auth..."
 	@if command heroku >/dev/null; then \
-		heroku auth:whoami || (echo "Not authenticated to heroku. For SSO accounts, run 'heroku login', for non-sso accounts set HEROKU_EMAIL and HEROKU_API_KEY" && exit -1); \
+		heroku auth:whoami || timeout 15 heroku auth:login || (echo "Not authenticated to heroku. For SSO accounts, run 'heroku login', for non-sso accounts set HEROKU_EMAIL and HEROKU_API_KEY" && exit -1); \
 	else \
 		echo "Heroku CLI not installed, can't check auth."; \
 	fi
@@ -62,12 +60,16 @@ endif
 .PHONY: check-auth-heroku
 
 refresh:
-	@$(terraform_command) refresh $(TF_ARGS)
-	@date +%s > .terraform/refreshed_at
+	@if [ "$(TF_BACKEND_KIND)" != "remote" ]; then \
+		$(terraform_command) refresh $(TF_ARGS); \
+		date +%s > .terraform/refreshed_at; \
+	else \
+		echo "remote backend does not support the refresh command, skipping"; \
+	fi
 .PHONY: refresh
 
 refresh-cached:
-	@last_refresh=`cat .terraform/refreshed_at || echo '0'`; \
+	@last_refresh=`cat .terraform/refreshed_at 2>/dev/null || echo '0'`; \
 	current_time=`date +%s`; \
 	if (( current_time - last_refresh > 600 )); then \
 		echo "It has been awhile since the last refresh. It is time."; \
@@ -78,11 +80,11 @@ refresh-cached:
 .PHONY: refresh-cached
 
 plan: check-auth init fmt refresh-cached ## run a terraform plan
-	@$(terraform_command) plan $(TF_ARGS) -refresh=false -input=false
+	$(terraform_command) plan $(TF_ARGS) -refresh=$(REFRESH) -input=false
 .PHONY: plan
 
 apply: check-auth init refresh ## run a terraform apply
-	@$(terraform_command) apply $(TF_ARGS) -refresh=false -auto-approve=$(AUTO_APPROVE)
+	@$(terraform_command) apply $(TF_ARGS) -refresh=$(REFRESH) -auto-approve=$(AUTO_APPROVE)
 .PHONY: apply
 
 docs:
@@ -102,8 +104,14 @@ init: terraform check-auth ## run terraform init for this component
 .PHONY: init
 
 check-plan: check-auth init refresh-cached ## run a terraform plan and check that it does not fail
-	@$(terraform_command) plan $(TF_ARGS) -detailed-exitcode -lock=false -out=$(CHECK_PLANFILE_PATH) ; \
-	ERR=$$?; \
+	@if [ "$(TF_BACKEND_KIND)" != "remote" ]; then \
+		$(terraform_command) plan $(TF_ARGS) -detailed-exitcode -lock=false -refresh=$(REFRESH) -out=$(CHECK_PLANFILE_PATH) ; \
+		ERR=$$?; \
+		rm $(CHECK_PLANFILE_PATH) 2>/dev/null; \
+	else \
+		$(terraform_command) plan $(TF_ARGS) -detailed-exitcode -lock=false; \
+		ERR=$$?; \
+	fi; \
 	if [ $$ERR -eq 0 ] ; then \
 		echo "Success"; \
 	elif [ $$ERR -eq 1 ] ; then \
@@ -111,11 +119,7 @@ check-plan: check-auth init refresh-cached ## run a terraform plan and check tha
 		exit 1; \
 	elif [ $$ERR -eq 2 ] ; then \
 		echo "Diff";  \
-	fi ; \
-	if [ -n "$(BUILDEVENT_FILE)" ]; then \
-		fogg exp entropy -f $(CHECK_PLANFILE_PATH) -o $(BUILDEVENT_FILE) ; \
-	fi
-	rm $(CHECK_PLANFILE_PATH)
+	fi;
 .PHONY: check-plan
 
 run: check-auth ## run an arbitrary terraform command, CMD. ex `make run CMD='show'`

@@ -63,48 +63,48 @@ terraform {
   {{ end}}
   }
 }
-variable env {
+variable "env" {
   type    =  string
   default = "{{ .Env }}"
 }
 
-variable project {
+variable "project" {
   type    =  string
   default = "{{ .Project }}"
 }
 
 {{if .ProviderConfiguration.AWS}}
-  variable region {
+  variable "region" {
     type    =  string
     default = "{{ .ProviderConfiguration.AWS.Region }}"
   }
 {{ end }}
 
-variable component {
+variable "component" {
   type =  string
   default = "{{ .Name }}"
 }
 
 {{ if (avail "Account" .) }}
-variable account {
+variable "account" {
   type =  string
   default = "{{ .Account }}"
 }
 {{ end }}
 
 {{ if .ProviderConfiguration.AWS }}{{ if .ProviderConfiguration.AWS.Profile }}
-  variable aws_profile {
+  variable "aws_profile" {
     type =  string
     default =  "{{ .ProviderConfiguration.AWS.Profile }}"
   }
 {{ end }}{{ end }}
 
-variable owner {
+variable "owner" {
   type =  string
   default = "{{ .Owner }}"
 }
 
-variable tags {
+variable "tags" {
   type =  object({project: string, env: string, service: string, owner: string, managedBy: string})
   default = {
     project   = "{{ .Project }}"
@@ -116,14 +116,14 @@ variable tags {
 }
 
 {{ range $key, $val := .ExtraVars }}
-variable {{ $key }} {
+variable "{{ $key }}" {
   type =  string
   default = "{{ $val }}"
 }
 {{ end }}
 
 {{ if .Global }}
-data terraform_remote_state global {
+data "terraform_remote_state" "global" {
   backend = "{{ .Global.Backend.Kind }}"
 
   config = {
@@ -135,7 +135,7 @@ data terraform_remote_state global {
 {{ $outer := . }}
 {{ range $component, $backend := .ComponentBackends  }}
 {{ if ne $component $outer.Name }}
-data terraform_remote_state {{ $component }} {
+data "terraform_remote_state" "{{ $component }}" {
   backend = "{{ $backend.Kind }}"
 
   config = {
@@ -146,7 +146,7 @@ data terraform_remote_state {{ $component }} {
 {{ end }}
 
 {{ range $name, $backend := .AccountBackends }}
-data terraform_remote_state {{ $name }} {
+data "terraform_remote_state" "{{ $name }}" {
   backend = "{{ $backend.Kind }}"
 
   config = {
@@ -155,8 +155,8 @@ data terraform_remote_state {{ $name }} {
 }
 {{ end }}
 
-variable aws_accounts {
-  type =  map
+variable "aws_accounts" {
+  type =  map(string)
   default = {
   {{ range $account, $id := .Accounts }}
     {{ $account }} = {{ $id }}

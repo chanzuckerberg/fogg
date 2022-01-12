@@ -8,11 +8,6 @@ export GO111MODULE=on
 
 all: test install
 
-setup: ## setup development dependencies
-	## Release dependencies
-	curl -sfL https://raw.githubusercontent.com/chanzuckerberg/bff/main/download.sh | sh
-.PHONY: setup
-
 fmt:
 	goimports -w -l .
 .PHONY: fmt
@@ -38,6 +33,9 @@ else
 endif
 .PHONY: linter-setup
 
+lint-tf:
+	terraform fmt -check -diff -recursive testdata
+
 lint: lint-setup ## run lint andn print results
 	./bin/reviewdog -conf .reviewdog.yml  -diff "git diff main"
 .PHONY: lint
@@ -53,11 +51,7 @@ lint-all: lint-setup ## run the fast go linters
 
 TEMPLATES := $(shell find templates -not -name "*.go")
 
-docker: ## check to be sure docker is running
-	@docker ps
-.PHONY: docker
-
-release: setup docker ## run a release
+release: setup ## run a release
 	./bin/bff bump
 	git push
 	goreleaser release
@@ -80,15 +74,11 @@ build: fmt ## build the binary
 	go build ${LDFLAGS} .
 .PHONY: build
 
-deps:
-	go mod tidy
-.PHONY: deps
-
 coverage: ## run the go coverage tool, reading file coverage.out
 	go tool cover -html=coverage.out
 .PHONY: coverage
 
-test: fmt deps ## run tests
+test: fmt ## run tests
  ifeq (, $(shell which gotest))
 	go test -failfast -cover ./...
  else
@@ -124,6 +114,6 @@ clean: ## clean the repo
 	rm -rf dist 2>/dev/null || true
 	rm coverage.out 2>/dev/null || true
 
-update-golden-files: clean deps ## update the golden files in testdata
+update-golden-files: clean ## update the golden files in testdata
 	go test -v -run TestIntegration ./apply/ -update
 .PHONY: update-golden-files
