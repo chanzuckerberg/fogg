@@ -8,11 +8,6 @@ export GO111MODULE=on
 
 all: test install
 
-setup: ## setup development dependencies
-	## Release dependencies
-	curl -sfL https://raw.githubusercontent.com/chanzuckerberg/bff/main/download.sh | sh
-.PHONY: setup
-
 fmt:
 	goimports -w -l .
 .PHONY: fmt
