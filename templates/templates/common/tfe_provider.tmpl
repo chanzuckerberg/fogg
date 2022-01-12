@@ -1,5 +1,5 @@
 {{define "tfe_provider"}}
-provider tfe {
+provider "tfe" {
 {{ if .Hostname -}}
   hostname = "{{ .Hostname }}"
 {{ end -}}

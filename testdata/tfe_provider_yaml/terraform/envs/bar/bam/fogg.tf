@@ -3,7 +3,7 @@
 terraform {
   required_version = "=1.1.1"
 
-  backend s3 {
+  backend "s3" {
 
     bucket = "bucket"
 
@@ -60,23 +60,23 @@ terraform {
 
   }
 }
-variable env {
+variable "env" {
   type    = string
   default = "bar"
 }
-variable project {
+variable "project" {
   type    = string
   default = "foo"
 }
-variable component {
+variable "component" {
   type    = string
   default = "bam"
 }
-variable owner {
+variable "owner" {
   type    = string
   default = "foo@example.com"
 }
-variable tags {
+variable "tags" {
   type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
   default = {
     project   = "foo"
@@ -86,7 +86,7 @@ variable tags {
     managedBy = "terraform"
   }
 }
-data terraform_remote_state global {
+data "terraform_remote_state" "global" {
   backend = "s3"
   config = {
 
@@ -100,7 +100,7 @@ data terraform_remote_state global {
 
   }
 }
-data terraform_remote_state foo {
+data "terraform_remote_state" "foo" {
   backend = "s3"
   config = {
 
@@ -114,8 +114,8 @@ data terraform_remote_state foo {
 
   }
 }
-variable aws_accounts {
-  type = map
+variable "aws_accounts" {
+  type = map(string)
   default = {
 
   }

@@ -1,6 +1,6 @@
 {{define "bless_provider"}}
 
-provider bless {
+provider "bless" {
   region  = "{{ .AWSRegion }}"
   {{ if .AWSProfile -}}
   profile = "{{ .AWSProfile }}"
@@ -12,7 +12,7 @@ provider bless {
 
 {{ $outer := . -}}
 {{ range $region := .AdditionalRegions }}
-provider bless {
+provider "bless" {
   alias = "{{ $region }}"
   region  = "{{ $region }}"
   {{ if $outer.AWSProfile}}
