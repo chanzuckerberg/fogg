@@ -11,7 +11,7 @@
   {{ else if eq .Kind "remote" }}
     hostname = "{{ .Remote.HostName }}"
     organization = "{{ .Remote.Organization }}"
-    workspaces = {
+    workspaces {
       name = "{{ .Remote.Workspace }}"
     }
   {{ end }}

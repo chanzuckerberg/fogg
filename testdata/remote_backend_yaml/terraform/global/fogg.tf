@@ -7,7 +7,7 @@ terraform {
 
     hostname     = "tfe.example.com"
     organization = "test-org"
-    workspaces = {
+    workspaces {
       name = "global"
     }
 
