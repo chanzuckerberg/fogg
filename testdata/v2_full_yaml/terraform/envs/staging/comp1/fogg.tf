@@ -16,7 +16,7 @@ terraform {
 
     hostname     = "example.com"
     organization = "foo"
-    workspaces = {
+    workspaces {
       name = "staging-comp1"
     }
 
