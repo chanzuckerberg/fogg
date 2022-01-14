@@ -11,6 +11,11 @@ env:
 {{- end }}
 {{- end }}
 
+# cancel old runs if we push new commits to the same ref
+concurrency:
+  group: {{ "${{ github.ref }}" }}
+  cancel-in-progress: true
+
 jobs:
 {{- range $idx, $testBucket := $githubActionsCI.TestBuckets }}
   terraform_{{$idx}}:
@@ -62,8 +67,19 @@ jobs:
       - run: aws configure set profile.{{ $profileName }}.source_profile _idacct
       - run: aws --profile {{ $profileName }} sts get-caller-identity
 {{- end }}
+      # we only run the following if there are changes in the terraform/* directory
+      # to optimize CI time
+      # can use this filter to decide whether or not to run linters or tests.
+      - uses: dorny/paths-filter@v2.2.1
+        id: filter
+        with:
+          filters: |
+            terraform:
+              - 'terraform/**'
   {{- range $component := $testBucket }}
-      - run: |
+      - name: {{ $component.Dir }}
+        if: {{ "${{ steps.filter.outputs.terraform == 'true' }}" }}
+        run: |
           cd {{ $component.Dir }}
           make  {{ $component.Command }}
   {{- end }}

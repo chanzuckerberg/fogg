@@ -5,6 +5,11 @@ on: push
 env:
     FOO: bar
 
+# cancel old runs if we push new commits to the same ref
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   terraform_0:
     runs-on: ubuntu-latest
@@ -42,39 +47,72 @@ jobs:
       - run: aws configure set profile.profile.role_arn arn:aws:iam::456:role/foo
       - run: aws configure set profile.profile.source_profile _idacct
       - run: aws --profile profile sts get-caller-identity
-      - run: |
+      # we only run the following if there are changes in the terraform/* directory
+      # to optimize CI time
+      # can use this filter to decide whether or not to run linters or tests.
+      - uses: dorny/paths-filter@v2.2.1
+        id: filter
+        with:
+          filters: |
+            terraform:
+              - 'terraform/**'
+      - name: terraform/accounts/bar
+        if: ${{ steps.filter.outputs.terraform == 'true' }}
+        run: |
           cd terraform/accounts/bar
           make  lint
-      - run: |
+      - name: terraform/accounts/foo
+        if: ${{ steps.filter.outputs.terraform == 'true' }}
+        run: |
           cd terraform/accounts/foo
           make  lint
-      - run: |
+      - name: terraform/global
+        if: ${{ steps.filter.outputs.terraform == 'true' }}
+        run: |
           cd terraform/global
           make  lint
-      - run: |
+      - name: terraform/modules/my_module
+        if: ${{ steps.filter.outputs.terraform == 'true' }}
+        run: |
           cd terraform/modules/my_module
           make  check
-      - run: |
+      - name: terraform/envs/prod/datadog
+        if: ${{ steps.filter.outputs.terraform == 'true' }}
+        run: |
           cd terraform/envs/prod/datadog
           make  lint
-      - run: |
+      - name: terraform/envs/prod/hero
+        if: ${{ steps.filter.outputs.terraform == 'true' }}
+        run: |
           cd terraform/envs/prod/hero
           make  lint
-      - run: |
+      - name: terraform/envs/prod/okta
+        if: ${{ steps.filter.outputs.terraform == 'true' }}
+        run: |
           cd terraform/envs/prod/okta
           make  lint
-      - run: |
+      - name: terraform/envs/prod/sentry
+        if: ${{ steps.filter.outputs.terraform == 'true' }}
+        run: |
           cd terraform/envs/prod/sentry
           make  lint
-      - run: |
+      - name: terraform/envs/prod/vpc
+        if: ${{ steps.filter.outputs.terraform == 'true' }}
+        run: |
           cd terraform/envs/prod/vpc
           make  lint
-      - run: |
+      - name: terraform/envs/staging/comp1
+        if: ${{ steps.filter.outputs.terraform == 'true' }}
+        run: |
           cd terraform/envs/staging/comp1
           make  lint
-      - run: |
+      - name: terraform/envs/staging/comp2
+        if: ${{ steps.filter.outputs.terraform == 'true' }}
+        run: |
           cd terraform/envs/staging/comp2
           make  lint
-      - run: |
+      - name: terraform/envs/staging/vpc
+        if: ${{ steps.filter.outputs.terraform == 'true' }}
+        run: |
           cd terraform/envs/staging/vpc
           make  lint
