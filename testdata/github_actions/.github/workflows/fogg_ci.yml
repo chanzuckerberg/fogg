@@ -3,6 +3,11 @@
 
 on: push
 
+# cancel old runs if we push new commits to the same ref
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   terraform_0:
     runs-on: ubuntu-latest
@@ -34,7 +39,18 @@ jobs:
             git status
             exit 1
           fi
-      - run: |
+      # we only run the following if there are changes in the terraform/* directory
+      # to optimize CI time
+      # can use this filter to decide whether or not to run linters or tests.
+      - uses: dorny/paths-filter@v2.2.1
+        id: filter
+        with:
+          filters: |
+            terraform:
+              - 'terraform/**'
+      - name: terraform/global
+        if: ${{ steps.filter.outputs.terraform == 'true' }}
+        run: |
           cd terraform/global
           make  lint
   terraform_1:
@@ -67,6 +83,15 @@ jobs:
             git status
             exit 1
           fi
+      # we only run the following if there are changes in the terraform/* directory
+      # to optimize CI time
+      # can use this filter to decide whether or not to run linters or tests.
+      - uses: dorny/paths-filter@v2.2.1
+        id: filter
+        with:
+          filters: |
+            terraform:
+              - 'terraform/**'
   terraform_2:
     runs-on: ubuntu-latest
     steps:
@@ -97,6 +122,15 @@ jobs:
             git status
             exit 1
           fi
+      # we only run the following if there are changes in the terraform/* directory
+      # to optimize CI time
+      # can use this filter to decide whether or not to run linters or tests.
+      - uses: dorny/paths-filter@v2.2.1
+        id: filter
+        with:
+          filters: |
+            terraform:
+              - 'terraform/**'
   terraform_3:
     runs-on: ubuntu-latest
     steps:
@@ -127,6 +161,15 @@ jobs:
             git status
             exit 1
           fi
+      # we only run the following if there are changes in the terraform/* directory
+      # to optimize CI time
+      # can use this filter to decide whether or not to run linters or tests.
+      - uses: dorny/paths-filter@v2.2.1
+        id: filter
+        with:
+          filters: |
+            terraform:
+              - 'terraform/**'
   terraform_4:
     runs-on: ubuntu-latest
     steps:
@@ -157,6 +200,15 @@ jobs:
             git status
             exit 1
           fi
+      # we only run the following if there are changes in the terraform/* directory
+      # to optimize CI time
+      # can use this filter to decide whether or not to run linters or tests.
+      - uses: dorny/paths-filter@v2.2.1
+        id: filter
+        with:
+          filters: |
+            terraform:
+              - 'terraform/**'
   terraform_5:
     runs-on: ubuntu-latest
     steps:
@@ -187,6 +239,15 @@ jobs:
             git status
             exit 1
           fi
+      # we only run the following if there are changes in the terraform/* directory
+      # to optimize CI time
+      # can use this filter to decide whether or not to run linters or tests.
+      - uses: dorny/paths-filter@v2.2.1
+        id: filter
+        with:
+          filters: |
+            terraform:
+              - 'terraform/**'
   terraform_6:
     runs-on: ubuntu-latest
     steps:
@@ -217,3 +278,12 @@ jobs:
             git status
             exit 1
           fi
+      # we only run the following if there are changes in the terraform/* directory
+      # to optimize CI time
+      # can use this filter to decide whether or not to run linters or tests.
+      - uses: dorny/paths-filter@v2.2.1
+        id: filter
+        with:
+          filters: |
+            terraform:
+              - 'terraform/**'
