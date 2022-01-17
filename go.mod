@@ -16,7 +16,7 @@ require (
 	github.com/google/go-github/v27 v27.0.6
 	github.com/hashicorp/go-getter v1.5.2
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-version v1.2.1
+	github.com/hashicorp/go-version v1.4.0
 	github.com/hashicorp/hcl/v2 v2.9.1
 	github.com/hashicorp/hcl2 v0.0.0-20191002203319-fb75b3253c80
 	github.com/hashicorp/terraform v0.14.9
