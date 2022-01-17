@@ -11,7 +11,7 @@ require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/chanzuckerberg/go-misc v0.0.0-20210209191033-ae96c0409e3f
 	github.com/davecgh/go-spew v1.1.1
-	github.com/fatih/color v1.10.0
+	github.com/fatih/color v1.13.0
 	github.com/go-errors/errors v1.1.1
 	github.com/google/go-github/v27 v27.0.6
 	github.com/hashicorp/go-getter v1.5.2
@@ -73,8 +73,8 @@ require (
 	github.com/klauspost/compress v1.11.2 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect
-	github.com/mattn/go-colorable v0.1.8 // indirect
-	github.com/mattn/go-isatty v0.0.12 // indirect
+	github.com/mattn/go-colorable v0.1.9 // indirect
+	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/mitchellh/go-testing-interface v1.14.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
@@ -92,7 +92,7 @@ require (
 	golang.org/x/mod v0.4.2 // indirect
 	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 // indirect
 	golang.org/x/oauth2 v0.0.0-20200902213428-5d25da1a8d43 // indirect
-	golang.org/x/sys v0.0.0-20210521203332-0cec03c779c1 // indirect
+	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
 	golang.org/x/term v0.0.0-20210503060354-a79de5458b56 // indirect
 	golang.org/x/text v0.3.5 // indirect
 	golang.org/x/tools v0.1.1 // indirect
