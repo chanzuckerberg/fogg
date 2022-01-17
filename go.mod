@@ -14,7 +14,7 @@ require (
 	github.com/fatih/color v1.10.0
 	github.com/go-errors/errors v1.1.1
 	github.com/google/go-github/v27 v27.0.6
-	github.com/hashicorp/go-getter v1.5.2
+	github.com/hashicorp/go-getter v1.5.11
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-version v1.2.1
 	github.com/hashicorp/hcl/v2 v2.9.1
@@ -58,7 +58,7 @@ require (
 	github.com/google/uuid v1.1.1 // indirect
 	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
-	github.com/hashicorp/go-cleanhttp v0.5.1 // indirect
+	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-retryablehttp v0.6.6 // indirect
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
 	github.com/hashicorp/go-uuid v1.0.2 // indirect
