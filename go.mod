@@ -12,7 +12,7 @@ require (
 	github.com/chanzuckerberg/go-misc v0.0.0-20210209191033-ae96c0409e3f
 	github.com/davecgh/go-spew v1.1.1
 	github.com/fatih/color v1.10.0
-	github.com/go-errors/errors v1.1.1
+	github.com/go-errors/errors v1.4.2
 	github.com/google/go-github/v27 v27.0.6
 	github.com/hashicorp/go-getter v1.5.2
 	github.com/hashicorp/go-multierror v1.1.1
