@@ -2,7 +2,15 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 SELF_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+ROOT:=$(shell dirname $(SELF_DIR))
 CHECK_PLANFILE_PATH ?= check-plan.output
+
+TFLINT_CONFIG := $(ROOT)/.tflint.hcl
+TFLINT_CONFIG_EXISTS := 1
+
+ifeq ("$(wildcard $(TFLINT_CONFIG))","")
+	TFLINT_CONFIG_EXISTS := 0
+endif
 
 include $(SELF_DIR)/common.mk
 
@@ -24,11 +32,13 @@ lint: lint-terraform-fmt lint-tflint ## run all linters for this component
 .PHONY: lint
 
 lint-tflint: ## run the tflint linter for this component
-	@printf "tflint: "
-ifeq ($(TFLINT_ENABLED),1)
-	@tflint || exit $$?;
-else
+	@printf "tflint:"
+ifneq ($(TFLINT_ENABLED),1)
 	@echo "disabled"
+else ifeq ($(TFLINT_CONFIG_EXISTS), 1)
+	@tflint --config $(ROOT)/.tflint.hcl || exit $$?
+else ifeq ($(TFLINT_CONFIG_EXISTS), 0) 
+	@tflint || exit $$?;	
 endif
 .PHONY: lint-tflint
 
