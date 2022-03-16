@@ -101,13 +101,15 @@ variable "owner" {
   default = "foo@example.com"
 }
 variable "tags" {
-  type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
+  type = object({ project : string, env : string, service : string, owner : string, managedBy : string, repo : string, folderPath : string })
   default = {
-    project   = "foofoo"
-    env       = ""
-    service   = "global"
-    owner     = "foo@example.com"
-    managedBy = "terraform"
+    project    = "foofoo"
+    env        = ""
+    service    = "global"
+    owner      = "foo@example.com"
+    repo       = ""
+    folderPath = ""
+    managedBy  = "terraform"
   }
 }
 variable "aws_accounts" {

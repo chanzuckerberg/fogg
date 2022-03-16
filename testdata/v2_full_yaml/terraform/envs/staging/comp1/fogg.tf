@@ -99,13 +99,15 @@ variable "owner" {
   default = "foo@example.com"
 }
 variable "tags" {
-  type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
+  type = object({ project : string, env : string, service : string, owner : string, managedBy : string, repo : string, folderPath : string })
   default = {
-    project   = "proj"
-    env       = "staging"
-    service   = "comp1"
-    owner     = "foo@example.com"
-    managedBy = "terraform"
+    project    = "proj"
+    env        = "staging"
+    service    = "comp1"
+    owner      = "foo@example.com"
+    repo       = ""
+    folderPath = ""
+    managedBy  = "terraform"
   }
 }
 variable "foo" {

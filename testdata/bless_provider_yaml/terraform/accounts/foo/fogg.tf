@@ -105,13 +105,15 @@ variable "owner" {
   default = "foo@example.com"
 }
 variable "tags" {
-  type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
+  type = object({ project : string, env : string, service : string, owner : string, managedBy : string, repo : string, folderPath : string })
   default = {
-    project   = "foofoo"
-    env       = "accounts"
-    service   = "foo"
-    owner     = "foo@example.com"
-    managedBy = "terraform"
+    project    = "foofoo"
+    env        = "accounts"
+    service    = "foo"
+    owner      = "foo@example.com"
+    repo       = ""
+    folderPath = ""
+    managedBy  = "terraform"
   }
 }
 data "terraform_remote_state" "global" {
