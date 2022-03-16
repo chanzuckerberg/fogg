@@ -105,12 +105,14 @@ variable "owner" {
 }
 
 variable "tags" {
-  type =  object({project: string, env: string, service: string, owner: string, managedBy: string})
+  type =  object({project: string, env: string, service: string, owner: string, managedBy: string, repo: string, folderPath: string})
   default = {
-    project   = "{{ .Project }}"
-    env       = "{{ .Env }}"
-    service   = "{{ .Name }}"
-    owner     = "{{ .Owner }}"
+    project     = "{{ .Project }}"
+    env         = "{{ .Env }}"
+    service     = "{{ .Name }}"
+    owner       = "{{ .Owner }}"
+    repo        = "{{ .Repo }}"
+    folderPath  = "{{ .FolderPath }}"
     managedBy = "terraform"
   }
 }

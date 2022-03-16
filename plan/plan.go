@@ -24,6 +24,7 @@ type Plan struct {
 	CircleCI        CircleCIConfig        `yaml:"circleci_ci"`
 	GitHubActionsCI GitHubActionsCIConfig `yaml:"github_actions_ci"`
 	Version         string                `yaml:"version"`
+	Repo            string                `yaml:"repo"`
 }
 
 // Common represents common fields
@@ -45,6 +46,8 @@ type ComponentCommon struct {
 	Name                  string                     `yaml:"name"`
 	Owner                 string                     `yaml:"owner"`
 	Project               string                     `yaml:"project"`
+	Repo                  string                     `yaml:"repo"`
+	FolderPath            string                     `yaml:"folderpath"`
 	ProviderConfiguration ProviderConfiguration      `yaml:"providers_configuration"`
 	ProviderVersions      map[string]ProviderVersion `yaml:"provider_versions"`
 
