@@ -105,7 +105,7 @@ variable "tags" {
     env        = "staging"
     service    = "comp1"
     owner      = "foo@example.com"
-    repo       = ""
+    repo       = "componentRepo"
     folderPath = ""
     managedBy  = "terraform"
   }

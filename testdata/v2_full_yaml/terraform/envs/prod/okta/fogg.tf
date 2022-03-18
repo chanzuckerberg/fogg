@@ -117,7 +117,7 @@ variable "tags" {
     env        = "prod"
     service    = "okta"
     owner      = "foo@example.com"
-    repo       = ""
+    repo       = "componentRepo"
     folderPath = ""
     managedBy  = "terraform"
   }

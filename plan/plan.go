@@ -335,6 +335,7 @@ func Eval(c *v2.Config) (*Plan, error) {
 	p.Version = v
 
 	var err error
+	// fmt.Println("p.Repo: ", p.Repo)
 	p.Global = p.buildGlobal(c)
 	p.Accounts = p.buildAccounts(c)
 	p.Envs, err = p.buildEnvs(c)
@@ -383,6 +384,7 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 		accountPlan.Accounts = resolveAccounts(c.Accounts) //FIXME this needs to run as a second phase, not directly from the config
 		accountPlan.PathToRepoRoot = "../../../"
 		accountPlan.Global = &p.Global
+		accountPlan.Repo = "accountRepo"
 		accountPlans[name] = accountPlan
 	}
 
@@ -450,6 +452,7 @@ func (p *Plan) buildGlobal(conf *v2.Config) Component {
 	componentPlan.Name = "global"
 	componentPlan.ExtraVars = resolveExtraVars(defaults.ExtraVars, global.ExtraVars)
 	componentPlan.PathToRepoRoot = "../../"
+	componentPlan.Repo = "componentRepo"
 
 	return componentPlan
 }
@@ -497,6 +500,7 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			componentPlan.ModuleSource = componentConf.ModuleSource
 			componentPlan.ModuleName = componentConf.ModuleName
 			componentPlan.PathToRepoRoot = "../../../../"
+			componentPlan.Repo = "componentRepo"
 
 			componentPlan.Global = &p.Global
 
@@ -890,6 +894,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		ExtraVars:        v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),
 		Owner:            v2.ResolveRequiredString(v2.OwnerGetter, commons...),
 		Project:          project,
+		Repo:             "test",
 		Common:           Common{TerraformVersion: v2.ResolveRequiredString(v2.TerraformVersionGetter, commons...)},
 		TravisCI:         travisPlan,
 		CircleCI:         circlePlan,
