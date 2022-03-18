@@ -20,8 +20,6 @@ jobs:
             - {{ $sshFingerprint }}
           {{- end }}
 {{- end }}
-      - run: python3 -m venv venv
-      - run: . venv/bin/activate
       - run: |
           command: |
             mkdir /tmp/terraform-docs
@@ -31,6 +29,8 @@ jobs:
             tar -xzf terraform-docs.tar.gz
             chmod +x terraform-docs
             echo "$PWD" >> $GITHUB_PATH
+      - run: python3 -m venv venv
+      - run: . venv/bin/activate
       - run: pip install awscli --upgrade --user
       - run: aws --version
       - run: FOGG_VERSION="v{{ $circleCI.FoggVersion }}" make setup
