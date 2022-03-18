@@ -20,7 +20,7 @@ jobs:
             - {{ $sshFingerprint }}
           {{- end }}
 {{- end }}
-      - run: |
+      - run:
           command: |
             mkdir /tmp/terraform-docs
             cd /tmp/terraform-docs
