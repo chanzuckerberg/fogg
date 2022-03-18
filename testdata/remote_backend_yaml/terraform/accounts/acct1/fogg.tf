@@ -85,7 +85,7 @@ variable "tags" {
     env        = "accounts"
     service    = "acct1"
     owner      = "foo@example.com"
-    repo       = "accountRepo"
+    repo       = "test repo string"
     folderPath = ""
     managedBy  = "terraform"
   }

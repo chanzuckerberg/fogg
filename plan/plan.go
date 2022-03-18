@@ -24,7 +24,7 @@ type Plan struct {
 	CircleCI        CircleCIConfig        `yaml:"circleci_ci"`
 	GitHubActionsCI GitHubActionsCIConfig `yaml:"github_actions_ci"`
 	Version         string                `yaml:"version"`
-	Repo            string                `yaml:"repo"`
+	Repo            string
 }
 
 // Common represents common fields
@@ -333,9 +333,9 @@ func Eval(c *v2.Config) (*Plan, error) {
 		return nil, errs.WrapInternal(e, "unable to parse fogg version")
 	}
 	p.Version = v
+	p.Repo = "test repo string"
 
 	var err error
-	// fmt.Println("p.Repo: ", p.Repo)
 	p.Global = p.buildGlobal(c)
 	p.Accounts = p.buildAccounts(c)
 	p.Envs, err = p.buildEnvs(c)
@@ -384,7 +384,7 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 		accountPlan.Accounts = resolveAccounts(c.Accounts) //FIXME this needs to run as a second phase, not directly from the config
 		accountPlan.PathToRepoRoot = "../../../"
 		accountPlan.Global = &p.Global
-		accountPlan.Repo = "accountRepo"
+		accountPlan.Repo = p.Repo
 		accountPlans[name] = accountPlan
 	}
 
@@ -452,7 +452,7 @@ func (p *Plan) buildGlobal(conf *v2.Config) Component {
 	componentPlan.Name = "global"
 	componentPlan.ExtraVars = resolveExtraVars(defaults.ExtraVars, global.ExtraVars)
 	componentPlan.PathToRepoRoot = "../../"
-	componentPlan.Repo = "componentRepo"
+	componentPlan.Repo = p.Repo
 
 	return componentPlan
 }
@@ -500,7 +500,7 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			componentPlan.ModuleSource = componentConf.ModuleSource
 			componentPlan.ModuleName = componentConf.ModuleName
 			componentPlan.PathToRepoRoot = "../../../../"
-			componentPlan.Repo = "componentRepo"
+			componentPlan.Repo = p.Repo
 
 			componentPlan.Global = &p.Global
 

@@ -123,7 +123,7 @@ variable "tags" {
     env        = "accounts"
     service    = "foo"
     owner      = "foo@example.com"
-    repo       = "accountRepo"
+    repo       = "test repo string"
     folderPath = ""
     managedBy  = "terraform"
   }
