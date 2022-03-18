@@ -18,7 +18,6 @@ import (
 	"github.com/chanzuckerberg/fogg/plan"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
-	"github.com/davecgh/go-spew/spew"
 	getter "github.com/hashicorp/go-getter"
 	"github.com/hashicorp/hcl2/hclwrite"
 	"github.com/sirupsen/logrus"
@@ -217,7 +216,6 @@ func applyEnvs(
 }
 
 func applyTree(dest afero.Fs, source fs.FS, common fs.FS, targetBasePath string, subst interface{}) (e error) {
-	spew.Config.Dump(subst)
 	return fs.WalkDir(source, ".", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return errs.WrapInternal(err, "unable to walk dir")
@@ -364,7 +362,6 @@ func applyTemplate(sourceFile io.Reader, commonTemplates fs.FS, dest afero.Fs, p
 	if e != nil {
 		return e
 	}
-	// spew.Dump(overrides)
 	return t.Execute(writer, overrides)
 }
 
