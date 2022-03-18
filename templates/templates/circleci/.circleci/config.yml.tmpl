@@ -22,6 +22,15 @@ jobs:
 {{- end }}
       - run: python3 -m venv venv
       - run: . venv/bin/activate
+      - run: |
+          command: |
+            mkdir /tmp/terraform-docs
+            cd /tmp/terraform-docs
+            # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
+            curl -sSLo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-linux-amd64.tar.gz
+            tar -xzf terraform-docs.tar.gz
+            chmod +x terraform-docs
+            echo "$PWD" >> $GITHUB_PATH
       - run: pip install awscli --upgrade --user
       - run: aws --version
       - run: FOGG_VERSION="v{{ $circleCI.FoggVersion }}" make setup
