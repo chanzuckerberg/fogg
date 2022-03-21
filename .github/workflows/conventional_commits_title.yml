@@ -1,0 +1,14 @@
+# Validates PR title follows conventional commits
+on:
+  pull_request:
+    types:
+      - edited
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  conventional_commit_title:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: chanzuckerberg/github-actions/.github/actions/conventional-commits@main
