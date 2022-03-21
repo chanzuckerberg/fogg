@@ -51,25 +51,6 @@ lint-all: lint-setup ## run the fast go linters
 
 TEMPLATES := $(shell find templates -not -name "*.go")
 
-release: setup ## run a release
-	./bin/bff bump
-	git push
-	goreleaser release
-.PHONY: release
-
-release-prerelease: setup ## release to github as a 'pre-release'
-	go build ${LDFLAGS} .
-	version=`./fogg version`; \
-	git tag v"$$version"; \
-	git push; \
-	git push origin v"$$version";
-	goreleaser release -f .goreleaser.prerelease.yml --debug
-.PHONY: release-prerelease
-
-release-snapshot: setup ## run a release
-	goreleaser release --snapshot
-.PHONY: release-snapshot
-
 build: fmt ## build the binary
 	go build ${LDFLAGS} .
 .PHONY: build
