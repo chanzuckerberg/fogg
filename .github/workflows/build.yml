@@ -10,10 +10,6 @@ jobs:
           go-version: "1.17"
       - name: Run tests
         run: make test-ci
-      - uses: codecov/codecov-action@v2
-        with:
-          name: fogg
-          fail_ci_if_error: false
 
   lint:
     runs-on: ubuntu-18.04
