@@ -1,7 +1,3 @@
-before:
-  hooks:
-    - make clean
-
 builds:
   - binary: fogg
     env:
@@ -22,9 +18,6 @@ archives:
 
 release:
   prerelease: false
-
-env_files:
-  github_token: ~/.config/goreleaser/github_token
 
 brews:
   - description: 'Terraform without pain.'
