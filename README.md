@@ -51,7 +51,7 @@ this, then install as above–
 
 ```shell
 brew uninstall fogg
-brew untap chanzuckerberg/fogg
+brew untap chanzuckerberg/tap
 ```
 
 ## Linux
