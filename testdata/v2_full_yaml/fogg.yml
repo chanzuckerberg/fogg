@@ -2,7 +2,7 @@ accounts:
   bar:
     providers:
       aws:
-        account_id: 456
+        account_id: 00456
         additional_regions:
           - us-east-1
           - us-east-2
@@ -44,7 +44,7 @@ defaults:
   project: proj
   providers:
     aws:
-      account_id: 456
+      account_id: 00456
       profile: profile
       region: us-west-2
       version: 0.12.0
