@@ -1,5 +1,17 @@
 # Changelog
 
+### [0.60.3](https://github.com/chanzuckerberg/fogg/compare/v0.60.2...v0.60.3) (2022-04-26)
+
+
+### Misc
+
+* remove codeql; we don't use it ([#639](https://github.com/chanzuckerberg/fogg/issues/639)) ([5176a6d](https://github.com/chanzuckerberg/fogg/commit/5176a6dc1703836daef045305d7e0945f2940aa1))
+
+
+### BugFixes
+
+* missing quotes in allowed accounts ([#637](https://github.com/chanzuckerberg/fogg/issues/637)) ([2695b4e](https://github.com/chanzuckerberg/fogg/commit/2695b4eedd191ab4687a6d6fc985817949b40e69))
+
 ### [0.60.2](https://github.com/chanzuckerberg/fogg/compare/v0.60.1...v0.60.2) (2022-04-26)
 
 
