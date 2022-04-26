@@ -8,6 +8,6 @@ provider "aws" {
     role_arn     = "{{ .RoleArn }}"
   }
   {{ end }}
-  allowed_account_ids = [{{ .AccountID }}]
+  allowed_account_ids = ["{{ .AccountID }}"]
 }
 {{ end }}
