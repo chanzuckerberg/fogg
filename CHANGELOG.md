@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.60.1](https://github.com/chanzuckerberg/fogg/compare/v0.60.0...v0.60.1) (2022-04-26)
+
+
+### BugFixes
+
+* treat AWS account IDs as strings ([#634](https://github.com/chanzuckerberg/fogg/issues/634)) ([d8f52bc](https://github.com/chanzuckerberg/fogg/commit/d8f52bc256b3eb2e8987c7bc2f83e7dfffd505e9))
+
 ## [0.60.0](https://github.com/chanzuckerberg/fogg/compare/v0.59.2...v0.60.0) (2022-03-21)
 
 
