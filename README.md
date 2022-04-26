@@ -126,17 +126,6 @@ There is no magic.
 And if you ever decide to stop using it, you have a working repo you can take in a different
 direction, just stop running `fogg apply` and go your own way.
 
-## Releasing
-
-The release process is mostly automated but has some rough edges. To run a release follow these steps
-
-1. you are running docker
-1. you have access to write to [chanzuckerberg/homebrew-tap](https://github.com/chanzuckerberg/homebrew-tap)
-1. ensure that you have a `GITHUB_TOKEN` environment variable set that has permissions to do releases on this project
-1. run `git clean -fdx`
-1. you have run `make setup`
-1. run `make release`
-
 ## Contributing
 
 We use standard go tools + makefiles to build fogg. Getting started should be as simple as-

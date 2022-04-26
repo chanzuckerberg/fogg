@@ -9,7 +9,7 @@ provider "aws" {
     role_arn = "arn:aws:iam::123:role/roll"
   }
 
-  allowed_account_ids = [123]
+  allowed_account_ids = ["123"]
 }
 # Aliased Providers (for doing things in every region).
 

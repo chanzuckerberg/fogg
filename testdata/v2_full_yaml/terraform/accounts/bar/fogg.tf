@@ -9,7 +9,7 @@ provider "aws" {
     role_arn = "arn:aws:iam::00456:role/foo"
   }
 
-  allowed_account_ids = [00456]
+  allowed_account_ids = ["00456"]
 }
 # Aliased Providers (for doing things in every region).
 
@@ -23,7 +23,7 @@ provider "aws" {
     role_arn = "arn:aws:iam::different_account:role/foo"
   }
 
-  allowed_account_ids = [different_account]
+  allowed_account_ids = ["different_account"]
 }
 
 
@@ -36,7 +36,7 @@ provider "aws" {
     role_arn = "arn:aws:iam::different_account:role/foo"
   }
 
-  allowed_account_ids = [different_account]
+  allowed_account_ids = ["different_account"]
 }
 
 
@@ -49,7 +49,7 @@ provider "aws" {
     role_arn = "arn:aws:iam::different_account:role/foo"
   }
 
-  allowed_account_ids = [different_account]
+  allowed_account_ids = ["different_account"]
 }
 
 
@@ -62,7 +62,7 @@ provider "aws" {
     role_arn = "arn:aws:iam::another_different_account:role/foo"
   }
 
-  allowed_account_ids = [another_different_account]
+  allowed_account_ids = ["another_different_account"]
 }
 
 
@@ -75,7 +75,7 @@ provider "aws" {
     role_arn = "arn:aws:iam::another_different_account:role/foo"
   }
 
-  allowed_account_ids = [another_different_account]
+  allowed_account_ids = ["another_different_account"]
 }
 
 
@@ -88,7 +88,7 @@ provider "aws" {
     role_arn = "arn:aws:iam::789:role/different_role"
   }
 
-  allowed_account_ids = [789]
+  allowed_account_ids = ["789"]
 }
 
 
@@ -101,7 +101,7 @@ provider "aws" {
     role_arn = "arn:aws:iam::789:role/different_role"
   }
 
-  allowed_account_ids = [789]
+  allowed_account_ids = ["789"]
 }
 
 
@@ -114,7 +114,7 @@ provider "aws" {
     role_arn = "arn:aws:iam::789:role/different_role"
   }
 
-  allowed_account_ids = [789]
+  allowed_account_ids = ["789"]
 }
 
 
@@ -127,7 +127,7 @@ provider "aws" {
     role_arn = "arn:aws:iam::00456:role/foo"
   }
 
-  allowed_account_ids = [00456]
+  allowed_account_ids = ["00456"]
 }
 
 
@@ -140,7 +140,7 @@ provider "aws" {
     role_arn = "arn:aws:iam::00456:role/foo"
   }
 
-  allowed_account_ids = [00456]
+  allowed_account_ids = ["00456"]
 }
 
 
