@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.60.2](https://github.com/chanzuckerberg/fogg/compare/v0.60.1...v0.60.2) (2022-04-26)
+
+
+### Misc
+
+* mark fogg_ci.yml as auto generated ([#626](https://github.com/chanzuckerberg/fogg/issues/626)) ([313a89f](https://github.com/chanzuckerberg/fogg/commit/313a89fda7b3e3b044720529cacf0cc7682df905))
+
 ### [0.60.1](https://github.com/chanzuckerberg/fogg/compare/v0.60.0...v0.60.1) (2022-04-26)
 
 
