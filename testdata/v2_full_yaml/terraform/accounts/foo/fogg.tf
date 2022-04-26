@@ -148,9 +148,9 @@ variable "aws_accounts" {
   type = map(string)
   default = {
 
-    bar = 456
+    bar = "00456"
 
-    foo = 123
+    foo = "123"
 
   }
 }

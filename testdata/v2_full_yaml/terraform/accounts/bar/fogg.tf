@@ -6,10 +6,10 @@ provider "aws" {
 
 
   assume_role {
-    role_arn = "arn:aws:iam::456:role/foo"
+    role_arn = "arn:aws:iam::00456:role/foo"
   }
 
-  allowed_account_ids = [456]
+  allowed_account_ids = [00456]
 }
 # Aliased Providers (for doing things in every region).
 
@@ -124,10 +124,10 @@ provider "aws" {
 
 
   assume_role {
-    role_arn = "arn:aws:iam::456:role/foo"
+    role_arn = "arn:aws:iam::00456:role/foo"
   }
 
-  allowed_account_ids = [456]
+  allowed_account_ids = [00456]
 }
 
 
@@ -137,10 +137,10 @@ provider "aws" {
 
 
   assume_role {
-    role_arn = "arn:aws:iam::456:role/foo"
+    role_arn = "arn:aws:iam::00456:role/foo"
   }
 
-  allowed_account_ids = [456]
+  allowed_account_ids = [00456]
 }
 
 
@@ -306,9 +306,9 @@ variable "aws_accounts" {
   type = map(string)
   default = {
 
-    bar = 456
+    bar = "00456"
 
-    foo = 123
+    foo = "123"
 
   }
 }

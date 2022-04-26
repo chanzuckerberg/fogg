@@ -5,7 +5,7 @@ provider "aws" {
   region  = "us-west-2"
   profile = "profile"
 
-  allowed_account_ids = [456]
+  allowed_account_ids = [00456]
 }
 # Aliased Providers (for doing things in every region).
 

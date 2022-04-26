@@ -5,7 +5,7 @@ provider "aws" {
   region  = "us-west-2"
   profile = "profile"
 
-  allowed_account_ids = [456]
+  allowed_account_ids = [00456]
 }
 # Aliased Providers (for doing things in every region).
 
@@ -216,9 +216,9 @@ variable "aws_accounts" {
   type = map(string)
   default = {
 
-    bar = 456
+    bar = "00456"
 
-    foo = 123
+    foo = "123"
 
   }
 }

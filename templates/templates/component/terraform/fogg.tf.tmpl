@@ -159,7 +159,7 @@ variable "aws_accounts" {
   type =  map(string)
   default = {
   {{ range $account, $id := .Accounts }}
-    {{ $account }} = {{ $id }}
+    {{ $account }} = "{{ $id }}"
   {{ end }}
   }
 }

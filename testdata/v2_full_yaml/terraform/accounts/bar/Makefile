@@ -11,7 +11,7 @@ export AWS_BACKEND_PROFILE := profile
 
 
 
-export AWS_PROVIDER_ROLE_ARN := arn:aws:iam::456:role/foo
+export AWS_PROVIDER_ROLE_ARN := arn:aws:iam::00456:role/foo
 
 
 
