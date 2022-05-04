@@ -9,12 +9,5 @@ provider "aws" {
   }
   {{ end }}
   allowed_account_ids = ["{{ .AccountID }}"]
-  default_tags {
-    tags = {
-      {{range $tag := .Tags}}
-      {{$tag.Key}} = {{$tag.Value}}
-      {{end}}
-    }
-  }
 }
 {{ end }}
