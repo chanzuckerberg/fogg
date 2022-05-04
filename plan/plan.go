@@ -635,7 +635,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	assertConfig := v2.ResolveAssertProvider(commons...)
 	if assertConfig != nil {
 		assertPlan = &v2.AssertProvider{
-			Domain: *&assertPlan.Domain,
+			Domain: assertPlan.Domain,
 		}
 
 		providerVersions["assert"] = ProviderVersion{
