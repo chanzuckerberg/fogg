@@ -166,6 +166,10 @@ var utilityProviders = map[string]ProviderVersion{
 		Source:  "hashicorp/tls",
 		Version: ptr.String("~> 3.0"),
 	},
+	"assert": {
+		Source:  "bwoznicki/assert",
+		Version: ptr.String("~> 0.0.1"),
+	},
 }
 
 //AWSProvider represents AWS provider configuration
@@ -624,6 +628,19 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		providerVersions["auth0"] = ProviderVersion{
 			Source:  "alexkappa/auth0",
 			Version: auth0Config.Version,
+		}
+	}
+
+	var assertPlan *v2.AssertProvider
+	assertConfig := v2.ResolveAssertProvider(commons...)
+	if assertConfig != nil {
+		assertPlan = &v2.AssertProvider{
+			Domain: assertPlan.Domain,
+		}
+
+		providerVersions["assert"] = ProviderVersion{
+			Source:  "bwoznicki/assert",
+			Version: assertConfig.Version,
 		}
 	}
 

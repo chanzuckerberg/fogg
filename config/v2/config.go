@@ -116,6 +116,7 @@ type Component struct {
 }
 
 type Providers struct {
+	Assert     *AssertProvider     `yaml:"assert,omitempty"`
 	Auth0      *Auth0Provider      `yaml:"auth0,omitempty"`
 	AWS        *AWSProvider        `yaml:"aws,omitempty"`
 	Bless      *BlessProvider      `yaml:"bless,omitempty"`
@@ -130,6 +131,11 @@ type Providers struct {
 	Sentry     *SentryProvider     `yaml:"sentry,omitempty"`
 	Snowflake  *SnowflakeProvider  `yaml:"snowflake,omitempty"`
 	Tfe        *TfeProvider        `yaml:"tfe,omitempty"`
+}
+
+type AssertProvider struct {
+	Version *string `yaml:"version,omitempty"`
+	Domain  *string `yaml:"domain,omitempty"`
 }
 
 // CommonProvider encapsulates common properties across providers
@@ -175,7 +181,6 @@ type AWSProvider struct {
 	Region            *string      `yaml:"region,omitempty"`
 	Role              *string      `yaml:"role,omitempty"` // FIXME validate format
 	Version           *string      `yaml:"version,omitempty"`
-
 	// HACK HACK(el): we can configure additional, aliased, AWS providers for other accounts
 	// 								A map of alias_name to provider configuration
 	AdditionalProviders map[string]*AWSProvider `yaml:"additional_providers,omitempty"`
