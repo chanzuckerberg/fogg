@@ -172,10 +172,6 @@ var utilityProviders = map[string]ProviderVersion{
 	},
 }
 
-type AWSTag struct {
-	Name, Value string
-}
-
 //AWSProvider represents AWS provider configuration
 type AWSProvider struct {
 	AccountID json.Number `yaml:"account_id"`
@@ -183,7 +179,6 @@ type AWSProvider struct {
 	Profile   *string     `yaml:"profile"`
 	Region    string      `yaml:"region"`
 	RoleArn   *string     `yaml:"role_arn"`
-	Tags      *[]*AWSTag  `yaml:"tags,omitempty"`
 }
 
 func (a *AWSProvider) String() string {
