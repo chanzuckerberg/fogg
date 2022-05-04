@@ -21,6 +21,13 @@ terraform {
 
     }
 
+    assert = {
+      source = "bwoznicki/assert"
+
+      version = "~> 0.0.1"
+
+    }
+
     local = {
       source = "hashicorp/local"
 

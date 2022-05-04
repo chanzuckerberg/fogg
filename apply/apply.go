@@ -42,7 +42,6 @@ func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade bool) error {
 	if err != nil {
 		return errs.WrapUser(err, "unable to evaluate plan")
 	}
-
 	e := applyRepo(fs, p, tmp.Repo, tmp.Common)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply repo")
