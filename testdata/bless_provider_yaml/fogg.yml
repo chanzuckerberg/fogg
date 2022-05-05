@@ -8,10 +8,12 @@ defaults:
   owner: foo@example.com
   project: foofoo
   providers:
+    assert:
+      version: 0.0.1
     bless:
       additional_regions:
-      - a
-      - b
+        - a
+        - b
       aws_profile: foofoofoo
       aws_region: bar
       version: 0.0.0

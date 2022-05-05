@@ -14,6 +14,10 @@
   {{ template "snowflake_provider" .ProviderConfiguration.Snowflake }}
 {{ end }}
 
+{{ if .ProviderConfiguration.Assert }}
+  {{ template "assert" .ProviderConfiguration.Assert }}
+{{ end }}
+
 {{ if .ProviderConfiguration.Bless }}
   {{ template "bless_provider" .ProviderConfiguration.Bless }}
 {{ end }}

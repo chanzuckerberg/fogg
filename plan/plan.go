@@ -121,6 +121,7 @@ func (c CIComponent) generateCIConfig(
 }
 
 type ProviderConfiguration struct {
+	Assert                 *AssertProvider     `yaml:"assert"`
 	Auth0                  *Auth0Provider      `yaml:"auth0"`
 	AWS                    *AWSProvider        `yaml:"aws"`
 	AWSAdditionalProviders []AWSProvider       `yaml:"aws_regional_providers"`
@@ -206,6 +207,10 @@ type GithubProvider struct {
 
 type Auth0Provider struct {
 	Domain string `yaml:"domain,omitempty"`
+}
+
+type AssertProvider struct {
+	Version string `yaml:"version,omitempty"`
 }
 
 //SnowflakeProvider represents Snowflake DB provider configuration
@@ -631,11 +636,11 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
-	var assertPlan *v2.AssertProvider
+	var assertPlan *AssertProvider
 	assertConfig := v2.ResolveAssertProvider(commons...)
 	if assertConfig != nil {
-		assertPlan = &v2.AssertProvider{
-			Domain: assertPlan.Domain,
+		assertPlan = &AssertProvider{
+			Version: *assertConfig.Version,
 		}
 
 		providerVersions["assert"] = ProviderVersion{
@@ -885,6 +890,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	return ComponentCommon{
 		Backend: backend,
 		ProviderConfiguration: ProviderConfiguration{
+			Assert:                 assertPlan,
 			Auth0:                  auth0Plan,
 			AWS:                    awsPlan,
 			AWSAdditionalProviders: additionalProviders,
