@@ -101,7 +101,7 @@ func ResolveAuth0Provider(commons ...Common) *Auth0Provider {
 }
 
 func ResolveAssertProvider(commons ...Common) *AssertProvider {
-	var domain, version *string
+	var version *string
 	for _, c := range commons {
 		if c.Providers == nil || c.Providers.Assert == nil {
 			continue
@@ -109,14 +109,10 @@ func ResolveAssertProvider(commons ...Common) *AssertProvider {
 		if c.Providers.Assert.Version != nil {
 			version = c.Providers.Assert.Version
 		}
-
-		if c.Providers.Assert.Domain != nil {
-			domain = c.Providers.Assert.Domain
-		}
 	}
 
-	if domain != nil && version != nil {
-		return &AssertProvider{Version: version, Domain: domain}
+	if version != nil {
+		return &AssertProvider{Version: version}
 	}
 	return nil
 }
