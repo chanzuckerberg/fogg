@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.61.2](https://github.com/chanzuckerberg/fogg/compare/v0.61.1...v0.61.2) (2022-05-05)
+
+
+### BugFixes
+
+* version contraint in assert provider ([#646](https://github.com/chanzuckerberg/fogg/issues/646)) ([d27e54b](https://github.com/chanzuckerberg/fogg/commit/d27e54b3e766e4354c72f39f13c703e8b5ef1130))
+
 ### [0.61.1](https://github.com/chanzuckerberg/fogg/compare/v0.61.0...v0.61.1) (2022-05-05)
 
 
