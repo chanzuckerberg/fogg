@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.61.0](https://github.com/chanzuckerberg/fogg/compare/v0.60.3...v0.61.0) (2022-05-04)
+
+
+### Features
+
+* adding assert library to fogg to make it easier to use in modules ([#642](https://github.com/chanzuckerberg/fogg/issues/642)) ([9451f02](https://github.com/chanzuckerberg/fogg/commit/9451f02fc7f4ae21a7f2191b94dcca2a7740fcda))
+
 ### [0.60.3](https://github.com/chanzuckerberg/fogg/compare/v0.60.2...v0.60.3) (2022-04-26)
 
 
