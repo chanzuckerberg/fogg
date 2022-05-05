@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.61.1](https://github.com/chanzuckerberg/fogg/compare/v0.61.0...v0.61.1) (2022-05-05)
+
+
+### BugFixes
+
+* assert provider getting into fogg ([#644](https://github.com/chanzuckerberg/fogg/issues/644)) ([02af482](https://github.com/chanzuckerberg/fogg/commit/02af4825c62b40ea030932ca8b7d196830770d58))
+
 ## [0.61.0](https://github.com/chanzuckerberg/fogg/compare/v0.60.3...v0.61.0) (2022-05-04)
 
 
