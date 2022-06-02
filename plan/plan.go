@@ -674,7 +674,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 
 		providerVersions["snowflake"] = ProviderVersion{
-			Source:  "chanzuckerberg/snowflake",
+			Source:  "Snowflake-Labs/snowflake",
 			Version: snowflakeConfig.Version,
 		}
 	}
