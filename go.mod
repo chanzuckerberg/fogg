@@ -14,7 +14,7 @@ require (
 	github.com/fatih/color v1.10.0
 	github.com/go-errors/errors v1.1.1
 	github.com/google/go-github/v27 v27.0.6
-	github.com/hashicorp/go-getter v1.5.11
+	github.com/hashicorp/go-getter v1.6.1
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-version v1.5.0
 	github.com/hashicorp/hcl/v2 v2.12.0
@@ -92,7 +92,7 @@ require (
 	golang.org/x/mod v0.4.2 // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
 	golang.org/x/oauth2 v0.0.0-20200902213428-5d25da1a8d43 // indirect
-	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
+	golang.org/x/sys v0.0.0-20220517195934-5e4e11fc645e // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/tools v0.1.1 // indirect
