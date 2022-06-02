@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.62.1](https://github.com/chanzuckerberg/fogg/compare/v0.62.0...v0.62.1) (2022-06-02)
+
+
+### Misc
+
+* Have Git ignore .terraform.lock.hcl ([#657](https://github.com/chanzuckerberg/fogg/issues/657)) ([398f41e](https://github.com/chanzuckerberg/fogg/commit/398f41ef65f04c078dd0430b3ef00d7b090b3f4f))
+
 ## [0.62.0](https://github.com/chanzuckerberg/fogg/compare/v0.61.2...v0.62.0) (2022-06-02)
 
 
