@@ -58,7 +58,7 @@ terraform {
     }
 
     snowflake = {
-      source = "chanzuckerberg/snowflake"
+      source = "Snowflake-Labs/snowflake"
 
     }
 
