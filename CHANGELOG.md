@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.62.0](https://github.com/chanzuckerberg/fogg/compare/v0.61.2...v0.62.0) (2022-06-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* Use Snowflake-Lab version of Terraform Snowflake provider (#655)
+
+### Features
+
+* Use Snowflake-Lab version of Terraform Snowflake provider ([#655](https://github.com/chanzuckerberg/fogg/issues/655)) ([ad21af3](https://github.com/chanzuckerberg/fogg/commit/ad21af33b05780fee7d9f4b9755abfeea74aac5e))
+
 ### [0.61.2](https://github.com/chanzuckerberg/fogg/compare/v0.61.1...v0.61.2) (2022-05-05)
 
 
