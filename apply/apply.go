@@ -2,6 +2,7 @@ package apply
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"io/fs"
@@ -20,6 +21,7 @@ import (
 	"github.com/chanzuckerberg/fogg/util"
 	getter "github.com/hashicorp/go-getter"
 	"github.com/hashicorp/hcl2/hclwrite"
+	"github.com/kelseyhightower/envconfig"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
@@ -27,7 +29,7 @@ import (
 const rootPath = "terraform"
 
 // Apply will run a plan and apply all the changes to the current repo.
-func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade bool) error {
+func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade, oauth bool) error {
 	if !upgrade {
 		toolVersion, err := util.VersionString()
 		if err != nil {
@@ -74,7 +76,7 @@ func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade bool) error {
 		return errs.WrapUser(e, "unable to apply accounts")
 	}
 
-	e = applyEnvs(fs, p, tmp.Env, tmp.Components, tmp.Common)
+	e = applyEnvs(fs, p, tmp.Env, tmp.Components, tmp.Common, oauth)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply envs")
 	}
@@ -165,12 +167,34 @@ func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox, commonBox fs
 	return nil
 }
 
+func convertSSHToHTTP(sURL string) (*url.URL, error) {
+	gitPrefix := "git@"
+	if !strings.HasPrefix(sURL, gitPrefix) {
+		return nil, errors.New("cannot convert SSH URL that doesn't start with " + gitPrefix)
+	}
+
+	splits := strings.Split(sURL, gitPrefix)
+	if len(splits) != 2 {
+		return nil, errors.New("not a valid SSH URL")
+	}
+
+	new := strings.ReplaceAll(splits[1], ":", "/")
+	u, err := url.Parse(fmt.Sprintf("https://%s", new))
+	if err != nil {
+		logrus.Error()
+		return nil, errs.WrapUser(err, "unable to parse SSH URL")
+	}
+
+	return u, err
+}
+
 func applyEnvs(
 	fs afero.Fs,
 	p *plan.Plan,
 	envBox fs.FS,
 	componentBoxes map[v2.ComponentKind]fs.FS,
-	commonBox fs.FS) (err error) {
+	commonBox fs.FS,
+	oauth bool) (err error) {
 	logrus.Debug("applying envs")
 	for env, envPlan := range p.Envs {
 		logrus.Debugf("applying %s", env)
@@ -204,6 +228,22 @@ func applyEnvs(
 			}
 
 			if componentPlan.ModuleSource != nil {
+				if oauth {
+					type HTTPAuth struct {
+						GithubToken string
+					}
+					var httpAuth HTTPAuth
+					err := envconfig.Process("fogg", &httpAuth)
+					if err != nil {
+						return errs.WrapUser(err, "unable to get FOGG_GITHUB_TOKEN")
+					}
+					u, err := convertSSHToHTTP(*componentPlan.ModuleSource)
+					if err != nil {
+						return errs.WrapUser(err, "unable to parse SSH URL from module")
+					}
+					u.User = url.UserPassword("", httpAuth.GithubToken)
+					*componentPlan.ModuleSource = u.String()
+				}
 				e := applyModuleInvocation(fs, path, *componentPlan.ModuleSource, componentPlan.ModuleName, templates.Templates.ModuleInvocation, commonBox)
 				if e != nil {
 					return errs.WrapUser(e, "unable to apply module invocation")

@@ -63,7 +63,7 @@ func TestIntegration(t *testing.T) {
 				r.NoError(e)
 				r.Len(w, 0)
 
-				e = apply.Apply(testdataFs, conf, templates.Templates, true)
+				e = apply.Apply(testdataFs, conf, templates.Templates, true, false)
 				r.NoError(e)
 			} else {
 				fileName := "fogg.yml"
@@ -90,7 +90,7 @@ func TestIntegration(t *testing.T) {
 				r.NoError(e)
 				r.Len(w, 0)
 
-				e = apply.Apply(fs, conf, templates.Templates, true)
+				e = apply.Apply(fs, conf, templates.Templates, true, false)
 				r.NoError(e)
 
 				r.NoError(afero.Walk(testdataFs, ".", func(path string, info os.FileInfo, err error) error {

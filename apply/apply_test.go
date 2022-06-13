@@ -46,6 +46,26 @@ func getNonExistentDirectoryName() string {
 	}
 }
 
+func TestConvertSSHToHTTPS(t *testing.T) {
+	r := require.New(t)
+
+	type test struct {
+		in  string
+		out string
+	}
+	tests := []test{
+		{
+			in:  "git@github.com:chanzuckerberg/shared-infra//terraform/modules/eks-airflow?ref=v0.80.0",
+			out: "https://github.com/chanzuckerberg/shared-infra//terraform/modules/eks-airflow?ref=v0.80.0",
+		},
+	}
+	for _, test := range tests {
+		u, err := convertSSHToHTTP(test.in)
+		r.NoError(err)
+		r.Equal(test.out, u.String())
+	}
+}
+
 func TestRemoveExtension(t *testing.T) {
 	r := require.New(t)
 	x := removeExtension("foo")
@@ -244,7 +264,7 @@ version: 2
 	r.NoError(e)
 	r.Len(w, 0)
 
-	e = Apply(fs, c, templates.Templates, false)
+	e = Apply(fs, c, templates.Templates, false, false)
 	r.NoError(e)
 }
 
