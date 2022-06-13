@@ -20,7 +20,6 @@ import (
 	"github.com/chanzuckerberg/fogg/util"
 	getter "github.com/hashicorp/go-getter"
 	"github.com/hashicorp/hcl2/hclwrite"
-	"github.com/kelseyhightower/envconfig"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
@@ -28,7 +27,7 @@ import (
 const rootPath = "terraform"
 
 // Apply will run a plan and apply all the changes to the current repo.
-func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade, oauth bool) error {
+func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade bool) error {
 	if !upgrade {
 		toolVersion, err := util.VersionString()
 		if err != nil {
@@ -75,7 +74,7 @@ func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade, oauth bool) 
 		return errs.WrapUser(e, "unable to apply accounts")
 	}
 
-	e = applyEnvs(fs, p, tmp.Env, tmp.Components, tmp.Common, oauth)
+	e = applyEnvs(fs, p, tmp.Env, tmp.Components, tmp.Common)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply envs")
 	}
@@ -166,46 +165,12 @@ func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox, commonBox fs
 	return nil
 }
 
-// Changes a URL to use the git protocol over HTTPS instead of SSH.
-// If the URL was not a remote URL or an git/SSH protocol,
-// it will return the path that was passed in. If it does
-// convert it properly, it will add Github credentials to the path
-func convertSSHToGithubHTTPURL(sURL, token string) string {
-	// only detect the remote destinations
-	s, err := getter.Detect(sURL, token, []getter.Detector{
-		&getter.GitLabDetector{},
-		&getter.GitHubDetector{},
-		&getter.GitDetector{},
-		&getter.BitBucketDetector{},
-		&getter.S3Detector{},
-		&getter.GCSDetector{},
-	})
-	if err != nil {
-		return sURL
-	}
-
-	splits := strings.Split(s, "git::ssh://git@")
-	if len(splits) != 2 {
-		return sURL
-	}
-	u, err := url.Parse(fmt.Sprintf("https://%s", splits[1]))
-	if err != nil {
-		logrus.Error()
-		return sURL
-	}
-	u.User = url.User(token)
-
-	// we want to force the git protocol
-	return fmt.Sprintf("git::%s", u.String())
-}
-
 func applyEnvs(
 	fs afero.Fs,
 	p *plan.Plan,
 	envBox fs.FS,
 	componentBoxes map[v2.ComponentKind]fs.FS,
-	commonBox fs.FS,
-	oauth bool) (err error) {
+	commonBox fs.FS) (err error) {
 	logrus.Debug("applying envs")
 	for env, envPlan := range p.Envs {
 		logrus.Debugf("applying %s", env)
@@ -239,21 +204,13 @@ func applyEnvs(
 			}
 
 			if componentPlan.ModuleSource != nil {
-				downloader := util.MakeDownloader(*componentPlan.ModuleSource)
-				if oauth {
-					type HTTPAuth struct {
-						GithubToken string `required:"true"`
-					}
-					var httpAuth HTTPAuth
-					err := envconfig.Process("fogg", &httpAuth)
-					if err != nil {
-						return errs.WrapUser(err, "unable to get env FOGG_GITHUBTOKEN with the --oauth flag")
-					}
-					downloader = util.MakeDownloader(convertSSHToGithubHTTPURL(*componentPlan.ModuleSource, httpAuth.GithubToken))
+				downloader, err := util.MakeDownloader(*componentPlan.ModuleSource)
+				if err != nil {
+					return errs.WrapUser(err, "unable to make a downloader")
 				}
-				e := applyModuleInvocation(fs, path, *componentPlan.ModuleSource, componentPlan.ModuleName, templates.Templates.ModuleInvocation, commonBox, downloader)
-				if e != nil {
-					return errs.WrapUser(e, "unable to apply module invocation")
+				err = applyModuleInvocation(fs, path, *componentPlan.ModuleSource, componentPlan.ModuleName, templates.Templates.ModuleInvocation, commonBox, downloader)
+				if err != nil {
+					return errs.WrapUser(err, "unable to apply module invocation")
 				}
 			}
 		}
