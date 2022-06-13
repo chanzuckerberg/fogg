@@ -257,8 +257,9 @@ func TestApplyModuleInvocation(t *testing.T) {
 	r.NoError(err)
 
 	fs := afero.NewCopyOnWriteFs(pwdFs, testFs)
-
-	e := applyModuleInvocation(fs, "mymodule", "test-module", nil, templates.Templates.ModuleInvocation, templates.Templates.Common)
+	downloader, err := util.MakeDownloader("test-module")
+	r.NoError(err)
+	e := applyModuleInvocation(fs, "mymodule", "test-module", nil, templates.Templates.ModuleInvocation, templates.Templates.Common, downloader)
 	r.NoError(e)
 
 	s, e := fs.Stat("mymodule")
@@ -291,7 +292,9 @@ func TestApplyModuleInvocationWithModuleName(t *testing.T) {
 	fs := afero.NewCopyOnWriteFs(pwdFs, testFs)
 
 	moduleName := "module-name"
-	e := applyModuleInvocation(fs, "mymodule", "test-module", &moduleName, templates.Templates.ModuleInvocation, templates.Templates.Common)
+	downloader, err := util.MakeDownloader("test-module")
+	r.NoError(err)
+	e := applyModuleInvocation(fs, "mymodule", "test-module", &moduleName, templates.Templates.ModuleInvocation, templates.Templates.Common, downloader)
 	r.NoError(e)
 
 	s, e := fs.Stat("mymodule")

@@ -22,6 +22,7 @@ require (
 	github.com/hashicorp/terraform v0.14.9
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20200806211835-c481b8bfa41e
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
+	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/kr/pretty v0.2.1
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/peterbourgon/diskv v2.0.1+incompatible
