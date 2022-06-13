@@ -1,6 +1,7 @@
 package apply
 
 import (
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"os"
@@ -11,6 +12,7 @@ import (
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
+	"github.com/hashicorp/go-getter"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/require"
@@ -46,23 +48,57 @@ func getNonExistentDirectoryName() string {
 	}
 }
 
-func TestConvertSSHToHTTPS(t *testing.T) {
+func TestConvertSSHToHTTP(t *testing.T) {
 	r := require.New(t)
 
 	type test struct {
 		in  string
 		out string
 	}
-	tests := []test{
-		{
-			in:  "git@github.com:chanzuckerberg/shared-infra//terraform/modules/eks-airflow?ref=v0.80.0",
-			out: "https://github.com/chanzuckerberg/shared-infra//terraform/modules/eks-airflow?ref=v0.80.0",
-		},
-	}
+	creds := "REDACTED"
+	tests := func(token string) []test {
+		return []test{
+			{
+				in:  "git@github.com:chanzuckerberg/shared-infra//terraform/modules/eks-airflow?ref=v0.80.0",
+				out: fmt.Sprintf("git::https://%s@github.com/chanzuckerberg/shared-infra//terraform/modules/eks-airflow?ref=v0.80.0", token),
+			},
+		}
+	}(creds)
 	for _, test := range tests {
-		u, err := convertSSHToHTTP(test.in)
+		u := convertSSHToGithubHTTPURL(test.in, creds)
+		s, err := getter.Detect(u, creds, []getter.Detector{
+			&getter.GitHubDetector{},
+		})
 		r.NoError(err)
-		r.Equal(test.out, u.String())
+		r.Equal(test.out, u)
+		r.Equal(test.out, s)
+	}
+}
+func TestConvertSSHToHTTPFail(t *testing.T) {
+	r := require.New(t)
+
+	type test struct {
+		in string
+	}
+
+	creds := "REDACTED"
+	tests := func(token string) []test {
+		return []test{
+			{
+				in: "github.com/scholzj/terraform-aws-vpc",
+			},
+			{
+				in: "terraform/modules/test",
+			},
+			{
+				in: "github.com/hashicorp/go-getter?ref=abcd12",
+			},
+		}
+	}(creds)
+	for _, test := range tests {
+		s := convertSSHToGithubHTTPURL(test.in, creds)
+		// make sure nothing changed in a failure case
+		r.Equal(test.in, s)
 	}
 }
 
@@ -278,7 +314,7 @@ func TestApplyModuleInvocation(t *testing.T) {
 
 	fs := afero.NewCopyOnWriteFs(pwdFs, testFs)
 
-	e := applyModuleInvocation(fs, "mymodule", "test-module", nil, templates.Templates.ModuleInvocation, templates.Templates.Common)
+	e := applyModuleInvocation(fs, "mymodule", "test-module", nil, templates.Templates.ModuleInvocation, templates.Templates.Common, util.MakeDownloader("test-module"))
 	r.NoError(e)
 
 	s, e := fs.Stat("mymodule")
@@ -311,7 +347,7 @@ func TestApplyModuleInvocationWithModuleName(t *testing.T) {
 	fs := afero.NewCopyOnWriteFs(pwdFs, testFs)
 
 	moduleName := "module-name"
-	e := applyModuleInvocation(fs, "mymodule", "test-module", &moduleName, templates.Templates.ModuleInvocation, templates.Templates.Common)
+	e := applyModuleInvocation(fs, "mymodule", "test-module", &moduleName, templates.Templates.ModuleInvocation, templates.Templates.Common, util.MakeDownloader("test-module"))
 	r.NoError(e)
 
 	s, e := fs.Stat("mymodule")

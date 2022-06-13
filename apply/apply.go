@@ -2,7 +2,6 @@ package apply
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io"
 	"io/fs"
@@ -167,25 +166,37 @@ func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox, commonBox fs
 	return nil
 }
 
-func convertSSHToHTTP(sURL string) (*url.URL, error) {
-	gitPrefix := "git@"
-	if !strings.HasPrefix(sURL, gitPrefix) {
-		return nil, errors.New("cannot convert SSH URL that doesn't start with " + gitPrefix)
+// Changes a URL to use the git protocol over HTTPS instead of SSH.
+// If the URL was not a remote URL or an git/SSH protocol,
+// it will return the path that was passed in. If it does
+// convert it properly, it will add Github credentials to the path
+func convertSSHToGithubHTTPURL(sURL, token string) string {
+	// only detect the remote destinations
+	s, err := getter.Detect(sURL, token, []getter.Detector{
+		&getter.GitLabDetector{},
+		&getter.GitHubDetector{},
+		&getter.GitDetector{},
+		&getter.BitBucketDetector{},
+		&getter.S3Detector{},
+		&getter.GCSDetector{},
+	})
+	if err != nil {
+		return sURL
 	}
 
-	splits := strings.Split(sURL, gitPrefix)
+	splits := strings.Split(s, "git::ssh://git@")
 	if len(splits) != 2 {
-		return nil, errors.New("not a valid SSH URL")
+		return sURL
 	}
-
-	new := strings.ReplaceAll(splits[1], ":", "/")
-	u, err := url.Parse(fmt.Sprintf("https://%s", new))
+	u, err := url.Parse(fmt.Sprintf("https://%s", splits[1]))
 	if err != nil {
 		logrus.Error()
-		return nil, errs.WrapUser(err, "unable to parse SSH URL")
+		return sURL
 	}
+	u.User = url.User(token)
 
-	return u, err
+	// we want to force the git protocol
+	return fmt.Sprintf("git::%s", u.String())
 }
 
 func applyEnvs(
@@ -228,23 +239,19 @@ func applyEnvs(
 			}
 
 			if componentPlan.ModuleSource != nil {
+				downloader := util.MakeDownloader(*componentPlan.ModuleSource)
 				if oauth {
 					type HTTPAuth struct {
-						GithubToken string
+						GithubToken string `required:"true"`
 					}
 					var httpAuth HTTPAuth
 					err := envconfig.Process("fogg", &httpAuth)
 					if err != nil {
-						return errs.WrapUser(err, "unable to get FOGG_GITHUB_TOKEN")
+						return errs.WrapUser(err, "unable to get env FOGG_GITHUBTOKEN with the --oauth flag")
 					}
-					u, err := convertSSHToHTTP(*componentPlan.ModuleSource)
-					if err != nil {
-						return errs.WrapUser(err, "unable to parse SSH URL from module")
-					}
-					u.User = url.UserPassword("", httpAuth.GithubToken)
-					*componentPlan.ModuleSource = u.String()
+					downloader = util.MakeDownloader(convertSSHToGithubHTTPURL(*componentPlan.ModuleSource, httpAuth.GithubToken))
 				}
-				e := applyModuleInvocation(fs, path, *componentPlan.ModuleSource, componentPlan.ModuleName, templates.Templates.ModuleInvocation, commonBox)
+				e := applyModuleInvocation(fs, path, *componentPlan.ModuleSource, componentPlan.ModuleName, templates.Templates.ModuleInvocation, commonBox, downloader)
 				if e != nil {
 					return errs.WrapUser(e, "unable to apply module invocation")
 				}
@@ -419,13 +426,15 @@ func applyModuleInvocation(
 	path, moduleAddress string,
 	inModuleName *string,
 	box fs.FS,
-	commonBox fs.FS) error {
+	commonBox fs.FS,
+	downloadFunc util.ModuleDownloader,
+) error {
 	e := fs.MkdirAll(path, 0755)
 	if e != nil {
 		return errs.WrapUserf(e, "couldn't create %s directory", path)
 	}
 
-	moduleConfig, e := util.DownloadAndParseModule(fs, moduleAddress)
+	moduleConfig, e := downloadFunc.DownloadAndParseModule(fs)
 	if e != nil {
 		return errs.WrapUser(e, "could not download or parse module")
 	}

@@ -65,12 +65,24 @@ func GetFoggCachePath() (string, error) {
 	return dir, nil
 }
 
-func DownloadAndParseModule(fs afero.Fs, mod string) (*tfconfig.Module, error) {
+type ModuleDownloader interface {
+	DownloadAndParseModule(fs afero.Fs) (*tfconfig.Module, error)
+}
+
+type Downloader struct {
+	Source string
+}
+
+func MakeDownloader(src string) *Downloader {
+	return &Downloader{Source: src}
+}
+
+func (dd *Downloader) DownloadAndParseModule(fs afero.Fs) (*tfconfig.Module, error) {
 	dir, err := GetFoggCachePath()
 	if err != nil {
 		return nil, err
 	}
-	d, err := DownloadModule(fs, dir, mod)
+	d, err := DownloadModule(fs, dir, dd.Source)
 	if err != nil {
 		return nil, errs.WrapUser(err, "unable to download module")
 	}

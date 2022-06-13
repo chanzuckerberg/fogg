@@ -34,8 +34,8 @@ func TestDownloadAndParseModule(t *testing.T) {
 	pwd, e := os.Getwd()
 	r.NoError(e)
 	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
-
-	c, e := DownloadAndParseModule(fs, "github.com/chanzuckerberg/fogg-test-module")
+	downloader := MakeDownloader("github.com/chanzuckerberg/fogg-test-module")
+	c, e := downloader.DownloadAndParseModule(fs)
 	r.Nil(e)
 	r.NotNil(c)
 	r.NotNil(c.Variables)
