@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.63.0](https://github.com/chanzuckerberg/fogg/compare/v0.62.1...v0.63.0) (2022-06-13)
+
+
+### Features
+
+* allow fogg to authenticate with GH OAuth token ([#663](https://github.com/chanzuckerberg/fogg/issues/663)) ([a48a095](https://github.com/chanzuckerberg/fogg/commit/a48a095eb971df744f57bbf2fc80833cb6ddc59d))
+
 ## [0.62.1](https://github.com/chanzuckerberg/fogg/compare/v0.62.0...v0.62.1) (2022-06-02)
 
 
