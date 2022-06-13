@@ -50,15 +50,15 @@ func TestDownloadAndParseModule(t *testing.T) {
 func TestMakeDownloader(t *testing.T) {
 	r := require.New(t)
 	creds := "REDACTED"
-	downloader, err := MakeDownloader("git@github.com:chanzuckerberg/shared-infra//terraform/modules/eks-airflow?ref=v0.80.0")
+	downloader, err := MakeDownloader("git@github.com:chanzuckerberg/test-repo//terraform/modules/eks-airflow?ref=v0.80.0")
 	r.NoError(err)
-	r.Equal("git@github.com:chanzuckerberg/shared-infra//terraform/modules/eks-airflow?ref=v0.80.0", downloader.Source)
+	r.Equal("git@github.com:chanzuckerberg/test-repo//terraform/modules/eks-airflow?ref=v0.80.0", downloader.Source)
 
 	os.Setenv("FOGG_GITHUBTOKEN", creds)
 	defer os.Unsetenv("FOGG_GITHUBTOKEN")
-	downloader, err = MakeDownloader("git@github.com:chanzuckerberg/shared-infra//terraform/modules/eks-airflow?ref=v0.80.0")
+	downloader, err = MakeDownloader("git@github.com:chanzuckerberg/test-repo//terraform/modules/eks-airflow?ref=v0.80.0")
 	r.NoError(err)
-	r.Equal(fmt.Sprintf("git::https://%s@github.com/chanzuckerberg/shared-infra//terraform/modules/eks-airflow?ref=v0.80.0", creds), downloader.Source)
+	r.Equal(fmt.Sprintf("git::https://%s@github.com/chanzuckerberg/test-repo//terraform/modules/eks-airflow?ref=v0.80.0", creds), downloader.Source)
 }
 
 func TestConvertSSHToHTTP(t *testing.T) {
@@ -72,8 +72,8 @@ func TestConvertSSHToHTTP(t *testing.T) {
 	tests := func(token string) []test {
 		return []test{
 			{
-				in:  "git@github.com:chanzuckerberg/shared-infra//terraform/modules/eks-airflow?ref=v0.80.0",
-				out: fmt.Sprintf("git::https://%s@github.com/chanzuckerberg/shared-infra//terraform/modules/eks-airflow?ref=v0.80.0", token),
+				in:  "git@github.com:chanzuckerberg/test-repo//terraform/modules/eks-airflow?ref=v0.80.0",
+				out: fmt.Sprintf("git::https://%s@github.com/chanzuckerberg/test-repo//terraform/modules/eks-airflow?ref=v0.80.0", token),
 			},
 		}
 	}(creds)
