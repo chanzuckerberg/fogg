@@ -81,8 +81,7 @@ func TestConvertSSHToHTTPFail(t *testing.T) {
 		in string
 	}
 
-	creds := "REDACTED"
-	tests := func(token string) []test {
+	tests := func() []test {
 		return []test{
 			{
 				in: "github.com/scholzj/terraform-aws-vpc",
@@ -94,9 +93,9 @@ func TestConvertSSHToHTTPFail(t *testing.T) {
 				in: "github.com/hashicorp/go-getter?ref=abcd12",
 			},
 		}
-	}(creds)
+	}()
 	for _, test := range tests {
-		s := convertSSHToGithubHTTPURL(test.in, creds)
+		s := convertSSHToGithubHTTPURL(test.in, "")
 		// make sure nothing changed in a failure case
 		r.Equal(test.in, s)
 	}
