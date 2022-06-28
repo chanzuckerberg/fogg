@@ -47,6 +47,13 @@ terraform {
 
     }
 
+    okta-head = {
+      source = "okta/okta"
+
+      version = "~> 3.30"
+
+    }
+
     random = {
       source = "hashicorp/random"
 
