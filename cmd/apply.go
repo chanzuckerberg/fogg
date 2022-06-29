@@ -8,7 +8,7 @@ import (
 
 func init() {
 	applyCmd.Flags().StringP("config", "c", "fogg.yml", "Use this to override the fogg config file.")
-	applyCmd.Flags().BoolP("upgrade", "u", false, "use this when running a new version of fogg")
+	applyCmd.Flags().BoolP("upgrade", "u", false, "Use this when running a new version of fogg")
 	rootCmd.AddCommand(applyCmd)
 }
 

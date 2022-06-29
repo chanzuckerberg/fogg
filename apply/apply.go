@@ -204,9 +204,13 @@ func applyEnvs(
 			}
 
 			if componentPlan.ModuleSource != nil {
-				e := applyModuleInvocation(fs, path, *componentPlan.ModuleSource, componentPlan.ModuleName, templates.Templates.ModuleInvocation, commonBox)
-				if e != nil {
-					return errs.WrapUser(e, "unable to apply module invocation")
+				downloader, err := util.MakeDownloader(*componentPlan.ModuleSource)
+				if err != nil {
+					return errs.WrapUser(err, "unable to make a downloader")
+				}
+				err = applyModuleInvocation(fs, path, *componentPlan.ModuleSource, componentPlan.ModuleName, templates.Templates.ModuleInvocation, commonBox, downloader)
+				if err != nil {
+					return errs.WrapUser(err, "unable to apply module invocation")
 				}
 			}
 		}
@@ -379,13 +383,15 @@ func applyModuleInvocation(
 	path, moduleAddress string,
 	inModuleName *string,
 	box fs.FS,
-	commonBox fs.FS) error {
+	commonBox fs.FS,
+	downloadFunc util.ModuleDownloader,
+) error {
 	e := fs.MkdirAll(path, 0755)
 	if e != nil {
 		return errs.WrapUserf(e, "couldn't create %s directory", path)
 	}
 
-	moduleConfig, e := util.DownloadAndParseModule(fs, moduleAddress)
+	moduleConfig, e := downloadFunc.DownloadAndParseModule(fs)
 	if e != nil {
 		return errs.WrapUser(e, "could not download or parse module")
 	}

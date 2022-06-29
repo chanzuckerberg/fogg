@@ -2,13 +2,18 @@ package util
 
 import (
 	"crypto/sha256"
+	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/chanzuckerberg/fogg/errs"
 	getter "github.com/hashicorp/go-getter"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
+	"github.com/kelseyhightower/envconfig"
 	homedir "github.com/mitchellh/go-homedir"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
 
@@ -65,12 +70,69 @@ func GetFoggCachePath() (string, error) {
 	return dir, nil
 }
 
-func DownloadAndParseModule(fs afero.Fs, mod string) (*tfconfig.Module, error) {
+type ModuleDownloader interface {
+	DownloadAndParseModule(fs afero.Fs) (*tfconfig.Module, error)
+}
+
+type Downloader struct {
+	Source string
+}
+
+// Changes a URL to use the git protocol over HTTPS instead of SSH.
+// If the URL was not a remote URL or an git/SSH protocol,
+// it will return the path that was passed in. If it does
+// convert it properly, it will add Github credentials to the path
+func convertSSHToGithubHTTPURL(sURL, token string) string {
+	// only detect the remote destinations
+	s, err := getter.Detect(sURL, token, []getter.Detector{
+		&getter.GitLabDetector{},
+		&getter.GitHubDetector{},
+		&getter.GitDetector{},
+		&getter.BitBucketDetector{},
+		&getter.S3Detector{},
+		&getter.GCSDetector{},
+	})
+	if err != nil {
+		logrus.Debug(err)
+		return sURL
+	}
+
+	splits := strings.Split(s, "git::ssh://git@")
+	if len(splits) != 2 {
+		return sURL
+	}
+	u, err := url.Parse(fmt.Sprintf("https://%s", splits[1]))
+	if err != nil {
+		logrus.Debug(err)
+		return sURL
+	}
+	u.User = url.User(token)
+
+	// we want to force the git protocol
+	return fmt.Sprintf("git::%s", u.String())
+}
+
+func MakeDownloader(src string) (*Downloader, error) {
+	type HTTPAuth struct {
+		GithubToken *string
+	}
+	var httpAuth HTTPAuth
+	err := envconfig.Process("fogg", &httpAuth)
+	if err != nil {
+		return nil, errs.WrapUser(err, "unable to get env FOGG_GITHUBTOKEN flag")
+	}
+	if httpAuth.GithubToken != nil {
+		src = convertSSHToGithubHTTPURL(src, *httpAuth.GithubToken)
+	}
+	return &Downloader{Source: src}, nil
+}
+
+func (dd *Downloader) DownloadAndParseModule(fs afero.Fs) (*tfconfig.Module, error) {
 	dir, err := GetFoggCachePath()
 	if err != nil {
 		return nil, err
 	}
-	d, err := DownloadModule(fs, dir, mod)
+	d, err := DownloadModule(fs, dir, dd.Source)
 	if err != nil {
 		return nil, errs.WrapUser(err, "unable to download module")
 	}
