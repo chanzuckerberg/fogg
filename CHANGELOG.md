@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.64.0](https://github.com/chanzuckerberg/fogg/compare/v0.63.0...v0.64.0) (2022-06-29)
+
+
+### Features
+
+* add okta/okta provider ([#669](https://github.com/chanzuckerberg/fogg/issues/669)) ([d2a4dbf](https://github.com/chanzuckerberg/fogg/commit/d2a4dbff798c90952798170df85702590516d8a9))
+
 ## [0.63.0](https://github.com/chanzuckerberg/fogg/compare/v0.62.1...v0.63.0) (2022-06-13)
 
 
