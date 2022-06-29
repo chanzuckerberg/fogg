@@ -171,6 +171,10 @@ var utilityProviders = map[string]ProviderVersion{
 		Source:  "bwoznicki/assert",
 		Version: ptr.String("~> 0.0.1"),
 	},
+	"okta-head": {
+		Source:  "okta/okta",
+		Version: ptr.String("~> 3.30"),
+	},
 }
 
 //AWSProvider represents AWS provider configuration
