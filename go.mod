@@ -14,7 +14,7 @@ require (
 	github.com/fatih/color v1.10.0
 	github.com/go-errors/errors v1.1.1
 	github.com/google/go-github/v27 v27.0.6
-	github.com/hashicorp/go-getter v1.6.1
+	github.com/hashicorp/go-getter v1.6.2
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-version v1.5.0
 	github.com/hashicorp/hcl/v2 v2.12.0
