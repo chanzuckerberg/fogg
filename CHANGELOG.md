@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.64.1](https://github.com/chanzuckerberg/fogg/compare/v0.64.0...v0.64.1) (2022-07-06)
+
+
+### Misc
+
+* trigger release ([#675](https://github.com/chanzuckerberg/fogg/issues/675)) ([e869c6b](https://github.com/chanzuckerberg/fogg/commit/e869c6bc11e8f956e76ebb49a9d19dc019dcfd9a))
+
 ## [0.64.0](https://github.com/chanzuckerberg/fogg/compare/v0.63.0...v0.64.0) (2022-06-29)
 
 
