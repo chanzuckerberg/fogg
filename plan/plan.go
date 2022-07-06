@@ -753,7 +753,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	databricksConfig := v2.ResolveDatabricksProvider(commons...)
 	if databricksConfig != nil {
 		providerVersions["databricks"] = ProviderVersion{
-			Source:  "databrickslabs/databricks",
+			Source:  "databricks/databricks",
 			Version: databricksConfig.Version,
 		}
 	}
