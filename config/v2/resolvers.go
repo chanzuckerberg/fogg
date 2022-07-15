@@ -2,6 +2,8 @@ package v2
 
 import (
 	"encoding/json"
+
+	"github.com/chanzuckerberg/fogg/util"
 )
 
 // lastNonNil, despite its name can return nil if all results are nil
@@ -182,7 +184,7 @@ func ResolveBackend(commons ...Common) *Backend {
 	for _, c := range commons {
 		if c.Backend != nil {
 			if ret == nil {
-				ret = &Backend{}
+				ret = &Backend{Kind: util.StrPtr("s3")}
 			}
 			b := c.Backend
 			if b.Kind != nil {
