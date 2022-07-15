@@ -180,66 +180,55 @@ func ResolveAWSProvider(commons ...Common) *AWSProvider {
 
 // ResolveBackend returns the Backend configuration for a given component, after applying all inheritance rules
 func ResolveBackend(commons ...Common) *Backend {
-	var kind, accountID, bucket, dynamoTable, profile, region, hostName, organization, role *string
-
-	kind = util.StrPtr("s3")
-
+	var ret *Backend
 	for _, c := range commons {
 		if c.Backend != nil {
+			if ret == nil {
+				ret = &Backend{Kind: util.StrPtr("s3")}
+			}
 			b := c.Backend
 			if b.Kind != nil {
-				kind = b.Kind
+				ret.Kind = b.Kind
 			}
 
 			if b.AccountID != nil {
-				accountID = b.AccountID
+				ret.AccountID = b.AccountID
 			}
 
 			if b.Bucket != nil {
-				bucket = b.Bucket
+				ret.Bucket = b.Bucket
 			}
 
 			if b.DynamoTable != nil {
-				dynamoTable = b.DynamoTable
+				ret.DynamoTable = b.DynamoTable
 			}
 
 			if b.Region != nil {
-				region = b.Region
+				ret.Region = b.Region
 			}
 
 			// Profile and Role are mutually exclusive, so if one is set then we set the other to
 			// nil Our validations in validateBackend will assure that they are not both set or missing in the
 			// same stuct.
 			if b.Profile != nil {
-				profile = b.Profile
-				role = nil
+				ret.Profile = b.Profile
+				ret.Role = nil
 			} else if b.Role != nil {
-				role = b.Role
-				profile = nil
+				ret.Role = b.Role
+				ret.Profile = nil
 			}
 
 			if b.HostName != nil {
-				hostName = b.HostName
+				ret.HostName = b.HostName
 			}
 
 			if b.Organization != nil {
-				organization = b.Organization
+				ret.Organization = b.Organization
 			}
 		}
 	}
 
-	return &Backend{
-		Kind: kind,
-
-		AccountID:    accountID,
-		Bucket:       bucket,
-		DynamoTable:  dynamoTable,
-		Profile:      profile,
-		Region:       region,
-		HostName:     hostName,
-		Organization: organization,
-		Role:         role,
-	}
+	return ret
 }
 
 // ResolveGithubProvider will return an GithubProvder iff one of the required fields is set somewhere in the set of Common
