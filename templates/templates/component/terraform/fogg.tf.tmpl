@@ -126,28 +126,15 @@ variable "{{ $key }}" {
 }
 {{ end }}
 
-{{ if .Global }}
+{{ if .Global}}
+{{ if .Global.Backend.Kind}}
 data "terraform_remote_state" "global" {
   backend = "{{ .Global.Backend.Kind }}"
 
   config = {
     {{ template "remote_backend" .Global.Backend }}
   }
-}
-{{ end }}
-
-{{ $outer := . }}
-{{ range $component, $backend := .ComponentBackends  }}
-{{ if ne $component $outer.Name }}
-data "terraform_remote_state" "{{ $component }}" {
-  backend = "{{ $backend.Kind }}"
-
-  config = {
-      {{ template "remote_backend" $backend }}
-  }
-}
-{{ end }}
-{{ end }}
+}{{ end }}{{end}}
 
 {{ range $name, $backend := .AccountBackends }}
 data "terraform_remote_state" "{{ $name }}" {

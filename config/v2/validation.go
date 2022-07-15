@@ -155,6 +155,13 @@ func (c *Config) ValidateBackends() error {
 	var errs *multierror.Error
 
 	c.WalkComponents(func(component string, comms ...Common) {
+		// NOTE[JH]: don't require the global/default have a backend
+		// Some repos manage several TFE organizations and requiring
+		// a global backend will inject remote states for which they cannot
+		// authenticate to.
+		if component == "global" {
+			return
+		}
 		backendConfig := ResolveBackend(comms...)
 
 		if e := ValidateBackend(backendConfig, component); e != nil {
