@@ -112,17 +112,54 @@ func convertSSHToGithubHTTPURL(sURL, token string) string {
 	return fmt.Sprintf("git::%s", u.String())
 }
 
+// Changes a URL to use the git protocol over HTTPS instead of SSH.
+// If the URL was not a remote URL or an git/SSH protocol,
+// it will return the path that was passed in. If it does
+// convert it properly, it will add Github credentials to the path
+func convertSSHToGithubAppHTTPURL(sURL, token string) string {
+	// only detect the remote destinations
+	s, err := getter.Detect(sURL, token, []getter.Detector{
+		&getter.GitLabDetector{},
+		&getter.GitHubDetector{},
+		&getter.GitDetector{},
+		&getter.BitBucketDetector{},
+		&getter.S3Detector{},
+		&getter.GCSDetector{},
+	})
+	if err != nil {
+		logrus.Debug(err)
+		return sURL
+	}
+
+	splits := strings.Split(s, "git::ssh://git@")
+	if len(splits) != 2 {
+		return sURL
+	}
+	u, err := url.Parse(fmt.Sprintf("https://%s", splits[1]))
+	if err != nil {
+		logrus.Debug(err)
+		return sURL
+	}
+	u.User = url.UserPassword("x-access-token", token)
+
+	// we want to force the git protocol
+	return fmt.Sprintf("git::%s", u.String())
+}
+
 func MakeDownloader(src string) (*Downloader, error) {
 	type HTTPAuth struct {
-		GithubToken *string
+		GithubToken    *string
+		GithubAppToken *string
 	}
 	var httpAuth HTTPAuth
 	err := envconfig.Process("fogg", &httpAuth)
 	if err != nil {
-		return nil, errs.WrapUser(err, "unable to get env FOGG_GITHUBTOKEN flag")
+		return nil, errs.WrapUser(err, "unable to parse Github tokens")
 	}
 	if httpAuth.GithubToken != nil {
 		src = convertSSHToGithubHTTPURL(src, *httpAuth.GithubToken)
+	} else if httpAuth.GithubAppToken != nil {
+		src = convertSSHToGithubAppHTTPURL(src, *httpAuth.GithubAppToken)
 	}
 	return &Downloader{Source: src}, nil
 }
