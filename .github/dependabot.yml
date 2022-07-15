@@ -7,3 +7,5 @@ updates:
   open-pull-requests-limit: 10
   labels:
   - bot/merge
+  commit-message:
+    prefix: "chore: "
