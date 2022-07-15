@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.65.0](https://github.com/chanzuckerberg/fogg/compare/v0.64.1...v0.65.0) (2022-07-15)
+
+
+### Features
+
+* allowing fogg to run with a github app token ([#679](https://github.com/chanzuckerberg/fogg/issues/679)) ([161a7c5](https://github.com/chanzuckerberg/fogg/commit/161a7c5d87bdd64086149c0b050de7c11b0a1ded))
+* no longer require root global backend ([#682](https://github.com/chanzuckerberg/fogg/issues/682)) ([ba46914](https://github.com/chanzuckerberg/fogg/commit/ba469143b996c7357a9326bcbe360c4843aac0f6))
+
+
+### Misc
+
+* Fix the dependabot PR commit prefix ([#677](https://github.com/chanzuckerberg/fogg/issues/677)) ([56930f1](https://github.com/chanzuckerberg/fogg/commit/56930f11b5817312e54dfff06f8db601d342175c))
+
 ## [0.64.1](https://github.com/chanzuckerberg/fogg/compare/v0.64.0...v0.64.1) (2022-07-06)
 
 

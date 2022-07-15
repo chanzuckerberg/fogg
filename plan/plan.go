@@ -453,8 +453,6 @@ func (p *Plan) buildGlobal(conf *v2.Config) Component {
 		componentPlan.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/global.tfstate", componentPlan.ComponentCommon.Project)
 	} else if componentPlan.ComponentCommon.Backend.Kind == BackendKindRemote {
 		componentPlan.ComponentCommon.Backend.Remote.Workspace = "global"
-	} else {
-		panic(fmt.Sprintf("Invalid backend kind of %s", componentPlan.ComponentCommon.Backend.Kind))
 	}
 
 	componentPlan.Name = "global"
@@ -862,32 +860,34 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	backendConf := v2.ResolveBackend(commons...)
 	var backend Backend
 
-	if *backendConf.Kind == "s3" {
-		var roleArn *string
-		if backendConf.Role != nil {
-			// we know from our validations that if role is set, then account id must also be set
-			tmp := fmt.Sprintf("arn:aws:iam::%s:role/%s", *backendConf.AccountID, *backendConf.Role)
-			roleArn = &tmp
-		}
-		backend = Backend{
-			Kind: BackendKindS3,
-			S3: &S3Backend{
-				Region:  *backendConf.Region,
-				Profile: backendConf.Profile,
-				Bucket:  *backendConf.Bucket,
-				RoleArn: roleArn,
+	if backendConf != nil {
+		if *backendConf.Kind == "s3" {
+			var roleArn *string
+			if backendConf.Role != nil {
+				// we know from our validations that if role is set, then account id must also be set
+				tmp := fmt.Sprintf("arn:aws:iam::%s:role/%s", *backendConf.AccountID, *backendConf.Role)
+				roleArn = &tmp
+			}
+			backend = Backend{
+				Kind: BackendKindS3,
+				S3: &S3Backend{
+					Region:  *backendConf.Region,
+					Profile: backendConf.Profile,
+					Bucket:  *backendConf.Bucket,
+					RoleArn: roleArn,
 
-				AccountID:   backendConf.AccountID,
-				DynamoTable: backendConf.DynamoTable,
-			},
-		}
-	} else if *backendConf.Kind == "remote" {
-		backend = Backend{
-			Kind: BackendKindRemote,
-			Remote: &RemoteBackend{
-				HostName:     *backendConf.HostName,
-				Organization: *backendConf.Organization,
-			},
+					AccountID:   backendConf.AccountID,
+					DynamoTable: backendConf.DynamoTable,
+				},
+			}
+		} else if *backendConf.Kind == "remote" {
+			backend = Backend{
+				Kind: BackendKindRemote,
+				Remote: &RemoteBackend{
+					HostName:     *backendConf.HostName,
+					Organization: *backendConf.Organization,
+				},
+			}
 		}
 	}
 
