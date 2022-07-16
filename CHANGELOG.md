@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.65.1](https://github.com/chanzuckerberg/fogg/compare/v0.65.0...v0.65.1) (2022-07-16)
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.52 to 1.44.56 ([#681](https://github.com/chanzuckerberg/fogg/issues/681)) ([518f5b4](https://github.com/chanzuckerberg/fogg/commit/518f5b46e4fa152696fa0ad78e17f17868ce7fc2))
+* Bump github.com/stretchr/testify from 1.7.1 to 1.8.0 ([#672](https://github.com/chanzuckerberg/fogg/issues/672)) ([ffbfc9c](https://github.com/chanzuckerberg/fogg/commit/ffbfc9c166d0d2edd7cb9932567ca7c7dc08e4dc))
+
 ## [0.65.0](https://github.com/chanzuckerberg/fogg/compare/v0.64.1...v0.65.0) (2022-07-15)
 
 
