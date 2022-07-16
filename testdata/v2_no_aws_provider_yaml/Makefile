@@ -3,9 +3,9 @@
 
 include scripts/common.mk
 
-ENVS=staging
-MODULES=
-ACCOUNTS=
+ENVS=prod staging
+MODULES=my_module
+ACCOUNTS=bar foo
 
 all: check
 

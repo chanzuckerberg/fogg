@@ -7,7 +7,7 @@ terraform {
 
     bucket = "buck"
 
-    key     = "terraform/proj/envs/staging/components/vpc.tfstate"
+    key     = "terraform/proj/accounts/bar.tfstate"
     encrypt = true
     region  = "us-west-2"
     profile = "profile"
@@ -76,7 +76,7 @@ terraform {
 }
 variable "env" {
   type    = string
-  default = "staging"
+  default = "accounts"
 }
 variable "project" {
   type    = string
@@ -84,7 +84,11 @@ variable "project" {
 }
 variable "component" {
   type    = string
-  default = "vpc"
+  default = "bar"
+}
+variable "account" {
+  type    = string
+  default = "bar"
 }
 variable "owner" {
   type    = string
@@ -94,15 +98,15 @@ variable "tags" {
   type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
   default = {
     project   = "proj"
-    env       = "staging"
-    service   = "vpc"
+    env       = "accounts"
+    service   = "bar"
     owner     = "foo@example.com"
     managedBy = "terraform"
   }
 }
 variable "foo" {
   type    = string
-  default = "bar3"
+  default = "bar1"
 }
 data "terraform_remote_state" "global" {
   backend = "s3"
@@ -112,34 +116,6 @@ data "terraform_remote_state" "global" {
     bucket = "buck"
 
     key     = "terraform/proj/global.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
-
-
-  }
-}
-data "terraform_remote_state" "comp1" {
-  backend = "s3"
-  config = {
-
-
-    bucket = "buck"
-
-    key     = "terraform/proj/envs/staging/components/comp1.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
-
-
-  }
-}
-data "terraform_remote_state" "comp2" {
-  backend = "s3"
-  config = {
-
-
-    bucket = "buck"
-
-    key     = "terraform/proj/envs/staging/components/comp2.tfstate"
     region  = "us-west-2"
     profile = "profile"
 
