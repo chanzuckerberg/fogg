@@ -3,287 +3,105 @@
 
 on: push
 
-# cancel old runs if we push new commits to the same ref
 concurrency:
   group: ${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
-  terraform_0:
+  fogg-apply:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.x
-        uses: actions/setup-python@v1
+      - name: Generate token
+        id: generate_token
+        uses: chanzuckerberg/github-app-token@v1.1.4
         with:
-          python-version: '3.6'
-      - run: |
-          mkdir /tmp/terraform-docs
-          cd /tmp/terraform-docs
-
-          # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
-          curl -sSLo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-linux-amd64.tar.gz
-          tar -xzf terraform-docs.tar.gz
-          chmod +x terraform-docs
-          echo "$PWD" >> $GITHUB_PATH
-      - run: python3 -m venv venv
-      - run: . venv/bin/activate
-      - run: pip install awscli --upgrade --user
-      - run: aws --version
-      - run: FOGG_VERSION="vundefined-pre+undefined.dirty" make setup
-      - run: |
-          .fogg/bin/fogg apply
-          if [ "$(git status --porcelain)" != "" ]; then
-            echo "git tree is dirty after running fogg apply"
-            echo "ensure you run fogg apply on your branch"
-            git status
-            exit 1
-          fi
-      # we only run the following if there are changes in the terraform/* directory
-      # to optimize CI time
-      # can use this filter to decide whether or not to run linters or tests.
-      - uses: dorny/paths-filter@v2.2.1
+          app_id: ${{ secrets.CZI_GITHUB_HELPER_APP_ID }}
+          private_key: ${{ secrets.CZI_GITHUB_HELPER_PK }}
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+      - name: Cache Fogg
+        id: cache-fogg
+        uses: actions/cache@v3
+        with:
+          path: ~/.fogg/cache
+          key: fogg-cache-${{ hashFiles('**/.fogg-version') }}
+      - run: make setup
+      - run: .fogg/bin/fogg apply
+        env:
+          FOGG_GITHUBAPPTOKEN: ${{ steps.generate_token.outputs.token }}
+      - uses: EndBug/add-and-commit@v9
+        with:
+          add: -A
+          message: |
+            commit from fogg_ci -- ran fogg apply and pushed
+  find-changed-dirs:
+    runs-on: ubuntu-latest
+    outputs:
+      allChanges: ${{ steps.changedDirs.outputs.allChanges }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2.10.2
         id: filter
         with:
+          initial-fetch-depth: '1'
+          list-files: json
           filters: |
-            terraform:
-              - 'terraform/**'
-      - name: terraform/global
-        if: ${{ steps.filter.outputs.terraform == 'true' }}
+            changed:
+              - added|modified: 'terraform/**'
+      - uses: actions/github-script@v6
+        id: changedDirs
+        with:
+          script: |
+            const path = require("path")
+            const changedFiles = ${{ steps.filter.outputs.changed_files }}
+            const changedDirs = changedFiles.map(f => path.dirname(f))
+            console.log(`Found the following changed dirs: ${JSON.stringify(changedDirs, null, 2)}\n OG: ${JSON.stringify(changedFiles, null, 2)} `)
+            const changedModules = [... new Set(changedDirs.filter(d => d.indexOf("modules") !== -1))]
+            const changedAccounts = [... new Set(changedDirs.filter(d => d.indexOf("accounts") !== -1 && d.split("/").length === 3))]
+            const changedEnvs = [... new Set(changedDirs.filter(d => d.indexOf("envs") !== -1 && d.split("/").length === 4))]
+            const allChanges = [...changedAccounts,...changedEnvs, ...changedModules]
+            console.log(`changedModules: ${JSON.stringify(changedModules)}`)
+            console.log(`changedAccounts: ${JSON.stringify(changedAccounts)}`)
+            console.log(`changedEnvs: ${JSON.stringify(changedEnvs)}`)
+            core.setOutput("allChanges", allChanges)
+  lint-changed-dirs:
+    runs-on: ubuntu-latest
+    needs: find-changed-dirs
+    strategy:
+      matrix:
+        tfmodule: ${{ fromJson(needs.find-changed-dirs.outputs.allChanges) }}
+    if: ${{ needs.find-changed-dirs.outputs.allChanges != '[]' }}
+    steps:
+      - name: Generate token
+        id: generate_token
+        uses: chanzuckerberg/github-app-token@v1.1.4
+        with:
+          app_id: ${{ secrets.CZI_GITHUB_HELPER_APP_ID }}
+          private_key: ${{ secrets.CZI_GITHUB_HELPER_PK }}
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+      - name: fix terraform docs
+        uses: terraform-docs/gh-actions@v1.0.0
+        if: contains(matrix.tfmodule, 'modules') # only need to make docs on the modules
+        with:
+          working-dir: ${{matrix.tfmodule}}
+          git-push: "true"
+          template: <!-- START -->\n{{ .Content }}\n<!-- END -->
+          ref: ${{ github.event.pull_request.head.ref }}
+          git-commit-message: |
+            commit from fogg_ci -- ran terraform-docs and pushed
+      - name: fix terraform fmt
         run: |
-          cd terraform/global
-          make  lint
-  terraform_1:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.x
-        uses: actions/setup-python@v1
+          cd ${{matrix.tfmodule}}
+          make fmt
+      - uses: EndBug/add-and-commit@v9
         with:
-          python-version: '3.6'
-      - run: |
-          mkdir /tmp/terraform-docs
-          cd /tmp/terraform-docs
-
-          # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
-          curl -sSLo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-linux-amd64.tar.gz
-          tar -xzf terraform-docs.tar.gz
-          chmod +x terraform-docs
-          echo "$PWD" >> $GITHUB_PATH
-      - run: python3 -m venv venv
-      - run: . venv/bin/activate
-      - run: pip install awscli --upgrade --user
-      - run: aws --version
-      - run: FOGG_VERSION="vundefined-pre+undefined.dirty" make setup
-      - run: |
-          .fogg/bin/fogg apply
-          if [ "$(git status --porcelain)" != "" ]; then
-            echo "git tree is dirty after running fogg apply"
-            echo "ensure you run fogg apply on your branch"
-            git status
-            exit 1
-          fi
-      # we only run the following if there are changes in the terraform/* directory
-      # to optimize CI time
-      # can use this filter to decide whether or not to run linters or tests.
-      - uses: dorny/paths-filter@v2.2.1
-        id: filter
-        with:
-          filters: |
-            terraform:
-              - 'terraform/**'
-  terraform_2:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.x
-        uses: actions/setup-python@v1
-        with:
-          python-version: '3.6'
-      - run: |
-          mkdir /tmp/terraform-docs
-          cd /tmp/terraform-docs
-
-          # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
-          curl -sSLo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-linux-amd64.tar.gz
-          tar -xzf terraform-docs.tar.gz
-          chmod +x terraform-docs
-          echo "$PWD" >> $GITHUB_PATH
-      - run: python3 -m venv venv
-      - run: . venv/bin/activate
-      - run: pip install awscli --upgrade --user
-      - run: aws --version
-      - run: FOGG_VERSION="vundefined-pre+undefined.dirty" make setup
-      - run: |
-          .fogg/bin/fogg apply
-          if [ "$(git status --porcelain)" != "" ]; then
-            echo "git tree is dirty after running fogg apply"
-            echo "ensure you run fogg apply on your branch"
-            git status
-            exit 1
-          fi
-      # we only run the following if there are changes in the terraform/* directory
-      # to optimize CI time
-      # can use this filter to decide whether or not to run linters or tests.
-      - uses: dorny/paths-filter@v2.2.1
-        id: filter
-        with:
-          filters: |
-            terraform:
-              - 'terraform/**'
-  terraform_3:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.x
-        uses: actions/setup-python@v1
-        with:
-          python-version: '3.6'
-      - run: |
-          mkdir /tmp/terraform-docs
-          cd /tmp/terraform-docs
-
-          # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
-          curl -sSLo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-linux-amd64.tar.gz
-          tar -xzf terraform-docs.tar.gz
-          chmod +x terraform-docs
-          echo "$PWD" >> $GITHUB_PATH
-      - run: python3 -m venv venv
-      - run: . venv/bin/activate
-      - run: pip install awscli --upgrade --user
-      - run: aws --version
-      - run: FOGG_VERSION="vundefined-pre+undefined.dirty" make setup
-      - run: |
-          .fogg/bin/fogg apply
-          if [ "$(git status --porcelain)" != "" ]; then
-            echo "git tree is dirty after running fogg apply"
-            echo "ensure you run fogg apply on your branch"
-            git status
-            exit 1
-          fi
-      # we only run the following if there are changes in the terraform/* directory
-      # to optimize CI time
-      # can use this filter to decide whether or not to run linters or tests.
-      - uses: dorny/paths-filter@v2.2.1
-        id: filter
-        with:
-          filters: |
-            terraform:
-              - 'terraform/**'
-  terraform_4:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.x
-        uses: actions/setup-python@v1
-        with:
-          python-version: '3.6'
-      - run: |
-          mkdir /tmp/terraform-docs
-          cd /tmp/terraform-docs
-
-          # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
-          curl -sSLo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-linux-amd64.tar.gz
-          tar -xzf terraform-docs.tar.gz
-          chmod +x terraform-docs
-          echo "$PWD" >> $GITHUB_PATH
-      - run: python3 -m venv venv
-      - run: . venv/bin/activate
-      - run: pip install awscli --upgrade --user
-      - run: aws --version
-      - run: FOGG_VERSION="vundefined-pre+undefined.dirty" make setup
-      - run: |
-          .fogg/bin/fogg apply
-          if [ "$(git status --porcelain)" != "" ]; then
-            echo "git tree is dirty after running fogg apply"
-            echo "ensure you run fogg apply on your branch"
-            git status
-            exit 1
-          fi
-      # we only run the following if there are changes in the terraform/* directory
-      # to optimize CI time
-      # can use this filter to decide whether or not to run linters or tests.
-      - uses: dorny/paths-filter@v2.2.1
-        id: filter
-        with:
-          filters: |
-            terraform:
-              - 'terraform/**'
-  terraform_5:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.x
-        uses: actions/setup-python@v1
-        with:
-          python-version: '3.6'
-      - run: |
-          mkdir /tmp/terraform-docs
-          cd /tmp/terraform-docs
-
-          # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
-          curl -sSLo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-linux-amd64.tar.gz
-          tar -xzf terraform-docs.tar.gz
-          chmod +x terraform-docs
-          echo "$PWD" >> $GITHUB_PATH
-      - run: python3 -m venv venv
-      - run: . venv/bin/activate
-      - run: pip install awscli --upgrade --user
-      - run: aws --version
-      - run: FOGG_VERSION="vundefined-pre+undefined.dirty" make setup
-      - run: |
-          .fogg/bin/fogg apply
-          if [ "$(git status --porcelain)" != "" ]; then
-            echo "git tree is dirty after running fogg apply"
-            echo "ensure you run fogg apply on your branch"
-            git status
-            exit 1
-          fi
-      # we only run the following if there are changes in the terraform/* directory
-      # to optimize CI time
-      # can use this filter to decide whether or not to run linters or tests.
-      - uses: dorny/paths-filter@v2.2.1
-        id: filter
-        with:
-          filters: |
-            terraform:
-              - 'terraform/**'
-  terraform_6:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.x
-        uses: actions/setup-python@v1
-        with:
-          python-version: '3.6'
-      - run: |
-          mkdir /tmp/terraform-docs
-          cd /tmp/terraform-docs
-
-          # https://terraform-docs.io/user-guide/installation/#pre-compiled-binary
-          curl -sSLo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-linux-amd64.tar.gz
-          tar -xzf terraform-docs.tar.gz
-          chmod +x terraform-docs
-          echo "$PWD" >> $GITHUB_PATH
-      - run: python3 -m venv venv
-      - run: . venv/bin/activate
-      - run: pip install awscli --upgrade --user
-      - run: aws --version
-      - run: FOGG_VERSION="vundefined-pre+undefined.dirty" make setup
-      - run: |
-          .fogg/bin/fogg apply
-          if [ "$(git status --porcelain)" != "" ]; then
-            echo "git tree is dirty after running fogg apply"
-            echo "ensure you run fogg apply on your branch"
-            git status
-            exit 1
-          fi
-      # we only run the following if there are changes in the terraform/* directory
-      # to optimize CI time
-      # can use this filter to decide whether or not to run linters or tests.
-      - uses: dorny/paths-filter@v2.2.1
-        id: filter
-        with:
-          filters: |
-            terraform:
-              - 'terraform/**'
+          add: -A
+          message: |
+            commit from fogg_ci -- ran terraform fmt and pushed
+      - name: tflint
+        run: |
+          make setup
+          cd ${{matrix.tfmodule}}
+          ${GITHUB_WORKSPACE}/.fogg/bin/tflint
