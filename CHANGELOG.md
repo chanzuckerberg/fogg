@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.66.0](https://github.com/chanzuckerberg/fogg/compare/v0.65.1...v0.66.0) (2022-07-18)
+
+
+### Features
+
+* updated ci that is faster and better ([#684](https://github.com/chanzuckerberg/fogg/issues/684)) ([3e78e17](https://github.com/chanzuckerberg/fogg/commit/3e78e17b4c0c2a8381012af7bb4f6875d6f7d65a))
+
 ## [0.65.1](https://github.com/chanzuckerberg/fogg/compare/v0.65.0...v0.65.1) (2022-07-16)
 
 
