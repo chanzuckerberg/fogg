@@ -17,6 +17,19 @@ import (
 	"github.com/spf13/afero"
 )
 
+func redactCredentials(source string) string {
+	splits := strings.Split(source, "git::")
+	if len(splits) != 2 {
+		return source
+	}
+	u, err := url.Parse(splits[1])
+	if err != nil {
+		return source
+	}
+	u.User = url.UserPassword("REDACTED", "REDACTED")
+	return fmt.Sprintf("git::%s", u)
+}
+
 func DownloadModule(fs afero.Fs, cacheDir, source string) (string, error) {
 	// We want to do these operations from the root of our working repository.
 	// In the case where we have a BaseFs we pull out its root. Otherwise use `pwd`.
@@ -44,7 +57,10 @@ func DownloadModule(fs afero.Fs, cacheDir, source string) (string, error) {
 	if err != nil {
 		return "", errs.WrapUser(err, "could not hash")
 	}
-	_, err = h.Write([]byte(source))
+	// Sometimes, like in a Github App credential case,
+	// the source will have dynamic 1-time credentials
+	// Make sure to remove these so we don't break the cache.
+	_, err = h.Write([]byte(redactCredentials(source)))
 	if err != nil {
 		return "", errs.WrapUser(err, "could not hash")
 	}
@@ -113,9 +129,10 @@ func convertSSHToGithubHTTPURL(sURL, token string) string {
 }
 
 // Changes a URL to use the git protocol over HTTPS instead of SSH.
-// If the URL was not a remote URL or an git/SSH protocol,
-// it will return the path that was passed in. If it does
-// convert it properly, it will add Github credentials to the path
+// This function should be used when using Github App credentials
+// since it requires the use of "x-access-token", as the user
+// which is not required by a Github Personal Access token.
+// This function returns a string to use and
 func convertSSHToGithubAppHTTPURL(sURL, token string) string {
 	// only detect the remote destinations
 	s, err := getter.Detect(sURL, token, []getter.Detector{
@@ -143,7 +160,7 @@ func convertSSHToGithubAppHTTPURL(sURL, token string) string {
 	u.User = url.UserPassword("x-access-token", token)
 
 	// we want to force the git protocol
-	return fmt.Sprintf("git::%s", u.String())
+	return fmt.Sprintf("git::%s", u)
 }
 
 func MakeDownloader(src string) (*Downloader, error) {

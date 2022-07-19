@@ -75,6 +75,13 @@ func TestMakeDownloaderGithubApp(t *testing.T) {
 	r.Equal(fmt.Sprintf("git::https://x-access-token:%s@github.com/chanzuckerberg/test-repo//terraform/modules/eks-airflow?ref=v0.80.0", creds), downloader.Source)
 }
 
+func TestRedactURL(t *testing.T) {
+	r := require.New(t)
+
+	rurl := redactCredentials("git::https://x-access-token:1234@github.com/chanzuckerberg/shared-infra")
+	r.Equal("git::https://REDACTED:REDACTED@github.com/chanzuckerberg/shared-infra", rurl)
+}
+
 func TestConvertSSHToHTTP(t *testing.T) {
 	r := require.New(t)
 
