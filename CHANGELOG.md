@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.66.1](https://github.com/chanzuckerberg/fogg/compare/v0.66.0...v0.66.1) (2022-07-19)
+
+
+### BugFixes
+
+* cache breaking with github app creds ([#687](https://github.com/chanzuckerberg/fogg/issues/687)) ([5274906](https://github.com/chanzuckerberg/fogg/commit/5274906b6fe3b7eb9fe221575f2fe91a8b11cbbe))
+
 ## [0.66.0](https://github.com/chanzuckerberg/fogg/compare/v0.65.1...v0.66.0) (2022-07-18)
 
 
