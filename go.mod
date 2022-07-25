@@ -28,7 +28,7 @@ require (
 	github.com/peterbourgon/diskv v2.0.1+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/segmentio/go-prompt v1.2.1-0.20161017233205-f0d19b6901ad
-	github.com/sirupsen/logrus v1.8.1
+	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/afero v1.2.2
 	github.com/spf13/cobra v1.5.0
 	github.com/stretchr/testify v1.8.0
@@ -93,7 +93,7 @@ require (
 	golang.org/x/mod v0.4.2 // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
 	golang.org/x/oauth2 v0.0.0-20200902213428-5d25da1a8d43 // indirect
-	golang.org/x/sys v0.0.0-20220517195934-5e4e11fc645e // indirect
+	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/tools v0.1.1 // indirect
