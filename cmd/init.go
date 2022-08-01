@@ -11,6 +11,8 @@ import (
 	"github.com/spf13/pflag"
 )
 
+type FoggProject = fogg_init.FoggProject
+
 func init() {
 	initCmd.Flags().String("project", "", "Use this to pass the project name via CLI.")
 	initCmd.Flags().String("region", "", "Use this to pass the aws region via CLI.")
@@ -31,60 +33,61 @@ func isFlagPassed(cmd *cobra.Command, name string) bool {
 	return found
 }
 
-func userPrompt(cmd *cobra.Command) (string, string, string, string, string, string, error) {
-	project, region, bucket, table, profile, owner := "", "", "", "", "", ""
+func userPrompt(cmd *cobra.Command) (*FoggProject, error) {
+	foggProject := new(FoggProject)
+	var err error
 
-	project, e := cmd.Flags().GetString("project")
-	if e != nil {
-		return project, region, bucket, table, profile, owner, e
+	foggProject.Project, err = cmd.Flags().GetString("project")
+	if err != nil {
+		return foggProject, err
 	}
-	if project == "" {
-		project = prompt.StringRequired("project name?")
-	}
-
-	region, e = cmd.Flags().GetString("region")
-	if e != nil {
-		return project, region, bucket, table, profile, owner, e
-	}
-	if region == "" {
-		region = prompt.StringRequired("aws region?")
+	if foggProject.Project == "" {
+		foggProject.Project = prompt.StringRequired("project name?")
 	}
 
-	bucket, e = cmd.Flags().GetString("bucket")
-	if e != nil {
-		return project, region, bucket, table, profile, owner, e
+	foggProject.Region, err = cmd.Flags().GetString("region")
+	if err != nil {
+		return foggProject, err
 	}
-	if bucket == "" {
-		bucket = prompt.StringRequired("infra bucket name?")
+	if foggProject.Region == "" {
+		foggProject.Region = prompt.StringRequired("aws region?")
 	}
 
-	table, e = cmd.Flags().GetString("table")
-	if e != nil {
-		return project, region, bucket, table, profile, owner, e
+	foggProject.Bucket, err = cmd.Flags().GetString("bucket")
+	if err != nil {
+		return foggProject, err
+	}
+	if foggProject.Bucket == "" {
+		foggProject.Bucket = prompt.StringRequired("infra bucket name?")
+	}
+
+	foggProject.Table, err = cmd.Flags().GetString("table")
+	if err != nil {
+		return foggProject, err
 	}
 	// check whether the flag was passed for table because table isn't required
 	// so this allows passing empty string to bypass the user prompt
-	if table == "" && !isFlagPassed(cmd, "table") {
-		table = prompt.String("infra dynamo table name?")
+	if foggProject.Table == "" && !isFlagPassed(cmd, "table") {
+		foggProject.Table = prompt.String("infra dynamo table name?")
 	}
 
-	profile, e = cmd.Flags().GetString("profile")
-	if e != nil {
-		return project, region, bucket, table, profile, owner, e
+	foggProject.Profile, err = cmd.Flags().GetString("profile")
+	if err != nil {
+		return foggProject, err
 	}
-	if profile == "" {
-		profile = prompt.StringRequired("auth profile?")
-	}
-
-	owner, e = cmd.Flags().GetString("owner")
-	if e != nil {
-		return project, region, bucket, table, profile, owner, e
-	}
-	if owner == "" {
-		owner = prompt.StringRequired("owner?")
+	if foggProject.Profile == "" {
+		foggProject.Profile = prompt.StringRequired("auth profile?")
 	}
 
-	return project, region, bucket, table, profile, owner, nil
+	foggProject.Owner, err = cmd.Flags().GetString("owner")
+	if err != nil {
+		return foggProject, err
+	}
+	if foggProject.Owner == "" {
+		foggProject.Owner = prompt.StringRequired("owner?")
+	}
+
+	return foggProject, nil
 }
 
 var initCmd = &cobra.Command{
@@ -101,11 +104,11 @@ var initCmd = &cobra.Command{
 		// check that we are at root of initialized git repo
 		openGitOrExit(fs)
 
-		project, region, bucket, table, profile, owner, err := userPrompt(cmd)
+		foggProject, err := userPrompt(cmd)
 		if err != nil {
 			return err
 		}
 
-		return fogg_init.Init(fs, project, region, bucket, table, profile, owner)
+		return fogg_init.Init(fs, foggProject)
 	},
 }
