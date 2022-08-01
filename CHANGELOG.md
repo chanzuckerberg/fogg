@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.67.0](https://github.com/chanzuckerberg/fogg/compare/v0.66.1...v0.67.0) (2022-08-01)
+
+
+### Features
+
+* CCIE-180 allow running 'fogg init' with flags instead of realtime user prompts ([#693](https://github.com/chanzuckerberg/fogg/issues/693)) ([07010d4](https://github.com/chanzuckerberg/fogg/commit/07010d43913b5194db33f6866920dd10f7d6b116))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.56 to 1.44.61 ([#689](https://github.com/chanzuckerberg/fogg/issues/689)) ([b35740f](https://github.com/chanzuckerberg/fogg/commit/b35740f7e8f00020e7cade6b4fe9fa244c97d2ed))
+* bump github.com/sirupsen/logrus from 1.8.1 to 1.9.0 ([#690](https://github.com/chanzuckerberg/fogg/issues/690)) ([af48725](https://github.com/chanzuckerberg/fogg/commit/af487254263dd5dce0820b35f468448a98583eae))
+
 ## [0.66.1](https://github.com/chanzuckerberg/fogg/compare/v0.66.0...v0.66.1) (2022-07-19)
 
 
