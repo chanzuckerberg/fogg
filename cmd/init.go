@@ -39,7 +39,7 @@ func userPrompt(cmd *cobra.Command) (*FoggProject, error) {
 
 	foggProject.Project, err = cmd.Flags().GetString("project")
 	if err != nil {
-		return foggProject, err
+		return nil, err
 	}
 	if foggProject.Project == "" {
 		foggProject.Project = prompt.StringRequired("project name?")
@@ -47,7 +47,7 @@ func userPrompt(cmd *cobra.Command) (*FoggProject, error) {
 
 	foggProject.Region, err = cmd.Flags().GetString("region")
 	if err != nil {
-		return foggProject, err
+		return nil, err
 	}
 	if foggProject.Region == "" {
 		foggProject.Region = prompt.StringRequired("aws region?")
@@ -55,7 +55,7 @@ func userPrompt(cmd *cobra.Command) (*FoggProject, error) {
 
 	foggProject.Bucket, err = cmd.Flags().GetString("bucket")
 	if err != nil {
-		return foggProject, err
+		return nil, err
 	}
 	if foggProject.Bucket == "" {
 		foggProject.Bucket = prompt.StringRequired("infra bucket name?")
@@ -63,7 +63,7 @@ func userPrompt(cmd *cobra.Command) (*FoggProject, error) {
 
 	foggProject.Table, err = cmd.Flags().GetString("table")
 	if err != nil {
-		return foggProject, err
+		return nil, err
 	}
 	// check whether the flag was passed for table because table isn't required
 	// so this allows passing empty string to bypass the user prompt
@@ -73,7 +73,7 @@ func userPrompt(cmd *cobra.Command) (*FoggProject, error) {
 
 	foggProject.Profile, err = cmd.Flags().GetString("profile")
 	if err != nil {
-		return foggProject, err
+		return nil, err
 	}
 	if foggProject.Profile == "" {
 		foggProject.Profile = prompt.StringRequired("auth profile?")
@@ -81,7 +81,7 @@ func userPrompt(cmd *cobra.Command) (*FoggProject, error) {
 
 	foggProject.Owner, err = cmd.Flags().GetString("owner")
 	if err != nil {
-		return foggProject, err
+		return nil, err
 	}
 	if foggProject.Owner == "" {
 		foggProject.Owner = prompt.StringRequired("owner?")
