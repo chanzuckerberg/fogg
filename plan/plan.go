@@ -877,7 +877,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 					RoleArn: roleArn,
 
 					AccountID:   backendConf.AccountID,
-					DynamoTable: backendConf.DynamoTable,
+					DynamoTable: &backendConf.DynamoTable,
 				},
 			}
 		} else if *backendConf.Kind == "remote" {

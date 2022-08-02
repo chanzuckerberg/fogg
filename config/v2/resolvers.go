@@ -199,7 +199,7 @@ func ResolveBackend(commons ...Common) *Backend {
 				ret.Bucket = b.Bucket
 			}
 
-			if b.DynamoTable != nil {
+			if b.DynamoTable != "" {
 				ret.DynamoTable = b.DynamoTable
 			}
 
@@ -625,7 +625,7 @@ func BackendRegionGetter(comm Common) *string {
 
 func BackendDynamoTableGetter(comm Common) *string {
 	if comm.Backend != nil {
-		return comm.Backend.DynamoTable
+		return &comm.Backend.DynamoTable
 	}
 	return nil
 }

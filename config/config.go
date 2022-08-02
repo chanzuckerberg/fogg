@@ -27,7 +27,7 @@ func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVe
 					Bucket:      &bucket,
 					Profile:     &awsProfile,
 					Region:      &region,
-					DynamoTable: &table,
+					DynamoTable: table,
 				},
 				Owner:   &owner,
 				Project: &project,

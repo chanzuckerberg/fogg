@@ -240,7 +240,7 @@ type Backend struct {
 	// fields used for S3 backend
 	AccountID   *string `yaml:"account_id,omitempty"`
 	Bucket      *string `yaml:"bucket,omitempty"`
-	DynamoTable *string `yaml:"dynamodb_table,omitempty"`
+	DynamoTable string  `yaml:"dynamodb_table,omitempty"`
 	Profile     *string `yaml:"profile,omitempty"`
 	Region      *string `yaml:"region,omitempty"`
 	Role        *string `yaml:"role,omitempty"`
