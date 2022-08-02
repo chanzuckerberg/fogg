@@ -1,5 +1,19 @@
 # Changelog
 
+### [0.67.1](https://github.com/chanzuckerberg/fogg/compare/v0.67.0...v0.67.1) (2022-08-02)
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.61 to 1.44.66 ([#692](https://github.com/chanzuckerberg/fogg/issues/692)) ([de5b495](https://github.com/chanzuckerberg/fogg/commit/de5b495259eaaecb31b6cd773d3ef51b9d4bb4cc))
+* bump github.com/aws/aws-sdk-go from 1.44.66 to 1.44.67 ([#695](https://github.com/chanzuckerberg/fogg/issues/695)) ([c97e9c0](https://github.com/chanzuckerberg/fogg/commit/c97e9c08d48f51dd859f8b9d3447c4dc7e97c3e5))
+
+
+### BugFixes
+
+* Prevent including table if its an empty string ([#697](https://github.com/chanzuckerberg/fogg/issues/697)) ([14cdabf](https://github.com/chanzuckerberg/fogg/commit/14cdabf8871fe70ea2ff9238d0366b90e73b3ed2))
+* release please pin ([#698](https://github.com/chanzuckerberg/fogg/issues/698)) ([28f9fad](https://github.com/chanzuckerberg/fogg/commit/28f9fad2c3edd3f8ded7794ffd35b0af5fc5d93a))
+
 ## [0.67.0](https://github.com/chanzuckerberg/fogg/compare/v0.66.1...v0.67.0) (2022-08-01)
 
 
