@@ -19,22 +19,22 @@ var defaultTerraformVersion = goVersion.Must(goVersion.NewVersion("0.13.5"))
 const DefaultFoggVersion = 2
 
 //InitConfig initializes the config file using user input
-func InitConfig(project, region, bucket, table, awsProfile, owner, awsProviderVersion string) *v2.Config {
+func InitConfig(project, region, bucket, table, awsProfile, owner *string, awsProviderVersion string) *v2.Config {
 	return &v2.Config{
 		Defaults: v2.Defaults{
 			Common: v2.Common{
 				Backend: &v2.Backend{
-					Bucket:      &bucket,
-					Profile:     &awsProfile,
-					Region:      &region,
-					DynamoTable: &table,
+					Bucket:      bucket,
+					Profile:     awsProfile,
+					Region:      region,
+					DynamoTable: table,
 				},
-				Owner:   &owner,
-				Project: &project,
+				Owner:   owner,
+				Project: project,
 				Providers: &v2.Providers{
 					AWS: &v2.AWSProvider{
-						Profile: &awsProfile,
-						Region:  &region,
+						Profile: awsProfile,
+						Region:  region,
 						Version: &awsProviderVersion,
 					},
 				},

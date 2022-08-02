@@ -8,9 +8,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func getPtr(val string) *string {
+	return &val
+}
+
 func TestInitConfig(t *testing.T) {
 	r := require.New(t)
-	c := InitConfig("proj", "reg", "buck", "table", "prof", "me@foo.example", "0.99.0")
+	c := InitConfig(getPtr("proj"), getPtr("reg"), getPtr("buck"), getPtr("table"), getPtr("prof"), getPtr("me@foo.example"), "0.99.0")
 	r.Equal("prof", *c.Defaults.Common.Backend.Profile)
 	r.Equal("prof", *c.Defaults.Providers.AWS.Profile)
 	r.Equal("reg", *c.Defaults.Providers.AWS.Region)
