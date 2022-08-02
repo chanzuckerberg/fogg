@@ -37,55 +37,63 @@ func userPrompt(cmd *cobra.Command) (*FoggProject, error) {
 	foggProject := new(FoggProject)
 	var err error
 
-	foggProject.Project, err = cmd.Flags().GetString("project")
+	project, err := cmd.Flags().GetString("project")
 	if err != nil {
 		return nil, err
 	}
-	if foggProject.Project == "" {
-		foggProject.Project = prompt.StringRequired("project name?")
+	if project == "" {
+		project = prompt.StringRequired("project name?")
 	}
+	foggProject.Project = &project
 
-	foggProject.Region, err = cmd.Flags().GetString("region")
+	region, err := cmd.Flags().GetString("region")
 	if err != nil {
 		return nil, err
 	}
-	if foggProject.Region == "" {
-		foggProject.Region = prompt.StringRequired("aws region?")
+	if region == "" {
+		region = prompt.StringRequired("aws region?")
 	}
+	foggProject.Region = &region
 
-	foggProject.Bucket, err = cmd.Flags().GetString("bucket")
+	bucket, err := cmd.Flags().GetString("bucket")
 	if err != nil {
 		return nil, err
 	}
-	if foggProject.Bucket == "" {
-		foggProject.Bucket = prompt.StringRequired("infra bucket name?")
+	if bucket == "" {
+		bucket = prompt.StringRequired("infra bucket name?")
 	}
+	foggProject.Bucket = &bucket
 
-	foggProject.Table, err = cmd.Flags().GetString("table")
+	table, err := cmd.Flags().GetString("table")
 	if err != nil {
 		return nil, err
 	}
 	// check whether the flag was passed for table because table isn't required
 	// so this allows passing empty string to bypass the user prompt
-	if foggProject.Table == "" && !isFlagPassed(cmd, "table") {
-		foggProject.Table = prompt.String("infra dynamo table name?")
+	if table == "" && !isFlagPassed(cmd, "table") {
+		table = prompt.String("infra dynamo table name?")
+	}
+	if table != "" {
+		foggProject.Table = &table
 	}
 
-	foggProject.Profile, err = cmd.Flags().GetString("profile")
+	profile, err := cmd.Flags().GetString("profile")
 	if err != nil {
 		return nil, err
 	}
-	if foggProject.Profile == "" {
-		foggProject.Profile = prompt.StringRequired("auth profile?")
+	if profile == "" {
+		profile = prompt.StringRequired("auth profile?")
 	}
+	foggProject.Profile = &profile
 
-	foggProject.Owner, err = cmd.Flags().GetString("owner")
+	owner, err := cmd.Flags().GetString("owner")
 	if err != nil {
 		return nil, err
 	}
-	if foggProject.Owner == "" {
-		foggProject.Owner = prompt.StringRequired("owner?")
+	if owner == "" {
+		owner = prompt.StringRequired("owner?")
 	}
+	foggProject.Owner = &owner
 
 	return foggProject, nil
 }

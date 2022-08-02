@@ -8,7 +8,7 @@ import (
 const AWSProviderVersion = "2.47.0"
 
 type FoggProject struct {
-	Project, Region, Bucket, Table, Profile, Owner string
+	Project, Region, Bucket, Table, Profile, Owner *string
 }
 
 //Init reads user console input and generates a fogg.yml file
