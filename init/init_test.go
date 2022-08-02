@@ -20,7 +20,7 @@ func TestInit(t *testing.T) {
 	fs, _, err := util.TestFs()
 	r.NoError(err)
 
-	conf := config.InitConfig(project, region, bucket, table, profile, owner, AWSProviderVersion)
+	conf := config.InitConfig(&project, &region, &bucket, &table, &profile, &owner, AWSProviderVersion)
 	r.NotNil(conf)
 	r.Equal(config.DefaultFoggVersion, conf.Version)
 
