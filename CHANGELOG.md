@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.67.2](https://github.com/chanzuckerberg/fogg/compare/v0.67.1...v0.67.2) (2022-08-03)
+
+
+### BugFixes
+
+* remove test ([#699](https://github.com/chanzuckerberg/fogg/issues/699)) ([046a4b3](https://github.com/chanzuckerberg/fogg/commit/046a4b3c6cc964de4144347f3aa0ed04bf0cc351))
+
 ### [0.67.1](https://github.com/chanzuckerberg/fogg/compare/v0.67.0...v0.67.1) (2022-08-02)
 
 
