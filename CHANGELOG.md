@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.68.1](https://github.com/chanzuckerberg/fogg/compare/v0.68.0...v0.68.1) (2022-08-08)
+
+
+### BugFixes
+
+* bump failed release ([#705](https://github.com/chanzuckerberg/fogg/issues/705)) ([a8d0d6b](https://github.com/chanzuckerberg/fogg/commit/a8d0d6bbc73b1d93ce5f229eb2625a3184c610e2))
+
 ## [0.68.0](https://github.com/chanzuckerberg/fogg/compare/v0.67.2...v0.68.0) (2022-08-08)
 
 
