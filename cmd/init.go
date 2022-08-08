@@ -59,8 +59,8 @@ func userPrompt(cmd *cobra.Command) (*FoggProject, error) {
 	if err != nil {
 		return nil, err
 	}
-	// check whether the flag was passed for bucket because bucket isn't required
-	// so this allows passing empty string to bypass the user prompt
+	// check whether the bucket flag was passed
+	// bucket isn't required so this allows passing empty string to bypass the user prompt
 	if bucket == "" && !isFlagPassed(cmd, "bucket") {
 		bucket = prompt.String("infra bucket name?")
 	}
@@ -72,8 +72,8 @@ func userPrompt(cmd *cobra.Command) (*FoggProject, error) {
 	if err != nil {
 		return nil, err
 	}
-	// check whether the flag was passed for table because table isn't required
-	// so this allows passing empty string to bypass the user prompt
+	// check whether the table flag was passed
+	// table isn't required so this allows passing empty string to bypass the user prompt
 	if table == "" && !isFlagPassed(cmd, "table") {
 		table = prompt.String("infra dynamo table name?")
 	}
@@ -85,8 +85,8 @@ func userPrompt(cmd *cobra.Command) (*FoggProject, error) {
 	if err != nil {
 		return nil, err
 	}
-	// check whether the flag was passed for profile because profile isn't required
-	// so this allows passing empty string to bypass the user prompt
+	// check whether the profile flag was passed
+	// profile isn't required so this allows passing empty string to bypass the user prompt
 	if profile == "" && !isFlagPassed(cmd, "profile") {
 		profile = prompt.String("auth profile?")
 	}
