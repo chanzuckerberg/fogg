@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.68.0](https://github.com/chanzuckerberg/fogg/compare/v0.67.2...v0.68.0) (2022-08-08)
+
+
+### Features
+
+* dont require bucket or profile ([#704](https://github.com/chanzuckerberg/fogg/issues/704)) ([b0614b7](https://github.com/chanzuckerberg/fogg/commit/b0614b7f84f412b5f67229c917071b4c15f3453d))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.67 to 1.44.70 ([#702](https://github.com/chanzuckerberg/fogg/issues/702)) ([4115db1](https://github.com/chanzuckerberg/fogg/commit/4115db135753d8f0368c605988de73f857863e4d))
+* bump gopkg.in/ini.v1 from 1.66.6 to 1.67.0 ([#701](https://github.com/chanzuckerberg/fogg/issues/701)) ([f5ffb28](https://github.com/chanzuckerberg/fogg/commit/f5ffb28f0b426d8373fc2e63e473c71492624b21))
+
 ### [0.67.2](https://github.com/chanzuckerberg/fogg/compare/v0.67.1...v0.67.2) (2022-08-03)
 
 
