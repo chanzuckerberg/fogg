@@ -2,6 +2,7 @@ package apply
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/fs"
@@ -12,6 +13,8 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+
+	"github.com/pkg/errors"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
@@ -38,55 +41,133 @@ func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade bool) error {
 			return errs.NewUserf("fogg version (%s) is different than version currently used to manage repo (%s). To upgrade add --upgrade.", toolVersion, repoVersion)
 		}
 	}
-	p, err := plan.Eval(conf)
+	plan, err := plan.Eval(conf)
 	if err != nil {
 		return errs.WrapUser(err, "unable to evaluate plan")
 	}
-	e := applyRepo(fs, p, tmp.Repo, tmp.Common)
-	if e != nil {
-		return errs.WrapUser(e, "unable to apply repo")
+	err = applyRepo(fs, plan, tmp.Repo, tmp.Common)
+	if err != nil {
+		return errs.WrapUser(err, "unable to apply repo")
 	}
 
-	if p.TravisCI.Enabled {
-		e = applyTree(fs, tmp.TravisCI, tmp.Common, "", p.TravisCI)
-		if e != nil {
-			return errs.WrapUser(e, "unable to apply travis ci")
+	if plan.TravisCI.Enabled {
+		err = applyTree(fs, tmp.TravisCI, tmp.Common, "", plan.TravisCI)
+		if err != nil {
+			return errs.WrapUser(err, "unable to apply travis ci")
 		}
 	}
 
-	if p.CircleCI.Enabled {
-		e = applyTree(fs, tmp.CircleCI, tmp.Common, "", p.CircleCI)
-		if e != nil {
-			return errs.WrapUser(e, "unable to apply CircleCI")
+	if plan.CircleCI.Enabled {
+		err = applyTree(fs, tmp.CircleCI, tmp.Common, "", plan.CircleCI)
+		if err != nil {
+			return errs.WrapUser(err, "unable to apply CircleCI")
 		}
 	}
 
-	if p.GitHubActionsCI.Enabled {
-		e = applyTree(fs, tmp.GitHubActionsCI, tmp.Common, ".github", p.GitHubActionsCI)
-		if e != nil {
-			return errs.WrapUser(e, "unable to apply GitHub Actions CI")
+	if plan.GitHubActionsCI.Enabled {
+		err = applyTree(fs, tmp.GitHubActionsCI, tmp.Common, ".github", plan.GitHubActionsCI)
+		if err != nil {
+			return errs.WrapUser(err, "unable to apply GitHub Actions CI")
 		}
 	}
 
 	tfBox := tmp.Components[v2.ComponentKindTerraform]
-	e = applyAccounts(fs, p, tfBox, tmp.Common)
-	if e != nil {
-		return errs.WrapUser(e, "unable to apply accounts")
+	err = applyAccounts(fs, plan, tfBox, tmp.Common)
+	if err != nil {
+		return errs.WrapUser(err, "unable to apply accounts")
 	}
 
-	e = applyEnvs(fs, p, tmp.Env, tmp.Components, tmp.Common)
-	if e != nil {
-		return errs.WrapUser(e, "unable to apply envs")
+	err = applyEnvs(fs, plan, tmp.Env, tmp.Components, tmp.Common)
+	if err != nil {
+		return errs.WrapUser(err, "unable to apply envs")
 	}
 
 	tfBox = tmp.Components[v2.ComponentKindTerraform]
-	e = applyGlobal(fs, p.Global, tfBox, tmp.Common)
-	if e != nil {
-		return errs.WrapUser(e, "unable to apply global")
+	err = applyGlobal(fs, plan.Global, tfBox, tmp.Common)
+	if err != nil {
+		return errs.WrapUser(err, "unable to apply global")
 	}
 
-	e = applyModules(fs, p.Modules, tmp.Module, tmp.Common)
-	return errs.WrapUser(e, "unable to apply modules")
+	err = applyModules(fs, plan.Modules, tmp.Module, tmp.Common)
+	if err != nil {
+		errs.WrapUser(err, "unable to apply modules")
+	}
+
+	return applyTFE(fs, plan)
+}
+
+type LocalsTFE struct {
+	Locals *Locals `json:"locals,omitempty"`
+}
+
+type Locals struct {
+	Accounts         map[string]*TFEWorkspace `json:"accounts,omitempty"`
+	Envs             map[string]*TFEWorkspace `json:"envs,omitempty"`
+	DefaultTFVersion *string                  `json:"default_terraform_version,omitempty"`
+}
+
+type TFEWorkspace struct {
+	TriggerPrefixes  []*string `json:"trigger_prefixes,omitempty"`
+	WorkingDirectory *string   `json:"working_directory,omitempty"`
+	TerraformVersion *string   `json:"terraform_version,omitempty"`
+	GithubBranch     *string   `json:"branch,omitempty"`
+	AutoApply        *bool     `json:"auto_apply,omitempty"`
+	RemoteApply      *string   `json:"remote_apply,omitempty"`
+}
+
+func MakeTFEWorkspace() *TFEWorkspace {
+	return &TFEWorkspace{
+		GithubBranch: "main",
+		AutoApply:    true,
+		RemoteApply: false,
+		TerraformVersion: 0.13.0,
+	}
+}
+
+func applyTFE(fs afero.Fs, plan *plan.Plan) error {
+	tfePath := filepath.Join("terraform", "tfe", "locals.tf.json")
+	_, err := fs.Stat(tfePath)
+	// if the repo doesn't have a locals.tf.json, don't worry about it
+	if errors.Is(err, os.ErrNotExist) {
+		return nil
+	}
+	read, err := fs.Open(tfePath)
+	if err != nil {
+		return errors.Wrapf(err, "unable to open locals.tf.json file %s for unmarshalling", tfePath)
+	}
+	defer read.Close()
+	locals := LocalsTFE{}
+	err = json.NewDecoder(read).Decode(&locals)
+	if err != nil {
+		return errors.Wrapf(err, "unable to decode locals.tf.json from %s", tfePath)
+	}
+
+	// for each of the accounts and envs that isn't already in locals.tf.json
+	// make a new entry using sane defaults
+	for accountName := range plan.Accounts {
+		if _, ok := locals.Locals.Accounts[accountName]; !ok {
+			locals.Locals.Accounts[accountName] = MakeTFEWorkspace()
+		}
+	}
+	for envName := range plan.Envs {
+		if _, ok := locals.Locals.Accounts[envName]; !ok {
+			locals.Locals.Accounts[envName] = MakeTFEWorkspace()
+		}
+	}
+
+	write, err := fs.OpenFile(tfePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	if err != nil {
+		return errors.Wrapf(err, "unable to open locals.tf.json file %s for marshaling", tfePath)
+	}
+	defer write.Close()
+	encoder := json.NewEncoder(write)
+	encoder.SetIndent("", "\t")
+	encoder.Encode(locals)
+	if err != nil {
+		return errors.Wrap(err, "unable to marhsal locals.tf.json")
+	}
+
+	return nil
 }
 
 func checkToolVersions(fs afero.Fs, current string) (bool, string, error) {
