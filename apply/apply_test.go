@@ -1,6 +1,8 @@
 package apply
 
 import (
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"os"
@@ -9,6 +11,7 @@ import (
 	"testing"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
+	"github.com/chanzuckerberg/fogg/plan"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/sirupsen/logrus"
@@ -43,6 +46,151 @@ func getNonExistentDirectoryName() string {
 			return nonexistentDir
 		}
 		nonexistentDir = "noexist-" + randomString(20)
+	}
+}
+
+type UploadLocalsTestCase struct {
+	locals                     LocalsTFE
+	plan                       plan.Plan
+	resultEnvs, resultAccounts []string
+}
+
+type UploadLocalsTestCaseSimple struct {
+	localsAccounts, localEnvs  []string
+	planAccounts, planEnvs     []string
+	resultEnvs, resultAccounts []string
+}
+
+func makeTestCases(tests []UploadLocalsTestCaseSimple) ([]UploadLocalsTestCase, error) {
+	testcases := []UploadLocalsTestCase{}
+	for _, test := range tests {
+		testcase := UploadLocalsTestCase{}
+
+		localAccounts := make(map[string]*TFEWorkspace, 0)
+		for _, local := range test.localsAccounts {
+			localAccounts[local] = MakeTFEWorkspace()
+		}
+		localEnvs := make(map[string]map[string]*TFEWorkspace, 0)
+		for _, local := range test.localEnvs {
+			splits := strings.Split(local, "/")
+			if len(splits) != 2 {
+				return nil, errors.New("env needs to be of the form env/component")
+			}
+			component := map[string]*TFEWorkspace{}
+			component[splits[1]] = MakeTFEWorkspace()
+			localEnvs[splits[0]] = component
+		}
+		locals := LocalsTFE{
+			Locals: &Locals{
+				Accounts: localAccounts,
+				Envs:     localEnvs,
+			},
+		}
+
+		planAccounts := map[string]plan.Account{}
+		for _, local := range test.planAccounts {
+			planAccounts[local] = plan.Account{}
+		}
+		planEnvs := map[string]plan.Env{}
+		for _, local := range test.planEnvs {
+			splits := strings.Split(local, "/")
+			if len(splits) != 2 {
+				return nil, errors.New("env needs to be of the form env/component")
+			}
+			component := map[string]plan.Component{}
+			component[splits[1]] = plan.Component{}
+			planEnvs[splits[0]] = plan.Env{
+				Components: component,
+			}
+		}
+		plan := plan.Plan{
+			Accounts: planAccounts,
+			Envs:     planEnvs,
+		}
+		testcase.locals = locals
+		testcase.plan = plan
+		testcase.resultAccounts = test.resultAccounts
+		testcase.resultEnvs = test.resultEnvs
+		testcases = append(testcases, testcase)
+	}
+	return testcases, nil
+}
+
+func TestUpdateLocalsFromPlan(t *testing.T) {
+	r := require.New(t)
+	testcases, err := makeTestCases([]UploadLocalsTestCaseSimple{
+		{
+			localsAccounts: []string{"a", "b"},
+			localEnvs:      []string{"playground/a", "dev/b"},
+			planAccounts:   []string{"a", "b"},
+			planEnvs:       []string{"playground/a", "dev/b"},
+			resultAccounts: []string{"a", "b"},
+			resultEnvs:     []string{"playground/a", "dev/b"},
+		},
+		{
+			localsAccounts: []string{"b"},
+			localEnvs:      []string{"playground/a", "dev/b"},
+			planAccounts:   []string{"a", "b"},
+			planEnvs:       []string{"playground/a", "dev/b"},
+			resultAccounts: []string{"a", "b"},
+			resultEnvs:     []string{"playground/a", "dev/b"},
+		},
+		{
+			localsAccounts: []string{},
+			localEnvs:      []string{"playground/a", "dev/b"},
+			planAccounts:   []string{"a", "b"},
+			planEnvs:       []string{"playground/a", "dev/b"},
+			resultAccounts: []string{"a", "b"},
+			resultEnvs:     []string{"playground/a", "dev/b"},
+		},
+		{
+			localsAccounts: []string{},
+			localEnvs:      []string{},
+			planAccounts:   []string{"a", "b"},
+			planEnvs:       []string{"playground/a", "dev/b"},
+			resultAccounts: []string{"a", "b"},
+			resultEnvs:     []string{"playground/a", "dev/b"},
+		},
+		{
+			localsAccounts: []string{"a", "b"},
+			localEnvs:      []string{"playground/a", "dev/b"},
+			planAccounts:   []string{"b"},
+			planEnvs:       []string{"playground/a", "dev/b"},
+			resultAccounts: []string{"b"},
+			resultEnvs:     []string{"playground/a", "dev/b"},
+		},
+		{
+			localsAccounts: []string{"a", "b"},
+			localEnvs:      []string{"playground/a", "dev/b"},
+			planAccounts:   []string{"b"},
+			planEnvs:       []string{"dev/b"},
+			resultAccounts: []string{"b"},
+			resultEnvs:     []string{"dev/b"},
+		},
+		{
+			localsAccounts: []string{"a", "b"},
+			localEnvs:      []string{"playground/a", "dev/b"},
+			planAccounts:   []string{"b"},
+			planEnvs:       []string{"dev2/b"},
+			resultAccounts: []string{"b"},
+			resultEnvs:     []string{"dev2/b"},
+		},
+	})
+	r.NoError(err)
+	for _, testcase := range testcases {
+		updateLocalsFromPlan(&testcase.locals, &testcase.plan)
+		resultsAccounts := []string{}
+		for key := range testcase.locals.Locals.Accounts {
+			resultsAccounts = append(resultsAccounts, key)
+		}
+		resultEnvs := []string{}
+		for env, envLocal := range testcase.locals.Locals.Envs {
+			for component := range envLocal {
+				resultEnvs = append(resultEnvs, fmt.Sprintf("%s/%s", env, component))
+			}
+		}
+		r.ElementsMatch(testcase.resultAccounts, resultsAccounts)
+		r.ElementsMatch(testcase.resultEnvs, resultEnvs)
 	}
 }
 

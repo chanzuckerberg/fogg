@@ -101,26 +101,75 @@ type LocalsTFE struct {
 }
 
 type Locals struct {
-	Accounts         map[string]*TFEWorkspace `json:"accounts,omitempty"`
-	Envs             map[string]*TFEWorkspace `json:"envs,omitempty"`
-	DefaultTFVersion *string                  `json:"default_terraform_version,omitempty"`
+	Accounts         map[string]*TFEWorkspace            `json:"accounts,omitempty"`
+	Envs             map[string]map[string]*TFEWorkspace `json:"envs,omitempty"`
+	DefaultTFVersion *string                             `json:"default_terraform_version,omitempty"`
 }
-
+type ExtraTeamPermissions struct {
+	Plan *[]string `json:"plan,omitempty"`
+	Read *[]string `json:"read,omitempty"`
+}
 type TFEWorkspace struct {
-	TriggerPrefixes  []*string `json:"trigger_prefixes,omitempty"`
-	WorkingDirectory *string   `json:"working_directory,omitempty"`
-	TerraformVersion *string   `json:"terraform_version,omitempty"`
-	GithubBranch     *string   `json:"branch,omitempty"`
-	AutoApply        *bool     `json:"auto_apply,omitempty"`
-	RemoteApply      *string   `json:"remote_apply,omitempty"`
+	TriggerPrefixes      []*string             `json:"trigger_prefixes,omitempty"`
+	WorkingDirectory     *string               `json:"working_directory,omitempty"`
+	TerraformVersion     *string               `json:"terraform_version,omitempty"`
+	ExtraTeamPermissions *ExtraTeamPermissions `json:"extra_team_permissions,omitempty"`
+	GithubBranch         *string               `json:"branch,omitempty"`
+	AutoApply            *bool                 `json:"auto_apply,omitempty"`
+	RemoteApply          *string               `json:"remote_apply,omitempty"`
 }
 
 func MakeTFEWorkspace() *TFEWorkspace {
-	return &TFEWorkspace{
-		GithubBranch: "main",
-		AutoApply:    true,
-		RemoteApply: false,
-		TerraformVersion: 0.13.0,
+	return &TFEWorkspace{}
+}
+
+func updateLocalsFromPlan(locals *LocalsTFE, plan *plan.Plan) {
+	// if there is a planned env or account that isn't in the locals, add it
+	for accountName := range plan.Accounts {
+		if _, ok := locals.Locals.Accounts[accountName]; !ok {
+			locals.Locals.Accounts[accountName] = MakeTFEWorkspace()
+		}
+	}
+	for envName := range plan.Envs {
+		if _, ok := locals.Locals.Envs[envName]; !ok {
+			locals.Locals.Envs[envName] = make(map[string]*TFEWorkspace, 0)
+		}
+		for componentName := range plan.Envs[envName].Components {
+			if _, ok := locals.Locals.Envs[envName][componentName]; !ok {
+				locals.Locals.Envs[envName][componentName] = MakeTFEWorkspace()
+			}
+		}
+	}
+
+	// if there is a locals env or account that isn't in the plan, delete it
+	for account := range locals.Locals.Accounts {
+		shouldDelete := func() bool {
+			for plannedAccount := range plan.Accounts {
+				if account == plannedAccount {
+					return false
+				}
+			}
+			return true
+		}()
+		if shouldDelete {
+			delete(locals.Locals.Accounts, account)
+		}
+	}
+	for envName, component := range locals.Locals.Envs {
+		for componentName := range component {
+			shouldDelete := func() bool {
+				for plannedComponent := range plan.Envs[envName].Components {
+					if plannedComponent == componentName {
+						return false
+					}
+				}
+
+				return true
+			}()
+			if shouldDelete {
+				delete(locals.Locals.Envs[envName], componentName)
+			}
+		}
 	}
 }
 
@@ -130,6 +179,8 @@ func applyTFE(fs afero.Fs, plan *plan.Plan) error {
 	// if the repo doesn't have a locals.tf.json, don't worry about it
 	if errors.Is(err, os.ErrNotExist) {
 		return nil
+	} else if err != nil {
+		return err
 	}
 	read, err := fs.Open(tfePath)
 	if err != nil {
@@ -142,19 +193,7 @@ func applyTFE(fs afero.Fs, plan *plan.Plan) error {
 		return errors.Wrapf(err, "unable to decode locals.tf.json from %s", tfePath)
 	}
 
-	// for each of the accounts and envs that isn't already in locals.tf.json
-	// make a new entry using sane defaults
-	for accountName := range plan.Accounts {
-		if _, ok := locals.Locals.Accounts[accountName]; !ok {
-			locals.Locals.Accounts[accountName] = MakeTFEWorkspace()
-		}
-	}
-	for envName := range plan.Envs {
-		if _, ok := locals.Locals.Accounts[envName]; !ok {
-			locals.Locals.Accounts[envName] = MakeTFEWorkspace()
-		}
-	}
-
+	updateLocalsFromPlan(&locals, plan)
 	write, err := fs.OpenFile(tfePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return errors.Wrapf(err, "unable to open locals.tf.json file %s for marshaling", tfePath)
