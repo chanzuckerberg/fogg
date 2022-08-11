@@ -90,7 +90,7 @@ func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade bool) error {
 
 	err = applyModules(fs, plan.Modules, tmp.Module, tmp.Common)
 	if err != nil {
-		errs.WrapUser(err, "unable to apply modules")
+		return errs.WrapUser(err, "unable to apply modules")
 	}
 
 	return applyTFE(fs, plan)
@@ -201,7 +201,7 @@ func applyTFE(fs afero.Fs, plan *plan.Plan) error {
 	defer write.Close()
 	encoder := json.NewEncoder(write)
 	encoder.SetIndent("", "\t")
-	encoder.Encode(locals)
+	err = encoder.Encode(locals)
 	if err != nil {
 		return errors.Wrap(err, "unable to marhsal locals.tf.json")
 	}
