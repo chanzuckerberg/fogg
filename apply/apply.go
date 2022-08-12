@@ -110,17 +110,28 @@ type ExtraTeamPermissions struct {
 	Read *[]string `json:"read,omitempty"`
 }
 type TFEWorkspace struct {
-	TriggerPrefixes      []*string             `json:"trigger_prefixes,omitempty"`
+	TriggerPrefixes      *[]string             `json:"trigger_prefixes"`
 	WorkingDirectory     *string               `json:"working_directory,omitempty"`
 	TerraformVersion     *string               `json:"terraform_version,omitempty"`
 	ExtraTeamPermissions *ExtraTeamPermissions `json:"extra_team_permissions,omitempty"`
 	GithubBranch         *string               `json:"branch,omitempty"`
 	AutoApply            *bool                 `json:"auto_apply,omitempty"`
-	RemoteApply          *string               `json:"remote_apply,omitempty"`
+	RemoteApply          *bool                 `json:"remote_apply,omitempty"`
 }
 
 func MakeTFEWorkspace() *TFEWorkspace {
-	return &TFEWorkspace{}
+	defaultTriggerPrefixes := make([]string, 0)
+	defaultTerraformVersion := "1.2.6"
+	defaultGithubBranch := "main"
+	defaultAutoApply := true
+	defaultRemoteApply := false
+	return &TFEWorkspace{
+		TriggerPrefixes:  &defaultTriggerPrefixes,
+		TerraformVersion: &defaultTerraformVersion,
+		GithubBranch:     &defaultGithubBranch,
+		AutoApply:        &defaultAutoApply,
+		RemoteApply:      &defaultRemoteApply,
+	}
 }
 
 func updateLocalsFromPlan(locals *LocalsTFE, plan *plan.Plan) {
@@ -200,7 +211,7 @@ func applyTFE(fs afero.Fs, plan *plan.Plan) error {
 	}
 	defer write.Close()
 	encoder := json.NewEncoder(write)
-	encoder.SetIndent("", "\t")
+	encoder.SetIndent("", "  ")
 	err = encoder.Encode(locals)
 	if err != nil {
 		return errors.Wrap(err, "unable to marhsal locals.tf.json")
