@@ -93,7 +93,7 @@ func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade bool) error {
 		return errs.WrapUser(err, "unable to apply modules")
 	}
 
-	return applyTFE(fs, plan)
+	return errs.WrapUser(applyTFE(fs, plan), "unable to apply TFE locals.tf.json")
 }
 
 type LocalsTFE struct {
