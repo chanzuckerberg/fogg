@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.69.0](https://github.com/chanzuckerberg/fogg/compare/v0.68.1...v0.69.0) (2022-08-12)
+
+
+### Features
+
+* update locals.tf.json on apply ([#707](https://github.com/chanzuckerberg/fogg/issues/707)) ([3a40011](https://github.com/chanzuckerberg/fogg/commit/3a40011a3f90f9706b0928fa5e0de2a197bb7938))
+
 ### [0.68.1](https://github.com/chanzuckerberg/fogg/compare/v0.68.0...v0.68.1) (2022-08-08)
 
 
