@@ -748,6 +748,14 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
+	opsGenieConfig := v2.ResolveOpsGenieProvider(commons...)
+	if opsGenieConfig != nil {
+		providerVersions["opsgenie"] = ProviderVersion{
+			Source:  "opsgenie/opsgenie",
+			Version: opsGenieConfig.Version,
+		}
+	}
+
 	databricksConfig := v2.ResolveDatabricksProvider(commons...)
 	if databricksConfig != nil {
 		providerVersions["databricks"] = ProviderVersion{

@@ -127,6 +127,7 @@ type Providers struct {
 	Heroku     *HerokuProvider     `yaml:"heroku,omitempty"`
 	Kubernetes *KubernetesProvider `yaml:"kubernetes,omitempty"`
 	Okta       *OktaProvider       `yaml:"okta,omitempty"`
+	OpsGenie   *OpsGenieProvider   `yaml:"opsgenie,omitempty"`
 	Pagerduty  *PagerdutyProvider  `yaml:"pagerduty,omitempty"`
 	Sentry     *SentryProvider     `yaml:"sentry,omitempty"`
 	Snowflake  *SnowflakeProvider  `yaml:"snowflake,omitempty"`
@@ -211,6 +212,10 @@ type DatadogProvider struct {
 }
 
 type PagerdutyProvider struct {
+	Version *string `yaml:"version,omitempty"`
+}
+
+type OpsGenieProvider struct {
 	Version *string `yaml:"version,omitempty"`
 }
 
@@ -484,6 +489,13 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 		return nil
 	}
 
+	randOpsGenieProvider := func(r *rand.Rand) *OpsGenieProvider {
+		if r.Float32() < 0.5 {
+			return &OpsGenieProvider{}
+		}
+		return nil
+	}
+
 	randDatabricksProvider := func(r *rand.Rand) *DatabricksProvider {
 		if r.Float32() < 0.5 {
 			return &DatabricksProvider{}
@@ -544,6 +556,7 @@ func (c *Config) Generate(r *rand.Rand, size int) reflect.Value {
 				Heroku:     randHerokuProvider(r),
 				Kubernetes: randKubernetesProvider(r),
 				Okta:       randOktaProvider(r, s),
+				OpsGenie:   randOpsGenieProvider(r),
 				Sentry:     randSentryProvider(r),
 				Snowflake:  randSnowflakeProvider(r, s),
 			},
