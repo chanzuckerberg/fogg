@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.70.0](https://github.com/chanzuckerberg/fogg/compare/v0.69.0...v0.70.0) (2022-08-23)
+
+
+### Features
+
+* Add OpsGenie to fogg ([#712](https://github.com/chanzuckerberg/fogg/issues/712)) ([1b16ed9](https://github.com/chanzuckerberg/fogg/commit/1b16ed918090341817863dfbf56c21974793f801))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.70 to 1.44.76 ([#709](https://github.com/chanzuckerberg/fogg/issues/709)) ([c061961](https://github.com/chanzuckerberg/fogg/commit/c06196116b7949f06fabc40686ac064069a8e0a9))
+
 ## [0.69.0](https://github.com/chanzuckerberg/fogg/compare/v0.68.1...v0.69.0) (2022-08-12)
 
 
