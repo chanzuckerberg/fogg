@@ -361,6 +361,25 @@ func ResolvePagerdutyProvider(commons ...Common) *PagerdutyProvider {
 	return p
 }
 
+func ResolveOpsGenieProvider(commons ...Common) *OpsGenieProvider {
+	var p *OpsGenieProvider
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.OpsGenie == nil {
+			continue
+		}
+		p = c.Providers.OpsGenie
+	}
+
+	version := lastNonNil(OpsGenieProviderVersionGetter, commons...)
+
+	if version != nil {
+		return &OpsGenieProvider{
+			Version: version,
+		}
+	}
+	return p
+}
+
 func ResolveDatabricksProvider(commons ...Common) *DatabricksProvider {
 	var p *DatabricksProvider
 	for _, c := range commons {
@@ -781,6 +800,13 @@ func PagerdutyProviderVersionGetter(comm Common) *string {
 		return nil
 	}
 	return comm.Providers.Pagerduty.Version
+}
+
+func OpsGenieProviderVersionGetter(comm Common) *string {
+	if comm.Providers == nil || comm.Providers.OpsGenie == nil {
+		return nil
+	}
+	return comm.Providers.OpsGenie.Version
 }
 
 func DatabricksProviderVersionGetter(comm Common) *string {
