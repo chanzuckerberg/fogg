@@ -1,5 +1,19 @@
 # Changelog
 
+### [0.70.1](https://github.com/chanzuckerberg/fogg/compare/v0.70.0...v0.70.1) (2022-08-29)
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.76 to 1.44.81 ([#711](https://github.com/chanzuckerberg/fogg/issues/711)) ([ba6e36c](https://github.com/chanzuckerberg/fogg/commit/ba6e36c6d32ee522330c108a8754ee0ba7c4d962))
+* bump github.com/aws/aws-sdk-go from 1.44.81 to 1.44.83 ([#714](https://github.com/chanzuckerberg/fogg/issues/714)) ([27124ee](https://github.com/chanzuckerberg/fogg/commit/27124ee1c77238bfc5b01bed31467acbea041584))
+* bump github.com/aws/aws-sdk-go from 1.44.83 to 1.44.86 ([#715](https://github.com/chanzuckerberg/fogg/issues/715)) ([d365cd8](https://github.com/chanzuckerberg/fogg/commit/d365cd842760f0ec86fb7b0aaf6d748ae38bfad1))
+
+
+### BugFixes
+
+* issue where the default version is not used ([#716](https://github.com/chanzuckerberg/fogg/issues/716)) ([2b45e36](https://github.com/chanzuckerberg/fogg/commit/2b45e36a8dad19b5e085332fdbecd1504b30ff51))
+
 ## [0.70.0](https://github.com/chanzuckerberg/fogg/compare/v0.69.0...v0.70.0) (2022-08-23)
 
 
