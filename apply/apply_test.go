@@ -68,7 +68,7 @@ func makeTestCases(tests []UploadLocalsTestCaseSimple) ([]UploadLocalsTestCase, 
 
 		localAccounts := make(map[string]*TFEWorkspace, 0)
 		for _, local := range test.localsAccounts {
-			localAccounts[local] = MakeTFEWorkspace()
+			localAccounts[local] = MakeTFEWorkspace("1.2.6")
 		}
 		localEnvs := make(map[string]map[string]*TFEWorkspace, 0)
 		for _, local := range test.localEnvs {
@@ -77,7 +77,7 @@ func makeTestCases(tests []UploadLocalsTestCaseSimple) ([]UploadLocalsTestCase, 
 				return nil, errors.New("env needs to be of the form env/component")
 			}
 			component := map[string]*TFEWorkspace{}
-			component[splits[1]] = MakeTFEWorkspace()
+			component[splits[1]] = MakeTFEWorkspace("1.2.6")
 			localEnvs[splits[0]] = component
 		}
 		locals := LocalsTFE{

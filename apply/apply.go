@@ -119,9 +119,12 @@ type TFEWorkspace struct {
 	RemoteApply          *bool                 `json:"remote_apply,omitempty"`
 }
 
-func MakeTFEWorkspace() *TFEWorkspace {
+func MakeTFEWorkspace(tfVersion string) *TFEWorkspace {
 	defaultTriggerPrefixes := make([]string, 0)
-	defaultTerraformVersion := "1.2.6"
+	defaultTerraformVersion := tfVersion
+	if defaultTerraformVersion == "" {
+		defaultTerraformVersion = "1.2.6"
+	}
 	defaultGithubBranch := "main"
 	defaultAutoApply := true
 	defaultRemoteApply := false
@@ -138,7 +141,7 @@ func updateLocalsFromPlan(locals *LocalsTFE, plan *plan.Plan) {
 	// if there is a planned env or account that isn't in the locals, add it
 	for accountName := range plan.Accounts {
 		if _, ok := locals.Locals.Accounts[accountName]; !ok {
-			locals.Locals.Accounts[accountName] = MakeTFEWorkspace()
+			locals.Locals.Accounts[accountName] = MakeTFEWorkspace(plan.Global.Common.TerraformVersion)
 		}
 	}
 	for envName := range plan.Envs {
@@ -147,7 +150,7 @@ func updateLocalsFromPlan(locals *LocalsTFE, plan *plan.Plan) {
 		}
 		for componentName := range plan.Envs[envName].Components {
 			if _, ok := locals.Locals.Envs[envName][componentName]; !ok {
-				locals.Locals.Envs[envName][componentName] = MakeTFEWorkspace()
+				locals.Locals.Envs[envName][componentName] = MakeTFEWorkspace(plan.Global.Common.TerraformVersion)
 			}
 		}
 	}
