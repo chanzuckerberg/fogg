@@ -127,7 +127,7 @@ func MakeTFEWorkspace(tfVersion string) *TFEWorkspace {
 	}
 	defaultGithubBranch := "main"
 	defaultAutoApply := true
-	defaultRemoteApply := false
+	defaultRemoteApply := true
 	return &TFEWorkspace{
 		TriggerPrefixes:  &defaultTriggerPrefixes,
 		TerraformVersion: &defaultTerraformVersion,
