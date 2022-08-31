@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.70.2](https://github.com/chanzuckerberg/fogg/compare/v0.70.1...v0.70.2) (2022-08-31)
+
+
+### BugFixes
+
+* remote apply default true ([#717](https://github.com/chanzuckerberg/fogg/issues/717)) ([282994b](https://github.com/chanzuckerberg/fogg/commit/282994b8222a6a2a72bfdd2e615dde26ab114811))
+
 ### [0.70.1](https://github.com/chanzuckerberg/fogg/compare/v0.70.0...v0.70.1) (2022-08-29)
 
 
