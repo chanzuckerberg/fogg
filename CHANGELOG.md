@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.70.3](https://github.com/chanzuckerberg/fogg/compare/v0.70.2...v0.70.3) (2022-09-01)
+
+
+### BugFixes
+
+* don't list nested dirs in modules folders ci ([#719](https://github.com/chanzuckerberg/fogg/issues/719)) ([e3e6c42](https://github.com/chanzuckerberg/fogg/commit/e3e6c421e1a017eac4c3ea0ab7be23412ebce3cc))
+
 ### [0.70.2](https://github.com/chanzuckerberg/fogg/compare/v0.70.1...v0.70.2) (2022-08-31)
 
 
