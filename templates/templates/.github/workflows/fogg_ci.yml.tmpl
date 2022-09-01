@@ -56,7 +56,7 @@ jobs:
             const changedFiles = {{`${{ steps.filter.outputs.changed_files }}`}}
             const changedDirs = changedFiles.map(f => path.dirname(f))
             console.log(`Found the following changed dirs: ${JSON.stringify(changedDirs, null, 2)}\n OG: ${JSON.stringify(changedFiles, null, 2)} `)
-            const changedModules = [... new Set(changedDirs.filter(d => d.indexOf("modules") !== -1))]
+            const changedModules = [... new Set(changedDirs.filter(d => d.indexOf("modules") !== -1 && d.split("/").length === 3))]
             const changedAccounts = [... new Set(changedDirs.filter(d => d.indexOf("accounts") !== -1 && d.split("/").length === 3))]
             const changedEnvs = [... new Set(changedDirs.filter(d => d.indexOf("envs") !== -1 && d.split("/").length === 4))]
             const allChanges = [...changedAccounts,...changedEnvs, ...changedModules]
