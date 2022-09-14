@@ -54,6 +54,8 @@ defaults:
       enabled: true
       command: lint
       aws_iam_role_name: foo
+      ssh_key_secrets:
+        - SHARED_INFRA_DEPLOY_KEY
       env:
         FOO: bar
 envs:
