@@ -7,7 +7,7 @@ replace github.com/spf13/afero v1.2.2 => github.com/chanzuckerberg/afero v0.0.0-
 require (
 	github.com/Masterminds/sprig v2.22.0+incompatible
 	github.com/antzucaro/matchr v0.0.0-20191224151129-ab6ba461ddec
-	github.com/aws/aws-sdk-go v1.44.86
+	github.com/aws/aws-sdk-go v1.44.95
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/chanzuckerberg/go-misc v0.0.0-20210209191033-ae96c0409e3f
 	github.com/davecgh/go-spew v1.1.1
@@ -17,7 +17,7 @@ require (
 	github.com/hashicorp/go-getter v1.6.2
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-version v1.6.0
-	github.com/hashicorp/hcl/v2 v2.13.0
+	github.com/hashicorp/hcl/v2 v2.14.0
 	github.com/hashicorp/hcl2 v0.0.0-20191002203319-fb75b3253c80
 	github.com/hashicorp/terraform v0.14.9
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20200806211835-c481b8bfa41e
