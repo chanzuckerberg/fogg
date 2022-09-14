@@ -32,9 +32,8 @@ jobs:
         uses: webfactory/ssh-agent@v0.4.1
         with:
           ssh-private-key: |
-          {{ range $idx, $secret := $githubActionsCI.SSHKeySecrets }}
-            {{`${{`}} secrets.{{ $secret }} {{`}}`}}
-          {{ end }}
+            {{ range $idx, $secret := $githubActionsCI.SSHKeySecrets }}{{`${{`}} secrets.{{ $secret }} {{`}}`}}
+            {{ end }}
       - run: .fogg/bin/fogg apply{{ else }}
       - run: .fogg/bin/fogg apply
         env:
