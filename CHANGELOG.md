@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.71.0](https://github.com/chanzuckerberg/fogg/compare/v0.70.3...v0.71.0) (2022-09-15)
+
+
+### Features
+
+* allow optional SSH keys in CI ([#726](https://github.com/chanzuckerberg/fogg/issues/726)) ([485303c](https://github.com/chanzuckerberg/fogg/commit/485303ccb0b88f92cca03f6db597f3db0901f583))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.86 to 1.44.91 ([#722](https://github.com/chanzuckerberg/fogg/issues/722)) ([d9eb39c](https://github.com/chanzuckerberg/fogg/commit/d9eb39c9861319ae61b031466ae44a177772cd1c))
+* bump github.com/aws/aws-sdk-go from 1.44.91 to 1.44.95 ([#725](https://github.com/chanzuckerberg/fogg/issues/725)) ([8af988b](https://github.com/chanzuckerberg/fogg/commit/8af988b4d768952ad299f85245c8e177e09b7a6e))
+* bump github.com/hashicorp/hcl/v2 from 2.13.0 to 2.14.0 ([#723](https://github.com/chanzuckerberg/fogg/issues/723)) ([c175c08](https://github.com/chanzuckerberg/fogg/commit/c175c0831ad6fa84b327de2d5c82b283d7437f25))
+
 ### [0.70.3](https://github.com/chanzuckerberg/fogg/compare/v0.70.2...v0.70.3) (2022-09-01)
 
 
