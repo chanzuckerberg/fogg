@@ -105,18 +105,20 @@ type Locals struct {
 	Envs             map[string]map[string]*TFEWorkspace `json:"envs,omitempty"`
 	DefaultTFVersion *string                             `json:"default_terraform_version,omitempty"`
 }
-type ExtraTeamPermissions struct {
-	Plan *[]string `json:"plan,omitempty"`
-	Read *[]string `json:"read,omitempty"`
+type TeamPermissions struct {
+	Plan  *[]string `json:"plan,omitempty"`
+	Read  *[]string `json:"read,omitempty"`
+	Write *[]string `json:"write,omitempty"`
 }
 type TFEWorkspace struct {
-	TriggerPrefixes      *[]string             `json:"trigger_prefixes"`
-	WorkingDirectory     *string               `json:"working_directory,omitempty"`
-	TerraformVersion     *string               `json:"terraform_version,omitempty"`
-	ExtraTeamPermissions *ExtraTeamPermissions `json:"extra_team_permissions,omitempty"`
-	GithubBranch         *string               `json:"branch,omitempty"`
-	AutoApply            *bool                 `json:"auto_apply,omitempty"`
-	RemoteApply          *bool                 `json:"remote_apply,omitempty"`
+	TriggerPrefixes         *[]string        `json:"trigger_prefixes,omitempty"`
+	WorkingDirectory        *string          `json:"working_directory,omitempty"`
+	TerraformVersion        *string          `json:"terraform_version,omitempty"`
+	ExtraTeamPermissions    *TeamPermissions `json:"extra_team_permissions,omitempty"`
+	OverrideTeamPermissions *TeamPermissions `json:"override_team_permissions,omitempty"`
+	GithubBranch            *string          `json:"branch,omitempty"`
+	AutoApply               *bool            `json:"auto_apply,omitempty"`
+	RemoteApply             *bool            `json:"remote_apply,omitempty"`
 }
 
 func MakeTFEWorkspace(tfVersion string) *TFEWorkspace {
