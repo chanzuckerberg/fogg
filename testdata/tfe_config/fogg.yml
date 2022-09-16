@@ -1,0 +1,29 @@
+defaults:
+  backend:
+    kind: remote
+    host_name: si.prod.tfe.czi.technology
+    organization: shared-infra
+  owner: foo@example.com
+  project: foo
+  providers: {}
+  terraform_version: 1.1.1
+envs:
+  comp1: {}
+  comp2: {}
+accounts:
+  account: {}
+tfe:
+  terraform_version: 1.2.6
+  gh_org: chanzuckerberg
+  gh_repo: fogg
+  tfe_org: si.prod.tfe.czi.technology
+  module_source: git@github.com:chanzuckerberg/shared-infra//terraform/modules/tfe-management?ref=tfe-management-v1.0.0
+  extra_vars:
+    TFE_AWS_ACCESS_KEY_ID: ""
+    TFE_AWS_SECRET_ACCESS_KEY: ""
+  providers:
+    tfe:
+      enabled: true
+      hostname: si.prod.tfe.czi.technology
+      version: 0.33.0
+version: 2
