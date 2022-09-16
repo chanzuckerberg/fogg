@@ -1,6 +1,7 @@
 package plan
 
 type TFEConfig struct {
+	Component
 	ReadTeams                      []string
 	Branch                         string
 	GithubOrg                      string

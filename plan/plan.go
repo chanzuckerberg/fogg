@@ -29,7 +29,7 @@ type Plan struct {
 	CircleCI        CircleCIConfig        `yaml:"circleci_ci"`
 	GitHubActionsCI GitHubActionsCIConfig `yaml:"github_actions_ci"`
 	Version         string                `yaml:"version"`
-	TFE             TFEConfig             `yaml:"tfe"`
+	TFE             *TFEConfig            `yaml:"tfe"`
 }
 
 // Common represents common fields
@@ -406,20 +406,31 @@ func parseGithubOrgRepoFromGit(path string) (string, string, error) {
 	return "", "", errors.New("unable to find a valid origin remote URL")
 }
 
-func (p *Plan) buildTFE(c *v2.Config) (TFEConfig, error) {
-	org, repo, err := parseGithubOrgRepoFromGit(".")
-	if err != nil {
-		return TFEConfig{}, err
+func (p *Plan) buildTFE(c *v2.Config) (*TFEConfig, error) {
+	if c.TFE == nil {
+		return nil, nil
 	}
-	tfeConfig := TFEConfig{
+
+	tfeConfig := &TFEConfig{
 		ReadTeams:                      []string{},
 		Branch:                         "main",
-		GithubOrg:                      org,
-		GithubRepo:                     repo,
+		GithubOrg:                      "",
+		GithubRepo:                     "",
 		TFEOrg:                         c.TFE.TFEOrg,
 		SSHKeyName:                     "fogg-ssh-key",
 		ExcludedGithubRequiredChecks:   []string{},
 		AdditionalGithubRequiredChecks: []string{},
+	}
+	tfeConfig.ComponentCommon = resolveComponentCommon(c.Defaults.Common, c.Global.Common, c.TFE.Common)
+	tfeConfig.ModuleSource = c.TFE.ModuleSource
+	tfeConfig.ModuleName = c.TFE.ModuleName
+
+	if tfeConfig.ComponentCommon.Backend.Kind == BackendKindS3 {
+		tfeConfig.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/%s.tfstate", "tfe", "tfe")
+	} else if tfeConfig.ComponentCommon.Backend.Kind == BackendKindRemote {
+		tfeConfig.ComponentCommon.Backend.Remote.Workspace = "tfe"
+	} else {
+		panic(fmt.Sprintf("Invalid backend kind of %s", tfeConfig.ComponentCommon.Backend.Kind))
 	}
 
 	if c.TFE.ReadTeams != nil {
@@ -442,6 +453,15 @@ func (p *Plan) buildTFE(c *v2.Config) (TFEConfig, error) {
 	}
 	if c.TFE.AdditionalGithubRequiredChecks != nil {
 		tfeConfig.AdditionalGithubRequiredChecks = *c.TFE.AdditionalGithubRequiredChecks
+	}
+
+	if tfeConfig.GithubOrg == "" || tfeConfig.GithubRepo == "" {
+		org, repo, err := parseGithubOrgRepoFromGit(".")
+		if err != nil {
+			return nil, err
+		}
+		tfeConfig.GithubOrg = org
+		tfeConfig.GithubRepo = repo
 	}
 
 	return tfeConfig, nil

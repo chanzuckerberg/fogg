@@ -64,7 +64,7 @@ type Config struct {
 }
 
 type TFE struct {
-	Common                         `yaml:",inline"`
+	Component                      `yaml:",inline"`
 	ReadTeams                      *[]string `yaml:"read_teams,omitempty"`
 	Branch                         *string   `yaml:"branch,omitempty"`
 	GithubOrg                      *string   `yaml:"gh_org,omitempty"`
