@@ -17,7 +17,7 @@ tfe:
   gh_org: chanzuckerberg
   gh_repo: fogg
   tfe_org: si.prod.tfe.czi.technology
-  module_source: git@github.com:chanzuckerberg/shared-infra//terraform/modules/tfe-management?ref=tfe-management-v1.0.0
+  module_source: github.com/chanzuckerberg/cztack//aws-params-reader-policy?ref=v0.15.1
   extra_vars:
     TFE_AWS_ACCESS_KEY_ID: ""
     TFE_AWS_SECRET_ACCESS_KEY: ""
