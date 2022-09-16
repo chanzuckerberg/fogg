@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.71.1](https://github.com/chanzuckerberg/fogg/compare/v0.71.0...v0.71.1) (2022-09-16)
+
+
+### BugFixes
+
+* update locals struct to decode ([#727](https://github.com/chanzuckerberg/fogg/issues/727)) ([9d05d25](https://github.com/chanzuckerberg/fogg/commit/9d05d252a820850a9e790e1cc169c8ef7a877c0b))
+
 ## [0.71.0](https://github.com/chanzuckerberg/fogg/compare/v0.70.3...v0.71.0) (2022-09-15)
 
 
