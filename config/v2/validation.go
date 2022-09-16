@@ -52,6 +52,7 @@ func (c *Config) Validate() ([]string, error) {
 	errs = multierror.Append(errs, c.validateModules())
 	errs = multierror.Append(errs, c.ValidateTravis())
 	errs = multierror.Append(errs, c.ValidateGithubActionsCI())
+	errs = multierror.Append(errs, c.ValidateTFE())
 
 	// refactor to make it easier to manage these
 	w, e := c.ValidateToolsTfLint()
@@ -272,6 +273,14 @@ func (c *Config) ValidateTravis() error {
 	})
 
 	return errs
+}
+
+func (c *Config) ValidateTFE() error {
+	var errs *multierror.Error
+
+	if c.TFE.TFEOrg == "" {
+
+	}
 }
 
 func (c *Config) ValidateGithubActionsCI() error {
