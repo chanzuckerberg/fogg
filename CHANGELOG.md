@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.72.0](https://github.com/chanzuckerberg/fogg/compare/v0.71.1...v0.72.0) (2022-09-19)
+
+
+### Features
+
+* fogg create tfe folder ([#730](https://github.com/chanzuckerberg/fogg/issues/730)) ([b259e9b](https://github.com/chanzuckerberg/fogg/commit/b259e9bbfa242e8ceec8538c7d6a1633d7b395df))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.95 to 1.44.100 ([#732](https://github.com/chanzuckerberg/fogg/issues/732)) ([18a1722](https://github.com/chanzuckerberg/fogg/commit/18a1722b37b57c96a315b4e466d32925254603bc))
+
 ### [0.71.1](https://github.com/chanzuckerberg/fogg/compare/v0.71.0...v0.71.1) (2022-09-16)
 
 
