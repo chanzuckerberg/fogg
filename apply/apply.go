@@ -370,7 +370,7 @@ func applyEnvs(
 				if err != nil {
 					return errs.WrapUser(err, "unable to make a downloader")
 				}
-				err = applyModuleInvocation(fs, path, *componentPlan.ModuleSource, componentPlan.ModuleName, templates.Templates.ModuleInvocation, commonBox, downloader)
+				err = applyModuleInvocation(fs, path, *componentPlan.ModuleSource, componentPlan.ModuleName, componentPlan.Variables, templates.Templates.ModuleInvocation, commonBox, downloader)
 				if err != nil {
 					return errs.WrapUser(err, "unable to apply module invocation")
 				}
@@ -544,6 +544,7 @@ func applyModuleInvocation(
 	fs afero.Fs,
 	path, moduleAddress string,
 	inModuleName *string,
+	variables []string,
 	box fs.FS,
 	commonBox fs.FS,
 	downloadFunc util.ModuleDownloader,
@@ -561,11 +562,13 @@ func applyModuleInvocation(
 	// This should really be part of the plan stage, not apply. But going to
 	// leave it here for now and re-think it when we make this mechanism
 	// general purpose.
-	variables := make([]string, 0)
-	for _, v := range moduleConfig.Variables {
-		variables = append(variables, v.Name)
+	if len(variables) == 0 {
+		variables = make([]string, 0)
+		for _, v := range moduleConfig.Variables {
+			variables = append(variables, v.Name)
+		}
+		sort.Strings(variables)
 	}
-	sort.Strings(variables)
 	outputs := make([]string, 0)
 	for _, o := range moduleConfig.Outputs {
 		outputs = append(outputs, o.Name)
