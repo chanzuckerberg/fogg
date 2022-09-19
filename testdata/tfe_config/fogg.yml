@@ -5,8 +5,13 @@ defaults:
     organization: shared-infra
   owner: foo@example.com
   project: foo
-  providers: {}
   terraform_version: 1.1.1
+  providers:
+    aws:
+      account_id: "626314663667"
+      region: us-west-2
+      role: tfe-si
+      version: 3.63.0
 envs:
   comp1: {}
   comp2: {}
@@ -17,7 +22,7 @@ tfe:
   gh_org: chanzuckerberg
   gh_repo: fogg
   tfe_org: si.prod.tfe.czi.technology
-  module_source: github.com/chanzuckerberg/cztack//aws-params-reader-policy?ref=v0.15.1
+  module_source:  github.com/chanzuckerberg/cztack//aws-params-reader-policy?ref=v0.15.1
   extra_vars:
     TFE_AWS_ACCESS_KEY_ID: ""
     TFE_AWS_SECRET_ACCESS_KEY: ""
@@ -26,4 +31,9 @@ tfe:
       enabled: true
       hostname: si.prod.tfe.czi.technology
       version: 0.33.0
+    aws:
+      account_id: "626314663666"
+      region: us-west-2
+      role: tfe-si
+      version: 3.30.0
 version: 2
