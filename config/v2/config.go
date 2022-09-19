@@ -15,7 +15,7 @@ import (
 	yaml "gopkg.in/yaml.v3"
 )
 
-//ReadConfig take a byte array as input and outputs a json or yaml config struct
+// ReadConfig take a byte array as input and outputs a json or yaml config struct
 func ReadConfig(fs afero.Fs, b []byte, configFile string) (*Config, error) {
 	var e error
 	c := &Config{}
@@ -60,6 +60,19 @@ type Config struct {
 	Modules  map[string]Module  `yaml:"modules,omitempty"`
 	Plugins  Plugins            `yaml:"plugins,omitempty"`
 	Version  int                `validate:"required,eq=2"`
+	TFE      *TFE               `yaml:"tfe,omitempty"`
+}
+
+type TFE struct {
+	Component                      `yaml:",inline"`
+	ReadTeams                      *[]string `yaml:"read_teams,omitempty"`
+	Branch                         *string   `yaml:"branch,omitempty"`
+	GithubOrg                      *string   `yaml:"gh_org,omitempty"`
+	GithubRepo                     *string   `yaml:"gh_repo,omitempty"`
+	TFEOrg                         string    `yaml:"tfe_org,omitempty"`
+	SSHKeyName                     *string   `yaml:"ssh_key_name,omitempty"`
+	ExcludedGithubRequiredChecks   *[]string `yaml:"excluded_gh_required_checks,omitempty"`
+	AdditionalGithubRequiredChecks *[]string `yaml:"additional_gh_required_checks,omitempty"`
 }
 
 type Common struct {
@@ -145,7 +158,7 @@ type CommonProvider struct {
 	Version *string `yaml:"version,omitempty"`
 }
 
-//Auth0Provider is the terraform provider for the Auth0 service.
+// Auth0Provider is the terraform provider for the Auth0 service.
 type Auth0Provider struct {
 	Version *string `yaml:"version,omitempty"`
 	Domain  *string `yaml:"domain,omitempty"`
@@ -238,7 +251,7 @@ type KubernetesProvider struct {
 	CommonProvider `yaml:",inline"`
 }
 
-//Backend is used to configure a terraform backend
+// Backend is used to configure a terraform backend
 type Backend struct {
 	Kind *string `yaml:"kind,omitempty" validate:"omitempty,oneof=s3 remote"`
 

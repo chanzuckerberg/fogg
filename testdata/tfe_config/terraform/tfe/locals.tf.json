@@ -1,0 +1,18 @@
+{
+  "locals": {
+    "accounts": {
+      "account": {
+        "trigger_prefixes": [],
+        "terraform_version": "1.1.1",
+        "branch": "main",
+        "auto_apply": true,
+        "remote_apply": true
+      }
+    },
+    "envs": {
+      "comp1": {},
+      "comp2": {}
+    },
+    "default_terraform_version": "1.2.6"
+  }
+}
