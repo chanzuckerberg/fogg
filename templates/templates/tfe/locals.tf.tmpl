@@ -1,0 +1,6 @@
+{{- $tfeConfig := . }}
+
+locals {
+  organization = "{{ $tfeConfig.TFEOrg }}"
+  repo = "{{ $tfeConfig.GithubOrg }}/{{ $tfeConfig.GithubRepo }}"
+}

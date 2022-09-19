@@ -8,6 +8,7 @@ import (
 	"github.com/chanzuckerberg/fogg/errs"
 	multierror "github.com/hashicorp/go-multierror"
 	goVersion "github.com/hashicorp/go-version"
+	"github.com/pkg/errors"
 	validator "gopkg.in/go-playground/validator.v9"
 )
 
@@ -52,6 +53,7 @@ func (c *Config) Validate() ([]string, error) {
 	errs = multierror.Append(errs, c.validateModules())
 	errs = multierror.Append(errs, c.ValidateTravis())
 	errs = multierror.Append(errs, c.ValidateGithubActionsCI())
+	errs = multierror.Append(errs, c.validateTFE())
 
 	// refactor to make it easier to manage these
 	w, e := c.ValidateToolsTfLint()
@@ -270,6 +272,16 @@ func (c *Config) ValidateTravis() error {
 			}
 		}
 	})
+
+	return errs
+}
+
+func (c *Config) validateTFE() error {
+	var errs *multierror.Error
+
+	if c.TFE != nil && c.TFE.TFEOrg == "" {
+		errs = multierror.Append(errs, errors.Errorf("tfe org is required"))
+	}
 
 	return errs
 }
