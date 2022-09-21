@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+	"golang.org/x/exp/slices"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
@@ -562,13 +563,17 @@ func applyModuleInvocation(
 	// This should really be part of the plan stage, not apply. But going to
 	// leave it here for now and re-think it when we make this mechanism
 	// general purpose.
-	if len(variables) == 0 {
-		variables = make([]string, 0)
-		for _, v := range moduleConfig.Variables {
+	addAll := len(variables) == 0
+	for _, v := range moduleConfig.Variables {
+		if addAll {
 			variables = append(variables, v.Name)
+		} else {
+			if v.Required && !slices.Contains(variables, v.Name) {
+				variables = append(variables, v.Name)
+			}
 		}
-		sort.Strings(variables)
 	}
+	sort.Strings(variables)
 	outputs := make([]string, 0)
 	for _, o := range moduleConfig.Outputs {
 		outputs = append(outputs, o.Name)
