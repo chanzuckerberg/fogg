@@ -1,5 +1,5 @@
 # First stage: build the executable
-FROM golang:1.17.3 AS builder
+FROM golang:1.18.6 AS builder
 
 # Enable Go modules and vendor
 ENV GO111MODULE=on GOFLAGS=-mod=vendor

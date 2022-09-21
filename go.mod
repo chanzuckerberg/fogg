@@ -1,6 +1,6 @@
 module github.com/chanzuckerberg/fogg
 
-go 1.17
+go 1.18
 
 replace github.com/spf13/afero v1.2.2 => github.com/chanzuckerberg/afero v0.0.0-20190514223411-36a9495a9b51
 
@@ -95,6 +95,7 @@ require (
 	github.com/ulikunitz/xz v0.5.8 // indirect
 	github.com/vmihailenco/msgpack/v4 v4.3.12 // indirect
 	github.com/vmihailenco/tagparser v0.1.1 // indirect
+	github.com/xanzy/ssh-agent v0.3.0 // indirect
 	github.com/zclconf/go-cty v1.11.0 // indirect
 	github.com/zclconf/go-cty-yaml v1.0.2 // indirect
 	go.opencensus.io v0.22.4 // indirect
