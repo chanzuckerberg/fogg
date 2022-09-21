@@ -236,7 +236,7 @@ func applyTFE(fs afero.Fs, plan *plan.Plan, tmpl *templates.T) error {
 		if err != nil {
 			return errs.WrapUser(err, "unable to make a downloader")
 		}
-		err = applyModuleInvocation(fs, path, *plan.TFE.ModuleSource, plan.TFE.ModuleName, templates.Templates.ModuleInvocation, tmpl.Common, downloader)
+		err = applyModuleInvocation(fs, path, *plan.TFE.ModuleSource, plan.TFE.ModuleName, nil, templates.Templates.ModuleInvocation, tmpl.Common, downloader)
 		if err != nil {
 			return errs.WrapUser(err, "unable to apply module invocation")
 		}
