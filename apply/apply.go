@@ -234,10 +234,21 @@ func applyTFE(fs afero.Fs, plan *plan.Plan, tmpl *templates.T) error {
 	}
 	if plan.TFE.ModuleSource != nil {
 		downloader, err := util.MakeDownloader(*plan.TFE.ModuleSource)
+		mi := []moduleInvocation{
+			{
+				module: v2.ComponentModule{
+					Name:      nil,
+					Prefix:    nil,
+					Source:    plan.TFE.ModuleSource,
+					Variables: []string{},
+				},
+				downloadFunc: downloader,
+			},
+		}
 		if err != nil {
 			return errs.WrapUser(err, "unable to make a downloader")
 		}
-		err = applyModuleInvocation(fs, path, *plan.TFE.ModuleSource, plan.TFE.ModuleName, nil, templates.Templates.ModuleInvocation, tmpl.Common, downloader)
+		err = applyModuleInvocation(fs, path, templates.Templates.ModuleInvocation, tmpl.Common, mi)
 		if err != nil {
 			return errs.WrapUser(err, "unable to apply module invocation")
 		}
@@ -366,15 +377,36 @@ func applyEnvs(
 				return errs.WrapUser(err, "unable to apply templates for component")
 			}
 
+			mi := make([]moduleInvocation, 0)
 			if componentPlan.ModuleSource != nil {
 				downloader, err := util.MakeDownloader(*componentPlan.ModuleSource)
 				if err != nil {
 					return errs.WrapUser(err, "unable to make a downloader")
 				}
-				err = applyModuleInvocation(fs, path, *componentPlan.ModuleSource, componentPlan.ModuleName, componentPlan.Variables, templates.Templates.ModuleInvocation, commonBox, downloader)
+				mi = append(mi, moduleInvocation{
+					module: v2.ComponentModule{
+						Name:      componentPlan.ModuleName,
+						Source:    componentPlan.ModuleSource,
+						Variables: componentPlan.Variables,
+						Prefix:    nil,
+					},
+					downloadFunc: downloader,
+				})
+			}
+
+			for _, m := range componentPlan.Modules {
+				downloader, err := util.MakeDownloader(*m.Source)
 				if err != nil {
-					return errs.WrapUser(err, "unable to apply module invocation")
+					return errs.WrapUser(err, "unable to make a downloader")
 				}
+				mi = append(mi, moduleInvocation{
+					module:       m,
+					downloadFunc: downloader,
+				})
+			}
+			err = applyModuleInvocation(fs, path, templates.Templates.ModuleInvocation, commonBox, mi)
+			if err != nil {
+				return errs.WrapUser(err, "unable to apply module invocation")
 			}
 		}
 	}
@@ -537,60 +569,84 @@ func applyTemplate(sourceFile io.Reader, commonTemplates fs.FS, dest afero.Fs, p
 type moduleData struct {
 	ModuleName   string
 	ModuleSource string
+	ModulePrefix string
 	Variables    []string
 	Outputs      []string
 }
 
+type modulesData struct {
+	Modules []*moduleData
+}
+
+type moduleInvocation struct {
+	module       v2.ComponentModule
+	downloadFunc util.ModuleDownloader
+}
+
 func applyModuleInvocation(
 	fs afero.Fs,
-	path, moduleAddress string,
-	inModuleName *string,
-	variables []string,
+	path string,
 	box fs.FS,
 	commonBox fs.FS,
-	downloadFunc util.ModuleDownloader,
+	moduleInvocations []moduleInvocation,
 ) error {
 	e := fs.MkdirAll(path, 0755)
 	if e != nil {
 		return errs.WrapUserf(e, "couldn't create %s directory", path)
 	}
+	arr := make([]*moduleData, 0)
+	// TODO: parallel downloads with go routines
+	for _, mi := range moduleInvocations {
+		moduleConfig, e := mi.downloadFunc.DownloadAndParseModule(fs)
+		if e != nil {
+			return errs.WrapUser(e, "could not download or parse module")
+		}
 
-	moduleConfig, e := downloadFunc.DownloadAndParseModule(fs)
-	if e != nil {
-		return errs.WrapUser(e, "could not download or parse module")
-	}
-
-	// This should really be part of the plan stage, not apply. But going to
-	// leave it here for now and re-think it when we make this mechanism
-	// general purpose.
-	addAll := variables == nil
-	for _, v := range moduleConfig.Variables {
-		if addAll {
-			variables = append(variables, v.Name)
-		} else {
-			if v.Required && !slices.Contains(variables, v.Name) {
+		// This should really be part of the plan stage, not apply. But going to
+		// leave it here for now and re-think it when we make this mechanism
+		// general purpose.
+		variables := mi.module.Variables
+		addAll := variables == nil
+		for _, v := range moduleConfig.Variables {
+			if addAll {
 				variables = append(variables, v.Name)
+			} else {
+				if v.Required && !slices.Contains(variables, v.Name) {
+					variables = append(variables, v.Name)
+				}
 			}
 		}
-	}
-	sort.Strings(variables)
-	outputs := make([]string, 0)
-	for _, o := range moduleConfig.Outputs {
-		outputs = append(outputs, o.Name)
-	}
-	sort.Strings(outputs)
+		sort.Strings(variables)
+		outputs := make([]string, 0)
+		for _, o := range moduleConfig.Outputs {
+			outputs = append(outputs, o.Name)
+		}
+		sort.Strings(outputs)
 
-	moduleName := ""
-	if inModuleName != nil {
-		moduleName = *inModuleName
-	}
-	if moduleName == "" {
-		moduleName = filepath.Base(moduleAddress)
-		re := regexp.MustCompile(`\?ref=.*`)
-		moduleName = re.ReplaceAllString(moduleName, "")
+		moduleName := ""
+		if mi.module.Name != nil {
+			moduleName = *mi.module.Name
+		}
+		if moduleName == "" {
+			moduleName = filepath.Base(*mi.module.Source)
+			re := regexp.MustCompile(`\?ref=.*`)
+			moduleName = re.ReplaceAllString(moduleName, "")
+		}
+
+		modulePrefix := ""
+		if mi.module.Prefix != nil {
+			modulePrefix = *mi.module.Prefix + "_"
+		}
+		moduleAddressForSource, _ := calculateModuleAddressForSource(path, *mi.module.Source)
+		arr = append(arr, &moduleData{
+			moduleName,
+			moduleAddressForSource,
+			modulePrefix,
+			variables,
+			outputs,
+		})
 	}
 
-	moduleAddressForSource, _ := calculateModuleAddressForSource(path, moduleAddress)
 	// MAIN
 	f, e := box.Open("main.tf.tmpl")
 	if e != nil {
@@ -601,7 +657,7 @@ func applyModuleInvocation(
 		commonBox,
 		fs,
 		filepath.Join(path, "main.tf"),
-		&moduleData{moduleName, moduleAddressForSource, variables, outputs})
+		&modulesData{arr})
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply template for main.tf")
 	}
@@ -616,7 +672,7 @@ func applyModuleInvocation(
 		return errs.WrapUser(e, "could not open template file")
 	}
 
-	e = applyTemplate(f, commonBox, fs, filepath.Join(path, "outputs.tf"), &moduleData{moduleName, moduleAddressForSource, variables, outputs})
+	e = applyTemplate(f, commonBox, fs, filepath.Join(path, "outputs.tf"), &modulesData{arr})
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply template for outputs.tf")
 	}

@@ -319,12 +319,13 @@ type Account struct {
 type Component struct {
 	ComponentCommon `yaml:",inline"`
 
-	EKS          *v2.EKSConfig     `yaml:"eks,omitempty"`
-	Kind         *v2.ComponentKind `yaml:"kind,omitempty"`
-	ModuleSource *string           `yaml:"module_source"`
-	ModuleName   *string           `yaml:"module_name"`
-	Variables    []string          `yaml:"variables"`
-	Global       *Component        `yaml:"global"`
+	EKS          *v2.EKSConfig        `yaml:"eks,omitempty"`
+	Kind         *v2.ComponentKind    `yaml:"kind,omitempty"`
+	ModuleSource *string              `yaml:"module_source"`
+	ModuleName   *string              `yaml:"module_name"`
+	Variables    []string             `yaml:"variables"`
+	Modules      []v2.ComponentModule `yaml:"modules"`
+	Global       *Component           `yaml:"global"`
 }
 
 // Env is an env
@@ -603,6 +604,7 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			componentPlan.ModuleSource = componentConf.ModuleSource
 			componentPlan.ModuleName = componentConf.ModuleName
 			componentPlan.Variables = componentConf.Variables
+			componentPlan.Modules = componentConf.Modules
 			componentPlan.PathToRepoRoot = "../../../../"
 
 			componentPlan.Global = &p.Global

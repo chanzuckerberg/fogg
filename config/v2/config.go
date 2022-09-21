@@ -57,7 +57,7 @@ type Config struct {
 	Defaults Defaults           `yaml:"defaults" validate:"required"`
 	Envs     map[string]Env     `yaml:"envs,omitempty"`
 	Global   Component          `yaml:"global,omitempty"`
-	Modules  map[string]Module  `yaml:"modules,omitempty"`
+	Modules  map[string]Module  `yaml:"modules,omitempty"` // BUG: order is important
 	Plugins  Plugins            `yaml:"plugins,omitempty"`
 	Version  int                `validate:"required,eq=2"`
 	TFE      *TFE               `yaml:"tfe,omitempty"`
@@ -122,11 +122,23 @@ type Env struct {
 type Component struct {
 	Common `yaml:",inline"`
 
-	EKS          *EKSConfig     `yaml:"eks,omitempty"`
-	Kind         *ComponentKind `yaml:"kind,omitempty"`
-	ModuleSource *string        `yaml:"module_source,omitempty"`
-	ModuleName   *string        `yaml:"module_name,omitempty"`
-	Variables    []string       `yaml:"variables,omitempty"`
+	EKS          *EKSConfig        `yaml:"eks,omitempty"`
+	Kind         *ComponentKind    `yaml:"kind,omitempty"`
+	ModuleSource *string           `yaml:"module_source,omitempty"`
+	ModuleName   *string           `yaml:"module_name,omitempty"`
+	Variables    []string          `yaml:"variables,omitempty"`
+	Modules      []ComponentModule `yaml:"modules,omitempty"`
+}
+
+type ComponentModule struct {
+	// Source for Terraform module as supported by Terraform
+	Source *string `yaml:"source,omitempty"`
+	// Name for generated module block, defaults to Source stripped from special characters
+	Name *string `yaml:"name,omitempty"`
+	// Prefix for all generated input and output placeholder to handle overlapping references
+	Prefix *string `yaml:"prefix,omitempty"`
+	// Variables to limit generated input placeholders (and use module defaults for others)
+	Variables []string `yaml:"variables,omitempty"`
 }
 
 type Providers struct {
