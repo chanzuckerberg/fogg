@@ -563,7 +563,7 @@ func applyModuleInvocation(
 	// This should really be part of the plan stage, not apply. But going to
 	// leave it here for now and re-think it when we make this mechanism
 	// general purpose.
-	addAll := len(variables) == 0
+	addAll := variables == nil
 	for _, v := range moduleConfig.Variables {
 		if addAll {
 			variables = append(variables, v.Name)
