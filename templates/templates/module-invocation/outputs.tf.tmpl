@@ -5,8 +5,9 @@
 // module "{{.ModulePrefix}}{{.ModuleName}}" outputs
 {{ $outer := . -}}
 {{- range .Outputs -}}
-output "{{$outer.ModulePrefix}}{{.}}" {
-  value = module.{{$outer.ModuleName}}.{{.}}
+output "{{$outer.ModulePrefix}}{{.Name}}" {
+  value = module.{{$outer.ModuleName}}.{{.Name}}
+  sensitive = {{.Sensitive}}
 }
 {{end }}
 {{- end }}
