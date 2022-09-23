@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+	"golang.org/x/exp/slices"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
@@ -236,7 +237,7 @@ func applyTFE(fs afero.Fs, plan *plan.Plan, tmpl *templates.T) error {
 		if err != nil {
 			return errs.WrapUser(err, "unable to make a downloader")
 		}
-		err = applyModuleInvocation(fs, path, *plan.TFE.ModuleSource, plan.TFE.ModuleName, templates.Templates.ModuleInvocation, tmpl.Common, downloader)
+		err = applyModuleInvocation(fs, path, *plan.TFE.ModuleSource, plan.TFE.ModuleName, nil, templates.Templates.ModuleInvocation, tmpl.Common, downloader)
 		if err != nil {
 			return errs.WrapUser(err, "unable to apply module invocation")
 		}
@@ -370,7 +371,7 @@ func applyEnvs(
 				if err != nil {
 					return errs.WrapUser(err, "unable to make a downloader")
 				}
-				err = applyModuleInvocation(fs, path, *componentPlan.ModuleSource, componentPlan.ModuleName, templates.Templates.ModuleInvocation, commonBox, downloader)
+				err = applyModuleInvocation(fs, path, *componentPlan.ModuleSource, componentPlan.ModuleName, componentPlan.Variables, templates.Templates.ModuleInvocation, commonBox, downloader)
 				if err != nil {
 					return errs.WrapUser(err, "unable to apply module invocation")
 				}
@@ -544,6 +545,7 @@ func applyModuleInvocation(
 	fs afero.Fs,
 	path, moduleAddress string,
 	inModuleName *string,
+	variables []string,
 	box fs.FS,
 	commonBox fs.FS,
 	downloadFunc util.ModuleDownloader,
@@ -561,9 +563,15 @@ func applyModuleInvocation(
 	// This should really be part of the plan stage, not apply. But going to
 	// leave it here for now and re-think it when we make this mechanism
 	// general purpose.
-	variables := make([]string, 0)
+	addAll := variables == nil
 	for _, v := range moduleConfig.Variables {
-		variables = append(variables, v.Name)
+		if addAll {
+			variables = append(variables, v.Name)
+		} else {
+			if v.Required && !slices.Contains(variables, v.Name) {
+				variables = append(variables, v.Name)
+			}
+		}
 	}
 	sort.Strings(variables)
 	outputs := make([]string, 0)
