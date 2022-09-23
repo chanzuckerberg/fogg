@@ -732,7 +732,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 
 		providerVersions["auth0"] = ProviderVersion{
-			Source:  "alexkappa/auth0",
+			Source:  "auth0/auth0",
 			Version: auth0Config.Version,
 		}
 	}
