@@ -35,7 +35,7 @@ terraform {
     }
 
     auth0 = {
-      source = "alexkappa/auth0"
+      source = "blah/blah"
 
       version = "aversion"
 
