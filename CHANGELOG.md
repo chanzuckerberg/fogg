@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.73.0](https://github.com/chanzuckerberg/fogg/compare/v0.72.0...v0.73.0) (2022-09-23)
+
+
+### Features
+
+* Default module variables ([#731](https://github.com/chanzuckerberg/fogg/issues/731)) ([cc29d58](https://github.com/chanzuckerberg/fogg/commit/cc29d58f83e4aa58ba37c62a2e559e93881cafc9))
+
+
+### BugFixes
+
+* Upgrade terraform-config-inspect ([#729](https://github.com/chanzuckerberg/fogg/issues/729)) ([75a4032](https://github.com/chanzuckerberg/fogg/commit/75a4032858d69e4e3f1a2e82f9d8c60a07e2a2a7))
+
 ## [0.72.0](https://github.com/chanzuckerberg/fogg/compare/v0.71.1...v0.72.0) (2022-09-19)
 
 
