@@ -116,6 +116,7 @@ type GitHubActionsCI struct {
 type Env struct {
 	Common `yaml:",inline"`
 
+	NoGlobal   bool                 `yaml:"no_global,omitempty"`
 	Components map[string]Component `yaml:"components,omitempty"`
 }
 

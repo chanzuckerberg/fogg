@@ -607,7 +607,9 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			componentPlan.Modules = componentConf.Modules
 			componentPlan.PathToRepoRoot = "../../../../"
 
-			componentPlan.Global = &p.Global
+			if !envConf.NoGlobal {
+				componentPlan.Global = &p.Global
+			}
 
 			envPlan.Components[componentName] = componentPlan
 		}
