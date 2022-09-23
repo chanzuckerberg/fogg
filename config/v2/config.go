@@ -163,6 +163,7 @@ type CommonProvider struct {
 type Auth0Provider struct {
 	Version *string `yaml:"version,omitempty"`
 	Domain  *string `yaml:"domain,omitempty"`
+	Source  *string `yaml:"source,omitempty"`
 }
 
 // OktaProvider is an okta provider

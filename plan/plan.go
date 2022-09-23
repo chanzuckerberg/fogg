@@ -731,8 +731,12 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Domain: *auth0Config.Domain,
 		}
 
+		defaultSource := "alexkappa/auth0"
+		if auth0Config.Source == nil {
+			auth0Config.Source = &defaultSource
+		}
 		providerVersions["auth0"] = ProviderVersion{
-			Source:  "auth0/auth0",
+			Source:  *auth0Config.Source,
 			Version: auth0Config.Version,
 		}
 	}

@@ -80,7 +80,7 @@ func ResolveStringMap(getter func(Common) map[string]string, commons ...Common) 
 }
 
 func ResolveAuth0Provider(commons ...Common) *Auth0Provider {
-	var domain, version *string
+	var domain, version, source *string
 	for _, c := range commons {
 		if c.Providers == nil || c.Providers.Auth0 == nil {
 			continue
@@ -92,10 +92,14 @@ func ResolveAuth0Provider(commons ...Common) *Auth0Provider {
 		if c.Providers.Auth0.Domain != nil {
 			domain = c.Providers.Auth0.Domain
 		}
+
+		if c.Providers.Auth0.Source != nil {
+			source = c.Providers.Auth0.Source
+		}
 	}
 
 	if domain != nil && version != nil {
-		return &Auth0Provider{Version: version, Domain: domain}
+		return &Auth0Provider{Version: version, Domain: domain, Source: source}
 	}
 	return nil
 }
