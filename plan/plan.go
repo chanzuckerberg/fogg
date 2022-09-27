@@ -151,7 +151,7 @@ type ProviderVersion struct {
 var utilityProviders = map[string]ProviderVersion{
 	"random": {
 		Source:  "hashicorp/random",
-		Version: ptr.String("~> 2.2"),
+		Version: ptr.String("~> 3.4"),
 	},
 	"archive": {
 		Source:  "hashicorp/archive",
