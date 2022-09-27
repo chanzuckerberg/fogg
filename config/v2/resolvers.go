@@ -456,6 +456,32 @@ func ResolveTfeProvider(commons ...Common) *TfeProvider {
 	}
 }
 
+func ResolveSopsProvider(commons ...Common) *SopsProvider {
+	var version *string
+	var enabled *bool
+
+	for _, c := range commons {
+		if c.Providers != nil && c.Providers.Sops != nil {
+			t := c.Providers.Sops
+
+			if t.Enabled != nil {
+				enabled = t.Enabled
+			}
+
+			if t.Version != nil {
+				version = t.Version
+			}
+		}
+	}
+
+	return &SopsProvider{
+		CommonProvider: CommonProvider{
+			Enabled: enabled,
+			Version: version,
+		},
+	}
+}
+
 func ResolveKubernetesProvider(commons ...Common) *KubernetesProvider {
 	var version *string
 	var enabled *bool

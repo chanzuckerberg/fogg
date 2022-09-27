@@ -141,6 +141,7 @@ type ProviderConfiguration struct {
 	Sentry                 *SentryProvider     `yaml:"sentry"`
 	Snowflake              *SnowflakeProvider  `yaml:"snowflake"`
 	Tfe                    *TfeProvider        `yaml:"tfe"`
+	Sops                   *SopsProvider       `yaml:"sops"`
 }
 
 type ProviderVersion struct {
@@ -254,6 +255,10 @@ type SentryProvider struct {
 type TfeProvider struct {
 	Enabled  bool    `yaml:"enabled,omitempty"`
 	Hostname *string `yaml:"hostname,omitempty"`
+}
+
+type SopsProvider struct {
+	Enabled bool `yaml:"enabled,omitempty"`
 }
 
 type KubernetesProvider struct {
@@ -896,6 +901,20 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
+	var sopsPlan *SopsProvider
+
+	sopsConfig := v2.ResolveSopsProvider(commons...)
+	if sopsConfig.Enabled != nil && *sopsConfig.Enabled {
+		sopsPlan = &SopsProvider{
+			Enabled: true,
+		}
+
+		providerVersions["sops"] = ProviderVersion{
+			Source:  "carlpett/sops",
+			Version: sopsConfig.Version,
+		}
+	}
+
 	var k8sPlan *KubernetesProvider
 
 	k8sConfig := v2.ResolveKubernetesProvider(commons...)
@@ -1019,6 +1038,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Sentry:                 sentryPlan,
 			Snowflake:              snowflakePlan,
 			Tfe:                    tfePlan,
+			Sops:                   sopsPlan,
 		},
 		ProviderVersions: providerVersions,
 		TfLint:           tfLintPlan,

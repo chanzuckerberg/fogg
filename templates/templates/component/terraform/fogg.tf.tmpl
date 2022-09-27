@@ -42,6 +42,10 @@
     {{ template "tfe_provider" .ProviderConfiguration.Tfe }}
 {{ end }}{{ end }}
 
+{{ if .ProviderConfiguration.Sops }}{{ if .ProviderConfiguration.Sops.Enabled }}
+    {{ template "sops_provider" .ProviderConfiguration.Sops }}
+{{ end }}{{ end }}
+
 {{ if .ProviderConfiguration.Sentry }}{{ if .ProviderConfiguration.Sentry.Enabled }}
     {{ template "sentry_provider" .ProviderConfiguration.Sentry }}
 {{ end }}{{ end }}

@@ -159,6 +159,7 @@ type Providers struct {
 	Sentry     *SentryProvider     `yaml:"sentry,omitempty"`
 	Snowflake  *SnowflakeProvider  `yaml:"snowflake,omitempty"`
 	Tfe        *TfeProvider        `yaml:"tfe,omitempty"`
+	Sops       *SopsProvider       `yaml:"sops,omitempty"`
 }
 
 type AssertProvider struct {
@@ -260,6 +261,10 @@ type TfeProvider struct {
 	CommonProvider `yaml:",inline"`
 
 	Hostname *string `yaml:"hostname,omitempty"`
+}
+
+type SopsProvider struct {
+	CommonProvider `yaml:",inline"`
 }
 
 type KubernetesProvider struct {
