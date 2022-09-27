@@ -153,10 +153,6 @@ var utilityProviders = map[string]ProviderVersion{
 		Source:  "hashicorp/random",
 		Version: ptr.String("~> 2.2"),
 	},
-	"template": {
-		Source:  "hashicorp/template",
-		Version: ptr.String("~> 2.2"),
-	},
 	"archive": {
 		Source:  "hashicorp/archive",
 		Version: ptr.String("~> 2.0"),
