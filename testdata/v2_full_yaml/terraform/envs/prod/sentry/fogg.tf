@@ -73,7 +73,7 @@ terraform {
     random = {
       source = "hashicorp/random"
 
-      version = "~> 2.2"
+      version = "~> 3.4"
 
     }
 
@@ -81,13 +81,6 @@ terraform {
       source = "jianyuan/sentry"
 
       version = "1.2.3"
-
-    }
-
-    template = {
-      source = "hashicorp/template"
-
-      version = "~> 2.2"
 
     }
 
