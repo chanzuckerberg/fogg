@@ -26,9 +26,14 @@ jobs:
           path: ~/.fogg/cache
           key: fogg-cache-${{ hashFiles('**/.fogg-version') }}
       - run: make setup
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.4.1
+        with:
+          ssh-private-key: |
+            ${{ secrets.SHARED_INFRA_DEPLOY_KEY }}
+            ${{ secrets.SHARED_INFRA_DEPLOY_KEY2 }}
+            
       - run: .fogg/bin/fogg apply
-        env:
-          FOGG_GITHUBAPPTOKEN: ${{ steps.generate_token.outputs.token }}
       - uses: EndBug/add-and-commit@v9
         with:
           add: -A

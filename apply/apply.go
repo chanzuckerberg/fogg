@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+	"golang.org/x/exp/slices"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
@@ -30,7 +31,7 @@ import (
 const rootPath = "terraform"
 
 // Apply will run a plan and apply all the changes to the current repo.
-func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade bool) error {
+func Apply(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool) error {
 	if !upgrade {
 		toolVersion, err := util.VersionString()
 		if err != nil {
@@ -45,55 +46,54 @@ func Apply(fs afero.Fs, conf *v2.Config, tmp *templates.T, upgrade bool) error {
 	if err != nil {
 		return errs.WrapUser(err, "unable to evaluate plan")
 	}
-	err = applyRepo(fs, plan, tmp.Repo, tmp.Common)
+	err = applyRepo(fs, plan, tmpl.Repo, tmpl.Common)
 	if err != nil {
 		return errs.WrapUser(err, "unable to apply repo")
 	}
 
 	if plan.TravisCI.Enabled {
-		err = applyTree(fs, tmp.TravisCI, tmp.Common, "", plan.TravisCI)
+		err = applyTree(fs, tmpl.TravisCI, tmpl.Common, "", plan.TravisCI)
 		if err != nil {
 			return errs.WrapUser(err, "unable to apply travis ci")
 		}
 	}
 
 	if plan.CircleCI.Enabled {
-		err = applyTree(fs, tmp.CircleCI, tmp.Common, "", plan.CircleCI)
+		err = applyTree(fs, tmpl.CircleCI, tmpl.Common, "", plan.CircleCI)
 		if err != nil {
 			return errs.WrapUser(err, "unable to apply CircleCI")
 		}
 	}
 
 	if plan.GitHubActionsCI.Enabled {
-		err = applyTree(fs, tmp.GitHubActionsCI, tmp.Common, ".github", plan.GitHubActionsCI)
+		err = applyTree(fs, tmpl.GitHubActionsCI, tmpl.Common, ".github", plan.GitHubActionsCI)
 		if err != nil {
 			return errs.WrapUser(err, "unable to apply GitHub Actions CI")
 		}
 	}
 
-	tfBox := tmp.Components[v2.ComponentKindTerraform]
-	err = applyAccounts(fs, plan, tfBox, tmp.Common)
+	tfBox := tmpl.Components[v2.ComponentKindTerraform]
+	err = applyAccounts(fs, plan, tfBox, tmpl.Common)
 	if err != nil {
 		return errs.WrapUser(err, "unable to apply accounts")
 	}
 
-	err = applyEnvs(fs, plan, tmp.Env, tmp.Components, tmp.Common)
+	err = applyEnvs(fs, plan, tmpl.Env, tmpl.Components, tmpl.Common)
 	if err != nil {
 		return errs.WrapUser(err, "unable to apply envs")
 	}
 
-	tfBox = tmp.Components[v2.ComponentKindTerraform]
-	err = applyGlobal(fs, plan.Global, tfBox, tmp.Common)
+	tfBox = tmpl.Components[v2.ComponentKindTerraform]
+	err = applyGlobal(fs, plan.Global, tfBox, tmpl.Common)
 	if err != nil {
 		return errs.WrapUser(err, "unable to apply global")
 	}
 
-	err = applyModules(fs, plan.Modules, tmp.Module, tmp.Common)
+	err = applyModules(fs, plan.Modules, tmpl.Module, tmpl.Common)
 	if err != nil {
 		return errs.WrapUser(err, "unable to apply modules")
 	}
-
-	return errs.WrapUser(applyTFE(fs, plan), "unable to apply TFE locals.tf.json")
+	return errs.WrapUser(applyTFE(fs, plan, tmpl), "unable to apply TFE locals.tf.json")
 }
 
 type LocalsTFE struct {
@@ -105,18 +105,20 @@ type Locals struct {
 	Envs             map[string]map[string]*TFEWorkspace `json:"envs,omitempty"`
 	DefaultTFVersion *string                             `json:"default_terraform_version,omitempty"`
 }
-type ExtraTeamPermissions struct {
-	Plan *[]string `json:"plan,omitempty"`
-	Read *[]string `json:"read,omitempty"`
+type TeamPermissions struct {
+	Plan  *[]string `json:"plan,omitempty"`
+	Read  *[]string `json:"read,omitempty"`
+	Write *[]string `json:"write,omitempty"`
 }
 type TFEWorkspace struct {
-	TriggerPrefixes      *[]string             `json:"trigger_prefixes"`
-	WorkingDirectory     *string               `json:"working_directory,omitempty"`
-	TerraformVersion     *string               `json:"terraform_version,omitempty"`
-	ExtraTeamPermissions *ExtraTeamPermissions `json:"extra_team_permissions,omitempty"`
-	GithubBranch         *string               `json:"branch,omitempty"`
-	AutoApply            *bool                 `json:"auto_apply,omitempty"`
-	RemoteApply          *bool                 `json:"remote_apply,omitempty"`
+	TriggerPrefixes         *[]string        `json:"trigger_prefixes,omitempty"`
+	WorkingDirectory        *string          `json:"working_directory,omitempty"`
+	TerraformVersion        *string          `json:"terraform_version,omitempty"`
+	ExtraTeamPermissions    *TeamPermissions `json:"extra_team_permissions,omitempty"`
+	OverrideTeamPermissions *TeamPermissions `json:"override_team_permissions,omitempty"`
+	GithubBranch            *string          `json:"branch,omitempty"`
+	AutoApply               *bool            `json:"auto_apply,omitempty"`
+	RemoteApply             *bool            `json:"remote_apply,omitempty"`
 }
 
 func MakeTFEWorkspace(tfVersion string) *TFEWorkspace {
@@ -187,15 +189,7 @@ func updateLocalsFromPlan(locals *LocalsTFE, plan *plan.Plan) {
 	}
 }
 
-func applyTFE(fs afero.Fs, plan *plan.Plan) error {
-	tfePath := filepath.Join("terraform", "tfe", "locals.tf.json")
-	_, err := fs.Stat(tfePath)
-	// if the repo doesn't have a locals.tf.json, don't worry about it
-	if errors.Is(err, os.ErrNotExist) {
-		return nil
-	} else if err != nil {
-		return err
-	}
+func updateLocalsTFEFile(fs afero.Fs, tfePath string, plan *plan.Plan) error {
 	read, err := fs.Open(tfePath)
 	if err != nil {
 		return errors.Wrapf(err, "unable to open locals.tf.json file %s for unmarshalling", tfePath)
@@ -215,12 +209,47 @@ func applyTFE(fs afero.Fs, plan *plan.Plan) error {
 	defer write.Close()
 	encoder := json.NewEncoder(write)
 	encoder.SetIndent("", "  ")
-	err = encoder.Encode(locals)
-	if err != nil {
-		return errors.Wrap(err, "unable to marhsal locals.tf.json")
+	return errors.Wrap(encoder.Encode(locals), "unable to marhsal locals.tf.json")
+}
+
+func applyTFE(fs afero.Fs, plan *plan.Plan, tmpl *templates.T) error {
+	// the TFE configuration is optional
+	if plan.TFE == nil {
+		return nil
 	}
 
-	return nil
+	logrus.Debug("applying tfe")
+	path := fmt.Sprintf("%s/tfe", rootPath)
+	err := fs.MkdirAll(path, 0755)
+	if err != nil {
+		return errors.Wrapf(err, "unable to make directory %s", path)
+	}
+	err = applyTree(fs, tmpl.Components[v2.ComponentKindTerraform], tmpl.Common, path, plan.TFE)
+	if err != nil {
+		return err
+	}
+	err = applyTree(fs, tmpl.TFE, tmpl.Common, path, plan.TFE)
+	if err != nil {
+		return err
+	}
+	if plan.TFE.ModuleSource != nil {
+		downloader, err := util.MakeDownloader(*plan.TFE.ModuleSource)
+		if err != nil {
+			return errs.WrapUser(err, "unable to make a downloader")
+		}
+		err = applyModuleInvocation(fs, path, *plan.TFE.ModuleSource, plan.TFE.ModuleName, nil, templates.Templates.ModuleInvocation, tmpl.Common, downloader)
+		if err != nil {
+			return errs.WrapUser(err, "unable to apply module invocation")
+		}
+	}
+
+	tfePath := filepath.Join("terraform", "tfe", "locals.tf.json")
+	_, err = fs.Stat(tfePath)
+	if err != nil {
+		return errors.Wrapf(err, "unable to stat on %s", tfePath)
+	}
+
+	return updateLocalsTFEFile(fs, tfePath, plan)
 }
 
 func checkToolVersions(fs afero.Fs, current string) (bool, string, error) {
@@ -342,7 +371,7 @@ func applyEnvs(
 				if err != nil {
 					return errs.WrapUser(err, "unable to make a downloader")
 				}
-				err = applyModuleInvocation(fs, path, *componentPlan.ModuleSource, componentPlan.ModuleName, templates.Templates.ModuleInvocation, commonBox, downloader)
+				err = applyModuleInvocation(fs, path, *componentPlan.ModuleSource, componentPlan.ModuleName, componentPlan.Variables, templates.Templates.ModuleInvocation, commonBox, downloader)
 				if err != nil {
 					return errs.WrapUser(err, "unable to apply module invocation")
 				}
@@ -516,6 +545,7 @@ func applyModuleInvocation(
 	fs afero.Fs,
 	path, moduleAddress string,
 	inModuleName *string,
+	variables []string,
 	box fs.FS,
 	commonBox fs.FS,
 	downloadFunc util.ModuleDownloader,
@@ -533,9 +563,15 @@ func applyModuleInvocation(
 	// This should really be part of the plan stage, not apply. But going to
 	// leave it here for now and re-think it when we make this mechanism
 	// general purpose.
-	variables := make([]string, 0)
+	addAll := variables == nil
 	for _, v := range moduleConfig.Variables {
-		variables = append(variables, v.Name)
+		if addAll {
+			variables = append(variables, v.Name)
+		} else {
+			if v.Required && !slices.Contains(variables, v.Name) {
+				variables = append(variables, v.Name)
+			}
+		}
 	}
 	sort.Strings(variables)
 	outputs := make([]string, 0)

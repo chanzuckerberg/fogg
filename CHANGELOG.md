@@ -1,5 +1,67 @@
 # Changelog
 
+## [0.74.0](https://github.com/chanzuckerberg/fogg/compare/v0.73.0...v0.74.0) (2022-09-23)
+
+
+### Features
+
+* make auth0 provider configurable ([#739](https://github.com/chanzuckerberg/fogg/issues/739)) ([4fd6aec](https://github.com/chanzuckerberg/fogg/commit/4fd6aec7507c64745047bed8f0b41474d8fa1749))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.100 to 1.44.104 ([#736](https://github.com/chanzuckerberg/fogg/issues/736)) ([73533f4](https://github.com/chanzuckerberg/fogg/commit/73533f4e1b2dd019b7f10bcf0d8534c74879966f))
+
+
+### BugFixes
+
+* update the auth0 provider name ([#737](https://github.com/chanzuckerberg/fogg/issues/737)) ([cd92b36](https://github.com/chanzuckerberg/fogg/commit/cd92b36d70c5895e1c8b8a2a1b3863c84214540e))
+
+## [0.73.0](https://github.com/chanzuckerberg/fogg/compare/v0.72.0...v0.73.0) (2022-09-23)
+
+
+### Features
+
+* Default module variables ([#731](https://github.com/chanzuckerberg/fogg/issues/731)) ([cc29d58](https://github.com/chanzuckerberg/fogg/commit/cc29d58f83e4aa58ba37c62a2e559e93881cafc9))
+
+
+### BugFixes
+
+* Upgrade terraform-config-inspect ([#729](https://github.com/chanzuckerberg/fogg/issues/729)) ([75a4032](https://github.com/chanzuckerberg/fogg/commit/75a4032858d69e4e3f1a2e82f9d8c60a07e2a2a7))
+
+## [0.72.0](https://github.com/chanzuckerberg/fogg/compare/v0.71.1...v0.72.0) (2022-09-19)
+
+
+### Features
+
+* fogg create tfe folder ([#730](https://github.com/chanzuckerberg/fogg/issues/730)) ([b259e9b](https://github.com/chanzuckerberg/fogg/commit/b259e9bbfa242e8ceec8538c7d6a1633d7b395df))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.95 to 1.44.100 ([#732](https://github.com/chanzuckerberg/fogg/issues/732)) ([18a1722](https://github.com/chanzuckerberg/fogg/commit/18a1722b37b57c96a315b4e466d32925254603bc))
+
+### [0.71.1](https://github.com/chanzuckerberg/fogg/compare/v0.71.0...v0.71.1) (2022-09-16)
+
+
+### BugFixes
+
+* update locals struct to decode ([#727](https://github.com/chanzuckerberg/fogg/issues/727)) ([9d05d25](https://github.com/chanzuckerberg/fogg/commit/9d05d252a820850a9e790e1cc169c8ef7a877c0b))
+
+## [0.71.0](https://github.com/chanzuckerberg/fogg/compare/v0.70.3...v0.71.0) (2022-09-15)
+
+
+### Features
+
+* allow optional SSH keys in CI ([#726](https://github.com/chanzuckerberg/fogg/issues/726)) ([485303c](https://github.com/chanzuckerberg/fogg/commit/485303ccb0b88f92cca03f6db597f3db0901f583))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.86 to 1.44.91 ([#722](https://github.com/chanzuckerberg/fogg/issues/722)) ([d9eb39c](https://github.com/chanzuckerberg/fogg/commit/d9eb39c9861319ae61b031466ae44a177772cd1c))
+* bump github.com/aws/aws-sdk-go from 1.44.91 to 1.44.95 ([#725](https://github.com/chanzuckerberg/fogg/issues/725)) ([8af988b](https://github.com/chanzuckerberg/fogg/commit/8af988b4d768952ad299f85245c8e177e09b7a6e))
+* bump github.com/hashicorp/hcl/v2 from 2.13.0 to 2.14.0 ([#723](https://github.com/chanzuckerberg/fogg/issues/723)) ([c175c08](https://github.com/chanzuckerberg/fogg/commit/c175c0831ad6fa84b327de2d5c82b283d7437f25))
+
 ### [0.70.3](https://github.com/chanzuckerberg/fogg/compare/v0.70.2...v0.70.3) (2022-09-01)
 
 

@@ -2,14 +2,19 @@ package plan
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
+	"path/filepath"
 	"sort"
+	"strings"
+
+	"github.com/pkg/errors"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/util"
 	"github.com/chanzuckerberg/go-misc/ptr"
+
+	"github.com/go-git/go-git/v5"
 	"github.com/sirupsen/logrus"
 	yaml "gopkg.in/yaml.v3"
 )
@@ -24,6 +29,7 @@ type Plan struct {
 	CircleCI        CircleCIConfig        `yaml:"circleci_ci"`
 	GitHubActionsCI GitHubActionsCIConfig `yaml:"github_actions_ci"`
 	Version         string                `yaml:"version"`
+	TFE             *TFEConfig            `yaml:"tfe"`
 }
 
 // Common represents common fields
@@ -32,7 +38,7 @@ type Common struct {
 	TerraformVersion string `yaml:"terraform_version"`
 }
 
-//ComponentCommon represents common fields for components
+// ComponentCommon represents common fields for components
 type ComponentCommon struct {
 	Common `yaml:",inline"`
 
@@ -145,11 +151,7 @@ type ProviderVersion struct {
 var utilityProviders = map[string]ProviderVersion{
 	"random": {
 		Source:  "hashicorp/random",
-		Version: ptr.String("~> 2.2"),
-	},
-	"template": {
-		Source:  "hashicorp/template",
-		Version: ptr.String("~> 2.2"),
+		Version: ptr.String("~> 3.4"),
 	},
 	"archive": {
 		Source:  "hashicorp/archive",
@@ -177,7 +179,7 @@ var utilityProviders = map[string]ProviderVersion{
 	},
 }
 
-//AWSProvider represents AWS provider configuration
+// AWSProvider represents AWS provider configuration
 type AWSProvider struct {
 	AccountID json.Number `yaml:"account_id"`
 	Alias     *string     `yaml:"alias"`
@@ -217,20 +219,20 @@ type AssertProvider struct {
 	Version string `yaml:"version,omitempty"`
 }
 
-//SnowflakeProvider represents Snowflake DB provider configuration
+// SnowflakeProvider represents Snowflake DB provider configuration
 type SnowflakeProvider struct {
 	Account string `yaml:"account,omitempty"`
 	Role    string `yaml:"role,omitempty"`
 	Region  string `yaml:"region,omitempty"`
 }
 
-//OktaProvider represents Okta configuration
+// OktaProvider represents Okta configuration
 type OktaProvider struct {
 	OrgName string  `yaml:"org_name,omitempty"`
 	BaseURL *string `yaml:"base_url,omitempty"`
 }
 
-//BlessProvider represents Bless ssh provider configuration
+// BlessProvider represents Bless ssh provider configuration
 type BlessProvider struct {
 	AdditionalRegions []string `yaml:"additional_regions,omitempty"`
 	AWSProfile        *string  `yaml:"aws_profile,omitempty"`
@@ -269,8 +271,8 @@ const (
 	BackendKindRemote BackendKind = "remote"
 )
 
-//Backend represents a plan for configuring the terraform backend. Only one struct member can be
-//non-nil at a time
+// Backend represents a plan for configuring the terraform backend. Only one struct member can be
+// non-nil at a time
 type Backend struct {
 	Kind   BackendKind    `yaml:"kind"`
 	S3     *S3Backend     `yaml:"s3,omitempty"`
@@ -317,6 +319,7 @@ type Component struct {
 	Kind         *v2.ComponentKind `yaml:"kind,omitempty"`
 	ModuleSource *string           `yaml:"module_source"`
 	ModuleName   *string           `yaml:"module_name"`
+	Variables    []string          `yaml:"variables"`
 	Global       *Component        `yaml:"global"`
 }
 
@@ -356,7 +359,10 @@ func Eval(c *v2.Config) (*Plan, error) {
 	p.TravisCI = p.buildTravisCIConfig(c, v)
 	p.CircleCI = p.buildCircleCIConfig(c, v)
 	p.GitHubActionsCI = p.buildGitHubActionsConfig(c, v)
-
+	p.TFE, err = p.buildTFE(c)
+	if err != nil {
+		return p, err
+	}
 	return p, nil
 }
 
@@ -368,6 +374,94 @@ func Print(p *Plan) error {
 	}
 	fmt.Print(string(out))
 	return nil
+}
+
+func parseGithubOrgRepoFromGit(path string) (string, string, error) {
+	repo, err := git.PlainOpen(path)
+	if err != nil {
+		return "", "", errors.Wrap(err, "unable to open the git repo")
+	}
+	remotes, err := repo.Remotes()
+	if err != nil {
+		return "", "", errors.Wrap(err, "unable to list the remotes of the repo")
+	}
+	for _, remote := range remotes {
+		if remote.Config().Name != "origin" {
+			continue
+		}
+
+		for _, u := range remote.Config().URLs {
+			remoteSplit := strings.Split(u, ":")
+			if len(remoteSplit) != 2 {
+				return "", "", errors.Errorf("unexpected syntax in git remote URL %s", u)
+			}
+			baseName := filepath.Base(remoteSplit[1])
+			return filepath.Dir(remoteSplit[1]), strings.TrimSuffix(baseName, filepath.Ext(remoteSplit[1])), nil
+		}
+	}
+
+	return "", "", errors.New("unable to find a valid origin remote URL")
+}
+
+func (p *Plan) buildTFE(c *v2.Config) (*TFEConfig, error) {
+	if c.TFE == nil {
+		return nil, nil
+	}
+
+	tfeConfig := &TFEConfig{
+		ReadTeams:                      []string{},
+		Branch:                         "main",
+		GithubOrg:                      "",
+		GithubRepo:                     "",
+		TFEOrg:                         c.TFE.TFEOrg,
+		SSHKeyName:                     "fogg-ssh-key",
+		ExcludedGithubRequiredChecks:   []string{},
+		AdditionalGithubRequiredChecks: []string{},
+	}
+	tfeConfig.ComponentCommon = resolveComponentCommon(c.Defaults.Common, c.Global.Common, c.TFE.Common)
+	tfeConfig.ModuleSource = c.TFE.ModuleSource
+	tfeConfig.ModuleName = c.TFE.ModuleName
+
+	if tfeConfig.ComponentCommon.Backend.Kind == BackendKindS3 {
+		tfeConfig.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/%s.tfstate", "tfe", "tfe")
+	} else if tfeConfig.ComponentCommon.Backend.Kind == BackendKindRemote {
+		tfeConfig.ComponentCommon.Backend.Remote.Workspace = "tfe"
+	} else {
+		panic(fmt.Sprintf("Invalid backend kind of %s", tfeConfig.ComponentCommon.Backend.Kind))
+	}
+
+	if c.TFE.ReadTeams != nil {
+		tfeConfig.ReadTeams = *c.TFE.ReadTeams
+	}
+	if c.TFE.Branch != nil {
+		tfeConfig.Branch = *c.TFE.Branch
+	}
+	if c.TFE.GithubOrg != nil {
+		tfeConfig.GithubOrg = *c.TFE.GithubOrg
+	}
+	if c.TFE.GithubRepo != nil {
+		tfeConfig.GithubRepo = *c.TFE.GithubRepo
+	}
+	if c.TFE.SSHKeyName != nil {
+		tfeConfig.SSHKeyName = *c.TFE.SSHKeyName
+	}
+	if c.TFE.ExcludedGithubRequiredChecks != nil {
+		tfeConfig.ExcludedGithubRequiredChecks = *c.TFE.ExcludedGithubRequiredChecks
+	}
+	if c.TFE.AdditionalGithubRequiredChecks != nil {
+		tfeConfig.AdditionalGithubRequiredChecks = *c.TFE.AdditionalGithubRequiredChecks
+	}
+
+	if tfeConfig.GithubOrg == "" || tfeConfig.GithubRepo == "" {
+		org, repo, err := parseGithubOrgRepoFromGit(".")
+		if err != nil {
+			return nil, err
+		}
+		tfeConfig.GithubOrg = org
+		tfeConfig.GithubRepo = repo
+	}
+
+	return tfeConfig, nil
 }
 
 func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
@@ -504,6 +598,7 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			componentPlan.Name = componentName
 			componentPlan.ModuleSource = componentConf.ModuleSource
 			componentPlan.ModuleName = componentConf.ModuleName
+			componentPlan.Variables = componentConf.Variables
 			componentPlan.PathToRepoRoot = "../../../../"
 
 			componentPlan.Global = &p.Global
@@ -632,8 +727,12 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Domain: *auth0Config.Domain,
 		}
 
+		defaultSource := "alexkappa/auth0"
+		if auth0Config.Source == nil {
+			auth0Config.Source = &defaultSource
+		}
 		providerVersions["auth0"] = ProviderVersion{
-			Source:  "alexkappa/auth0",
+			Source:  *auth0Config.Source,
 			Version: auth0Config.Version,
 		}
 	}

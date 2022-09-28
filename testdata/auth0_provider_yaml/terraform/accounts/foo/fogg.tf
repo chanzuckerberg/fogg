@@ -35,7 +35,7 @@ terraform {
     }
 
     auth0 = {
-      source = "alexkappa/auth0"
+      source = "blah/blah"
 
       version = "aversion"
 
@@ -65,14 +65,7 @@ terraform {
     random = {
       source = "hashicorp/random"
 
-      version = "~> 2.2"
-
-    }
-
-    template = {
-      source = "hashicorp/template"
-
-      version = "~> 2.2"
+      version = "~> 3.4"
 
     }
 
