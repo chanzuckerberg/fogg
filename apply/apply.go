@@ -219,16 +219,26 @@ func applyTFE(fs afero.Fs, plan *plan.Plan, tmpl *templates.T) error {
 	}
 
 	logrus.Debug("applying tfe")
-	path := fmt.Sprintf("%s/tfe", rootPath)
+	path := filepath.Join(rootPath, "tfe")
 	err := fs.MkdirAll(path, 0755)
 	if err != nil {
 		return errors.Wrapf(err, "unable to make directory %s", path)
 	}
-	err = applyTree(fs, tmpl.Components[v2.ComponentKindTerraform], tmpl.Common, path, plan.TFE)
+
+	// only create the locals.tf.json template is one doesn't exist yet
+	tfePath := filepath.Join(rootPath, "tfe", "locals.tf.json")
+	_, err = fs.Stat(tfePath)
 	if err != nil {
-		return err
+		if errors.Is(err, os.ErrNotExist) {
+			err = applyTree(fs, tmpl.TFE, tmpl.Common, path, plan.TFE)
+			if err != nil {
+				return err
+			}
+		} else {
+			return errors.Wrapf(err, "unable to stat on %s", tfePath)
+		}
 	}
-	err = applyTree(fs, tmpl.TFE, tmpl.Common, path, plan.TFE)
+	err = applyTree(fs, tmpl.Components[v2.ComponentKindTerraform], tmpl.Common, path, plan.TFE)
 	if err != nil {
 		return err
 	}
@@ -243,7 +253,6 @@ func applyTFE(fs afero.Fs, plan *plan.Plan, tmpl *templates.T) error {
 		}
 	}
 
-	tfePath := filepath.Join("terraform", "tfe", "locals.tf.json")
 	_, err = fs.Stat(tfePath)
 	if err != nil {
 		return errors.Wrapf(err, "unable to stat on %s", tfePath)
