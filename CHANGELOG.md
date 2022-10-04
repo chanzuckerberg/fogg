@@ -1,5 +1,20 @@
 # Changelog
 
+### [0.74.1](https://github.com/chanzuckerberg/fogg/compare/v0.74.0...v0.74.1) (2022-10-04)
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.104 to 1.44.105 ([#740](https://github.com/chanzuckerberg/fogg/issues/740)) ([ca757fc](https://github.com/chanzuckerberg/fogg/commit/ca757fc83fd0818c5d4ebfef796894b6a11b6da7))
+* bump github.com/aws/aws-sdk-go from 1.44.105 to 1.44.109 ([#745](https://github.com/chanzuckerberg/fogg/issues/745)) ([5264e0c](https://github.com/chanzuckerberg/fogg/commit/5264e0cdfa0166d8e24da0f560e0cdbd1640c4cd))
+* bump github.com/hashicorp/hcl/v2 from 2.14.0 to 2.14.1 ([#741](https://github.com/chanzuckerberg/fogg/issues/741)) ([b4b3269](https://github.com/chanzuckerberg/fogg/commit/b4b3269f213c5d9cd1b8c24b1ae293468a8933af))
+* Update utility providers ([#743](https://github.com/chanzuckerberg/fogg/issues/743)) ([b4e6ac9](https://github.com/chanzuckerberg/fogg/commit/b4e6ac9ecd7c9affde72d525b36906273c55922b))
+
+
+### BugFixes
+
+* locals.tf.json getting overwritten ([#746](https://github.com/chanzuckerberg/fogg/issues/746)) ([12b4077](https://github.com/chanzuckerberg/fogg/commit/12b40779f8680455ac47d6311171964d124d6f07))
+
 ## [0.74.0](https://github.com/chanzuckerberg/fogg/compare/v0.73.0...v0.74.0) (2022-09-23)
 
 
