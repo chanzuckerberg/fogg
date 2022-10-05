@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.75.1](https://github.com/chanzuckerberg/fogg/compare/v0.75.0...v0.75.1) (2022-10-05)
+
+
+### BugFixes
+
+* omitted variables from tfe config ([#749](https://github.com/chanzuckerberg/fogg/issues/749)) ([617d79f](https://github.com/chanzuckerberg/fogg/commit/617d79fcb8c546e403d7ac84a8bfec22fba315f9))
+
 ## [0.75.0](https://github.com/chanzuckerberg/fogg/compare/v0.74.1...v0.75.0) (2022-10-05)
 
 
