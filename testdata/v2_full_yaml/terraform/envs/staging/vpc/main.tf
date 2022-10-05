@@ -50,5 +50,4 @@ module "terraform-aws-vpc" {
   tags                               = local.tags
   vpc_tags                           = local.vpc_tags
   vpn_gateway_id                     = local.vpn_gateway_id
-
 }

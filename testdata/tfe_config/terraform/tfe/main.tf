@@ -2,12 +2,9 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 module "aws-params-reader-policy" {
-  source                    = "github.com/chanzuckerberg/cztack//aws-params-reader-policy?ref=v0.15.1"
-  env                       = local.env
-  parameter_store_key_alias = local.parameter_store_key_alias
-  project                   = local.project
-  region                    = local.region
-  role_name                 = local.role_name
-  service                   = local.service
-
+  source    = "github.com/chanzuckerberg/cztack//aws-params-reader-policy?ref=v0.15.1"
+  env       = local.env
+  project   = local.project
+  role_name = local.role_name
+  service   = local.service
 }
