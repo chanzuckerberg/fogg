@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.75.0](https://github.com/chanzuckerberg/fogg/compare/v0.74.1...v0.75.0) (2022-10-05)
+
+
+### Features
+
+* Add terraform validate support ([#747](https://github.com/chanzuckerberg/fogg/issues/747)) ([068cc00](https://github.com/chanzuckerberg/fogg/commit/068cc00928330d47d3a9d1897686727e17152acc))
+
 ### [0.74.1](https://github.com/chanzuckerberg/fogg/compare/v0.74.0...v0.74.1) (2022-10-04)
 
 
