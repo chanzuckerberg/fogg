@@ -12,8 +12,8 @@ fmt: terraform ## run terraform fmt on this module
 	@$(terraform_command) fmt $(TF_ARGS)
 .PHONY: fmt
 
-validate: terraform ## validate code in this module
-	$(terraform_command) validate $(TF_ARGS)
+validate: terraform ## run terraform validate on this module
+	@$(terraform_command) validate $(TF_ARGS)
 .PHONY: validate
 
 check: lint check-docs ## run all checks on this module
