@@ -20,6 +20,10 @@ fmt: terraform ## format code in this component
 	$(terraform_command) fmt $(TF_ARGS)
 .PHONY: fmt
 
+validate: terraform ## validate code in this component
+	$(terraform_command) validate $(TF_ARGS)
+.PHONY: validate
+
 lint: lint-terraform-fmt lint-tflint ## run all linters for this component
 .PHONY: lint
 

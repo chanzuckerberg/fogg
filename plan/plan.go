@@ -421,6 +421,7 @@ func (p *Plan) buildTFE(c *v2.Config) (*TFEConfig, error) {
 	tfeConfig.ComponentCommon = resolveComponentCommon(c.Defaults.Common, c.Global.Common, c.TFE.Common)
 	tfeConfig.ModuleSource = c.TFE.ModuleSource
 	tfeConfig.ModuleName = c.TFE.ModuleName
+	tfeConfig.Variables = c.TFE.Variables
 
 	if tfeConfig.ComponentCommon.Backend.Kind == BackendKindS3 {
 		tfeConfig.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/%s.tfstate", "tfe", "tfe")
