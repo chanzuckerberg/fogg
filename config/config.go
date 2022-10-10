@@ -13,12 +13,12 @@ import (
 	yaml "gopkg.in/yaml.v3"
 )
 
-var defaultTerraformVersion = goVersion.Must(goVersion.NewVersion("0.13.5"))
+var defaultTerraformVersion = goVersion.Must(goVersion.NewVersion("1.2.6"))
 
-//DefaultFoggVersion is the version that fogg will generate by default
+// DefaultFoggVersion is the version that fogg will generate by default
 const DefaultFoggVersion = 2
 
-//InitConfig initializes the config file using user input
+// InitConfig initializes the config file using user input
 func InitConfig(project, region, bucket, table, awsProfile, owner *string, awsProviderVersion string) *v2.Config {
 	return &v2.Config{
 		Defaults: v2.Defaults{
@@ -69,7 +69,7 @@ func FindConfig(fs afero.Fs, configFile string) ([]byte, int, error) {
 	return b, v, nil
 }
 
-//FindAndReadConfig locates config file and reads it based on the version
+// FindAndReadConfig locates config file and reads it based on the version
 func FindAndReadConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
 	b, v, err := FindConfig(fs, configFile)
 	if err != nil {
