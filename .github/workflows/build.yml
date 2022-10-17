@@ -21,28 +21,9 @@ jobs:
       - uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.1.3
-
-      # - name: tflint
-      #   uses: reviewdog/action-tflint@master
-      #   with:
-      #     github_token: ${{ secrets.github_token }}
-      #     working_directory: "testdata" # Optional. Change working directory
-      #     reporter: github-pr-review # Optional. Change reporter
-      #     fail_on_error: "true" # Optional. Fail action if errors are found
-      #     filter_mode: "nofilter" # Optional. Check all files, not just the diff
-      #     tflint_rulesets: "aws" # Optional. Extra official rulesets to install
-      #     # flags: "--module" # Optional. Add custom tflint flags
-
       - name: golangci-lint
         uses: reviewdog/action-golangci-lint@v2
         with:
           reporter: github-pr-review
-
-      - name: markdownlint
-        uses: reviewdog/action-markdownlint@v0.1
-        with:
-          reporter: github-pr-review
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: terraform fmt
         run: terraform fmt -check -diff -recursive testdata
