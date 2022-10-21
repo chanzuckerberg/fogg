@@ -1,11 +1,5 @@
 # fogg
 
-![.github/workflows/build.yml](https://github.com/chanzuckerberg/fogg/workflows/.github/workflows/build.yml/badge.svg)
-
-**Please note**: If you believe you have found a security issue, _please responsibly disclose_ by contacting us at [security@chanzuckerberg.com](mailto:security@chanzuckerberg.com).
-
-----
-
 Visit the fogg documentation for more details: [https://chanzuckerberg.github.io/fogg/](https://chanzuckerberg.github.io/fogg/)
 
 Fogg is an opinionated tool for managing infrastructure-as-code repositories using Terraform.
@@ -35,33 +29,14 @@ so much time in the past." - @lenn0x
 
 If you need help getting started with fogg, either open a github issue or join our [gitter chat room](https://gitter.im/chanzuckerberg/fogg).
 
-## Install
-
-## Mac
-
-You can use homebrew to install fogg –
-
-```shell
-brew tap chanzuckerberg/tap
-brew install fogg
-```
-
-Note– if you installed fogg from homebrew before version 0.15.0, the tap location has changed. Run
-this, then install as above–
-
-```shell
-brew uninstall fogg
-brew untap chanzuckerberg/tap
-```
-
-## Linux
+## Release Binaries
 
 Binaries are available on the releases page. Download one for your architecture, put it in your path and make it executable.
 
 Instructions on downloading the binary:
 
-1. Go here: <https://github.com/chanzuckerberg/fogg/releases> to find which version of fogg you want.
-2. Run `curl -s https://raw.githubusercontent.com/chanzuckerberg/fogg/master/download.sh | bash -s -- -b FOGG_PATH VERSION`
+1. Go here: <https://github.com/vincenthsh/fogg/releases> to find which version of fogg you want.
+2. Run `curl -s https://raw.githubusercontent.com/vincenthsh/fogg/master/download.sh | bash -s -- -b FOGG_PATH VERSION`
    1. FOGG_PATH is the directory where you want to install fogg
    2. VERSION is the release you want
 3. To verify you installed the desired version, you can run `fogg version`.

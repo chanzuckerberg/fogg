@@ -11,15 +11,7 @@ jobs:
   fogg-apply:
     runs-on: ubuntu-latest
     steps:
-      - name: Generate token
-        id: generate_token
-        uses: chanzuckerberg/github-app-token@v1.1.4
-        with:
-          app_id: {{`${{ secrets.CZI_GITHUB_HELPER_APP_ID }}`}}
-          private_key: {{`${{ secrets.CZI_GITHUB_HELPER_PK }}`}}
       - uses: actions/checkout@v3
-        with:
-          token: {{`${{ steps.generate_token.outputs.token }}`}}
       - name: Cache Fogg
         id: cache-fogg
         uses: actions/cache@v3
@@ -27,17 +19,9 @@ jobs:
           path: ~/.fogg/cache
           key: fogg-cache-{{`${{ hashFiles('**/.fogg-version') }}`}}
       - run: make setup
-      {{- if not (eq (len $githubActionsCI.SSHKeySecrets) 0) }}
-      - name: Install SSH key
-        uses: webfactory/ssh-agent@v0.4.1
-        with:
-          ssh-private-key: |
-            {{ range $idx, $secret := $githubActionsCI.SSHKeySecrets }}{{`${{`}} secrets.{{ $secret }} {{`}}`}}
-            {{ end }}
-      - run: .fogg/bin/fogg apply{{ else }}
       - run: .fogg/bin/fogg apply
         env:
-          FOGG_GITHUBAPPTOKEN: {{`${{ steps.generate_token.outputs.token }}`}}{{ end }}
+          FOGG_GITHUBAPPTOKEN: {{`${{ secrets.GITHUB_TOKEN }}`}}
       - uses: EndBug/add-and-commit@v9
         with:
           add: -A
@@ -81,15 +65,9 @@ jobs:
         tfmodule: {{`${{ fromJson(needs.find-changed-dirs.outputs.allChanges) }}`}}
     if: {{`${{ needs.find-changed-dirs.outputs.allChanges != '[]' }}`}}
     steps:
-      - name: Generate token
-        id: generate_token
-        uses: chanzuckerberg/github-app-token@v1.1.4
-        with:
-          app_id: {{`${{ secrets.CZI_GITHUB_HELPER_APP_ID }}`}}
-          private_key: {{`${{ secrets.CZI_GITHUB_HELPER_PK }}`}}
       - uses: actions/checkout@v3
         with:
-          token: {{`${{ steps.generate_token.outputs.token }}`}}
+          token: {{`${{ secrets.GITHUB_TOKEN }}`}}
       - name: fix terraform docs
         uses: terraform-docs/gh-actions@v1.0.0
         if: contains(matrix.tfmodule, 'modules') # only need to make docs on the modules

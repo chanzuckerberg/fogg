@@ -10,7 +10,7 @@ ACCOUNTS={{ .Accounts | dict | keys | sortAlpha | join " "}}
 all: check
 
 setup: ## set up working directory by installing dependencies
-	curl -s https://raw.githubusercontent.com/chanzuckerberg/fogg/v{{ .Version }}/download.sh | bash -s -- -b .fogg/bin v{{.Version}}
+	curl -s https://raw.githubusercontent.com/vincenthsh/fogg/v{{ .Version }}/download.sh | bash -s -- -b .fogg/bin v{{.Version}}
 	.fogg/bin/fogg setup
 .PHONY: setup
 

@@ -8,7 +8,7 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v5
+      - uses: actions/github-script@v6
         id: configure-changelog
         with:
           result-encoding: string
@@ -22,7 +22,7 @@ jobs:
             return JSON.stringify(changelogTypes)
 
       - name: release please
-        uses: google-github-actions/release-please-action@v3.0.0
+        uses: google-github-actions/release-please-action@v3.5.0
         id: release
         with:
           release-type: simple
@@ -44,7 +44,7 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
 
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
+        uses: goreleaser/goreleaser-action@v3
         with:
           version: latest
           args: release --rm-dist
