@@ -9,7 +9,7 @@ export GO111MODULE=on
 all: test install
 
 fmt:
-	goimports -w -l .
+	~/go/bin/goimports -w -l .
 .PHONY: fmt
 
 lint-setup: ## setup linter dependencies

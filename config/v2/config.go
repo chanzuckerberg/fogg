@@ -11,6 +11,7 @@ import (
 
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plugins"
+	"github.com/runatlantis/atlantis/server/core/config/raw"
 	"github.com/spf13/afero"
 	yaml "gopkg.in/yaml.v3"
 )
@@ -98,6 +99,7 @@ type Tools struct {
 	TravisCI        *TravisCI        `yaml:"travis_ci,omitempty"`
 	CircleCI        *CircleCI        `yaml:"circle_ci,omitempty"`
 	GitHubActionsCI *GitHubActionsCI `yaml:"github_actions_ci,omitempty"`
+	Atlantis        *Atlantis        `yaml:"atlantis,omitempty"`
 	TfLint          *TfLint          `yaml:"tflint,omitempty"`
 }
 
@@ -111,6 +113,11 @@ type GitHubActionsCI struct {
 	CommonCI `yaml:",inline"`
 
 	SSHKeySecrets []string `yaml:"ssh_key_secrets"`
+}
+
+type Atlantis struct {
+	Enabled     *bool `yaml:"enabled,omitempty"`
+	raw.RepoCfg `yaml:",inline"`
 }
 
 type Env struct {

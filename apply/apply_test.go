@@ -3,7 +3,7 @@ package apply
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -223,7 +223,7 @@ func TestApplyTemplateBasic(t *testing.T) {
 	r.Nil(e)
 	f, e := dest.Open("bar")
 	r.Nil(e)
-	i, e := ioutil.ReadAll(f)
+	i, e := io.ReadAll(f)
 	r.Nil(e)
 	r.Equal("foo", string(i))
 }
@@ -245,7 +245,7 @@ func TestApplyTemplateBasicNewDirectory(t *testing.T) {
 	r.Nil(e)
 	f, e := dest.Open(path)
 	r.Nil(e)
-	i, e := ioutil.ReadAll(f)
+	i, e := io.ReadAll(f)
 	r.Nil(e)
 	r.Equal("foo", string(i))
 }
@@ -264,7 +264,7 @@ func TestApplyTemplate(t *testing.T) {
 	r.Nil(e)
 	f, e := dest.Open("hello")
 	r.Nil(e)
-	i, e := ioutil.ReadAll(f)
+	i, e := io.ReadAll(f)
 	r.Nil(e)
 	r.Equal("Hello World", string(i))
 }
@@ -751,7 +751,7 @@ func readFile(fs afero.Fs, path string) (string, error) {
 	if e != nil {
 		return "", e
 	}
-	r, e := ioutil.ReadAll(f)
+	r, e := io.ReadAll(f)
 	if e != nil {
 		return "", e
 	}

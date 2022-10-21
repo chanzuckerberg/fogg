@@ -3,8 +3,10 @@ package plan
 import (
 	"fmt"
 	"sort"
+	"strings"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
+	atlantis "github.com/runatlantis/atlantis/server/core/config/raw"
 )
 
 type CIProject struct {
@@ -31,6 +33,12 @@ type CircleCIConfig struct {
 type GitHubActionsCIConfig struct {
 	CIConfig
 	SSHKeySecrets []string
+}
+
+type AtlantisConfig struct {
+	Enabled bool
+	Envs    *map[string]Env
+	RepoCfg *atlantis.RepoCfg
 }
 
 type TravisCIConfig struct {
@@ -345,5 +353,63 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 	return GitHubActionsCIConfig{
 		CIConfig:      *ciConfig,
 		SSHKeySecrets: sshKeySecrets,
+	}
+}
+
+// golang 1.18+ generics
+func Ptr[T any](v T) *T {
+	return &v
+}
+
+// buildAtlantisConfig must be build after Envs
+func (p *Plan) buildAtlantisConfig(c *v2.Config, foggVersion string) AtlantisConfig {
+	enabled := false
+	repoCfg := atlantis.RepoCfg{}
+	if c.Defaults.Tools != nil && c.Defaults.Tools.Atlantis != nil {
+		enabled = *c.Defaults.Tools.Atlantis.Enabled
+		repoCfg = c.Defaults.Tools.Atlantis.RepoCfg
+		projects := []atlantis.Project{}
+		for envName, env := range p.Envs {
+			for cName, d := range env.Components {
+				whenModified := []string{"*.tf"}
+				if d.ModuleSource != nil && strings.HasPrefix(*d.ModuleSource, "terraform/modules/") {
+					whenModified = append(whenModified, fmt.Sprintf(
+						"../../../%s/**/*.tf",
+						strings.TrimPrefix(*d.ModuleSource, "terraform/"),
+					))
+				}
+				for _, m := range d.Modules {
+					if strings.HasPrefix(*m.Source, "terraform/modules/") {
+						whenModified = append(whenModified, fmt.Sprintf(
+							"../../../%s/**/*.tf",
+							strings.TrimPrefix(*m.Source, "terraform/"),
+						))
+					}
+				}
+
+				projects = append(projects, atlantis.Project{
+					Name:              Ptr(fmt.Sprintf("%s_%s", envName, cName)),
+					Dir:               Ptr(fmt.Sprintf("terraform/envs/%s/%s", envName, cName)),
+					TerraformVersion:  &d.Common.TerraformVersion,
+					Workspace:         Ptr(atlantis.DefaultWorkspace),
+					ApplyRequirements: []string{atlantis.ApprovedApplyRequirement},
+					Autoplan: &atlantis.Autoplan{
+						Enabled:      Ptr(true),
+						WhenModified: whenModified,
+					},
+				})
+			}
+		}
+
+		// sort projects by name
+		sort.Slice(projects, func(i, j int) bool {
+			return *projects[i].Name < *projects[j].Name
+		})
+		repoCfg.Projects = projects
+	}
+	return AtlantisConfig{
+		Enabled: enabled,
+		Envs:    &p.Envs,
+		RepoCfg: &repoCfg,
 	}
 }

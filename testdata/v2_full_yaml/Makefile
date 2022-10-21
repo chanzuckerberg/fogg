@@ -10,7 +10,7 @@ ACCOUNTS=bar foo
 all: check
 
 setup: ## set up working directory by installing dependencies
-	curl -s https://raw.githubusercontent.com/chanzuckerberg/fogg/vundefined-pre+undefined.dirty/download.sh | bash -s -- -b .fogg/bin vundefined-pre+undefined.dirty
+	curl -s https://raw.githubusercontent.com/vincenthsh/fogg/vundefined-pre+undefined.dirty/download.sh | bash -s -- -b .fogg/bin vundefined-pre+undefined.dirty
 	.fogg/bin/fogg setup
 .PHONY: setup
 
