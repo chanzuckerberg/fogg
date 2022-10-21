@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - main
+      - feat-multi-module-components
 
 name: release-please
 jobs:
@@ -20,14 +20,6 @@ jobs:
             ]
 
             return JSON.stringify(changelogTypes)
-      # See https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
-      # For why we need to generate a token and not use the default
-      - name: Generate token
-        id: generate_token
-        uses: chanzuckerberg/github-app-token@v1.1.4
-        with:
-          app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
-          private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
 
       - name: release please
         uses: google-github-actions/release-please-action@v3.0.0
@@ -36,9 +28,10 @@ jobs:
           release-type: simple
           bump-minor-pre-major: true
           changelog-types: ${{ steps.configure-changelog.outputs.result }}
-          token: ${{ steps.generate_token.outputs.token }}
+          # https://github.com/google-github-actions/release-please-action#github-credentials
+          token: ${{ secrets.VINCENT_PAT }}
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         # we need to fetch all history and tags
         # so we build the proper version
         with:
@@ -56,5 +49,5 @@ jobs:
           version: latest
           args: release --rm-dist
         env:
-          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+          GITHUB_TOKEN: ${{ secrets.VINCENT_PAT }}
         if: ${{ steps.release.outputs.release_created }}
