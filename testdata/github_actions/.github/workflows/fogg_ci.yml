@@ -20,7 +20,7 @@ jobs:
       - run: make setup
       - run: .fogg/bin/fogg apply
         env:
-          FOGG_GITHUBAPPTOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FOGG_GITHUBTOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: EndBug/add-and-commit@v9
         with:
           add: -A
