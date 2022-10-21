@@ -11,7 +11,7 @@ require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/chanzuckerberg/go-misc v0.0.0-20210209191033-ae96c0409e3f
 	github.com/davecgh/go-spew v1.1.1
-	github.com/fatih/color v1.10.0
+	github.com/fatih/color v1.13.0
 	github.com/go-errors/errors v1.1.1
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/google/go-github/v27 v27.0.6
@@ -85,8 +85,8 @@ require (
 	github.com/klauspost/compress v1.11.2 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect
-	github.com/mattn/go-colorable v0.1.8 // indirect
-	github.com/mattn/go-isatty v0.0.12 // indirect
+	github.com/mattn/go-colorable v0.1.9 // indirect
+	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/mitchellh/go-testing-interface v1.14.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
