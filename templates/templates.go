@@ -14,6 +14,7 @@ import (
 //	files starting with said characters
 //
 //go:embed templates/.github/*
+//go:embed templates/atlantis/*
 //go:embed templates/circleci/.circleci/*
 //go:embed templates/common/*
 //go:embed templates/component/*
@@ -43,6 +44,7 @@ type T struct {
 	TravisCI         fs.FS
 	CircleCI         fs.FS
 	GitHubActionsCI  fs.FS
+	Atlantis         fs.FS
 	TFE              fs.FS
 }
 
@@ -68,5 +70,6 @@ var Templates = &T{
 	TravisCI:         mustFSSub("templates/travis-ci"),
 	CircleCI:         mustFSSub("templates/circleci"),
 	GitHubActionsCI:  mustFSSub("templates/.github"),
+	Atlantis:         mustFSSub("templates/atlantis"),
 	TFE:              mustFSSub("templates/tfe"),
 }

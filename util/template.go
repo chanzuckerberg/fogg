@@ -4,12 +4,14 @@ import (
 	"io"
 	"io/fs"
 	"reflect"
+	"strings"
 	"text/template"
 
 	"github.com/Masterminds/sprig"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v3"
 )
 
 func dict(in interface{}) map[string]interface{} {
@@ -38,12 +40,28 @@ func avail(name string, data interface{}) bool {
 	return v.FieldByName(name).IsValid()
 }
 
+// https://github.com/helm/helm/blob/v3.10.1/pkg/engine/funcs.go#L79
+
+// toYAML takes an interface, marshals it to yaml, and returns a string. It will
+// always return a string, even on marshal error (empty string).
+//
+// This is designed to be called from a template.
+func toYAML(v interface{}) string {
+	data, err := yaml.Marshal(v)
+	if err != nil {
+		// Swallow errors inside of a template.
+		return ""
+	}
+	return strings.TrimSuffix(string(data), "\n")
+}
+
 // OpenTemplate will read `source` for a template, parse, configure and return a template.Template
 func OpenTemplate(label string, source io.Reader, templates fs.FS) (*template.Template, error) {
 	// TODO we should probably cache these rather than open and parse them for every apply
 	funcs := sprig.TxtFuncMap()
 	funcs["dict"] = dict
 	funcs["avail"] = avail
+	funcs["toYaml"] = toYAML
 
 	s, err := io.ReadAll(source)
 	if err != nil {

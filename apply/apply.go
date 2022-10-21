@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"io/ioutil"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -70,6 +69,13 @@ func Apply(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool) error 
 		err = applyTree(fs, tmpl.GitHubActionsCI, tmpl.Common, ".github", plan.GitHubActionsCI)
 		if err != nil {
 			return errs.WrapUser(err, "unable to apply GitHub Actions CI")
+		}
+	}
+
+	if plan.Atlantis.Enabled {
+		err = applyTree(fs, tmpl.Atlantis, tmpl.Common, "", plan.Atlantis)
+		if err != nil {
+			return errs.WrapUser(err, "unable to apply Atlantis")
 		}
 	}
 
@@ -272,7 +278,7 @@ func checkToolVersions(fs afero.Fs, current string) (bool, string, error) {
 	reader := io.ReadCloser(f)
 	defer reader.Close()
 
-	b, e := ioutil.ReadAll(reader)
+	b, e := io.ReadAll(reader)
 	if e != nil {
 		return false, "", errs.WrapUser(e, "unable to read .fogg-version file")
 	}
@@ -461,7 +467,7 @@ func applyTree(dest afero.Fs, source fs.FS, common fs.FS, targetBasePath string,
 			}
 			logrus.Infof("%s removed", target)
 		} else if extension == ".ln" {
-			linkTargetBytes, err := ioutil.ReadAll(sourceFile)
+			linkTargetBytes, err := io.ReadAll(sourceFile)
 			if err != nil {
 				return errs.WrapUserf(err, "could not read source file %#v", sourceFile)
 			}

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"io/ioutil"
+	"io"
 	"os"
 
 	"github.com/chanzuckerberg/fogg/errs"
@@ -36,7 +36,7 @@ var fmtCmd = &cobra.Command{
 			}
 			defer f.Close()
 
-			b, err := ioutil.ReadAll(f)
+			b, err := io.ReadAll(f)
 			if err != nil {
 				return errs.WrapUser(err, "could not read fogg.yml")
 			}
