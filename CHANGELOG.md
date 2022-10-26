@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.76.0](https://github.com/chanzuckerberg/fogg/compare/v0.75.1...v0.76.0) (2022-10-26)
+
+
+### Features
+
+* upgrade default versions ([#751](https://github.com/chanzuckerberg/fogg/issues/751)) ([dede7ca](https://github.com/chanzuckerberg/fogg/commit/dede7caeb71319d410e6f37a195416b4783a0e1b))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.109 to 1.44.114 ([#753](https://github.com/chanzuckerberg/fogg/issues/753)) ([aa6efd0](https://github.com/chanzuckerberg/fogg/commit/aa6efd0134b13dbc2e9e13237c9977c4821ae102))
+* bump github.com/aws/aws-sdk-go from 1.44.114 to 1.44.116 ([#755](https://github.com/chanzuckerberg/fogg/issues/755)) ([73169cf](https://github.com/chanzuckerberg/fogg/commit/73169cf10da1003df801a4fd73c61fcc135d3c17))
+* bump github.com/aws/aws-sdk-go from 1.44.116 to 1.44.117 ([#758](https://github.com/chanzuckerberg/fogg/issues/758)) ([27780ea](https://github.com/chanzuckerberg/fogg/commit/27780ea2155fba1f8ea31c8ac109abd5a6a7de15))
+* Bump github.com/aws/aws-sdk-go from 1.44.117 to 1.44.121 ([#762](https://github.com/chanzuckerberg/fogg/issues/762)) ([1228114](https://github.com/chanzuckerberg/fogg/commit/122811466ab378536c55e5628bea02571f548061))
+* bump github.com/kr/pretty from 0.2.1 to 0.3.1 ([#752](https://github.com/chanzuckerberg/fogg/issues/752)) ([938f655](https://github.com/chanzuckerberg/fogg/commit/938f655ead17c11bf13c703ac868ee1f84d636f0))
+* bump github.com/spf13/cobra from 1.5.0 to 1.6.0 ([#756](https://github.com/chanzuckerberg/fogg/issues/756)) ([f9a12ac](https://github.com/chanzuckerberg/fogg/commit/f9a12acf6211fd5a214e8f8bb058574079168dc3))
+* Bump github.com/stretchr/testify from 1.8.0 to 1.8.1 ([#763](https://github.com/chanzuckerberg/fogg/issues/763)) ([280da81](https://github.com/chanzuckerberg/fogg/commit/280da81b0122b54b33b82cf5b251f915460328e1))
+* update CI ([#757](https://github.com/chanzuckerberg/fogg/issues/757)) ([51c611a](https://github.com/chanzuckerberg/fogg/commit/51c611a9328ca836ddcf4f2184b4f4b4cdb4a64f))
+
+
+### BugFixes
+
+* Pin hashicorp/null provider to 3.1.1 since 3.2.0 introduced a breaking change ([#764](https://github.com/chanzuckerberg/fogg/issues/764)) ([22b9db9](https://github.com/chanzuckerberg/fogg/commit/22b9db9f11f7897bb7d6919b82b21dde30d275f8))
+
 ### [0.75.1](https://github.com/chanzuckerberg/fogg/compare/v0.75.0...v0.75.1) (2022-10-05)
 
 
