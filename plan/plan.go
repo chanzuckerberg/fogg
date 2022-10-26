@@ -159,7 +159,7 @@ var utilityProviders = map[string]ProviderVersion{
 	},
 	"null": {
 		Source:  "hashicorp/null",
-		Version: ptr.String("~> 3.0"),
+		Version: ptr.String("3.1.1"),
 	},
 	"local": {
 		Source:  "hashicorp/local",
