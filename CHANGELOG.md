@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.76.0](https://github.com/vincenthsh/fogg/compare/v0.75.0...v0.76.0) (2022-10-31)
+
+
+### Features
+
+* Add pre-commit to Github Actions workflow ([#14](https://github.com/vincenthsh/fogg/issues/14)) ([dddef4c](https://github.com/vincenthsh/fogg/commit/dddef4c662f2c728048208d4444f7e087426ac18))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.120 to 1.44.121 ([#9](https://github.com/vincenthsh/fogg/issues/9)) ([32304bd](https://github.com/vincenthsh/fogg/commit/32304bde57d7ade05fe3f0f7e87d99f3ae879d51))
+* bump github.com/aws/aws-sdk-go from 1.44.121 to 1.44.122 ([#13](https://github.com/vincenthsh/fogg/issues/13)) ([4a2d7dc](https://github.com/vincenthsh/fogg/commit/4a2d7dc0e856b1d4026bd89a317af878e45d3661))
+* bump github.com/spf13/cobra from 1.6.0 to 1.6.1 ([#12](https://github.com/vincenthsh/fogg/issues/12)) ([db39a91](https://github.com/vincenthsh/fogg/commit/db39a91de81e01670d59458d0ad2c6f4b8d60899))
+* bump github.com/stretchr/testify from 1.8.0 to 1.8.1 ([#10](https://github.com/vincenthsh/fogg/issues/10)) ([3b213ab](https://github.com/vincenthsh/fogg/commit/3b213ab74240290cfe812d21a76666d637c45471))
+
 ## [0.75.0](https://github.com/vincenthsh/fogg/compare/v0.74.0...v0.75.0) (2022-10-21)
 
 
