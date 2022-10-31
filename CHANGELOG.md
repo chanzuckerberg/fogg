@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.76.1](https://github.com/vincenthsh/fogg/compare/v0.76.0...v0.76.1) (2022-10-31)
+
+
+### BugFixes
+
+* Read terraformVersion from ComponentCommon.Common ([#15](https://github.com/vincenthsh/fogg/issues/15)) ([af6b9d4](https://github.com/vincenthsh/fogg/commit/af6b9d4d3dd2d74152d8ecc38f2e03dcf0536675))
+
 ## [0.76.0](https://github.com/vincenthsh/fogg/compare/v0.75.0...v0.76.0) (2022-10-31)
 
 
