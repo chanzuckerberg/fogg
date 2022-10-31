@@ -386,7 +386,7 @@ func (p *Plan) buildAtlantisConfig(c *v2.Config, foggVersion string) AtlantisCon
 				projects = append(projects, atlantis.Project{
 					Name:              util.Ptr(fmt.Sprintf("%s_%s", envName, cName)),
 					Dir:               util.Ptr(fmt.Sprintf("terraform/envs/%s/%s", envName, cName)),
-					TerraformVersion:  &d.ComponentCommon.TerraformVersion,
+					TerraformVersion:  &d.ComponentCommon.Common.TerraformVersion,
 					Workspace:         util.Ptr(atlantis.DefaultWorkspace),
 					ApplyRequirements: []string{atlantis.ApprovedApplyRequirement},
 					Autoplan: &atlantis.Autoplan{
