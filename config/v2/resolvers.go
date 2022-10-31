@@ -188,7 +188,7 @@ func ResolveBackend(commons ...Common) *Backend {
 	for _, c := range commons {
 		if c.Backend != nil {
 			if ret == nil {
-				ret = &Backend{Kind: util.StrPtr("s3")}
+				ret = &Backend{Kind: util.Ptr("s3")}
 			}
 			b := c.Backend
 			if b.Kind != nil {

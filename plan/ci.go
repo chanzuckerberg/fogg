@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
+	"github.com/chanzuckerberg/fogg/util"
 	atlantis "github.com/runatlantis/atlantis/server/core/config/raw"
 )
 
@@ -356,11 +357,6 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 	}
 }
 
-// golang 1.18+ generics
-func Ptr[T any](v T) *T {
-	return &v
-}
-
 // buildAtlantisConfig must be build after Envs
 func (p *Plan) buildAtlantisConfig(c *v2.Config, foggVersion string) AtlantisConfig {
 	enabled := false
@@ -388,13 +384,13 @@ func (p *Plan) buildAtlantisConfig(c *v2.Config, foggVersion string) AtlantisCon
 				}
 
 				projects = append(projects, atlantis.Project{
-					Name:              Ptr(fmt.Sprintf("%s_%s", envName, cName)),
-					Dir:               Ptr(fmt.Sprintf("terraform/envs/%s/%s", envName, cName)),
-					TerraformVersion:  &d.Common.TerraformVersion,
-					Workspace:         Ptr(atlantis.DefaultWorkspace),
+					Name:              util.Ptr(fmt.Sprintf("%s_%s", envName, cName)),
+					Dir:               util.Ptr(fmt.Sprintf("terraform/envs/%s/%s", envName, cName)),
+					TerraformVersion:  &d.ComponentCommon.TerraformVersion,
+					Workspace:         util.Ptr(atlantis.DefaultWorkspace),
 					ApplyRequirements: []string{atlantis.ApprovedApplyRequirement},
 					Autoplan: &atlantis.Autoplan{
-						Enabled:      Ptr(true),
+						Enabled:      util.Ptr(true),
 						WhenModified: whenModified,
 					},
 				})
