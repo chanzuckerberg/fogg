@@ -53,28 +53,28 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 		Version: 2,
 		Defaults: v2.Defaults{
 			Common: v2.Common{
-				Project:          util.StrPtr("foo"),
-				Owner:            util.StrPtr("bar"),
-				TerraformVersion: util.StrPtr("0.1.0"),
+				Project:          util.Ptr("foo"),
+				Owner:            util.Ptr("bar"),
+				TerraformVersion: util.Ptr("0.1.0"),
 				Providers: &v2.Providers{
 					AWS: &v2.AWSProvider{
 						AccountID: util.JSONNumberPtr(123),
-						Region:    util.StrPtr("us-west-2"),
-						Profile:   util.StrPtr("foo"),
-						Version:   util.StrPtr("0.12.0"),
+						Region:    util.Ptr("us-west-2"),
+						Profile:   util.Ptr("foo"),
+						Version:   util.Ptr("0.12.0"),
 					},
 				},
 				Backend: &v2.Backend{
-					Bucket:    util.StrPtr("bucket"),
-					Region:    util.StrPtr("us-west-2"),
-					Profile:   util.StrPtr("profile"),
-					AccountID: util.StrPtr("some account id"),
+					Bucket:    util.Ptr("bucket"),
+					Region:    util.Ptr("us-west-2"),
+					Profile:   util.Ptr("profile"),
+					AccountID: util.Ptr("some account id"),
 				},
 				Tools: &v2.Tools{
 					TravisCI: &v2.TravisCI{
 						CommonCI: v2.CommonCI{
 							Enabled:        &tr,
-							AWSIAMRoleName: util.StrPtr("rollin"),
+							AWSIAMRoleName: util.Ptr("rollin"),
 						},
 					}},
 			},
@@ -109,27 +109,27 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 		Version: 2,
 		Defaults: v2.Defaults{
 			Common: v2.Common{
-				Project:          util.StrPtr("foo"),
-				Owner:            util.StrPtr("bar"),
-				TerraformVersion: util.StrPtr("0.1.0"),
+				Project:          util.Ptr("foo"),
+				Owner:            util.Ptr("bar"),
+				TerraformVersion: util.Ptr("0.1.0"),
 				Providers: &v2.Providers{
 					AWS: &v2.AWSProvider{
 						AccountID: util.JSONNumberPtr(123),
-						Region:    util.StrPtr("us-west-2"),
-						Profile:   util.StrPtr("foo"),
-						Version:   util.StrPtr("0.12.0"),
+						Region:    util.Ptr("us-west-2"),
+						Profile:   util.Ptr("foo"),
+						Version:   util.Ptr("0.12.0"),
 					},
 				},
 				Backend: &v2.Backend{
-					Bucket:    util.StrPtr("bucket"),
-					Region:    util.StrPtr("us-west-2"),
-					Profile:   util.StrPtr("profile"),
-					AccountID: util.StrPtr("some account id"),
+					Bucket:    util.Ptr("bucket"),
+					Region:    util.Ptr("us-west-2"),
+					Profile:   util.Ptr("profile"),
+					AccountID: util.Ptr("some account id"),
 				},
 				Tools: &v2.Tools{TravisCI: &v2.TravisCI{
 					CommonCI: v2.CommonCI{
 						Enabled:        &tr,
-						AWSIAMRoleName: util.StrPtr("rollin"),
+						AWSIAMRoleName: util.Ptr("rollin"),
 					},
 				}},
 			},
@@ -165,28 +165,28 @@ func Test_buildCircleCI_Profiles(t *testing.T) {
 		Version: 2,
 		Defaults: v2.Defaults{
 			Common: v2.Common{
-				Project:          util.StrPtr("foo"),
-				Owner:            util.StrPtr("bar"),
-				TerraformVersion: util.StrPtr("0.1.0"),
+				Project:          util.Ptr("foo"),
+				Owner:            util.Ptr("bar"),
+				TerraformVersion: util.Ptr("0.1.0"),
 				Providers: &v2.Providers{
 					AWS: &v2.AWSProvider{
 						AccountID: util.JSONNumberPtr(123),
-						Region:    util.StrPtr("us-west-2"),
-						Profile:   util.StrPtr("foo"),
-						Version:   util.StrPtr("0.12.0"),
+						Region:    util.Ptr("us-west-2"),
+						Profile:   util.Ptr("foo"),
+						Version:   util.Ptr("0.12.0"),
 					},
 				},
 				Backend: &v2.Backend{
-					Bucket:    util.StrPtr("bucket"),
-					Region:    util.StrPtr("us-west-2"),
-					Profile:   util.StrPtr("profile"),
-					AccountID: util.StrPtr("some account id"),
+					Bucket:    util.Ptr("bucket"),
+					Region:    util.Ptr("us-west-2"),
+					Profile:   util.Ptr("profile"),
+					AccountID: util.Ptr("some account id"),
 				},
 				Tools: &v2.Tools{
 					CircleCI: &v2.CircleCI{
 						CommonCI: v2.CommonCI{
 							Enabled:        &tr,
-							AWSIAMRoleName: util.StrPtr("rollin"),
+							AWSIAMRoleName: util.Ptr("rollin"),
 						},
 					}},
 			},
@@ -220,28 +220,28 @@ func Test_buildCircleCI_ProfilesDisabled(t *testing.T) {
 		Version: 2,
 		Defaults: v2.Defaults{
 			Common: v2.Common{
-				Project:          util.StrPtr("foo"),
-				Owner:            util.StrPtr("bar"),
-				TerraformVersion: util.StrPtr("0.1.0"),
+				Project:          util.Ptr("foo"),
+				Owner:            util.Ptr("bar"),
+				TerraformVersion: util.Ptr("0.1.0"),
 				Providers: &v2.Providers{
 					AWS: &v2.AWSProvider{
 						AccountID: util.JSONNumberPtr(123),
-						Region:    util.StrPtr("us-west-2"),
-						Profile:   util.StrPtr("foo"),
-						Version:   util.StrPtr("0.12.0"),
+						Region:    util.Ptr("us-west-2"),
+						Profile:   util.Ptr("foo"),
+						Version:   util.Ptr("0.12.0"),
 					},
 				},
 				Backend: &v2.Backend{
-					Bucket:    util.StrPtr("bucket"),
-					Region:    util.StrPtr("us-west-2"),
-					Profile:   util.StrPtr("profile"),
-					AccountID: util.StrPtr("some account id"),
+					Bucket:    util.Ptr("bucket"),
+					Region:    util.Ptr("us-west-2"),
+					Profile:   util.Ptr("profile"),
+					AccountID: util.Ptr("some account id"),
 				},
 				Tools: &v2.Tools{
 					CircleCI: &v2.CircleCI{
 						CommonCI: v2.CommonCI{
 							Enabled:        &tr,
-							AWSIAMRoleName: util.StrPtr("rollin"),
+							AWSIAMRoleName: util.Ptr("rollin"),
 							Providers: map[string]v2.CIProviderConfig{
 								"aws": {
 									Disabled: true,

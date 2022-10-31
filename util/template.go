@@ -1,6 +1,7 @@
 package util
 
 import (
+	"bytes"
 	"io"
 	"io/fs"
 	"reflect"
@@ -47,12 +48,15 @@ func avail(name string, data interface{}) bool {
 //
 // This is designed to be called from a template.
 func toYAML(v interface{}) string {
-	data, err := yaml.Marshal(v)
+	var b bytes.Buffer
+	yamlEncoder := yaml.NewEncoder(&b)
+	yamlEncoder.SetIndent(2)
+	err := yamlEncoder.Encode(v)
 	if err != nil {
 		// Swallow errors inside of a template.
 		return ""
 	}
-	return strings.TrimSuffix(string(data), "\n")
+	return strings.TrimSuffix(b.String(), "\n")
 }
 
 // OpenTemplate will read `source` for a template, parse, configure and return a template.Template

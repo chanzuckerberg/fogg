@@ -21,6 +21,15 @@ jobs:
       - run: .fogg/bin/fogg apply
         env:
           FOGG_GITHUBTOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-python@v3
+      - uses: mfinelli/setup-shfmt@v1
+        with:
+          shfmt-version: 3.5.1
+      - uses: rhythmictech/actions-setup-tfenv@v0.1.2
+      - uses: scottbrenner/cfn-lint-action@v2
+      - uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: --all-files || true
       - uses: EndBug/add-and-commit@v9
         with:
           add: -A
