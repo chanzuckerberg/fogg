@@ -88,16 +88,26 @@ jobs:
           git-commit-message: |
             commit from fogg_ci -- ran terraform-docs and pushed
       - name: fix terraform fmt
+        working-directory: {{`${{matrix.tfmodule}}`}}
         run: |
-          cd {{`${{matrix.tfmodule}}`}}
           make fmt
       - uses: EndBug/add-and-commit@v9
         with:
           add: -A
           message: |
             commit from fogg_ci -- ran terraform fmt and pushed
+      - uses: actions/cache@v2
+        name: Cache plugin dir
+        with:
+          path: ~/.tflint.d/plugins
+          key: flint-{{`${{ hashFiles('.tflint.hcl') }}`}}
+      - uses: terraform-linters/setup-tflint@v2
+        name: Setup TFLint
+        with:
+          tflint_version: '0.42.2'
+      - name: Init TFLint
+        run: tflint --init
       - name: tflint
+        working-directory: {{`${{matrix.tfmodule}}`}}
         run: |
-          make setup
-          cd {{`${{matrix.tfmodule}}`}}
-          ${GITHUB_WORKSPACE}/.fogg/bin/tflint
+          tflint --config ${GITHUB_WORKSPACE}/.tflint.hcl

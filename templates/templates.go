@@ -24,6 +24,7 @@ import (
 //go:embed templates/module-invocation/*
 //go:embed templates/repo
 //go:embed templates/repo/scripts/*
+//go:embed templates/repo/.tflint.hcl
 //go:embed templates/repo/.fogg-version.tmpl
 //go:embed templates/repo/.gitattributes
 //go:embed templates/repo/.gitignore
