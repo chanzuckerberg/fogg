@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.76.4](https://github.com/vincenthsh/fogg/compare/v0.76.3...v0.76.4) (2022-11-17)
+
+
+### BugFixes
+
+* change fogg ci gh actions to run on pr ([#28](https://github.com/vincenthsh/fogg/issues/28)) ([f0b6026](https://github.com/vincenthsh/fogg/commit/f0b602645e9dface75df7fa0320227c11d8292d3))
+
 ## [0.76.3](https://github.com/vincenthsh/fogg/compare/v0.76.2...v0.76.3) (2022-11-17)
 
 
