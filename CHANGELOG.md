@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.76.3](https://github.com/vincenthsh/fogg/compare/v0.76.2...v0.76.3) (2022-11-17)
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.136 to 1.44.139 ([#24](https://github.com/vincenthsh/fogg/issues/24)) ([a4e3987](https://github.com/vincenthsh/fogg/commit/a4e3987282baf4c76c1d3d902ee77df5e0f3f6be))
+
+
+### BugFixes
+
+* fogg ci gh actions tflint ([#25](https://github.com/vincenthsh/fogg/issues/25)) ([105b9c8](https://github.com/vincenthsh/fogg/commit/105b9c879ed3313221d422896cd01ea685331d86))
+* fogg ci gh actions typo on tflint cache ([#27](https://github.com/vincenthsh/fogg/issues/27)) ([8ff5fef](https://github.com/vincenthsh/fogg/commit/8ff5feff18c20abe31404564006d450cbfb5f271))
+
 ## [0.76.2](https://github.com/vincenthsh/fogg/compare/v0.76.1...v0.76.2) (2022-11-17)
 
 
