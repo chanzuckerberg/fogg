@@ -2,7 +2,7 @@
 # Make improvements in fogg, so that everyone can benefit.
 {{- $githubActionsCI := . }}
 
-on: push
+on: pull_request
 
 concurrency:
   group: {{`${{ github.ref }}`}}
@@ -108,6 +108,5 @@ jobs:
       - name: Init TFLint
         run: tflint --init
       - name: tflint
-        working-directory: {{`${{matrix.tfmodule}}`}}
         run: |
-          tflint --config ${GITHUB_WORKSPACE}/.tflint.hcl
+          tflint {{`${{matrix.tfmodule}}`}}
