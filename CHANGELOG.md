@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.76.2](https://github.com/vincenthsh/fogg/compare/v0.76.1...v0.76.2) (2022-11-17)
+
+
+### BugFixes
+
+* fogg ci gh actions tflint ([#23](https://github.com/vincenthsh/fogg/issues/23)) ([9db0eda](https://github.com/vincenthsh/fogg/commit/9db0eda6d5286e0e257137c83162f04c4187055d))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.122 to 1.44.126 ([#17](https://github.com/vincenthsh/fogg/issues/17)) ([3c7bdf8](https://github.com/vincenthsh/fogg/commit/3c7bdf8b306b20a593464feea822e73b5142fe38))
+* bump github.com/aws/aws-sdk-go from 1.44.126 to 1.44.131 ([#19](https://github.com/vincenthsh/fogg/issues/19)) ([cd5edbe](https://github.com/vincenthsh/fogg/commit/cd5edbee4327544dfa1b180c477550b44e8db4c6))
+* bump github.com/aws/aws-sdk-go from 1.44.131 to 1.44.136 ([#21](https://github.com/vincenthsh/fogg/issues/21)) ([b22e95c](https://github.com/vincenthsh/fogg/commit/b22e95cf5b537bcbf074c0c0bbd807431a342a2b))
+* bump github.com/hashicorp/hcl/v2 from 2.14.1 to 2.15.0 ([#22](https://github.com/vincenthsh/fogg/issues/22)) ([36f8ed8](https://github.com/vincenthsh/fogg/commit/36f8ed8320652e9b18ef809e552763ee4ef3d578))
+
 ## [0.76.1](https://github.com/vincenthsh/fogg/compare/v0.76.0...v0.76.1) (2022-10-31)
 
 
