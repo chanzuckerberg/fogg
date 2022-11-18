@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.76.6](https://github.com/vincenthsh/fogg/compare/v0.76.5...v0.76.6) (2022-11-18)
+
+
+### BugFixes
+
+* Add tflint ignores ([#32](https://github.com/vincenthsh/fogg/issues/32)) ([8c9e885](https://github.com/vincenthsh/fogg/commit/8c9e88567fa8923621750afa8682b2195a7f9e92))
+
 ## [0.76.5](https://github.com/vincenthsh/fogg/compare/v0.76.4...v0.76.5) (2022-11-18)
 
 
