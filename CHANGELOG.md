@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.76.7](https://github.com/vincenthsh/fogg/compare/v0.76.6...v0.76.7) (2022-11-18)
+
+
+### BugFixes
+
+* switching fogg gh ci to pull_request broke commits ([#34](https://github.com/vincenthsh/fogg/issues/34)) ([7059854](https://github.com/vincenthsh/fogg/commit/7059854679dbecd7eda9cbb9a5924d167ef55a2b))
+
 ## [0.76.6](https://github.com/vincenthsh/fogg/compare/v0.76.5...v0.76.6) (2022-11-18)
 
 
