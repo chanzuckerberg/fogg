@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.76.8](https://github.com/vincenthsh/fogg/compare/v0.76.7...v0.76.8) (2022-11-18)
+
+
+### BugFixes
+
+* fogg gh ci invalid yaml ([#37](https://github.com/vincenthsh/fogg/issues/37)) ([938dda9](https://github.com/vincenthsh/fogg/commit/938dda9e49308038a78ca99c3ab3ac9c2611d51b))
+
 ## [0.76.7](https://github.com/vincenthsh/fogg/compare/v0.76.6...v0.76.7) (2022-11-18)
 
 
