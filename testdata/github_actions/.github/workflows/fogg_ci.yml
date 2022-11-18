@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref }}
       - name: Cache Fogg
@@ -43,6 +44,7 @@ jobs:
       allChanges: ${{ steps.changedDirs.outputs.allChanges }}
     steps:
       - uses: actions/checkout@v3
+        with:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref }}
       - uses: dorny/paths-filter@v2.10.2
