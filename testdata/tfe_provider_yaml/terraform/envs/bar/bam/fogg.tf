@@ -67,22 +67,28 @@ terraform {
 
   }
 }
+# tflint-ignore: terraform_unused_declarations
 variable "env" {
   type    = string
   default = "bar"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "project" {
   type    = string
   default = "foo"
 }
+# tflint-ignore: terraform_unused_declarations
+# tflint-ignore: terraform_unused_declarations
 variable "component" {
   type    = string
   default = "bam"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "owner" {
   type    = string
   default = "foo@example.com"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "tags" {
   type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
   default = {
@@ -93,6 +99,7 @@ variable "tags" {
     managedBy = "terraform"
   }
 }
+# tflint-ignore: terraform_unused_declarations
 data "terraform_remote_state" "global" {
   backend = "s3"
   config = {
@@ -107,6 +114,7 @@ data "terraform_remote_state" "global" {
 
   }
 }
+# tflint-ignore: terraform_unused_declarations
 data "terraform_remote_state" "foo" {
   backend = "s3"
   config = {
@@ -121,6 +129,7 @@ data "terraform_remote_state" "foo" {
 
   }
 }
+# tflint-ignore: terraform_unused_declarations
 variable "aws_accounts" {
   type = map(string)
   default = {

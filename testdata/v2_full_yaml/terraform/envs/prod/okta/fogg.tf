@@ -93,18 +93,22 @@ terraform {
 
   }
 }
+# tflint-ignore: terraform_unused_declarations
 variable "env" {
   type    = string
   default = "prod"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "project" {
   type    = string
   default = "proj"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "region" {
   type    = string
   default = "us-west-2"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "component" {
   type    = string
   default = "okta"
@@ -113,10 +117,12 @@ variable "aws_profile" {
   type    = string
   default = "profile"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "owner" {
   type    = string
   default = "foo@example.com"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "tags" {
   type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
   default = {
@@ -131,6 +137,7 @@ variable "foo" {
   type    = string
   default = "bar1"
 }
+# tflint-ignore: terraform_unused_declarations
 data "terraform_remote_state" "global" {
   backend = "s3"
   config = {
@@ -145,6 +152,7 @@ data "terraform_remote_state" "global" {
 
   }
 }
+# tflint-ignore: terraform_unused_declarations
 data "terraform_remote_state" "datadog" {
   backend = "s3"
   config = {
@@ -159,6 +167,7 @@ data "terraform_remote_state" "datadog" {
 
   }
 }
+# tflint-ignore: terraform_unused_declarations
 data "terraform_remote_state" "hero" {
   backend = "s3"
   config = {
@@ -173,6 +182,7 @@ data "terraform_remote_state" "hero" {
 
   }
 }
+# tflint-ignore: terraform_unused_declarations
 data "terraform_remote_state" "sentry" {
   backend = "s3"
   config = {
@@ -187,6 +197,7 @@ data "terraform_remote_state" "sentry" {
 
   }
 }
+# tflint-ignore: terraform_unused_declarations
 data "terraform_remote_state" "vpc" {
   backend = "s3"
   config = {
@@ -201,6 +212,7 @@ data "terraform_remote_state" "vpc" {
 
   }
 }
+# tflint-ignore: terraform_unused_declarations
 data "terraform_remote_state" "bar" {
   backend = "s3"
   config = {
@@ -215,6 +227,7 @@ data "terraform_remote_state" "bar" {
 
   }
 }
+# tflint-ignore: terraform_unused_declarations
 data "terraform_remote_state" "foo" {
   backend = "s3"
   config = {
@@ -229,6 +242,7 @@ data "terraform_remote_state" "foo" {
 
   }
 }
+# tflint-ignore: terraform_unused_declarations
 variable "aws_accounts" {
   type = map(string)
   default = {

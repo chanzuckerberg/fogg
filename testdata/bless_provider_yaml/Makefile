@@ -22,12 +22,14 @@ lint-terraform: lint-accounts lint-envs lint-modules ## lint the terraform code 
 
 lint-accounts:  ## lint the terrarform code in terraform/accounts
 	@for account in $(ACCOUNTS); do \
+		echo "terraform/accounts/$$account"; \
 		$(MAKE) -C terraform/accounts/$$account lint || exit $$?; \
 	done
 .PHONY: lint-accounts
 
 lint-envs: ## lint the terraform code in terraform/envs
 	@for env in $(ENVS); do \
+		echo "terraform/envs/$$env"; \
 		$(MAKE) -C terraform/envs/$$env lint || exit $$?; \
 	done; \
 	$(MAKE) -C terraform/global lint || exit $$?
@@ -35,6 +37,7 @@ lint-envs: ## lint the terraform code in terraform/envs
 
 lint-modules: ## lint the terraform code in terraform/modules
 	@for module in $(MODULES); do \
+	  echo "terraform/modules/$$module"; \
 		$(MAKE) -C terraform/modules/$$module lint || exit $$?; \
 	done
 .PHONY: lint-modules

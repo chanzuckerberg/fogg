@@ -83,18 +83,22 @@ terraform {
 
   }
 }
+# tflint-ignore: terraform_unused_declarations
 variable "env" {
   type    = string
   default = ""
 }
+# tflint-ignore: terraform_unused_declarations
 variable "project" {
   type    = string
   default = "proj"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "region" {
   type    = string
   default = "us-west-2"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "component" {
   type    = string
   default = "global"
@@ -103,10 +107,12 @@ variable "aws_profile" {
   type    = string
   default = "profile"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "owner" {
   type    = string
   default = "foo@example.com"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "tags" {
   type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
   default = {
@@ -121,6 +127,7 @@ variable "foo" {
   type    = string
   default = "bar1"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "aws_accounts" {
   type = map(string)
   default = {
