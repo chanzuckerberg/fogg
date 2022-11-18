@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.76.5](https://github.com/vincenthsh/fogg/compare/v0.76.4...v0.76.5) (2022-11-18)
+
+
+### BugFixes
+
+* Small makefile fixes for visibility ([#30](https://github.com/vincenthsh/fogg/issues/30)) ([3e922b4](https://github.com/vincenthsh/fogg/commit/3e922b4b7fb12539938d1815faf548f4cefc6b1f))
+
 ## [0.76.4](https://github.com/vincenthsh/fogg/compare/v0.76.3...v0.76.4) (2022-11-17)
 
 
