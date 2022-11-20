@@ -96,9 +96,11 @@ jobs:
           git-commit-message: |
             commit from fogg_ci -- ran terraform-docs and pushed
       - name: fix terraform fmt
-        working-directory: {{`${{matrix.tfmodule}}`}}
         run: |
+          pushd {{`${{matrix.tfmodule}}`}}
           make fmt
+          popd
+          git checkout .terraform-version
       - uses: EndBug/add-and-commit@v9
         with:
           add: -A
