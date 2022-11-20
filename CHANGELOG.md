@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.76.9](https://github.com/vincenthsh/fogg/compare/v0.76.8...v0.76.9) (2022-11-20)
+
+
+### BugFixes
+
+* prevent changes to .terraform-version ([#39](https://github.com/vincenthsh/fogg/issues/39)) ([8d94722](https://github.com/vincenthsh/fogg/commit/8d94722c23928f88172aff4cd7e280d039ed44cd))
+
 ## [0.76.8](https://github.com/vincenthsh/fogg/compare/v0.76.7...v0.76.8) (2022-11-18)
 
 
