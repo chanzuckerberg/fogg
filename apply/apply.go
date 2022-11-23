@@ -24,6 +24,7 @@ import (
 	"github.com/chanzuckerberg/fogg/util"
 	getter "github.com/hashicorp/go-getter"
 	"github.com/hashicorp/hcl2/hclwrite"
+	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
@@ -547,7 +548,7 @@ type moduleData struct {
 	ModuleName   string
 	ModuleSource string
 	Variables    []string
-	Outputs      []string
+	Outputs      []*tfconfig.Output
 }
 
 func applyModuleInvocation(
@@ -583,11 +584,14 @@ func applyModuleInvocation(
 		}
 	}
 	sort.Strings(variables)
-	outputs := make([]string, 0)
+
+	outputs := make([]*tfconfig.Output, 0)
 	for _, o := range moduleConfig.Outputs {
-		outputs = append(outputs, o.Name)
+		outputs = append(outputs, o)
 	}
-	sort.Strings(outputs)
+	sort.Slice(outputs, func(i, j int) bool {
+		return outputs[i].Name < outputs[j].Name
+	})
 
 	moduleName := ""
 	if inModuleName != nil {
