@@ -2,19 +2,23 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 output "database_name" {
-  value = module.aws-aurora-postgres.database_name
+  value     = module.aws-aurora-postgres.database_name
+  sensitive = false
 }
 
 output "endpoint" {
-  value = module.aws-aurora-postgres.endpoint
+  value     = module.aws-aurora-postgres.endpoint
+  sensitive = false
 }
 
 output "port" {
-  value = module.aws-aurora-postgres.port
+  value     = module.aws-aurora-postgres.port
+  sensitive = false
 }
 
 output "reader_endpoint" {
-  value = module.aws-aurora-postgres.reader_endpoint
+  value     = module.aws-aurora-postgres.reader_endpoint
+  sensitive = false
 }
 
 
