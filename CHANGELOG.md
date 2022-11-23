@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.77.0](https://github.com/chanzuckerberg/fogg/compare/v0.76.0...v0.77.0) (2022-11-23)
+
+
+### Features
+
+* sensitive outputs fixes [#759](https://github.com/chanzuckerberg/fogg/issues/759) ([88c89f1](https://github.com/chanzuckerberg/fogg/commit/88c89f1a7d98e72eb109d38e102aed6b2504b918))
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.121 to 1.44.126 ([#766](https://github.com/chanzuckerberg/fogg/issues/766)) ([6f1cb9e](https://github.com/chanzuckerberg/fogg/commit/6f1cb9ef73afe2ee0194748c2d1886db39c54fa9))
+* Bump github.com/spf13/cobra from 1.6.0 to 1.6.1 ([#767](https://github.com/chanzuckerberg/fogg/issues/767)) ([5bfe160](https://github.com/chanzuckerberg/fogg/commit/5bfe160bf2b8e4a3daa6dc5546a872c98edd4406))
+
 ## [0.76.0](https://github.com/chanzuckerberg/fogg/compare/v0.75.1...v0.76.0) (2022-10-26)
 
 
