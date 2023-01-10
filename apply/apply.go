@@ -692,7 +692,7 @@ func linkFile(fs afero.Fs, name, target string) error {
 	err := fs.Remove(name)
 	logrus.Debugf("error removing file %s (probably ok): %s", name, err)
 
-	_, err = linker.SymlinkIfPossible(relativePath, name)
+	err = linker.SymlinkIfPossible(relativePath, name)
 	return err
 }
 
