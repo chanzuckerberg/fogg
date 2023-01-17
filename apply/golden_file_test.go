@@ -108,8 +108,6 @@ func TestIntegration(t *testing.T) {
 						r.NoError(e2)
 						r.NotNil(i2)
 
-						logrus.Debugf("i1 size: %d ii2 size %d", i1.Size(), i2.Size())
-						r.Equalf(i1.Size(), i2.Size(), "file size: %s", path)
 						// This (below) doesn't currently work for files created on a mac then tested on linux. :shrug:
 						// r.Equalf(i1.Mode(), i2.Mode(), "file mode: %s, %o vs %o", path, i1.Mode(), i2.Mode())
 
@@ -118,8 +116,13 @@ func TestIntegration(t *testing.T) {
 						f2, e4 := afero.ReadFile(fs, path)
 						r.NoError(e4)
 
-						logrus.Debugf("f1:\n%s\n\n---- ", f1)
-						logrus.Debugf("f2:\n%s\n\n---- ", f2)
+						if i1.Size() != i2.Size() {
+							logrus.Debugf("f1:\n%s\n\n---- ", f1)
+							logrus.Debugf("f2:\n%s\n\n---- ", f2)
+						}
+
+						logrus.Debugf("i1 size: %d ii2 size %d", i1.Size(), i2.Size())
+						r.Equalf(i1.Size(), i2.Size(), "file size: %s", path)
 
 						r.Equal(f1, f2, path)
 					}

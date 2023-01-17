@@ -502,7 +502,7 @@ func TestTFEConfig(t *testing.T) {
 		},
 	}
 	emptyTrigger := []string{}
-	tfVersion := "0.13.5"
+	tfVersion := "0.100.0"
 	existingLocals := LocalsTFE{
 		Locals: &Locals{
 			Envs: map[string]map[string]*TFEWorkspace{
