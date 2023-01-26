@@ -61,7 +61,9 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 						AccountID: util.JSONNumberPtr(123),
 						Region:    util.StrPtr("us-west-2"),
 						Profile:   util.StrPtr("foo"),
-						Version:   util.StrPtr("0.12.0"),
+						CommonProvider: v2.CommonProvider{
+							Version: util.StrPtr("0.12.0"),
+						},
 					},
 				},
 				Backend: &v2.Backend{
@@ -117,7 +119,9 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 						AccountID: util.JSONNumberPtr(123),
 						Region:    util.StrPtr("us-west-2"),
 						Profile:   util.StrPtr("foo"),
-						Version:   util.StrPtr("0.12.0"),
+						CommonProvider: v2.CommonProvider{
+							Version: util.StrPtr("0.12.0"),
+						},
 					},
 				},
 				Backend: &v2.Backend{
@@ -173,7 +177,9 @@ func Test_buildCircleCI_Profiles(t *testing.T) {
 						AccountID: util.JSONNumberPtr(123),
 						Region:    util.StrPtr("us-west-2"),
 						Profile:   util.StrPtr("foo"),
-						Version:   util.StrPtr("0.12.0"),
+						CommonProvider: v2.CommonProvider{
+							Version: util.StrPtr("0.12.0"),
+						},
 					},
 				},
 				Backend: &v2.Backend{
@@ -228,7 +234,9 @@ func Test_buildCircleCI_ProfilesDisabled(t *testing.T) {
 						AccountID: util.JSONNumberPtr(123),
 						Region:    util.StrPtr("us-west-2"),
 						Profile:   util.StrPtr("foo"),
-						Version:   util.StrPtr("0.12.0"),
+						CommonProvider: v2.CommonProvider{
+							Version: util.StrPtr("0.12.0"),
+						},
 					},
 				},
 				Backend: &v2.Backend{

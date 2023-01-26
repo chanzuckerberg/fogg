@@ -207,33 +207,44 @@ func (a *AWSProvider) String() string {
 
 // GithubProvider represents a configuration of a github provider
 type GithubProvider struct {
-	Organization string  `yaml:"organization"`
-	BaseURL      *string `yaml:"base_url"`
+	CommonProvider `yaml:",inline"`
+	Organization   string  `yaml:"organization"`
+	BaseURL        *string `yaml:"base_url"`
 }
 
 type Auth0Provider struct {
-	Domain string `yaml:"domain,omitempty"`
+	CommonProvider `yaml:",inline"`
+	Domain         string `yaml:"domain,omitempty"`
 }
 
 type AssertProvider struct {
-	Version string `yaml:"version,omitempty"`
+	CommonProvider `yaml:",inline"`
+}
+
+type CommonProvider struct {
+	CustomProvider bool   `yaml:"custom_provider,omitempty"`
+	Enabled        bool   `yaml:"enabled,omitempty"`
+	Version        string `yaml:"version,omitempty"`
 }
 
 // SnowflakeProvider represents Snowflake DB provider configuration
 type SnowflakeProvider struct {
-	Account string `yaml:"account,omitempty"`
-	Role    string `yaml:"role,omitempty"`
-	Region  string `yaml:"region,omitempty"`
+	CommonProvider `yaml:",inline"`
+	Account        string `yaml:"account,omitempty"`
+	Role           string `yaml:"role,omitempty"`
+	Region         string `yaml:"region,omitempty"`
 }
 
 // OktaProvider represents Okta configuration
 type OktaProvider struct {
-	OrgName string  `yaml:"org_name,omitempty"`
-	BaseURL *string `yaml:"base_url,omitempty"`
+	CommonProvider `yaml:",inline"`
+	OrgName        string  `yaml:"org_name,omitempty"`
+	BaseURL        *string `yaml:"base_url,omitempty"`
 }
 
 // BlessProvider represents Bless ssh provider configuration
 type BlessProvider struct {
+	CommonProvider    `yaml:",inline"`
 	AdditionalRegions []string `yaml:"additional_regions,omitempty"`
 	AWSProfile        *string  `yaml:"aws_profile,omitempty"`
 	AWSRegion         string   `yaml:"aws_region,omitempty"`
@@ -241,25 +252,29 @@ type BlessProvider struct {
 }
 
 type HerokuProvider struct {
+	CommonProvider `yaml:",inline"`
 }
 
 type DatadogProvider struct {
+	CommonProvider `yaml:",inline"`
 }
 
 type SentryProvider struct {
-	Enabled bool
-	BaseURL *string `yaml:"base_url,omitempty"`
+	CommonProvider `yaml:",inline"`
+	BaseURL        *string `yaml:"base_url,omitempty"`
 }
 
 type TfeProvider struct {
-	Enabled  bool    `yaml:"enabled,omitempty"`
-	Hostname *string `yaml:"hostname,omitempty"`
+	CommonProvider `yaml:",inline"`
+	Hostname       *string `yaml:"hostname,omitempty"`
 }
 
 type KubernetesProvider struct {
+	CommonProvider `yaml:",inline"`
 }
 
 type GrafanaProvider struct {
+	CommonProvider `yaml:",inline"`
 }
 
 // BackendKind is a enum of backends we support
@@ -723,8 +738,17 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	var auth0Plan *Auth0Provider
 	auth0Config := v2.ResolveAuth0Provider(commons...)
-	if auth0Config != nil {
+	if auth0Config != nil && auth0Config.Enabled != nil && *auth0Config.Enabled {
+		customProvider := false
+		if auth0Config.CustomProvider != nil {
+			customProvider = *auth0Config.CustomProvider
+		}
 		auth0Plan = &Auth0Provider{
+			CommonProvider: CommonProvider{
+				Enabled:        *auth0Config.Enabled,
+				CustomProvider: customProvider,
+				Version:        *auth0Config.Version,
+			},
 			Domain: *auth0Config.Domain,
 		}
 
@@ -740,9 +764,17 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	var assertPlan *AssertProvider
 	assertConfig := v2.ResolveAssertProvider(commons...)
-	if assertConfig != nil {
+	if assertConfig != nil && assertConfig.Enabled != nil && *assertConfig.Enabled {
+		customProvider := false
+		if assertConfig.CustomProvider != nil {
+			customProvider = *assertConfig.CustomProvider
+		}
 		assertPlan = &AssertProvider{
-			Version: *assertConfig.Version,
+			CommonProvider: CommonProvider{
+				Version:        *assertConfig.Version,
+				Enabled:        *assertConfig.Enabled,
+				CustomProvider: customProvider,
+			},
 		}
 
 		providerVersions["assert"] = ProviderVersion{
@@ -753,11 +785,19 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	var githubPlan *GithubProvider
 	githubConfig := v2.ResolveGithubProvider(commons...)
-
-	if githubConfig != nil {
+	if githubConfig != nil && githubConfig.Enabled != nil && *githubConfig.Enabled {
+		customProvider := false
+		if githubConfig.CustomProvider != nil {
+			customProvider = *githubConfig.CustomProvider
+		}
 		githubPlan = &GithubProvider{
 			Organization: *githubConfig.Organization,
 			BaseURL:      githubConfig.BaseURL,
+			CommonProvider: CommonProvider{
+				Version:        *githubConfig.Version,
+				Enabled:        *githubConfig.Enabled,
+				CustomProvider: customProvider,
+			},
 		}
 
 		providerVersions["github"] = ProviderVersion{
@@ -768,11 +808,16 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	var snowflakePlan *SnowflakeProvider
 	snowflakeConfig := v2.ResolveSnowflakeProvider(commons...)
-	if snowflakeConfig != nil {
+	if snowflakeConfig != nil && snowflakeConfig.Enabled != nil && *snowflakeConfig.Enabled {
 		snowflakePlan = &SnowflakeProvider{
 			Account: *snowflakeConfig.Account,
 			Role:    *snowflakeConfig.Role,
 			Region:  *snowflakeConfig.Region,
+			CommonProvider: CommonProvider{
+				Version:        *snowflakeConfig.Version,
+				Enabled:        *snowflakeConfig.Enabled,
+				CustomProvider: *snowflakeConfig.CustomProvider,
+			},
 		}
 
 		providerVersions["snowflake"] = ProviderVersion{
@@ -783,10 +828,15 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	var oktaPlan *OktaProvider
 	oktaConfig := v2.ResolveOktaProvider(commons...)
-	if oktaConfig != nil {
+	if oktaConfig != nil && oktaConfig.Enabled != nil && *oktaConfig.Enabled {
 		oktaPlan = &OktaProvider{
 			OrgName: *oktaConfig.OrgName,
 			BaseURL: oktaConfig.BaseURL,
+			CommonProvider: CommonProvider{
+				Version:        *oktaConfig.Version,
+				Enabled:        *oktaConfig.Enabled,
+				CustomProvider: *oktaConfig.CustomProvider,
+			},
 		}
 
 		var registryNamespace string
@@ -804,12 +854,26 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	var blessPlan *BlessProvider
 	blessConfig := v2.ResolveBlessProvider(commons...)
-	if blessConfig != nil && (blessConfig.AWSProfile != nil || blessConfig.RoleArn != nil) && blessConfig.AWSRegion != nil {
+	if blessConfig != nil &&
+		(blessConfig.AWSProfile != nil || blessConfig.RoleArn != nil) &&
+		blessConfig.AWSRegion != nil &&
+		blessConfig.Enabled != nil &&
+		*blessConfig.Enabled {
+
+		customProvider := false
+		if blessConfig.CustomProvider != nil {
+			customProvider = *blessConfig.CustomProvider
+		}
 		blessPlan = &BlessProvider{
 			AWSProfile:        blessConfig.AWSProfile,
 			AWSRegion:         *blessConfig.AWSRegion,
 			AdditionalRegions: blessConfig.AdditionalRegions,
 			RoleArn:           blessConfig.RoleArn,
+			CommonProvider: CommonProvider{
+				Version:        *blessConfig.Version,
+				Enabled:        *blessConfig.Enabled,
+				CustomProvider: customProvider,
+			},
 		}
 
 		providerVersions["bless"] = ProviderVersion{
@@ -820,8 +884,14 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	var herokuPlan *HerokuProvider
 	herokuConfig := v2.ResolveHerokuProvider(commons...)
-	if herokuConfig != nil {
-		herokuPlan = &HerokuProvider{}
+	if herokuConfig != nil && herokuConfig.Enabled != nil && *herokuConfig.Enabled {
+		herokuPlan = &HerokuProvider{
+			CommonProvider: CommonProvider{
+				Version:        *herokuConfig.Version,
+				Enabled:        *herokuConfig.Enabled,
+				CustomProvider: *herokuConfig.CustomProvider,
+			},
+		}
 
 		providerVersions["heroku"] = ProviderVersion{
 			Source:  "heroku/heroku",
@@ -831,8 +901,14 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	var datadogPlan *DatadogProvider
 	datadogConfig := v2.ResolveDatadogProvider(commons...)
-	if datadogConfig != nil {
-		datadogPlan = &DatadogProvider{}
+	if datadogConfig != nil && datadogConfig.Enabled != nil && *datadogConfig.Enabled {
+		datadogPlan = &DatadogProvider{
+			CommonProvider: CommonProvider{
+				Version:        *datadogConfig.Version,
+				Enabled:        *datadogConfig.Enabled,
+				CustomProvider: *datadogConfig.CustomProvider,
+			},
+		}
 
 		providerVersions["datadog"] = ProviderVersion{
 			Source:  "datadog/datadog",
@@ -841,7 +917,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	}
 
 	pagerdutyConfig := v2.ResolvePagerdutyProvider(commons...)
-	if pagerdutyConfig != nil {
+	if pagerdutyConfig != nil && pagerdutyConfig.Enabled != nil && *pagerdutyConfig.Enabled {
 		providerVersions["pagerduty"] = ProviderVersion{
 			Source:  "pagerduty/pagerduty",
 			Version: pagerdutyConfig.Version,
@@ -849,7 +925,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	}
 
 	opsGenieConfig := v2.ResolveOpsGenieProvider(commons...)
-	if opsGenieConfig != nil {
+	if opsGenieConfig != nil && opsGenieConfig.Enabled != nil && *opsGenieConfig.Enabled {
 		providerVersions["opsgenie"] = ProviderVersion{
 			Source:  "opsgenie/opsgenie",
 			Version: opsGenieConfig.Version,
@@ -857,7 +933,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	}
 
 	databricksConfig := v2.ResolveDatabricksProvider(commons...)
-	if databricksConfig != nil {
+	if databricksConfig != nil && databricksConfig.Enabled != nil && *databricksConfig.Enabled {
 		providerVersions["databricks"] = ProviderVersion{
 			Source:  "databricks/databricks",
 			Version: databricksConfig.Version,
@@ -866,9 +942,13 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	var sentryPlan *SentryProvider
 	sentryConfig := v2.ResolveSentryProvider(commons...)
-	if sentryConfig != nil {
+	if sentryConfig != nil && sentryConfig.Enabled != nil && *sentryConfig.Enabled {
 		sentryPlan = &SentryProvider{
-			Enabled: true,
+			CommonProvider: CommonProvider{
+				Version:        *sentryConfig.Version,
+				Enabled:        *sentryConfig.Enabled,
+				CustomProvider: *sentryConfig.CustomProvider,
+			},
 			BaseURL: sentryConfig.BaseURL,
 		}
 
@@ -881,9 +961,13 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	var tfePlan *TfeProvider
 
 	tfeConfig := v2.ResolveTfeProvider(commons...)
-	if tfeConfig.Enabled != nil && *tfeConfig.Enabled {
+	if tfeConfig != nil && tfeConfig.Enabled != nil && *tfeConfig.Enabled {
 		tfePlan = &TfeProvider{
-			Enabled:  true,
+			CommonProvider: CommonProvider{
+				Version:        *tfeConfig.Version,
+				Enabled:        *tfeConfig.Enabled,
+				CustomProvider: *tfeConfig.CustomProvider,
+			},
 			Hostname: tfeConfig.Hostname,
 		}
 
@@ -896,8 +980,14 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	var k8sPlan *KubernetesProvider
 
 	k8sConfig := v2.ResolveKubernetesProvider(commons...)
-	if k8sConfig.Enabled != nil && *k8sConfig.Enabled {
-		k8sPlan = &KubernetesProvider{}
+	if k8sConfig != nil && k8sConfig.Enabled != nil && *k8sConfig.Enabled {
+		k8sPlan = &KubernetesProvider{
+			CommonProvider: CommonProvider{
+				Version:        *k8sConfig.Version,
+				Enabled:        *k8sConfig.Enabled,
+				CustomProvider: *k8sConfig.CustomProvider,
+			},
+		}
 
 		providerVersions["kubernetes"] = ProviderVersion{
 			Source:  "hashicorp/kubernetes",
@@ -908,8 +998,14 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	var grafanaPlan *GrafanaProvider
 
 	grafanaConfig := v2.ResolveGrafanaProvider(commons...)
-	if grafanaConfig.Enabled != nil && *grafanaConfig.Enabled {
-		grafanaPlan = &GrafanaProvider{}
+	if grafanaConfig != nil && grafanaConfig.Enabled != nil && *grafanaConfig.Enabled {
+		grafanaPlan = &GrafanaProvider{
+			CommonProvider: CommonProvider{
+				Version:        *grafanaConfig.Version,
+				Enabled:        *grafanaConfig.Enabled,
+				CustomProvider: *grafanaConfig.CustomProvider,
+			},
+		}
 
 		providerVersions["grafana"] = ProviderVersion{
 			Source:  "grafana/grafana",
