@@ -6,9 +6,6 @@ provider "snowflake" {
   role    = "bar"
   region  = "us-west-2"
 }
-
-provider "tfe" {
-}
 terraform {
   required_version = "=1.1.1"
 
@@ -71,13 +68,6 @@ terraform {
       source = "Snowflake-Labs/snowflake"
 
       version = "0.55.1"
-
-    }
-
-    tfe = {
-      source = "hashicorp/tfe"
-
-      version = "0.41.0"
 
     }
 

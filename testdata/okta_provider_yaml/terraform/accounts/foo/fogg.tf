@@ -5,9 +5,6 @@ provider "okta" {
   org_name = "orgname"
   base_url = "oktapreview.com"
 }
-
-provider "tfe" {
-}
 terraform {
   required_version = "=1.1.1"
 
@@ -70,13 +67,6 @@ terraform {
       source = "hashicorp/random"
 
       version = "~> 3.4"
-
-    }
-
-    tfe = {
-      source = "hashicorp/tfe"
-
-      version = "0.41.0"
 
     }
 

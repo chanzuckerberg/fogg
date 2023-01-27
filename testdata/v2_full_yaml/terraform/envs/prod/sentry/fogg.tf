@@ -10,9 +10,6 @@ provider "aws" {
 # Aliased Providers (for doing things in every region).
 
 
-provider "tfe" {
-}
-
 provider "sentry" {
 }
 terraform {
@@ -84,13 +81,6 @@ terraform {
       source = "jianyuan/sentry"
 
       version = "1.2.3"
-
-    }
-
-    tfe = {
-      source = "hashicorp/tfe"
-
-      version = "0.41.0"
 
     }
 

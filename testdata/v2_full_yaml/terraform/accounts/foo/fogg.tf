@@ -18,9 +18,6 @@ provider "bless" {
   region  = "us-west-2"
   profile = "prof"
 }
-
-provider "tfe" {
-}
 terraform {
   required_version = "=0.100.0"
 
@@ -90,13 +87,6 @@ terraform {
       source = "hashicorp/random"
 
       version = "~> 3.4"
-
-    }
-
-    tfe = {
-      source = "hashicorp/tfe"
-
-      version = "0.41.0"
 
     }
 

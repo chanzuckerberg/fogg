@@ -516,7 +516,7 @@ func ResolveSentryProvider(commons ...Common) *SentryProvider {
 
 func ResolveTfeProvider(commons ...Common) *TfeProvider {
 	var version *string
-	enabled := defaultEnabled(true)
+	var enabled *bool
 	var hostname *string
 
 	for _, c := range commons {
