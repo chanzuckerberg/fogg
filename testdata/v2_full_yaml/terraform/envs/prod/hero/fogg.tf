@@ -55,6 +55,13 @@ terraform {
 
     }
 
+    heroku = {
+      source = "heroku/heroku"
+
+      version = "5.1.10"
+
+    }
+
     local = {
       source = "hashicorp/local"
 

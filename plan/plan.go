@@ -738,7 +738,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	var auth0Plan *Auth0Provider
 	auth0Config := v2.ResolveAuth0Provider(commons...)
-	if auth0Config != nil && auth0Config.Enabled != nil && *auth0Config.Enabled {
+	if auth0Config != nil && (auth0Config.Enabled == nil || (auth0Config.Enabled != nil && *auth0Config.Enabled)) {
 		customProvider := false
 		if auth0Config.CustomProvider != nil {
 			customProvider = *auth0Config.CustomProvider
@@ -755,7 +755,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 		auth0Plan = &Auth0Provider{
 			CommonProvider: CommonProvider{
-				Enabled:        *auth0Config.Enabled,
+				Enabled:        auth0Config.Enabled == nil || (auth0Config.Enabled != nil && *auth0Config.Enabled),
 				CustomProvider: customProvider,
 				Version:        version,
 			},
@@ -770,7 +770,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	var assertPlan *AssertProvider
 	assertConfig := v2.ResolveAssertProvider(commons...)
-	if assertConfig != nil && assertConfig.Enabled != nil && *assertConfig.Enabled {
+	if assertConfig != nil && (assertConfig.Enabled == nil || (assertConfig.Enabled != nil && *assertConfig.Enabled)) {
 		customProvider := false
 		if assertConfig.CustomProvider != nil {
 			customProvider = *assertConfig.CustomProvider
@@ -782,7 +782,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		assertPlan = &AssertProvider{
 			CommonProvider: CommonProvider{
 				Version:        version,
-				Enabled:        *assertConfig.Enabled,
+				Enabled:        assertConfig.Enabled == nil || (assertConfig.Enabled != nil && *assertConfig.Enabled),
 				CustomProvider: customProvider,
 			},
 		}
@@ -795,7 +795,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	var githubPlan *GithubProvider
 	githubConfig := v2.ResolveGithubProvider(commons...)
-	if githubConfig != nil && githubConfig.Enabled != nil && *githubConfig.Enabled {
+	if githubConfig != nil && (githubConfig.Enabled == nil || (githubConfig.Enabled != nil && *githubConfig.Enabled)) {
 		customProvider := false
 		if githubConfig.CustomProvider != nil {
 			customProvider = *githubConfig.CustomProvider
@@ -810,7 +810,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			BaseURL:      githubConfig.BaseURL,
 			CommonProvider: CommonProvider{
 				Version:        version,
-				Enabled:        *githubConfig.Enabled,
+				Enabled:        githubConfig.Enabled == nil || (githubConfig.Enabled != nil && *githubConfig.Enabled),
 				CustomProvider: customProvider,
 			},
 		}
@@ -823,7 +823,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	var snowflakePlan *SnowflakeProvider
 	snowflakeConfig := v2.ResolveSnowflakeProvider(commons...)
-	if snowflakeConfig != nil && snowflakeConfig.Enabled != nil && *snowflakeConfig.Enabled {
+	if snowflakeConfig != nil && (snowflakeConfig.Enabled == nil || (snowflakeConfig.Enabled != nil && *snowflakeConfig.Enabled)) {
 		customProvider := false
 		if snowflakeConfig.CustomProvider != nil {
 			customProvider = *snowflakeConfig.CustomProvider
@@ -838,7 +838,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Region:  *snowflakeConfig.Region,
 			CommonProvider: CommonProvider{
 				Version:        version,
-				Enabled:        *snowflakeConfig.Enabled,
+				Enabled:        snowflakeConfig.Enabled == nil || (snowflakeConfig.Enabled != nil && *snowflakeConfig.Enabled),
 				CustomProvider: customProvider,
 			},
 		}
@@ -851,7 +851,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	var oktaPlan *OktaProvider
 	oktaConfig := v2.ResolveOktaProvider(commons...)
-	if oktaConfig != nil && oktaConfig.Enabled != nil && *oktaConfig.Enabled {
+	if oktaConfig != nil && (oktaConfig.Enabled == nil || (oktaConfig.Enabled != nil && *oktaConfig.Enabled)) {
 		customProvider := false
 		if oktaConfig.CustomProvider != nil {
 			customProvider = *oktaConfig.CustomProvider
@@ -865,7 +865,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			BaseURL: oktaConfig.BaseURL,
 			CommonProvider: CommonProvider{
 				Version:        version,
-				Enabled:        *oktaConfig.Enabled,
+				Enabled:        oktaConfig.Enabled == nil || (oktaConfig.Enabled != nil && *oktaConfig.Enabled),
 				CustomProvider: customProvider,
 			},
 		}
@@ -888,8 +888,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	if blessConfig != nil &&
 		(blessConfig.AWSProfile != nil || blessConfig.RoleArn != nil) &&
 		blessConfig.AWSRegion != nil &&
-		blessConfig.Enabled != nil &&
-		*blessConfig.Enabled {
+		(blessConfig.Enabled == nil || (blessConfig.Enabled != nil && *blessConfig.Enabled)) {
 
 		customProvider := false
 		if blessConfig.CustomProvider != nil {
@@ -906,7 +905,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			RoleArn:           blessConfig.RoleArn,
 			CommonProvider: CommonProvider{
 				Version:        version,
-				Enabled:        *blessConfig.Enabled,
+				Enabled:        (blessConfig.Enabled == nil || (blessConfig.Enabled != nil && *blessConfig.Enabled)),
 				CustomProvider: customProvider,
 			},
 		}
@@ -919,7 +918,8 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	var herokuPlan *HerokuProvider
 	herokuConfig := v2.ResolveHerokuProvider(commons...)
-	if herokuConfig != nil && herokuConfig.Enabled != nil && *herokuConfig.Enabled {
+	// Not a fan but if enabled is not there or if it explicityly says enabled true
+	if herokuConfig != nil && (herokuConfig.Enabled == nil || (herokuConfig.Enabled != nil && *herokuConfig.Enabled)) {
 		customProvider := false
 		if herokuConfig.CustomProvider != nil {
 			customProvider = *herokuConfig.CustomProvider
@@ -931,7 +931,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		herokuPlan = &HerokuProvider{
 			CommonProvider: CommonProvider{
 				Version:        version,
-				Enabled:        *herokuConfig.Enabled,
+				Enabled:        herokuConfig.Enabled == nil || (herokuConfig.Enabled != nil && *herokuConfig.Enabled),
 				CustomProvider: customProvider,
 			},
 		}
@@ -944,7 +944,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	var datadogPlan *DatadogProvider
 	datadogConfig := v2.ResolveDatadogProvider(commons...)
-	if datadogConfig != nil && datadogConfig.Enabled != nil && *datadogConfig.Enabled {
+	if datadogConfig != nil && (datadogConfig.Enabled == nil || (datadogConfig.Enabled != nil && *datadogConfig.Enabled)) {
 		customProvider := false
 		if datadogConfig.CustomProvider != nil {
 			customProvider = *datadogConfig.CustomProvider
@@ -956,7 +956,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		datadogPlan = &DatadogProvider{
 			CommonProvider: CommonProvider{
 				Version:        version,
-				Enabled:        *datadogConfig.Enabled,
+				Enabled:        datadogConfig.Enabled == nil || (datadogConfig.Enabled != nil && *datadogConfig.Enabled),
 				CustomProvider: customProvider,
 			},
 		}
@@ -968,7 +968,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	}
 
 	pagerdutyConfig := v2.ResolvePagerdutyProvider(commons...)
-	if pagerdutyConfig != nil && pagerdutyConfig.Enabled != nil && *pagerdutyConfig.Enabled {
+	if pagerdutyConfig != nil && (pagerdutyConfig.Enabled == nil || (pagerdutyConfig.Enabled != nil && *pagerdutyConfig.Enabled)) {
 		providerVersions["pagerduty"] = ProviderVersion{
 			Source:  "pagerduty/pagerduty",
 			Version: pagerdutyConfig.Version,
@@ -976,7 +976,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	}
 
 	opsGenieConfig := v2.ResolveOpsGenieProvider(commons...)
-	if opsGenieConfig != nil && opsGenieConfig.Enabled != nil && *opsGenieConfig.Enabled {
+	if opsGenieConfig != nil && (opsGenieConfig.Enabled == nil || (opsGenieConfig.Enabled != nil && *opsGenieConfig.Enabled)) {
 		providerVersions["opsgenie"] = ProviderVersion{
 			Source:  "opsgenie/opsgenie",
 			Version: opsGenieConfig.Version,
@@ -984,7 +984,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	}
 
 	databricksConfig := v2.ResolveDatabricksProvider(commons...)
-	if databricksConfig != nil && databricksConfig.Enabled != nil && *databricksConfig.Enabled {
+	if databricksConfig != nil && (databricksConfig.Enabled == nil || (databricksConfig.Enabled != nil && *databricksConfig.Enabled)) {
 		providerVersions["databricks"] = ProviderVersion{
 			Source:  "databricks/databricks",
 			Version: databricksConfig.Version,
@@ -993,7 +993,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 	var sentryPlan *SentryProvider
 	sentryConfig := v2.ResolveSentryProvider(commons...)
-	if sentryConfig != nil && sentryConfig.Enabled != nil && *sentryConfig.Enabled {
+	if sentryConfig != nil && (sentryConfig.Enabled == nil || (sentryConfig.Enabled != nil && *sentryConfig.Enabled)) {
 		customProvider := false
 		if sentryConfig.CustomProvider != nil {
 			customProvider = *sentryConfig.CustomProvider
@@ -1005,7 +1005,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		sentryPlan = &SentryProvider{
 			CommonProvider: CommonProvider{
 				Version:        version,
-				Enabled:        *sentryConfig.Enabled,
+				Enabled:        sentryConfig.Enabled == nil || (sentryConfig.Enabled != nil && *sentryConfig.Enabled),
 				CustomProvider: customProvider,
 			},
 			BaseURL: sentryConfig.BaseURL,
@@ -1020,7 +1020,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	var tfePlan *TfeProvider
 
 	tfeConfig := v2.ResolveTfeProvider(commons...)
-	if tfeConfig != nil && tfeConfig.Enabled != nil && *tfeConfig.Enabled {
+	if tfeConfig != nil && (tfeConfig.Enabled == nil || (tfeConfig.Enabled != nil && *tfeConfig.Enabled)) {
 		customProvider := false
 		if tfeConfig.CustomProvider != nil {
 			customProvider = *tfeConfig.CustomProvider
@@ -1032,7 +1032,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		tfePlan = &TfeProvider{
 			CommonProvider: CommonProvider{
 				Version:        version,
-				Enabled:        *tfeConfig.Enabled,
+				Enabled:        tfeConfig.Enabled == nil || (tfeConfig.Enabled != nil && *tfeConfig.Enabled),
 				CustomProvider: customProvider,
 			},
 			Hostname: tfeConfig.Hostname,
@@ -1047,7 +1047,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	var k8sPlan *KubernetesProvider
 
 	k8sConfig := v2.ResolveKubernetesProvider(commons...)
-	if k8sConfig != nil && k8sConfig.Enabled != nil && *k8sConfig.Enabled {
+	if k8sConfig != nil && (k8sConfig.Enabled == nil || (k8sConfig.Enabled != nil && *k8sConfig.Enabled)) {
 		customProvider := false
 		if k8sConfig.CustomProvider != nil {
 			customProvider = *k8sConfig.CustomProvider
@@ -1059,7 +1059,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		k8sPlan = &KubernetesProvider{
 			CommonProvider: CommonProvider{
 				Version:        version,
-				Enabled:        *k8sConfig.Enabled,
+				Enabled:        k8sConfig.Enabled == nil || (k8sConfig.Enabled != nil && *k8sConfig.Enabled),
 				CustomProvider: customProvider,
 			},
 		}
@@ -1073,7 +1073,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	var grafanaPlan *GrafanaProvider
 
 	grafanaConfig := v2.ResolveGrafanaProvider(commons...)
-	if grafanaConfig != nil && grafanaConfig.Enabled != nil && *grafanaConfig.Enabled {
+	if grafanaConfig != nil && (grafanaConfig.Enabled == nil || (grafanaConfig.Enabled != nil && *grafanaConfig.Enabled)) {
 		customProvider := false
 		if grafanaConfig.CustomProvider != nil {
 			customProvider = *grafanaConfig.CustomProvider
@@ -1085,7 +1085,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		grafanaPlan = &GrafanaProvider{
 			CommonProvider: CommonProvider{
 				Version:        version,
-				Enabled:        *grafanaConfig.Enabled,
+				Enabled:        grafanaConfig.Enabled == nil || (grafanaConfig.Enabled != nil && *grafanaConfig.Enabled),
 				CustomProvider: customProvider,
 			},
 		}

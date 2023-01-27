@@ -381,6 +381,9 @@ func ResolveHerokuProvider(commons ...Common) *HerokuProvider {
 			continue
 		}
 		p = c.Providers.Heroku
+		if p.CustomProvider == nil {
+			p.CustomProvider = defaultEnabled(true)
+		}
 	}
 
 	version := lastNonNil(HerokuProviderVersionGetter, commons...)
@@ -515,6 +518,13 @@ func ResolveSentryProvider(commons ...Common) *SentryProvider {
 }
 
 func ResolveTfeProvider(commons ...Common) *TfeProvider {
+	var p *TfeProvider
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.Tfe == nil {
+			continue
+		}
+		p = c.Providers.Tfe
+	}
 	var version *string
 	var enabled *bool
 	var hostname *string
@@ -537,17 +547,27 @@ func ResolveTfeProvider(commons ...Common) *TfeProvider {
 		}
 	}
 
-	return &TfeProvider{
-		CommonProvider: CommonProvider{
-			CustomProvider: lastNonNilBool(TFEProviderCustomProviderGetter, commons...),
-			Enabled:        enabled,
-			Version:        version,
-		},
-		Hostname: hostname,
+	if version != nil {
+		return &TfeProvider{
+			CommonProvider: CommonProvider{
+				CustomProvider: lastNonNilBool(TFEProviderCustomProviderGetter, commons...),
+				Enabled:        enabled,
+				Version:        version,
+			},
+			Hostname: hostname,
+		}
 	}
+	return p
 }
 
 func ResolveKubernetesProvider(commons ...Common) *KubernetesProvider {
+	var p *KubernetesProvider
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.Kubernetes == nil {
+			continue
+		}
+		p = c.Providers.Kubernetes
+	}
 	var version *string
 	var enabled *bool
 
@@ -565,16 +585,26 @@ func ResolveKubernetesProvider(commons ...Common) *KubernetesProvider {
 		}
 	}
 
-	return &KubernetesProvider{
-		CommonProvider: CommonProvider{
-			CustomProvider: lastNonNilBool(KubernetesProviderCustomProviderGetter, commons...),
-			Enabled:        enabled,
-			Version:        version,
-		},
+	if version != nil {
+		return &KubernetesProvider{
+			CommonProvider: CommonProvider{
+				CustomProvider: lastNonNilBool(KubernetesProviderCustomProviderGetter, commons...),
+				Enabled:        enabled,
+				Version:        version,
+			},
+		}
 	}
+	return p
 }
 
 func ResolveGrafanaProvider(commons ...Common) *GrafanaProvider {
+	var p *GrafanaProvider
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.Grafana == nil {
+			continue
+		}
+		p = c.Providers.Grafana
+	}
 	var version *string
 	var enabled *bool
 
@@ -592,13 +622,16 @@ func ResolveGrafanaProvider(commons ...Common) *GrafanaProvider {
 		}
 	}
 
-	return &GrafanaProvider{
-		CommonProvider: CommonProvider{
-			CustomProvider: lastNonNilBool(GrafanaProviderCustomProviderGetter, commons...),
-			Enabled:        enabled,
-			Version:        version,
-		},
+	if version != nil {
+		return &GrafanaProvider{
+			CommonProvider: CommonProvider{
+				CustomProvider: lastNonNilBool(GrafanaProviderCustomProviderGetter, commons...),
+				Enabled:        enabled,
+				Version:        version,
+			},
+		}
 	}
+	return p
 }
 
 func ResolveTfLint(commons ...Common) TfLint {

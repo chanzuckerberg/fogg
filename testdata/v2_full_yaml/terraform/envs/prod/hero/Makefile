@@ -12,7 +12,7 @@ export AWS_BACKEND_PROFILE := profile
 
 export AWS_PROVIDER_PROFILE := profile
 
-
+export HEROKU_PROVIDER := 1
 
 
 include ../../../..//scripts/component.mk

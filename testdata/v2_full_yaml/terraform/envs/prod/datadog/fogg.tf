@@ -11,6 +11,8 @@ provider "aws" {
 
 
 provider "assert" {}
+
+provider "datadog" {}
 terraform {
   required_version = "=0.100.0"
 
@@ -45,6 +47,13 @@ terraform {
       source = "hashicorp/aws"
 
       version = "0.12.0"
+
+    }
+
+    datadog = {
+      source = "datadog/datadog"
+
+      version = "3.20.0"
 
     }
 
