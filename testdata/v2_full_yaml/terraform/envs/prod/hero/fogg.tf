@@ -11,6 +11,9 @@ provider "aws" {
 
 
 provider "assert" {}
+
+provider "heroku" {}
+
 terraform {
   required_version = "=0.100.0"
 

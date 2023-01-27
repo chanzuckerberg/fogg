@@ -382,7 +382,7 @@ func ResolveHerokuProvider(commons ...Common) *HerokuProvider {
 		}
 		p = c.Providers.Heroku
 		if p.CustomProvider == nil {
-			p.CustomProvider = defaultEnabled(true)
+			p.CustomProvider = defaultEnabled(false)
 		}
 	}
 
@@ -407,6 +407,9 @@ func ResolveDatadogProvider(commons ...Common) *DatadogProvider {
 			continue
 		}
 		p = c.Providers.Datadog
+		if p.CustomProvider == nil {
+			p.CustomProvider = defaultEnabled(false)
+		}
 	}
 
 	version := lastNonNil(DatadogProviderVersionGetter, commons...)
@@ -430,6 +433,9 @@ func ResolvePagerdutyProvider(commons ...Common) *PagerdutyProvider {
 			continue
 		}
 		p = c.Providers.Pagerduty
+		if p.CustomProvider == nil {
+			p.CustomProvider = defaultEnabled(false)
+		}
 	}
 
 	version := lastNonNil(PagerdutyProviderVersionGetter, commons...)
@@ -453,6 +459,9 @@ func ResolveOpsGenieProvider(commons ...Common) *OpsGenieProvider {
 			continue
 		}
 		p = c.Providers.OpsGenie
+		if p.CustomProvider == nil {
+			p.CustomProvider = defaultEnabled(false)
+		}
 	}
 
 	version := lastNonNil(OpsGenieProviderVersionGetter, commons...)
@@ -495,10 +504,13 @@ func ResolveDatabricksProvider(commons ...Common) *DatabricksProvider {
 func ResolveSentryProvider(commons ...Common) *SentryProvider {
 	var p *SentryProvider
 	for _, c := range commons {
-		if c.Providers == nil || c.Providers.Datadog == nil {
+		if c.Providers == nil || c.Providers.Sentry == nil {
 			continue
 		}
 		p = c.Providers.Sentry
+		if p.CustomProvider == nil {
+			p.CustomProvider = defaultEnabled(false)
+		}
 	}
 
 	version := lastNonNil(SentryProviderVersionGetter, commons...)
@@ -524,6 +536,9 @@ func ResolveTfeProvider(commons ...Common) *TfeProvider {
 			continue
 		}
 		p = c.Providers.Tfe
+		if p.CustomProvider == nil {
+			p.CustomProvider = defaultEnabled(false)
+		}
 	}
 	var version *string
 	var enabled *bool
@@ -567,6 +582,9 @@ func ResolveKubernetesProvider(commons ...Common) *KubernetesProvider {
 			continue
 		}
 		p = c.Providers.Kubernetes
+		if p.CustomProvider == nil {
+			p.CustomProvider = defaultEnabled(false)
+		}
 	}
 	var version *string
 	var enabled *bool
@@ -604,6 +622,9 @@ func ResolveGrafanaProvider(commons ...Common) *GrafanaProvider {
 			continue
 		}
 		p = c.Providers.Grafana
+		if p.CustomProvider == nil {
+			p.CustomProvider = defaultEnabled(false)
+		}
 	}
 	var version *string
 	var enabled *bool
