@@ -160,16 +160,13 @@ func ResolveAssertProvider(commons ...Common) *AssertProvider {
 		}
 	}
 
-	if version != nil {
-		return &AssertProvider{
-			CommonProvider: CommonProvider{
-				Enabled:        enabled,
-				Version:        version,
-				CustomProvider: customProvider,
-			},
-		}
+	return &AssertProvider{
+		CommonProvider: CommonProvider{
+			Enabled:        enabled,
+			Version:        version,
+			CustomProvider: customProvider,
+		},
 	}
-	return nil
 }
 
 // ResolveAWSProvider will return an AWSProvder if one of the required fields is set somewhere in
@@ -519,7 +516,7 @@ func ResolveSentryProvider(commons ...Common) *SentryProvider {
 
 func ResolveTfeProvider(commons ...Common) *TfeProvider {
 	var version *string
-	var enabled *bool
+	enabled := defaultEnabled(true)
 	var hostname *string
 
 	for _, c := range commons {

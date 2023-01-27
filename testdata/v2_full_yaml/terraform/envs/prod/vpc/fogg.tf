@@ -9,6 +9,9 @@ provider "aws" {
 }
 # Aliased Providers (for doing things in every region).
 
+
+provider "tfe" {
+}
 terraform {
   required_version = "=0.100.0"
 
@@ -35,7 +38,7 @@ terraform {
     assert = {
       source = "bwoznicki/assert"
 
-      version = "~> 0.0.1"
+      version = "0.0.1"
 
     }
 
@@ -71,6 +74,13 @@ terraform {
       source = "hashicorp/random"
 
       version = "~> 3.4"
+
+    }
+
+    tfe = {
+      source = "hashicorp/tfe"
+
+      version = "0.41.0"
 
     }
 

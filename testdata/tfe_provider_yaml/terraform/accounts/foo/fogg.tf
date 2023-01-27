@@ -29,7 +29,7 @@ terraform {
     assert = {
       source = "bwoznicki/assert"
 
-      version = "~> 0.0.1"
+      version = "0.0.1"
 
     }
 

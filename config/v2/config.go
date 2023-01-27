@@ -148,7 +148,6 @@ type Providers struct {
 
 type AssertProvider struct {
 	CommonProvider `yaml:",inline"`
-	Version        *string `yaml:"version,omitempty"`
 }
 
 // CommonProvider encapsulates common properties across providers
