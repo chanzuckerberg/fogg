@@ -220,7 +220,9 @@ func TestValidateAWSProvider(t *testing.T) {
 		AccountID: util.JSONNumberPtr(123456),
 		Profile:   util.StrPtr("my-profile"),
 		Region:    util.StrPtr("us-sw-12"),
-		Version:   util.StrPtr("1.1.1"),
+		CommonProvider: CommonProvider{
+			Version: util.StrPtr("1.1.1"),
+		},
 	}
 
 	invalidNothing := &AWSProvider{}
@@ -229,14 +231,18 @@ func TestValidateAWSProvider(t *testing.T) {
 		Profile:   util.StrPtr("my-profile-name"),
 		Role:      util.StrPtr("my-role-name"),
 		Region:    util.StrPtr("us-sw-12"),
-		Version:   util.StrPtr("1.1.1"),
+		CommonProvider: CommonProvider{
+			Version: util.StrPtr("1.1.1"),
+		},
 	}
 
 	validRole := &AWSProvider{
 		AccountID: util.JSONNumberPtr(123456),
 		Role:      util.StrPtr("my-role-name"),
 		Region:    util.StrPtr("us-sw-12"),
-		Version:   util.StrPtr("1.1.1"),
+		CommonProvider: CommonProvider{
+			Version: util.StrPtr("1.1.1"),
+		},
 	}
 
 	type args struct {

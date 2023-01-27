@@ -10,7 +10,10 @@ provider "aws" {
 # Aliased Providers (for doing things in every region).
 
 
+provider "assert" {}
+
 provider "heroku" {}
+
 terraform {
   required_version = "=0.100.0"
 
@@ -37,7 +40,7 @@ terraform {
     assert = {
       source = "bwoznicki/assert"
 
-      version = "~> 0.0.1"
+      version = "0.0.1"
 
     }
 
@@ -57,6 +60,8 @@ terraform {
 
     heroku = {
       source = "heroku/heroku"
+
+      version = "5.1.10"
 
     }
 

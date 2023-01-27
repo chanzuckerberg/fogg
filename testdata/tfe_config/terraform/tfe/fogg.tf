@@ -14,9 +14,7 @@ provider "aws" {
 # Aliased Providers (for doing things in every region).
 
 
-provider "tfe" {
-  hostname = "si.prod.tfe.czi.technology"
-}
+provider "assert" {}
 terraform {
   required_version = "=1.2.6"
 
@@ -41,7 +39,7 @@ terraform {
     assert = {
       source = "bwoznicki/assert"
 
-      version = "~> 0.0.1"
+      version = "0.0.1"
 
     }
 

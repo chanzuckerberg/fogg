@@ -7,6 +7,18 @@ import (
 )
 
 // lastNonNil, despite its name can return nil if all results are nil
+func lastNonNilBool(getter func(Common) *bool, commons ...Common) *bool {
+	var s *bool
+	for _, c := range commons {
+		t := getter(c)
+		if t != nil {
+			s = t
+		}
+	}
+	return s
+}
+
+// lastNonNil, despite its name can return nil if all results are nil
 func lastNonNil(getter func(Common) *string, commons ...Common) *string {
 	var s *string
 	for _, c := range commons {
@@ -79,14 +91,17 @@ func ResolveStringMap(getter func(Common) map[string]string, commons ...Common) 
 	return resolved
 }
 
+func defaultEnabled(a bool) *bool {
+	return &a
+}
+
 func ResolveAuth0Provider(commons ...Common) *Auth0Provider {
 	var domain, version, source *string
+	enabled := defaultEnabled(true)
+	customProvider := defaultEnabled(false)
 	for _, c := range commons {
 		if c.Providers == nil || c.Providers.Auth0 == nil {
 			continue
-		}
-		if c.Providers.Auth0.Version != nil {
-			version = c.Providers.Auth0.Version
 		}
 
 		if c.Providers.Auth0.Domain != nil {
@@ -96,16 +111,38 @@ func ResolveAuth0Provider(commons ...Common) *Auth0Provider {
 		if c.Providers.Auth0.Source != nil {
 			source = c.Providers.Auth0.Source
 		}
+
+		if c.Providers.Auth0.Enabled != nil {
+			enabled = c.Providers.Auth0.Enabled
+		}
+
+		if c.Providers.Auth0.Version != nil {
+			version = c.Providers.Auth0.Version
+		}
+
+		if c.Providers.Auth0.CustomProvider != nil {
+			customProvider = c.Providers.Auth0.CustomProvider
+		}
 	}
 
 	if domain != nil && version != nil {
-		return &Auth0Provider{Version: version, Domain: domain, Source: source}
+		return &Auth0Provider{
+			Domain: domain,
+			Source: source,
+			CommonProvider: CommonProvider{
+				CustomProvider: customProvider,
+				Enabled:        enabled,
+				Version:        version,
+			},
+		}
 	}
 	return nil
 }
 
 func ResolveAssertProvider(commons ...Common) *AssertProvider {
 	var version *string
+	enabled := defaultEnabled(true)
+	customProvider := defaultEnabled(false)
 	for _, c := range commons {
 		if c.Providers == nil || c.Providers.Assert == nil {
 			continue
@@ -113,12 +150,23 @@ func ResolveAssertProvider(commons ...Common) *AssertProvider {
 		if c.Providers.Assert.Version != nil {
 			version = c.Providers.Assert.Version
 		}
+
+		if c.Providers.Assert.Enabled != nil {
+			enabled = c.Providers.Assert.Enabled
+		}
+
+		if c.Providers.Assert.CustomProvider != nil {
+			customProvider = c.Providers.Assert.CustomProvider
+		}
 	}
 
-	if version != nil {
-		return &AssertProvider{Version: version}
+	return &AssertProvider{
+		CommonProvider: CommonProvider{
+			Enabled:        enabled,
+			Version:        version,
+			CustomProvider: customProvider,
+		},
 	}
-	return nil
 }
 
 // ResolveAWSProvider will return an AWSProvder if one of the required fields is set somewhere in
@@ -171,7 +219,10 @@ func ResolveAWSProvider(commons ...Common) *AWSProvider {
 			Profile: profile,
 			Region:  region,
 			Role:    role,
-			Version: version,
+			CommonProvider: CommonProvider{
+				Enabled: defaultEnabled(true),
+				Version: version,
+			},
 
 			// optional fields
 			AccountID:           accountID,
@@ -238,8 +289,8 @@ func ResolveBackend(commons ...Common) *Backend {
 // ResolveGithubProvider will return an GithubProvder iff one of the required fields is set somewhere in the set of Common
 // config objects passed in. Otherwise it will return nil.
 func ResolveGithubProvider(commons ...Common) *GithubProvider {
+	enabled := defaultEnabled(true)
 	org := lastNonNil(GithubProviderOrganizationGetter, commons...)
-
 	if org == nil {
 		return nil
 	}
@@ -249,7 +300,11 @@ func ResolveGithubProvider(commons ...Common) *GithubProvider {
 
 		// optional fields
 		BaseURL: lastNonNil(GithubProviderBaseURLGetter, commons...),
-		Version: lastNonNil(GithubProviderVersionGetter, commons...),
+		CommonProvider: CommonProvider{
+			Enabled:        enabled,
+			CustomProvider: lastNonNilBool(GithubProviderCustomProviderGetter, commons...),
+			Version:        lastNonNil(GithubProviderVersionGetter, commons...),
+		},
 	}
 }
 
@@ -264,7 +319,11 @@ func ResolveSnowflakeProvider(commons ...Common) *SnowflakeProvider {
 			Account: account,
 			Role:    role,
 			Region:  region,
-			Version: version,
+			CommonProvider: CommonProvider{
+				CustomProvider: lastNonNilBool(SnowflakeProviderCustomProviderGetter, commons...),
+				Enabled:        defaultEnabled(true),
+				Version:        version,
+			},
 		}
 	}
 	return nil
@@ -282,9 +341,13 @@ func ResolveOktaProvider(commons ...Common) *OktaProvider {
 
 	return &OktaProvider{
 		OrgName:           orgName,
-		Version:           lastNonNil(OktaProviderVersionGetter, commons...),
 		BaseURL:           baseURL,
 		RegistryNamespace: registryNamespace,
+		CommonProvider: CommonProvider{
+			CustomProvider: lastNonNilBool(OktaProviderCustomProviderGetter, commons...),
+			Enabled:        defaultEnabled(true),
+			Version:        lastNonNil(OktaProviderVersionGetter, commons...),
+		},
 	}
 }
 
@@ -302,8 +365,11 @@ func ResolveBlessProvider(commons ...Common) *BlessProvider {
 		AWSProfile: profile,
 		AWSRegion:  region,
 		RoleArn:    roleArn,
-
-		Version:           lastNonNil(BlessProviderVersionGetter, commons...),
+		CommonProvider: CommonProvider{
+			CustomProvider: lastNonNilBool(BlessProviderCustomProviderGetter, commons...),
+			Enabled:        defaultEnabled(true),
+			Version:        lastNonNil(BlessProviderVersionGetter, commons...),
+		},
 		AdditionalRegions: ResolveOptionalStringSlice(BlessProviderAdditionalRegionsGetter, commons...),
 	}
 }
@@ -315,13 +381,20 @@ func ResolveHerokuProvider(commons ...Common) *HerokuProvider {
 			continue
 		}
 		p = c.Providers.Heroku
+		if p.CustomProvider == nil {
+			p.CustomProvider = defaultEnabled(false)
+		}
 	}
 
 	version := lastNonNil(HerokuProviderVersionGetter, commons...)
 
 	if version != nil {
 		return &HerokuProvider{
-			Version: version,
+			CommonProvider: CommonProvider{
+				CustomProvider: lastNonNilBool(HerokuProviderCustomProviderGetter, commons...),
+				Enabled:        defaultEnabled(true),
+				Version:        version,
+			},
 		}
 	}
 	return p
@@ -334,13 +407,20 @@ func ResolveDatadogProvider(commons ...Common) *DatadogProvider {
 			continue
 		}
 		p = c.Providers.Datadog
+		if p.CustomProvider == nil {
+			p.CustomProvider = defaultEnabled(false)
+		}
 	}
 
 	version := lastNonNil(DatadogProviderVersionGetter, commons...)
 
 	if version != nil {
 		return &DatadogProvider{
-			Version: version,
+			CommonProvider: CommonProvider{
+				CustomProvider: lastNonNilBool(DatadogProviderCustomProviderGetter, commons...),
+				Enabled:        defaultEnabled(true),
+				Version:        version,
+			},
 		}
 	}
 	return p
@@ -353,13 +433,20 @@ func ResolvePagerdutyProvider(commons ...Common) *PagerdutyProvider {
 			continue
 		}
 		p = c.Providers.Pagerduty
+		if p.CustomProvider == nil {
+			p.CustomProvider = defaultEnabled(false)
+		}
 	}
 
 	version := lastNonNil(PagerdutyProviderVersionGetter, commons...)
 
 	if version != nil {
 		return &PagerdutyProvider{
-			Version: version,
+			CommonProvider: CommonProvider{
+				CustomProvider: lastNonNilBool(PagerDutyProviderCustomProviderGetter, commons...),
+				Enabled:        defaultEnabled(true),
+				Version:        version,
+			},
 		}
 	}
 	return p
@@ -372,13 +459,20 @@ func ResolveOpsGenieProvider(commons ...Common) *OpsGenieProvider {
 			continue
 		}
 		p = c.Providers.OpsGenie
+		if p.CustomProvider == nil {
+			p.CustomProvider = defaultEnabled(false)
+		}
 	}
 
 	version := lastNonNil(OpsGenieProviderVersionGetter, commons...)
 
 	if version != nil {
 		return &OpsGenieProvider{
-			Version: version,
+			CommonProvider: CommonProvider{
+				CustomProvider: lastNonNilBool(OpsGenieProviderCustomProviderGetter, commons...),
+				Enabled:        defaultEnabled(true),
+				Version:        version,
+			},
 		}
 	}
 	return p
@@ -397,7 +491,11 @@ func ResolveDatabricksProvider(commons ...Common) *DatabricksProvider {
 
 	if version != nil {
 		return &DatabricksProvider{
-			Version: version,
+			CommonProvider: CommonProvider{
+				CustomProvider: lastNonNilBool(DatabricksProviderCustomProviderGetter, commons...),
+				Enabled:        defaultEnabled(true),
+				Version:        version,
+			},
 		}
 	}
 	return p
@@ -406,10 +504,13 @@ func ResolveDatabricksProvider(commons ...Common) *DatabricksProvider {
 func ResolveSentryProvider(commons ...Common) *SentryProvider {
 	var p *SentryProvider
 	for _, c := range commons {
-		if c.Providers == nil || c.Providers.Datadog == nil {
+		if c.Providers == nil || c.Providers.Sentry == nil {
 			continue
 		}
 		p = c.Providers.Sentry
+		if p.CustomProvider == nil {
+			p.CustomProvider = defaultEnabled(false)
+		}
 	}
 
 	version := lastNonNil(SentryProviderVersionGetter, commons...)
@@ -417,7 +518,11 @@ func ResolveSentryProvider(commons ...Common) *SentryProvider {
 
 	if version != nil {
 		return &SentryProvider{
-			Version: version,
+			CommonProvider: CommonProvider{
+				CustomProvider: lastNonNilBool(SentryProviderCustomProviderGetter, commons...),
+				Enabled:        defaultEnabled(true),
+				Version:        version,
+			},
 			BaseURL: baseURL,
 		}
 	}
@@ -425,6 +530,16 @@ func ResolveSentryProvider(commons ...Common) *SentryProvider {
 }
 
 func ResolveTfeProvider(commons ...Common) *TfeProvider {
+	var p *TfeProvider
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.Tfe == nil {
+			continue
+		}
+		p = c.Providers.Tfe
+		if p.CustomProvider == nil {
+			p.CustomProvider = defaultEnabled(false)
+		}
+	}
 	var version *string
 	var enabled *bool
 	var hostname *string
@@ -447,16 +562,30 @@ func ResolveTfeProvider(commons ...Common) *TfeProvider {
 		}
 	}
 
-	return &TfeProvider{
-		CommonProvider: CommonProvider{
-			Enabled: enabled,
-			Version: version,
-		},
-		Hostname: hostname,
+	if version != nil {
+		return &TfeProvider{
+			CommonProvider: CommonProvider{
+				CustomProvider: lastNonNilBool(TFEProviderCustomProviderGetter, commons...),
+				Enabled:        enabled,
+				Version:        version,
+			},
+			Hostname: hostname,
+		}
 	}
+	return p
 }
 
 func ResolveKubernetesProvider(commons ...Common) *KubernetesProvider {
+	var p *KubernetesProvider
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.Kubernetes == nil {
+			continue
+		}
+		p = c.Providers.Kubernetes
+		if p.CustomProvider == nil {
+			p.CustomProvider = defaultEnabled(false)
+		}
+	}
 	var version *string
 	var enabled *bool
 
@@ -474,15 +603,29 @@ func ResolveKubernetesProvider(commons ...Common) *KubernetesProvider {
 		}
 	}
 
-	return &KubernetesProvider{
-		CommonProvider: CommonProvider{
-			Enabled: enabled,
-			Version: version,
-		},
+	if version != nil {
+		return &KubernetesProvider{
+			CommonProvider: CommonProvider{
+				CustomProvider: lastNonNilBool(KubernetesProviderCustomProviderGetter, commons...),
+				Enabled:        enabled,
+				Version:        version,
+			},
+		}
 	}
+	return p
 }
 
 func ResolveGrafanaProvider(commons ...Common) *GrafanaProvider {
+	var p *GrafanaProvider
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.Grafana == nil {
+			continue
+		}
+		p = c.Providers.Grafana
+		if p.CustomProvider == nil {
+			p.CustomProvider = defaultEnabled(false)
+		}
+	}
 	var version *string
 	var enabled *bool
 
@@ -500,12 +643,16 @@ func ResolveGrafanaProvider(commons ...Common) *GrafanaProvider {
 		}
 	}
 
-	return &GrafanaProvider{
-		CommonProvider: CommonProvider{
-			Enabled: enabled,
-			Version: version,
-		},
+	if version != nil {
+		return &GrafanaProvider{
+			CommonProvider: CommonProvider{
+				CustomProvider: lastNonNilBool(GrafanaProviderCustomProviderGetter, commons...),
+				Enabled:        enabled,
+				Version:        version,
+			},
+		}
 	}
+	return p
 }
 
 func ResolveTfLint(commons ...Common) TfLint {
@@ -699,6 +846,49 @@ func GithubProviderOrganizationGetter(comm Common) *string {
 	return nil
 }
 
+func GithubProviderCustomProviderGetter(comm Common) *bool {
+	if comm.Providers != nil && comm.Providers.Github != nil {
+		return comm.Providers.Github.CommonProvider.CustomProvider
+	}
+	return nil
+}
+func TFEProviderCustomProviderGetter(comm Common) *bool {
+	if comm.Providers != nil && comm.Providers.Tfe != nil {
+		return comm.Providers.Tfe.CommonProvider.CustomProvider
+	}
+	return nil
+}
+func SentryProviderCustomProviderGetter(comm Common) *bool {
+	if comm.Providers != nil && comm.Providers.Sentry != nil {
+		return comm.Providers.Sentry.CommonProvider.CustomProvider
+	}
+	return nil
+}
+func OpsGenieProviderCustomProviderGetter(comm Common) *bool {
+	if comm.Providers != nil && comm.Providers.OpsGenie != nil {
+		return comm.Providers.OpsGenie.CommonProvider.CustomProvider
+	}
+	return nil
+}
+func PagerDutyProviderCustomProviderGetter(comm Common) *bool {
+	if comm.Providers != nil && comm.Providers.Pagerduty != nil {
+		return comm.Providers.Pagerduty.CommonProvider.CustomProvider
+	}
+	return nil
+}
+func DatadogProviderCustomProviderGetter(comm Common) *bool {
+	if comm.Providers != nil && comm.Providers.Datadog != nil {
+		return comm.Providers.Datadog.CommonProvider.CustomProvider
+	}
+	return nil
+}
+func HerokuProviderCustomProviderGetter(comm Common) *bool {
+	if comm.Providers != nil && comm.Providers.Heroku != nil {
+		return comm.Providers.Heroku.CommonProvider.CustomProvider
+	}
+	return nil
+}
+
 func GithubProviderBaseURLGetter(comm Common) *string {
 	if comm.Providers != nil && comm.Providers.Github != nil {
 		return comm.Providers.Github.BaseURL
@@ -709,6 +899,43 @@ func GithubProviderBaseURLGetter(comm Common) *string {
 func GithubProviderVersionGetter(comm Common) *string {
 	if comm.Providers != nil && comm.Providers.Github != nil {
 		return comm.Providers.Github.Version
+	}
+	return nil
+}
+func GrafanaProviderCustomProviderGetter(comm Common) *bool {
+	if comm.Providers != nil && comm.Providers.Grafana != nil {
+		return comm.Providers.Grafana.CommonProvider.CustomProvider
+	}
+	return nil
+}
+func BlessProviderCustomProviderGetter(comm Common) *bool {
+	if comm.Providers != nil && comm.Providers.Bless != nil {
+		return comm.Providers.Bless.CommonProvider.CustomProvider
+	}
+	return nil
+}
+func OktaProviderCustomProviderGetter(comm Common) *bool {
+	if comm.Providers != nil && comm.Providers.Okta != nil {
+		return comm.Providers.Okta.CommonProvider.CustomProvider
+	}
+	return nil
+}
+func DatabricksProviderCustomProviderGetter(comm Common) *bool {
+	if comm.Providers != nil && comm.Providers.Databricks != nil {
+		return comm.Providers.Databricks.CommonProvider.CustomProvider
+	}
+	return nil
+}
+func KubernetesProviderCustomProviderGetter(comm Common) *bool {
+	if comm.Providers != nil && comm.Providers.Kubernetes != nil {
+		return comm.Providers.Kubernetes.CommonProvider.CustomProvider
+	}
+	return nil
+}
+
+func SnowflakeProviderCustomProviderGetter(comm Common) *bool {
+	if comm.Providers != nil && comm.Providers.Snowflake != nil {
+		return comm.Providers.Snowflake.CommonProvider.CustomProvider
 	}
 	return nil
 }
@@ -748,6 +975,12 @@ func SnowflakeProviderRegionGetter(comm Common) *string {
 func SnowflakeProviderVersionGetter(comm Common) *string {
 	if comm.Providers != nil && comm.Providers.Snowflake != nil {
 		return comm.Providers.Snowflake.Version
+	}
+	return nil
+}
+func SnowflakeProviderEnabledGetter(comm Common) *bool {
+	if comm.Providers != nil && comm.Providers.Snowflake != nil {
+		return comm.Providers.Snowflake.Enabled
 	}
 	return nil
 }

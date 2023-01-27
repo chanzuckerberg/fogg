@@ -10,6 +10,8 @@ provider "aws" {
 # Aliased Providers (for doing things in every region).
 
 
+provider "assert" {}
+
 provider "datadog" {}
 terraform {
   required_version = "=0.100.0"
@@ -37,7 +39,7 @@ terraform {
     assert = {
       source = "bwoznicki/assert"
 
-      version = "~> 0.0.1"
+      version = "0.0.1"
 
     }
 
@@ -50,6 +52,8 @@ terraform {
 
     datadog = {
       source = "datadog/datadog"
+
+      version = "3.20.0"
 
     }
 

@@ -29,6 +29,7 @@ tfe:
     TFE_AWS_SECRET_ACCESS_KEY: ""
   providers:
     tfe:
+      custom_provider: true
       enabled: true
       hostname: si.prod.tfe.czi.technology
       version: 0.33.0
