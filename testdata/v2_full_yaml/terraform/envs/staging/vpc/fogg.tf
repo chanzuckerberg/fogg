@@ -9,6 +9,8 @@ provider "aws" {
 }
 # Aliased Providers (for doing things in every region).
 
+
+provider "assert" {}
 terraform {
   required_version = "=0.100.0"
 

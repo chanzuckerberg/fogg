@@ -14,6 +14,8 @@ provider "aws" {
 # Aliased Providers (for doing things in every region).
 
 
+provider "assert" {}
+
 provider "bless" {
   region  = "us-west-2"
   profile = "prof"

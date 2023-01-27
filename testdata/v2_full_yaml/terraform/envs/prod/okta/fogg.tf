@@ -10,6 +10,8 @@ provider "aws" {
 # Aliased Providers (for doing things in every region).
 
 
+provider "assert" {}
+
 provider "okta" {
   org_name = "foo"
   base_url = "https://foo.okta.com/"

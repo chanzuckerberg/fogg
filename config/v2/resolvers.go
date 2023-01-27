@@ -98,7 +98,7 @@ func defaultEnabled(a bool) *bool {
 func ResolveAuth0Provider(commons ...Common) *Auth0Provider {
 	var domain, version, source *string
 	enabled := defaultEnabled(true)
-	customProvider := defaultEnabled(true)
+	customProvider := defaultEnabled(false)
 	for _, c := range commons {
 		if c.Providers == nil || c.Providers.Auth0 == nil {
 			continue
@@ -142,7 +142,7 @@ func ResolveAuth0Provider(commons ...Common) *Auth0Provider {
 func ResolveAssertProvider(commons ...Common) *AssertProvider {
 	var version *string
 	enabled := defaultEnabled(true)
-	customProvider := defaultEnabled(true)
+	customProvider := defaultEnabled(false)
 	for _, c := range commons {
 		if c.Providers == nil || c.Providers.Assert == nil {
 			continue
