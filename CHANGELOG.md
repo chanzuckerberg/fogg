@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.78.0](https://github.com/chanzuckerberg/fogg/compare/v0.77.0...v0.78.0) (2023-01-27)
+
+
+### Features
+
+* allow custom provider blocks ([#780](https://github.com/chanzuckerberg/fogg/issues/780)) ([05a4db9](https://github.com/chanzuckerberg/fogg/commit/05a4db9588965a00f6522c51dd1ef3b1366cadea))
+
+
+### BugFixes
+
+* Update dependencies and fix unit tests ([#776](https://github.com/chanzuckerberg/fogg/issues/776)) ([3a7445b](https://github.com/chanzuckerberg/fogg/commit/3a7445bc4f60494b013e1e2ac9dcde497fcdf854))
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.180 to 1.44.184 ([#779](https://github.com/chanzuckerberg/fogg/issues/779)) ([f5475c2](https://github.com/chanzuckerberg/fogg/commit/f5475c2b092f299e73b6af3fc6bcb714dda41c33))
+* Bump github.com/fatih/color from 1.13.0 to 1.14.0 ([#778](https://github.com/chanzuckerberg/fogg/issues/778)) ([be67c99](https://github.com/chanzuckerberg/fogg/commit/be67c9966f32d468add86f4b10fd5081568bcbdd))
+
 ## [0.77.0](https://github.com/chanzuckerberg/fogg/compare/v0.76.0...v0.77.0) (2022-11-23)
 
 
