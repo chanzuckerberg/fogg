@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.78.1](https://github.com/chanzuckerberg/fogg/compare/v0.78.0...v0.78.1) (2023-01-30)
+
+
+### Misc
+
+* Bump github.com/chanzuckerberg/go-misc from 1.0.1 to 1.0.3 ([#781](https://github.com/chanzuckerberg/fogg/issues/781)) ([82c15b9](https://github.com/chanzuckerberg/fogg/commit/82c15b99a854ea18c93afa295b9338cf0fc631a1))
+* Bump github.com/fatih/color from 1.14.0 to 1.14.1 ([#782](https://github.com/chanzuckerberg/fogg/issues/782)) ([9d91b5c](https://github.com/chanzuckerberg/fogg/commit/9d91b5c5c87370551f192f4c60bd0f2ef3087aeb))
+
 ## [0.78.0](https://github.com/chanzuckerberg/fogg/compare/v0.77.0...v0.78.0) (2023-01-27)
 
 
