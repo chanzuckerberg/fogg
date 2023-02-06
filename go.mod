@@ -9,9 +9,9 @@ replace github.com/hashicorp/terraform => github.com/hashicorp/terraform v0.14.9
 require (
 	github.com/Masterminds/sprig v2.22.0+incompatible
 	github.com/antzucaro/matchr v0.0.0-20221106193745-7bed6ef61ef9
-	github.com/aws/aws-sdk-go v1.44.189
+	github.com/aws/aws-sdk-go v1.44.191
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/chanzuckerberg/go-misc v1.0.3
+	github.com/chanzuckerberg/go-misc v1.0.5
 	github.com/davecgh/go-spew v1.1.1
 	github.com/fatih/color v1.14.1
 	github.com/go-errors/errors v1.4.2
@@ -20,7 +20,7 @@ require (
 	github.com/hashicorp/go-getter v1.6.2
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-version v1.6.0
-	github.com/hashicorp/hcl/v2 v2.15.0
+	github.com/hashicorp/hcl/v2 v2.16.0
 	github.com/hashicorp/hcl2 v0.0.0-20191002203319-fb75b3253c80
 	github.com/hashicorp/terraform v1.3.7
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20221020162138-81db043ad408
@@ -36,7 +36,7 @@ require (
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.1
-	golang.org/x/exp v0.0.0-20230125214544-b3c2aaf6208d
+	golang.org/x/exp v0.0.0-20230131160201-f062dba9d201
 	gopkg.in/go-playground/validator.v9 v9.31.0
 	gopkg.in/ini.v1 v1.67.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -44,7 +44,7 @@ require (
 
 require (
 	cloud.google.com/go v0.109.0 // indirect
-	cloud.google.com/go/compute v1.15.1 // indirect
+	cloud.google.com/go/compute v1.18.0 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
 	cloud.google.com/go/iam v0.10.0 // indirect
 	cloud.google.com/go/storage v1.29.0 // indirect
@@ -65,7 +65,7 @@ require (
 	github.com/go-git/gcfg v1.5.0 // indirect
 	github.com/go-git/go-billy/v5 v5.4.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
-	github.com/go-playground/universal-translator v0.18.0 // indirect
+	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/btree v1.1.2 // indirect
@@ -118,9 +118,9 @@ require (
 	golang.org/x/text v0.6.0 // indirect
 	golang.org/x/tools v0.5.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
-	google.golang.org/api v0.108.0 // indirect
+	google.golang.org/api v0.109.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/genproto v0.0.0-20230125152338-dcaf20b6aeaa // indirect
+	google.golang.org/genproto v0.0.0-20230131230820-1c016267d619 // indirect
 	google.golang.org/grpc v1.52.3 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
