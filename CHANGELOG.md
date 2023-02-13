@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.78.4](https://github.com/chanzuckerberg/fogg/compare/v0.78.3...v0.78.4) (2023-02-13)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.194 to 1.44.199 ([#791](https://github.com/chanzuckerberg/fogg/issues/791)) ([bc3185b](https://github.com/chanzuckerberg/fogg/commit/bc3185b78345c0a82ecc66ed992838afcdaa9b5d))
+* Bump github.com/hashicorp/hcl/v2 from 2.16.0 to 2.16.1 ([#790](https://github.com/chanzuckerberg/fogg/issues/790)) ([16da44b](https://github.com/chanzuckerberg/fogg/commit/16da44b16ea32001f45bb0bdb4f38af93a00097f))
+
 ### [0.78.3](https://github.com/chanzuckerberg/fogg/compare/v0.78.2...v0.78.3) (2023-02-06)
 
 
