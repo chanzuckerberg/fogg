@@ -102,34 +102,6 @@ variable "tags" {
   }
 }
 # tflint-ignore: terraform_unused_declarations
-data "terraform_remote_state" "global" {
-  backend = "remote"
-  config = {
-
-
-    hostname     = "tfe.example.com"
-    organization = "test-org"
-    workspaces = {
-      name = "global"
-    }
-
-  }
-}
-# tflint-ignore: terraform_unused_declarations
-data "terraform_remote_state" "acct1" {
-  backend = "remote"
-  config = {
-
-
-    hostname     = "tfe.example.com"
-    organization = "test-org"
-    workspaces = {
-      name = "accounts-acct1"
-    }
-
-  }
-}
-# tflint-ignore: terraform_unused_declarations
 variable "aws_accounts" {
   type = map(string)
   default = {

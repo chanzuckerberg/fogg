@@ -112,36 +112,6 @@ variable "tags" {
   }
 }
 # tflint-ignore: terraform_unused_declarations
-data "terraform_remote_state" "global" {
-  backend = "s3"
-  config = {
-
-
-    bucket = "bucket"
-
-    key     = "terraform/foofoo/global.tfstate"
-    region  = "region"
-    profile = "foofoo"
-
-
-  }
-}
-# tflint-ignore: terraform_unused_declarations
-data "terraform_remote_state" "foo" {
-  backend = "s3"
-  config = {
-
-
-    bucket = "bucket"
-
-    key     = "terraform/foofoo/accounts/foo.tfstate"
-    region  = "region"
-    profile = "foofoo"
-
-
-  }
-}
-# tflint-ignore: terraform_unused_declarations
 variable "aws_accounts" {
   type = map(string)
   default = {

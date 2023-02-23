@@ -126,34 +126,6 @@ variable "tags" {
   }
 }
 # tflint-ignore: terraform_unused_declarations
-data "terraform_remote_state" "global" {
-  backend = "remote"
-  config = {
-
-
-    hostname     = "si.prod.tfe.czi.technology"
-    organization = "shared-infra"
-    workspaces = {
-      name = "global"
-    }
-
-  }
-}
-# tflint-ignore: terraform_unused_declarations
-data "terraform_remote_state" "account" {
-  backend = "remote"
-  config = {
-
-
-    hostname     = "si.prod.tfe.czi.technology"
-    organization = "shared-infra"
-    workspaces = {
-      name = "accounts-account"
-    }
-
-  }
-}
-# tflint-ignore: terraform_unused_declarations
 variable "aws_accounts" {
   type = map(string)
   default = {
