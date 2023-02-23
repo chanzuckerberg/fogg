@@ -388,7 +388,7 @@ func (p *Plan) buildAtlantisConfig(c *v2.Config, foggVersion string) AtlantisCon
 					Dir:               util.Ptr(fmt.Sprintf("terraform/envs/%s/%s", envName, cName)),
 					TerraformVersion:  &d.ComponentCommon.Common.TerraformVersion,
 					Workspace:         util.Ptr(atlantis.DefaultWorkspace),
-					ApplyRequirements: []string{atlantis.ApprovedApplyRequirement},
+					ApplyRequirements: []string{atlantis.ApprovedRequirement},
 					Autoplan: &atlantis.Autoplan{
 						Enabled:      util.Ptr(true),
 						WhenModified: whenModified,
