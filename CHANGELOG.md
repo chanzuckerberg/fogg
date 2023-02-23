@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.77.0](https://github.com/vincenthsh/fogg/compare/v0.76.9...v0.77.0) (2023-02-23)
+
+
+### Features
+
+* Split component remote-state files for exclusion in Atlantis autoplan ([#69](https://github.com/vincenthsh/fogg/issues/69)) ([df05e8a](https://github.com/vincenthsh/fogg/commit/df05e8ad809f342ea3af36ef10b53174bac99eba))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.139 to 1.44.204 ([#65](https://github.com/vincenthsh/fogg/issues/65)) ([564f57f](https://github.com/vincenthsh/fogg/commit/564f57fe0c77c1e5687e0fb0d2f6bf7d6887f193))
+* bump github.com/aws/aws-sdk-go from 1.44.204 to 1.44.207 ([#67](https://github.com/vincenthsh/fogg/issues/67)) ([7136e96](https://github.com/vincenthsh/fogg/commit/7136e96a6a2e417fe7343c2ea2d11d9be6d476e5))
+* bump github.com/fatih/color from 1.13.0 to 1.14.1 ([#55](https://github.com/vincenthsh/fogg/issues/55)) ([a38799c](https://github.com/vincenthsh/fogg/commit/a38799c5aa50c2e506fa6dcd66df3c922770dda1))
+* bump github.com/hashicorp/go-getter from 1.6.2 to 1.7.0 ([#62](https://github.com/vincenthsh/fogg/issues/62)) ([72c124d](https://github.com/vincenthsh/fogg/commit/72c124dc735a4284558c149ba64208d6a5f49d14))
+* bump github.com/hashicorp/hcl/v2 from 2.15.0 to 2.16.1 ([#63](https://github.com/vincenthsh/fogg/issues/63)) ([0499f0e](https://github.com/vincenthsh/fogg/commit/0499f0ee0a22ee3335474b07bfabd419f40836ce))
+* bump github.com/runatlantis/atlantis from 0.20.1 to 0.22.3 ([#56](https://github.com/vincenthsh/fogg/issues/56)) ([fbc1626](https://github.com/vincenthsh/fogg/commit/fbc16267e9b116edcd2cb7d1a617a76a776c5207))
+* bump golang.org/x/net from 0.1.0 to 0.7.0 ([#68](https://github.com/vincenthsh/fogg/issues/68)) ([76fa365](https://github.com/vincenthsh/fogg/commit/76fa365401f870a972eeee19ecc6a6a45a1bbda2))
+
 ## [0.76.9](https://github.com/vincenthsh/fogg/compare/v0.76.8...v0.76.9) (2022-11-20)
 
 
