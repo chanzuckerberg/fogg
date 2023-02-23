@@ -1,4 +1,5 @@
 fogg.tf linguist-generated
+remote-states.tf linguist-generated
 Makefile linguist-generated
 atlantis.yaml linguist-generated
 .travis.yml linguist-generated

@@ -136,42 +136,6 @@ variable "{{ $key }}" {
 }
 {{ end }}
 
-{{ if .Global}}
-{{ if .Global.Backend.Kind}}
-# tflint-ignore: terraform_unused_declarations
-data "terraform_remote_state" "global" {
-  backend = "{{ .Global.Backend.Kind }}"
-
-  config = {
-    {{ template "remote_backend" .Global.Backend }}
-  }
-}{{ end }}{{end}}
-
-{{ $outer := . }}
-{{ range $component, $backend := .ComponentBackends  }}
-{{ if ne $component $outer.Name }}
-# tflint-ignore: terraform_unused_declarations
-data "terraform_remote_state" "{{ $component }}" {
-  backend = "{{ $backend.Kind }}"
-
-  config = {
-      {{ template "remote_backend" $backend }}
-  }
-}
-{{ end }}
-{{ end }}
-
-{{ range $name, $backend := .AccountBackends }}
-# tflint-ignore: terraform_unused_declarations
-data "terraform_remote_state" "{{ $name }}" {
-  backend = "{{ $backend.Kind }}"
-
-  config = {
-    {{ template "remote_backend" $backend }}
-  }
-}
-{{ end }}
-
 # tflint-ignore: terraform_unused_declarations
 variable "aws_accounts" {
   type =  map(string)

@@ -367,7 +367,10 @@ func (p *Plan) buildAtlantisConfig(c *v2.Config, foggVersion string) AtlantisCon
 		projects := []atlantis.Project{}
 		for envName, env := range p.Envs {
 			for cName, d := range env.Components {
-				whenModified := []string{"*.tf"}
+				whenModified := []string{
+					"*.tf",
+					"!remote-states.tf",
+				}
 				if d.ModuleSource != nil && strings.HasPrefix(*d.ModuleSource, "terraform/modules/") {
 					whenModified = append(whenModified, fmt.Sprintf(
 						"../../../%s/**/*.tf",
