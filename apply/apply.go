@@ -140,43 +140,44 @@ func MakeTFEWorkspace(tfVersion string) *TFEWorkspace {
 	}
 }
 
-func updateLocalsFromPlan(locals *LocalsTFE, plan *plan.Plan) {
+func updateLocalsFromPlan(locals *LocalsTFE, p *plan.Plan) {
 	// if there is a planned env or account that isn't in the locals, add it
-	for accountName := range plan.Accounts {
-		if _, ok := locals.Locals.Accounts[accountName]; !ok {
-			locals.Locals.Accounts[accountName] = MakeTFEWorkspace(plan.Global.Common.TerraformVersion)
+	for accountName, account := range p.Accounts {
+		if _, ok := locals.Locals.Accounts[accountName]; !ok && account.Backend.Kind == plan.BackendKindRemote {
+
+			locals.Locals.Accounts[accountName] = MakeTFEWorkspace(p.Global.Common.TerraformVersion)
 		}
 	}
-	for envName := range plan.Envs {
+	for envName := range p.Envs {
 		if _, ok := locals.Locals.Envs[envName]; !ok {
 			locals.Locals.Envs[envName] = make(map[string]*TFEWorkspace, 0)
 		}
-		for componentName := range plan.Envs[envName].Components {
-			if _, ok := locals.Locals.Envs[envName][componentName]; !ok {
-				locals.Locals.Envs[envName][componentName] = MakeTFEWorkspace(plan.Global.Common.TerraformVersion)
+		for componentName, comp := range p.Envs[envName].Components {
+			if _, ok := locals.Locals.Envs[envName][componentName]; !ok && comp.Backend.Kind == plan.BackendKindRemote {
+				locals.Locals.Envs[envName][componentName] = MakeTFEWorkspace(p.Global.Common.TerraformVersion)
 			}
 		}
 	}
 
 	// if there is a locals env or account that isn't in the plan, delete it
-	for account := range locals.Locals.Accounts {
+	for accountName := range locals.Locals.Accounts {
 		shouldDelete := func() bool {
-			for plannedAccount := range plan.Accounts {
-				if account == plannedAccount {
+			for plannedAccountName, account := range p.Accounts {
+				if accountName == plannedAccountName && account.Backend.Kind == plan.BackendKindRemote {
 					return false
 				}
 			}
 			return true
 		}()
 		if shouldDelete {
-			delete(locals.Locals.Accounts, account)
+			delete(locals.Locals.Accounts, accountName)
 		}
 	}
 	for envName, component := range locals.Locals.Envs {
 		for componentName := range component {
 			shouldDelete := func() bool {
-				for plannedComponent := range plan.Envs[envName].Components {
-					if plannedComponent == componentName {
+				for plannedComponent, comp := range p.Envs[envName].Components {
+					if plannedComponent == componentName && comp.Backend.Kind == plan.BackendKindRemote {
 						return false
 					}
 				}

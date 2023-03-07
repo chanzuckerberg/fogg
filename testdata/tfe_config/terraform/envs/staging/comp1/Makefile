@@ -2,12 +2,20 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 
-export TERRAFORM_VERSION := 0.100.0
+export TERRAFORM_VERSION := 1.1.1
 export TFLINT_ENABLED := 0
-export TF_PLUGIN_CACHE_DIR := ../..//.terraform.d/plugin-cache
-export TF_BACKEND_KIND := remote
+export TF_PLUGIN_CACHE_DIR := ../../../..//.terraform.d/plugin-cache
+export TF_BACKEND_KIND := s3
 
-include ../..//scripts/component.mk
+export AWS_BACKEND_PROFILE := czi-tfe
+
+
+
+export AWS_PROVIDER_ROLE_ARN := arn:aws:iam::626314663667:role/tfe-si
+
+
+
+include ../../../..//scripts/component.mk
 
 
 help: ## display help for this makefile

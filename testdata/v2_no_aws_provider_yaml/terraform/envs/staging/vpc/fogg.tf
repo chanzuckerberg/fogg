@@ -5,15 +5,13 @@ provider "assert" {}
 terraform {
   required_version = "=0.100.0"
 
-  backend "s3" {
+  backend "remote" {
 
-    bucket = "buck"
-
-    key     = "terraform/proj/envs/staging/components/vpc.tfstate"
-    encrypt = true
-    region  = "us-west-2"
-    profile = "profile"
-
+    hostname     = "si.prod.tfe.czi.technology"
+    organization = "k8s-test-app-infra"
+    workspaces {
+      name = "staging-vpc"
+    }
 
   }
   required_providers {
@@ -100,72 +98,67 @@ variable "foo" {
   default = "bar3"
 }
 data "terraform_remote_state" "global" {
-  backend = "s3"
+  backend = "remote"
   config = {
 
 
-    bucket = "buck"
-
-    key     = "terraform/proj/global.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
-
+    hostname     = "si.prod.tfe.czi.technology"
+    organization = "k8s-test-app-infra"
+    workspaces = {
+      name = "global"
+    }
 
   }
 }
 data "terraform_remote_state" "comp1" {
-  backend = "s3"
+  backend = "remote"
   config = {
 
 
-    bucket = "buck"
-
-    key     = "terraform/proj/envs/staging/components/comp1.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
-
+    hostname     = "si.prod.tfe.czi.technology"
+    organization = "k8s-test-app-infra"
+    workspaces = {
+      name = "staging-comp1"
+    }
 
   }
 }
 data "terraform_remote_state" "comp2" {
-  backend = "s3"
+  backend = "remote"
   config = {
 
 
-    bucket = "buck"
-
-    key     = "terraform/proj/envs/staging/components/comp2.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
-
+    hostname     = "si.prod.tfe.czi.technology"
+    organization = "k8s-test-app-infra"
+    workspaces = {
+      name = "staging-comp2"
+    }
 
   }
 }
 data "terraform_remote_state" "bar" {
-  backend = "s3"
+  backend = "remote"
   config = {
 
 
-    bucket = "buck"
-
-    key     = "terraform/proj/accounts/bar.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
-
+    hostname     = "si.prod.tfe.czi.technology"
+    organization = "k8s-test-app-infra"
+    workspaces = {
+      name = "accounts-bar"
+    }
 
   }
 }
 data "terraform_remote_state" "foo" {
-  backend = "s3"
+  backend = "remote"
   config = {
 
 
-    bucket = "buck"
-
-    key     = "terraform/proj/accounts/foo.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
-
+    hostname     = "si.prod.tfe.czi.technology"
+    organization = "k8s-test-app-infra"
+    workspaces = {
+      name = "accounts-foo"
+    }
 
   }
 }

@@ -1,23 +1,27 @@
 accounts:
-  bar: 
-  foo: 
+  bar:
+  foo:
 defaults:
   backend:
-    bucket: buck
-    profile: profile
-    region: us-west-2
+    kind: remote
+    host_name: si.prod.tfe.czi.technology
+    organization: k8s-test-app-infra
   extra_vars:
     foo: bar1
   owner: foo@example.com
   project: proj
-  providers: 
+  providers:
   terraform_version: 0.100.0
 envs:
-  prod: 
+  prod:
   staging:
     components:
-      comp1: 
-      comp2: 
+      comp1:
+        backend:
+          bucket: buck2
+          profile: profile
+          region: us-west-2
+      comp2:
       vpc:
         extra_vars:
           foo: bar3
@@ -25,5 +29,5 @@ envs:
     extra_vars:
       foo: bar2
 modules:
-  my_module: 
+  my_module:
 version: 2

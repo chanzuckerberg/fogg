@@ -91,7 +91,11 @@ func makeTestCases(tests []UploadLocalsTestCaseSimple) ([]UploadLocalsTestCase, 
 
 		planAccounts := map[string]plan.Account{}
 		for _, local := range test.planAccounts {
-			planAccounts[local] = plan.Account{}
+			planAccounts[local] = plan.Account{ComponentCommon: plan.ComponentCommon{
+				Backend: plan.Backend{
+					Kind: plan.BackendKindRemote,
+				},
+			}}
 		}
 		planEnvs := map[string]plan.Env{}
 		for _, local := range test.planEnvs {
@@ -100,7 +104,11 @@ func makeTestCases(tests []UploadLocalsTestCaseSimple) ([]UploadLocalsTestCase, 
 				return nil, errors.New("env needs to be of the form env/component")
 			}
 			component := map[string]plan.Component{}
-			component[splits[1]] = plan.Component{}
+			component[splits[1]] = plan.Component{ComponentCommon: plan.ComponentCommon{
+				Backend: plan.Backend{
+					Kind: plan.BackendKindRemote,
+				},
+			}}
 			planEnvs[splits[0]] = plan.Env{
 				Components: component,
 			}
@@ -445,7 +453,12 @@ func TestTFEConfigOmitEmpty(t *testing.T) {
 		Envs: map[string]plan.Env{
 			"prod": {
 				Components: map[string]plan.Component{
-					"test": {},
+					"test": {
+						ComponentCommon: plan.ComponentCommon{
+							Backend: plan.Backend{
+								Kind: plan.BackendKindRemote,
+							},
+						}},
 				},
 				Env: "prod",
 			},
@@ -495,7 +508,13 @@ func TestTFEConfig(t *testing.T) {
 		Envs: map[string]plan.Env{
 			"prod": {
 				Components: map[string]plan.Component{
-					"test": {},
+					"test": {
+						ComponentCommon: plan.ComponentCommon{
+							Backend: plan.Backend{
+								Kind: plan.BackendKindRemote,
+							},
+						},
+					},
 				},
 				Env: "prod",
 			},

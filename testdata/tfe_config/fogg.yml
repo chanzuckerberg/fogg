@@ -13,7 +13,16 @@ defaults:
       role: tfe-si
       version: 3.63.0
 envs:
-  comp1: {}
+  staging:
+    components:
+      comp1:
+        backend:
+          bucket: buck2
+          dynamodb_table: blah
+          kind: s3
+          profile: czi-tfe
+          region: us-west-2
+          account_id: "612168857605"
   comp2: {}
 accounts:
   account: {}
