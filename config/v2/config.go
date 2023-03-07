@@ -124,7 +124,7 @@ type Component struct {
 	Kind         *ComponentKind `yaml:"kind,omitempty"`
 	ModuleSource *string        `yaml:"module_source,omitempty"`
 	ModuleName   *string        `yaml:"module_name,omitempty"`
-	Variables    *[]string      `yaml:"variables,omitempty"`
+	Variables    []string       `yaml:"variables"`
 }
 
 type Providers struct {
