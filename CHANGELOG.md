@@ -1,5 +1,31 @@
 # Changelog
 
+### [0.78.7](https://github.com/chanzuckerberg/fogg/compare/v0.78.6...v0.78.7) (2023-03-06)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.209 to 1.44.214 ([#802](https://github.com/chanzuckerberg/fogg/issues/802)) ([578bd78](https://github.com/chanzuckerberg/fogg/commit/578bd788c7a514959472d5d68d3d3b35a4a4de3f))
+* Bump github.com/go-git/go-git/v5 from 5.5.2 to 5.6.0 ([#803](https://github.com/chanzuckerberg/fogg/issues/803)) ([3c37100](https://github.com/chanzuckerberg/fogg/commit/3c3710032217c71d229d84e7b2e65aae1b3480c4))
+
+### [0.78.6](https://github.com/chanzuckerberg/fogg/compare/v0.78.5...v0.78.6) (2023-03-06)
+
+
+### Misc
+
+* Bump github.com/chanzuckerberg/go-misc from 1.0.5 to 1.0.6 ([#797](https://github.com/chanzuckerberg/fogg/issues/797)) ([387fb73](https://github.com/chanzuckerberg/fogg/commit/387fb735bc619a32444ab630229451aed3243a55))
+
+### [0.78.5](https://github.com/chanzuckerberg/fogg/compare/v0.78.4...v0.78.5) (2023-02-28)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.199 to 1.44.204 ([#796](https://github.com/chanzuckerberg/fogg/issues/796)) ([23bf435](https://github.com/chanzuckerberg/fogg/commit/23bf4359593c1d3fa2a1b6e0411b53ee64480ad5))
+* Bump github.com/aws/aws-sdk-go from 1.44.204 to 1.44.209 ([#800](https://github.com/chanzuckerberg/fogg/issues/800)) ([e056abb](https://github.com/chanzuckerberg/fogg/commit/e056abbf5f0e979d8485706446399eeaebc84df1))
+* Bump github.com/hashicorp/go-getter from 1.6.2 to 1.7.0 ([#793](https://github.com/chanzuckerberg/fogg/issues/793)) ([8dde728](https://github.com/chanzuckerberg/fogg/commit/8dde728475cc42fe056e51e12acb0a5c4696b39b))
+* Bump github.com/stretchr/testify from 1.8.1 to 1.8.2 ([#799](https://github.com/chanzuckerberg/fogg/issues/799)) ([0f0eefa](https://github.com/chanzuckerberg/fogg/commit/0f0eefa0cfa77591690a895b6a07f022e38e8bc9))
+* Bump golang.org/x/net from 0.5.0 to 0.7.0 ([#795](https://github.com/chanzuckerberg/fogg/issues/795)) ([097ffe4](https://github.com/chanzuckerberg/fogg/commit/097ffe48cd1ba18682f1747dcd3adc4af5f816b5))
+
 ### [0.78.4](https://github.com/chanzuckerberg/fogg/compare/v0.78.3...v0.78.4) (2023-02-13)
 
 
