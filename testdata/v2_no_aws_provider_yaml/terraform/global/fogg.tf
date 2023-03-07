@@ -5,15 +5,13 @@ provider "assert" {}
 terraform {
   required_version = "=0.100.0"
 
-  backend "s3" {
+  backend "remote" {
 
-    bucket = "buck"
-
-    key     = "terraform/proj/global.tfstate"
-    encrypt = true
-    region  = "us-west-2"
-    profile = "profile"
-
+    hostname     = "si.prod.tfe.czi.technology"
+    organization = "k8s-test-app-infra"
+    workspaces {
+      name = "global"
+    }
 
   }
   required_providers {

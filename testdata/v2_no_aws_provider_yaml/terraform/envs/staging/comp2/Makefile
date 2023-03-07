@@ -5,11 +5,7 @@
 export TERRAFORM_VERSION := 0.100.0
 export TFLINT_ENABLED := 0
 export TF_PLUGIN_CACHE_DIR := ../../../..//.terraform.d/plugin-cache
-export TF_BACKEND_KIND := s3
-
-export AWS_BACKEND_PROFILE := profile
-
-
+export TF_BACKEND_KIND := remote
 
 include ../../../..//scripts/component.mk
 
