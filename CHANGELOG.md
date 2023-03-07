@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.79.0](https://github.com/chanzuckerberg/fogg/compare/v0.78.7...v0.79.0) (2023-03-07)
+
+
+### Features
+
+* only update locals.tf.json on remote backends ([#805](https://github.com/chanzuckerberg/fogg/issues/805)) ([12761a4](https://github.com/chanzuckerberg/fogg/commit/12761a4d122627c60e5cf0e4282549d8bd0f13ef))
+
+
+### BugFixes
+
+* omit empty leaving behind variables ([#807](https://github.com/chanzuckerberg/fogg/issues/807)) ([fa0402b](https://github.com/chanzuckerberg/fogg/commit/fa0402b46a0e43a216dc482e1a53ea3b23719495))
+
 ### [0.78.7](https://github.com/chanzuckerberg/fogg/compare/v0.78.6...v0.78.7) (2023-03-06)
 
 
