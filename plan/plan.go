@@ -436,7 +436,9 @@ func (p *Plan) buildTFE(c *v2.Config) (*TFEConfig, error) {
 	tfeConfig.ComponentCommon = resolveComponentCommon(c.Defaults.Common, c.Global.Common, c.TFE.Common)
 	tfeConfig.ModuleSource = c.TFE.ModuleSource
 	tfeConfig.ModuleName = c.TFE.ModuleName
-	tfeConfig.Variables = c.TFE.Variables
+	if c.TFE.Variables != nil {
+		tfeConfig.Variables = *c.TFE.Variables
+	}
 
 	if tfeConfig.ComponentCommon.Backend.Kind == BackendKindS3 {
 		tfeConfig.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/%s.tfstate", "tfe", "tfe")
@@ -614,7 +616,9 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			componentPlan.Name = componentName
 			componentPlan.ModuleSource = componentConf.ModuleSource
 			componentPlan.ModuleName = componentConf.ModuleName
-			componentPlan.Variables = componentConf.Variables
+			if componentConf.Variables != nil {
+				componentPlan.Variables = *componentConf.Variables
+			}
 			componentPlan.PathToRepoRoot = "../../../../"
 
 			componentPlan.Global = &p.Global
