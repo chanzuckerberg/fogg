@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.79.1](https://github.com/chanzuckerberg/fogg/compare/v0.79.0...v0.79.1) (2023-03-07)
+
+
+### BugFixes
+
+* to properly encode and decode yaml while preserving variables ([#808](https://github.com/chanzuckerberg/fogg/issues/808)) ([518c6cb](https://github.com/chanzuckerberg/fogg/commit/518c6cb65de7b8d783e9814e6d31c0c2e1dc4130))
+
 ## [0.79.0](https://github.com/chanzuckerberg/fogg/compare/v0.78.7...v0.79.0) (2023-03-07)
 
 
