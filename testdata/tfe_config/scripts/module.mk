@@ -8,6 +8,10 @@ include $(SELF_DIR)/common.mk
 all: fmt lint doc
 .PHONY: all
 
+setup: ## set up local dependencies for this repo
+	$(MAKE) -C $(REPO_ROOT) setup
+.PHONY: setup
+
 fmt: terraform ## run terraform fmt on this module
 	@$(terraform_command) fmt $(TF_ARGS)
 .PHONY: fmt
@@ -22,8 +26,14 @@ check: lint check-docs ## run all checks on this module
 lint: lint-tf check-docs ## run all linters on this module
 .PHONY: lint
 
-lint-tf: terraform ## run terraform linters on this module
+lint-tf: setup terraform ## run terraform linters on this module
 	$(terraform_command) fmt $(TF_ARGS) --check=true --diff=true
+	@printf "tflint: "
+ifeq ($(TFLINT_ENABLED),1)
+	@$(REPO_ROOT)/.fogg/bin/tflint || exit $$?;
+else
+	@echo "disabled"
+endif
 .PHONY: lint-tf
 
 readme: ## update this module's README.md

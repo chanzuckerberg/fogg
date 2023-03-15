@@ -11,16 +11,6 @@ output "endpoint" {
   sensitive = false
 }
 
-output "master_password" {
-  value     = module.aws-aurora-postgres.master_password
-  sensitive = false
-}
-
-output "master_username" {
-  value     = module.aws-aurora-postgres.master_username
-  sensitive = false
-}
-
 output "port" {
   value     = module.aws-aurora-postgres.port
   sensitive = false

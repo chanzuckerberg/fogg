@@ -36,6 +36,7 @@ type Plan struct {
 type Common struct {
 	PathToRepoRoot   string `yaml:"path_to_repo_root"`
 	TerraformVersion string `yaml:"terraform_version"`
+	TfLint           TfLint `yaml:"tf_lint"`
 }
 
 // ComponentCommon represents common fields for components
@@ -541,6 +542,9 @@ func (p *Plan) buildModules(c *v2.Config) map[string]Module {
 
 		modulePlan.PathToRepoRoot = "../../../"
 		modulePlan.TerraformVersion = *v2.ResolveModuleTerraformVersion(c.Defaults, conf)
+		modulePlan.TfLint = TfLint{
+			Enabled: *v2.ResolveTfLint(c.Defaults.Common).Enabled,
+		}
 		modulePlans[name] = modulePlan
 	}
 	return modulePlans

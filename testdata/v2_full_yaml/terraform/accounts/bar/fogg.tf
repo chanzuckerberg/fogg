@@ -151,7 +151,7 @@ provider "bless" {
   role_arn = "arn:aws:iam::1234567890:role/roll"
 }
 terraform {
-  required_version = "=0.100.0"
+  required_version = "=1.3.0"
 
   backend "s3" {
 
