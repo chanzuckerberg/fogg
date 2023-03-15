@@ -76,7 +76,7 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 
 	r.NotNil(plan.Modules)
 	r.Len(plan.Modules, 1)
-	r.Equal("0.100.0", plan.Modules["my_module"].TerraformVersion)
+	r.Equal("1.3.0", plan.Modules["my_module"].TerraformVersion)
 
 	r.NotNil(plan.Envs)
 	r.Len(plan.Envs, 2)
