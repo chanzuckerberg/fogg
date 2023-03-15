@@ -94,7 +94,7 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 	r.Nil(plan.Envs["staging"].Components["vpc"].ModuleName)
 
 	r.NotNil(plan.Envs["staging"].Components["comp1"])
-	r.Equal("0.100.0", plan.Envs["staging"].Components["comp1"].TerraformVersion)
+	r.Equal("1.3.0", plan.Envs["staging"].Components["comp1"].TerraformVersion)
 
 	r.NotNil(plan.Envs["prod"])
 	r.NotNil(plan.Envs["prod"].Components["hero"])
