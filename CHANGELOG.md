@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.78.0](https://github.com/vincenthsh/fogg/compare/v0.77.0...v0.78.0) (2023-03-15)
+
+
+### Features
+
+* Use aws_iam_role_name field for GitHub Actions fogg apply job ([#84](https://github.com/vincenthsh/fogg/issues/84)) ([eccc952](https://github.com/vincenthsh/fogg/commit/eccc9523fc8dccd6a01d13e9c946213549b89c2b))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.207 to 1.44.219 ([#78](https://github.com/vincenthsh/fogg/issues/78)) ([d3e3927](https://github.com/vincenthsh/fogg/commit/d3e39272033d0ba8444472aacaa4dec29c347245))
+* bump github.com/aws/aws-sdk-go from 1.44.219 to 1.44.221 ([#82](https://github.com/vincenthsh/fogg/issues/82)) ([64aa35b](https://github.com/vincenthsh/fogg/commit/64aa35b2db029f0fd023156ba265e3b81f2f7c51))
+* bump github.com/chanzuckerberg/go-misc ([#71](https://github.com/vincenthsh/fogg/issues/71)) ([47611cc](https://github.com/vincenthsh/fogg/commit/47611cc5512fa3180ccd8f6840150e1e08b03e2b))
+* bump github.com/fatih/color from 1.14.1 to 1.15.0 ([#79](https://github.com/vincenthsh/fogg/issues/79)) ([518acec](https://github.com/vincenthsh/fogg/commit/518acecca54b9956426054ace3347e089cd6f02b))
+* bump github.com/go-git/go-git/v5 from 5.4.2 to 5.5.2 ([#51](https://github.com/vincenthsh/fogg/issues/51)) ([f0cf66a](https://github.com/vincenthsh/fogg/commit/f0cf66adc3737c09084c890e2b70991448357c8d))
+* bump github.com/go-git/go-git/v5 from 5.5.2 to 5.6.0 ([#76](https://github.com/vincenthsh/fogg/issues/76)) ([1553792](https://github.com/vincenthsh/fogg/commit/155379288f540255a8ab678809f92214b5af1faf))
+* bump github.com/hashicorp/go-getter from 1.7.0 to 1.7.1 ([#81](https://github.com/vincenthsh/fogg/issues/81)) ([1d67c70](https://github.com/vincenthsh/fogg/commit/1d67c70702f1e07db4f4892abc7377087944e81f))
+* bump github.com/hashicorp/hcl/v2 from 2.16.1 to 2.16.2 ([#80](https://github.com/vincenthsh/fogg/issues/80)) ([b120143](https://github.com/vincenthsh/fogg/commit/b1201438f7d728ec8706104356ee6aaa7eeb6f35))
+* bump github.com/jinzhu/copier ([#73](https://github.com/vincenthsh/fogg/issues/73)) ([767ea87](https://github.com/vincenthsh/fogg/commit/767ea870cb815f171f914669dba8b5b0a7ec09de))
+* bump github.com/runatlantis/atlantis from 0.22.3 to 0.23.2 ([#77](https://github.com/vincenthsh/fogg/issues/77)) ([d6b9eb9](https://github.com/vincenthsh/fogg/commit/d6b9eb95f73467a014dd40f3677d62221d8a95cb))
+
 ## [0.77.0](https://github.com/vincenthsh/fogg/compare/v0.76.9...v0.77.0) (2023-02-23)
 
 
