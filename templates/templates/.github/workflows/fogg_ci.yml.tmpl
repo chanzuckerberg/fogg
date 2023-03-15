@@ -111,6 +111,5 @@ jobs:
             commit from fogg_ci -- ran terraform fmt and pushed
       - name: tflint
         run: |
-          make setup
           cd {{`${{matrix.tfmodule}}`}}
-          ${GITHUB_WORKSPACE}/.fogg/bin/tflint
+          make lint
