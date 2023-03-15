@@ -9,6 +9,11 @@ concurrency:
 jobs:
   fogg-apply:
     runs-on: ubuntu-latest
+    permissions:
+      # required for GH Actions -> OIDC -> AWS
+      id-token: write
+      # required to push fixes back to repo
+      contents: write
     steps:
       - uses: actions/checkout@v3
         with:
