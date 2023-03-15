@@ -294,8 +294,10 @@ func (c *Config) ValidateGithubActionsCI() error {
 			return // nothing to do
 		}
 
-		if t.AWSIAMRoleName == nil || *t.AWSIAMRoleName == "" {
-			errs = multierror.Append(errs, fmt.Errorf("if github_actions_ci is enabled, aws_role_name must be set"))
+		if t.AWSIAMRoleName != nil && *t.AWSIAMRoleName != "" {
+			if t.AWSRegion == nil || *t.AWSRegion == "" {
+				errs = multierror.Append(errs, fmt.Errorf("if github_actions_ci.aws_role_name is set, aws_region must be set"))
+			}
 		}
 
 		if t.Command != nil {

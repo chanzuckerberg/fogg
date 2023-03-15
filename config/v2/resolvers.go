@@ -597,11 +597,13 @@ func ResolveGitHubActionsCI(commons ...Common) *GitHubActionsCI {
 	}
 
 	roleName := lastNonNil(GitHubActionsRoleNameGetter, commons...)
+	region := lastNonNil(GitHubActionsRegionGetter, commons...)
 	return &GitHubActionsCI{
 		CommonCI: CommonCI{
 			Enabled:        &enabled,
 			Buildevents:    &buildevents,
 			AWSIAMRoleName: roleName,
+			AWSRegion:      region,
 			Command:        &testCommand,
 		},
 	}
@@ -907,6 +909,13 @@ func GitHubActionsRoleNameGetter(comm Common) *string {
 		return nil
 	}
 	return comm.Tools.GitHubActionsCI.AWSIAMRoleName
+}
+
+func GitHubActionsRegionGetter(comm Common) *string {
+	if comm.Tools == nil || comm.Tools.GitHubActionsCI == nil {
+		return nil
+	}
+	return comm.Tools.GitHubActionsCI.AWSRegion
 }
 
 func CircleCIRoleNameGetter(comm Common) *string {

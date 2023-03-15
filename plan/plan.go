@@ -82,6 +82,7 @@ type CIComponent struct {
 
 	AWSProfileName string
 	AWSRoleName    string
+	AWSRegion      string
 	AWSAccountID   string
 	Command        string
 }
@@ -967,7 +968,10 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		},
 	}
 	if githubActionsPlan.Enabled {
-		githubActionsPlan.AWSRoleName = *githubActionsConfig.AWSIAMRoleName
+		if githubActionsConfig.AWSIAMRoleName != nil {
+			githubActionsPlan.AWSRoleName = *githubActionsConfig.AWSIAMRoleName
+			githubActionsPlan.AWSRegion = *githubActionsConfig.AWSRegion
+		}
 		githubActionsPlan.Command = *githubActionsConfig.Command
 	}
 

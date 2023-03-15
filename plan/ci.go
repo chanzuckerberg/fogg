@@ -21,6 +21,9 @@ type CIConfig struct {
 	Env         map[string]string
 	projects    []CIProject
 
+	DefaultAWSIAMRoleName string
+	DefaultAWSRegion      string
+
 	TestBuckets [][]CIProject
 	AWSProfiles ciAwsProfiles
 	Buildevents bool
@@ -275,6 +278,12 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 	ciConfig := &CIConfig{
 		FoggVersion: foggVersion,
 		Env:         env,
+	}
+
+	if c.Defaults.Tools != nil && c.Defaults.Tools.GitHubActionsCI != nil &&
+		c.Defaults.Tools.GitHubActionsCI.AWSIAMRoleName != nil && c.Defaults.Tools.GitHubActionsCI.AWSRegion != nil {
+		ciConfig.DefaultAWSIAMRoleName = *c.Defaults.Tools.GitHubActionsCI.AWSIAMRoleName
+		ciConfig.DefaultAWSRegion = *c.Defaults.Tools.GitHubActionsCI.AWSRegion
 	}
 
 	var awsProvider v2.CIProviderConfig

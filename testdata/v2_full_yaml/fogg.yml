@@ -54,6 +54,7 @@ defaults:
       enabled: true
       command: lint
       aws_iam_role_name: foo
+      aws_region: bar
       ssh_key_secrets:
         - SHARED_INFRA_DEPLOY_KEY
         - SHARED_INFRA_DEPLOY_KEY2

@@ -21,6 +21,11 @@ jobs:
           path: ~/.fogg/cache
           key: fogg-cache-${{ hashFiles('**/.fogg-version') }}
       - run: make setup
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: foo
+          aws-region: bar
       - run: .fogg/bin/fogg apply
         env:
           FOGG_GITHUBTOKEN: ${{ secrets.GITHUB_TOKEN }}

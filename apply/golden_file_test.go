@@ -31,6 +31,7 @@ func TestIntegration(t *testing.T) {
 		{"v2_minimal_valid_yaml"},
 		{"v2_no_aws_provider_yaml"},
 		{"github_actions"},
+		{"github_actions_with_iam_role"},
 		{"circleci"},
 		{"tfe_provider_yaml"},
 		{"remote_backend_yaml"},

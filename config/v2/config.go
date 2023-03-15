@@ -313,6 +313,7 @@ type TravisCI struct {
 type CommonCI struct {
 	Enabled        *bool                       `yaml:"enabled,omitempty"`
 	AWSIAMRoleName *string                     `yaml:"aws_iam_role_name,omitempty"`
+	AWSRegion      *string                     `yaml:"aws_region,omitempty"`
 	TestBuckets    *int                        `yaml:"test_buckets,omitempty"`
 	Command        *string                     `yaml:"command,omitempty"`
 	Buildevents    *bool                       `yaml:"buildevents,omitempty"`
