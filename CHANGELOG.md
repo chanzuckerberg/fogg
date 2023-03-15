@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.78.1](https://github.com/vincenthsh/fogg/compare/v0.78.0...v0.78.1) (2023-03-15)
+
+
+### BugFixes
+
+* GitHub Actions ID Token permissions for AWS IAM Role access ([#85](https://github.com/vincenthsh/fogg/issues/85)) ([f23d16d](https://github.com/vincenthsh/fogg/commit/f23d16ddd84d8239c876cb9541465acf3f9a88e9))
+
 ## [0.78.0](https://github.com/vincenthsh/fogg/compare/v0.77.0...v0.78.0) (2023-03-15)
 
 
