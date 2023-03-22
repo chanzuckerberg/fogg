@@ -67,29 +67,34 @@ terraform {
   {{ end}}
   }
 }
+# tflint-ignore: terraform_unused_declarations
 variable "env" {
   type    =  string
   default = "{{ .Env }}"
 }
 
+# tflint-ignore: terraform_unused_declarations
 variable "project" {
   type    =  string
   default = "{{ .Project }}"
 }
 
 {{if .ProviderConfiguration.AWS}}
+  # tflint-ignore: terraform_unused_declarations
   variable "region" {
     type    =  string
     default = "{{ .ProviderConfiguration.AWS.Region }}"
   }
 {{ end }}
 
+# tflint-ignore: terraform_unused_declarations
 variable "component" {
   type =  string
   default = "{{ .Name }}"
 }
 
 {{ if (avail "Account" .) }}
+# tflint-ignore: terraform_unused_declarations
 variable "account" {
   type =  string
   default = "{{ .Account }}"
@@ -97,17 +102,20 @@ variable "account" {
 {{ end }}
 
 {{ if .ProviderConfiguration.AWS }}{{ if .ProviderConfiguration.AWS.Profile }}
+  # tflint-ignore: terraform_unused_declarations
   variable "aws_profile" {
     type =  string
     default =  "{{ .ProviderConfiguration.AWS.Profile }}"
   }
 {{ end }}{{ end }}
 
+# tflint-ignore: terraform_unused_declarations
 variable "owner" {
   type =  string
   default = "{{ .Owner }}"
 }
 
+# tflint-ignore: terraform_unused_declarations
 variable "tags" {
   type =  object({project: string, env: string, service: string, owner: string, managedBy: string})
   default = {
@@ -120,6 +128,7 @@ variable "tags" {
 }
 
 {{ range $key, $val := .ExtraVars }}
+# tflint-ignore: terraform_unused_declarations
 variable "{{ $key }}" {
   type =  string
   default = "{{ $val }}"
@@ -128,6 +137,7 @@ variable "{{ $key }}" {
 
 {{ if .Global}}
 {{ if .Global.Backend.Kind}}
+# tflint-ignore: terraform_unused_declarations
 data "terraform_remote_state" "global" {
   backend = "{{ .Global.Backend.Kind }}"
 
@@ -159,6 +169,7 @@ data "terraform_remote_state" "{{ $name }}" {
 }
 {{ end }}
 
+# tflint-ignore: terraform_unused_declarations
 variable "aws_accounts" {
   type =  map(string)
   default = {
