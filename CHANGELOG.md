@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.80.0](https://github.com/chanzuckerberg/fogg/compare/v0.79.1...v0.80.0) (2023-03-22)
+
+
+### Features
+
+* terraform_unused_declarations warning in latest tflint version ([#819](https://github.com/chanzuckerberg/fogg/issues/819)) ([f610035](https://github.com/chanzuckerberg/fogg/commit/f6100355677dab6ca1bb82ff6032ccae632f5004))
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.214 to 1.44.219 ([#810](https://github.com/chanzuckerberg/fogg/issues/810)) ([976c8bc](https://github.com/chanzuckerberg/fogg/commit/976c8bcae0d092c206843d27553c7cf6a9b7214b))
+* Bump github.com/fatih/color from 1.14.1 to 1.15.0 ([#812](https://github.com/chanzuckerberg/fogg/issues/812)) ([ff5d54d](https://github.com/chanzuckerberg/fogg/commit/ff5d54d3edc11b16396908d9c83a32955fe898e8))
+* Bump github.com/hashicorp/hcl/v2 from 2.16.1 to 2.16.2 ([#811](https://github.com/chanzuckerberg/fogg/issues/811)) ([4b1ef58](https://github.com/chanzuckerberg/fogg/commit/4b1ef5805227158eeb71e9a615d0c7fb591fd8a4))
+
 ### [0.79.1](https://github.com/chanzuckerberg/fogg/compare/v0.79.0...v0.79.1) (2023-03-07)
 
 
