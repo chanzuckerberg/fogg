@@ -2,7 +2,9 @@
 # Make improvements in fogg, so that everyone can benefit.
 {{- $githubActionsCI := . }}
 
-on: push
+on: 
+  push:
+  merge_group:
 
 concurrency:
   group: {{`${{ github.ref }}`}}
