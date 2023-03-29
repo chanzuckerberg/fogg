@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.81.0](https://github.com/chanzuckerberg/fogg/compare/v0.80.0...v0.81.0) (2023-03-27)
+
+
+### Features
+
+* enable mergequeues ([#820](https://github.com/chanzuckerberg/fogg/issues/820)) ([46c4483](https://github.com/chanzuckerberg/fogg/commit/46c448341443aa7af331cf15f0aa66acb0145e69))
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.219 to 1.44.224 ([#818](https://github.com/chanzuckerberg/fogg/issues/818)) ([c3e056b](https://github.com/chanzuckerberg/fogg/commit/c3e056b44c3b435f74041a8538938b35f5973332))
+* Bump github.com/aws/aws-sdk-go from 1.44.224 to 1.44.229 ([#822](https://github.com/chanzuckerberg/fogg/issues/822)) ([294f6c4](https://github.com/chanzuckerberg/fogg/commit/294f6c4c5e7587805b1e2fe3107eb602b71e458a))
+* Bump github.com/go-git/go-git/v5 from 5.6.0 to 5.6.1 ([#817](https://github.com/chanzuckerberg/fogg/issues/817)) ([ea0d89e](https://github.com/chanzuckerberg/fogg/commit/ea0d89eb7838580ffc2b438f790d0880793fd674))
+* Bump github.com/hashicorp/go-getter from 1.7.0 to 1.7.1 ([#816](https://github.com/chanzuckerberg/fogg/issues/816)) ([c532397](https://github.com/chanzuckerberg/fogg/commit/c53239779ba8936bfb23250289875c2986579c6a))
+
 ## [0.80.0](https://github.com/chanzuckerberg/fogg/compare/v0.79.1...v0.80.0) (2023-03-22)
 
 
