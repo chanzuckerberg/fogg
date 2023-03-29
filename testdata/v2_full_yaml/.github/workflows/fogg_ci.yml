@@ -111,4 +111,4 @@ jobs:
         run: |
           make setup
           cd ${{matrix.tfmodule}}
-          ${GITHUB_WORKSPACE}/.fogg/bin/tflint
+          ${GITHUB_WORKSPACE}/.fogg/bin/tflint --disable-rule terraform_deprecated_index --disable-rule terraform_required_providers --disable-rule terraform_unused_declarations
