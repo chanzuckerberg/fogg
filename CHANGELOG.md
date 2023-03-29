@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.81.1](https://github.com/chanzuckerberg/fogg/compare/v0.81.0...v0.81.1) (2023-03-29)
+
+
+### BugFixes
+
+* Suppress the following tflint rules: terraform_deprecated_index, terraform_required_providers, terraform_unused_declarations ([#823](https://github.com/chanzuckerberg/fogg/issues/823)) ([287d2d1](https://github.com/chanzuckerberg/fogg/commit/287d2d172e9ee1ddd663ee7a501c5cb971fb59c5))
+
 ## [0.81.0](https://github.com/chanzuckerberg/fogg/compare/v0.80.0...v0.81.0) (2023-03-27)
 
 
