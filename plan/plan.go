@@ -137,6 +137,7 @@ type ProviderConfiguration struct {
 	Grafana                *GrafanaProvider    `yaml:"grafana"`
 	Heroku                 *HerokuProvider     `yaml:"heroku"`
 	Kubernetes             *KubernetesProvider `yaml:"kubernetes"`
+	Kubectl                *KubectlProvider    `yaml:"kubectl"`
 	Okta                   *OktaProvider       `yaml:"okta"`
 	Sentry                 *SentryProvider     `yaml:"sentry"`
 	Snowflake              *SnowflakeProvider  `yaml:"snowflake"`
@@ -270,6 +271,10 @@ type TfeProvider struct {
 }
 
 type KubernetesProvider struct {
+	CommonProvider `yaml:",inline"`
+}
+
+type KubectlProvider struct {
 	CommonProvider `yaml:",inline"`
 }
 
@@ -1074,6 +1079,32 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
+	var kubectlPlan *KubectlProvider
+
+	kubcectlConfig := v2.ResolveKubectlProvider(commons...)
+	if kubcectlConfig != nil && (kubcectlConfig.Enabled == nil || (kubcectlConfig.Enabled != nil && *kubcectlConfig.Enabled)) {
+		customProvider := false
+		if kubcectlConfig.CustomProvider != nil {
+			customProvider = *kubcectlConfig.CustomProvider
+		}
+		version := "1.14.0"
+		if kubcectlConfig.Version != nil {
+			version = *kubcectlConfig.Version
+		}
+		kubectlPlan = &KubectlProvider{
+			CommonProvider: CommonProvider{
+				Version:        version,
+				Enabled:        kubcectlConfig.Enabled == nil || (kubcectlConfig.Enabled != nil && *kubcectlConfig.Enabled),
+				CustomProvider: customProvider,
+			},
+		}
+
+		providerVersions["kubectl"] = ProviderVersion{
+			Source:  "gavinbunney/kubectl",
+			Version: &version,
+		}
+	}
+
 	var grafanaPlan *GrafanaProvider
 
 	grafanaConfig := v2.ResolveGrafanaProvider(commons...)
@@ -1195,6 +1226,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Grafana:                grafanaPlan,
 			Heroku:                 herokuPlan,
 			Kubernetes:             k8sPlan,
+			Kubectl:                kubectlPlan,
 			Okta:                   oktaPlan,
 			Sentry:                 sentryPlan,
 			Snowflake:              snowflakePlan,
