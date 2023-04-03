@@ -615,6 +615,46 @@ func ResolveKubernetesProvider(commons ...Common) *KubernetesProvider {
 	return p
 }
 
+func ResolveKubectlProvider(commons ...Common) *KubectlProvider {
+	var p *KubectlProvider
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.Kubectl == nil {
+			continue
+		}
+		p = c.Providers.Kubectl
+		if p.CustomProvider == nil {
+			p.CustomProvider = defaultEnabled(false)
+		}
+	}
+	var version *string
+	var enabled *bool
+
+	for _, c := range commons {
+		if c.Providers != nil && c.Providers.Kubectl != nil {
+			t := c.Providers.Kubectl
+
+			if t.Enabled != nil {
+				enabled = t.Enabled
+			}
+
+			if t.Version != nil {
+				version = t.Version
+			}
+		}
+	}
+
+	if version != nil {
+		return &KubectlProvider{
+			CommonProvider: CommonProvider{
+				CustomProvider: lastNonNilBool(KubectlProviderCustomProviderGetter, commons...),
+				Enabled:        enabled,
+				Version:        version,
+			},
+		}
+	}
+	return p
+}
+
 func ResolveGrafanaProvider(commons ...Common) *GrafanaProvider {
 	var p *GrafanaProvider
 	for _, c := range commons {
@@ -926,9 +966,17 @@ func DatabricksProviderCustomProviderGetter(comm Common) *bool {
 	}
 	return nil
 }
+
 func KubernetesProviderCustomProviderGetter(comm Common) *bool {
 	if comm.Providers != nil && comm.Providers.Kubernetes != nil {
 		return comm.Providers.Kubernetes.CommonProvider.CustomProvider
+	}
+	return nil
+}
+
+func KubectlProviderCustomProviderGetter(comm Common) *bool {
+	if comm.Providers != nil && comm.Providers.Kubectl != nil {
+		return comm.Providers.Kubectl.CommonProvider.CustomProvider
 	}
 	return nil
 }
