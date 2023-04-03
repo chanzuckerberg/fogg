@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.82.0](https://github.com/chanzuckerberg/fogg/compare/v0.81.1...v0.82.0) (2023-04-03)
+
+
+### Features
+
+* Add kubectl provider support ([#825](https://github.com/chanzuckerberg/fogg/issues/825)) ([4f1db59](https://github.com/chanzuckerberg/fogg/commit/4f1db594a0421d607757dc4407566e3a8617084d))
+
 ### [0.81.1](https://github.com/chanzuckerberg/fogg/compare/v0.81.0...v0.81.1) (2023-03-29)
 
 
