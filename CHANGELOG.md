@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.82.2](https://github.com/chanzuckerberg/fogg/compare/v0.82.1...v0.82.2) (2023-04-10)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.234 to 1.44.239 ([#831](https://github.com/chanzuckerberg/fogg/issues/831)) ([8e2d372](https://github.com/chanzuckerberg/fogg/commit/8e2d3726ae056e386f900a12cea6c26ff5e785f3))
+* Bump github.com/spf13/cobra from 1.6.1 to 1.7.0 ([#830](https://github.com/chanzuckerberg/fogg/issues/830)) ([e32d622](https://github.com/chanzuckerberg/fogg/commit/e32d622dbb8296f9630892e1f743204089d54dd6))
+
 ### [0.82.1](https://github.com/chanzuckerberg/fogg/compare/v0.82.0...v0.82.1) (2023-04-03)
 
 
