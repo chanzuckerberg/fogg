@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.82.4](https://github.com/chanzuckerberg/fogg/compare/v0.82.3...v0.82.4) (2023-04-17)
+
+
+### Misc
+
+* Bump github.com/chanzuckerberg/go-misc from 1.0.7 to 1.0.8 ([#834](https://github.com/chanzuckerberg/fogg/issues/834)) ([5cf893a](https://github.com/chanzuckerberg/fogg/commit/5cf893af34bb0bb16fadfb7c7b0dd7e1cef53797))
+
 ### [0.82.3](https://github.com/chanzuckerberg/fogg/compare/v0.82.2...v0.82.3) (2023-04-17)
 
 
