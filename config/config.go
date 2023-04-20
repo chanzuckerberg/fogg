@@ -1,6 +1,7 @@
 package config
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"path/filepath"
 
@@ -23,7 +24,9 @@ func defaultEnabled(a bool) *bool {
 }
 
 // InitConfig initializes the config file using user input
-func InitConfig(project, region, bucket, table, awsProfile, owner *string, awsProviderVersion string) *v2.Config {
+func InitConfig(project, region, bucket, table, awsProfile, owner, awsAccountID *string, awsProviderVersion string) *v2.Config {
+	accountID := json.Number(*awsAccountID)
+
 	return &v2.Config{
 		Defaults: v2.Defaults{
 			Common: v2.Common{
@@ -37,8 +40,9 @@ func InitConfig(project, region, bucket, table, awsProfile, owner *string, awsPr
 				Project: project,
 				Providers: &v2.Providers{
 					AWS: &v2.AWSProvider{
-						Profile: awsProfile,
-						Region:  region,
+						AccountID: &accountID,
+						Profile:   awsProfile,
+						Region:    region,
 						CommonProvider: v2.CommonProvider{
 							Enabled: defaultEnabled(true),
 							Version: &awsProviderVersion,

@@ -5,7 +5,7 @@ import (
 	"github.com/spf13/afero"
 )
 
-//Migration Defines a fogg migration and the actions that it can perform
+// Migration Defines a fogg migration and the actions that it can perform
 type Migration interface {
 	Description() string                      //Describes the migration taking
 	Guard(afero.Fs, string) (bool, error)     //Returns true if migration is runnable, otherwise error
@@ -13,7 +13,7 @@ type Migration interface {
 	Prompt() bool                             //Returns whether the user would like to run the migration
 }
 
-//RunMigrations cycles through a list of migrations and applies them if necessary
+// RunMigrations cycles through a list of migrations and applies them if necessary
 func RunMigrations(fs afero.Fs, configFile string, forceApply bool) error {
 	migrations := []Migration{}
 

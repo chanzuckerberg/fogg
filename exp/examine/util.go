@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/afero"
 )
 
-//TODO:(EC) Add a RegistryModule field
+// TODO:(EC) Add a RegistryModule field
 type ModuleWrapper struct {
 	moduleSource string
 	version      string
@@ -62,7 +62,7 @@ type Submodule struct {
 const githubURL = "github.com"
 const tagPattern = "ref="
 
-//GetFromGithub Retrieves modules that are available through github
+// GetFromGithub Retrieves modules that are available through github
 func GetFromGithub(fs afero.Fs, repo string) (*tfconfig.Module, error) {
 	//FIXME: (EC) Create temporary directory, when tests fail directory stays
 	//TODO: Make directory name more general

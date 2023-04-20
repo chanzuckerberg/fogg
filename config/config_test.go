@@ -14,7 +14,7 @@ func getPtr(val string) *string {
 
 func TestInitConfig(t *testing.T) {
 	r := require.New(t)
-	c := InitConfig(getPtr("proj"), getPtr("reg"), getPtr("buck"), getPtr("table"), getPtr("prof"), getPtr("me@foo.example"), "0.99.0")
+	c := InitConfig(getPtr("proj"), getPtr("reg"), getPtr("buck"), getPtr("table"), getPtr("prof"), getPtr("me@foo.example"), getPtr("123456789"), "0.99.0")
 	r.Equal("prof", *c.Defaults.Common.Backend.Profile)
 	r.Equal("prof", *c.Defaults.Providers.AWS.Profile)
 	r.Equal("reg", *c.Defaults.Providers.AWS.Region)
