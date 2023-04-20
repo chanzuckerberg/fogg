@@ -17,12 +17,12 @@ func TestInit(t *testing.T) {
 	table := "acme"
 	profile := "acme-auth"
 	owner := "infra@acme.example"
-	awsAccountId := "123456789"
+	awsAccountID := "123456789"
 
 	fs, _, err := util.TestFs()
 	r.NoError(err)
 
-	conf := config.InitConfig(&project, &region, &bucket, &table, &profile, &owner, &awsAccountId, AWSProviderVersion)
+	conf := config.InitConfig(&project, &region, &bucket, &table, &profile, &owner, &awsAccountID, AWSProviderVersion)
 	r.NotNil(conf)
 	r.Equal(config.DefaultFoggVersion, conf.Version)
 
