@@ -13,7 +13,7 @@ func init() {
 	expCmd.AddCommand(examineCmd)
 }
 
-//TODO:(EC) Create a flag for path to walk
+// TODO:(EC) Create a flag for path to walk
 var examineCmd = &cobra.Command{
 	Use:   "examine",
 	Short: "Detects terraform module updates",

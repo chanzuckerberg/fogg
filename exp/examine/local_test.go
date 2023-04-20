@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-//TODO: Move fs to versioning.go
+// TODO: Move fs to versioning.go
 func TestGetLocalModules(t *testing.T) {
 	r := require.New(t)
 	pwd, err := os.Getwd()

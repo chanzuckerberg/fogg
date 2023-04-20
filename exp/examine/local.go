@@ -10,8 +10,8 @@ import (
 
 //**Local refers to any files located within your local file system**
 
-//GetLocalModules retrieves all terraform modules within a given directory
-//TODO:(EC) Define local and global modules OR rename the values
+// GetLocalModules retrieves all terraform modules within a given directory
+// TODO:(EC) Define local and global modules OR rename the values
 func GetLocalModules(fs afero.Fs, dir string) (*tfconfig.Module, error) {
 	_, err := os.Stat(dir)
 	if err != nil {
