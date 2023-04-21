@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.82.5](https://github.com/chanzuckerberg/fogg/compare/v0.82.4...v0.82.5) (2023-04-20)
+
+
+### BugFixes
+
+* Add AWS Account ID to fogg init interview ([#837](https://github.com/chanzuckerberg/fogg/issues/837)) ([1f66cd3](https://github.com/chanzuckerberg/fogg/commit/1f66cd324fabf04a98093384f67a6120eed295dc))
+
 ### [0.82.4](https://github.com/chanzuckerberg/fogg/compare/v0.82.3...v0.82.4) (2023-04-17)
 
 
