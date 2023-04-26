@@ -10,7 +10,11 @@ import (
 
 	"github.com/chanzuckerberg/fogg/errs"
 	getter "github.com/hashicorp/go-getter"
+	goversion "github.com/hashicorp/go-version"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
+	"github.com/hashicorp/terraform/registry"
+	"github.com/hashicorp/terraform/registry/regsrc"
+	"github.com/hashicorp/terraform/registry/response"
 	"github.com/kelseyhightower/envconfig"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/sirupsen/logrus"
@@ -30,7 +34,12 @@ func redactCredentials(source string) string {
 	return fmt.Sprintf("git::%s", u)
 }
 
-func DownloadModule(fs afero.Fs, cacheDir, source string) (string, error) {
+func IsRegistrySourceAddr(addr string) bool {
+	_, err := regsrc.ParseModuleSource(addr)
+	return err == nil
+}
+
+func DownloadModule(fs afero.Fs, cacheDir, source, version string, reg *registry.Client) (string, error) {
 	// We want to do these operations from the root of our working repository.
 	// In the case where we have a BaseFs we pull out its root. Otherwise use `pwd`.
 	var pwd string
@@ -42,6 +51,16 @@ func DownloadModule(fs afero.Fs, cacheDir, source string) (string, error) {
 		if err != nil {
 			return "", errs.WrapUser(err, "could not get pwd")
 		}
+	}
+
+	logrus.Debugf("Downloading module %q - version %q", source, version)
+	if version != "" && IsRegistrySourceAddr(source) {
+		logrus.Debugf("Attempting to download module %q from registry", source)
+		resolvedSource, regErr := ResolveRegistryModule(source, version, reg)
+		if regErr != nil {
+			return "", regErr
+		}
+		source = resolvedSource
 	}
 
 	s, err := getter.Detect(source, pwd, getter.Detectors)
@@ -77,6 +96,81 @@ func DownloadModule(fs afero.Fs, cacheDir, source string) (string, error) {
 	return d, nil
 }
 
+// Resolve module source based on version string
+func ResolveRegistryModule(source string, version string, reg *registry.Client) (string, error) {
+	var err error
+	var vc goversion.Constraints
+	if strings.TrimSpace(version) != "" {
+		var err error
+		vc, err = goversion.NewConstraint(version)
+		if err != nil {
+			return "", errs.WrapUser(err, fmt.Sprintf("module %q has invalid version constraint %q", source, version))
+		}
+	}
+	// ParseModuleSource should not error because entry to this function is guarded
+	addr, _ := regsrc.ParseModuleSource(source)
+	hostname, _ := addr.SvcHost()
+	var resp *response.ModuleVersions
+	resp, err = reg.ModuleVersions(addr)
+	if err != nil {
+		if registry.IsModuleNotFound(err) {
+			return "", errs.WrapUser(err, fmt.Sprintf("module %q cannot be found in the module registry at %s", source, hostname))
+		} else {
+			return "", errs.WrapUser(err, fmt.Sprintf("failed to retrieve available versions for module %q from %s", source, hostname))
+		}
+	}
+	if len(resp.Modules) < 1 {
+		return "", fmt.Errorf("the registry at %s returned an invalid response when Terraform requested available versions for module %q", hostname, source)
+	}
+
+	// The response might contain information about dependencies to potentially
+	// optimize future requests, which doesn't apply here and we just take
+	// the first item which is guaranteed to be the address we requested.
+	modMeta := resp.Modules[0]
+
+	var latestMatch *goversion.Version
+	var latestVersion *goversion.Version
+	for _, mv := range modMeta.Versions {
+		v, err := goversion.NewVersion(mv.Version)
+		if err != nil {
+			logrus.Infof("The registry at %s returned an invalid version string %q for module %q, which Terraform ignored.", hostname, mv.Version, source)
+			continue
+		}
+
+		// If we've found a pre-release version then we'll ignore it unless
+		// it was exactly requested.
+		if v.Prerelease() != "" && vc.String() != v.String() {
+			logrus.Infof("ignoring %s for module %q because it is a pre-release and was not requested exactly", v, source)
+			continue
+		}
+
+		if latestVersion == nil || v.GreaterThan(latestVersion) {
+			latestVersion = v
+		}
+
+		if vc.Check(v) {
+			if latestMatch == nil || v.GreaterThan(latestMatch) {
+				latestMatch = v
+			}
+		}
+	}
+
+	if latestVersion == nil {
+		return "", fmt.Errorf("module %q has no versions available on %s", addr, hostname)
+	}
+
+	if latestMatch == nil {
+		return "", fmt.Errorf("there is no available version of module %q which matches the given version constraint %q. The newest available version is %s", addr, version, latestVersion)
+	}
+
+	dlAddr, err := reg.ModuleLocation(addr, latestMatch.String())
+	if err != nil {
+		return "", errs.WrapUser(err, fmt.Sprintf("failed to retrieve a download URL for %s %s from %s", addr, latestMatch, hostname))
+	}
+	source, _ = getter.SourceDirSubdir(dlAddr)
+	return source, nil
+}
+
 func GetFoggCachePath() (string, error) {
 	homedir, err := homedir.Dir()
 	if err != nil {
@@ -91,7 +185,12 @@ type ModuleDownloader interface {
 }
 
 type Downloader struct {
+	// Source to download Module from
 	Source string
+	// Version constraint string, if empty this will be ignored
+	Version string
+	// Terraform Registry Client to look up module based on version string
+	RegistryClient *registry.Client
 }
 
 // Changes a URL to use the git protocol over HTTPS instead of SSH.
@@ -163,7 +262,7 @@ func convertSSHToGithubAppHTTPURL(sURL, token string) string {
 	return fmt.Sprintf("git::%s", u)
 }
 
-func MakeDownloader(src string) (*Downloader, error) {
+func MakeDownloader(src, version string, reg *registry.Client) (*Downloader, error) {
 	type HTTPAuth struct {
 		GithubToken    *string
 		GithubAppToken *string
@@ -178,7 +277,7 @@ func MakeDownloader(src string) (*Downloader, error) {
 	} else if httpAuth.GithubAppToken != nil {
 		src = convertSSHToGithubAppHTTPURL(src, *httpAuth.GithubAppToken)
 	}
-	return &Downloader{Source: src}, nil
+	return &Downloader{Source: src, Version: version, RegistryClient: reg}, nil
 }
 
 func (dd *Downloader) DownloadAndParseModule(fs afero.Fs) (*tfconfig.Module, error) {
@@ -186,7 +285,7 @@ func (dd *Downloader) DownloadAndParseModule(fs afero.Fs) (*tfconfig.Module, err
 	if err != nil {
 		return nil, err
 	}
-	d, err := DownloadModule(fs, dir, dd.Source)
+	d, err := DownloadModule(fs, dir, dd.Source, dd.Version, dd.RegistryClient)
 	if err != nil {
 		return nil, errs.WrapUser(err, "unable to download module")
 	}

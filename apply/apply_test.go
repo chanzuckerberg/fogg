@@ -406,7 +406,7 @@ func TestApplyModuleInvocation(t *testing.T) {
 
 	moduleSource := "test-module"
 	fs := afero.NewCopyOnWriteFs(pwdFs, testFs)
-	downloader, err := util.MakeDownloader("test-module")
+	downloader, err := util.MakeDownloader("test-module", "", nil)
 	r.NoError(err)
 	mi := []moduleInvocation{
 		{
@@ -449,7 +449,7 @@ func TestApplyModuleInvocationWithEmptyVariables(t *testing.T) {
 
 	moduleSource := "test-module"
 	fs := afero.NewCopyOnWriteFs(pwdFs, testFs)
-	downloader, err := util.MakeDownloader(moduleSource)
+	downloader, err := util.MakeDownloader(moduleSource, "", nil)
 	r.NoError(err)
 	mi := []moduleInvocation{
 		{
@@ -491,7 +491,7 @@ func TestApplyModuleInvocationWithOneDefaultVariable(t *testing.T) {
 	r.NoError(err)
 
 	fs := afero.NewCopyOnWriteFs(pwdFs, testFs)
-	downloader, err := util.MakeDownloader("test-module")
+	downloader, err := util.MakeDownloader("test-module", "", nil)
 	r.NoError(err)
 	moduleName := "test-module"
 	mi := []moduleInvocation{
@@ -536,7 +536,7 @@ func TestApplyModuleInvocationWithModuleName(t *testing.T) {
 	fs := afero.NewCopyOnWriteFs(pwdFs, testFs)
 
 	moduleSource := "test-module"
-	downloader, err := util.MakeDownloader(moduleSource)
+	downloader, err := util.MakeDownloader(moduleSource, "", nil)
 	r.NoError(err)
 	moduleName := "module_name"
 	mi := []moduleInvocation{
@@ -581,7 +581,7 @@ func TestApplyModuleInvocationWithModulePrefix(t *testing.T) {
 
 	fs := afero.NewCopyOnWriteFs(pwdFs, testFs)
 
-	downloader, err := util.MakeDownloader("test-module")
+	downloader, err := util.MakeDownloader("test-module", "", nil)
 	r.NoError(err)
 	moduleName := "module_name"
 	modulePrefix := "prefix"
@@ -690,7 +690,7 @@ func TestCalculateLocalPath(t *testing.T) {
 
 		t.Run("", func(t *testing.T) {
 			r := require.New(t)
-			p, e := calculateModuleAddressForSource(tt.path, tt.moduleAddress)
+			p, _, e := calculateModuleAddressForSource(tt.path, tt.moduleAddress, "")
 			r.Nil(e)
 			r.Equal(tt.expected, p)
 		})

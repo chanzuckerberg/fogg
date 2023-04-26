@@ -1,0 +1,35 @@
+defaults:
+  backend:
+    bucket: buck
+    profile: profile
+    region: us-west-2
+  extra_vars:
+    foo: bar1
+  owner: foo@example.com
+  project: proj
+  providers:
+    aws:
+      account_id: 00456
+      profile: profile
+      region: us-west-2
+      version: 0.12.0
+  terraform_version: 0.100.0
+envs:
+  test:
+    components:
+      vpc:
+        modules:
+          - name: "vpc"
+            source: "terraform-aws-modules/vpc/aws"
+            version: "4.0.1"
+            variables:
+              - name
+              - cidr
+              - azs
+              - private_subnets
+              - public_subnets
+              - tags
+          - source: "terraform/modules/my_module"
+modules:
+  my_module: {}
+version: 2

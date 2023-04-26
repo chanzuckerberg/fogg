@@ -36,6 +36,7 @@ func TestIntegration(t *testing.T) {
 		{"tfe_provider_yaml"},
 		{"remote_backend_yaml"},
 		{"tfe_config"},
+		{"v2_tf_registry_module"},
 	}
 
 	for _, test := range testCases {

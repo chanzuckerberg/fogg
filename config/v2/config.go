@@ -141,6 +141,8 @@ type Component struct {
 type ComponentModule struct {
 	// Source for Terraform module as supported by Terraform
 	Source *string `yaml:"source,omitempty"`
+	// Version for Terraform module as supported by Terraform
+	Version *string `yaml:"version,omitempty"`
 	// Name for generated module block, defaults to Source stripped from special characters
 	Name *string `yaml:"name,omitempty"`
 	// Prefix for all generated input and output placeholder to handle overlapping references

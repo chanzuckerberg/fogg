@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	getter "github.com/hashicorp/go-getter"
+	"github.com/hashicorp/terraform/registry"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/require"
 )
@@ -22,7 +23,7 @@ func TestDownloadModule(t *testing.T) {
 	r.NoError(e)
 
 	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
-	d, e := DownloadModule(fs, dir, "github.com/chanzuckerberg/fogg-test-module")
+	d, e := DownloadModule(fs, dir, "github.com/chanzuckerberg/fogg-test-module", "", nil)
 	r.NoError(e)
 	r.NotNil(d)
 	r.NotEmpty(d)
@@ -35,7 +36,7 @@ func TestDownloadAndParseModule(t *testing.T) {
 	pwd, e := os.Getwd()
 	r.NoError(e)
 	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
-	downloader, err := MakeDownloader("github.com/chanzuckerberg/fogg-test-module")
+	downloader, err := MakeDownloader("github.com/chanzuckerberg/fogg-test-module", "", nil)
 	r.NoError(err)
 	c, e := downloader.DownloadAndParseModule(fs)
 	r.Nil(e)
@@ -46,16 +47,35 @@ func TestDownloadAndParseModule(t *testing.T) {
 	r.Len(c.Outputs, 2)
 }
 
+func TestDownloadAndParseRegistryModule(t *testing.T) {
+	r := require.New(t)
+
+	pwd, e := os.Getwd()
+	r.NoError(e)
+	fs := afero.NewBasePathFs(afero.NewOsFs(), pwd)
+
+	reg := registry.NewClient(nil, nil)
+	downloader, err := MakeDownloader("terraform-aws-modules/s3-bucket/aws", "3.8.2", reg)
+	r.NoError(err)
+	c, e := downloader.DownloadAndParseModule(fs)
+	r.Nil(e)
+	r.NotNil(c)
+	r.NotNil(c.Variables)
+	r.NotNil(c.Outputs)
+	r.Len(c.Variables, 46)
+	r.Len(c.Outputs, 8)
+}
+
 func TestMakeDownloader(t *testing.T) {
 	r := require.New(t)
 	creds := "REDACTED"
-	downloader, err := MakeDownloader("git@github.com:chanzuckerberg/test-repo//terraform/modules/eks-airflow?ref=v0.80.0")
+	downloader, err := MakeDownloader("git@github.com:chanzuckerberg/test-repo//terraform/modules/eks-airflow?ref=v0.80.0", "", nil)
 	r.NoError(err)
 	r.Equal("git@github.com:chanzuckerberg/test-repo//terraform/modules/eks-airflow?ref=v0.80.0", downloader.Source)
 
 	os.Setenv("FOGG_GITHUBTOKEN", creds)
 	defer os.Unsetenv("FOGG_GITHUBTOKEN")
-	downloader, err = MakeDownloader("git@github.com:chanzuckerberg/test-repo//terraform/modules/eks-airflow?ref=v0.80.0")
+	downloader, err = MakeDownloader("git@github.com:chanzuckerberg/test-repo//terraform/modules/eks-airflow?ref=v0.80.0", "", nil)
 	r.NoError(err)
 	r.Equal(fmt.Sprintf("git::https://%s@github.com/chanzuckerberg/test-repo//terraform/modules/eks-airflow?ref=v0.80.0", creds), downloader.Source)
 }
@@ -63,13 +83,13 @@ func TestMakeDownloader(t *testing.T) {
 func TestMakeDownloaderGithubApp(t *testing.T) {
 	r := require.New(t)
 	creds := "REDACTED"
-	downloader, err := MakeDownloader("git@github.com:chanzuckerberg/test-repo//terraform/modules/eks-airflow?ref=v0.80.0")
+	downloader, err := MakeDownloader("git@github.com:chanzuckerberg/test-repo//terraform/modules/eks-airflow?ref=v0.80.0", "", nil)
 	r.NoError(err)
 	r.Equal("git@github.com:chanzuckerberg/test-repo//terraform/modules/eks-airflow?ref=v0.80.0", downloader.Source)
 
 	os.Setenv("FOGG_GITHUBAPPTOKEN", creds)
 	defer os.Unsetenv("FOGG_GITHUBAPPTOKEN")
-	downloader, err = MakeDownloader("git@github.com:chanzuckerberg/test-repo//terraform/modules/eks-airflow?ref=v0.80.0")
+	downloader, err = MakeDownloader("git@github.com:chanzuckerberg/test-repo//terraform/modules/eks-airflow?ref=v0.80.0", "", nil)
 	r.NoError(err)
 	r.Equal(fmt.Sprintf("git::https://x-access-token:%s@github.com/chanzuckerberg/test-repo//terraform/modules/eks-airflow?ref=v0.80.0", creds), downloader.Source)
 }

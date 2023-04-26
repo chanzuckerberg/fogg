@@ -5,11 +5,11 @@ import (
 	"math"
 	"os"
 	"os/exec"
-	"strings"
 
 	"github.com/antzucaro/matchr"
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform/plans"
+	"github.com/hashicorp/terraform/plans/planfile"
 	"github.com/pkg/errors"
 	prompt "github.com/segmentio/go-prompt"
 	"github.com/sirupsen/logrus"
@@ -35,17 +35,17 @@ func generatePlan(planPath string) error {
 
 // parsePlan
 func parsePlan(planPath string) error {
-	f, err := os.Open(planPath)
+	reader, err := planfile.Open(planPath)
 	if err != nil {
 		return errors.Wrapf(err, "Could not read plan at %s", planPath)
 	}
-	defer f.Close()
+	defer reader.Close()
 	// TODO: also remove the plan?
-	plan, err := terraform.ReadPlan(f)
+	plan, err := reader.ReadPlan()
 	if err != nil {
 		return errors.Wrapf(err, "Terraform could not parse plan at %s", planPath)
 	}
-	if plan.Diff == nil {
+	if plan.Changes == nil || plan.Changes.Resources == nil {
 		logrus.Debug("nil diff")
 		return nil
 	}
@@ -53,15 +53,12 @@ func parsePlan(planPath string) error {
 	deletions := map[string]bool{}
 	additions := map[string]bool{}
 
-	for _, module := range plan.Diff.Modules {
-		moduleName := strings.TrimPrefix(strings.Join(module.Path, "."), "root.")
-		for name, instance := range module.Resources {
-			fullName := fmt.Sprintf("%s.%s", moduleName, name)
-			if instance.Destroy {
-				deletions[fullName] = true
-			} else {
-				additions[fullName] = true
-			}
+	for _, resourceChange := range plan.Changes.Resources {
+		switch resourceChange.ChangeSrc.Action {
+		case plans.Create, plans.DeleteThenCreate:
+			additions[resourceChange.Addr.String()] = true
+		case plans.Delete, plans.CreateThenDelete:
+			deletions[resourceChange.Addr.String()] = true
 		}
 	}
 

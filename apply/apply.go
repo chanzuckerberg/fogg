@@ -24,6 +24,7 @@ import (
 	getter "github.com/hashicorp/go-getter"
 	"github.com/hashicorp/hcl2/hclwrite"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
+	"github.com/hashicorp/terraform/registry"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
@@ -240,7 +241,7 @@ func applyTFE(fs afero.Fs, plan *plan.Plan, tmpl *templates.T) error {
 		return err
 	}
 	if plan.TFE.ModuleSource != nil {
-		downloader, err := util.MakeDownloader(*plan.TFE.ModuleSource)
+		downloader, err := util.MakeDownloader(*plan.TFE.ModuleSource, "", nil)
 		mi := []moduleInvocation{
 			{
 				module: v2.ComponentModule{
@@ -364,6 +365,7 @@ func applyEnvs(
 		if err != nil {
 			return errs.WrapUser(err, "unable to apply templates to env")
 		}
+		reg := registry.NewClient(nil, nil)
 		for component, componentPlan := range envPlan.Components {
 			path = fmt.Sprintf("%s/envs/%s/%s", rootPath, env, component)
 			err = fs.MkdirAll(path, 0755)
@@ -386,7 +388,7 @@ func applyEnvs(
 
 			mi := make([]moduleInvocation, 0)
 			if componentPlan.ModuleSource != nil {
-				downloader, err := util.MakeDownloader(*componentPlan.ModuleSource)
+				downloader, err := util.MakeDownloader(*componentPlan.ModuleSource, "", reg)
 				if err != nil {
 					return errs.WrapUser(err, "unable to make a downloader")
 				}
@@ -394,6 +396,7 @@ func applyEnvs(
 					module: v2.ComponentModule{
 						Name:      componentPlan.ModuleName,
 						Source:    componentPlan.ModuleSource,
+						Version:   nil,
 						Variables: componentPlan.Variables,
 						Prefix:    nil,
 					},
@@ -402,7 +405,11 @@ func applyEnvs(
 			}
 
 			for _, m := range componentPlan.Modules {
-				downloader, err := util.MakeDownloader(*m.Source)
+				moduleVersion := ""
+				if m.Version != nil {
+					moduleVersion = *m.Version
+				}
+				downloader, err := util.MakeDownloader(*m.Source, moduleVersion, reg)
 				if err != nil {
 					return errs.WrapUser(err, "unable to make a downloader")
 				}
@@ -574,11 +581,12 @@ func applyTemplate(sourceFile io.Reader, commonTemplates fs.FS, dest afero.Fs, p
 // leave it here for now and re-think it when we make this mechanism
 // general purpose.
 type moduleData struct {
-	ModuleName   string
-	ModuleSource string
-	ModulePrefix string
-	Variables    []string
-	Outputs      []*tfconfig.Output
+	ModuleName    string
+	ModuleSource  string
+	ModuleVersion string
+	ModulePrefix  string
+	Variables     []string
+	Outputs       []*tfconfig.Output
 }
 
 type modulesData struct {
@@ -647,10 +655,15 @@ func applyModuleInvocation(
 		if mi.module.Prefix != nil {
 			modulePrefix = *mi.module.Prefix + "_"
 		}
-		moduleAddressForSource, _ := calculateModuleAddressForSource(path, *mi.module.Source)
+		moduleVersion := ""
+		if mi.module.Version != nil {
+			moduleVersion = *mi.module.Version
+		}
+		moduleAddressForSource, moduleVersion, _ := calculateModuleAddressForSource(path, *mi.module.Source, moduleVersion)
 		arr = append(arr, &moduleData{
 			moduleName,
 			moduleAddressForSource,
+			moduleVersion,
 			modulePrefix,
 			variables,
 			outputs,
@@ -695,30 +708,35 @@ func applyModuleInvocation(
 	return nil
 }
 
-func calculateModuleAddressForSource(path, moduleAddress string) (string, error) {
-	// For cases where the module is a local path, we need to calculate the
-	// relative path from the component to the module.
-	// The module_source path in the fogg.yml is relative to the repo root.
-	var moduleAddressForSource string
-	// getter will kinda normalize the module address, but it will actually be
-	// wrong for local file paths, so we need to calculate that ourselves below
-	s, e := getter.Detect(moduleAddress, path, getter.Detectors)
-	if e != nil {
-		return "", e
-	}
-	u, e := url.Parse(s)
-	if e != nil || u.Scheme == "file" {
-		// This indicates that we have a local path to the module.
-		// It is possible that this test is unreliable.
-		moduleAddressForSource, e = filepath.Rel(path, moduleAddress)
-		if e != nil {
-			return "", e
-		}
+func calculateModuleAddressForSource(path, moduleAddress string, moduleVersion string) (string, string, error) {
+	if moduleVersion != "" && util.IsRegistrySourceAddr(moduleAddress) {
+		return moduleAddress, moduleVersion, nil
 	} else {
-		moduleAddressForSource = moduleAddress
+		// For cases where the module is a local path, we need to calculate the
+		// relative path from the component to the module.
+		// The module_source path in the fogg.yml is relative to the repo root.
+		var moduleAddressForSource string
+		// getter will kinda normalize the module address, but it will actually be
+		// wrong for local file paths, so we need to calculate that ourselves below
+		s, e := getter.Detect(moduleAddress, path, getter.Detectors)
+		if e != nil {
+			return "", "", e
+		}
+		u, e := url.Parse(s)
+		if e != nil || u.Scheme == "file" {
+			// This indicates that we have a local path to the module.
+			// It is possible that this test is unreliable.
+			moduleAddressForSource, e = filepath.Rel(path, moduleAddress)
+			if e != nil {
+				return "", "", e
+			}
+		} else {
+			moduleAddressForSource = moduleAddress
+		}
+		return moduleAddressForSource, "", nil
 	}
-	return moduleAddressForSource, nil
 }
+
 func getTargetPath(basePath, path string) string {
 	target := filepath.Join(basePath, path)
 	extension := filepath.Ext(path)

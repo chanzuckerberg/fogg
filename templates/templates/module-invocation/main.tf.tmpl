@@ -3,6 +3,9 @@
 {{ range .Modules }}
 module "{{.ModuleName}}" {
   source = "{{.ModuleSource}}"
+  {{ if .ModuleVersion -}}
+  version = "{{ .ModuleVersion }}"
+  {{ end -}}
   {{ $outer := . -}}
   {{range .Variables -}}
     {{.}} = local.{{$outer.ModulePrefix}}{{.}}
