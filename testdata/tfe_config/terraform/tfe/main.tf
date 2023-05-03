@@ -15,7 +15,4 @@ module "aws-aurora-postgres" {
 
 
 
-  providers = {
-    aws.czi-si = aws.czi-si
-  }
 }

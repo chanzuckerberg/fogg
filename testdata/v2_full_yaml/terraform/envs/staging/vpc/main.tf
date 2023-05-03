@@ -53,7 +53,4 @@ module "terraform-aws-vpc" {
 
 
 
-  providers = {
-    aws.czi-si = aws.czi-si
-  }
 }

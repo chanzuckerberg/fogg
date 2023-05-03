@@ -612,7 +612,7 @@ func applyModuleInvocation(
 	module := moduleData{
 		ModuleName:      moduleName,
 		ModuleSource:    moduleAddressForSource,
-		ProviderAliases: map[string]string{"aws.czi-si": "aws.czi-si"},
+		ProviderAliases: component.ProviderAliases,
 		Variables:       component.Variables,
 		Outputs:         outputs,
 	}

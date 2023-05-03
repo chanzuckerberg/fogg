@@ -52,8 +52,7 @@ module "prod-vpc" {
   vpn_gateway_id                     = local.vpn_gateway_id
 
 
-
   providers = {
-    aws.czi-si = aws.czi-si
+    aws.alias1 = aws.alias2
   }
 }
