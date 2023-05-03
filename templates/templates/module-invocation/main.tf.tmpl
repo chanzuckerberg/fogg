@@ -7,7 +7,7 @@ module "{{.ModuleName}}" {
     {{.}} = local.{{.}}
   {{ end}}
 
-  {{ if .ProviderAliases }}
+  {{ if .ProviderAliases -}}
   providers = {
     {{ range $k, $v := .ProviderAliases -}}
     {{$k}} = {{$v}}{{ end}}
