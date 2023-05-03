@@ -120,11 +120,12 @@ type Env struct {
 type Component struct {
 	Common `yaml:",inline"`
 
-	EKS          *EKSConfig     `yaml:"eks,omitempty"`
-	Kind         *ComponentKind `yaml:"kind,omitempty"`
-	ModuleSource *string        `yaml:"module_source,omitempty"`
-	ModuleName   *string        `yaml:"module_name,omitempty"`
-	Variables    *[]string      `yaml:"variables,omitempty"`
+	EKS             *EKSConfig         `yaml:"eks,omitempty"`
+	Kind            *ComponentKind     `yaml:"kind,omitempty"`
+	ModuleSource    *string            `yaml:"module_source,omitempty"`
+	ModuleName      *string            `yaml:"module_name,omitempty"`
+	ProviderAliases *map[string]string `yaml:"provider_aliases,omitempty"`
+	Variables       *[]string          `yaml:"variables,omitempty"`
 }
 
 type Providers struct {

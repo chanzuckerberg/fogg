@@ -335,12 +335,13 @@ type Account struct {
 type Component struct {
 	ComponentCommon `yaml:",inline"`
 
-	EKS          *v2.EKSConfig     `yaml:"eks,omitempty"`
-	Kind         *v2.ComponentKind `yaml:"kind,omitempty"`
-	ModuleSource *string           `yaml:"module_source"`
-	ModuleName   *string           `yaml:"module_name"`
-	Variables    []string          `yaml:"variables"`
-	Global       *Component        `yaml:"global"`
+	EKS             *v2.EKSConfig     `yaml:"eks,omitempty"`
+	Kind            *v2.ComponentKind `yaml:"kind,omitempty"`
+	ModuleSource    *string           `yaml:"module_source"`
+	ModuleName      *string           `yaml:"module_name"`
+	Variables       []string          `yaml:"variables"`
+	ProviderAliases map[string]string `yaml:"provider_aliases"`
+	Global          *Component        `yaml:"global"`
 }
 
 // Env is an env
@@ -441,6 +442,9 @@ func (p *Plan) buildTFE(c *v2.Config) (*TFEConfig, error) {
 	tfeConfig.ComponentCommon = resolveComponentCommon(c.Defaults.Common, c.Global.Common, c.TFE.Common)
 	tfeConfig.ModuleSource = c.TFE.ModuleSource
 	tfeConfig.ModuleName = c.TFE.ModuleName
+	if c.TFE.ProviderAliases != nil {
+		tfeConfig.ProviderAliases = *c.TFE.ProviderAliases
+	}
 	if c.TFE.Variables != nil {
 		tfeConfig.Variables = *c.TFE.Variables
 	}
@@ -621,6 +625,9 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			componentPlan.Name = componentName
 			componentPlan.ModuleSource = componentConf.ModuleSource
 			componentPlan.ModuleName = componentConf.ModuleName
+			if componentConf.ProviderAliases != nil {
+				componentPlan.ProviderAliases = *componentConf.ProviderAliases
+			}
 			if componentConf.Variables != nil {
 				componentPlan.Variables = *componentConf.Variables
 			}

@@ -13,4 +13,9 @@ module "aws-aurora-postgres" {
   service               = local.service
   vpc_id                = local.vpc_id
 
+
+
+  providers = {
+    aws.czi-si = aws.czi-si
+  }
 }

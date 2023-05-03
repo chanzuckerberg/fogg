@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -233,7 +232,7 @@ func TestApplyTemplateBasic(t *testing.T) {
 	r.Nil(e)
 	f, e := dest.Open("bar")
 	r.Nil(e)
-	i, e := ioutil.ReadAll(f)
+	i, e := io.ReadAll(f)
 	r.Nil(e)
 	r.Equal("foo", string(i))
 }
@@ -255,7 +254,7 @@ func TestApplyTemplateBasicNewDirectory(t *testing.T) {
 	r.Nil(e)
 	f, e := dest.Open(path)
 	r.Nil(e)
-	i, e := ioutil.ReadAll(f)
+	i, e := io.ReadAll(f)
 	r.Nil(e)
 	r.Equal("foo", string(i))
 }
@@ -274,7 +273,7 @@ func TestApplyTemplate(t *testing.T) {
 	r.Nil(e)
 	f, e := dest.Open("hello")
 	r.Nil(e)
-	i, e := ioutil.ReadAll(f)
+	i, e := io.ReadAll(f)
 	r.Nil(e)
 	r.Equal("Hello World", string(i))
 }
@@ -417,7 +416,10 @@ func TestApplyModuleInvocation(t *testing.T) {
 	fs := afero.NewCopyOnWriteFs(pwdFs, testFs)
 	downloader, err := util.MakeDownloader("test-module")
 	r.NoError(err)
-	e := applyModuleInvocation(fs, "mymodule", "test-module", nil, nil, templates.Templates.ModuleInvocation, templates.Templates.Common, downloader)
+	comp := plan.Component{
+		ModuleSource: util.StrPtr("test-module"),
+	}
+	e := applyModuleInvocation(fs, "mymodule", comp, templates.Templates.ModuleInvocation, templates.Templates.Common, downloader)
 	r.NoError(e)
 
 	s, e := fs.Stat("mymodule")
@@ -570,7 +572,7 @@ func TestApplyModuleInvocationWithEmptyVariables(t *testing.T) {
 	fs := afero.NewCopyOnWriteFs(pwdFs, testFs)
 	downloader, err := util.MakeDownloader("test-module")
 	r.NoError(err)
-	e := applyModuleInvocation(fs, "mymodule", "test-module", nil, []string{}, templates.Templates.ModuleInvocation, templates.Templates.Common, downloader)
+	e := applyModuleInvocation(fs, "mymodule", plan.Component{ModuleSource: util.StrPtr("test-module")}, templates.Templates.ModuleInvocation, templates.Templates.Common, downloader)
 	r.NoError(e)
 
 	s, e := fs.Stat("mymodule")
@@ -603,7 +605,7 @@ func TestApplyModuleInvocationWithOneDefaultVariable(t *testing.T) {
 	fs := afero.NewCopyOnWriteFs(pwdFs, testFs)
 	downloader, err := util.MakeDownloader("test-module")
 	r.NoError(err)
-	e := applyModuleInvocation(fs, "mymodule", "test-module", nil, []string{"baz"}, templates.Templates.ModuleInvocation, templates.Templates.Common, downloader)
+	e := applyModuleInvocation(fs, "mymodule", plan.Component{ModuleSource: util.StrPtr("test-module")}, templates.Templates.ModuleInvocation, templates.Templates.Common, downloader)
 	r.NoError(e)
 
 	s, e := fs.Stat("mymodule")
@@ -638,7 +640,11 @@ func TestApplyModuleInvocationWithModuleName(t *testing.T) {
 	moduleName := "module-name"
 	downloader, err := util.MakeDownloader("test-module")
 	r.NoError(err)
-	e := applyModuleInvocation(fs, "mymodule", "test-module", &moduleName, nil, templates.Templates.ModuleInvocation, templates.Templates.Common, downloader)
+	comp := plan.Component{
+		ModuleSource: util.StrPtr("test-module"),
+		ModuleName:   util.StrPtr(moduleName),
+	}
+	e := applyModuleInvocation(fs, "mymodule", comp, templates.Templates.ModuleInvocation, templates.Templates.Common, downloader)
 	r.NoError(e)
 
 	s, e := fs.Stat("mymodule")
@@ -792,7 +798,7 @@ func readFile(fs afero.Fs, path string) (string, error) {
 	if e != nil {
 		return "", e
 	}
-	r, e := ioutil.ReadAll(f)
+	r, e := io.ReadAll(f)
 	if e != nil {
 		return "", e
 	}

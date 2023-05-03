@@ -6,4 +6,10 @@ module "{{.ModuleName}}" {
   {{range .Variables -}}
     {{.}} = local.{{.}}
   {{ end}}
+
+  {{ if .ProviderAliases }}
+  providers = {
+    {{ range $k, $v := .ProviderAliases -}}
+    {{$k}} = {{$v}}{{ end}}
+  }{{ end }}
 }
