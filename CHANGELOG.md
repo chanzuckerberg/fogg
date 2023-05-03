@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.83.0](https://github.com/chanzuckerberg/fogg/compare/v0.82.7...v0.83.0) (2023-05-03)
+
+
+### Features
+
+* allow for users to add aliased providers ([ac310fe](https://github.com/chanzuckerberg/fogg/commit/ac310fe016123d14d86095a230ea595859d9883d))
+
+
+### BugFixes
+
+* commited to main too fast ([#844](https://github.com/chanzuckerberg/fogg/issues/844)) ([f9d3c46](https://github.com/chanzuckerberg/fogg/commit/f9d3c46092927bc9ce40c01c02f14e76eecacfca))
+
 ### [0.82.7](https://github.com/chanzuckerberg/fogg/compare/v0.82.6...v0.82.7) (2023-05-01)
 
 
