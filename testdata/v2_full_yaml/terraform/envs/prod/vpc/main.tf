@@ -54,6 +54,6 @@ module "prod-vpc" {
 
 
   providers = {
-    aws.czi-si = aws.czi-si
+    aws.alias1 = aws.alias2
   }
 }
