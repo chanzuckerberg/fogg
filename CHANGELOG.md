@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.79.0](https://github.com/vincenthsh/fogg/compare/v0.78.1...v0.79.0) (2023-05-05)
+
+
+### Features
+
+* Add support for integration registry ([#105](https://github.com/vincenthsh/fogg/issues/105)) ([5f17513](https://github.com/vincenthsh/fogg/commit/5f1751399e76cb197ddaa7b3300da970be99888b))
+* Add support for TF registry hosted modules ([#103](https://github.com/vincenthsh/fogg/issues/103)) ([815b561](https://github.com/vincenthsh/fogg/commit/815b56160a12cebfa8ec2a85305c6847d8a47dcb))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.240 to 1.44.249 ([#101](https://github.com/vincenthsh/fogg/issues/101)) ([30c07a2](https://github.com/vincenthsh/fogg/commit/30c07a2391ec42fdb4abd071b3d96447af949e88))
+* bump github.com/aws/aws-sdk-go from 1.44.249 to 1.44.257 ([#107](https://github.com/vincenthsh/fogg/issues/107)) ([0d380ba](https://github.com/vincenthsh/fogg/commit/0d380ba0dbbccd77a8522f896435dcb63ab2d12a))
+* bump github.com/chanzuckerberg/go-misc from 1.0.6 to 1.0.8 ([#97](https://github.com/vincenthsh/fogg/issues/97)) ([eb3c653](https://github.com/vincenthsh/fogg/commit/eb3c65306bcfc445661767951d0fc440f0121c86))
+* bump github.com/go-git/go-git/v5 from 5.6.0 to 5.6.1 ([#88](https://github.com/vincenthsh/fogg/issues/88)) ([0bf7ecb](https://github.com/vincenthsh/fogg/commit/0bf7ecb0624498ef0d813dc8234043fe520b9f6e))
+* bump github.com/runatlantis/atlantis from 0.23.2 to 0.23.5 ([#98](https://github.com/vincenthsh/fogg/issues/98)) ([598bf02](https://github.com/vincenthsh/fogg/commit/598bf028defa1f2d723adb419e91884a7e7737a9))
+* bump github.com/spf13/cobra from 1.6.1 to 1.7.0 ([#93](https://github.com/vincenthsh/fogg/issues/93)) ([571113a](https://github.com/vincenthsh/fogg/commit/571113a426ef4a66975879d3293bdbb188314e88))
+
 ## [0.78.1](https://github.com/vincenthsh/fogg/compare/v0.78.0...v0.78.1) (2023-03-15)
 
 
