@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/afero"
 )
 
-//LatestModuleVersions retrieves the latest version of the provided modules
+// LatestModuleVersions retrieves the latest version of the provided modules
 func LatestModuleVersions(fs afero.Fs, module *tfconfig.Module) ([]ModuleWrapper, error) {
 	var latestModules []ModuleWrapper
 	var moduleWrapper ModuleWrapper
@@ -38,7 +38,7 @@ func LatestModuleVersions(fs afero.Fs, module *tfconfig.Module) ([]ModuleWrapper
 	return latestModules, nil
 }
 
-//createGitURL retrieves the latest release version and creates an HTTP accessible link
+// createGitURL retrieves the latest release version and creates an HTTP accessible link
 func createGitURL(moduleCall *tfconfig.ModuleCall) (string, error) {
 	splitString := strings.Split(moduleCall.Source, "/")
 	owner, repo := splitString[1], splitString[2]

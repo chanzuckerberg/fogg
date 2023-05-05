@@ -20,6 +20,7 @@ func init() {
 	initCmd.Flags().String("table", "", "Use this to pass the infra dynamo table name via CLI.")
 	initCmd.Flags().String("profile", "", "Use this to pass the aws auth profile via CLI.")
 	initCmd.Flags().String("owner", "", "Use this to pass the owner name via CLI.")
+	initCmd.Flags().String("aws-account-id", "", "Use this to pass the primary AWS Account ID via CLI.")
 	rootCmd.AddCommand(initCmd)
 }
 
@@ -102,6 +103,15 @@ func userPrompt(cmd *cobra.Command) (*FoggProject, error) {
 		owner = prompt.StringRequired("owner?")
 	}
 	foggProject.Owner = &owner
+
+	awsAccountID, err := cmd.Flags().GetString("aws-account-id")
+	if err != nil {
+		return nil, err
+	}
+	if awsAccountID == "" {
+		awsAccountID = prompt.StringRequired("AWS Account ID?")
+	}
+	foggProject.AwsAccountID = &awsAccountID
 
 	return foggProject, nil
 }

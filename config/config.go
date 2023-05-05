@@ -1,6 +1,7 @@
 package config
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"path/filepath"
 
@@ -13,13 +14,19 @@ import (
 	yaml "gopkg.in/yaml.v3"
 )
 
-var defaultTerraformVersion = goVersion.Must(goVersion.NewVersion("0.13.5"))
+var defaultTerraformVersion = goVersion.Must(goVersion.NewVersion("1.2.6"))
 
-//DefaultFoggVersion is the version that fogg will generate by default
+// DefaultFoggVersion is the version that fogg will generate by default
 const DefaultFoggVersion = 2
 
-//InitConfig initializes the config file using user input
-func InitConfig(project, region, bucket, table, awsProfile, owner *string, awsProviderVersion string) *v2.Config {
+func defaultEnabled(a bool) *bool {
+	return &a
+}
+
+// InitConfig initializes the config file using user input
+func InitConfig(project, region, bucket, table, awsProfile, owner, awsAccountID *string, awsProviderVersion string) *v2.Config {
+	accountID := json.Number(*awsAccountID)
+
 	return &v2.Config{
 		Defaults: v2.Defaults{
 			Common: v2.Common{
@@ -33,9 +40,13 @@ func InitConfig(project, region, bucket, table, awsProfile, owner *string, awsPr
 				Project: project,
 				Providers: &v2.Providers{
 					AWS: &v2.AWSProvider{
-						Profile: awsProfile,
-						Region:  region,
-						Version: &awsProviderVersion,
+						AccountID: &accountID,
+						Profile:   awsProfile,
+						Region:    region,
+						CommonProvider: v2.CommonProvider{
+							Enabled: defaultEnabled(true),
+							Version: &awsProviderVersion,
+						},
 					},
 				},
 				TerraformVersion: util.StrPtr(defaultTerraformVersion.String()),
@@ -69,7 +80,7 @@ func FindConfig(fs afero.Fs, configFile string) ([]byte, int, error) {
 	return b, v, nil
 }
 
-//FindAndReadConfig locates config file and reads it based on the version
+// FindAndReadConfig locates config file and reads it based on the version
 func FindAndReadConfig(fs afero.Fs, configFile string) (*v2.Config, error) {
 	b, v, err := FindConfig(fs, configFile)
 	if err != nil {

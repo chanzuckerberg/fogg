@@ -92,6 +92,8 @@ envs:
       vpc:
         module_source: github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0
         module_name: prod-vpc
+        provider_aliases: 
+          "aws.alias1": "aws.alias2"
   staging:
     backend:
       kind: remote

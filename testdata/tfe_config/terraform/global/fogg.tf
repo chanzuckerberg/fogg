@@ -13,6 +13,8 @@ provider "aws" {
 }
 # Aliased Providers (for doing things in every region).
 
+
+provider "assert" {}
 terraform {
   required_version = "=1.1.1"
 
@@ -37,7 +39,7 @@ terraform {
     assert = {
       source = "bwoznicki/assert"
 
-      version = "~> 0.0.1"
+      version = "0.0.1"
 
     }
 
@@ -58,7 +60,7 @@ terraform {
     null = {
       source = "hashicorp/null"
 
-      version = "~> 3.0"
+      version = "3.1.1"
 
     }
 
@@ -85,26 +87,32 @@ terraform {
 
   }
 }
+# tflint-ignore: terraform_unused_declarations
 variable "env" {
   type    = string
   default = ""
 }
+# tflint-ignore: terraform_unused_declarations
 variable "project" {
   type    = string
   default = "foo"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "region" {
   type    = string
   default = "us-west-2"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "component" {
   type    = string
   default = "global"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "owner" {
   type    = string
   default = "foo@example.com"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "tags" {
   type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
   default = {
@@ -115,6 +123,7 @@ variable "tags" {
     managedBy = "terraform"
   }
 }
+# tflint-ignore: terraform_unused_declarations
 variable "aws_accounts" {
   type = map(string)
   default = {

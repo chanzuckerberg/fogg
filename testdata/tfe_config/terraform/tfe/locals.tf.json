@@ -10,8 +10,8 @@
       }
     },
     "envs": {
-      "comp1": {},
-      "comp2": {}
+      "comp2": {},
+      "staging": {}
     },
     "default_terraform_version": "1.2.6"
   }

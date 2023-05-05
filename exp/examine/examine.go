@@ -4,8 +4,8 @@ import (
 	"github.com/spf13/afero"
 )
 
-//Examine loads local modules and compares them to their latest version to see differences
-//TODO: Comparison between local and latest
+// Examine loads local modules and compares them to their latest version to see differences
+// TODO: Comparison between local and latest
 func Examine(fs afero.Fs, path string) error {
 	//Collect local modules to be updated
 	module, err := GetLocalModules(fs, path)

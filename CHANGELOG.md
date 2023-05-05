@@ -1,5 +1,250 @@
 # Changelog
 
+## [0.83.0](https://github.com/chanzuckerberg/fogg/compare/v0.82.7...v0.83.0) (2023-05-03)
+
+
+### Features
+
+* allow for users to add aliased providers ([ac310fe](https://github.com/chanzuckerberg/fogg/commit/ac310fe016123d14d86095a230ea595859d9883d))
+
+
+### BugFixes
+
+* commited to main too fast ([#844](https://github.com/chanzuckerberg/fogg/issues/844)) ([f9d3c46](https://github.com/chanzuckerberg/fogg/commit/f9d3c46092927bc9ce40c01c02f14e76eecacfca))
+
+### [0.82.7](https://github.com/chanzuckerberg/fogg/compare/v0.82.6...v0.82.7) (2023-05-01)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.248 to 1.44.253 ([#841](https://github.com/chanzuckerberg/fogg/issues/841)) ([f702f51](https://github.com/chanzuckerberg/fogg/commit/f702f51c58466a2b7170aee40a98d4c73eec5344))
+
+### [0.82.6](https://github.com/chanzuckerberg/fogg/compare/v0.82.5...v0.82.6) (2023-04-24)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.244 to 1.44.248 ([#839](https://github.com/chanzuckerberg/fogg/issues/839)) ([ed543c9](https://github.com/chanzuckerberg/fogg/commit/ed543c9e5dd1d27b6612757ab04ca338704226d1))
+
+### [0.82.5](https://github.com/chanzuckerberg/fogg/compare/v0.82.4...v0.82.5) (2023-04-20)
+
+
+### BugFixes
+
+* Add AWS Account ID to fogg init interview ([#837](https://github.com/chanzuckerberg/fogg/issues/837)) ([1f66cd3](https://github.com/chanzuckerberg/fogg/commit/1f66cd324fabf04a98093384f67a6120eed295dc))
+
+### [0.82.4](https://github.com/chanzuckerberg/fogg/compare/v0.82.3...v0.82.4) (2023-04-17)
+
+
+### Misc
+
+* Bump github.com/chanzuckerberg/go-misc from 1.0.7 to 1.0.8 ([#834](https://github.com/chanzuckerberg/fogg/issues/834)) ([5cf893a](https://github.com/chanzuckerberg/fogg/commit/5cf893af34bb0bb16fadfb7c7b0dd7e1cef53797))
+
+### [0.82.3](https://github.com/chanzuckerberg/fogg/compare/v0.82.2...v0.82.3) (2023-04-17)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.239 to 1.44.244 ([#833](https://github.com/chanzuckerberg/fogg/issues/833)) ([347ef49](https://github.com/chanzuckerberg/fogg/commit/347ef49ab015002e5cf6fd02a710d4d1db2f6f63))
+
+### [0.82.2](https://github.com/chanzuckerberg/fogg/compare/v0.82.1...v0.82.2) (2023-04-10)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.234 to 1.44.239 ([#831](https://github.com/chanzuckerberg/fogg/issues/831)) ([8e2d372](https://github.com/chanzuckerberg/fogg/commit/8e2d3726ae056e386f900a12cea6c26ff5e785f3))
+* Bump github.com/spf13/cobra from 1.6.1 to 1.7.0 ([#830](https://github.com/chanzuckerberg/fogg/issues/830)) ([e32d622](https://github.com/chanzuckerberg/fogg/commit/e32d622dbb8296f9630892e1f743204089d54dd6))
+
+### [0.82.1](https://github.com/chanzuckerberg/fogg/compare/v0.82.0...v0.82.1) (2023-04-03)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.229 to 1.44.234 ([#828](https://github.com/chanzuckerberg/fogg/issues/828)) ([8af4153](https://github.com/chanzuckerberg/fogg/commit/8af415374710eca78e043a4341b895aeca6d5c5c))
+* Bump github.com/chanzuckerberg/go-misc from 1.0.6 to 1.0.7 ([#827](https://github.com/chanzuckerberg/fogg/issues/827)) ([eb8d223](https://github.com/chanzuckerberg/fogg/commit/eb8d2233ae9a3c8aa2dde9d77e303eeaec341a88))
+
+## [0.82.0](https://github.com/chanzuckerberg/fogg/compare/v0.81.1...v0.82.0) (2023-04-03)
+
+
+### Features
+
+* Add kubectl provider support ([#825](https://github.com/chanzuckerberg/fogg/issues/825)) ([4f1db59](https://github.com/chanzuckerberg/fogg/commit/4f1db594a0421d607757dc4407566e3a8617084d))
+
+### [0.81.1](https://github.com/chanzuckerberg/fogg/compare/v0.81.0...v0.81.1) (2023-03-29)
+
+
+### BugFixes
+
+* Suppress the following tflint rules: terraform_deprecated_index, terraform_required_providers, terraform_unused_declarations ([#823](https://github.com/chanzuckerberg/fogg/issues/823)) ([287d2d1](https://github.com/chanzuckerberg/fogg/commit/287d2d172e9ee1ddd663ee7a501c5cb971fb59c5))
+
+## [0.81.0](https://github.com/chanzuckerberg/fogg/compare/v0.80.0...v0.81.0) (2023-03-27)
+
+
+### Features
+
+* enable mergequeues ([#820](https://github.com/chanzuckerberg/fogg/issues/820)) ([46c4483](https://github.com/chanzuckerberg/fogg/commit/46c448341443aa7af331cf15f0aa66acb0145e69))
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.219 to 1.44.224 ([#818](https://github.com/chanzuckerberg/fogg/issues/818)) ([c3e056b](https://github.com/chanzuckerberg/fogg/commit/c3e056b44c3b435f74041a8538938b35f5973332))
+* Bump github.com/aws/aws-sdk-go from 1.44.224 to 1.44.229 ([#822](https://github.com/chanzuckerberg/fogg/issues/822)) ([294f6c4](https://github.com/chanzuckerberg/fogg/commit/294f6c4c5e7587805b1e2fe3107eb602b71e458a))
+* Bump github.com/go-git/go-git/v5 from 5.6.0 to 5.6.1 ([#817](https://github.com/chanzuckerberg/fogg/issues/817)) ([ea0d89e](https://github.com/chanzuckerberg/fogg/commit/ea0d89eb7838580ffc2b438f790d0880793fd674))
+* Bump github.com/hashicorp/go-getter from 1.7.0 to 1.7.1 ([#816](https://github.com/chanzuckerberg/fogg/issues/816)) ([c532397](https://github.com/chanzuckerberg/fogg/commit/c53239779ba8936bfb23250289875c2986579c6a))
+
+## [0.80.0](https://github.com/chanzuckerberg/fogg/compare/v0.79.1...v0.80.0) (2023-03-22)
+
+
+### Features
+
+* terraform_unused_declarations warning in latest tflint version ([#819](https://github.com/chanzuckerberg/fogg/issues/819)) ([f610035](https://github.com/chanzuckerberg/fogg/commit/f6100355677dab6ca1bb82ff6032ccae632f5004))
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.214 to 1.44.219 ([#810](https://github.com/chanzuckerberg/fogg/issues/810)) ([976c8bc](https://github.com/chanzuckerberg/fogg/commit/976c8bcae0d092c206843d27553c7cf6a9b7214b))
+* Bump github.com/fatih/color from 1.14.1 to 1.15.0 ([#812](https://github.com/chanzuckerberg/fogg/issues/812)) ([ff5d54d](https://github.com/chanzuckerberg/fogg/commit/ff5d54d3edc11b16396908d9c83a32955fe898e8))
+* Bump github.com/hashicorp/hcl/v2 from 2.16.1 to 2.16.2 ([#811](https://github.com/chanzuckerberg/fogg/issues/811)) ([4b1ef58](https://github.com/chanzuckerberg/fogg/commit/4b1ef5805227158eeb71e9a615d0c7fb591fd8a4))
+
+### [0.79.1](https://github.com/chanzuckerberg/fogg/compare/v0.79.0...v0.79.1) (2023-03-07)
+
+
+### BugFixes
+
+* to properly encode and decode yaml while preserving variables ([#808](https://github.com/chanzuckerberg/fogg/issues/808)) ([518c6cb](https://github.com/chanzuckerberg/fogg/commit/518c6cb65de7b8d783e9814e6d31c0c2e1dc4130))
+
+## [0.79.0](https://github.com/chanzuckerberg/fogg/compare/v0.78.7...v0.79.0) (2023-03-07)
+
+
+### Features
+
+* only update locals.tf.json on remote backends ([#805](https://github.com/chanzuckerberg/fogg/issues/805)) ([12761a4](https://github.com/chanzuckerberg/fogg/commit/12761a4d122627c60e5cf0e4282549d8bd0f13ef))
+
+
+### BugFixes
+
+* omit empty leaving behind variables ([#807](https://github.com/chanzuckerberg/fogg/issues/807)) ([fa0402b](https://github.com/chanzuckerberg/fogg/commit/fa0402b46a0e43a216dc482e1a53ea3b23719495))
+
+### [0.78.7](https://github.com/chanzuckerberg/fogg/compare/v0.78.6...v0.78.7) (2023-03-06)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.209 to 1.44.214 ([#802](https://github.com/chanzuckerberg/fogg/issues/802)) ([578bd78](https://github.com/chanzuckerberg/fogg/commit/578bd788c7a514959472d5d68d3d3b35a4a4de3f))
+* Bump github.com/go-git/go-git/v5 from 5.5.2 to 5.6.0 ([#803](https://github.com/chanzuckerberg/fogg/issues/803)) ([3c37100](https://github.com/chanzuckerberg/fogg/commit/3c3710032217c71d229d84e7b2e65aae1b3480c4))
+
+### [0.78.6](https://github.com/chanzuckerberg/fogg/compare/v0.78.5...v0.78.6) (2023-03-06)
+
+
+### Misc
+
+* Bump github.com/chanzuckerberg/go-misc from 1.0.5 to 1.0.6 ([#797](https://github.com/chanzuckerberg/fogg/issues/797)) ([387fb73](https://github.com/chanzuckerberg/fogg/commit/387fb735bc619a32444ab630229451aed3243a55))
+
+### [0.78.5](https://github.com/chanzuckerberg/fogg/compare/v0.78.4...v0.78.5) (2023-02-28)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.199 to 1.44.204 ([#796](https://github.com/chanzuckerberg/fogg/issues/796)) ([23bf435](https://github.com/chanzuckerberg/fogg/commit/23bf4359593c1d3fa2a1b6e0411b53ee64480ad5))
+* Bump github.com/aws/aws-sdk-go from 1.44.204 to 1.44.209 ([#800](https://github.com/chanzuckerberg/fogg/issues/800)) ([e056abb](https://github.com/chanzuckerberg/fogg/commit/e056abbf5f0e979d8485706446399eeaebc84df1))
+* Bump github.com/hashicorp/go-getter from 1.6.2 to 1.7.0 ([#793](https://github.com/chanzuckerberg/fogg/issues/793)) ([8dde728](https://github.com/chanzuckerberg/fogg/commit/8dde728475cc42fe056e51e12acb0a5c4696b39b))
+* Bump github.com/stretchr/testify from 1.8.1 to 1.8.2 ([#799](https://github.com/chanzuckerberg/fogg/issues/799)) ([0f0eefa](https://github.com/chanzuckerberg/fogg/commit/0f0eefa0cfa77591690a895b6a07f022e38e8bc9))
+* Bump golang.org/x/net from 0.5.0 to 0.7.0 ([#795](https://github.com/chanzuckerberg/fogg/issues/795)) ([097ffe4](https://github.com/chanzuckerberg/fogg/commit/097ffe48cd1ba18682f1747dcd3adc4af5f816b5))
+
+### [0.78.4](https://github.com/chanzuckerberg/fogg/compare/v0.78.3...v0.78.4) (2023-02-13)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.194 to 1.44.199 ([#791](https://github.com/chanzuckerberg/fogg/issues/791)) ([bc3185b](https://github.com/chanzuckerberg/fogg/commit/bc3185b78345c0a82ecc66ed992838afcdaa9b5d))
+* Bump github.com/hashicorp/hcl/v2 from 2.16.0 to 2.16.1 ([#790](https://github.com/chanzuckerberg/fogg/issues/790)) ([16da44b](https://github.com/chanzuckerberg/fogg/commit/16da44b16ea32001f45bb0bdb4f38af93a00097f))
+
+### [0.78.3](https://github.com/chanzuckerberg/fogg/compare/v0.78.2...v0.78.3) (2023-02-06)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.189 to 1.44.194 ([#786](https://github.com/chanzuckerberg/fogg/issues/786)) ([2508cc9](https://github.com/chanzuckerberg/fogg/commit/2508cc93aeb01e471e9e843caef72b4adfa8b692))
+* Bump github.com/chanzuckerberg/go-misc from 1.0.3 to 1.0.5 ([#788](https://github.com/chanzuckerberg/fogg/issues/788)) ([625a3da](https://github.com/chanzuckerberg/fogg/commit/625a3da8b63cc05ed8ede30221e21518adf77e8d))
+* Bump github.com/hashicorp/hcl/v2 from 2.15.0 to 2.16.0 ([#787](https://github.com/chanzuckerberg/fogg/issues/787)) ([e5ad3b0](https://github.com/chanzuckerberg/fogg/commit/e5ad3b0d976d95cc595ecc33f34a3898e2eb672d))
+
+### [0.78.2](https://github.com/chanzuckerberg/fogg/compare/v0.78.1...v0.78.2) (2023-01-31)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.184 to 1.44.189 ([#783](https://github.com/chanzuckerberg/fogg/issues/783)) ([8f101b6](https://github.com/chanzuckerberg/fogg/commit/8f101b6a8f7e4f1210b63384ba72349e63cc7577))
+
+### [0.78.1](https://github.com/chanzuckerberg/fogg/compare/v0.78.0...v0.78.1) (2023-01-30)
+
+
+### Misc
+
+* Bump github.com/chanzuckerberg/go-misc from 1.0.1 to 1.0.3 ([#781](https://github.com/chanzuckerberg/fogg/issues/781)) ([82c15b9](https://github.com/chanzuckerberg/fogg/commit/82c15b99a854ea18c93afa295b9338cf0fc631a1))
+* Bump github.com/fatih/color from 1.14.0 to 1.14.1 ([#782](https://github.com/chanzuckerberg/fogg/issues/782)) ([9d91b5c](https://github.com/chanzuckerberg/fogg/commit/9d91b5c5c87370551f192f4c60bd0f2ef3087aeb))
+
+## [0.78.0](https://github.com/chanzuckerberg/fogg/compare/v0.77.0...v0.78.0) (2023-01-27)
+
+
+### Features
+
+* allow custom provider blocks ([#780](https://github.com/chanzuckerberg/fogg/issues/780)) ([05a4db9](https://github.com/chanzuckerberg/fogg/commit/05a4db9588965a00f6522c51dd1ef3b1366cadea))
+
+
+### BugFixes
+
+* Update dependencies and fix unit tests ([#776](https://github.com/chanzuckerberg/fogg/issues/776)) ([3a7445b](https://github.com/chanzuckerberg/fogg/commit/3a7445bc4f60494b013e1e2ac9dcde497fcdf854))
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.180 to 1.44.184 ([#779](https://github.com/chanzuckerberg/fogg/issues/779)) ([f5475c2](https://github.com/chanzuckerberg/fogg/commit/f5475c2b092f299e73b6af3fc6bcb714dda41c33))
+* Bump github.com/fatih/color from 1.13.0 to 1.14.0 ([#778](https://github.com/chanzuckerberg/fogg/issues/778)) ([be67c99](https://github.com/chanzuckerberg/fogg/commit/be67c9966f32d468add86f4b10fd5081568bcbdd))
+
+## [0.77.0](https://github.com/chanzuckerberg/fogg/compare/v0.76.0...v0.77.0) (2022-11-23)
+
+
+### Features
+
+* sensitive outputs fixes [#759](https://github.com/chanzuckerberg/fogg/issues/759) ([88c89f1](https://github.com/chanzuckerberg/fogg/commit/88c89f1a7d98e72eb109d38e102aed6b2504b918))
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.121 to 1.44.126 ([#766](https://github.com/chanzuckerberg/fogg/issues/766)) ([6f1cb9e](https://github.com/chanzuckerberg/fogg/commit/6f1cb9ef73afe2ee0194748c2d1886db39c54fa9))
+* Bump github.com/spf13/cobra from 1.6.0 to 1.6.1 ([#767](https://github.com/chanzuckerberg/fogg/issues/767)) ([5bfe160](https://github.com/chanzuckerberg/fogg/commit/5bfe160bf2b8e4a3daa6dc5546a872c98edd4406))
+
+## [0.76.0](https://github.com/chanzuckerberg/fogg/compare/v0.75.1...v0.76.0) (2022-10-26)
+
+
+### Features
+
+* upgrade default versions ([#751](https://github.com/chanzuckerberg/fogg/issues/751)) ([dede7ca](https://github.com/chanzuckerberg/fogg/commit/dede7caeb71319d410e6f37a195416b4783a0e1b))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.109 to 1.44.114 ([#753](https://github.com/chanzuckerberg/fogg/issues/753)) ([aa6efd0](https://github.com/chanzuckerberg/fogg/commit/aa6efd0134b13dbc2e9e13237c9977c4821ae102))
+* bump github.com/aws/aws-sdk-go from 1.44.114 to 1.44.116 ([#755](https://github.com/chanzuckerberg/fogg/issues/755)) ([73169cf](https://github.com/chanzuckerberg/fogg/commit/73169cf10da1003df801a4fd73c61fcc135d3c17))
+* bump github.com/aws/aws-sdk-go from 1.44.116 to 1.44.117 ([#758](https://github.com/chanzuckerberg/fogg/issues/758)) ([27780ea](https://github.com/chanzuckerberg/fogg/commit/27780ea2155fba1f8ea31c8ac109abd5a6a7de15))
+* Bump github.com/aws/aws-sdk-go from 1.44.117 to 1.44.121 ([#762](https://github.com/chanzuckerberg/fogg/issues/762)) ([1228114](https://github.com/chanzuckerberg/fogg/commit/122811466ab378536c55e5628bea02571f548061))
+* bump github.com/kr/pretty from 0.2.1 to 0.3.1 ([#752](https://github.com/chanzuckerberg/fogg/issues/752)) ([938f655](https://github.com/chanzuckerberg/fogg/commit/938f655ead17c11bf13c703ac868ee1f84d636f0))
+* bump github.com/spf13/cobra from 1.5.0 to 1.6.0 ([#756](https://github.com/chanzuckerberg/fogg/issues/756)) ([f9a12ac](https://github.com/chanzuckerberg/fogg/commit/f9a12acf6211fd5a214e8f8bb058574079168dc3))
+* Bump github.com/stretchr/testify from 1.8.0 to 1.8.1 ([#763](https://github.com/chanzuckerberg/fogg/issues/763)) ([280da81](https://github.com/chanzuckerberg/fogg/commit/280da81b0122b54b33b82cf5b251f915460328e1))
+* update CI ([#757](https://github.com/chanzuckerberg/fogg/issues/757)) ([51c611a](https://github.com/chanzuckerberg/fogg/commit/51c611a9328ca836ddcf4f2184b4f4b4cdb4a64f))
+
+
+### BugFixes
+
+* Pin hashicorp/null provider to 3.1.1 since 3.2.0 introduced a breaking change ([#764](https://github.com/chanzuckerberg/fogg/issues/764)) ([22b9db9](https://github.com/chanzuckerberg/fogg/commit/22b9db9f11f7897bb7d6919b82b21dde30d275f8))
+
+### [0.75.1](https://github.com/chanzuckerberg/fogg/compare/v0.75.0...v0.75.1) (2022-10-05)
+
+
+### BugFixes
+
+* omitted variables from tfe config ([#749](https://github.com/chanzuckerberg/fogg/issues/749)) ([617d79f](https://github.com/chanzuckerberg/fogg/commit/617d79fcb8c546e403d7ac84a8bfec22fba315f9))
+
 ## [0.75.0](https://github.com/chanzuckerberg/fogg/compare/v0.74.1...v0.75.0) (2022-10-05)
 
 

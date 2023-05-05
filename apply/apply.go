@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"io/ioutil"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -24,6 +23,7 @@ import (
 	"github.com/chanzuckerberg/fogg/util"
 	getter "github.com/hashicorp/go-getter"
 	"github.com/hashicorp/hcl2/hclwrite"
+	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
@@ -139,43 +139,44 @@ func MakeTFEWorkspace(tfVersion string) *TFEWorkspace {
 	}
 }
 
-func updateLocalsFromPlan(locals *LocalsTFE, plan *plan.Plan) {
+func updateLocalsFromPlan(locals *LocalsTFE, p *plan.Plan) {
 	// if there is a planned env or account that isn't in the locals, add it
-	for accountName := range plan.Accounts {
-		if _, ok := locals.Locals.Accounts[accountName]; !ok {
-			locals.Locals.Accounts[accountName] = MakeTFEWorkspace(plan.Global.Common.TerraformVersion)
+	for accountName, account := range p.Accounts {
+		if _, ok := locals.Locals.Accounts[accountName]; !ok && account.Backend.Kind == plan.BackendKindRemote {
+
+			locals.Locals.Accounts[accountName] = MakeTFEWorkspace(p.Global.Common.TerraformVersion)
 		}
 	}
-	for envName := range plan.Envs {
+	for envName := range p.Envs {
 		if _, ok := locals.Locals.Envs[envName]; !ok {
 			locals.Locals.Envs[envName] = make(map[string]*TFEWorkspace, 0)
 		}
-		for componentName := range plan.Envs[envName].Components {
-			if _, ok := locals.Locals.Envs[envName][componentName]; !ok {
-				locals.Locals.Envs[envName][componentName] = MakeTFEWorkspace(plan.Global.Common.TerraformVersion)
+		for componentName, comp := range p.Envs[envName].Components {
+			if _, ok := locals.Locals.Envs[envName][componentName]; !ok && comp.Backend.Kind == plan.BackendKindRemote {
+				locals.Locals.Envs[envName][componentName] = MakeTFEWorkspace(p.Global.Common.TerraformVersion)
 			}
 		}
 	}
 
 	// if there is a locals env or account that isn't in the plan, delete it
-	for account := range locals.Locals.Accounts {
+	for accountName := range locals.Locals.Accounts {
 		shouldDelete := func() bool {
-			for plannedAccount := range plan.Accounts {
-				if account == plannedAccount {
+			for plannedAccountName, account := range p.Accounts {
+				if accountName == plannedAccountName && account.Backend.Kind == plan.BackendKindRemote {
 					return false
 				}
 			}
 			return true
 		}()
 		if shouldDelete {
-			delete(locals.Locals.Accounts, account)
+			delete(locals.Locals.Accounts, accountName)
 		}
 	}
 	for envName, component := range locals.Locals.Envs {
 		for componentName := range component {
 			shouldDelete := func() bool {
-				for plannedComponent := range plan.Envs[envName].Components {
-					if plannedComponent == componentName {
+				for plannedComponent, comp := range p.Envs[envName].Components {
+					if plannedComponent == componentName && comp.Backend.Kind == plan.BackendKindRemote {
 						return false
 					}
 				}
@@ -247,7 +248,7 @@ func applyTFE(fs afero.Fs, plan *plan.Plan, tmpl *templates.T) error {
 		if err != nil {
 			return errs.WrapUser(err, "unable to make a downloader")
 		}
-		err = applyModuleInvocation(fs, path, *plan.TFE.ModuleSource, plan.TFE.ModuleName, nil, templates.Templates.ModuleInvocation, tmpl.Common, downloader)
+		err = applyModuleInvocation(fs, path, plan.TFE.Component, templates.Templates.ModuleInvocation, tmpl.Common, downloader)
 		if err != nil {
 			return errs.WrapUser(err, "unable to apply module invocation")
 		}
@@ -269,7 +270,7 @@ func checkToolVersions(fs afero.Fs, current string) (bool, string, error) {
 	reader := io.ReadCloser(f)
 	defer reader.Close()
 
-	b, e := ioutil.ReadAll(reader)
+	b, e := io.ReadAll(reader)
 	if e != nil {
 		return false, "", errs.WrapUser(e, "unable to read .fogg-version file")
 	}
@@ -380,7 +381,7 @@ func applyEnvs(
 				if err != nil {
 					return errs.WrapUser(err, "unable to make a downloader")
 				}
-				err = applyModuleInvocation(fs, path, *componentPlan.ModuleSource, componentPlan.ModuleName, componentPlan.Variables, templates.Templates.ModuleInvocation, commonBox, downloader)
+				err = applyModuleInvocation(fs, path, componentPlan, templates.Templates.ModuleInvocation, commonBox, downloader)
 				if err != nil {
 					return errs.WrapUser(err, "unable to apply module invocation")
 				}
@@ -437,7 +438,7 @@ func applyTree(dest afero.Fs, source fs.FS, common fs.FS, targetBasePath string,
 			}
 			logrus.Infof("%s removed", target)
 		} else if extension == ".ln" {
-			linkTargetBytes, err := ioutil.ReadAll(sourceFile)
+			linkTargetBytes, err := io.ReadAll(sourceFile)
 			if err != nil {
 				return errs.WrapUserf(err, "could not read source file %#v", sourceFile)
 			}
@@ -544,17 +545,17 @@ func applyTemplate(sourceFile io.Reader, commonTemplates fs.FS, dest afero.Fs, p
 // leave it here for now and re-think it when we make this mechanism
 // general purpose.
 type moduleData struct {
-	ModuleName   string
-	ModuleSource string
-	Variables    []string
-	Outputs      []string
+	ModuleName      string
+	ModuleSource    string
+	ProviderAliases map[string]string
+	Variables       []string
+	Outputs         []*tfconfig.Output
 }
 
 func applyModuleInvocation(
 	fs afero.Fs,
-	path, moduleAddress string,
-	inModuleName *string,
-	variables []string,
+	path string,
+	component plan.Component,
 	box fs.FS,
 	commonBox fs.FS,
 	downloadFunc util.ModuleDownloader,
@@ -572,45 +573,55 @@ func applyModuleInvocation(
 	// This should really be part of the plan stage, not apply. But going to
 	// leave it here for now and re-think it when we make this mechanism
 	// general purpose.
-	addAll := variables == nil
+	addAll := component.Variables == nil
 	for _, v := range moduleConfig.Variables {
 		if addAll {
-			variables = append(variables, v.Name)
+			component.Variables = append(component.Variables, v.Name)
 		} else {
-			if v.Required && !slices.Contains(variables, v.Name) {
-				variables = append(variables, v.Name)
+			if v.Required && !slices.Contains(component.Variables, v.Name) {
+				component.Variables = append(component.Variables, v.Name)
 			}
 		}
 	}
-	sort.Strings(variables)
-	outputs := make([]string, 0)
+	sort.Strings(component.Variables)
+
+	outputs := make([]*tfconfig.Output, 0)
 	for _, o := range moduleConfig.Outputs {
-		outputs = append(outputs, o.Name)
+		outputs = append(outputs, o)
 	}
-	sort.Strings(outputs)
+	sort.Slice(outputs, func(i, j int) bool {
+		return outputs[i].Name < outputs[j].Name
+	})
 
 	moduleName := ""
-	if inModuleName != nil {
-		moduleName = *inModuleName
+	if component.ModuleName != nil {
+		moduleName = *component.ModuleName
 	}
 	if moduleName == "" {
-		moduleName = filepath.Base(moduleAddress)
+		moduleName = filepath.Base(*component.ModuleSource)
 		re := regexp.MustCompile(`\?ref=.*`)
 		moduleName = re.ReplaceAllString(moduleName, "")
 	}
 
-	moduleAddressForSource, _ := calculateModuleAddressForSource(path, moduleAddress)
+	moduleAddressForSource, _ := calculateModuleAddressForSource(path, *component.ModuleSource)
 	// MAIN
 	f, e := box.Open("main.tf.tmpl")
 	if e != nil {
 		return errs.WrapUser(e, "could not open template file")
+	}
+	module := moduleData{
+		ModuleName:      moduleName,
+		ModuleSource:    moduleAddressForSource,
+		ProviderAliases: component.ProviderAliases,
+		Variables:       component.Variables,
+		Outputs:         outputs,
 	}
 	e = applyTemplate(
 		f,
 		commonBox,
 		fs,
 		filepath.Join(path, "main.tf"),
-		&moduleData{moduleName, moduleAddressForSource, variables, outputs})
+		&module)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply template for main.tf")
 	}
@@ -625,7 +636,7 @@ func applyModuleInvocation(
 		return errs.WrapUser(e, "could not open template file")
 	}
 
-	e = applyTemplate(f, commonBox, fs, filepath.Join(path, "outputs.tf"), &moduleData{moduleName, moduleAddressForSource, variables, outputs})
+	e = applyTemplate(f, commonBox, fs, filepath.Join(path, "outputs.tf"), &module)
 	if e != nil {
 		return errs.WrapUser(e, "unable to apply template for outputs.tf")
 	}

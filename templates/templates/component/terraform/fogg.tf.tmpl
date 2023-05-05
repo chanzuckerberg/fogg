@@ -10,45 +10,45 @@
 
 {{ end }}
 
-{{ if .ProviderConfiguration.Snowflake }}
+{{ if .ProviderConfiguration.Snowflake }}{{ if not .ProviderConfiguration.Snowflake.CustomProvider }}
   {{ template "snowflake_provider" .ProviderConfiguration.Snowflake }}
-{{ end }}
+{{ end }}{{ end }}
 
-{{ if .ProviderConfiguration.Assert }}
+{{ if .ProviderConfiguration.Assert }}{{ if not .ProviderConfiguration.Assert.CustomProvider }}
   {{ template "assert" .ProviderConfiguration.Assert }}
-{{ end }}
+{{ end }}{{ end }}
 
-{{ if .ProviderConfiguration.Bless }}
+{{ if .ProviderConfiguration.Bless }}{{ if not .ProviderConfiguration.Bless.CustomProvider }}
   {{ template "bless_provider" .ProviderConfiguration.Bless }}
-{{ end }}
+{{ end }}{{ end }}
 
-{{ if .ProviderConfiguration.Okta}}
+{{ if .ProviderConfiguration.Okta}}{{ if not .ProviderConfiguration.Okta.CustomProvider }}
   {{ template "okta_provider" .ProviderConfiguration.Okta}}
-{{ end }}
+{{ end }}{{ end }}
 
-{{ if .ProviderConfiguration.Github}}
+{{ if .ProviderConfiguration.Github}}{{ if not .ProviderConfiguration.Github.CustomProvider }}
   {{ template "github_provider" .ProviderConfiguration.Github}}
-{{ end }}
+{{ end }}{{ end }}
 
-{{ if .ProviderConfiguration.Heroku }}
+{{ if .ProviderConfiguration.Heroku }}{{ if not .ProviderConfiguration.Heroku.CustomProvider }}
   {{ template "heroku_provider" .ProviderConfiguration.Heroku }}
-{{ end }}
+  {{ end }}{{ end }}
 
-{{ if .ProviderConfiguration.Datadog }}
+{{ if .ProviderConfiguration.Datadog }}{{ if not .ProviderConfiguration.Datadog.CustomProvider }}
   {{ template "datadog_provider" .ProviderConfiguration.Datadog }}
-{{ end }}
+{{ end }}{{ end }}
 
-{{ if .ProviderConfiguration.Tfe }}{{ if .ProviderConfiguration.Tfe.Enabled }}
+{{ if .ProviderConfiguration.Tfe }}{{ if not .ProviderConfiguration.Tfe.CustomProvider }}
     {{ template "tfe_provider" .ProviderConfiguration.Tfe }}
 {{ end }}{{ end }}
 
-{{ if .ProviderConfiguration.Sentry }}{{ if .ProviderConfiguration.Sentry.Enabled }}
+{{ if .ProviderConfiguration.Sentry }}{{ if not .ProviderConfiguration.Sentry.CustomProvider }}
     {{ template "sentry_provider" .ProviderConfiguration.Sentry }}
 {{ end }}{{ end }}
 
-{{ if .ProviderConfiguration.Auth0 }}
+{{ if .ProviderConfiguration.Auth0 }}{{ if not .ProviderConfiguration.Auth0.CustomProvider }}
   {{ template "auth0_provider" .ProviderConfiguration.Auth0 }}
-{{ end }}
+{{ end }}{{ end }}
 
 terraform {
   required_version = "={{ .TerraformVersion }}"
@@ -67,29 +67,34 @@ terraform {
   {{ end}}
   }
 }
+# tflint-ignore: terraform_unused_declarations
 variable "env" {
   type    =  string
   default = "{{ .Env }}"
 }
 
+# tflint-ignore: terraform_unused_declarations
 variable "project" {
   type    =  string
   default = "{{ .Project }}"
 }
 
 {{if .ProviderConfiguration.AWS}}
+  # tflint-ignore: terraform_unused_declarations
   variable "region" {
     type    =  string
     default = "{{ .ProviderConfiguration.AWS.Region }}"
   }
 {{ end }}
 
+# tflint-ignore: terraform_unused_declarations
 variable "component" {
   type =  string
   default = "{{ .Name }}"
 }
 
 {{ if (avail "Account" .) }}
+# tflint-ignore: terraform_unused_declarations
 variable "account" {
   type =  string
   default = "{{ .Account }}"
@@ -97,17 +102,20 @@ variable "account" {
 {{ end }}
 
 {{ if .ProviderConfiguration.AWS }}{{ if .ProviderConfiguration.AWS.Profile }}
+  # tflint-ignore: terraform_unused_declarations
   variable "aws_profile" {
     type =  string
     default =  "{{ .ProviderConfiguration.AWS.Profile }}"
   }
 {{ end }}{{ end }}
 
+# tflint-ignore: terraform_unused_declarations
 variable "owner" {
   type =  string
   default = "{{ .Owner }}"
 }
 
+# tflint-ignore: terraform_unused_declarations
 variable "tags" {
   type =  object({project: string, env: string, service: string, owner: string, managedBy: string})
   default = {
@@ -120,6 +128,7 @@ variable "tags" {
 }
 
 {{ range $key, $val := .ExtraVars }}
+# tflint-ignore: terraform_unused_declarations
 variable "{{ $key }}" {
   type =  string
   default = "{{ $val }}"
@@ -128,6 +137,7 @@ variable "{{ $key }}" {
 
 {{ if .Global}}
 {{ if .Global.Backend.Kind}}
+# tflint-ignore: terraform_unused_declarations
 data "terraform_remote_state" "global" {
   backend = "{{ .Global.Backend.Kind }}"
 
@@ -159,6 +169,7 @@ data "terraform_remote_state" "{{ $name }}" {
 }
 {{ end }}
 
+# tflint-ignore: terraform_unused_declarations
 variable "aws_accounts" {
   type =  map(string)
   default = {

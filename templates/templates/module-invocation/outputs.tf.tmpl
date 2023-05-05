@@ -3,8 +3,9 @@
 
 {{ $outer := . -}}
 {{- range .Outputs -}}
-output "{{.}}" {
-  value = module.{{$outer.ModuleName}}.{{.}}
+output "{{.Name}}" {
+  value = module.{{$outer.ModuleName}}.{{.Name}}
+  sensitive = {{.Sensitive}}
 }
 
 {{end}}

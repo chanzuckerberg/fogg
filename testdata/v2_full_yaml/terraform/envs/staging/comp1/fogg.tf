@@ -9,6 +9,8 @@ provider "aws" {
 }
 # Aliased Providers (for doing things in every region).
 
+
+provider "assert" {}
 terraform {
   required_version = "=0.100.0"
 
@@ -33,7 +35,7 @@ terraform {
     assert = {
       source = "bwoznicki/assert"
 
-      version = "~> 0.0.1"
+      version = "0.0.1"
 
     }
 
@@ -54,7 +56,7 @@ terraform {
     null = {
       source = "hashicorp/null"
 
-      version = "~> 3.0"
+      version = "3.1.1"
 
     }
 
@@ -81,30 +83,37 @@ terraform {
 
   }
 }
+# tflint-ignore: terraform_unused_declarations
 variable "env" {
   type    = string
   default = "staging"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "project" {
   type    = string
   default = "proj"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "region" {
   type    = string
   default = "us-west-2"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "component" {
   type    = string
   default = "comp1"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "aws_profile" {
   type    = string
   default = "profile"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "owner" {
   type    = string
   default = "foo@example.com"
 }
+# tflint-ignore: terraform_unused_declarations
 variable "tags" {
   type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
   default = {
@@ -115,10 +124,12 @@ variable "tags" {
     managedBy = "terraform"
   }
 }
+# tflint-ignore: terraform_unused_declarations
 variable "foo" {
   type    = string
   default = "bar2"
 }
+# tflint-ignore: terraform_unused_declarations
 data "terraform_remote_state" "global" {
   backend = "s3"
   config = {
@@ -187,6 +198,7 @@ data "terraform_remote_state" "foo" {
 
   }
 }
+# tflint-ignore: terraform_unused_declarations
 variable "aws_accounts" {
   type = map(string)
   default = {
