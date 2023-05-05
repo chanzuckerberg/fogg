@@ -1,0 +1,7 @@
+
+
+dependencies {
+  paths = [
+    "../hero",
+  ]
+}

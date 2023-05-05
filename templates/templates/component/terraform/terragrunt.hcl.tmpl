@@ -1,0 +1,11 @@
+{{ $outer := . }}
+
+dependencies {
+  paths = [
+{{ range $component, $backend := .ComponentBackends  -}}
+{{ if ne $component $outer.Name}}    "../{{$component}}",
+{{ end -}}
+{{ end -}}
+{{ range $name, $backend := .AccountBackends}}    "../../../accounts/{{$name}}",
+{{ end }}  ]
+}
