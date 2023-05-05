@@ -23,7 +23,7 @@ endif
 
 tfenv: ## install the tfenv tool
 	@if [ ! -d ${TFENV_DIR} ]; then \
-		git clone -q https://github.com/chanzuckerberg/tfenv.git $(TFENV_DIR); \
+		git clone -q https://github.com/tfutils/tfenv.git $(TFENV_DIR); \
 	fi
 .PHONY: tfenv
 
