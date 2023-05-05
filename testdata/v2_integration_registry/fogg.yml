@@ -1,0 +1,184 @@
+defaults:
+  backend:
+    bucket: buck
+    profile: profile
+    region: us-west-2
+  extra_vars:
+    foo: bar1
+  owner: foo@example.com
+  project: proj
+  providers:
+    aws:
+      account_id: 00456
+      profile: profile
+      region: us-west-2
+      version: 0.12.0
+  terraform_version: 0.100.0
+  integration_registry: ssm
+envs:
+  test:
+    components:
+      vpc:
+        modules:
+          - name: "foo_vpc"
+            prefix: "foo"
+            source: "terraform-aws-modules/vpc/aws"
+            version: "4.0.1"
+            variables:
+              - name
+              - cidr
+              - azs
+              - private_subnets
+              - public_subnets
+              - tags
+            # outputs_map is omitted, all outputs are integrated with a default format
+            integration:
+              mode: all
+              format: jsonencode(%s)
+          - name: "bar_vpc"
+            prefix: "bar"
+            source: "terraform-aws-modules/vpc/aws"
+            version: "4.0.1"
+            variables:
+              - name
+              - cidr
+              - azs
+              - private_subnets
+              - public_subnets
+              - tags
+            # all outputs are integrated
+            # some are mapped
+            integration:
+              mode: all
+              format: jsonencode(%s)
+              outputs_map:
+                # with path overwrite
+                cgw_arns:
+                  path: customer_gateways
+                # with format string overwrite
+                elasticache_subnets:
+                  format: yamlencode(%s)
+          - name: "baz_vpc"
+            prefix: "baz"
+            source: "terraform-aws-modules/vpc/aws"
+            version: "4.0.1"
+            variables:
+              - name
+              - cidr
+              - azs
+              - private_subnets
+              - public_subnets
+              - tags
+            # only selected outputs are integrated
+            # if outputs_map is missing, should warn
+            # with drop_prefix
+            integration:
+              mode: selected
+              path_infix: network/baz
+              drop_prefix: true # drop the "baz" prefix
+              format: jsonencode(%s)
+              outputs_map:
+                vpc_id:
+                  format: "%s"
+                azs: {}
+                public_subnets:
+                  # /${var.env}/${var.component}/{{ infix }}/subnets/public/${each.key}
+                  path: subnets
+                  for_each: true
+                  path_for_each: public
+                private_subnets:
+                  path: subnets
+                  for_each: true
+                  path_for_each: private
+                database_subnets:
+                  path: subnets
+                  for_each: true
+                  path_for_each: database
+          - name: "corge_vpc"
+            prefix: "corge"
+            source: "terraform-aws-modules/vpc/aws"
+            version: "4.0.1"
+            variables:
+              - name
+              - cidr
+              - azs
+              - private_subnets
+              - public_subnets
+              - tags
+            # with drop_component at integration
+            integration:
+              mode: selected
+              path_infix: network
+              drop_component: true # drop the component name "vpc" from all paths
+              outputs_map:
+                vpc_id:
+                  drop_component: false # don't drop the component name "vpc" for this output only
+                # using default format
+                azs:
+                  format: jsonencode(%s)
+                public_subnets:
+                  # /${var.env}/${var.component}/subnets/public/${each.key}
+                  path: subnets
+                  for_each: true
+                  path_for_each: public
+                private_subnets:
+                  path: subnets
+                  for_each: true
+                  path_for_each: private
+                database_subnets:
+                  path: subnets
+                  for_each: true
+                  path_for_each: database
+          - name: "grault_vpc"
+            prefix: "grault"
+            source: "terraform-aws-modules/vpc/aws"
+            version: "4.0.1"
+            variables:
+              - name
+              - cidr
+              - azs
+              - private_subnets
+              - public_subnets
+              - tags
+            # with drop_component at integration
+            integration:
+              mode: selected
+              path_infix: network
+              drop_prefix: true
+              outputs_map:
+                vpc_id: {}
+                # using default format
+                azs:
+                  path: "vpc_azs"
+                  drop_component: true # drop the component name "vpc" for this output only
+                  format: jsonencode(%s)
+                public_subnets:
+                  # /${var.env}/${var.component}/subnets/public/${each.key}
+                  path: subnets
+                  for_each: true
+                  path_for_each: public
+                private_subnets:
+                  path: subnets
+                  for_each: true
+                  path_for_each: private
+                database_subnets:
+                  path: subnets
+                  for_each: true
+                  path_for_each: database
+          - name: "qux_vpc"
+            prefix: "qux"
+            source: "terraform-aws-modules/vpc/aws"
+            version: "4.0.1"
+            variables:
+              - name
+              - cidr
+              - azs
+              - private_subnets
+              - public_subnets
+              - tags
+            # # no outputs are integrated (default)
+            # integration:
+            #   mode: none
+modules:
+  my_module: {}
+version: 2

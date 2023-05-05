@@ -2,7 +2,7 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 {{ range .Modules -}}
-// module "{{.ModulePrefix}}{{.ModuleName}}" outputs
+// module "{{.ModuleName}}" outputs
 {{ $outer := . -}}
 {{- range .Outputs -}}
 output "{{$outer.ModulePrefix}}{{.Name}}" {

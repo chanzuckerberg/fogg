@@ -652,6 +652,10 @@ func OwnerGetter(comm Common) *string {
 	return comm.Owner
 }
 
+func IntegrationRegistryGetter(comm Common) *string {
+	return comm.IntegrationRegistry
+}
+
 func ProjectGetter(comm Common) *string {
 	return comm.Project
 }

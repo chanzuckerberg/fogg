@@ -54,6 +54,7 @@ type ComponentCommon struct {
 	Project               string                     `yaml:"project"`
 	ProviderConfiguration ProviderConfiguration      `yaml:"providers_configuration"`
 	ProviderVersions      map[string]ProviderVersion `yaml:"provider_versions"`
+	IntegrationRegistry   *string                    `yaml:"integration_registry"`
 
 	TfLint TfLint `yaml:"tf_lint"`
 
@@ -1046,15 +1047,16 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Tfe:                    tfePlan,
 			Sops:                   sopsPlan,
 		},
-		ProviderVersions: providerVersions,
-		TfLint:           tfLintPlan,
-		ExtraVars:        v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),
-		Owner:            v2.ResolveRequiredString(v2.OwnerGetter, commons...),
-		Project:          project,
-		Common:           Common{TerraformVersion: v2.ResolveRequiredString(v2.TerraformVersionGetter, commons...)},
-		TravisCI:         travisPlan,
-		CircleCI:         circlePlan,
-		GitHubActionsCI:  githubActionsPlan,
+		ProviderVersions:    providerVersions,
+		IntegrationRegistry: v2.ResolveOptionalString(v2.IntegrationRegistryGetter, commons...),
+		TfLint:              tfLintPlan,
+		ExtraVars:           v2.ResolveStringMap(v2.ExtraVarsGetter, commons...),
+		Owner:               v2.ResolveRequiredString(v2.OwnerGetter, commons...),
+		Project:             project,
+		Common:              Common{TerraformVersion: v2.ResolveRequiredString(v2.TerraformVersionGetter, commons...)},
+		TravisCI:            travisPlan,
+		CircleCI:            circlePlan,
+		GitHubActionsCI:     githubActionsPlan,
 	}
 }
 

@@ -59,6 +59,13 @@ func toYAML(v interface{}) string {
 	return strings.TrimSuffix(b.String(), "\n")
 }
 
+// deRef is a generic function to dereference a pointer to it's actual value type.
+//
+// This is designed to be called from a template.
+func deRef[T any](v *T) T {
+	return *v
+}
+
 // OpenTemplate will read `source` for a template, parse, configure and return a template.Template
 func OpenTemplate(label string, source io.Reader, templates fs.FS) (*template.Template, error) {
 	// TODO we should probably cache these rather than open and parse them for every apply
@@ -66,6 +73,7 @@ func OpenTemplate(label string, source io.Reader, templates fs.FS) (*template.Te
 	funcs["dict"] = dict
 	funcs["avail"] = avail
 	funcs["toYaml"] = toYAML
+	funcs["deRefStr"] = deRef[string]
 
 	s, err := io.ReadAll(source)
 	if err != nil {

@@ -256,7 +256,7 @@ func applyTFE(fs afero.Fs, plan *plan.Plan, tmpl *templates.T) error {
 		if err != nil {
 			return errs.WrapUser(err, "unable to make a downloader")
 		}
-		err = applyModuleInvocation(fs, path, templates.Templates.ModuleInvocation, tmpl.Common, mi)
+		err = applyModuleInvocation(fs, path, templates.Templates.ModuleInvocation, tmpl.Common, mi, nil)
 		if err != nil {
 			return errs.WrapUser(err, "unable to apply module invocation")
 		}
@@ -418,7 +418,7 @@ func applyEnvs(
 					downloadFunc: downloader,
 				})
 			}
-			err = applyModuleInvocation(fs, path, templates.Templates.ModuleInvocation, commonBox, mi)
+			err = applyModuleInvocation(fs, path, templates.Templates.ModuleInvocation, commonBox, mi, componentPlan.IntegrationRegistry)
 			if err != nil {
 				return errs.WrapUser(err, "unable to apply module invocation")
 			}
@@ -581,12 +581,24 @@ func applyTemplate(sourceFile io.Reader, commonTemplates fs.FS, dest afero.Fs, p
 // leave it here for now and re-think it when we make this mechanism
 // general purpose.
 type moduleData struct {
-	ModuleName    string
-	ModuleSource  string
-	ModuleVersion string
-	ModulePrefix  string
-	Variables     []string
-	Outputs       []*tfconfig.Output
+	ModuleName                 string
+	ModuleSource               string
+	ModuleVersion              string
+	ModulePrefix               string
+	Variables                  []string
+	Outputs                    []*tfconfig.Output
+	IntegrationRegistryEntries []*IntegrationRegistryEntry
+}
+
+type IntegrationRegistryEntry struct {
+	Output        *tfconfig.Output
+	OutputRef     string
+	DropComponent bool
+	DropPrefix    bool
+	PathInfix     *string
+	Path          *string
+	ForEach       bool
+	PathForEach   *string
 }
 
 type modulesData struct {
@@ -604,6 +616,7 @@ func applyModuleInvocation(
 	box fs.FS,
 	commonBox fs.FS,
 	moduleInvocations []moduleInvocation,
+	integrationRegistry *string,
 ) error {
 	e := fs.MkdirAll(path, 0755)
 	if e != nil {
@@ -633,14 +646,6 @@ func applyModuleInvocation(
 		}
 		sort.Strings(variables)
 
-		outputs := make([]*tfconfig.Output, 0)
-		for _, o := range moduleConfig.Outputs {
-			outputs = append(outputs, o)
-		}
-		sort.Slice(outputs, func(i, j int) bool {
-			return outputs[i].Name < outputs[j].Name
-		})
-
 		moduleName := ""
 		if mi.module.Name != nil {
 			moduleName = *mi.module.Name
@@ -650,6 +655,75 @@ func applyModuleInvocation(
 			re := regexp.MustCompile(`\?ref=.*`)
 			moduleName = re.ReplaceAllString(moduleName, "")
 		}
+
+		outputs := make([]*tfconfig.Output, 0)
+		integrationRegistryEntries := make([]*IntegrationRegistryEntry, 0)
+		integration := mi.module.Integration
+		if integration == nil {
+			integration = &v2.ModuleIntegrationConfig{
+				Mode: util.StrPtr("none"),
+			}
+		}
+		for _, o := range moduleConfig.Outputs {
+			outputs = append(outputs, o)
+			outputRef := fmt.Sprintf("module.%s.%s", moduleName, o.Name)
+			outputRefFmted := outputRef
+			if integration.Format != nil {
+				outputRefFmted = fmt.Sprintf(*integration.Format, outputRef)
+			}
+			if *integration.Mode != "none" {
+				wrapEntry := IntegrationRegistryEntry{
+					Output:        o,
+					OutputRef:     outputRefFmted,
+					DropComponent: integration.DropComponent,
+					DropPrefix:    integration.DropPrefix,
+					PathInfix:     integration.PathInfix,
+				}
+				for eName, e := range integration.OutputsMap {
+					if o.Name == eName {
+						if e.Format != nil {
+							outputRefFmted = fmt.Sprintf(*e.Format, outputRef)
+						}
+						if e.ForEach {
+							outputRef = "each.value"
+							outputRefFmted = outputRef
+							if integration.Format != nil {
+								outputRefFmted = fmt.Sprintf(*integration.Format, outputRef)
+							}
+							if e.Format != nil {
+								outputRefFmted = fmt.Sprintf(*e.Format, outputRef)
+							}
+						}
+						dropComponent := integration.DropComponent
+						if e.DropComponent != nil {
+							dropComponent = *e.DropComponent
+						}
+						wrapEntry = IntegrationRegistryEntry{
+							Output:        o,
+							OutputRef:     outputRefFmted,
+							DropComponent: dropComponent,
+							DropPrefix:    integration.DropPrefix,
+							PathInfix:     integration.PathInfix,
+							Path:          e.Path,
+							ForEach:       e.ForEach,
+							PathForEach:   e.PathForEach,
+						}
+						if *integration.Mode == "selected" {
+							integrationRegistryEntries = append(integrationRegistryEntries, &wrapEntry)
+						}
+					}
+				}
+				if *integration.Mode != "selected" {
+					integrationRegistryEntries = append(integrationRegistryEntries, &wrapEntry)
+				}
+			}
+		}
+		sort.Slice(outputs, func(i, j int) bool {
+			return outputs[i].Name < outputs[j].Name
+		})
+		sort.Slice(integrationRegistryEntries, func(i, j int) bool {
+			return integrationRegistryEntries[i].Output.Name < integrationRegistryEntries[j].Output.Name
+		})
 
 		modulePrefix := ""
 		if mi.module.Prefix != nil {
@@ -661,12 +735,13 @@ func applyModuleInvocation(
 		}
 		moduleAddressForSource, moduleVersion, _ := calculateModuleAddressForSource(path, *mi.module.Source, moduleVersion)
 		arr = append(arr, &moduleData{
-			moduleName,
-			moduleAddressForSource,
-			moduleVersion,
-			modulePrefix,
-			variables,
-			outputs,
+			ModuleName:                 moduleName,
+			ModuleSource:               moduleAddressForSource,
+			ModuleVersion:              moduleVersion,
+			ModulePrefix:               modulePrefix,
+			Variables:                  variables,
+			Outputs:                    outputs,
+			IntegrationRegistryEntries: integrationRegistryEntries,
 		})
 	}
 
@@ -703,6 +778,24 @@ func applyModuleInvocation(
 	e = fmtHcl(fs, filepath.Join(path, "outputs.tf"), false)
 	if e != nil {
 		return errs.WrapUser(e, "unable to format outputs.tf")
+	}
+
+	if integrationRegistry != nil && *integrationRegistry == "ssm" {
+		// Integration Registry Entries - ssm parameter store
+		f, e = box.Open("ssm-parameter-store.tf.tmpl")
+		if e != nil {
+			return errs.WrapUser(e, "could not open template file")
+		}
+
+		e = applyTemplate(f, commonBox, fs, filepath.Join(path, "ssm-parameter-store.tf"), &modulesData{arr})
+		if e != nil {
+			return errs.WrapUser(e, "unable to apply template for ssm-parameter-store.tf")
+		}
+
+		e = fmtHcl(fs, filepath.Join(path, "ssm-parameter-store.tf"), false)
+		if e != nil {
+			return errs.WrapUser(e, "unable to format ssm-parameter-store.tf")
+		}
 	}
 
 	return nil

@@ -85,6 +85,8 @@ type Common struct {
 	DependsOn        *DependsOn        `yaml:"depends_on,omitempty"`
 	TerraformVersion *string           `yaml:"terraform_version,omitempty"`
 	Tools            *Tools            `yaml:"tools,omitempty"`
+	// Store output for Integrations (only ssm supported atm)
+	IntegrationRegistry *string `yaml:"integration_registry,omitempty"`
 }
 
 type Defaults struct {
@@ -149,6 +151,38 @@ type ComponentModule struct {
 	Prefix *string `yaml:"prefix,omitempty"`
 	// Variables to limit generated input placeholders (and use module defaults for others)
 	Variables []string `yaml:"variables,omitempty"`
+	// Integration Registry config
+	Integration *ModuleIntegrationConfig `yaml:"integration,omitempty"`
+}
+
+type ModuleIntegrationConfig struct {
+	// Mode only "none" | "selected" | "all" supported
+	// default = "none", anything else is treated as "all"
+	Mode *string `yaml:"mode,omitempty"`
+	// A default golang format string for output integration
+	// omitted format is "module.module_name.output_name"
+	Format *string `yaml:"format,omitempty"`
+	// Drop prefix used for input and output placeholders from parameter path
+	DropPrefix bool `yaml:"drop_prefix,omitempty"`
+	// Drop component from parameter path (only uses env)
+	DropComponent bool `yaml:"drop_component,omitempty"`
+	// Infix path for all outputs
+	PathInfix *string `yaml:"path_infix,omitempty"`
+	// Map for outputs into Integration Registry
+	OutputsMap map[string]*IntegrationRegistryMap `yaml:"outputs_map,omitempty"`
+}
+
+type IntegrationRegistryMap struct {
+	// A golang format string
+	Format *string `yaml:"format,omitempty"`
+	// Drop component from parameter path (only use env)
+	DropComponent *bool `yaml:"drop_component,omitempty"`
+	// Path to store outputs under
+	Path *string `yaml:"path,omitempty"`
+	// Add for each configuration
+	ForEach bool `yaml:"for_each,omitempty"`
+	// Create for_each outputs under this path
+	PathForEach *string `yaml:"path_for_each,omitempty"`
 }
 
 type Providers struct {
