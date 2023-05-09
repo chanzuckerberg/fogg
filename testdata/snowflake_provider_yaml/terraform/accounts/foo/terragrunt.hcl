@@ -1,0 +1,7 @@
+
+
+dependencies {
+  paths = [
+    "../../../accounts/foo",
+  ]
+}
