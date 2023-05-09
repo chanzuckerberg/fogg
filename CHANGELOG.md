@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.84.0](https://github.com/chanzuckerberg/fogg/compare/v0.83.1...v0.84.0) (2023-05-09)
+
+
+### Features
+
+* fogg to generate terragrunt files ([#845](https://github.com/chanzuckerberg/fogg/issues/845)) ([9845a34](https://github.com/chanzuckerberg/fogg/commit/9845a34df7c2b0758efcf94a80b679af0e62e46e))
+
+
+### BugFixes
+
+* use Terraform-supported tfenv instead of ours ([#846](https://github.com/chanzuckerberg/fogg/issues/846)) ([0460b7f](https://github.com/chanzuckerberg/fogg/commit/0460b7fdea91048cafedf59e0506438907c0a6ff))
+
 ### [0.83.1](https://github.com/chanzuckerberg/fogg/compare/v0.83.0...v0.83.1) (2023-05-08)
 
 
