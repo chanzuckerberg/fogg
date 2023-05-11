@@ -27,7 +27,7 @@ jobs:
         with:
           path: ~/.fogg/cache
           key: fogg-cache-${{ hashFiles('**/.fogg-version') }}
-      - run: make setup
+      - run: make setup      
       - run: |
           mkdir -p ~/.ssh/
           ssh-keyscan -H github.com >> ~/.ssh/known_hosts

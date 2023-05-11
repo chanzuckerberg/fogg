@@ -35,8 +35,10 @@ jobs:
         with:
           path: ~/.fogg/cache
           key: fogg-cache-{{`${{ hashFiles('**/.fogg-version') }}`}}
-      - run: make setup
-      - run: ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+      - run: make setup      
+      - run: |
+          mkdir -p ~/.ssh/
+          ssh-keyscan -H github.com >> ~/.ssh/known_hosts
       {{- if not (eq (len $githubActionsCI.SSHKeySecrets) 0) }}
       - name: Install SSH key
         uses: webfactory/ssh-agent@v0.4.1
