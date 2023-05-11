@@ -28,7 +28,9 @@ jobs:
           path: ~/.fogg/cache
           key: fogg-cache-${{ hashFiles('**/.fogg-version') }}
       - run: make setup
-      - run: ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+      - run: |
+          mkdir -p ~/.ssh/
+          ssh-keyscan -H github.com >> ~/.ssh/known_hosts
       - run: .fogg/bin/fogg apply
         env:
           FOGG_GITHUBAPPTOKEN: ${{ steps.generate_token.outputs.token }}
