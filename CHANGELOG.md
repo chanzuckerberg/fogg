@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.85.0](https://github.com/chanzuckerberg/fogg/compare/v0.84.1...v0.85.0) (2023-05-11)
+
+
+### Features
+
+* allow fogg ci to be configured with runners ([145dfe6](https://github.com/chanzuckerberg/fogg/commit/145dfe6a9b61fcfe8dd3d7c9890b72c72b5a2cf9))
+* grab the latest Github hostkey for the runner ([4607d49](https://github.com/chanzuckerberg/fogg/commit/4607d494de0485c08fc6e62aea48e9cef9cb6b07))
+
+
+### Misc
+
+* update golden files ([e63339b](https://github.com/chanzuckerberg/fogg/commit/e63339bfe71129d47c13adff1d643da0f680f1c4))
+* utilize self-hosted runners ([#856](https://github.com/chanzuckerberg/fogg/issues/856)) ([a37bb81](https://github.com/chanzuckerberg/fogg/commit/a37bb813c8afc0b335cc388d08632077bb3bb8a1))
+
 ### [0.84.1](https://github.com/chanzuckerberg/fogg/compare/v0.84.0...v0.84.1) (2023-05-11)
 
 
