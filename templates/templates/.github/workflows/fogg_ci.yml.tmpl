@@ -11,7 +11,14 @@ concurrency:
 
 jobs:
   fogg-apply:
+    {{ if (eq (len $githubActionsCI.RunsOn) 0) -}}
     runs-on: ubuntu-latest
+    {{ else -}}
+    runs-on: [{{ range $index, $element := $githubActionsCI.RunsOn -}}
+        {{if $index}},{{end -}}
+        {{$element -}}
+    {{end -}}]
+    {{ end -}}
     steps:
       - name: Generate token
         id: generate_token
@@ -46,7 +53,14 @@ jobs:
           message: |
             commit from fogg_ci -- ran fogg apply and pushed
   find-changed-dirs:
+    {{ if (eq (len $githubActionsCI.RunsOn) 0) -}}
     runs-on: ubuntu-latest
+    {{ else -}}
+    runs-on: [{{ range $index, $element := $githubActionsCI.RunsOn -}}
+        {{if $index}},{{end -}}
+        {{$element -}}
+    {{end -}}]
+    {{ end -}}
     outputs:
       allChanges: {{`${{ steps.changedDirs.outputs.allChanges }}`}}
     steps:
@@ -76,7 +90,14 @@ jobs:
             console.log(`changedEnvs: ${JSON.stringify(changedEnvs)}`)
             core.setOutput("allChanges", allChanges)
   lint-changed-dirs:
+    {{ if (eq (len $githubActionsCI.RunsOn) 0) -}}
     runs-on: ubuntu-latest
+    {{ else -}}
+    runs-on: [{{ range $index, $element := $githubActionsCI.RunsOn -}}
+        {{if $index}},{{end -}}
+        {{$element -}}
+    {{end -}}]
+    {{ end -}}
     needs: find-changed-dirs
     strategy:
       matrix:

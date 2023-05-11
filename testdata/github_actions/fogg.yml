@@ -13,4 +13,7 @@ defaults:
       command: lint
       enabled: true
       test_buckets: 7
+      runs_on:
+        - self-hosted
+        - ARM64
 version: 2

@@ -31,6 +31,7 @@ type CircleCIConfig struct {
 type GitHubActionsCIConfig struct {
 	CIConfig
 	SSHKeySecrets []string
+	RunsOn        []string
 }
 
 type TravisCIConfig struct {
@@ -335,15 +336,25 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 		}
 	}
 
-	var sshKeySecrets []string
+	var (
+		sshKeySecrets []string
+		runsOn        []string
+	)
 
 	if c.Defaults.Tools != nil && c.Defaults.Tools.GitHubActionsCI != nil {
 		sshKeySecrets = c.Defaults.Tools.GitHubActionsCI.SSHKeySecrets
+	}
+
+	if c.Defaults.Tools != nil &&
+		c.Defaults.Tools.GitHubActionsCI != nil &&
+		c.Defaults.Tools.GitHubActionsCI.RunsOn != nil {
+		runsOn = *c.Defaults.Tools.GitHubActionsCI.RunsOn
 	}
 
 	ciConfig = ciConfig.populateBuckets(numBuckets)
 	return GitHubActionsCIConfig{
 		CIConfig:      *ciConfig,
 		SSHKeySecrets: sshKeySecrets,
+		RunsOn:        runsOn,
 	}
 }
