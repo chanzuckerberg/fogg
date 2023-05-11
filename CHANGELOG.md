@@ -1,5 +1,18 @@
 # Changelog
 
+### [0.85.1](https://github.com/chanzuckerberg/fogg/compare/v0.85.0...v0.85.1) (2023-05-11)
+
+
+### BugFixes
+
+* mkdir not applied to template ([9658c74](https://github.com/chanzuckerberg/fogg/commit/9658c74755968adcf1ad1bc33dcad2fe46fb9853))
+* ssh dir not always there ([57febc2](https://github.com/chanzuckerberg/fogg/commit/57febc28109f0511531129b4d0f872c2b7d46b3b))
+
+
+### Misc
+
+* Bump github.com/cloudflare/circl from 1.3.1 to 1.3.3 ([#857](https://github.com/chanzuckerberg/fogg/issues/857)) ([a1e59ad](https://github.com/chanzuckerberg/fogg/commit/a1e59ad8de29cdfeefb916c21ec6b61461261b93))
+
 ## [0.85.0](https://github.com/chanzuckerberg/fogg/compare/v0.84.1...v0.85.0) (2023-05-11)
 
 
