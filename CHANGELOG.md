@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.84.1](https://github.com/chanzuckerberg/fogg/compare/v0.84.0...v0.84.1) (2023-05-11)
+
+
+### BugFixes
+
+* allow for linux/amr64 platform ([#851](https://github.com/chanzuckerberg/fogg/issues/851)) ([5c4c56d](https://github.com/chanzuckerberg/fogg/commit/5c4c56d2167253860870d8e5b23c6217d376a2cf))
+
 ## [0.84.0](https://github.com/chanzuckerberg/fogg/compare/v0.83.1...v0.84.0) (2023-05-09)
 
 
