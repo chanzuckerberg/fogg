@@ -2,7 +2,7 @@ on: pull_request
 
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v3
@@ -12,12 +12,15 @@ jobs:
         run: make test-ci
 
   lint:
-    runs-on: ubuntu-22.04
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v3
         with:
           go-version-file: go.mod
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
       - uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.1.3
