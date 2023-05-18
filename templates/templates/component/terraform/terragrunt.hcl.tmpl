@@ -4,8 +4,10 @@ dependencies {
   paths = [
 {{ if avail "Env" . -}}
   {{ if eq .Env "accounts" -}}
-    {{ range $name, $backend := .AccountBackends }}    "../{{$name}}",
+    {{ range $name, $backend := .AccountBackends -}}
+      {{- if ne $name $outer.Name }}    "../{{$name}}",
 {{ end -}}
+{{- end -}}
 {{- else if eq .Env "" -}}
 {{- else -}}
 {{- range $component, $backend := .ComponentBackends -}}

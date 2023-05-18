@@ -3,6 +3,7 @@ accounts:
     depends_on:
       accounts: 
         - foo
+        - bar
       components: []
     providers:
       aws:
