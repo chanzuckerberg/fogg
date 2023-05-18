@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.85.2](https://github.com/chanzuckerberg/fogg/compare/v0.85.1...v0.85.2) (2023-05-18)
+
+
+### BugFixes
+
+* wrong relative path in terragrunt files ([#860](https://github.com/chanzuckerberg/fogg/issues/860)) ([0b3bf29](https://github.com/chanzuckerberg/fogg/commit/0b3bf29518269936ce1fd70d7b8fc4a568361453))
+
 ### [0.85.1](https://github.com/chanzuckerberg/fogg/compare/v0.85.0...v0.85.1) (2023-05-11)
 
 
