@@ -1,5 +1,3 @@
-
-
 dependencies {
   paths = [
     "../comp2",

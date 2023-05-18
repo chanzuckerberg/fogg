@@ -1,11 +1,21 @@
-{{ $outer := . }}
+{{ $outer := . -}}
 
 dependencies {
   paths = [
-{{ range $component, $backend := .ComponentBackends  -}}
-{{ if ne $component $outer.Name}}    "../{{$component}}",
+{{ if avail "Env" . -}}
+  {{ if eq .Env "accounts" -}}
+    {{ range $name, $backend := .AccountBackends -}}
+      {{- if ne $name $outer.Name }}    "../{{$name}}",
 {{ end -}}
+{{- end -}}
+{{- else if eq .Env "" -}}
+{{- else -}}
+{{- range $component, $backend := .ComponentBackends -}}
+  {{- if ne $component $outer.Name }}    "../{{$component}}",
+{{ end  -}}
+{{- end -}}
+{{- range $name, $backend := .AccountBackends}}    "../../../accounts/{{$name}}",
 {{ end -}}
-{{ range $name, $backend := .AccountBackends}}    "../../../accounts/{{$name}}",
-{{ end }}  ]
+{{- end -}}
+{{- end }}  ]
 }

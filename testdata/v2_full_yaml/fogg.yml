@@ -1,5 +1,10 @@
 accounts:
   bar:
+    depends_on:
+      accounts: 
+        - foo
+        - bar
+      components: []
     providers:
       aws:
         account_id: 00456
@@ -79,9 +84,11 @@ envs:
           sentry:
             version: 1.2.3
         depends_on:
-          accounts: []
-          components:
+          accounts: 
             - foo
+            - bar
+          components:
+            - okta
             - hero
       okta:
         providers:
