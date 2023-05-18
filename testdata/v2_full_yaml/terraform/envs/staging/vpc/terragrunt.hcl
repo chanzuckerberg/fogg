@@ -4,6 +4,5 @@ dependencies {
     "../comp2",
     "../../../accounts/bar",
     "../../../accounts/foo",
-
   ]
 }

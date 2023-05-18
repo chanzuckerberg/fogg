@@ -6,6 +6,5 @@ dependencies {
     "../sentry",
     "../../../accounts/bar",
     "../../../accounts/foo",
-
   ]
 }

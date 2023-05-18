@@ -1,6 +1,5 @@
 dependencies {
   paths = [
     "../../../accounts/account",
-
   ]
 }

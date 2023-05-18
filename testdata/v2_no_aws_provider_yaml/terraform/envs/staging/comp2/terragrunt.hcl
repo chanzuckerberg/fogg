@@ -4,6 +4,5 @@ dependencies {
     "../vpc",
     "../../../accounts/bar",
     "../../../accounts/foo",
-
   ]
 }

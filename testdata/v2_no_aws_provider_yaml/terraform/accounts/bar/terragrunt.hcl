@@ -2,6 +2,5 @@ dependencies {
   paths = [
     "../bar",
     "../foo",
-
   ]
 }

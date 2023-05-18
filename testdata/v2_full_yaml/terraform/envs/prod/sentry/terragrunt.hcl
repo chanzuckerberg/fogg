@@ -4,6 +4,5 @@ dependencies {
     "../okta",
     "../../../accounts/bar",
     "../../../accounts/foo",
-
   ]
 }
