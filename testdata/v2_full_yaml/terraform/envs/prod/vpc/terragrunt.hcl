@@ -6,7 +6,9 @@ dependencies {
     "../hero",
     "../okta",
     "../sentry",
+    "../vpc",
     "../../../accounts/bar",
     "../../../accounts/foo",
+
   ]
 }
