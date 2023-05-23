@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.86.0](https://github.com/chanzuckerberg/fogg/compare/v0.85.2...v0.86.0) (2023-05-23)
+
+
+### Features
+
+* SPIKE: Add helm provider support to fogg ([#865](https://github.com/chanzuckerberg/fogg/issues/865)) ([0e8cbfb](https://github.com/chanzuckerberg/fogg/commit/0e8cbfbffb540027eea8f386385ff4e6f1fdf658))
+
+
+### Misc
+
+* Bump github.com/sirupsen/logrus from 1.9.0 to 1.9.2 ([#864](https://github.com/chanzuckerberg/fogg/issues/864)) ([720c934](https://github.com/chanzuckerberg/fogg/commit/720c93485f63b1b2d51f9a11bd059545b1aedc40))
+
 ### [0.85.2](https://github.com/chanzuckerberg/fogg/compare/v0.85.1...v0.85.2) (2023-05-18)
 
 
