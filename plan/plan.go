@@ -137,6 +137,7 @@ type ProviderConfiguration struct {
 	Grafana                *GrafanaProvider    `yaml:"grafana"`
 	Heroku                 *HerokuProvider     `yaml:"heroku"`
 	Kubernetes             *KubernetesProvider `yaml:"kubernetes"`
+	Helm                   *HelmProvider       `yaml:"helm"`
 	Kubectl                *KubectlProvider    `yaml:"kubectl"`
 	Okta                   *OktaProvider       `yaml:"okta"`
 	Sentry                 *SentryProvider     `yaml:"sentry"`
@@ -271,6 +272,10 @@ type TfeProvider struct {
 }
 
 type KubernetesProvider struct {
+	CommonProvider `yaml:",inline"`
+}
+
+type HelmProvider struct {
 	CommonProvider `yaml:",inline"`
 }
 
@@ -1068,7 +1073,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		if k8sConfig.CustomProvider != nil {
 			customProvider = *k8sConfig.CustomProvider
 		}
-		version := "2.17.0"
+		version := "2.20.0"
 		if k8sConfig.Version != nil {
 			version = *k8sConfig.Version
 		}
@@ -1082,6 +1087,32 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 
 		providerVersions["kubernetes"] = ProviderVersion{
 			Source:  "hashicorp/kubernetes",
+			Version: &version,
+		}
+	}
+
+	var helmPlan *HelmProvider
+
+	helmConfig := v2.ResolveHelmProvider(commons...)
+	if helmConfig != nil && (helmConfig.Enabled == nil || (helmConfig.Enabled != nil && *helmConfig.Enabled)) {
+		customProvider := false
+		if helmConfig.CustomProvider != nil {
+			customProvider = *helmConfig.CustomProvider
+		}
+		version := "2.9.0"
+		if helmConfig.Version != nil {
+			version = *helmConfig.Version
+		}
+		helmPlan = &HelmProvider{
+			CommonProvider: CommonProvider{
+				Version:        version,
+				Enabled:        helmConfig.Enabled == nil || (helmConfig.Enabled != nil && *helmConfig.Enabled),
+				CustomProvider: customProvider,
+			},
+		}
+
+		providerVersions["helm"] = ProviderVersion{
+			Source:  "hashicorp/helm",
 			Version: &version,
 		}
 	}
@@ -1120,7 +1151,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		if grafanaConfig.CustomProvider != nil {
 			customProvider = *grafanaConfig.CustomProvider
 		}
-		version := "1.34.0"
+		version := "1.40.1"
 		if grafanaConfig.Version != nil {
 			version = *grafanaConfig.Version
 		}
@@ -1233,6 +1264,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Grafana:                grafanaPlan,
 			Heroku:                 herokuPlan,
 			Kubernetes:             k8sPlan,
+			Helm:                   helmPlan,
 			Kubectl:                kubectlPlan,
 			Okta:                   oktaPlan,
 			Sentry:                 sentryPlan,
