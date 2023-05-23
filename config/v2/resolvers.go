@@ -615,6 +615,46 @@ func ResolveKubernetesProvider(commons ...Common) *KubernetesProvider {
 	return p
 }
 
+func ResolveHelmProvider(commons ...Common) *HelmProvider {
+	var p *HelmProvider
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.Helm == nil {
+			continue
+		}
+		p = c.Providers.Helm
+		if p.CustomProvider == nil {
+			p.CustomProvider = defaultEnabled(false)
+		}
+	}
+	var version *string
+	var enabled *bool
+
+	for _, c := range commons {
+		if c.Providers != nil && c.Providers.Helm != nil {
+			t := c.Providers.Helm
+
+			if t.Enabled != nil {
+				enabled = t.Enabled
+			}
+
+			if t.Version != nil {
+				version = t.Version
+			}
+		}
+	}
+
+	if version != nil {
+		return &HelmProvider{
+			CommonProvider: CommonProvider{
+				CustomProvider: lastNonNilBool(HelmProviderCustomProviderGetter, commons...),
+				Enabled:        enabled,
+				Version:        version,
+			},
+		}
+	}
+	return p
+}
+
 func ResolveKubectlProvider(commons ...Common) *KubectlProvider {
 	var p *KubectlProvider
 	for _, c := range commons {
@@ -970,6 +1010,13 @@ func DatabricksProviderCustomProviderGetter(comm Common) *bool {
 func KubernetesProviderCustomProviderGetter(comm Common) *bool {
 	if comm.Providers != nil && comm.Providers.Kubernetes != nil {
 		return comm.Providers.Kubernetes.CommonProvider.CustomProvider
+	}
+	return nil
+}
+
+func HelmProviderCustomProviderGetter(comm Common) *bool {
+	if comm.Providers != nil && comm.Providers.Helm != nil {
+		return comm.Providers.Helm.CommonProvider.CustomProvider
 	}
 	return nil
 }
