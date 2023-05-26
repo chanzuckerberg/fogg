@@ -1,5 +1,18 @@
 # Changelog
 
+### [0.86.1](https://github.com/chanzuckerberg/fogg/compare/v0.86.0...v0.86.1) (2023-05-26)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.258 to 1.44.266 ([#862](https://github.com/chanzuckerberg/fogg/issues/862)) ([0565e8b](https://github.com/chanzuckerberg/fogg/commit/0565e8b31103dfcea18f509349781c1d9c2d77cb))
+* Bump github.com/stretchr/testify from 1.8.2 to 1.8.3 ([#863](https://github.com/chanzuckerberg/fogg/issues/863)) ([7285ba4](https://github.com/chanzuckerberg/fogg/commit/7285ba406743b1f34031d64ec33b915b0d67d993))
+
+
+### BugFixes
+
+* Fix tfe_outputs test ([#868](https://github.com/chanzuckerberg/fogg/issues/868)) ([677b233](https://github.com/chanzuckerberg/fogg/commit/677b2330c98d0600ae08b7b02a25299516dd3a60))
+
 ## [0.86.0](https://github.com/chanzuckerberg/fogg/compare/v0.85.2...v0.86.0) (2023-05-23)
 
 
