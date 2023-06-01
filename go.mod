@@ -15,7 +15,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/fatih/color v1.15.0
 	github.com/go-errors/errors v1.4.2
-	github.com/go-git/go-git/v5 v5.6.1
+	github.com/go-git/go-git/v5 v5.7.0
 	github.com/google/go-github/v27 v27.0.6
 	github.com/hashicorp/go-getter v1.7.1
 	github.com/hashicorp/go-multierror v1.1.1
@@ -51,7 +51,7 @@ require (
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Microsoft/go-winio v0.6.0 // indirect
-	github.com/ProtonMail/go-crypto v0.0.0-20230217124315-7d5c6f04bbb8 // indirect
+	github.com/ProtonMail/go-crypto v0.0.0-20230518184743-7afd39499903 // indirect
 	github.com/acomagu/bufpipe v1.0.4 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
@@ -62,7 +62,7 @@ require (
 	github.com/bmatcuk/doublestar v1.3.4 // indirect
 	github.com/cloudflare/circl v1.3.3 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
-	github.com/go-git/gcfg v1.5.0 // indirect
+	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
 	github.com/go-git/go-billy/v5 v5.4.1 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
@@ -102,7 +102,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/sergi/go-diff v1.3.1 // indirect
-	github.com/skeema/knownhosts v1.1.0 // indirect
+	github.com/skeema/knownhosts v1.1.1 // indirect
 	github.com/ulikunitz/xz v0.5.11 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
