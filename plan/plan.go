@@ -273,6 +273,7 @@ type TfeProvider struct {
 
 type KubernetesProvider struct {
 	CommonProvider `yaml:",inline"`
+	ClusterName    *string `yaml:"cluster_name,omitempty"`
 }
 
 type HelmProvider struct {
@@ -1078,6 +1079,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			version = *k8sConfig.Version
 		}
 		k8sPlan = &KubernetesProvider{
+			ClusterName: k8sConfig.ClusterName,
 			CommonProvider: CommonProvider{
 				Version:        version,
 				Enabled:        k8sConfig.Enabled == nil || (k8sConfig.Enabled != nil && *k8sConfig.Enabled),

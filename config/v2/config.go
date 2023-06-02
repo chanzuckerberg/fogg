@@ -254,6 +254,7 @@ type TfeProvider struct {
 
 type KubernetesProvider struct {
 	CommonProvider `yaml:",inline"`
+	ClusterName    *string `yaml:"cluster_name,omitempty"`
 }
 
 type HelmProvider struct {
