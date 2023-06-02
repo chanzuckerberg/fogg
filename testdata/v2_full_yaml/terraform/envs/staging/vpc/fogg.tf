@@ -170,6 +170,19 @@ data "terraform_remote_state" "comp2" {
 
   }
 }
+data "terraform_remote_state" "k8s-comp" {
+  backend = "remote"
+  config = {
+
+
+    hostname     = "example.com"
+    organization = "foo"
+    workspaces = {
+      name = "staging-k8s-comp"
+    }
+
+  }
+}
 data "terraform_remote_state" "bar" {
   backend = "s3"
   config = {
