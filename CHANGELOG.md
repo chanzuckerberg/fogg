@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.87.0](https://github.com/chanzuckerberg/fogg/compare/v0.86.1...v0.87.0) (2023-06-02)
+
+
+### Features
+
+* Fogg template for k8s ([#873](https://github.com/chanzuckerberg/fogg/issues/873)) ([2050d3c](https://github.com/chanzuckerberg/fogg/commit/2050d3cfdf12a5b2bccaa4eb43340bb17f568f1a))
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.266 to 1.44.271 ([#869](https://github.com/chanzuckerberg/fogg/issues/869)) ([d98e0d2](https://github.com/chanzuckerberg/fogg/commit/d98e0d227fdfb7b9a2d6ea19d9eccdc8dea70ec8))
+* Bump github.com/chanzuckerberg/go-misc from 1.0.9 to 1.10.0 ([#871](https://github.com/chanzuckerberg/fogg/issues/871)) ([062565d](https://github.com/chanzuckerberg/fogg/commit/062565d35ee909f52cd24eeca52b88deb4b6ce9a))
+* Bump github.com/go-git/go-git/v5 from 5.6.1 to 5.7.0 ([#870](https://github.com/chanzuckerberg/fogg/issues/870)) ([47e70ef](https://github.com/chanzuckerberg/fogg/commit/47e70efbab9b21b74237cb200574e06448c54b83))
+
 ### [0.86.1](https://github.com/chanzuckerberg/fogg/compare/v0.86.0...v0.86.1) (2023-05-26)
 
 
