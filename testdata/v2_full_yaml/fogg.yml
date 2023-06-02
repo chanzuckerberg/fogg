@@ -115,6 +115,12 @@ envs:
         extra_vars:
           foo: bar3
         module_source: github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0
+      k8s-comp:
+        providers:
+          kubernetes:
+            enabled: true
+            cluster_component_name: comp1
+            version: 2.19.0
     extra_vars:
       foo: bar2
 modules:

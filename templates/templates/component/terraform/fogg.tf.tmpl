@@ -50,9 +50,9 @@
   {{ template "auth0_provider" .ProviderConfiguration.Auth0 }}
 {{ end }}{{ end }}
 
-{{ if .ProviderConfiguration.Kubernetes }}{{ if not .ProviderConfiguration.Kubernetes.CustomProvider }}
-  {{ template "kubernetes_provider" .ProviderConfiguration.Kubernetes }}
-{{ end }}{{ end }}
+{{- if .ProviderConfiguration.Kubernetes -}}{{- if not .ProviderConfiguration.Kubernetes.CustomProvider -}}
+  {{- template "kubernetes_provider" .ProviderConfiguration.Kubernetes -}}
+{{- end -}}{{- end -}}
 
 terraform {
   required_version = "={{ .TerraformVersion }}"

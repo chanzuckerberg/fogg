@@ -586,7 +586,7 @@ func ResolveKubernetesProvider(commons ...Common) *KubernetesProvider {
 			p.CustomProvider = defaultEnabled(false)
 		}
 	}
-	clusterName := lastNonNil(KubernetesProviderClusterNameGetter, commons...)
+	clusterComponentName := lastNonNil(KubernetesProviderClusterComponentNameGetter, commons...)
 	var version *string
 	var enabled *bool
 
@@ -606,7 +606,7 @@ func ResolveKubernetesProvider(commons ...Common) *KubernetesProvider {
 
 	if version != nil {
 		return &KubernetesProvider{
-			ClusterName: clusterName,
+			ClusterComponentName: clusterComponentName,
 			CommonProvider: CommonProvider{
 				CustomProvider: lastNonNilBool(KubernetesProviderCustomProviderGetter, commons...),
 				Enabled:        enabled,
@@ -1241,9 +1241,9 @@ func DependsOnComponentsGetter(comm Common) []string {
 	return comm.DependsOn.Components
 }
 
-func KubernetesProviderClusterNameGetter(comm Common) *string {
+func KubernetesProviderClusterComponentNameGetter(comm Common) *string {
 	if comm.Providers == nil || comm.Providers.Kubernetes == nil {
 		return nil
 	}
-	return comm.Providers.Kubernetes.ClusterName
+	return comm.Providers.Kubernetes.ClusterComponentName
 }

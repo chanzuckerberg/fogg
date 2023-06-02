@@ -11,6 +11,17 @@ provider "aws" {
 
 
 provider "assert" {}
+data "aws_eks_cluster" "cluster" {
+  name = data.terraform_remote_state.comp1.outputs.cluster_id
+}
+data "aws_eks_cluster_auth" "cluster" {
+  name = data.terraform_remote_state.comp1.outputs.cluster_id
+}
+provider "kubernetes" {
+  host                   = data.aws_eks_cluster.cluster.endpoint
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
+  token                  = data.aws_eks_cluster_auth.cluster.token
+}
 terraform {
   required_version = "=0.100.0"
 
@@ -19,7 +30,7 @@ terraform {
     hostname     = "example.com"
     organization = "foo"
     workspaces {
-      name = "staging-comp2"
+      name = "staging-k8s-comp"
     }
 
   }
@@ -43,6 +54,13 @@ terraform {
       source = "hashicorp/aws"
 
       version = "0.12.0"
+
+    }
+
+    kubernetes = {
+      source = "hashicorp/kubernetes"
+
+      version = "2.19.0"
 
     }
 
@@ -101,7 +119,7 @@ variable "region" {
 # tflint-ignore: terraform_unused_declarations
 variable "component" {
   type    = string
-  default = "comp2"
+  default = "k8s-comp"
 }
 # tflint-ignore: terraform_unused_declarations
 variable "aws_profile" {
@@ -119,7 +137,7 @@ variable "tags" {
   default = {
     project   = "proj"
     env       = "staging"
-    service   = "comp2"
+    service   = "k8s-comp"
     owner     = "foo@example.com"
     managedBy = "terraform"
   }
@@ -157,7 +175,7 @@ data "terraform_remote_state" "comp1" {
 
   }
 }
-data "terraform_remote_state" "k8s-comp" {
+data "terraform_remote_state" "comp2" {
   backend = "remote"
   config = {
 
@@ -165,7 +183,7 @@ data "terraform_remote_state" "k8s-comp" {
     hostname     = "example.com"
     organization = "foo"
     workspaces = {
-      name = "staging-k8s-comp"
+      name = "staging-comp2"
     }
 
   }
