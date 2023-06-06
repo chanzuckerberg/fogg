@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.87.2](https://github.com/chanzuckerberg/fogg/compare/v0.87.1...v0.87.2) (2023-06-06)
+
+
+### Misc
+
+* Bump github.com/hashicorp/hcl/v2 from 2.16.2 to 2.17.0 ([#876](https://github.com/chanzuckerberg/fogg/issues/876)) ([d6d0b82](https://github.com/chanzuckerberg/fogg/commit/d6d0b828f3a167a99ebada18bd06b4988754d1d5))
+* Bump github.com/stretchr/testify from 1.8.3 to 1.8.4 ([#877](https://github.com/chanzuckerberg/fogg/issues/877)) ([b986427](https://github.com/chanzuckerberg/fogg/commit/b986427d785fe0432e803fc9a1585ff2cd9e01b1))
+
 ### [0.87.1](https://github.com/chanzuckerberg/fogg/compare/v0.87.0...v0.87.1) (2023-06-05)
 
 
