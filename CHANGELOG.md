@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.87.1](https://github.com/chanzuckerberg/fogg/compare/v0.87.0...v0.87.1) (2023-06-05)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.271 to 1.44.275 ([#874](https://github.com/chanzuckerberg/fogg/issues/874)) ([bef41a3](https://github.com/chanzuckerberg/fogg/commit/bef41a336c48b2a5bd96fee828d6806029e6508e))
+* Bump github.com/sirupsen/logrus from 1.9.2 to 1.9.3 ([#875](https://github.com/chanzuckerberg/fogg/issues/875)) ([790e988](https://github.com/chanzuckerberg/fogg/commit/790e988ff19d5d3ad2d3a3411a93fbfebc6882f3))
+
 ## [0.87.0](https://github.com/chanzuckerberg/fogg/compare/v0.86.1...v0.87.0) (2023-06-02)
 
 
