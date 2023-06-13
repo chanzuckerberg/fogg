@@ -16,6 +16,7 @@ TFENV_DIR ?= $(REPO_ROOT)/.fogg/tfenv
 export PATH :=$(TFENV_DIR)/versions/$(TERRAFORM_VERSION)/:$(REPO_ROOT)/.fogg/bin:$(PATH)
 export TF_PLUGIN_CACHE_DIR=$(REPO_ROOT)/.terraform.d/plugin-cache
 export TF_IN_AUTOMATION=1
+export TFENV_ARCH=amd64
 terraform_command ?= $(TFENV_DIR)/versions/$(TERRAFORM_VERSION)/terraform
 MODE ?= local
 
