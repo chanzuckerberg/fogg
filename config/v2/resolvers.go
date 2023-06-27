@@ -6,7 +6,7 @@ import (
 	"github.com/chanzuckerberg/fogg/util"
 )
 
-// lastNonNil, despite its name can return nil if all results are nil
+// lastNonNilBool, despite its name can return nil if all results are nil
 func lastNonNilBool(getter func(Common) *bool, commons ...Common) *bool {
 	var s *bool
 	for _, c := range commons {
@@ -30,7 +30,7 @@ func lastNonNil(getter func(Common) *string, commons ...Common) *string {
 	return s
 }
 
-// lastNonNilInt, despite its name can return nil if all results are nil
+// lastNonNilInt64, despite its name can return nil if all results are nil
 func lastNonNilInt64(getter func(Common) *int64, commons ...Common) *int64 {
 	var s *int64
 	for _, c := range commons {
@@ -59,7 +59,7 @@ func ResolveRequiredString(getter func(Common) *string, commons ...Common) strin
 	return *lastNonNil(getter, commons...)
 }
 
-// ResolveRequiredInt will resolve the value and panic if it is nil. Only to be used after validations are run.
+// ResolveRequiredInt64 will resolve the value and panic if it is nil. Only to be used after validations are run.
 func ResolveRequiredInt64(getter func(Common) *int64, commons ...Common) int64 {
 	return *lastNonNilInt64(getter, commons...)
 }
