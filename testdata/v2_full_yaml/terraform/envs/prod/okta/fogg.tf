@@ -10,6 +10,8 @@ provider "aws" {
 # Aliased Providers (for doing things in every region).
 
 
+provider "assert" {}
+
 provider "okta" {
   org_name = "foo"
   base_url = "https://foo.okta.com/"
@@ -40,7 +42,7 @@ terraform {
     assert = {
       source = "bwoznicki/assert"
 
-      version = "~> 0.0.1"
+      version = "0.0.1"
 
     }
 
@@ -67,6 +69,8 @@ terraform {
 
     okta = {
       source = "acme/okta"
+
+      version = "3.40.0"
 
     }
 

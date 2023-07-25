@@ -18,6 +18,10 @@ var defaultTerraformVersion = goVersion.Must(goVersion.NewVersion("0.13.5"))
 // DefaultFoggVersion is the version that fogg will generate by default
 const DefaultFoggVersion = 2
 
+func defaultEnabled(a bool) *bool {
+	return &a
+}
+
 // InitConfig initializes the config file using user input
 func InitConfig(project, region, bucket, table, awsProfile, owner *string, awsProviderVersion string) *v2.Config {
 	return &v2.Config{
@@ -35,7 +39,10 @@ func InitConfig(project, region, bucket, table, awsProfile, owner *string, awsPr
 					AWS: &v2.AWSProvider{
 						Profile: awsProfile,
 						Region:  region,
-						Version: &awsProviderVersion,
+						CommonProvider: v2.CommonProvider{
+							Enabled: defaultEnabled(true),
+							Version: &awsProviderVersion,
+						},
 					},
 				},
 				TerraformVersion: util.Ptr(defaultTerraformVersion.String()),

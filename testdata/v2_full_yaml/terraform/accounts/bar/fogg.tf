@@ -144,6 +144,8 @@ provider "aws" {
 }
 
 
+provider "assert" {}
+
 provider "bless" {
   region   = "us-west-2"
   role_arn = "arn:aws:iam::1234567890:role/roll"
@@ -174,7 +176,7 @@ terraform {
     assert = {
       source = "bwoznicki/assert"
 
-      version = "~> 0.0.1"
+      version = "0.0.1"
 
     }
 

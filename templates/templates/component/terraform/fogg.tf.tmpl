@@ -10,43 +10,43 @@
 
 {{ end }}
 
-{{ if .ProviderConfiguration.Snowflake }}
+{{ if .ProviderConfiguration.Snowflake }}{{ if not .ProviderConfiguration.Snowflake.CustomProvider }}
   {{ template "snowflake_provider" .ProviderConfiguration.Snowflake }}
-{{ end }}
+{{ end }}{{ end }}
 
-{{ if .ProviderConfiguration.Assert }}
+{{ if .ProviderConfiguration.Assert }}{{ if not .ProviderConfiguration.Assert.CustomProvider }}
   {{ template "assert" .ProviderConfiguration.Assert }}
-{{ end }}
+{{ end }}{{ end }}
 
-{{ if .ProviderConfiguration.Bless }}
+{{ if .ProviderConfiguration.Bless }}{{ if not .ProviderConfiguration.Bless.CustomProvider }}
   {{ template "bless_provider" .ProviderConfiguration.Bless }}
-{{ end }}
+{{ end }}{{ end }}
 
-{{ if .ProviderConfiguration.Okta}}
+{{ if .ProviderConfiguration.Okta}}{{ if not .ProviderConfiguration.Okta.CustomProvider }}
   {{ template "okta_provider" .ProviderConfiguration.Okta}}
-{{ end }}
+{{ end }}{{ end }}
 
-{{ if .ProviderConfiguration.Github}}
+{{ if .ProviderConfiguration.Github}}{{ if not .ProviderConfiguration.Github.CustomProvider }}
   {{ template "github_provider" .ProviderConfiguration.Github}}
-{{ end }}
+{{ end }}{{ end }}
 
-{{ if .ProviderConfiguration.Heroku }}
+{{ if .ProviderConfiguration.Heroku }}{{ if not .ProviderConfiguration.Heroku.CustomProvider }}
   {{ template "heroku_provider" .ProviderConfiguration.Heroku }}
-{{ end }}
+{{ end }}{{ end }}
 
-{{ if .ProviderConfiguration.Datadog }}
+{{ if .ProviderConfiguration.Datadog }}{{ if not .ProviderConfiguration.Datadog.CustomProvider }}
   {{ template "datadog_provider" .ProviderConfiguration.Datadog }}
-{{ end }}
+{{ end }}{{ end }}
 
-{{ if .ProviderConfiguration.Tfe }}{{ if .ProviderConfiguration.Tfe.Enabled }}
+{{ if .ProviderConfiguration.Tfe }}{{ if not .ProviderConfiguration.Tfe.CustomProvider }}
     {{ template "tfe_provider" .ProviderConfiguration.Tfe }}
 {{ end }}{{ end }}
 
-{{ if .ProviderConfiguration.Sops }}{{ if .ProviderConfiguration.Sops.Enabled }}
+{{ if .ProviderConfiguration.Sops }}{{ if not .ProviderConfiguration.Sops.CustomProvider }}
     {{ template "sops_provider" .ProviderConfiguration.Sops }}
 {{ end }}{{ end }}
 
-{{ if .ProviderConfiguration.Sentry }}{{ if .ProviderConfiguration.Sentry.Enabled }}
+{{ if .ProviderConfiguration.Sentry }}{{ if not .ProviderConfiguration.Sentry.CustomProvider }}
     {{ template "sentry_provider" .ProviderConfiguration.Sentry }}
 {{ end }}{{ end }}
 

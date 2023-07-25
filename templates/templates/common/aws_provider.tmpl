@@ -9,5 +9,32 @@ provider "aws" {
   }
   {{ end }}
   allowed_account_ids = ["{{ .AccountID }}"]
+  {{- if .IgnoreTags }}
+  ignore_tags = {
+    {{ if .IgnoreTags.Keys }} keys = [
+    {{- range $k := .IgnoreTags.Keys }}
+      "{{ $k }}",
+    {{- end }}
+    ]
+    {{- end }}
+    {{ if .IgnoreTags.KeyPrefixes }} key_prefixes = [
+    {{- range $k := .IgnoreTags.KeyPrefixes }}
+      "{{ $k }}",
+    {{- end }}
+    ]
+    {{- end }}
+  }
+  {{- end }}
+  {{- if and .DefaultTags .DefaultTags.Tags }}
+  default_tags = {
+    tags = {
+    {{- range $k, $v := .DefaultTags.Tags }}
+      {{- if $v }}
+      {{ $k }} = "{{ $v }}"
+      {{- end }}
+    {{- end }}
+    }
+  }
+  {{- end }}
 }
 {{ end }}

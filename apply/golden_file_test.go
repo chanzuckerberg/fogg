@@ -36,6 +36,7 @@ func TestIntegration(t *testing.T) {
 		{"tfe_provider_yaml"},
 		{"remote_backend_yaml"},
 		{"tfe_config"},
+		{"v2_aws_default_tags"},
 		{"v2_tf_registry_module"},
 		{"v2_tf_registry_module_atlantis"},
 		{"v2_integration_registry"},

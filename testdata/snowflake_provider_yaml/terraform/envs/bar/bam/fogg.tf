@@ -6,6 +6,8 @@ provider "snowflake" {
   role    = "bar"
   region  = "us-west-2"
 }
+
+provider "assert" {}
 terraform {
   required_version = "=1.1.1"
 
@@ -32,7 +34,7 @@ terraform {
     assert = {
       source = "bwoznicki/assert"
 
-      version = "~> 0.0.1"
+      version = "0.0.1"
 
     }
 
@@ -66,6 +68,8 @@ terraform {
 
     snowflake = {
       source = "Snowflake-Labs/snowflake"
+
+      version = "0.55.1"
 
     }
 
