@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.80.0](https://github.com/vincenthsh/fogg/compare/v0.79.0...v0.80.0) (2023-07-25)
+
+
+### Features
+
+* Support AWS Provider tagging configurations ([#140](https://github.com/vincenthsh/fogg/issues/140)) ([b22902e](https://github.com/vincenthsh/fogg/commit/b22902e89838f33a9fbe00fc5dcdb7a8196a02b9))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.257 to 1.44.307 ([#142](https://github.com/vincenthsh/fogg/issues/142)) ([e048c14](https://github.com/vincenthsh/fogg/commit/e048c1437d33d5161129add50fbfe561c942a4c2))
+* bump github.com/chanzuckerberg/go-misc from 1.0.8 to 1.10.2 ([#129](https://github.com/vincenthsh/fogg/issues/129)) ([d1d7831](https://github.com/vincenthsh/fogg/commit/d1d783101ffd6432f014a236e88c7d63dab116eb))
+* bump github.com/go-git/go-git/v5 from 5.6.1 to 5.8.0 ([#135](https://github.com/vincenthsh/fogg/issues/135)) ([6c15438](https://github.com/vincenthsh/fogg/commit/6c15438fd3892163c303070aad8b0efb00eb7d59))
+* bump github.com/runatlantis/atlantis from 0.23.5 to 0.24.4 ([#132](https://github.com/vincenthsh/fogg/issues/132)) ([5a263be](https://github.com/vincenthsh/fogg/commit/5a263be185f41422f3370676aacdaf93ca3432cb))
+
 ## [0.79.0](https://github.com/vincenthsh/fogg/compare/v0.78.1...v0.79.0) (2023-05-05)
 
 
