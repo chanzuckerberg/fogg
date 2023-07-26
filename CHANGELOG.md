@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.81.0](https://github.com/vincenthsh/fogg/compare/v0.80.0...v0.81.0) (2023-07-26)
+
+
+### Features
+
+* Add tfstateKey tag for traceability ([#146](https://github.com/vincenthsh/fogg/issues/146)) ([fde67f9](https://github.com/vincenthsh/fogg/commit/fde67f93c812087e7865ac1d7b6cc10d8d4e1e64))
+* Re-use existing fogg var.tags ([#145](https://github.com/vincenthsh/fogg/issues/145)) ([1290edd](https://github.com/vincenthsh/fogg/commit/1290edd31cd06d7558b6c15c1023e8944d085048))
+
+
+### BugFixes
+
+* Fix syntax error in aws provider default and ignore tags config ([#143](https://github.com/vincenthsh/fogg/issues/143)) ([07d54ce](https://github.com/vincenthsh/fogg/commit/07d54ce9ec2fcf5ef8af5a6d56e90ef61d21b0c1))
+
 ## [0.80.0](https://github.com/vincenthsh/fogg/compare/v0.79.0...v0.80.0) (2023-07-25)
 
 
