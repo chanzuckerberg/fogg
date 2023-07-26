@@ -119,12 +119,19 @@ variable "owner" {
 
 # tflint-ignore: terraform_unused_declarations
 variable "tags" {
-  type =  object({project: string, env: string, service: string, owner: string, managedBy: string})
+  type =  object({project: string, env: string, service: string, owner: string, managedBy: string, tfstateKey: string})
   default = {
     project   = "{{ .Project }}"
     env       = "{{ .Env }}"
     service   = "{{ .Name }}"
     owner     = "{{ .Owner }}"
+    {{- with .Backend }}
+    {{- if eq .Kind "s3" }}
+    tfstateKey = "{{ .S3.KeyPath }}"
+    {{ else if eq .Kind "remote" }}
+    tfstateKey = "{{ .Remote.HostName }}/{{ .Remote.Organization }}/{{ .Remote.Workspace }}"
+    {{- end }}
+    {{- end }}
     managedBy = "terraform"
   }
 }

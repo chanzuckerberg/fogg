@@ -92,12 +92,14 @@ variable "owner" {
 }
 # tflint-ignore: terraform_unused_declarations
 variable "tags" {
-  type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
+  type = object({ project : string, env : string, service : string, owner : string, managedBy : string, tfstateKey : string })
   default = {
-    project   = "proj"
-    env       = "staging"
-    service   = "comp2"
-    owner     = "foo@example.com"
+    project    = "proj"
+    env        = "staging"
+    service    = "comp2"
+    owner      = "foo@example.com"
+    tfstateKey = "terraform/proj/envs/staging/components/comp2.tfstate"
+
     managedBy = "terraform"
   }
 }
