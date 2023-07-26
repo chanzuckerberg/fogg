@@ -10,7 +10,7 @@ provider "aws" {
   {{ end }}
   allowed_account_ids = ["{{ .AccountID }}"]
   {{- if .IgnoreTags }}
-  ignore_tags = {
+  ignore_tags {
     {{ if .IgnoreTags.Keys }} keys = [
     {{- range $k := .IgnoreTags.Keys }}
       "{{ $k }}",
@@ -26,7 +26,7 @@ provider "aws" {
   }
   {{- end }}
   {{- if and .DefaultTags .DefaultTags.Tags }}
-  default_tags = {
+  default_tags {
     tags = {
     {{- range $k, $v := .DefaultTags.Tags }}
       {{- if $v }}

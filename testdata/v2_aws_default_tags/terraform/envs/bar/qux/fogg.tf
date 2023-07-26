@@ -6,7 +6,7 @@ provider "aws" {
   profile = "profile"
 
   allowed_account_ids = ["00456"]
-  ignore_tags = {
+  ignore_tags {
     keys = [
       "state",
     ]
@@ -14,7 +14,7 @@ provider "aws" {
       "kubernetes.io/",
     ]
   }
-  default_tags = {
+  default_tags {
     tags = {
       Component = "Qux"
       Env       = "Bar"
