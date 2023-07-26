@@ -15,11 +15,11 @@ provider "aws" {
     ]
   }
   default_tags {
-    tags = {
+    tags = merge(var.tags, {
       Component = "Vox"
       Env       = "Foo"
       Project   = "Overwrite"
-    }
+    })
   }
 }
 # Aliased Providers (for doing things in every region).

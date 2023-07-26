@@ -259,11 +259,13 @@ type AWSProvider struct {
 }
 
 type AWSProviderDefaultTags struct {
+	Enabled *bool `yaml:"enabled,omitempty"`
 	// List of exact resource tag keys to ignore across all resources handled by this provider.
 	Tags map[string]string `yaml:"tags,omitempty"`
 }
 
 type AWSProviderIgnoreTags struct {
+	Enabled *bool `yaml:"enabled,omitempty"`
 	// List of exact resource tag keys to ignore across all resources handled by this provider.
 	Keys        []string `yaml:"keys,omitempty"`
 	KeyPrefixes []string `yaml:"key_prefixes,omitempty"`

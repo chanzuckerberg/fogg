@@ -1,0 +1,91 @@
+defaults:
+  backend:
+    bucket: buck
+    profile: profile
+    region: us-west-2
+  extra_vars:
+    foo: bar1
+  owner: foo@example.com
+  project: proj
+  providers:
+    aws:
+      account_id: 00456
+      profile: profile
+      region: us-west-2
+      version: 0.12.0
+      # https://registry.terraform.io/providers/hashicorp/aws/4.67.0/docs/guides/resource-tagging#ignoring-changes-to-specific-tags
+      ignore_tags:
+        enabled: false
+        keys:
+          - state
+        key_prefixes:
+          - kubernetes.io/
+      # https://registry.terraform.io/providers/hashicorp/aws/4.67.0/docs/guides/resource-tagging#propagating-tags-to-all-resources
+      default_tags:
+        # backwards compatibility requires explicit opt-in
+        enabled: true
+  terraform_version: 0.100.0
+envs:
+  bar:
+    providers:
+      aws:
+        ignore_tags:
+          enabled: true
+        default_tags:
+          tags:
+            env: Bar
+    components:
+      qux:
+        providers:
+          aws:
+            default_tags:
+              tags:
+                # tags are merged
+                Component: Qux
+        modules:
+          - source: "terraform/modules/my_module"
+      corge:
+        providers:
+          aws:
+            default_tags:
+              tags:
+                Component: Corge
+                # tags are cleared with null
+                Project: null
+        modules:
+          - source: "terraform/modules/my_module"
+  foo:
+    providers:
+      aws:
+        default_tags:
+          tags:
+            Env: Foo
+    components:
+      vox:
+        providers:
+          aws:
+            default_tags:
+              tags:
+                Component: Vox
+                # tags are merged and overwrite
+                Project: Overwrite
+        modules:
+          - source: "terraform/modules/my_module"
+  fred:
+    providers:
+      aws:
+        default_tags:
+          enabled: false
+    components:
+      qux:
+        providers:
+          aws:
+            default_tags:
+              tags:
+                # tags are merged
+                Component: Qux
+        modules:
+          - source: "terraform/modules/my_module"
+modules:
+  my_module: {}
+version: 2

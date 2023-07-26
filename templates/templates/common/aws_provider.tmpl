@@ -9,15 +9,15 @@ provider "aws" {
   }
   {{ end }}
   allowed_account_ids = ["{{ .AccountID }}"]
-  {{- if .IgnoreTags }}
+  {{- if and .IgnoreTags (and .IgnoreTags.Enabled (deRefBool .IgnoreTags.Enabled)) }}
   ignore_tags {
-    {{ if .IgnoreTags.Keys }} keys = [
+    {{ if and .IgnoreTags.Keys (not (eq (len .IgnoreTags.Keys) 0)) }} keys = [
     {{- range $k := .IgnoreTags.Keys }}
       "{{ $k }}",
     {{- end }}
     ]
     {{- end }}
-    {{ if .IgnoreTags.KeyPrefixes }} key_prefixes = [
+    {{ if and .IgnoreTags.KeyPrefixes (not (eq (len .IgnoreTags.KeyPrefixes) 0)) }} key_prefixes = [
     {{- range $k := .IgnoreTags.KeyPrefixes }}
       "{{ $k }}",
     {{- end }}
@@ -25,15 +25,19 @@ provider "aws" {
     {{- end }}
   }
   {{- end }}
-  {{- if and .DefaultTags .DefaultTags.Tags }}
+  {{- if and .DefaultTags (and .DefaultTags.Enabled (deRefBool .DefaultTags.Enabled)) }}
   default_tags {
-    tags = {
+    {{- if .DefaultTags.Tags }}
+    tags = merge(var.tags,{
     {{- range $k, $v := .DefaultTags.Tags }}
       {{- if $v }}
       {{ $k }} = "{{ $v }}"
       {{- end }}
     {{- end }}
-    }
+    })
+    {{- else }}
+    tags = var.tags
+    {{- end }}
   }
   {{- end }}
 }

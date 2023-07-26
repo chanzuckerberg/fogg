@@ -6,19 +6,6 @@ provider "aws" {
   profile = "profile"
 
   allowed_account_ids = ["00456"]
-  ignore_tags {
-    keys = [
-      "state",
-    ]
-    key_prefixes = [
-      "kubernetes.io/",
-    ]
-  }
-  default_tags {
-    tags = {
-      Project = "Tagging"
-    }
-  }
 }
 # Aliased Providers (for doing things in every region).
 

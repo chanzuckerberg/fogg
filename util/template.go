@@ -74,6 +74,7 @@ func OpenTemplate(label string, source io.Reader, templates fs.FS) (*template.Te
 	funcs["avail"] = avail
 	funcs["toYaml"] = toYAML
 	funcs["deRefStr"] = deRef[string]
+	funcs["deRefBool"] = deRef[bool]
 
 	s, err := io.ReadAll(source)
 	if err != nil {

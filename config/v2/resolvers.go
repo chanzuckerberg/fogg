@@ -173,13 +173,16 @@ func ResolveAssertProvider(commons ...Common) *AssertProvider {
 // the set of Common config objects passed in. Otherwise it will return nil.
 func ResolveAWSProvider(commons ...Common) *AWSProvider {
 	var profile, region, role, version *string
-	var ignoreTags *AWSProviderIgnoreTags
 	var accountID *json.Number
 	var additionalRegions []string
 	var additionalProviders map[string]*AWSProvider
 
 	mergedDefaultTags := &AWSProviderDefaultTags{
-		Tags: make(map[string]string),
+		Enabled: defaultEnabled(false),
+		Tags:    make(map[string]string),
+	}
+	mergedIgnoreTags := &AWSProviderIgnoreTags{
+		Enabled: defaultEnabled(false),
 	}
 	for _, c := range commons {
 		if c.Providers != nil && c.Providers.AWS != nil {
@@ -215,10 +218,9 @@ func ResolveAWSProvider(commons ...Common) *AWSProvider {
 			if p.AdditionalProviders != nil {
 				additionalProviders = p.AdditionalProviders
 			}
-			if p.IgnoreTags != nil {
-				ignoreTags = p.IgnoreTags
-			}
+			// aggregate provider tags
 			mergedDefaultTags.merge(p.DefaultTags)
+			mergedIgnoreTags.merge(p.IgnoreTags)
 		}
 	}
 
@@ -235,7 +237,7 @@ func ResolveAWSProvider(commons ...Common) *AWSProvider {
 			// optional fields
 			AccountID:           accountID,
 			DefaultTags:         mergedDefaultTags,
-			IgnoreTags:          ignoreTags,
+			IgnoreTags:          mergedIgnoreTags,
 			AdditionalRegions:   additionalRegions,
 			AdditionalProviders: additionalProviders,
 		}
@@ -246,14 +248,39 @@ func ResolveAWSProvider(commons ...Common) *AWSProvider {
 func (c *AWSProviderDefaultTags) merge(other *AWSProviderDefaultTags) *AWSProviderDefaultTags {
 	if c == nil {
 		c = &AWSProviderDefaultTags{
-			Tags: make(map[string]string),
+			Enabled: defaultEnabled(false),
+			Tags:    make(map[string]string),
 		}
 	}
 	if other == nil {
 		return c
 	}
+	if other.Enabled != nil {
+		c.Enabled = other.Enabled
+	}
 	for key, value := range other.Tags {
 		c.Tags[key] = value
+	}
+	return c
+}
+
+func (c *AWSProviderIgnoreTags) merge(other *AWSProviderIgnoreTags) *AWSProviderIgnoreTags {
+	if c == nil {
+		c = &AWSProviderIgnoreTags{
+			Enabled: defaultEnabled(false),
+		}
+	}
+	if other == nil {
+		return c
+	}
+	if other.Enabled != nil {
+		c.Enabled = other.Enabled
+	}
+	if other.Keys != nil {
+		c.Keys = other.Keys
+	}
+	if other.KeyPrefixes != nil {
+		c.KeyPrefixes = other.KeyPrefixes
 	}
 	return c
 }
