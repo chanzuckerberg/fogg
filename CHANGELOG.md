@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.82.0](https://github.com/vincenthsh/fogg/compare/v0.81.0...v0.82.0) (2023-08-02)
+
+
+### Features
+
+* Bump dependencies ([#151](https://github.com/vincenthsh/fogg/issues/151)) ([16eb7c9](https://github.com/vincenthsh/fogg/commit/16eb7c9774389685943d5428b962ba77b53a7a6e))
+
 ## [0.81.0](https://github.com/vincenthsh/fogg/compare/v0.80.0...v0.81.0) (2023-07-26)
 
 
