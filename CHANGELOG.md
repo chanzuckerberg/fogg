@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.82.1](https://github.com/vincenthsh/fogg/compare/v0.82.0...v0.82.1) (2023-08-02)
+
+
+### BugFixes
+
+* tflint v0.47.0 fixes ([#154](https://github.com/vincenthsh/fogg/issues/154)) ([565466e](https://github.com/vincenthsh/fogg/commit/565466e5e83c5c21dcf11f6a4cce9a1ae9d52a37))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.44.312 to 1.44.314 ([#153](https://github.com/vincenthsh/fogg/issues/153)) ([7393a7c](https://github.com/vincenthsh/fogg/commit/7393a7cbaddbb1888ca4d06281fece8a34e09390))
+
 ## [0.82.0](https://github.com/vincenthsh/fogg/compare/v0.81.0...v0.82.0) (2023-08-02)
 
 
