@@ -128,4 +128,4 @@ jobs:
         run: tflint --init
       - name: tflint
         run: |
-          tflint ${{matrix.tfmodule}}
+          tflint --chdir ${{matrix.tfmodule}}
