@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.82.2](https://github.com/vincenthsh/fogg/compare/v0.82.1...v0.82.2) (2023-08-02)
+
+
+### BugFixes
+
+* Ensure tflint config from repo root is used in CI ([#156](https://github.com/vincenthsh/fogg/issues/156)) ([6a8dcf7](https://github.com/vincenthsh/fogg/commit/6a8dcf704c615153bbe884e7d45ade13fca6e0ca))
+
 ## [0.82.1](https://github.com/vincenthsh/fogg/compare/v0.82.0...v0.82.1) (2023-08-02)
 
 
