@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.88.0](https://github.com/chanzuckerberg/fogg/compare/v0.87.9...v0.88.0) (2023-08-07)
+
+
+### Features
+
+* allow dependabot to automerge PRs ([#905](https://github.com/chanzuckerberg/fogg/issues/905)) ([5fa3b99](https://github.com/chanzuckerberg/fogg/commit/5fa3b9954cfd2a8ee027910bbe3fd1c061c5dfd8))
+
 ### [0.87.9](https://github.com/chanzuckerberg/fogg/compare/v0.87.8...v0.87.9) (2023-08-01)
 
 
