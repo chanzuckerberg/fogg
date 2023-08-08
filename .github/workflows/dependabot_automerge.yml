@@ -1,0 +1,53 @@
+name: Dependabot auto-approve
+on: 
+  pull_request: {}
+
+permissions:
+  pull-requests: write
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+jobs:
+  dependabot:
+    runs-on: [ARM64, self-hosted, Linux]
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - name: Generate token
+        id: generate_token
+        uses: chanzuckerberg/github-app-token@v1.1.4
+        with:
+          app_id: ${{ secrets.CZI_GITHUB_HELPER_APP_ID }}
+          private_key: ${{ secrets.CZI_GITHUB_HELPER_PK }}
+      - name: Install gh CLI
+        shell: bash
+        env:
+          VERSION: 2.30.0
+        run: |
+          set -ue
+          set -o pipefail
+          AMD_URL="https://github.com/cli/cli/releases/download/v${VERSION}/gh_${VERSION}_linux_amd64.tar.gz"
+          ARM_URL="https://github.com/cli/cli/releases/download/v${VERSION}/gh_${VERSION}_linux_arm64.tar.gz"
+          PLATFORM=$(uname -m)
+          if [[ $PLATFORM == "arm64" ]]; then
+              URL=$ARM_URL
+          elif [[ $PLATFORM == "aarch64" ]]; then
+              URL=$ARM_URL
+          else
+              URL=$AMD_URL
+          fi
+          curl $URL -L -v -o ghcli.tar.gz
+          mkdir ghcli
+          tar -xf ghcli.tar.gz -C ghcli --strip-components 1
+          echo "${PWD}/ghcli/bin" >> "${GITHUB_PATH}"
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v1
+        with:
+          github-token: "${{ steps.generate_token.outputs.token }}"
+      - name: Approve a PR
+        run: |
+          gh pr review --approve "$PR_URL"
+          gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
