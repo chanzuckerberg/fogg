@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.88.2](https://github.com/chanzuckerberg/fogg/compare/v0.88.1...v0.88.2) (2023-08-14)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.317 to 1.44.322 ([#908](https://github.com/chanzuckerberg/fogg/issues/908)) ([b80f101](https://github.com/chanzuckerberg/fogg/commit/b80f101d61792318f2796bbf79d8b766e7004f5d))
+
 ### [0.88.1](https://github.com/chanzuckerberg/fogg/compare/v0.88.0...v0.88.1) (2023-08-08)
 
 
