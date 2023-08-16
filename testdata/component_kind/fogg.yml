@@ -1,4 +1,9 @@
 version: 2
+component_templates:
+  baz: &baz
+    kind: not_terraform
+    module_source: github.com/chanzuckerberg/cztack//aws-aurora-postgres?ref=main
+
 defaults:
   backend:
     kind: remote
@@ -16,3 +21,6 @@ envs:
       foo: {}
       bar:
         kind: not_terraform
+      baz:
+        <<: *baz
+        module_name: baz-v2
