@@ -51,6 +51,7 @@ func (c *Config) Write(fs afero.Fs, path string) error {
 }
 
 type Config struct {
+	ComponentTemplates map[string]any `yaml:"component_templates,omitempty"`
 	Accounts map[string]Account `yaml:"accounts,omitempty"`
 	Defaults Defaults           `yaml:"defaults" validate:"required"`
 	Envs     map[string]Env     `yaml:"envs,omitempty"`
