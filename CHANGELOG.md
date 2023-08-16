@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.89.0](https://github.com/chanzuckerberg/fogg/compare/v0.88.2...v0.89.0) (2023-08-16)
+
+
+### Features
+
+* Add support for an unstructured component templates ([#910](https://github.com/chanzuckerberg/fogg/issues/910)) ([e11887f](https://github.com/chanzuckerberg/fogg/commit/e11887f43fe55f097a43c7ee451730c94ab4eb23))
+
 ### [0.88.2](https://github.com/chanzuckerberg/fogg/compare/v0.88.1...v0.88.2) (2023-08-14)
 
 
