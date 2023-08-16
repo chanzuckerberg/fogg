@@ -51,15 +51,15 @@ func (c *Config) Write(fs afero.Fs, path string) error {
 }
 
 type Config struct {
-	ComponentTemplates map[string]any `yaml:"component_templates,omitempty"`
-	Accounts map[string]Account `yaml:"accounts,omitempty"`
-	Defaults Defaults           `yaml:"defaults" validate:"required"`
-	Envs     map[string]Env     `yaml:"envs,omitempty"`
-	Global   Component          `yaml:"global,omitempty"`
-	Modules  map[string]Module  `yaml:"modules,omitempty"`
-	Plugins  Plugins            `yaml:"plugins,omitempty"`
-	Version  int                `validate:"required,eq=2"`
-	TFE      *TFE               `yaml:"tfe,omitempty"`
+	ComponentTemplates map[string]any     `yaml:"component_templates,omitempty"`
+	Accounts           map[string]Account `yaml:"accounts,omitempty"`
+	Defaults           Defaults           `yaml:"defaults" validate:"required"`
+	Envs               map[string]Env     `yaml:"envs,omitempty"`
+	Global             Component          `yaml:"global,omitempty"`
+	Modules            map[string]Module  `yaml:"modules,omitempty"`
+	Plugins            Plugins            `yaml:"plugins,omitempty"`
+	Version            int                `validate:"required,eq=2"`
+	TFE                *TFE               `yaml:"tfe,omitempty"`
 }
 
 type TFE struct {
