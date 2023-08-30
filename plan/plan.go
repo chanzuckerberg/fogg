@@ -46,13 +46,18 @@ type ComponentCommon struct {
 	Accounts              map[string]*json.Number    `yaml:"all_accounts"`
 	Backend               Backend                    `yaml:"backend"`
 	ComponentBackends     map[string]Backend         `yaml:"comonent_backends"`
-	Env                   string                     ` yaml:"env"`
+	Env                   string                     `yaml:"env"`
 	ExtraVars             map[string]string          `yaml:"extra_vars"`
 	Name                  string                     `yaml:"name"`
 	Owner                 string                     `yaml:"owner"`
 	Project               string                     `yaml:"project"`
 	ProviderConfiguration ProviderConfiguration      `yaml:"providers_configuration"`
 	ProviderVersions      map[string]ProviderVersion `yaml:"provider_versions"`
+	Date                  string                     `yaml:"date"`
+	FilePath              string                     `yaml:"file_path"`
+	FoggUser              string                     `yaml:"fogg_user"`
+	GitRepository         string                     `yaml:"git_repository"`
+	CommitHash            string                     `yaml:"commit_hash"`
 
 	TfLint TfLint `yaml:"tf_lint"`
 
@@ -1282,6 +1287,8 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		TravisCI:         travisPlan,
 		CircleCI:         circlePlan,
 		GitHubActionsCI:  githubActionsPlan,
+		// TODO: resolve all other Stamp tags
+		Date: v2.ResolveDate(commons),
 	}
 }
 
