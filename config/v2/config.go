@@ -35,7 +35,7 @@ func ReadConfig(fs afero.Fs, b []byte, configFile string) (*Config, error) {
 	default:
 		return nil, errs.NewUserf("File type %s is not supported", ext)
 	}
-	c.RootPath = fs.Name()
+	c.GenerateStamp(fs, configFile)
 	return c, e
 }
 
@@ -87,7 +87,6 @@ type Config struct {
 	Plugins            Plugins            `yaml:"plugins,omitempty"`
 	Version            int                `validate:"required,eq=2"`
 	TFE                *TFE               `yaml:"tfe,omitempty"`
-	RootPath           string
 	Stamp              Stamp
 }
 

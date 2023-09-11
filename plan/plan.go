@@ -450,7 +450,7 @@ func (p *Plan) buildTFE(c *v2.Config) (*TFEConfig, error) {
 		ExcludedGithubRequiredChecks:   []string{},
 		AdditionalGithubRequiredChecks: []string{},
 	}
-	tfeConfig.ComponentCommon = resolveComponentCommon(c.Defaults.Common, c.Global.Common, c.TFE.Common)
+	tfeConfig.ComponentCommon = resolveComponentCommon(c.Stamp, c.Defaults.Common, c.Global.Common, c.TFE.Common)
 	tfeConfig.ModuleSource = c.TFE.ModuleSource
 	tfeConfig.ModuleName = c.TFE.ModuleName
 	if c.TFE.ProviderAliases != nil {
@@ -509,7 +509,7 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 	for name, acct := range c.Accounts {
 		accountPlan := Account{}
 
-		accountPlan.ComponentCommon = resolveComponentCommon(defaults.Common, acct.Common)
+		accountPlan.ComponentCommon = resolveComponentCommon(c.Stamp, defaults.Common, acct.Common)
 		accountPlan.Name = name
 		accountPlan.Account = name // for backwards compat
 		accountPlan.Env = "accounts"
@@ -579,7 +579,7 @@ func (p *Plan) buildGlobal(conf *v2.Config) Component {
 	defaults := conf.Defaults
 	global := conf.Global
 
-	componentPlan.ComponentCommon = resolveComponentCommon(defaults.Common, global.Common)
+	componentPlan.ComponentCommon = resolveComponentCommon(conf.Stamp, defaults.Common, global.Common)
 
 	if componentPlan.ComponentCommon.Backend.Kind == BackendKindS3 {
 		componentPlan.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/global.tfstate", componentPlan.ComponentCommon.Project)
@@ -612,7 +612,7 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 				return nil, errs.WrapUser(fmt.Errorf("Component %s can't have same name as account", componentName), "Invalid component name")
 			}
 
-			componentPlan.ComponentCommon = resolveComponentCommon(defaults.Common, envConf.Common, componentConf.Common)
+			componentPlan.ComponentCommon = resolveComponentCommon(conf.Stamp, defaults.Common, envConf.Common, componentConf.Common)
 			accountRemoteStates := v2.ResolveOptionalStringSlice(v2.DependsOnAccountsGetter, defaults.Common, envConf.Common, componentConf.Common)
 			accountBackends := map[string]Backend{}
 			for k, v := range p.Accounts {
@@ -753,7 +753,7 @@ func resolveAWSProvider(commons ...v2.Common) (plan *AWSProvider, providers []AW
 	return
 }
 
-func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
+func resolveComponentCommon(stamp v2.Stamp, commons ...v2.Common) ComponentCommon {
 	providerVersions := copyMap(utilityProviders)
 	awsPlan, additionalProviders, awsVersion := resolveAWSProvider(commons...)
 	if awsVersion != nil {
@@ -1287,8 +1287,11 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		TravisCI:         travisPlan,
 		CircleCI:         circlePlan,
 		GitHubActionsCI:  githubActionsPlan,
-		// TODO: resolve all other Stamp tags
-		Date: v2.ResolveDate(commons),
+		Date:             stamp.Date,
+		FilePath:         stamp.FilePath,
+		FoggUser:         stamp.FoggUser,
+		GitRepository:    stamp.GitRepository,
+		CommitHash:       stamp.CommitHash,
 	}
 }
 
