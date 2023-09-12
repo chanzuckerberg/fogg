@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.89.5](https://github.com/chanzuckerberg/fogg/compare/v0.89.4...v0.89.5) (2023-09-12)
+
+
+### Misc
+
+* Bump github.com/go-errors/errors from 1.4.2 to 1.5.0 ([#923](https://github.com/chanzuckerberg/fogg/issues/923)) ([b1a9415](https://github.com/chanzuckerberg/fogg/commit/b1a9415d604f8a5be7b43f96d8c8b1b65aed5084))
+
 ### [0.89.4](https://github.com/chanzuckerberg/fogg/compare/v0.89.3...v0.89.4) (2023-09-11)
 
 
