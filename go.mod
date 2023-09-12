@@ -1,6 +1,6 @@
 module github.com/chanzuckerberg/fogg
 
-go 1.19
+go 1.21
 
 replace github.com/spf13/afero => github.com/chanzuckerberg/afero v0.0.0-20190514223411-36a9495a9b51
 
@@ -14,7 +14,7 @@ require (
 	github.com/chanzuckerberg/go-misc v1.10.6
 	github.com/davecgh/go-spew v1.1.1
 	github.com/fatih/color v1.15.0
-	github.com/go-errors/errors v1.4.2
+	github.com/go-errors/errors v1.5.0
 	github.com/go-git/go-git/v5 v5.8.1
 	github.com/google/go-github/v27 v27.0.6
 	github.com/hashicorp/go-getter v1.7.2
