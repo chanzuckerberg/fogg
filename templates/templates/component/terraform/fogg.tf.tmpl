@@ -128,7 +128,7 @@ variable "tags" {
     service       = "{{ .Name }}"
     owner         = "{{ .Owner }}"
     date          = "{{ .Date }}"
-    filePath      = "{{ .FilePath }}"
+    filePath      = "{{ cwd }}"
     foggUser      = "{{ .FoggUser }}"
     gitRepository = "{{ .GitRepository }}"
     commitHash    = "{{ .CommitHash }}"

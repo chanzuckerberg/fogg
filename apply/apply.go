@@ -12,6 +12,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"text/template"
 
 	"github.com/pkg/errors"
 	"golang.org/x/exp/slices"
@@ -522,9 +523,8 @@ func removeExtension(path string) string {
 }
 
 func applyTemplate(sourceFile io.Reader, commonTemplates fs.FS, dest afero.Fs, path string, overrides interface{}) error {
-	dir, _ := filepath.Split(path)
-	ospath := filepath.FromSlash(dir)
-	err := dest.MkdirAll(ospath, 0775)
+	dir := filepath.Dir(path)
+	err := dest.MkdirAll(dir, 0775)
 	if err != nil {
 		return errs.WrapUserf(err, "couldn't create %s directory", dir)
 	}
@@ -534,7 +534,13 @@ func applyTemplate(sourceFile io.Reader, commonTemplates fs.FS, dest afero.Fs, p
 	if err != nil {
 		return errs.WrapUser(err, "unable to open file")
 	}
-	t, e := util.OpenTemplate(path, sourceFile, commonTemplates)
+	t, e := util.OpenTemplate(path, sourceFile, commonTemplates, []template.FuncMap{
+		{
+			"cwd": func() string {
+				return writer.Name()
+			},
+		},
+	}...)
 	if e != nil {
 		return e
 	}

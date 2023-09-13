@@ -1288,7 +1288,6 @@ func resolveComponentCommon(stamp v2.Stamp, commons ...v2.Common) ComponentCommo
 		CircleCI:         circlePlan,
 		GitHubActionsCI:  githubActionsPlan,
 		Date:             stamp.Date,
-		FilePath:         stamp.FilePath,
 		FoggUser:         stamp.FoggUser,
 		GitRepository:    stamp.GitRepository,
 		CommitHash:       stamp.CommitHash,

@@ -853,8 +853,6 @@ func OwnerGetter(comm Common) *string {
 	return comm.Owner
 }
 
-// add something
-
 func ProjectGetter(comm Common) *string {
 	return comm.Project
 }

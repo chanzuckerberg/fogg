@@ -73,7 +73,6 @@ func getGitRemoteOriginURL(cwd ...string) string {
 func (c *Config) GenerateStamp(fs afero.Fs, configFile string) {
 	stamp := Stamp{}
 	stamp.Date = DateAsTag()
-	stamp.FilePath = fs.Name()
 	stamp.FoggUser = ""
 	stamp.GitRepository = getGitRemoteOriginURL()
 	stamp.CommitHash = ""
@@ -88,7 +87,6 @@ func DateAsTag() string {
 
 type Stamp struct {
 	Date          string
-	FilePath      string
 	FoggUser      string
 	GitRepository string
 	CommitHash    string

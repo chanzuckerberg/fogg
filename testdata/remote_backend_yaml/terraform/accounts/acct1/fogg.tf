@@ -101,7 +101,7 @@ variable "tags" {
     service       = "acct1"
     owner         = "foo@example.com"
     date          = "2023-09-13"
-    filePath      = "BasePathFs"
+    filePath      = "/terraform/accounts/acct1/fogg.tf"
     foggUser      = ""
     gitRepository = "git@github.com:chanzuckerberg/fogg"
     commitHash    = ""
