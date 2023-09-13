@@ -123,17 +123,16 @@ variable "owner" {
 variable "tags" {
   type =  object({project: string, env: string, service: string, owner: string, managedBy: string})
   default = {
-    project       = "{{ .Project }}"
-    env           = "{{ .Env }}"
-    service       = "{{ .Name }}"
-    owner         = "{{ .Owner }}"
-    date          = "{{ .Date }}"
-    filePath      = "{{ cwd }}"
-    foggUser      = "{{ .FoggUser }}"
-    gitRepository = "{{ .GitRepository }}"
-    commitHash    = "{{ .CommitHash }}"
-    managedBy = "terraform"
-
+    project               = "{{ .Project }}"
+    env                   = "{{ .Env }}"
+    service               = "{{ .Name }}"
+    owner                 = "{{ .Owner }}"
+    date                  = "{{ .Date }}"
+    terraformWorkspaceDir = "{{ cwd }}"
+    foggUser              = "{{ .FoggUser }}"
+    gitRepository         = "{{ .GitRepository }}"
+    commitHash            = "{{ .CommitHash }}"
+    managedBy             = "terraform"
   }
 }
 

@@ -537,7 +537,7 @@ func applyTemplate(sourceFile io.Reader, commonTemplates fs.FS, dest afero.Fs, p
 	t, e := util.OpenTemplate(path, sourceFile, commonTemplates, []template.FuncMap{
 		{
 			"cwd": func() string {
-				return writer.Name()
+				return filepath.Dir(writer.Name())
 			},
 		},
 	}...)
