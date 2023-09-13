@@ -4,14 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plugins"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	yaml "gopkg.in/yaml.v3"
 )
@@ -54,29 +52,10 @@ func (c *Config) Write(fs afero.Fs, path string) error {
 	return encoder.Encode(c)
 }
 
-func getGitRemoteOriginURL(cwd ...string) string {
-	dir := "."
-	if len(cwd) > 0 {
-		dir = cwd[0]
-	}
-	cmd := exec.Command("git", "remote", "get-url", "--push", "origin")
-	cmd.Dir = dir
-	out, err := cmd.Output()
-	if err != nil {
-		logrus.Warnf("unable to get git output: %s", err)
-		return ""
-	}
-	return strings.TrimSpace(string(out))
-}
-
 // TODO: write out functions to generate tag data
 func (c *Config) GenerateStamp(fs afero.Fs, configFile string) {
 	stamp := Stamp{}
-	stamp.Date = DateAsTag()
-	stamp.FilePath = fs.Name()
 	stamp.FoggUser = ""
-	stamp.GitRepository = getGitRemoteOriginURL()
-	stamp.CommitHash = ""
 	c.Stamp = stamp
 }
 
@@ -87,11 +66,7 @@ func DateAsTag() string {
 }
 
 type Stamp struct {
-	Date          string
-	FilePath      string
-	FoggUser      string
-	GitRepository string
-	CommitHash    string
+	FoggUser string
 }
 
 type Config struct {
