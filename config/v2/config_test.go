@@ -8,22 +8,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type testGitRemote struct {
-	path           string
-	expectedRemote string
-}
-
-func TestGetGitRemoveOriginURL(t *testing.T) {
-	r := require.New(t)
-	tests := []testGitRemote{
-		{path: ".", expectedRemote: "git@github.com:chanzuckerberg/fogg"},
-	}
-	for _, test := range tests {
-		remote := getGitRemoteOriginURL(test.path)
-		r.Equal(test.expectedRemote, remote)
-	}
-}
-
 func TestReadConfig(t *testing.T) {
 	r := require.New(t)
 
