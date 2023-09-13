@@ -114,11 +114,9 @@ variable "tags" {
     env                   = "accounts"
     service               = "foo"
     owner                 = "foo@example.com"
-    date                  = "2023-09-13"
     terraformWorkspaceDir = "/terraform/accounts/foo"
     foggUser              = ""
     gitRepository         = "git@github.com:chanzuckerberg/fogg"
-    commitHash            = ""
     managedBy             = "terraform"
   }
 }

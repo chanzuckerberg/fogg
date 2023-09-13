@@ -95,11 +95,9 @@ variable "tags" {
     env                   = "staging"
     service               = "vpc"
     owner                 = "foo@example.com"
-    date                  = "2023-09-13"
     terraformWorkspaceDir = "/terraform/envs/staging/vpc"
     foggUser              = ""
     gitRepository         = "git@github.com:chanzuckerberg/fogg"
-    commitHash            = ""
     managedBy             = "terraform"
   }
 }

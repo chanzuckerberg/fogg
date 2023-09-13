@@ -139,11 +139,9 @@ variable "tags" {
     env                   = "staging"
     service               = "k8s-comp"
     owner                 = "foo@example.com"
-    date                  = "2023-09-13"
     terraformWorkspaceDir = "/terraform/envs/staging/k8s-comp"
     foggUser              = ""
     gitRepository         = "git@github.com:chanzuckerberg/fogg"
-    commitHash            = ""
     managedBy             = "terraform"
   }
 }
