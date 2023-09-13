@@ -849,11 +849,6 @@ func ResolveCircleCI(commons ...Common) *CircleCI {
 	}
 }
 
-// TODO: move Stamp into Common to conform with other resolver functions
-// func ResolveDate(comm Common) string {
-// 	return comm.Stamp.Date
-// }
-
 func OwnerGetter(comm Common) *string {
 	return comm.Owner
 }
