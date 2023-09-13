@@ -17,7 +17,7 @@ jobs:
       # required to push fixes back to repo
       contents: write{{ end }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4.0.0
         with:
           repository: {{`${{ github.event.pull_request.head.repo.full_name }}`}}
           ref: {{`${{ github.event.pull_request.head.ref }}`}}
@@ -30,15 +30,15 @@ jobs:
       - run: make setup
       {{- if not (eq (len $githubActionsCI.DefaultAWSIAMRoleName) 0) }}
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4.0.0
         with:
           role-to-assume: {{ $githubActionsCI.DefaultAWSIAMRoleName }}
           aws-region: {{ $githubActionsCI.DefaultAWSRegion }}{{ end }}
       - run: .fogg/bin/fogg apply
         env:
           FOGG_GITHUBTOKEN: {{`${{ secrets.GITHUB_TOKEN }}`}}
-      - uses: actions/setup-python@v3
-      - uses: mfinelli/setup-shfmt@v1
+      - uses: actions/setup-python@v4
+      - uses: mfinelli/setup-shfmt@v2
         with:
           shfmt-version: 3.5.1
       - uses: rhythmictech/actions-setup-tfenv@v0.1.2
@@ -56,11 +56,11 @@ jobs:
     outputs:
       allChanges: {{`${{ steps.changedDirs.outputs.allChanges }}`}}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4.0.0
         with:
           repository: {{`${{ github.event.pull_request.head.repo.full_name }}`}}
           ref: {{`${{ github.event.pull_request.head.ref }}`}}
-      - uses: dorny/paths-filter@v2.10.2
+      - uses: dorny/paths-filter@v2.11.1
         id: filter
         with:
           initial-fetch-depth: '1'
@@ -92,7 +92,7 @@ jobs:
         tfmodule: {{`${{ fromJson(needs.find-changed-dirs.outputs.allChanges) }}`}}
     if: {{`${{ needs.find-changed-dirs.outputs.allChanges != '[]' }}`}}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4.0.0
         with:
           token: {{`${{ secrets.GITHUB_TOKEN }}`}}
           repository: {{`${{ github.event.pull_request.head.repo.full_name }}`}}
@@ -118,12 +118,12 @@ jobs:
           add: -A
           message: |
             commit from fogg_ci -- ran terraform fmt and pushed
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         name: Cache plugin dir
         with:
           path: ~/.tflint.d/plugins
           key: tflint-{{`${{ hashFiles('.tflint.hcl') }}`}}
-      - uses: terraform-linters/setup-tflint@v2
+      - uses: terraform-linters/setup-tflint@v3
         name: Setup TFLint
         with:
           tflint_version: v0.47.0

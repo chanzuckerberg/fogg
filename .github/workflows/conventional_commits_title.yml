@@ -1,0 +1,28 @@
+# Validates PR title follows conventional commits
+on:
+  pull_request:
+    types:
+      - edited
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  conventional_commit_title:
+    runs-on: ubuntu-22.04
+    steps:
+      # source https://github.com/chanzuckerberg/github-actions/blob/cac0ba177b109becac01bc340a3a1547feb40fe5/.github/actions/conventional-commits/action.yml
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            const validator = /^(chore|feat|fix|revert|docs|style)(\((((CCIE|CDI|PRODSEC|SECENG|ONCALL)-[0-9]+)|([a-z]+))\))?(!)?: (.)+$/
+            const title = context.payload.pull_request.title
+            const is_valid = validator.test(title)
+
+            if (!is_valid) {
+              const details = JSON.stringify({
+                title: title,
+                valid_syntax: validator.toString(),
+              })
+              core.setFailed(`Your pr title doesn't adhere to conventional commits syntax. See more details: ${details}`)
+            }
