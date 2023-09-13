@@ -1,0 +1,32 @@
+# ref: https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions#common-dependabot-automations
+name: Dependabot auto-approve
+on:
+  pull_request:
+    branches:
+      - feat-multi-module-components
+
+permissions:
+  # required to set pr to auto merge
+  pull-requests: write
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  dependabot:
+    runs-on: ubuntu-22.04
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v1
+      - name: Set to Auto Merge
+        run: |
+          gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+      - name: Approve PR
+        run: |
+          gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{ secrets.VINCENT_PAT }}
