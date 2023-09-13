@@ -1,11 +1,21 @@
 version: 2
 updates:
-- package-ecosystem: gomod
-  directory: "/"
-  schedule:
-    interval: weekly
-  open-pull-requests-limit: 10
-  labels:
-  - bot/merge
-  commit-message:
-    prefix: "chore: "
+  - package-ecosystem: gomod
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    labels:
+      - bot/merge
+    commit-message:
+      prefix: "chore: "
+    groups:
+      atlantis:
+        patterns:
+          - "github.com/runatlantis/*"
+      terraform:
+        patterns:
+          - "github.com/hashicorp/*"
+      gomod:
+        patterns:
+          - "*"
