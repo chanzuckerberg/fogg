@@ -80,17 +80,6 @@ func (c *Config) GenerateStamp(fs afero.Fs, configFile string) {
 	c.Stamp = stamp
 }
 
-// TODO: write out functions to generate tag data
-func (c *Config) GenerateStamp(fs afero.Fs, configFile string) {
-	stamp := Stamp{}
-	stamp.Date = DateAsTag()
-	stamp.FilePath = fs.Name()
-	stamp.FoggUser = ""
-	stamp.GitRepository = ""
-	stamp.CommitHash = ""
-	c.Stamp = stamp
-}
-
 func DateAsTag() string {
 	formatLayout := "2006-01-02"
 	currentTime := time.Now()
