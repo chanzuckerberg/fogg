@@ -34,10 +34,10 @@ type testGitRemote struct {
 	expectedRemote string
 }
 
-func TestGetGitRemoveOriginURL(t *testing.T) {
+func TestGetGitRemoteOriginURL(t *testing.T) {
 	r := require.New(t)
 	tests := []testGitRemote{
-		{path: ".", expectedRemote: "git@github.com:chanzuckerberg/fogg"},
+		{path: ".", expectedRemote: "https://git@github.com:chanzuckerberg/fogg"},
 	}
 	for _, test := range tests {
 		remote := getGitRemoteOriginURL(test.path)
