@@ -127,6 +127,7 @@ variable "tags" {
     env                   = "{{ .Env }}"
     service               = "{{ .Name }}"
     owner                 = "{{ .Owner }}"
+    terraformLastApplyTime = timestamp()
     terraformWorkspaceDir = "{{ cwd }}"
     foggUser              = "{{ .FoggUser }}"
     gitRepository         = "{{ git_origin }}"

@@ -109,14 +109,15 @@ variable "owner" {
 variable "tags" {
   type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
   default = {
-    project               = "foofoo"
-    env                   = "accounts"
-    service               = "foo"
-    owner                 = "foo@example.com"
-    terraformWorkspaceDir = "/terraform/accounts/foo"
-    foggUser              = ""
-    gitRepository         = "git@github.com:chanzuckerberg/fogg"
-    managedBy             = "terraform"
+    project                = "foofoo"
+    env                    = "accounts"
+    service                = "foo"
+    owner                  = "foo@example.com"
+    terraformLastApplyTime = timestamp()
+    terraformWorkspaceDir  = "/terraform/accounts/foo"
+    foggUser               = ""
+    gitRepository          = "git@github.com:chanzuckerberg/fogg"
+    managedBy              = "terraform"
   }
 }
 # tflint-ignore: terraform_unused_declarations
