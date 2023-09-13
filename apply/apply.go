@@ -86,6 +86,11 @@ func Apply(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool) error 
 		return errs.WrapUser(err, "unable to apply accounts")
 	}
 
+	err = applyModules(fs, plan.Modules, tmpl.Module, tmpl.Common)
+	if err != nil {
+		return errs.WrapUser(err, "unable to apply modules")
+	}
+
 	err = applyEnvs(fs, plan, tmpl.Env, tmpl.Components, tmpl.Common)
 	if err != nil {
 		return errs.WrapUser(err, "unable to apply envs")
@@ -97,10 +102,6 @@ func Apply(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool) error 
 		return errs.WrapUser(err, "unable to apply global")
 	}
 
-	err = applyModules(fs, plan.Modules, tmpl.Module, tmpl.Common)
-	if err != nil {
-		return errs.WrapUser(err, "unable to apply modules")
-	}
 	return errs.WrapUser(applyTFE(fs, plan, tmpl), "unable to apply TFE locals.tf.json")
 }
 

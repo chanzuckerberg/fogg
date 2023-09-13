@@ -19,3 +19,15 @@ updates:
       gomod:
         patterns:
           - "*"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - bot/merge
+    commit-message:
+      prefix: "chore: "
+    groups:
+      github-actions:
+        patterns:
+          - "*"

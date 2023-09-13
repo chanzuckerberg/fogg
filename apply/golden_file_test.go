@@ -50,18 +50,18 @@ func TestIntegration(t *testing.T) {
 			r := require.New(t)
 
 			testdataFs := afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(util.ProjectRoot(), "testdata", tt.fileName))
-
+			configFile := "fogg.yml"
 			if *updateGoldenFiles {
 				// delete all files except fogg.yml
 				e := afero.Walk(testdataFs, ".", func(path string, info os.FileInfo, err error) error {
-					if !info.IsDir() && !(path == "fogg.yml") {
+					if !info.IsDir() && !(path == configFile) {
 						return testdataFs.Remove(path)
 					}
 					return nil
 				})
 				r.NoError(e)
 
-				conf, e := config.FindAndReadConfig(testdataFs, "fogg.yml")
+				conf, e := config.FindAndReadConfig(testdataFs, configFile)
 				r.NoError(e)
 				fmt.Printf("conf %#v\n", conf)
 				fmt.Println("READ CONFIG")
@@ -73,23 +73,17 @@ func TestIntegration(t *testing.T) {
 				e = apply.Apply(testdataFs, conf, templates.Templates, true)
 				r.NoError(e)
 			} else {
-				fileName := "fogg.yml"
 				fs, _, e := util.TestFs()
 				r.NoError(e)
 
 				// copy fogg.yml into the tmp test dir (so that it doesn't show up as a diff)
-				configContents, e := afero.ReadFile(testdataFs, fileName)
-				if os.IsNotExist(e) { //If the error is related to the file being non-existent
-					fileName = "fogg.yml"
-					configContents, e = afero.ReadFile(testdataFs, fileName)
-				}
+				configContents, e := afero.ReadFile(testdataFs, configFile)
 				r.NoError(e)
-
-				configMode, e := testdataFs.Stat(fileName)
+				configMode, e := testdataFs.Stat(configFile)
 				r.NoError(e)
-				r.NoError(afero.WriteFile(fs, fileName, configContents, configMode.Mode()))
+				r.NoError(afero.WriteFile(fs, configFile, configContents, configMode.Mode()))
 
-				conf, e := config.FindAndReadConfig(fs, fileName)
+				conf, e := config.FindAndReadConfig(fs, configFile)
 				r.NoError(e)
 				fmt.Printf("conf %#v\n", conf)
 
