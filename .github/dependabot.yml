@@ -16,9 +16,17 @@ updates:
       terraform:
         patterns:
           - "github.com/hashicorp/*"
+        exclude-patterns:
+          # pin to 0.15.3 (last version with shared registry packages)
+          - "github.com/hashicorp/terraform/*"
       gomod:
         patterns:
           - "*"
+        exclude-patterns:
+          - "github.com/runatlantis/*"
+          - "github.com/hashicorp/*"
+          # pin to 0.15.3 (last version with shared registry packages)
+          - "github.com/hashicorp/terraform/*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
