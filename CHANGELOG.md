@@ -1,5 +1,37 @@
 # Changelog
 
+### [0.89.4](https://github.com/chanzuckerberg/fogg/compare/v0.89.3...v0.89.4) (2023-09-11)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.45.2 to 1.45.6 ([#922](https://github.com/chanzuckerberg/fogg/issues/922)) ([3cd3956](https://github.com/chanzuckerberg/fogg/commit/3cd3956cb36e30e9494de86f60c1691c69d1fd62))
+* Bump github.com/chanzuckerberg/go-misc from 1.10.5 to 1.10.6 ([#924](https://github.com/chanzuckerberg/fogg/issues/924)) ([14444ac](https://github.com/chanzuckerberg/fogg/commit/14444ac3563511fac3450902014b46f2a9cf0382))
+
+### [0.89.3](https://github.com/chanzuckerberg/fogg/compare/v0.89.2...v0.89.3) (2023-09-04)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.332 to 1.45.2 ([#919](https://github.com/chanzuckerberg/fogg/issues/919)) ([5167872](https://github.com/chanzuckerberg/fogg/commit/51678722c4c485ee315e163bd7e1ddd41151a4eb))
+* Bump github.com/hashicorp/hcl/v2 from 2.17.0 to 2.18.0 ([#920](https://github.com/chanzuckerberg/fogg/issues/920)) ([9a62de8](https://github.com/chanzuckerberg/fogg/commit/9a62de8d82ac5a6e14d3aa47df5c2efe3280c737))
+
+### [0.89.2](https://github.com/chanzuckerberg/fogg/compare/v0.89.1...v0.89.2) (2023-08-28)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.327 to 1.44.332 ([#916](https://github.com/chanzuckerberg/fogg/issues/916)) ([6e049a8](https://github.com/chanzuckerberg/fogg/commit/6e049a873013721aefc06b0fe40efc0f0b07ebeb))
+
+### [0.89.1](https://github.com/chanzuckerberg/fogg/compare/v0.89.0...v0.89.1) (2023-08-21)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.44.322 to 1.44.327 ([#913](https://github.com/chanzuckerberg/fogg/issues/913)) ([3588770](https://github.com/chanzuckerberg/fogg/commit/3588770d987573f57ce03e7a360022ec2316177d))
+* Bump github.com/chanzuckerberg/go-misc from 1.10.4 to 1.10.5 ([#912](https://github.com/chanzuckerberg/fogg/issues/912)) ([b9f4ace](https://github.com/chanzuckerberg/fogg/commit/b9f4acedb7ad5a71ec7a0c41b6c3e37aa36af366))
+* Bump github.com/jinzhu/copier from 0.3.5 to 0.4.0 ([#914](https://github.com/chanzuckerberg/fogg/issues/914)) ([f30717a](https://github.com/chanzuckerberg/fogg/commit/f30717a038b08f8ffff5879c0edbc5fffe42651e))
+
 ## [0.89.0](https://github.com/chanzuckerberg/fogg/compare/v0.88.2...v0.89.0) (2023-08-16)
 
 
