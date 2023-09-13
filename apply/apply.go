@@ -8,6 +8,7 @@ import (
 	"io/fs"
 	"net/url"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"sort"
@@ -522,6 +523,21 @@ func removeExtension(path string) string {
 	return strings.TrimSuffix(path, filepath.Ext(path))
 }
 
+func getGitRemoteOriginURL(cwd ...string) string {
+	dir := "."
+	if len(cwd) > 0 {
+		dir = cwd[0]
+	}
+	cmd := exec.Command("git", "remote", "get-url", "--push", "origin")
+	cmd.Dir = dir
+	out, err := cmd.Output()
+	if err != nil {
+		logrus.Warnf("unable to get git output: %s", err)
+		return ""
+	}
+	return strings.TrimSpace(string(out))
+}
+
 func applyTemplate(sourceFile io.Reader, commonTemplates fs.FS, dest afero.Fs, path string, overrides interface{}) error {
 	dir := filepath.Dir(path)
 	err := dest.MkdirAll(dir, 0775)
@@ -539,6 +555,7 @@ func applyTemplate(sourceFile io.Reader, commonTemplates fs.FS, dest afero.Fs, p
 			"cwd": func() string {
 				return filepath.Dir(writer.Name())
 			},
+			"git_origin": getGitRemoteOriginURL,
 		},
 	}...)
 	if e != nil {

@@ -1287,10 +1287,7 @@ func resolveComponentCommon(stamp v2.Stamp, commons ...v2.Common) ComponentCommo
 		TravisCI:         travisPlan,
 		CircleCI:         circlePlan,
 		GitHubActionsCI:  githubActionsPlan,
-		Date:             stamp.Date,
 		FoggUser:         stamp.FoggUser,
-		GitRepository:    stamp.GitRepository,
-		CommitHash:       stamp.CommitHash,
 	}
 }
 
