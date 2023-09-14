@@ -30,18 +30,21 @@ func init() {
 }
 
 type testGitRemote struct {
-	path           string
-	expectedRemote string
+	path            string
+	expectedRemotes []string
 }
 
 func TestGetGitRemoteOriginURL(t *testing.T) {
 	r := require.New(t)
+	sshRemote := "git@github.com:chanzuckerberg/fogg"
+	httpsRemote := "https://github.com/chanzuckerberg/fogg"
+	acceptableRemotes := []string{sshRemote, httpsRemote}
 	tests := []testGitRemote{
-		{path: ".", expectedRemote: "https://git@github.com:chanzuckerberg/fogg"},
+		{path: ".", expectedRemotes: acceptableRemotes},
 	}
 	for _, test := range tests {
 		remote := getGitRemoteOriginURL(test.path)
-		r.Equal(test.expectedRemote, remote)
+		r.Contains(test.expectedRemotes, remote)
 	}
 }
 

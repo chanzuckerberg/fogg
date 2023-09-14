@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plugins"
@@ -35,7 +34,6 @@ func ReadConfig(fs afero.Fs, b []byte, configFile string) (*Config, error) {
 	default:
 		return nil, errs.NewUserf("File type %s is not supported", ext)
 	}
-	c.GenerateStamp(fs, configFile)
 	return c, e
 }
 
@@ -52,23 +50,6 @@ func (c *Config) Write(fs afero.Fs, path string) error {
 	return encoder.Encode(c)
 }
 
-// TODO: write out functions to generate tag data
-func (c *Config) GenerateStamp(fs afero.Fs, configFile string) {
-	stamp := Stamp{}
-	stamp.FoggUser = ""
-	c.Stamp = stamp
-}
-
-func DateAsTag() string {
-	formatLayout := "2006-01-02"
-	currentTime := time.Now()
-	return currentTime.Format(formatLayout)
-}
-
-type Stamp struct {
-	FoggUser string
-}
-
 type Config struct {
 	ComponentTemplates map[string]any     `yaml:"component_templates,omitempty"`
 	Accounts           map[string]Account `yaml:"accounts,omitempty"`
@@ -79,7 +60,6 @@ type Config struct {
 	Plugins            Plugins            `yaml:"plugins,omitempty"`
 	Version            int                `validate:"required,eq=2"`
 	TFE                *TFE               `yaml:"tfe,omitempty"`
-	Stamp              Stamp
 }
 
 type TFE struct {
