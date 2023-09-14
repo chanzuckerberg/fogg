@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.83.0](https://github.com/vincenthsh/fogg/compare/v0.82.2...v0.83.0) (2023-09-14)
+
+
+### Features
+
+* Add support for module metadata arguments ([#186](https://github.com/vincenthsh/fogg/issues/186)) ([7ed4cee](https://github.com/vincenthsh/fogg/commit/7ed4cee462d3a6418cb596a74bf6890b22f6dfa5))
+
+
+### Misc
+
+* Add dependabot auto merge workflow ([#177](https://github.com/vincenthsh/fogg/issues/177)) ([564e34d](https://github.com/vincenthsh/fogg/commit/564e34dbddc109cb10c67858eecc3e720015c55b))
+* bump ci templates ([#181](https://github.com/vincenthsh/fogg/issues/181)) ([466bdda](https://github.com/vincenthsh/fogg/commit/466bdda0906a3a85a4c24e4abd3d2f27f8850eb7))
+* bump github.com/runatlantis/atlantis from 0.24.4 to 0.25.0 ([#160](https://github.com/vincenthsh/fogg/issues/160)) ([52211f8](https://github.com/vincenthsh/fogg/commit/52211f83375aead864a9ac6f67b1fec3d6207c89))
+* bump the github-actions group with 4 updates ([#176](https://github.com/vincenthsh/fogg/issues/176)) ([aef3cab](https://github.com/vincenthsh/fogg/commit/aef3cab1798779f9f18c096b54a025115865e65c))
+* bump the gomod group with 6 updates ([#175](https://github.com/vincenthsh/fogg/issues/175)) ([503db2f](https://github.com/vincenthsh/fogg/commit/503db2fb2af89eac346038af6fb37f5e5ed1dd00))
+* Dependabot integration can't set pr to auto merge ([#180](https://github.com/vincenthsh/fogg/issues/180)) ([7728bee](https://github.com/vincenthsh/fogg/commit/7728bee3583c3b91a25ed6f97a34d7d91fb074c8))
+* Fix missing env var for gh cli ([#179](https://github.com/vincenthsh/fogg/issues/179)) ([f1a2f6e](https://github.com/vincenthsh/fogg/commit/f1a2f6ebf5b75eca5c41ae37007de155bb84ead7))
+* Group dependabot PRs for ease of maintenance ([#173](https://github.com/vincenthsh/fogg/issues/173)) ([edcd0b2](https://github.com/vincenthsh/fogg/commit/edcd0b2c4f237a78ca384d05b2e8f65f0ef56be6))
+
+
+### BugFixes
+
+* dependabot gomod groups ([#182](https://github.com/vincenthsh/fogg/issues/182)) ([5ab29f4](https://github.com/vincenthsh/fogg/commit/5ab29f4cff27dc822513fee3e26f077f704a98e1))
+* Update conventional commit title regex ([#184](https://github.com/vincenthsh/fogg/issues/184)) ([4b0d1a0](https://github.com/vincenthsh/fogg/commit/4b0d1a0c5e0c1be87d1da54b1028514d8ebc4a76))
+
 ## [0.82.2](https://github.com/vincenthsh/fogg/compare/v0.82.1...v0.82.2) (2023-08-02)
 
 
