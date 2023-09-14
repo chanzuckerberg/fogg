@@ -5,9 +5,13 @@
   // module "{{ .ModuleName }}" ssm Parameter Store integration registry entries (non sensitive)
   {{- $outer := . }}
   {{ range .IntegrationRegistryEntries -}}
-    {{- if not .Output.Sensitive -}}
-      resource "aws_ssm_parameter" "{{print $outer.ModulePrefix .Output.Name}}" {
-        {{- if .Provider }}
+    {{- if not .Output.Sensitive  -}}
+      {{- $resource_name := print $outer.ModulePrefix .Output.Name -}}
+      {{- if and .Provider (ne (deRefStr .Provider) "aws") -}}
+      {{- $resource_name = list $resource_name (trimPrefix "aws." .Provider) | join "_" -}}
+      {{- end -}}
+      resource "aws_ssm_parameter" "{{$resource_name}}" {
+        {{- if and .Provider (ne (deRefStr .Provider) "aws") }}
           provider = {{.Provider}}
         {{- end }}
         {{- $path := .Output.Name -}}

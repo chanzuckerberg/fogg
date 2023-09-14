@@ -11,6 +11,24 @@ provider "aws" {
 
 
 provider "aws" {
+  alias   = "stg"
+  region  = "us-west-2"
+  profile = "stg"
+
+  allowed_account_ids = ["00456"]
+}
+
+
+provider "aws" {
+  alias   = "prd"
+  region  = "us-west-2"
+  profile = "prd"
+
+  allowed_account_ids = ["00456"]
+}
+
+
+provider "aws" {
   alias   = "no_default_tags"
   region  = "us-west-2"
   profile = "profile"

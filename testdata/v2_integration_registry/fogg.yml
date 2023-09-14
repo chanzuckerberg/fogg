@@ -28,6 +28,19 @@ envs:
                   enabled: false
                 ignore_tags:
                   enabled: false
+              # publish outputs across accounts
+              stg:
+                default_tags:
+                  enabled: false
+                ignore_tags:
+                  enabled: false
+                profile: stg
+              prd:
+                default_tags:
+                  enabled: false
+                ignore_tags:
+                  enabled: false
+                profile: prd
         modules:
           - name: "foo_vpc"
             prefix: "foo"
@@ -42,7 +55,7 @@ envs:
               - tags
             # outputs_map is omitted, all outputs are integrated with a default format
             integration:
-              provider: aws.no_default_tags
+              providers: [aws.no_default_tags]
               mode: all
               format: jsonencode(%s)
           - name: "bar_vpc"
@@ -240,6 +253,11 @@ envs:
               path_infix: network/integrate_selected
               drop_prefix: true # drop the "map_integrate_selected" prefix
               format: jsonencode(%s)
+              providers:
+                # publish to stg and prd SSM ParameterStore
+                - aws
+                - aws.stg
+                - aws.prd
               outputs_map:
                 vpc_id:
                   format: "%s"

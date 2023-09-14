@@ -673,12 +673,22 @@ func applyModuleInvocation(
 		}
 		for _, o := range moduleConfig.Outputs {
 			outputs = append(outputs, o)
-			integrationRegistryEntries = integrateOutput(moduleName, o, mi, integration, integrationRegistryEntries)
+			if len(integration.Providers) > 0 {
+				for _, provider := range integration.Providers {
+					p := provider
+					integrationRegistryEntries = integrateOutput(moduleName, o, mi, integration, &p, integrationRegistryEntries)
+				}
+			} else {
+				integrationRegistryEntries = integrateOutput(moduleName, o, mi, integration, nil, integrationRegistryEntries)
+			}
 		}
 		sort.Slice(outputs, func(i, j int) bool {
 			return outputs[i].Name < outputs[j].Name
 		})
 		sort.Slice(integrationRegistryEntries, func(i, j int) bool {
+			if integrationRegistryEntries[i].Output.Name == integrationRegistryEntries[j].Output.Name {
+				return *integrationRegistryEntries[i].Provider < *integrationRegistryEntries[j].Provider
+			}
 			return integrationRegistryEntries[i].Output.Name < integrationRegistryEntries[j].Output.Name
 		})
 
@@ -766,6 +776,7 @@ func integrateOutput(
 	o *tfconfig.Output,
 	mi moduleInvocation,
 	integration *v2.ModuleIntegrationConfig,
+	provider *string,
 	integrationRegistryEntries []*IntegrationRegistryEntry,
 ) []*IntegrationRegistryEntry {
 	// dont integrate
@@ -787,7 +798,7 @@ func integrateOutput(
 		DropComponent: integration.DropComponent,
 		DropPrefix:    integration.DropPrefix,
 		PathInfix:     integration.PathInfix,
-		Provider:      integration.Provider,
+		Provider:      provider,
 	}
 	for eName, e := range integration.OutputsMap {
 		if o.Name == eName {
@@ -821,7 +832,7 @@ func integrateOutput(
 				Path:          e.Path,
 				ForEach:       e.ForEach,
 				PathForEach:   e.PathForEach,
-				Provider:      integration.Provider,
+				Provider:      provider,
 			}
 			// integrate only mapped
 			if *integration.Mode == "selected" {

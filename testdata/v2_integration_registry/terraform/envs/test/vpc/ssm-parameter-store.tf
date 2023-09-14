@@ -2,7 +2,7 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 // module "foo_vpc" ssm Parameter Store integration registry entries (non sensitive)
-resource "aws_ssm_parameter" "foo_azs" {
+resource "aws_ssm_parameter" "foo_azs_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_azs"
   type           = "String"
@@ -10,7 +10,7 @@ resource "aws_ssm_parameter" "foo_azs" {
   insecure_value = jsonencode(module.foo_vpc.azs)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_cgw_arns" {
+resource "aws_ssm_parameter" "foo_cgw_arns_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_cgw_arns"
   type           = "String"
@@ -18,7 +18,7 @@ resource "aws_ssm_parameter" "foo_cgw_arns" {
   insecure_value = jsonencode(module.foo_vpc.cgw_arns)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_cgw_ids" {
+resource "aws_ssm_parameter" "foo_cgw_ids_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_cgw_ids"
   type           = "String"
@@ -26,7 +26,7 @@ resource "aws_ssm_parameter" "foo_cgw_ids" {
   insecure_value = jsonencode(module.foo_vpc.cgw_ids)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_database_internet_gateway_route_id" {
+resource "aws_ssm_parameter" "foo_database_internet_gateway_route_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_database_internet_gateway_route_id"
   type           = "String"
@@ -34,7 +34,7 @@ resource "aws_ssm_parameter" "foo_database_internet_gateway_route_id" {
   insecure_value = jsonencode(module.foo_vpc.database_internet_gateway_route_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_database_ipv6_egress_route_id" {
+resource "aws_ssm_parameter" "foo_database_ipv6_egress_route_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_database_ipv6_egress_route_id"
   type           = "String"
@@ -42,7 +42,7 @@ resource "aws_ssm_parameter" "foo_database_ipv6_egress_route_id" {
   insecure_value = jsonencode(module.foo_vpc.database_ipv6_egress_route_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_database_nat_gateway_route_ids" {
+resource "aws_ssm_parameter" "foo_database_nat_gateway_route_ids_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_database_nat_gateway_route_ids"
   type           = "String"
@@ -50,7 +50,7 @@ resource "aws_ssm_parameter" "foo_database_nat_gateway_route_ids" {
   insecure_value = jsonencode(module.foo_vpc.database_nat_gateway_route_ids)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_database_network_acl_arn" {
+resource "aws_ssm_parameter" "foo_database_network_acl_arn_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_database_network_acl_arn"
   type           = "String"
@@ -58,7 +58,7 @@ resource "aws_ssm_parameter" "foo_database_network_acl_arn" {
   insecure_value = jsonencode(module.foo_vpc.database_network_acl_arn)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_database_network_acl_id" {
+resource "aws_ssm_parameter" "foo_database_network_acl_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_database_network_acl_id"
   type           = "String"
@@ -66,7 +66,7 @@ resource "aws_ssm_parameter" "foo_database_network_acl_id" {
   insecure_value = jsonencode(module.foo_vpc.database_network_acl_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_database_route_table_association_ids" {
+resource "aws_ssm_parameter" "foo_database_route_table_association_ids_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_database_route_table_association_ids"
   type           = "String"
@@ -74,7 +74,7 @@ resource "aws_ssm_parameter" "foo_database_route_table_association_ids" {
   insecure_value = jsonencode(module.foo_vpc.database_route_table_association_ids)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_database_route_table_ids" {
+resource "aws_ssm_parameter" "foo_database_route_table_ids_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_database_route_table_ids"
   type           = "String"
@@ -82,7 +82,7 @@ resource "aws_ssm_parameter" "foo_database_route_table_ids" {
   insecure_value = jsonencode(module.foo_vpc.database_route_table_ids)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_database_subnet_arns" {
+resource "aws_ssm_parameter" "foo_database_subnet_arns_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_database_subnet_arns"
   type           = "String"
@@ -90,7 +90,7 @@ resource "aws_ssm_parameter" "foo_database_subnet_arns" {
   insecure_value = jsonencode(module.foo_vpc.database_subnet_arns)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_database_subnet_group" {
+resource "aws_ssm_parameter" "foo_database_subnet_group_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_database_subnet_group"
   type           = "String"
@@ -98,7 +98,7 @@ resource "aws_ssm_parameter" "foo_database_subnet_group" {
   insecure_value = jsonencode(module.foo_vpc.database_subnet_group)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_database_subnet_group_name" {
+resource "aws_ssm_parameter" "foo_database_subnet_group_name_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_database_subnet_group_name"
   type           = "String"
@@ -106,7 +106,7 @@ resource "aws_ssm_parameter" "foo_database_subnet_group_name" {
   insecure_value = jsonencode(module.foo_vpc.database_subnet_group_name)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_database_subnets" {
+resource "aws_ssm_parameter" "foo_database_subnets_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_database_subnets"
   type           = "String"
@@ -114,7 +114,7 @@ resource "aws_ssm_parameter" "foo_database_subnets" {
   insecure_value = jsonencode(module.foo_vpc.database_subnets)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_database_subnets_cidr_blocks" {
+resource "aws_ssm_parameter" "foo_database_subnets_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_database_subnets_cidr_blocks"
   type           = "String"
@@ -122,7 +122,7 @@ resource "aws_ssm_parameter" "foo_database_subnets_cidr_blocks" {
   insecure_value = jsonencode(module.foo_vpc.database_subnets_cidr_blocks)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_database_subnets_ipv6_cidr_blocks" {
+resource "aws_ssm_parameter" "foo_database_subnets_ipv6_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_database_subnets_ipv6_cidr_blocks"
   type           = "String"
@@ -130,7 +130,7 @@ resource "aws_ssm_parameter" "foo_database_subnets_ipv6_cidr_blocks" {
   insecure_value = jsonencode(module.foo_vpc.database_subnets_ipv6_cidr_blocks)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_default_network_acl_id" {
+resource "aws_ssm_parameter" "foo_default_network_acl_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_default_network_acl_id"
   type           = "String"
@@ -138,7 +138,7 @@ resource "aws_ssm_parameter" "foo_default_network_acl_id" {
   insecure_value = jsonencode(module.foo_vpc.default_network_acl_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_default_route_table_id" {
+resource "aws_ssm_parameter" "foo_default_route_table_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_default_route_table_id"
   type           = "String"
@@ -146,7 +146,7 @@ resource "aws_ssm_parameter" "foo_default_route_table_id" {
   insecure_value = jsonencode(module.foo_vpc.default_route_table_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_default_security_group_id" {
+resource "aws_ssm_parameter" "foo_default_security_group_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_default_security_group_id"
   type           = "String"
@@ -154,7 +154,7 @@ resource "aws_ssm_parameter" "foo_default_security_group_id" {
   insecure_value = jsonencode(module.foo_vpc.default_security_group_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_default_vpc_arn" {
+resource "aws_ssm_parameter" "foo_default_vpc_arn_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_default_vpc_arn"
   type           = "String"
@@ -162,7 +162,7 @@ resource "aws_ssm_parameter" "foo_default_vpc_arn" {
   insecure_value = jsonencode(module.foo_vpc.default_vpc_arn)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_default_vpc_cidr_block" {
+resource "aws_ssm_parameter" "foo_default_vpc_cidr_block_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_default_vpc_cidr_block"
   type           = "String"
@@ -170,7 +170,7 @@ resource "aws_ssm_parameter" "foo_default_vpc_cidr_block" {
   insecure_value = jsonencode(module.foo_vpc.default_vpc_cidr_block)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_default_vpc_default_network_acl_id" {
+resource "aws_ssm_parameter" "foo_default_vpc_default_network_acl_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_default_vpc_default_network_acl_id"
   type           = "String"
@@ -178,7 +178,7 @@ resource "aws_ssm_parameter" "foo_default_vpc_default_network_acl_id" {
   insecure_value = jsonencode(module.foo_vpc.default_vpc_default_network_acl_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_default_vpc_default_route_table_id" {
+resource "aws_ssm_parameter" "foo_default_vpc_default_route_table_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_default_vpc_default_route_table_id"
   type           = "String"
@@ -186,7 +186,7 @@ resource "aws_ssm_parameter" "foo_default_vpc_default_route_table_id" {
   insecure_value = jsonencode(module.foo_vpc.default_vpc_default_route_table_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_default_vpc_default_security_group_id" {
+resource "aws_ssm_parameter" "foo_default_vpc_default_security_group_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_default_vpc_default_security_group_id"
   type           = "String"
@@ -194,7 +194,7 @@ resource "aws_ssm_parameter" "foo_default_vpc_default_security_group_id" {
   insecure_value = jsonencode(module.foo_vpc.default_vpc_default_security_group_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_default_vpc_enable_dns_hostnames" {
+resource "aws_ssm_parameter" "foo_default_vpc_enable_dns_hostnames_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_default_vpc_enable_dns_hostnames"
   type           = "String"
@@ -202,7 +202,7 @@ resource "aws_ssm_parameter" "foo_default_vpc_enable_dns_hostnames" {
   insecure_value = jsonencode(module.foo_vpc.default_vpc_enable_dns_hostnames)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_default_vpc_enable_dns_support" {
+resource "aws_ssm_parameter" "foo_default_vpc_enable_dns_support_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_default_vpc_enable_dns_support"
   type           = "String"
@@ -210,7 +210,7 @@ resource "aws_ssm_parameter" "foo_default_vpc_enable_dns_support" {
   insecure_value = jsonencode(module.foo_vpc.default_vpc_enable_dns_support)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_default_vpc_id" {
+resource "aws_ssm_parameter" "foo_default_vpc_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_default_vpc_id"
   type           = "String"
@@ -218,7 +218,7 @@ resource "aws_ssm_parameter" "foo_default_vpc_id" {
   insecure_value = jsonencode(module.foo_vpc.default_vpc_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_default_vpc_instance_tenancy" {
+resource "aws_ssm_parameter" "foo_default_vpc_instance_tenancy_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_default_vpc_instance_tenancy"
   type           = "String"
@@ -226,7 +226,7 @@ resource "aws_ssm_parameter" "foo_default_vpc_instance_tenancy" {
   insecure_value = jsonencode(module.foo_vpc.default_vpc_instance_tenancy)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_default_vpc_main_route_table_id" {
+resource "aws_ssm_parameter" "foo_default_vpc_main_route_table_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_default_vpc_main_route_table_id"
   type           = "String"
@@ -234,7 +234,7 @@ resource "aws_ssm_parameter" "foo_default_vpc_main_route_table_id" {
   insecure_value = jsonencode(module.foo_vpc.default_vpc_main_route_table_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_dhcp_options_id" {
+resource "aws_ssm_parameter" "foo_dhcp_options_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_dhcp_options_id"
   type           = "String"
@@ -242,7 +242,7 @@ resource "aws_ssm_parameter" "foo_dhcp_options_id" {
   insecure_value = jsonencode(module.foo_vpc.dhcp_options_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_egress_only_internet_gateway_id" {
+resource "aws_ssm_parameter" "foo_egress_only_internet_gateway_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_egress_only_internet_gateway_id"
   type           = "String"
@@ -250,7 +250,7 @@ resource "aws_ssm_parameter" "foo_egress_only_internet_gateway_id" {
   insecure_value = jsonencode(module.foo_vpc.egress_only_internet_gateway_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_elasticache_network_acl_arn" {
+resource "aws_ssm_parameter" "foo_elasticache_network_acl_arn_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_elasticache_network_acl_arn"
   type           = "String"
@@ -258,7 +258,7 @@ resource "aws_ssm_parameter" "foo_elasticache_network_acl_arn" {
   insecure_value = jsonencode(module.foo_vpc.elasticache_network_acl_arn)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_elasticache_network_acl_id" {
+resource "aws_ssm_parameter" "foo_elasticache_network_acl_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_elasticache_network_acl_id"
   type           = "String"
@@ -266,7 +266,7 @@ resource "aws_ssm_parameter" "foo_elasticache_network_acl_id" {
   insecure_value = jsonencode(module.foo_vpc.elasticache_network_acl_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_elasticache_route_table_association_ids" {
+resource "aws_ssm_parameter" "foo_elasticache_route_table_association_ids_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_elasticache_route_table_association_ids"
   type           = "String"
@@ -274,7 +274,7 @@ resource "aws_ssm_parameter" "foo_elasticache_route_table_association_ids" {
   insecure_value = jsonencode(module.foo_vpc.elasticache_route_table_association_ids)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_elasticache_route_table_ids" {
+resource "aws_ssm_parameter" "foo_elasticache_route_table_ids_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_elasticache_route_table_ids"
   type           = "String"
@@ -282,7 +282,7 @@ resource "aws_ssm_parameter" "foo_elasticache_route_table_ids" {
   insecure_value = jsonencode(module.foo_vpc.elasticache_route_table_ids)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_elasticache_subnet_arns" {
+resource "aws_ssm_parameter" "foo_elasticache_subnet_arns_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_elasticache_subnet_arns"
   type           = "String"
@@ -290,7 +290,7 @@ resource "aws_ssm_parameter" "foo_elasticache_subnet_arns" {
   insecure_value = jsonencode(module.foo_vpc.elasticache_subnet_arns)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_elasticache_subnet_group" {
+resource "aws_ssm_parameter" "foo_elasticache_subnet_group_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_elasticache_subnet_group"
   type           = "String"
@@ -298,7 +298,7 @@ resource "aws_ssm_parameter" "foo_elasticache_subnet_group" {
   insecure_value = jsonencode(module.foo_vpc.elasticache_subnet_group)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_elasticache_subnet_group_name" {
+resource "aws_ssm_parameter" "foo_elasticache_subnet_group_name_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_elasticache_subnet_group_name"
   type           = "String"
@@ -306,7 +306,7 @@ resource "aws_ssm_parameter" "foo_elasticache_subnet_group_name" {
   insecure_value = jsonencode(module.foo_vpc.elasticache_subnet_group_name)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_elasticache_subnets" {
+resource "aws_ssm_parameter" "foo_elasticache_subnets_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_elasticache_subnets"
   type           = "String"
@@ -314,7 +314,7 @@ resource "aws_ssm_parameter" "foo_elasticache_subnets" {
   insecure_value = jsonencode(module.foo_vpc.elasticache_subnets)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_elasticache_subnets_cidr_blocks" {
+resource "aws_ssm_parameter" "foo_elasticache_subnets_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_elasticache_subnets_cidr_blocks"
   type           = "String"
@@ -322,7 +322,7 @@ resource "aws_ssm_parameter" "foo_elasticache_subnets_cidr_blocks" {
   insecure_value = jsonencode(module.foo_vpc.elasticache_subnets_cidr_blocks)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_elasticache_subnets_ipv6_cidr_blocks" {
+resource "aws_ssm_parameter" "foo_elasticache_subnets_ipv6_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_elasticache_subnets_ipv6_cidr_blocks"
   type           = "String"
@@ -330,7 +330,7 @@ resource "aws_ssm_parameter" "foo_elasticache_subnets_ipv6_cidr_blocks" {
   insecure_value = jsonencode(module.foo_vpc.elasticache_subnets_ipv6_cidr_blocks)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_igw_arn" {
+resource "aws_ssm_parameter" "foo_igw_arn_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_igw_arn"
   type           = "String"
@@ -338,7 +338,7 @@ resource "aws_ssm_parameter" "foo_igw_arn" {
   insecure_value = jsonencode(module.foo_vpc.igw_arn)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_igw_id" {
+resource "aws_ssm_parameter" "foo_igw_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_igw_id"
   type           = "String"
@@ -346,7 +346,7 @@ resource "aws_ssm_parameter" "foo_igw_id" {
   insecure_value = jsonencode(module.foo_vpc.igw_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_intra_network_acl_arn" {
+resource "aws_ssm_parameter" "foo_intra_network_acl_arn_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_intra_network_acl_arn"
   type           = "String"
@@ -354,7 +354,7 @@ resource "aws_ssm_parameter" "foo_intra_network_acl_arn" {
   insecure_value = jsonencode(module.foo_vpc.intra_network_acl_arn)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_intra_network_acl_id" {
+resource "aws_ssm_parameter" "foo_intra_network_acl_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_intra_network_acl_id"
   type           = "String"
@@ -362,7 +362,7 @@ resource "aws_ssm_parameter" "foo_intra_network_acl_id" {
   insecure_value = jsonencode(module.foo_vpc.intra_network_acl_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_intra_route_table_association_ids" {
+resource "aws_ssm_parameter" "foo_intra_route_table_association_ids_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_intra_route_table_association_ids"
   type           = "String"
@@ -370,7 +370,7 @@ resource "aws_ssm_parameter" "foo_intra_route_table_association_ids" {
   insecure_value = jsonencode(module.foo_vpc.intra_route_table_association_ids)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_intra_route_table_ids" {
+resource "aws_ssm_parameter" "foo_intra_route_table_ids_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_intra_route_table_ids"
   type           = "String"
@@ -378,7 +378,7 @@ resource "aws_ssm_parameter" "foo_intra_route_table_ids" {
   insecure_value = jsonencode(module.foo_vpc.intra_route_table_ids)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_intra_subnet_arns" {
+resource "aws_ssm_parameter" "foo_intra_subnet_arns_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_intra_subnet_arns"
   type           = "String"
@@ -386,7 +386,7 @@ resource "aws_ssm_parameter" "foo_intra_subnet_arns" {
   insecure_value = jsonencode(module.foo_vpc.intra_subnet_arns)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_intra_subnets" {
+resource "aws_ssm_parameter" "foo_intra_subnets_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_intra_subnets"
   type           = "String"
@@ -394,7 +394,7 @@ resource "aws_ssm_parameter" "foo_intra_subnets" {
   insecure_value = jsonencode(module.foo_vpc.intra_subnets)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_intra_subnets_cidr_blocks" {
+resource "aws_ssm_parameter" "foo_intra_subnets_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_intra_subnets_cidr_blocks"
   type           = "String"
@@ -402,7 +402,7 @@ resource "aws_ssm_parameter" "foo_intra_subnets_cidr_blocks" {
   insecure_value = jsonencode(module.foo_vpc.intra_subnets_cidr_blocks)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_intra_subnets_ipv6_cidr_blocks" {
+resource "aws_ssm_parameter" "foo_intra_subnets_ipv6_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_intra_subnets_ipv6_cidr_blocks"
   type           = "String"
@@ -410,7 +410,7 @@ resource "aws_ssm_parameter" "foo_intra_subnets_ipv6_cidr_blocks" {
   insecure_value = jsonencode(module.foo_vpc.intra_subnets_ipv6_cidr_blocks)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_name" {
+resource "aws_ssm_parameter" "foo_name_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_name"
   type           = "String"
@@ -418,7 +418,7 @@ resource "aws_ssm_parameter" "foo_name" {
   insecure_value = jsonencode(module.foo_vpc.name)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_nat_ids" {
+resource "aws_ssm_parameter" "foo_nat_ids_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_nat_ids"
   type           = "String"
@@ -426,7 +426,7 @@ resource "aws_ssm_parameter" "foo_nat_ids" {
   insecure_value = jsonencode(module.foo_vpc.nat_ids)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_nat_public_ips" {
+resource "aws_ssm_parameter" "foo_nat_public_ips_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_nat_public_ips"
   type           = "String"
@@ -434,7 +434,7 @@ resource "aws_ssm_parameter" "foo_nat_public_ips" {
   insecure_value = jsonencode(module.foo_vpc.nat_public_ips)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_natgw_ids" {
+resource "aws_ssm_parameter" "foo_natgw_ids_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_natgw_ids"
   type           = "String"
@@ -442,7 +442,7 @@ resource "aws_ssm_parameter" "foo_natgw_ids" {
   insecure_value = jsonencode(module.foo_vpc.natgw_ids)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_outpost_network_acl_arn" {
+resource "aws_ssm_parameter" "foo_outpost_network_acl_arn_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_outpost_network_acl_arn"
   type           = "String"
@@ -450,7 +450,7 @@ resource "aws_ssm_parameter" "foo_outpost_network_acl_arn" {
   insecure_value = jsonencode(module.foo_vpc.outpost_network_acl_arn)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_outpost_network_acl_id" {
+resource "aws_ssm_parameter" "foo_outpost_network_acl_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_outpost_network_acl_id"
   type           = "String"
@@ -458,7 +458,7 @@ resource "aws_ssm_parameter" "foo_outpost_network_acl_id" {
   insecure_value = jsonencode(module.foo_vpc.outpost_network_acl_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_outpost_subnet_arns" {
+resource "aws_ssm_parameter" "foo_outpost_subnet_arns_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_outpost_subnet_arns"
   type           = "String"
@@ -466,7 +466,7 @@ resource "aws_ssm_parameter" "foo_outpost_subnet_arns" {
   insecure_value = jsonencode(module.foo_vpc.outpost_subnet_arns)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_outpost_subnets" {
+resource "aws_ssm_parameter" "foo_outpost_subnets_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_outpost_subnets"
   type           = "String"
@@ -474,7 +474,7 @@ resource "aws_ssm_parameter" "foo_outpost_subnets" {
   insecure_value = jsonencode(module.foo_vpc.outpost_subnets)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_outpost_subnets_cidr_blocks" {
+resource "aws_ssm_parameter" "foo_outpost_subnets_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_outpost_subnets_cidr_blocks"
   type           = "String"
@@ -482,7 +482,7 @@ resource "aws_ssm_parameter" "foo_outpost_subnets_cidr_blocks" {
   insecure_value = jsonencode(module.foo_vpc.outpost_subnets_cidr_blocks)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_outpost_subnets_ipv6_cidr_blocks" {
+resource "aws_ssm_parameter" "foo_outpost_subnets_ipv6_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_outpost_subnets_ipv6_cidr_blocks"
   type           = "String"
@@ -490,7 +490,7 @@ resource "aws_ssm_parameter" "foo_outpost_subnets_ipv6_cidr_blocks" {
   insecure_value = jsonencode(module.foo_vpc.outpost_subnets_ipv6_cidr_blocks)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_private_ipv6_egress_route_ids" {
+resource "aws_ssm_parameter" "foo_private_ipv6_egress_route_ids_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_private_ipv6_egress_route_ids"
   type           = "String"
@@ -498,7 +498,7 @@ resource "aws_ssm_parameter" "foo_private_ipv6_egress_route_ids" {
   insecure_value = jsonencode(module.foo_vpc.private_ipv6_egress_route_ids)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_private_nat_gateway_route_ids" {
+resource "aws_ssm_parameter" "foo_private_nat_gateway_route_ids_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_private_nat_gateway_route_ids"
   type           = "String"
@@ -506,7 +506,7 @@ resource "aws_ssm_parameter" "foo_private_nat_gateway_route_ids" {
   insecure_value = jsonencode(module.foo_vpc.private_nat_gateway_route_ids)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_private_network_acl_arn" {
+resource "aws_ssm_parameter" "foo_private_network_acl_arn_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_private_network_acl_arn"
   type           = "String"
@@ -514,7 +514,7 @@ resource "aws_ssm_parameter" "foo_private_network_acl_arn" {
   insecure_value = jsonencode(module.foo_vpc.private_network_acl_arn)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_private_network_acl_id" {
+resource "aws_ssm_parameter" "foo_private_network_acl_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_private_network_acl_id"
   type           = "String"
@@ -522,7 +522,7 @@ resource "aws_ssm_parameter" "foo_private_network_acl_id" {
   insecure_value = jsonencode(module.foo_vpc.private_network_acl_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_private_route_table_association_ids" {
+resource "aws_ssm_parameter" "foo_private_route_table_association_ids_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_private_route_table_association_ids"
   type           = "String"
@@ -530,7 +530,7 @@ resource "aws_ssm_parameter" "foo_private_route_table_association_ids" {
   insecure_value = jsonencode(module.foo_vpc.private_route_table_association_ids)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_private_route_table_ids" {
+resource "aws_ssm_parameter" "foo_private_route_table_ids_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_private_route_table_ids"
   type           = "String"
@@ -538,7 +538,7 @@ resource "aws_ssm_parameter" "foo_private_route_table_ids" {
   insecure_value = jsonencode(module.foo_vpc.private_route_table_ids)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_private_subnet_arns" {
+resource "aws_ssm_parameter" "foo_private_subnet_arns_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_private_subnet_arns"
   type           = "String"
@@ -546,7 +546,7 @@ resource "aws_ssm_parameter" "foo_private_subnet_arns" {
   insecure_value = jsonencode(module.foo_vpc.private_subnet_arns)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_private_subnets" {
+resource "aws_ssm_parameter" "foo_private_subnets_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_private_subnets"
   type           = "String"
@@ -554,7 +554,7 @@ resource "aws_ssm_parameter" "foo_private_subnets" {
   insecure_value = jsonencode(module.foo_vpc.private_subnets)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_private_subnets_cidr_blocks" {
+resource "aws_ssm_parameter" "foo_private_subnets_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_private_subnets_cidr_blocks"
   type           = "String"
@@ -562,7 +562,7 @@ resource "aws_ssm_parameter" "foo_private_subnets_cidr_blocks" {
   insecure_value = jsonencode(module.foo_vpc.private_subnets_cidr_blocks)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_private_subnets_ipv6_cidr_blocks" {
+resource "aws_ssm_parameter" "foo_private_subnets_ipv6_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_private_subnets_ipv6_cidr_blocks"
   type           = "String"
@@ -570,7 +570,7 @@ resource "aws_ssm_parameter" "foo_private_subnets_ipv6_cidr_blocks" {
   insecure_value = jsonencode(module.foo_vpc.private_subnets_ipv6_cidr_blocks)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_public_internet_gateway_ipv6_route_id" {
+resource "aws_ssm_parameter" "foo_public_internet_gateway_ipv6_route_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_public_internet_gateway_ipv6_route_id"
   type           = "String"
@@ -578,7 +578,7 @@ resource "aws_ssm_parameter" "foo_public_internet_gateway_ipv6_route_id" {
   insecure_value = jsonencode(module.foo_vpc.public_internet_gateway_ipv6_route_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_public_internet_gateway_route_id" {
+resource "aws_ssm_parameter" "foo_public_internet_gateway_route_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_public_internet_gateway_route_id"
   type           = "String"
@@ -586,7 +586,7 @@ resource "aws_ssm_parameter" "foo_public_internet_gateway_route_id" {
   insecure_value = jsonencode(module.foo_vpc.public_internet_gateway_route_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_public_network_acl_arn" {
+resource "aws_ssm_parameter" "foo_public_network_acl_arn_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_public_network_acl_arn"
   type           = "String"
@@ -594,7 +594,7 @@ resource "aws_ssm_parameter" "foo_public_network_acl_arn" {
   insecure_value = jsonencode(module.foo_vpc.public_network_acl_arn)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_public_network_acl_id" {
+resource "aws_ssm_parameter" "foo_public_network_acl_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_public_network_acl_id"
   type           = "String"
@@ -602,7 +602,7 @@ resource "aws_ssm_parameter" "foo_public_network_acl_id" {
   insecure_value = jsonencode(module.foo_vpc.public_network_acl_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_public_route_table_association_ids" {
+resource "aws_ssm_parameter" "foo_public_route_table_association_ids_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_public_route_table_association_ids"
   type           = "String"
@@ -610,7 +610,7 @@ resource "aws_ssm_parameter" "foo_public_route_table_association_ids" {
   insecure_value = jsonencode(module.foo_vpc.public_route_table_association_ids)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_public_route_table_ids" {
+resource "aws_ssm_parameter" "foo_public_route_table_ids_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_public_route_table_ids"
   type           = "String"
@@ -618,7 +618,7 @@ resource "aws_ssm_parameter" "foo_public_route_table_ids" {
   insecure_value = jsonencode(module.foo_vpc.public_route_table_ids)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_public_subnet_arns" {
+resource "aws_ssm_parameter" "foo_public_subnet_arns_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_public_subnet_arns"
   type           = "String"
@@ -626,7 +626,7 @@ resource "aws_ssm_parameter" "foo_public_subnet_arns" {
   insecure_value = jsonencode(module.foo_vpc.public_subnet_arns)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_public_subnets" {
+resource "aws_ssm_parameter" "foo_public_subnets_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_public_subnets"
   type           = "String"
@@ -634,7 +634,7 @@ resource "aws_ssm_parameter" "foo_public_subnets" {
   insecure_value = jsonencode(module.foo_vpc.public_subnets)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_public_subnets_cidr_blocks" {
+resource "aws_ssm_parameter" "foo_public_subnets_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_public_subnets_cidr_blocks"
   type           = "String"
@@ -642,7 +642,7 @@ resource "aws_ssm_parameter" "foo_public_subnets_cidr_blocks" {
   insecure_value = jsonencode(module.foo_vpc.public_subnets_cidr_blocks)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_public_subnets_ipv6_cidr_blocks" {
+resource "aws_ssm_parameter" "foo_public_subnets_ipv6_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_public_subnets_ipv6_cidr_blocks"
   type           = "String"
@@ -650,7 +650,7 @@ resource "aws_ssm_parameter" "foo_public_subnets_ipv6_cidr_blocks" {
   insecure_value = jsonencode(module.foo_vpc.public_subnets_ipv6_cidr_blocks)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_redshift_network_acl_arn" {
+resource "aws_ssm_parameter" "foo_redshift_network_acl_arn_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_redshift_network_acl_arn"
   type           = "String"
@@ -658,7 +658,7 @@ resource "aws_ssm_parameter" "foo_redshift_network_acl_arn" {
   insecure_value = jsonencode(module.foo_vpc.redshift_network_acl_arn)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_redshift_network_acl_id" {
+resource "aws_ssm_parameter" "foo_redshift_network_acl_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_redshift_network_acl_id"
   type           = "String"
@@ -666,7 +666,7 @@ resource "aws_ssm_parameter" "foo_redshift_network_acl_id" {
   insecure_value = jsonencode(module.foo_vpc.redshift_network_acl_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_redshift_public_route_table_association_ids" {
+resource "aws_ssm_parameter" "foo_redshift_public_route_table_association_ids_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_redshift_public_route_table_association_ids"
   type           = "String"
@@ -674,7 +674,7 @@ resource "aws_ssm_parameter" "foo_redshift_public_route_table_association_ids" {
   insecure_value = jsonencode(module.foo_vpc.redshift_public_route_table_association_ids)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_redshift_route_table_association_ids" {
+resource "aws_ssm_parameter" "foo_redshift_route_table_association_ids_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_redshift_route_table_association_ids"
   type           = "String"
@@ -682,7 +682,7 @@ resource "aws_ssm_parameter" "foo_redshift_route_table_association_ids" {
   insecure_value = jsonencode(module.foo_vpc.redshift_route_table_association_ids)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_redshift_route_table_ids" {
+resource "aws_ssm_parameter" "foo_redshift_route_table_ids_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_redshift_route_table_ids"
   type           = "String"
@@ -690,7 +690,7 @@ resource "aws_ssm_parameter" "foo_redshift_route_table_ids" {
   insecure_value = jsonencode(module.foo_vpc.redshift_route_table_ids)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_redshift_subnet_arns" {
+resource "aws_ssm_parameter" "foo_redshift_subnet_arns_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_redshift_subnet_arns"
   type           = "String"
@@ -698,7 +698,7 @@ resource "aws_ssm_parameter" "foo_redshift_subnet_arns" {
   insecure_value = jsonencode(module.foo_vpc.redshift_subnet_arns)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_redshift_subnet_group" {
+resource "aws_ssm_parameter" "foo_redshift_subnet_group_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_redshift_subnet_group"
   type           = "String"
@@ -706,7 +706,7 @@ resource "aws_ssm_parameter" "foo_redshift_subnet_group" {
   insecure_value = jsonencode(module.foo_vpc.redshift_subnet_group)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_redshift_subnets" {
+resource "aws_ssm_parameter" "foo_redshift_subnets_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_redshift_subnets"
   type           = "String"
@@ -714,7 +714,7 @@ resource "aws_ssm_parameter" "foo_redshift_subnets" {
   insecure_value = jsonencode(module.foo_vpc.redshift_subnets)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_redshift_subnets_cidr_blocks" {
+resource "aws_ssm_parameter" "foo_redshift_subnets_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_redshift_subnets_cidr_blocks"
   type           = "String"
@@ -722,7 +722,7 @@ resource "aws_ssm_parameter" "foo_redshift_subnets_cidr_blocks" {
   insecure_value = jsonencode(module.foo_vpc.redshift_subnets_cidr_blocks)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_redshift_subnets_ipv6_cidr_blocks" {
+resource "aws_ssm_parameter" "foo_redshift_subnets_ipv6_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_redshift_subnets_ipv6_cidr_blocks"
   type           = "String"
@@ -730,7 +730,7 @@ resource "aws_ssm_parameter" "foo_redshift_subnets_ipv6_cidr_blocks" {
   insecure_value = jsonencode(module.foo_vpc.redshift_subnets_ipv6_cidr_blocks)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_this_customer_gateway" {
+resource "aws_ssm_parameter" "foo_this_customer_gateway_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_this_customer_gateway"
   type           = "String"
@@ -738,7 +738,7 @@ resource "aws_ssm_parameter" "foo_this_customer_gateway" {
   insecure_value = jsonencode(module.foo_vpc.this_customer_gateway)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_vgw_arn" {
+resource "aws_ssm_parameter" "foo_vgw_arn_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_vgw_arn"
   type           = "String"
@@ -746,7 +746,7 @@ resource "aws_ssm_parameter" "foo_vgw_arn" {
   insecure_value = jsonencode(module.foo_vpc.vgw_arn)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_vgw_id" {
+resource "aws_ssm_parameter" "foo_vgw_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_vgw_id"
   type           = "String"
@@ -754,7 +754,7 @@ resource "aws_ssm_parameter" "foo_vgw_id" {
   insecure_value = jsonencode(module.foo_vpc.vgw_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_vpc_arn" {
+resource "aws_ssm_parameter" "foo_vpc_arn_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_vpc_arn"
   type           = "String"
@@ -762,7 +762,7 @@ resource "aws_ssm_parameter" "foo_vpc_arn" {
   insecure_value = jsonencode(module.foo_vpc.vpc_arn)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_vpc_cidr_block" {
+resource "aws_ssm_parameter" "foo_vpc_cidr_block_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_vpc_cidr_block"
   type           = "String"
@@ -770,7 +770,7 @@ resource "aws_ssm_parameter" "foo_vpc_cidr_block" {
   insecure_value = jsonencode(module.foo_vpc.vpc_cidr_block)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_vpc_enable_dns_hostnames" {
+resource "aws_ssm_parameter" "foo_vpc_enable_dns_hostnames_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_vpc_enable_dns_hostnames"
   type           = "String"
@@ -778,7 +778,7 @@ resource "aws_ssm_parameter" "foo_vpc_enable_dns_hostnames" {
   insecure_value = jsonencode(module.foo_vpc.vpc_enable_dns_hostnames)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_vpc_enable_dns_support" {
+resource "aws_ssm_parameter" "foo_vpc_enable_dns_support_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_vpc_enable_dns_support"
   type           = "String"
@@ -786,7 +786,7 @@ resource "aws_ssm_parameter" "foo_vpc_enable_dns_support" {
   insecure_value = jsonencode(module.foo_vpc.vpc_enable_dns_support)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_vpc_flow_log_cloudwatch_iam_role_arn" {
+resource "aws_ssm_parameter" "foo_vpc_flow_log_cloudwatch_iam_role_arn_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_vpc_flow_log_cloudwatch_iam_role_arn"
   type           = "String"
@@ -794,7 +794,7 @@ resource "aws_ssm_parameter" "foo_vpc_flow_log_cloudwatch_iam_role_arn" {
   insecure_value = jsonencode(module.foo_vpc.vpc_flow_log_cloudwatch_iam_role_arn)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_vpc_flow_log_destination_arn" {
+resource "aws_ssm_parameter" "foo_vpc_flow_log_destination_arn_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_vpc_flow_log_destination_arn"
   type           = "String"
@@ -802,7 +802,7 @@ resource "aws_ssm_parameter" "foo_vpc_flow_log_destination_arn" {
   insecure_value = jsonencode(module.foo_vpc.vpc_flow_log_destination_arn)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_vpc_flow_log_destination_type" {
+resource "aws_ssm_parameter" "foo_vpc_flow_log_destination_type_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_vpc_flow_log_destination_type"
   type           = "String"
@@ -810,7 +810,7 @@ resource "aws_ssm_parameter" "foo_vpc_flow_log_destination_type" {
   insecure_value = jsonencode(module.foo_vpc.vpc_flow_log_destination_type)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_vpc_flow_log_id" {
+resource "aws_ssm_parameter" "foo_vpc_flow_log_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_vpc_flow_log_id"
   type           = "String"
@@ -818,7 +818,7 @@ resource "aws_ssm_parameter" "foo_vpc_flow_log_id" {
   insecure_value = jsonencode(module.foo_vpc.vpc_flow_log_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_vpc_id" {
+resource "aws_ssm_parameter" "foo_vpc_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_vpc_id"
   type           = "String"
@@ -826,7 +826,7 @@ resource "aws_ssm_parameter" "foo_vpc_id" {
   insecure_value = jsonencode(module.foo_vpc.vpc_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_vpc_instance_tenancy" {
+resource "aws_ssm_parameter" "foo_vpc_instance_tenancy_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_vpc_instance_tenancy"
   type           = "String"
@@ -834,7 +834,7 @@ resource "aws_ssm_parameter" "foo_vpc_instance_tenancy" {
   insecure_value = jsonencode(module.foo_vpc.vpc_instance_tenancy)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_vpc_ipv6_association_id" {
+resource "aws_ssm_parameter" "foo_vpc_ipv6_association_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_vpc_ipv6_association_id"
   type           = "String"
@@ -842,7 +842,7 @@ resource "aws_ssm_parameter" "foo_vpc_ipv6_association_id" {
   insecure_value = jsonencode(module.foo_vpc.vpc_ipv6_association_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_vpc_ipv6_cidr_block" {
+resource "aws_ssm_parameter" "foo_vpc_ipv6_cidr_block_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_vpc_ipv6_cidr_block"
   type           = "String"
@@ -850,7 +850,7 @@ resource "aws_ssm_parameter" "foo_vpc_ipv6_cidr_block" {
   insecure_value = jsonencode(module.foo_vpc.vpc_ipv6_cidr_block)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_vpc_main_route_table_id" {
+resource "aws_ssm_parameter" "foo_vpc_main_route_table_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_vpc_main_route_table_id"
   type           = "String"
@@ -858,7 +858,7 @@ resource "aws_ssm_parameter" "foo_vpc_main_route_table_id" {
   insecure_value = jsonencode(module.foo_vpc.vpc_main_route_table_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_vpc_owner_id" {
+resource "aws_ssm_parameter" "foo_vpc_owner_id_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_vpc_owner_id"
   type           = "String"
@@ -866,7 +866,7 @@ resource "aws_ssm_parameter" "foo_vpc_owner_id" {
   insecure_value = jsonencode(module.foo_vpc.vpc_owner_id)
   tags           = var.tags
 }
-resource "aws_ssm_parameter" "foo_vpc_secondary_cidr_blocks" {
+resource "aws_ssm_parameter" "foo_vpc_secondary_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
   name           = "/${var.env}/${var.component}/foo_vpc_secondary_cidr_blocks"
   type           = "String"
@@ -2867,7 +2867,63 @@ resource "aws_ssm_parameter" "map_integrate_selected_azs" {
   insecure_value = jsonencode(each.value)
   tags           = var.tags
 }
+resource "aws_ssm_parameter" "map_integrate_selected_azs_prd" {
+  provider = aws.prd
+  for_each = { for k, v in module.vpc_map_integrate_selected :
+    k => v.azs
+  }
+  name           = "/${var.env}/${var.component}/network/integrate_selected/azs/${each.key}"
+  type           = "String"
+  tier           = "Standard"
+  insecure_value = jsonencode(each.value)
+  tags           = var.tags
+}
+resource "aws_ssm_parameter" "map_integrate_selected_azs_stg" {
+  provider = aws.stg
+  for_each = { for k, v in module.vpc_map_integrate_selected :
+    k => v.azs
+  }
+  name           = "/${var.env}/${var.component}/network/integrate_selected/azs/${each.key}"
+  type           = "String"
+  tier           = "Standard"
+  insecure_value = jsonencode(each.value)
+  tags           = var.tags
+}
 resource "aws_ssm_parameter" "map_integrate_selected_database_subnets" {
+  for_each = { for output in flatten([
+    for module_key, module_outputs in module.vpc_map_integrate_selected : [
+      for output_key, output_value in module_outputs.database_subnets : {
+        module_key   = module_key
+        output_key   = output_key
+        output_value = output_value
+      }
+    ]
+  ]) : "${output.module_key}/${output.output_key}" => output }
+  name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/database/${each.key}"
+  type           = "String"
+  tier           = "Standard"
+  insecure_value = jsonencode(each.value.output_value)
+  tags           = var.tags
+}
+resource "aws_ssm_parameter" "map_integrate_selected_database_subnets_prd" {
+  provider = aws.prd
+  for_each = { for output in flatten([
+    for module_key, module_outputs in module.vpc_map_integrate_selected : [
+      for output_key, output_value in module_outputs.database_subnets : {
+        module_key   = module_key
+        output_key   = output_key
+        output_value = output_value
+      }
+    ]
+  ]) : "${output.module_key}/${output.output_key}" => output }
+  name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/database/${each.key}"
+  type           = "String"
+  tier           = "Standard"
+  insecure_value = jsonencode(each.value.output_value)
+  tags           = var.tags
+}
+resource "aws_ssm_parameter" "map_integrate_selected_database_subnets_stg" {
+  provider = aws.stg
   for_each = { for output in flatten([
     for module_key, module_outputs in module.vpc_map_integrate_selected : [
       for output_key, output_value in module_outputs.database_subnets : {
@@ -2899,6 +2955,40 @@ resource "aws_ssm_parameter" "map_integrate_selected_private_subnets" {
   insecure_value = jsonencode(each.value.output_value)
   tags           = var.tags
 }
+resource "aws_ssm_parameter" "map_integrate_selected_private_subnets_prd" {
+  provider = aws.prd
+  for_each = { for output in flatten([
+    for module_key, module_outputs in module.vpc_map_integrate_selected : [
+      for output_key, output_value in module_outputs.private_subnets : {
+        module_key   = module_key
+        output_key   = output_key
+        output_value = output_value
+      }
+    ]
+  ]) : "${output.module_key}/${output.output_key}" => output }
+  name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/private/${each.key}"
+  type           = "String"
+  tier           = "Standard"
+  insecure_value = jsonencode(each.value.output_value)
+  tags           = var.tags
+}
+resource "aws_ssm_parameter" "map_integrate_selected_private_subnets_stg" {
+  provider = aws.stg
+  for_each = { for output in flatten([
+    for module_key, module_outputs in module.vpc_map_integrate_selected : [
+      for output_key, output_value in module_outputs.private_subnets : {
+        module_key   = module_key
+        output_key   = output_key
+        output_value = output_value
+      }
+    ]
+  ]) : "${output.module_key}/${output.output_key}" => output }
+  name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/private/${each.key}"
+  type           = "String"
+  tier           = "Standard"
+  insecure_value = jsonencode(each.value.output_value)
+  tags           = var.tags
+}
 resource "aws_ssm_parameter" "map_integrate_selected_public_subnets" {
   for_each = { for output in flatten([
     for module_key, module_outputs in module.vpc_map_integrate_selected : [
@@ -2915,7 +3005,63 @@ resource "aws_ssm_parameter" "map_integrate_selected_public_subnets" {
   insecure_value = jsonencode(each.value.output_value)
   tags           = var.tags
 }
+resource "aws_ssm_parameter" "map_integrate_selected_public_subnets_prd" {
+  provider = aws.prd
+  for_each = { for output in flatten([
+    for module_key, module_outputs in module.vpc_map_integrate_selected : [
+      for output_key, output_value in module_outputs.public_subnets : {
+        module_key   = module_key
+        output_key   = output_key
+        output_value = output_value
+      }
+    ]
+  ]) : "${output.module_key}/${output.output_key}" => output }
+  name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/public/${each.key}"
+  type           = "String"
+  tier           = "Standard"
+  insecure_value = jsonencode(each.value.output_value)
+  tags           = var.tags
+}
+resource "aws_ssm_parameter" "map_integrate_selected_public_subnets_stg" {
+  provider = aws.stg
+  for_each = { for output in flatten([
+    for module_key, module_outputs in module.vpc_map_integrate_selected : [
+      for output_key, output_value in module_outputs.public_subnets : {
+        module_key   = module_key
+        output_key   = output_key
+        output_value = output_value
+      }
+    ]
+  ]) : "${output.module_key}/${output.output_key}" => output }
+  name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/public/${each.key}"
+  type           = "String"
+  tier           = "Standard"
+  insecure_value = jsonencode(each.value.output_value)
+  tags           = var.tags
+}
 resource "aws_ssm_parameter" "map_integrate_selected_vpc_id" {
+  for_each = { for k, v in module.vpc_map_integrate_selected :
+    k => v.vpc_id
+  }
+  name           = "/${var.env}/${var.component}/network/integrate_selected/vpc_id/${each.key}"
+  type           = "String"
+  tier           = "Standard"
+  insecure_value = each.value
+  tags           = var.tags
+}
+resource "aws_ssm_parameter" "map_integrate_selected_vpc_id_prd" {
+  provider = aws.prd
+  for_each = { for k, v in module.vpc_map_integrate_selected :
+    k => v.vpc_id
+  }
+  name           = "/${var.env}/${var.component}/network/integrate_selected/vpc_id/${each.key}"
+  type           = "String"
+  tier           = "Standard"
+  insecure_value = each.value
+  tags           = var.tags
+}
+resource "aws_ssm_parameter" "map_integrate_selected_vpc_id_stg" {
+  provider = aws.stg
   for_each = { for k, v in module.vpc_map_integrate_selected :
     k => v.vpc_id
   }

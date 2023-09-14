@@ -172,8 +172,8 @@ type ModuleIntegrationConfig struct {
 	DropComponent bool `yaml:"drop_component,omitempty"`
 	// Infix path for all outputs
 	PathInfix *string `yaml:"path_infix,omitempty"`
-	// Resource provider https://developer.hashicorp.com/terraform/language/meta-arguments/resource-provider
-	Provider *string `yaml:"provider,omitempty"`
+	// Resource providers to publish outputs via https://developer.hashicorp.com/terraform/language/meta-arguments/resource-provider
+	Providers []string `yaml:"providers,omitempty"`
 	// Map for outputs into Integration Registry
 	OutputsMap map[string]*IntegrationRegistryMap `yaml:"outputs_map,omitempty"`
 }
