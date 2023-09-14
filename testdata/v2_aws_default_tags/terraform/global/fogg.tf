@@ -10,6 +10,15 @@ provider "aws" {
 # Aliased Providers (for doing things in every region).
 
 
+provider "aws" {
+  alias   = "no_default_tags"
+  region  = "us-west-2"
+  profile = "profile"
+
+  allowed_account_ids = ["00456"]
+}
+
+
 provider "assert" {}
 terraform {
   required_version = "=0.100.0"

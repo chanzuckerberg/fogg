@@ -2,14 +2,15 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 module "vpc" {
+  for_each        = local.map
   source          = "terraform-aws-modules/vpc/aws"
   version         = "4.0.1"
-  azs             = local.azs
-  cidr            = local.cidr
-  name            = local.name
-  private_subnets = local.private_subnets
-  public_subnets  = local.public_subnets
-  tags            = local.tags
+  azs             = each.value.azs
+  cidr            = each.value.cidr
+  name            = each.value.name
+  private_subnets = each.value.private_subnets
+  public_subnets  = each.value.public_subnets
+  tags            = each.value.tags
 }
 
 module "my_module" {

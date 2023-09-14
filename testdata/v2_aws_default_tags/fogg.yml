@@ -24,6 +24,14 @@ defaults:
       default_tags:
         # backwards compatibility requires explicit opt-in
         enabled: true
+      additional_providers:
+        # workaround provider for default_tags bugs
+        no_default_tags:
+          default_tags:
+            enabled: false
+          ignore_tags:
+            enabled: false
+
   terraform_version: 0.100.0
 global:
   providers:
@@ -59,6 +67,9 @@ envs:
                 Project: null
         modules:
           - source: "terraform/modules/my_module"
+            providers:
+              aws: aws
+              aws.no_default_tags: aws.no_default_tags
   foo:
     providers:
       aws:

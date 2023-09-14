@@ -130,12 +130,14 @@ type Env struct {
 type Component struct {
 	Common `yaml:",inline"`
 
-	EKS          *EKSConfig        `yaml:"eks,omitempty"`
-	Kind         *ComponentKind    `yaml:"kind,omitempty"`
-	ModuleSource *string           `yaml:"module_source,omitempty"`
-	ModuleName   *string           `yaml:"module_name,omitempty"`
-	Variables    []string          `yaml:"variables,omitempty"`
-	Modules      []ComponentModule `yaml:"modules,omitempty"`
+	EKS           *EKSConfig        `yaml:"eks,omitempty"`
+	Kind          *ComponentKind    `yaml:"kind,omitempty"`
+	ModuleSource  *string           `yaml:"module_source,omitempty"`
+	ModuleName    *string           `yaml:"module_name,omitempty"`
+	ModuleForEach *string           `yaml:"module_for_each,omitempty"`
+	ProvidersMap  map[string]string `yaml:"module_providers,omitempty"`
+	Variables     []string          `yaml:"variables,omitempty"`
+	Modules       []ComponentModule `yaml:"modules,omitempty"`
 }
 
 type ComponentModule struct {
@@ -151,6 +153,10 @@ type ComponentModule struct {
 	Variables []string `yaml:"variables,omitempty"`
 	// Integration Registry config
 	Integration *ModuleIntegrationConfig `yaml:"integration,omitempty"`
+	// Optional mapping of providers https://developer.hashicorp.com/terraform/language/meta-arguments/module-providers
+	ProvidersMap map[string]string `yaml:"providers,omitempty"`
+	// For Each metadata argument https://developer.hashicorp.com/terraform/language/modules/syntax#meta-arguments
+	ForEach *string `yaml:"for_each,omitempty"`
 }
 
 type ModuleIntegrationConfig struct {
@@ -166,6 +172,8 @@ type ModuleIntegrationConfig struct {
 	DropComponent bool `yaml:"drop_component,omitempty"`
 	// Infix path for all outputs
 	PathInfix *string `yaml:"path_infix,omitempty"`
+	// Resource provider https://developer.hashicorp.com/terraform/language/meta-arguments/resource-provider
+	Provider *string `yaml:"provider,omitempty"`
 	// Map for outputs into Integration Registry
 	OutputsMap map[string]*IntegrationRegistryMap `yaml:"outputs_map,omitempty"`
 }

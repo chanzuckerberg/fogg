@@ -66,3 +66,39 @@ module "qux_vpc" {
   public_subnets  = local.qux_public_subnets
   tags            = local.qux_tags
 }
+
+module "vpc_map" {
+  for_each        = local.vpc_map
+  source          = "terraform-aws-modules/vpc/aws"
+  version         = "4.0.1"
+  azs             = each.value.azs
+  cidr            = each.value.cidr
+  name            = each.value.name
+  private_subnets = each.value.private_subnets
+  public_subnets  = each.value.public_subnets
+  tags            = each.value.tags
+}
+
+module "vpc_map_integrate_all" {
+  for_each        = local.vpc_map
+  source          = "terraform-aws-modules/vpc/aws"
+  version         = "4.0.1"
+  azs             = each.value.azs
+  cidr            = each.value.cidr
+  name            = each.value.name
+  private_subnets = each.value.private_subnets
+  public_subnets  = each.value.public_subnets
+  tags            = each.value.tags
+}
+
+module "vpc_map_integrate_selected" {
+  for_each        = local.vpc_map
+  source          = "terraform-aws-modules/vpc/aws"
+  version         = "4.0.1"
+  azs             = each.value.azs
+  cidr            = each.value.cidr
+  name            = each.value.name
+  private_subnets = each.value.private_subnets
+  public_subnets  = each.value.public_subnets
+  tags            = each.value.tags
+}

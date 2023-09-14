@@ -2623,3 +2623,1968 @@ output "qux_vpc_secondary_cidr_blocks" {
   value     = module.qux_vpc.vpc_secondary_cidr_blocks
   sensitive = false
 }
+// module "vpc_map" outputs
+output "map_azs" {
+  value = { for k, v in module.vpc_map :
+    k => v.azs
+  }
+  sensitive = false
+}
+output "map_cgw_arns" {
+  value = { for k, v in module.vpc_map :
+    k => v.cgw_arns
+  }
+  sensitive = false
+}
+output "map_cgw_ids" {
+  value = { for k, v in module.vpc_map :
+    k => v.cgw_ids
+  }
+  sensitive = false
+}
+output "map_database_internet_gateway_route_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.database_internet_gateway_route_id
+  }
+  sensitive = false
+}
+output "map_database_ipv6_egress_route_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.database_ipv6_egress_route_id
+  }
+  sensitive = false
+}
+output "map_database_nat_gateway_route_ids" {
+  value = { for k, v in module.vpc_map :
+    k => v.database_nat_gateway_route_ids
+  }
+  sensitive = false
+}
+output "map_database_network_acl_arn" {
+  value = { for k, v in module.vpc_map :
+    k => v.database_network_acl_arn
+  }
+  sensitive = false
+}
+output "map_database_network_acl_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.database_network_acl_id
+  }
+  sensitive = false
+}
+output "map_database_route_table_association_ids" {
+  value = { for k, v in module.vpc_map :
+    k => v.database_route_table_association_ids
+  }
+  sensitive = false
+}
+output "map_database_route_table_ids" {
+  value = { for k, v in module.vpc_map :
+    k => v.database_route_table_ids
+  }
+  sensitive = false
+}
+output "map_database_subnet_arns" {
+  value = { for k, v in module.vpc_map :
+    k => v.database_subnet_arns
+  }
+  sensitive = false
+}
+output "map_database_subnet_group" {
+  value = { for k, v in module.vpc_map :
+    k => v.database_subnet_group
+  }
+  sensitive = false
+}
+output "map_database_subnet_group_name" {
+  value = { for k, v in module.vpc_map :
+    k => v.database_subnet_group_name
+  }
+  sensitive = false
+}
+output "map_database_subnets" {
+  value = { for k, v in module.vpc_map :
+    k => v.database_subnets
+  }
+  sensitive = false
+}
+output "map_database_subnets_cidr_blocks" {
+  value = { for k, v in module.vpc_map :
+    k => v.database_subnets_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_database_subnets_ipv6_cidr_blocks" {
+  value = { for k, v in module.vpc_map :
+    k => v.database_subnets_ipv6_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_default_network_acl_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.default_network_acl_id
+  }
+  sensitive = false
+}
+output "map_default_route_table_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.default_route_table_id
+  }
+  sensitive = false
+}
+output "map_default_security_group_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.default_security_group_id
+  }
+  sensitive = false
+}
+output "map_default_vpc_arn" {
+  value = { for k, v in module.vpc_map :
+    k => v.default_vpc_arn
+  }
+  sensitive = false
+}
+output "map_default_vpc_cidr_block" {
+  value = { for k, v in module.vpc_map :
+    k => v.default_vpc_cidr_block
+  }
+  sensitive = false
+}
+output "map_default_vpc_default_network_acl_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.default_vpc_default_network_acl_id
+  }
+  sensitive = false
+}
+output "map_default_vpc_default_route_table_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.default_vpc_default_route_table_id
+  }
+  sensitive = false
+}
+output "map_default_vpc_default_security_group_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.default_vpc_default_security_group_id
+  }
+  sensitive = false
+}
+output "map_default_vpc_enable_dns_hostnames" {
+  value = { for k, v in module.vpc_map :
+    k => v.default_vpc_enable_dns_hostnames
+  }
+  sensitive = false
+}
+output "map_default_vpc_enable_dns_support" {
+  value = { for k, v in module.vpc_map :
+    k => v.default_vpc_enable_dns_support
+  }
+  sensitive = false
+}
+output "map_default_vpc_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.default_vpc_id
+  }
+  sensitive = false
+}
+output "map_default_vpc_instance_tenancy" {
+  value = { for k, v in module.vpc_map :
+    k => v.default_vpc_instance_tenancy
+  }
+  sensitive = false
+}
+output "map_default_vpc_main_route_table_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.default_vpc_main_route_table_id
+  }
+  sensitive = false
+}
+output "map_dhcp_options_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.dhcp_options_id
+  }
+  sensitive = false
+}
+output "map_egress_only_internet_gateway_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.egress_only_internet_gateway_id
+  }
+  sensitive = false
+}
+output "map_elasticache_network_acl_arn" {
+  value = { for k, v in module.vpc_map :
+    k => v.elasticache_network_acl_arn
+  }
+  sensitive = false
+}
+output "map_elasticache_network_acl_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.elasticache_network_acl_id
+  }
+  sensitive = false
+}
+output "map_elasticache_route_table_association_ids" {
+  value = { for k, v in module.vpc_map :
+    k => v.elasticache_route_table_association_ids
+  }
+  sensitive = false
+}
+output "map_elasticache_route_table_ids" {
+  value = { for k, v in module.vpc_map :
+    k => v.elasticache_route_table_ids
+  }
+  sensitive = false
+}
+output "map_elasticache_subnet_arns" {
+  value = { for k, v in module.vpc_map :
+    k => v.elasticache_subnet_arns
+  }
+  sensitive = false
+}
+output "map_elasticache_subnet_group" {
+  value = { for k, v in module.vpc_map :
+    k => v.elasticache_subnet_group
+  }
+  sensitive = false
+}
+output "map_elasticache_subnet_group_name" {
+  value = { for k, v in module.vpc_map :
+    k => v.elasticache_subnet_group_name
+  }
+  sensitive = false
+}
+output "map_elasticache_subnets" {
+  value = { for k, v in module.vpc_map :
+    k => v.elasticache_subnets
+  }
+  sensitive = false
+}
+output "map_elasticache_subnets_cidr_blocks" {
+  value = { for k, v in module.vpc_map :
+    k => v.elasticache_subnets_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_elasticache_subnets_ipv6_cidr_blocks" {
+  value = { for k, v in module.vpc_map :
+    k => v.elasticache_subnets_ipv6_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_igw_arn" {
+  value = { for k, v in module.vpc_map :
+    k => v.igw_arn
+  }
+  sensitive = false
+}
+output "map_igw_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.igw_id
+  }
+  sensitive = false
+}
+output "map_intra_network_acl_arn" {
+  value = { for k, v in module.vpc_map :
+    k => v.intra_network_acl_arn
+  }
+  sensitive = false
+}
+output "map_intra_network_acl_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.intra_network_acl_id
+  }
+  sensitive = false
+}
+output "map_intra_route_table_association_ids" {
+  value = { for k, v in module.vpc_map :
+    k => v.intra_route_table_association_ids
+  }
+  sensitive = false
+}
+output "map_intra_route_table_ids" {
+  value = { for k, v in module.vpc_map :
+    k => v.intra_route_table_ids
+  }
+  sensitive = false
+}
+output "map_intra_subnet_arns" {
+  value = { for k, v in module.vpc_map :
+    k => v.intra_subnet_arns
+  }
+  sensitive = false
+}
+output "map_intra_subnets" {
+  value = { for k, v in module.vpc_map :
+    k => v.intra_subnets
+  }
+  sensitive = false
+}
+output "map_intra_subnets_cidr_blocks" {
+  value = { for k, v in module.vpc_map :
+    k => v.intra_subnets_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_intra_subnets_ipv6_cidr_blocks" {
+  value = { for k, v in module.vpc_map :
+    k => v.intra_subnets_ipv6_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_name" {
+  value = { for k, v in module.vpc_map :
+    k => v.name
+  }
+  sensitive = false
+}
+output "map_nat_ids" {
+  value = { for k, v in module.vpc_map :
+    k => v.nat_ids
+  }
+  sensitive = false
+}
+output "map_nat_public_ips" {
+  value = { for k, v in module.vpc_map :
+    k => v.nat_public_ips
+  }
+  sensitive = false
+}
+output "map_natgw_ids" {
+  value = { for k, v in module.vpc_map :
+    k => v.natgw_ids
+  }
+  sensitive = false
+}
+output "map_outpost_network_acl_arn" {
+  value = { for k, v in module.vpc_map :
+    k => v.outpost_network_acl_arn
+  }
+  sensitive = false
+}
+output "map_outpost_network_acl_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.outpost_network_acl_id
+  }
+  sensitive = false
+}
+output "map_outpost_subnet_arns" {
+  value = { for k, v in module.vpc_map :
+    k => v.outpost_subnet_arns
+  }
+  sensitive = false
+}
+output "map_outpost_subnets" {
+  value = { for k, v in module.vpc_map :
+    k => v.outpost_subnets
+  }
+  sensitive = false
+}
+output "map_outpost_subnets_cidr_blocks" {
+  value = { for k, v in module.vpc_map :
+    k => v.outpost_subnets_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_outpost_subnets_ipv6_cidr_blocks" {
+  value = { for k, v in module.vpc_map :
+    k => v.outpost_subnets_ipv6_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_private_ipv6_egress_route_ids" {
+  value = { for k, v in module.vpc_map :
+    k => v.private_ipv6_egress_route_ids
+  }
+  sensitive = false
+}
+output "map_private_nat_gateway_route_ids" {
+  value = { for k, v in module.vpc_map :
+    k => v.private_nat_gateway_route_ids
+  }
+  sensitive = false
+}
+output "map_private_network_acl_arn" {
+  value = { for k, v in module.vpc_map :
+    k => v.private_network_acl_arn
+  }
+  sensitive = false
+}
+output "map_private_network_acl_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.private_network_acl_id
+  }
+  sensitive = false
+}
+output "map_private_route_table_association_ids" {
+  value = { for k, v in module.vpc_map :
+    k => v.private_route_table_association_ids
+  }
+  sensitive = false
+}
+output "map_private_route_table_ids" {
+  value = { for k, v in module.vpc_map :
+    k => v.private_route_table_ids
+  }
+  sensitive = false
+}
+output "map_private_subnet_arns" {
+  value = { for k, v in module.vpc_map :
+    k => v.private_subnet_arns
+  }
+  sensitive = false
+}
+output "map_private_subnets" {
+  value = { for k, v in module.vpc_map :
+    k => v.private_subnets
+  }
+  sensitive = false
+}
+output "map_private_subnets_cidr_blocks" {
+  value = { for k, v in module.vpc_map :
+    k => v.private_subnets_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_private_subnets_ipv6_cidr_blocks" {
+  value = { for k, v in module.vpc_map :
+    k => v.private_subnets_ipv6_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_public_internet_gateway_ipv6_route_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.public_internet_gateway_ipv6_route_id
+  }
+  sensitive = false
+}
+output "map_public_internet_gateway_route_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.public_internet_gateway_route_id
+  }
+  sensitive = false
+}
+output "map_public_network_acl_arn" {
+  value = { for k, v in module.vpc_map :
+    k => v.public_network_acl_arn
+  }
+  sensitive = false
+}
+output "map_public_network_acl_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.public_network_acl_id
+  }
+  sensitive = false
+}
+output "map_public_route_table_association_ids" {
+  value = { for k, v in module.vpc_map :
+    k => v.public_route_table_association_ids
+  }
+  sensitive = false
+}
+output "map_public_route_table_ids" {
+  value = { for k, v in module.vpc_map :
+    k => v.public_route_table_ids
+  }
+  sensitive = false
+}
+output "map_public_subnet_arns" {
+  value = { for k, v in module.vpc_map :
+    k => v.public_subnet_arns
+  }
+  sensitive = false
+}
+output "map_public_subnets" {
+  value = { for k, v in module.vpc_map :
+    k => v.public_subnets
+  }
+  sensitive = false
+}
+output "map_public_subnets_cidr_blocks" {
+  value = { for k, v in module.vpc_map :
+    k => v.public_subnets_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_public_subnets_ipv6_cidr_blocks" {
+  value = { for k, v in module.vpc_map :
+    k => v.public_subnets_ipv6_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_redshift_network_acl_arn" {
+  value = { for k, v in module.vpc_map :
+    k => v.redshift_network_acl_arn
+  }
+  sensitive = false
+}
+output "map_redshift_network_acl_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.redshift_network_acl_id
+  }
+  sensitive = false
+}
+output "map_redshift_public_route_table_association_ids" {
+  value = { for k, v in module.vpc_map :
+    k => v.redshift_public_route_table_association_ids
+  }
+  sensitive = false
+}
+output "map_redshift_route_table_association_ids" {
+  value = { for k, v in module.vpc_map :
+    k => v.redshift_route_table_association_ids
+  }
+  sensitive = false
+}
+output "map_redshift_route_table_ids" {
+  value = { for k, v in module.vpc_map :
+    k => v.redshift_route_table_ids
+  }
+  sensitive = false
+}
+output "map_redshift_subnet_arns" {
+  value = { for k, v in module.vpc_map :
+    k => v.redshift_subnet_arns
+  }
+  sensitive = false
+}
+output "map_redshift_subnet_group" {
+  value = { for k, v in module.vpc_map :
+    k => v.redshift_subnet_group
+  }
+  sensitive = false
+}
+output "map_redshift_subnets" {
+  value = { for k, v in module.vpc_map :
+    k => v.redshift_subnets
+  }
+  sensitive = false
+}
+output "map_redshift_subnets_cidr_blocks" {
+  value = { for k, v in module.vpc_map :
+    k => v.redshift_subnets_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_redshift_subnets_ipv6_cidr_blocks" {
+  value = { for k, v in module.vpc_map :
+    k => v.redshift_subnets_ipv6_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_this_customer_gateway" {
+  value = { for k, v in module.vpc_map :
+    k => v.this_customer_gateway
+  }
+  sensitive = false
+}
+output "map_vgw_arn" {
+  value = { for k, v in module.vpc_map :
+    k => v.vgw_arn
+  }
+  sensitive = false
+}
+output "map_vgw_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.vgw_id
+  }
+  sensitive = false
+}
+output "map_vpc_arn" {
+  value = { for k, v in module.vpc_map :
+    k => v.vpc_arn
+  }
+  sensitive = false
+}
+output "map_vpc_cidr_block" {
+  value = { for k, v in module.vpc_map :
+    k => v.vpc_cidr_block
+  }
+  sensitive = false
+}
+output "map_vpc_enable_dns_hostnames" {
+  value = { for k, v in module.vpc_map :
+    k => v.vpc_enable_dns_hostnames
+  }
+  sensitive = false
+}
+output "map_vpc_enable_dns_support" {
+  value = { for k, v in module.vpc_map :
+    k => v.vpc_enable_dns_support
+  }
+  sensitive = false
+}
+output "map_vpc_flow_log_cloudwatch_iam_role_arn" {
+  value = { for k, v in module.vpc_map :
+    k => v.vpc_flow_log_cloudwatch_iam_role_arn
+  }
+  sensitive = false
+}
+output "map_vpc_flow_log_destination_arn" {
+  value = { for k, v in module.vpc_map :
+    k => v.vpc_flow_log_destination_arn
+  }
+  sensitive = false
+}
+output "map_vpc_flow_log_destination_type" {
+  value = { for k, v in module.vpc_map :
+    k => v.vpc_flow_log_destination_type
+  }
+  sensitive = false
+}
+output "map_vpc_flow_log_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.vpc_flow_log_id
+  }
+  sensitive = false
+}
+output "map_vpc_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.vpc_id
+  }
+  sensitive = false
+}
+output "map_vpc_instance_tenancy" {
+  value = { for k, v in module.vpc_map :
+    k => v.vpc_instance_tenancy
+  }
+  sensitive = false
+}
+output "map_vpc_ipv6_association_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.vpc_ipv6_association_id
+  }
+  sensitive = false
+}
+output "map_vpc_ipv6_cidr_block" {
+  value = { for k, v in module.vpc_map :
+    k => v.vpc_ipv6_cidr_block
+  }
+  sensitive = false
+}
+output "map_vpc_main_route_table_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.vpc_main_route_table_id
+  }
+  sensitive = false
+}
+output "map_vpc_owner_id" {
+  value = { for k, v in module.vpc_map :
+    k => v.vpc_owner_id
+  }
+  sensitive = false
+}
+output "map_vpc_secondary_cidr_blocks" {
+  value = { for k, v in module.vpc_map :
+    k => v.vpc_secondary_cidr_blocks
+  }
+  sensitive = false
+}
+// module "vpc_map_integrate_all" outputs
+output "map_integrate_all_azs" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.azs
+  }
+  sensitive = false
+}
+output "map_integrate_all_cgw_arns" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.cgw_arns
+  }
+  sensitive = false
+}
+output "map_integrate_all_cgw_ids" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.cgw_ids
+  }
+  sensitive = false
+}
+output "map_integrate_all_database_internet_gateway_route_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.database_internet_gateway_route_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_database_ipv6_egress_route_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.database_ipv6_egress_route_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_database_nat_gateway_route_ids" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.database_nat_gateway_route_ids
+  }
+  sensitive = false
+}
+output "map_integrate_all_database_network_acl_arn" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.database_network_acl_arn
+  }
+  sensitive = false
+}
+output "map_integrate_all_database_network_acl_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.database_network_acl_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_database_route_table_association_ids" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.database_route_table_association_ids
+  }
+  sensitive = false
+}
+output "map_integrate_all_database_route_table_ids" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.database_route_table_ids
+  }
+  sensitive = false
+}
+output "map_integrate_all_database_subnet_arns" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.database_subnet_arns
+  }
+  sensitive = false
+}
+output "map_integrate_all_database_subnet_group" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.database_subnet_group
+  }
+  sensitive = false
+}
+output "map_integrate_all_database_subnet_group_name" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.database_subnet_group_name
+  }
+  sensitive = false
+}
+output "map_integrate_all_database_subnets" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.database_subnets
+  }
+  sensitive = false
+}
+output "map_integrate_all_database_subnets_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.database_subnets_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_all_database_subnets_ipv6_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.database_subnets_ipv6_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_all_default_network_acl_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.default_network_acl_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_default_route_table_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.default_route_table_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_default_security_group_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.default_security_group_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_default_vpc_arn" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.default_vpc_arn
+  }
+  sensitive = false
+}
+output "map_integrate_all_default_vpc_cidr_block" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.default_vpc_cidr_block
+  }
+  sensitive = false
+}
+output "map_integrate_all_default_vpc_default_network_acl_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.default_vpc_default_network_acl_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_default_vpc_default_route_table_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.default_vpc_default_route_table_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_default_vpc_default_security_group_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.default_vpc_default_security_group_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_default_vpc_enable_dns_hostnames" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.default_vpc_enable_dns_hostnames
+  }
+  sensitive = false
+}
+output "map_integrate_all_default_vpc_enable_dns_support" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.default_vpc_enable_dns_support
+  }
+  sensitive = false
+}
+output "map_integrate_all_default_vpc_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.default_vpc_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_default_vpc_instance_tenancy" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.default_vpc_instance_tenancy
+  }
+  sensitive = false
+}
+output "map_integrate_all_default_vpc_main_route_table_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.default_vpc_main_route_table_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_dhcp_options_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.dhcp_options_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_egress_only_internet_gateway_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.egress_only_internet_gateway_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_elasticache_network_acl_arn" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.elasticache_network_acl_arn
+  }
+  sensitive = false
+}
+output "map_integrate_all_elasticache_network_acl_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.elasticache_network_acl_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_elasticache_route_table_association_ids" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.elasticache_route_table_association_ids
+  }
+  sensitive = false
+}
+output "map_integrate_all_elasticache_route_table_ids" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.elasticache_route_table_ids
+  }
+  sensitive = false
+}
+output "map_integrate_all_elasticache_subnet_arns" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.elasticache_subnet_arns
+  }
+  sensitive = false
+}
+output "map_integrate_all_elasticache_subnet_group" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.elasticache_subnet_group
+  }
+  sensitive = false
+}
+output "map_integrate_all_elasticache_subnet_group_name" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.elasticache_subnet_group_name
+  }
+  sensitive = false
+}
+output "map_integrate_all_elasticache_subnets" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.elasticache_subnets
+  }
+  sensitive = false
+}
+output "map_integrate_all_elasticache_subnets_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.elasticache_subnets_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_all_elasticache_subnets_ipv6_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.elasticache_subnets_ipv6_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_all_igw_arn" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.igw_arn
+  }
+  sensitive = false
+}
+output "map_integrate_all_igw_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.igw_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_intra_network_acl_arn" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.intra_network_acl_arn
+  }
+  sensitive = false
+}
+output "map_integrate_all_intra_network_acl_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.intra_network_acl_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_intra_route_table_association_ids" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.intra_route_table_association_ids
+  }
+  sensitive = false
+}
+output "map_integrate_all_intra_route_table_ids" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.intra_route_table_ids
+  }
+  sensitive = false
+}
+output "map_integrate_all_intra_subnet_arns" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.intra_subnet_arns
+  }
+  sensitive = false
+}
+output "map_integrate_all_intra_subnets" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.intra_subnets
+  }
+  sensitive = false
+}
+output "map_integrate_all_intra_subnets_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.intra_subnets_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_all_intra_subnets_ipv6_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.intra_subnets_ipv6_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_all_name" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.name
+  }
+  sensitive = false
+}
+output "map_integrate_all_nat_ids" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.nat_ids
+  }
+  sensitive = false
+}
+output "map_integrate_all_nat_public_ips" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.nat_public_ips
+  }
+  sensitive = false
+}
+output "map_integrate_all_natgw_ids" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.natgw_ids
+  }
+  sensitive = false
+}
+output "map_integrate_all_outpost_network_acl_arn" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.outpost_network_acl_arn
+  }
+  sensitive = false
+}
+output "map_integrate_all_outpost_network_acl_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.outpost_network_acl_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_outpost_subnet_arns" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.outpost_subnet_arns
+  }
+  sensitive = false
+}
+output "map_integrate_all_outpost_subnets" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.outpost_subnets
+  }
+  sensitive = false
+}
+output "map_integrate_all_outpost_subnets_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.outpost_subnets_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_all_outpost_subnets_ipv6_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.outpost_subnets_ipv6_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_all_private_ipv6_egress_route_ids" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.private_ipv6_egress_route_ids
+  }
+  sensitive = false
+}
+output "map_integrate_all_private_nat_gateway_route_ids" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.private_nat_gateway_route_ids
+  }
+  sensitive = false
+}
+output "map_integrate_all_private_network_acl_arn" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.private_network_acl_arn
+  }
+  sensitive = false
+}
+output "map_integrate_all_private_network_acl_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.private_network_acl_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_private_route_table_association_ids" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.private_route_table_association_ids
+  }
+  sensitive = false
+}
+output "map_integrate_all_private_route_table_ids" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.private_route_table_ids
+  }
+  sensitive = false
+}
+output "map_integrate_all_private_subnet_arns" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.private_subnet_arns
+  }
+  sensitive = false
+}
+output "map_integrate_all_private_subnets" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.private_subnets
+  }
+  sensitive = false
+}
+output "map_integrate_all_private_subnets_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.private_subnets_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_all_private_subnets_ipv6_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.private_subnets_ipv6_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_all_public_internet_gateway_ipv6_route_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.public_internet_gateway_ipv6_route_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_public_internet_gateway_route_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.public_internet_gateway_route_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_public_network_acl_arn" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.public_network_acl_arn
+  }
+  sensitive = false
+}
+output "map_integrate_all_public_network_acl_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.public_network_acl_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_public_route_table_association_ids" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.public_route_table_association_ids
+  }
+  sensitive = false
+}
+output "map_integrate_all_public_route_table_ids" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.public_route_table_ids
+  }
+  sensitive = false
+}
+output "map_integrate_all_public_subnet_arns" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.public_subnet_arns
+  }
+  sensitive = false
+}
+output "map_integrate_all_public_subnets" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.public_subnets
+  }
+  sensitive = false
+}
+output "map_integrate_all_public_subnets_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.public_subnets_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_all_public_subnets_ipv6_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.public_subnets_ipv6_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_all_redshift_network_acl_arn" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.redshift_network_acl_arn
+  }
+  sensitive = false
+}
+output "map_integrate_all_redshift_network_acl_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.redshift_network_acl_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_redshift_public_route_table_association_ids" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.redshift_public_route_table_association_ids
+  }
+  sensitive = false
+}
+output "map_integrate_all_redshift_route_table_association_ids" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.redshift_route_table_association_ids
+  }
+  sensitive = false
+}
+output "map_integrate_all_redshift_route_table_ids" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.redshift_route_table_ids
+  }
+  sensitive = false
+}
+output "map_integrate_all_redshift_subnet_arns" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.redshift_subnet_arns
+  }
+  sensitive = false
+}
+output "map_integrate_all_redshift_subnet_group" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.redshift_subnet_group
+  }
+  sensitive = false
+}
+output "map_integrate_all_redshift_subnets" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.redshift_subnets
+  }
+  sensitive = false
+}
+output "map_integrate_all_redshift_subnets_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.redshift_subnets_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_all_redshift_subnets_ipv6_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.redshift_subnets_ipv6_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_all_this_customer_gateway" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.this_customer_gateway
+  }
+  sensitive = false
+}
+output "map_integrate_all_vgw_arn" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.vgw_arn
+  }
+  sensitive = false
+}
+output "map_integrate_all_vgw_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.vgw_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_vpc_arn" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.vpc_arn
+  }
+  sensitive = false
+}
+output "map_integrate_all_vpc_cidr_block" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.vpc_cidr_block
+  }
+  sensitive = false
+}
+output "map_integrate_all_vpc_enable_dns_hostnames" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.vpc_enable_dns_hostnames
+  }
+  sensitive = false
+}
+output "map_integrate_all_vpc_enable_dns_support" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.vpc_enable_dns_support
+  }
+  sensitive = false
+}
+output "map_integrate_all_vpc_flow_log_cloudwatch_iam_role_arn" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.vpc_flow_log_cloudwatch_iam_role_arn
+  }
+  sensitive = false
+}
+output "map_integrate_all_vpc_flow_log_destination_arn" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.vpc_flow_log_destination_arn
+  }
+  sensitive = false
+}
+output "map_integrate_all_vpc_flow_log_destination_type" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.vpc_flow_log_destination_type
+  }
+  sensitive = false
+}
+output "map_integrate_all_vpc_flow_log_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.vpc_flow_log_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_vpc_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.vpc_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_vpc_instance_tenancy" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.vpc_instance_tenancy
+  }
+  sensitive = false
+}
+output "map_integrate_all_vpc_ipv6_association_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.vpc_ipv6_association_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_vpc_ipv6_cidr_block" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.vpc_ipv6_cidr_block
+  }
+  sensitive = false
+}
+output "map_integrate_all_vpc_main_route_table_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.vpc_main_route_table_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_vpc_owner_id" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.vpc_owner_id
+  }
+  sensitive = false
+}
+output "map_integrate_all_vpc_secondary_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_all :
+    k => v.vpc_secondary_cidr_blocks
+  }
+  sensitive = false
+}
+// module "vpc_map_integrate_selected" outputs
+output "map_integrate_selected_azs" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.azs
+  }
+  sensitive = false
+}
+output "map_integrate_selected_cgw_arns" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.cgw_arns
+  }
+  sensitive = false
+}
+output "map_integrate_selected_cgw_ids" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.cgw_ids
+  }
+  sensitive = false
+}
+output "map_integrate_selected_database_internet_gateway_route_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.database_internet_gateway_route_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_database_ipv6_egress_route_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.database_ipv6_egress_route_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_database_nat_gateway_route_ids" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.database_nat_gateway_route_ids
+  }
+  sensitive = false
+}
+output "map_integrate_selected_database_network_acl_arn" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.database_network_acl_arn
+  }
+  sensitive = false
+}
+output "map_integrate_selected_database_network_acl_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.database_network_acl_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_database_route_table_association_ids" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.database_route_table_association_ids
+  }
+  sensitive = false
+}
+output "map_integrate_selected_database_route_table_ids" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.database_route_table_ids
+  }
+  sensitive = false
+}
+output "map_integrate_selected_database_subnet_arns" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.database_subnet_arns
+  }
+  sensitive = false
+}
+output "map_integrate_selected_database_subnet_group" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.database_subnet_group
+  }
+  sensitive = false
+}
+output "map_integrate_selected_database_subnet_group_name" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.database_subnet_group_name
+  }
+  sensitive = false
+}
+output "map_integrate_selected_database_subnets" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.database_subnets
+  }
+  sensitive = false
+}
+output "map_integrate_selected_database_subnets_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.database_subnets_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_selected_database_subnets_ipv6_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.database_subnets_ipv6_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_selected_default_network_acl_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.default_network_acl_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_default_route_table_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.default_route_table_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_default_security_group_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.default_security_group_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_default_vpc_arn" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.default_vpc_arn
+  }
+  sensitive = false
+}
+output "map_integrate_selected_default_vpc_cidr_block" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.default_vpc_cidr_block
+  }
+  sensitive = false
+}
+output "map_integrate_selected_default_vpc_default_network_acl_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.default_vpc_default_network_acl_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_default_vpc_default_route_table_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.default_vpc_default_route_table_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_default_vpc_default_security_group_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.default_vpc_default_security_group_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_default_vpc_enable_dns_hostnames" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.default_vpc_enable_dns_hostnames
+  }
+  sensitive = false
+}
+output "map_integrate_selected_default_vpc_enable_dns_support" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.default_vpc_enable_dns_support
+  }
+  sensitive = false
+}
+output "map_integrate_selected_default_vpc_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.default_vpc_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_default_vpc_instance_tenancy" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.default_vpc_instance_tenancy
+  }
+  sensitive = false
+}
+output "map_integrate_selected_default_vpc_main_route_table_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.default_vpc_main_route_table_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_dhcp_options_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.dhcp_options_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_egress_only_internet_gateway_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.egress_only_internet_gateway_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_elasticache_network_acl_arn" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.elasticache_network_acl_arn
+  }
+  sensitive = false
+}
+output "map_integrate_selected_elasticache_network_acl_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.elasticache_network_acl_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_elasticache_route_table_association_ids" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.elasticache_route_table_association_ids
+  }
+  sensitive = false
+}
+output "map_integrate_selected_elasticache_route_table_ids" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.elasticache_route_table_ids
+  }
+  sensitive = false
+}
+output "map_integrate_selected_elasticache_subnet_arns" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.elasticache_subnet_arns
+  }
+  sensitive = false
+}
+output "map_integrate_selected_elasticache_subnet_group" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.elasticache_subnet_group
+  }
+  sensitive = false
+}
+output "map_integrate_selected_elasticache_subnet_group_name" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.elasticache_subnet_group_name
+  }
+  sensitive = false
+}
+output "map_integrate_selected_elasticache_subnets" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.elasticache_subnets
+  }
+  sensitive = false
+}
+output "map_integrate_selected_elasticache_subnets_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.elasticache_subnets_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_selected_elasticache_subnets_ipv6_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.elasticache_subnets_ipv6_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_selected_igw_arn" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.igw_arn
+  }
+  sensitive = false
+}
+output "map_integrate_selected_igw_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.igw_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_intra_network_acl_arn" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.intra_network_acl_arn
+  }
+  sensitive = false
+}
+output "map_integrate_selected_intra_network_acl_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.intra_network_acl_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_intra_route_table_association_ids" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.intra_route_table_association_ids
+  }
+  sensitive = false
+}
+output "map_integrate_selected_intra_route_table_ids" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.intra_route_table_ids
+  }
+  sensitive = false
+}
+output "map_integrate_selected_intra_subnet_arns" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.intra_subnet_arns
+  }
+  sensitive = false
+}
+output "map_integrate_selected_intra_subnets" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.intra_subnets
+  }
+  sensitive = false
+}
+output "map_integrate_selected_intra_subnets_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.intra_subnets_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_selected_intra_subnets_ipv6_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.intra_subnets_ipv6_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_selected_name" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.name
+  }
+  sensitive = false
+}
+output "map_integrate_selected_nat_ids" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.nat_ids
+  }
+  sensitive = false
+}
+output "map_integrate_selected_nat_public_ips" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.nat_public_ips
+  }
+  sensitive = false
+}
+output "map_integrate_selected_natgw_ids" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.natgw_ids
+  }
+  sensitive = false
+}
+output "map_integrate_selected_outpost_network_acl_arn" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.outpost_network_acl_arn
+  }
+  sensitive = false
+}
+output "map_integrate_selected_outpost_network_acl_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.outpost_network_acl_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_outpost_subnet_arns" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.outpost_subnet_arns
+  }
+  sensitive = false
+}
+output "map_integrate_selected_outpost_subnets" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.outpost_subnets
+  }
+  sensitive = false
+}
+output "map_integrate_selected_outpost_subnets_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.outpost_subnets_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_selected_outpost_subnets_ipv6_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.outpost_subnets_ipv6_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_selected_private_ipv6_egress_route_ids" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.private_ipv6_egress_route_ids
+  }
+  sensitive = false
+}
+output "map_integrate_selected_private_nat_gateway_route_ids" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.private_nat_gateway_route_ids
+  }
+  sensitive = false
+}
+output "map_integrate_selected_private_network_acl_arn" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.private_network_acl_arn
+  }
+  sensitive = false
+}
+output "map_integrate_selected_private_network_acl_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.private_network_acl_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_private_route_table_association_ids" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.private_route_table_association_ids
+  }
+  sensitive = false
+}
+output "map_integrate_selected_private_route_table_ids" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.private_route_table_ids
+  }
+  sensitive = false
+}
+output "map_integrate_selected_private_subnet_arns" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.private_subnet_arns
+  }
+  sensitive = false
+}
+output "map_integrate_selected_private_subnets" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.private_subnets
+  }
+  sensitive = false
+}
+output "map_integrate_selected_private_subnets_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.private_subnets_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_selected_private_subnets_ipv6_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.private_subnets_ipv6_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_selected_public_internet_gateway_ipv6_route_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.public_internet_gateway_ipv6_route_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_public_internet_gateway_route_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.public_internet_gateway_route_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_public_network_acl_arn" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.public_network_acl_arn
+  }
+  sensitive = false
+}
+output "map_integrate_selected_public_network_acl_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.public_network_acl_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_public_route_table_association_ids" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.public_route_table_association_ids
+  }
+  sensitive = false
+}
+output "map_integrate_selected_public_route_table_ids" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.public_route_table_ids
+  }
+  sensitive = false
+}
+output "map_integrate_selected_public_subnet_arns" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.public_subnet_arns
+  }
+  sensitive = false
+}
+output "map_integrate_selected_public_subnets" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.public_subnets
+  }
+  sensitive = false
+}
+output "map_integrate_selected_public_subnets_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.public_subnets_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_selected_public_subnets_ipv6_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.public_subnets_ipv6_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_selected_redshift_network_acl_arn" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.redshift_network_acl_arn
+  }
+  sensitive = false
+}
+output "map_integrate_selected_redshift_network_acl_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.redshift_network_acl_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_redshift_public_route_table_association_ids" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.redshift_public_route_table_association_ids
+  }
+  sensitive = false
+}
+output "map_integrate_selected_redshift_route_table_association_ids" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.redshift_route_table_association_ids
+  }
+  sensitive = false
+}
+output "map_integrate_selected_redshift_route_table_ids" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.redshift_route_table_ids
+  }
+  sensitive = false
+}
+output "map_integrate_selected_redshift_subnet_arns" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.redshift_subnet_arns
+  }
+  sensitive = false
+}
+output "map_integrate_selected_redshift_subnet_group" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.redshift_subnet_group
+  }
+  sensitive = false
+}
+output "map_integrate_selected_redshift_subnets" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.redshift_subnets
+  }
+  sensitive = false
+}
+output "map_integrate_selected_redshift_subnets_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.redshift_subnets_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_selected_redshift_subnets_ipv6_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.redshift_subnets_ipv6_cidr_blocks
+  }
+  sensitive = false
+}
+output "map_integrate_selected_this_customer_gateway" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.this_customer_gateway
+  }
+  sensitive = false
+}
+output "map_integrate_selected_vgw_arn" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.vgw_arn
+  }
+  sensitive = false
+}
+output "map_integrate_selected_vgw_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.vgw_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_vpc_arn" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.vpc_arn
+  }
+  sensitive = false
+}
+output "map_integrate_selected_vpc_cidr_block" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.vpc_cidr_block
+  }
+  sensitive = false
+}
+output "map_integrate_selected_vpc_enable_dns_hostnames" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.vpc_enable_dns_hostnames
+  }
+  sensitive = false
+}
+output "map_integrate_selected_vpc_enable_dns_support" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.vpc_enable_dns_support
+  }
+  sensitive = false
+}
+output "map_integrate_selected_vpc_flow_log_cloudwatch_iam_role_arn" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.vpc_flow_log_cloudwatch_iam_role_arn
+  }
+  sensitive = false
+}
+output "map_integrate_selected_vpc_flow_log_destination_arn" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.vpc_flow_log_destination_arn
+  }
+  sensitive = false
+}
+output "map_integrate_selected_vpc_flow_log_destination_type" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.vpc_flow_log_destination_type
+  }
+  sensitive = false
+}
+output "map_integrate_selected_vpc_flow_log_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.vpc_flow_log_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_vpc_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.vpc_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_vpc_instance_tenancy" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.vpc_instance_tenancy
+  }
+  sensitive = false
+}
+output "map_integrate_selected_vpc_ipv6_association_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.vpc_ipv6_association_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_vpc_ipv6_cidr_block" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.vpc_ipv6_cidr_block
+  }
+  sensitive = false
+}
+output "map_integrate_selected_vpc_main_route_table_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.vpc_main_route_table_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_vpc_owner_id" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.vpc_owner_id
+  }
+  sensitive = false
+}
+output "map_integrate_selected_vpc_secondary_cidr_blocks" {
+  value = { for k, v in module.vpc_map_integrate_selected :
+    k => v.vpc_secondary_cidr_blocks
+  }
+  sensitive = false
+}

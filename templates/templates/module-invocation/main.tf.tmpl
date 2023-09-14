@@ -2,13 +2,28 @@
 # Make improvements in fogg, so that everyone can benefit.
 {{ range .Modules }}
 module "{{.ModuleName}}" {
+  {{- if .ModuleForEach }}
+  for_each = {{ .ModuleForEach }}
+  {{- end }}
   source = "{{.ModuleSource}}"
-  {{ if .ModuleVersion -}}
+  {{- if .ModuleVersion }}
   version = "{{ .ModuleVersion }}"
-  {{ end -}}
-  {{ $outer := . -}}
-  {{range .Variables -}}
+  {{- end }}
+  {{- $outer := . }}
+  {{- range .Variables }}
+    {{- if $outer.ModuleForEach }}
+    {{.}} = each.value.{{.}}
+    {{- else }}
     {{.}} = local.{{$outer.ModulePrefix}}{{.}}
-  {{ end -}}
+    {{- end }}
+  {{- end }}
+  {{- if .ProvidersMap }}
+
+  providers = {
+  {{- range $child_provider, $parent_provider := .ProvidersMap}}
+    {{ $child_provider }} = {{ $parent_provider }}
+  {{- end}}
+  }
+  {{- end }}
 }
 {{ end }}

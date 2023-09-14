@@ -2,40 +2,67 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 {{ range .Modules -}}
-// module "{{ .ModuleName }}" ssm Parameter Store integration registry entries (non sensitive)
-{{- $outer := . }}
-{{ range .IntegrationRegistryEntries -}}
-{{- if not .Output.Sensitive -}}
-resource "aws_ssm_parameter" "{{print $outer.ModulePrefix .Output.Name}}" {
-  {{- $path := .Output.Name -}}
-  {{- if not .DropPrefix -}}
-  {{- $path = print $outer.ModulePrefix .Output.Name -}}
-  {{- end }}
-  {{- if .Path }}
-  {{- $path = deRefStr .Path -}}
-  {{- end }}
-  {{- if .PathInfix }}
-  {{- $path = print (deRefStr .PathInfix) "/" $path  -}}
-  {{- end }}
-  {{- $fullPath := print "/${var.env}/${var.component}/" $path -}}
-  {{- if .DropComponent -}}
-  {{- $fullPath = print "/${var.env}/" $path -}}
-  {{- end -}}
-  {{- if .ForEach }}
-  for_each = module.{{$outer.ModuleName}}.{{.Output.Name}}
-  {{- if .PathForEach }}
-  name  = "{{ $fullPath }}/{{ .PathForEach }}/${each.key}"
-  {{- else }}
-  name  = "{{ $fullPath }}/${each.key}"
-  {{- end }}
-  {{- else }}
-  name  = "{{ $fullPath }}"
-  {{- end }}
-  type  = "String"
-  tier  = "Standard"
-  insecure_value = {{ .OutputRef }}
-  tags = var.tags
-}
-{{ end }}
-{{ end }}
-{{- end }}
+  // module "{{ .ModuleName }}" ssm Parameter Store integration registry entries (non sensitive)
+  {{- $outer := . }}
+  {{ range .IntegrationRegistryEntries -}}
+    {{- if not .Output.Sensitive -}}
+      resource "aws_ssm_parameter" "{{print $outer.ModulePrefix .Output.Name}}" {
+        {{- if .Provider }}
+          provider = {{.Provider}}
+        {{- end }}
+        {{- $path := .Output.Name -}}
+        {{- if not .DropPrefix -}}
+          {{- $path = print $outer.ModulePrefix .Output.Name -}}
+        {{- end }}
+        {{- if .Path }}
+          {{- $path = deRefStr .Path -}}
+        {{- end }}
+        {{- if .PathInfix }}
+          {{- $path = print (deRefStr .PathInfix) "/" $path  -}}
+        {{- end }}
+        {{- $fullPath := print "/${var.env}/${var.component}/" $path -}}
+        {{- if .DropComponent -}}
+          {{- $fullPath = print "/${var.env}/" $path -}}
+        {{- end -}}
+        {{- if $outer.ModuleForEach }}
+          {{- if .ForEach }}
+            for_each = { for output in flatten([
+              for module_key, module_outputs in module.{{$outer.ModuleName}}: [
+                for output_key, output_value in module_outputs.{{.Output.Name}}: {
+                  module_key   = module_key
+                  output_key   = output_key
+                  output_value = output_value
+                }
+              ]
+            ]): "${output.module_key}/${output.output_key}" => output }
+            {{- if .PathForEach }}
+              name  = "{{ $fullPath }}/{{ .PathForEach }}/${each.key}"
+            {{- else }}
+              name  = "{{ $fullPath }}/${each.key}"
+            {{- end }}
+          {{- else }}
+            for_each = { for k, v in module.{{$outer.ModuleName}}:
+              k => v.{{.Output.Name}}
+            }
+            name  = "{{ $fullPath }}/${each.key}"
+          {{- end }}
+        {{- else }}
+          {{- if .ForEach }}
+            for_each = module.{{$outer.ModuleName}}.{{.Output.Name}}
+            {{- if .PathForEach }}
+              name  = "{{ $fullPath }}/{{ .PathForEach }}/${each.key}"
+            {{- else }}
+              name  = "{{ $fullPath }}/${each.key}"
+            {{- end }}
+          {{- else }}
+            name  = "{{ $fullPath }}"
+          {{- end }}
+        {{- end }}
+        type  = "String"
+        tier  = "Standard"
+        insecure_value = {{ .OutputRef }}
+        tags = var.tags
+      }
+    {{- end }}
+  {{ end }}
+{{ end -}}

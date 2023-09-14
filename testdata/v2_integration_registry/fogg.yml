@@ -19,6 +19,15 @@ envs:
   test:
     components:
       vpc:
+        providers:
+          aws:
+            additional_providers:
+              # workaround provider for default_tags bugs
+              no_default_tags:
+                default_tags:
+                  enabled: false
+                ignore_tags:
+                  enabled: false
         modules:
           - name: "foo_vpc"
             prefix: "foo"
@@ -33,6 +42,7 @@ envs:
               - tags
             # outputs_map is omitted, all outputs are integrated with a default format
             integration:
+              provider: aws.no_default_tags
               mode: all
               format: jsonencode(%s)
           - name: "bar_vpc"
@@ -179,6 +189,74 @@ envs:
             # # no outputs are integrated (default)
             # integration:
             #   mode: none
+          - name: "vpc_map"
+            for_each: "local.vpc_map"
+            prefix: "map"
+            source: "terraform-aws-modules/vpc/aws"
+            version: "4.0.1"
+            variables:
+              - name
+              - cidr
+              - azs
+              - private_subnets
+              - public_subnets
+              - tags
+            # # no outputs are integrated (default)
+            # integration:
+            #   mode: none
+          - name: "vpc_map_integrate_all"
+            for_each: "local.vpc_map"
+            prefix: "map_integrate_all"
+            source: "terraform-aws-modules/vpc/aws"
+            version: "4.0.1"
+            variables:
+              - name
+              - cidr
+              - azs
+              - private_subnets
+              - public_subnets
+              - tags
+            # outputs_map is omitted, all outputs are integrated with a default format
+            integration:
+              mode: all
+              format: jsonencode(%s)
+          - name: "vpc_map_integrate_selected"
+            for_each: "local.vpc_map"
+            prefix: "map_integrate_selected"
+            source: "terraform-aws-modules/vpc/aws"
+            version: "4.0.1"
+            variables:
+              - name
+              - cidr
+              - azs
+              - private_subnets
+              - public_subnets
+              - tags
+            # only selected outputs are integrated
+            # if outputs_map is missing, should warn
+            # with drop_prefix
+            integration:
+              mode: selected
+              path_infix: network/integrate_selected
+              drop_prefix: true # drop the "map_integrate_selected" prefix
+              format: jsonencode(%s)
+              outputs_map:
+                vpc_id:
+                  format: "%s"
+                azs: {}
+                public_subnets:
+                  # /${var.env}/${var.component}/{{ infix }}/subnets/public/${each.key}
+                  path: subnets
+                  for_each: true
+                  path_for_each: public
+                private_subnets:
+                  path: subnets
+                  for_each: true
+                  path_for_each: private
+                database_subnets:
+                  path: subnets
+                  for_each: true
+                  path_for_each: database
 modules:
   my_module: {}
 version: 2
