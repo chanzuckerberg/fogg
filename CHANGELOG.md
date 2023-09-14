@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.84.0](https://github.com/vincenthsh/fogg/compare/v0.83.0...v0.84.0) (2023-09-14)
+
+
+### Features
+
+* Publish integration registry entries accross AWS Accounts ([#187](https://github.com/vincenthsh/fogg/issues/187)) ([383a610](https://github.com/vincenthsh/fogg/commit/383a6104c9c77d258537a1a8f320fa555024005d))
+
 ## [0.83.0](https://github.com/vincenthsh/fogg/compare/v0.82.2...v0.83.0) (2023-09-14)
 
 
