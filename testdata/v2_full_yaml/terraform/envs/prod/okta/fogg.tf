@@ -137,7 +137,6 @@ variable "tags" {
     owner                  = "foo@example.com"
     terraformLastApplyTime = timestamp()
     terraformWorkspaceDir  = "/terraform/envs/prod/okta"
-    foggUser               = ""
     gitRepository          = "git@github.com:chanzuckerberg/fogg"
     managedBy              = "terraform"
   }
