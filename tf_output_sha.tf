@@ -1,13 +1,11 @@
 data "external" "git_sha" {
-  try(
   program = [
     "git",
-    "hash-object",
-    "*",
+    "log",
     "--pretty=format:{ \"sha\": \"%H\" }",
     "-1",
     "HEAD"
-  ], "blah")
+  ]
 }
 
 output "git_sha" {

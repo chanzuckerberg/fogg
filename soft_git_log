@@ -1,0 +1,5 @@
+git log --pretty=format:"sha:%H" -1 HEAD
+status=$?
+if [ $status -ne 0 ]; then
+    echo "error"
+fi
