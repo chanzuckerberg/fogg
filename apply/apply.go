@@ -400,6 +400,7 @@ func applyEnvs(
 						ForEach:      componentPlan.ModuleForEach,
 						Version:      nil,
 						Variables:    componentPlan.Variables,
+						Outputs:      componentPlan.Outputs,
 						Prefix:       nil,
 						ProvidersMap: componentPlan.ProvidersMap,
 					},
@@ -640,9 +641,9 @@ func applyModuleInvocation(
 		// leave it here for now and re-think it when we make this mechanism
 		// general purpose.
 		variables := mi.module.Variables
-		addAll := variables == nil
+		addAllVariables := variables == nil
 		for _, v := range moduleConfig.Variables {
-			if addAll {
+			if addAllVariables {
 				variables = append(variables, v.Name)
 			} else {
 				if v.Required && !slices.Contains(variables, v.Name) {
@@ -671,8 +672,15 @@ func applyModuleInvocation(
 				Mode: util.StrPtr("none"),
 			}
 		}
+		addAllOutputs := mi.module.Outputs == nil
 		for _, o := range moduleConfig.Outputs {
-			outputs = append(outputs, o)
+			if addAllOutputs {
+				outputs = append(outputs, o)
+			} else {
+				if slices.Contains(mi.module.Outputs, o.Name) {
+					outputs = append(outputs, o)
+				}
+			}
 			if len(integration.Providers) > 0 {
 				for _, provider := range integration.Providers {
 					p := provider

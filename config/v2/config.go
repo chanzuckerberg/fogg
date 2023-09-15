@@ -137,6 +137,7 @@ type Component struct {
 	ModuleForEach *string           `yaml:"module_for_each,omitempty"`
 	ProvidersMap  map[string]string `yaml:"module_providers,omitempty"`
 	Variables     []string          `yaml:"variables,omitempty"`
+	Outputs       []string          `yaml:"outputs,omitempty"`
 	Modules       []ComponentModule `yaml:"modules,omitempty"`
 }
 
@@ -151,6 +152,8 @@ type ComponentModule struct {
 	Prefix *string `yaml:"prefix,omitempty"`
 	// Variables to limit generated input placeholders (and use module defaults for others)
 	Variables []string `yaml:"variables,omitempty"`
+	// Outputs list to limit generated component outputs
+	Outputs []string `yaml:"outputs,omitempty"`
 	// Integration Registry config
 	Integration *ModuleIntegrationConfig `yaml:"integration,omitempty"`
 	// Optional mapping of providers https://developer.hashicorp.com/terraform/language/meta-arguments/module-providers

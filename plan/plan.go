@@ -347,6 +347,7 @@ type Component struct {
 	ModuleForEach *string              `yaml:"module_for_each"`
 	ProvidersMap  map[string]string    `yaml:"providers"`
 	Variables     []string             `yaml:"variables"`
+	Outputs       []string             `yaml:"outputs"`
 	Modules       []v2.ComponentModule `yaml:"modules"`
 	Global        *Component           `yaml:"global"`
 }
@@ -629,6 +630,7 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			componentPlan.ModuleName = componentConf.ModuleName
 			componentPlan.ModuleForEach = componentConf.ModuleForEach
 			componentPlan.Variables = componentConf.Variables
+			componentPlan.Outputs = componentConf.Outputs
 			componentPlan.Modules = componentConf.Modules
 			componentPlan.ProvidersMap = componentConf.ProvidersMap
 			componentPlan.PathToRepoRoot = "../../../../"

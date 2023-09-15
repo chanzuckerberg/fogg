@@ -53,6 +53,9 @@ envs:
               - private_subnets
               - public_subnets
               - tags
+            # suppress all outputs
+            # only available through integration registry
+            outputs: []
             # outputs_map is omitted, all outputs are integrated with a default format
             integration:
               providers: [aws.no_default_tags]
