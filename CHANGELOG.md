@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.85.0](https://github.com/vincenthsh/fogg/compare/v0.84.0...v0.85.0) (2023-09-15)
+
+
+### Features
+
+* Add ability to suppress module outputs in component ([#190](https://github.com/vincenthsh/fogg/issues/190)) ([33cf8be](https://github.com/vincenthsh/fogg/commit/33cf8be12bf1a1a9b1c32e1922fbc426c97c13eb))
+
 ## [0.84.0](https://github.com/vincenthsh/fogg/compare/v0.83.0...v0.84.0) (2023-09-14)
 
 
