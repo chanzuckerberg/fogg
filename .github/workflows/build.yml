@@ -1,23 +1,40 @@
 on: pull_request
 
 jobs:
+  golden:
+    runs-on: [self-hosted, ARM64, linux]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Run tests
+        run: make update-golden-files
+      - name: Commit updated mod tidy
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: -A
+          message: commit from ci -- updated golden files
   test:
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: go.mod
+          cache: true
       - name: Run tests
         run: make test-ci
 
   lint:
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: go.mod
+          cache: true
       - uses: actions/setup-node@v3
         with:
           node-version: 18
