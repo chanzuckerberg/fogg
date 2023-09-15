@@ -120,6 +120,13 @@ variable "owner" {
 }
 
 # tflint-ignore: terraform_unused_declarations
+data "external" "git_sha" {
+  program = [
+    "./soft_git_log"
+  ]
+}
+
+# tflint-ignore: terraform_unused_declarations
 variable "tags" {
   type =  object({project: string, env: string, service: string, owner: string, managedBy: string})
   default = {
@@ -130,6 +137,7 @@ variable "tags" {
     terraformLastApplyTime = timestamp()
     terraformWorkspaceDir = "{{ cwd }}"
     gitRepository         = "{{ git_origin }}"
+    commitSha             = data.external.git_sha.result.sha
     managedBy             = "terraform"
   }
 }
