@@ -2,7 +2,7 @@ package config
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"path/filepath"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
@@ -67,7 +67,7 @@ func FindConfig(fs afero.Fs, configFile string) ([]byte, int, error) {
 	}
 	defer f.Close()
 
-	b, e := ioutil.ReadAll(f)
+	b, e := io.ReadAll(f)
 	if e != nil {
 		return nil, 0, errs.WrapUser(e, "unable to read config")
 	}
