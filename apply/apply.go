@@ -653,28 +653,34 @@ func applyModuleInvocation(
 		// This should really be part of the plan stage, not apply. But going to
 		// leave it here for now and re-think it when we make this mechanism
 		// general purpose.
-		variables := mi.module.Variables
-		addAllVariables := variables == nil
+
+		allVariables := []string{}
+		requiredVariables := []string{}
+
 		for _, v := range moduleConfig.Variables {
-			if addAllVariables {
-				variables = append(variables, v.Name)
-			} else {
-				if v.Required && !slices.Contains(variables, v.Name) {
-					variables = append(variables, v.Name)
-				}
+			allVariables = append(allVariables, v.Name)
+			if v.Required {
+				requiredVariables = append(requiredVariables, v.Name)
 			}
 		}
-		sort.Strings(variables)
-
 		moduleName := ""
+		dropRef := regexp.MustCompile(`\?ref=.*`)
 		if mi.module.Name != nil {
 			moduleName = *mi.module.Name
 		}
 		if moduleName == "" {
 			moduleName = filepath.Base(*mi.module.Source)
-			re := regexp.MustCompile(`\?ref=.*`)
-			moduleName = re.ReplaceAllString(moduleName, "")
+			moduleName = dropRef.ReplaceAllString(moduleName, "")
 		}
+
+		variables := allVariables
+		// filter down to configured variables
+		if mi.module.Variables != nil {
+			warningMessage := fmt.Sprintf("%%s is not a valid variable for %s (ignored)", dropRef.ReplaceAllString(*mi.module.Source, ""))
+			filteredVariables := util.Intersect(allVariables, mi.module.Variables, &warningMessage)
+			variables = util.Union(requiredVariables, filteredVariables)
+		}
+		sort.Strings(variables)
 
 		outputs := make([]*tfconfig.Output, 0)
 		integrationRegistryEntries := make([]*IntegrationRegistryEntry, 0)

@@ -37,6 +37,7 @@ envs:
               - private_subnets
               - public_subnets
               - tags
+              - banana
           - source: "terraform/modules/my_module"
 modules:
   my_module: {}
