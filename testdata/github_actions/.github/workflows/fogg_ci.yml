@@ -22,7 +22,7 @@ jobs:
           key: fogg-cache-${{ hashFiles('**/.fogg-version') }}
       - run: |
           make setup
-          echo ".fogg/bin" >> "${GITHUB_PATH}"
+          echo "$(pwd)/.fogg/bin" >> "${GITHUB_PATH}"
       - run: fogg apply
         env:
           FOGG_GITHUBTOKEN: ${{ secrets.GITHUB_TOKEN }}

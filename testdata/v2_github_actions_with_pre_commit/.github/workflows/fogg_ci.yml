@@ -26,7 +26,7 @@ jobs:
           key: fogg-cache-${{ hashFiles('**/.fogg-version') }}
       - run: |
           make setup
-          echo ".fogg/bin" >> "${GITHUB_PATH}"
+          echo "$(pwd)/.fogg/bin" >> "${GITHUB_PATH}"
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4.0.0
         with:
