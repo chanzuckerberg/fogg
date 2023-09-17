@@ -12,6 +12,7 @@ jobs:
     permissions:
       # required for GH Actions -> OIDC -> AWS
       id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v4.0.0
         with:
