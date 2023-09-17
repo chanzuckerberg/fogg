@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.86.0](https://github.com/vincenthsh/fogg/compare/v0.85.0...v0.86.0) (2023-09-17)
+
+
+### Features
+
+* Integrate pre-commit and apply tflint fixes ([#193](https://github.com/vincenthsh/fogg/issues/193)) ([e687e62](https://github.com/vincenthsh/fogg/commit/e687e627202f3ad9d2b6dec3e1856c803a790fea))
+
 ## [0.85.0](https://github.com/vincenthsh/fogg/compare/v0.84.0...v0.85.0) (2023-09-15)
 
 
