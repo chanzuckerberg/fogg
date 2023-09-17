@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.86.1](https://github.com/vincenthsh/fogg/compare/v0.86.0...v0.86.1) (2023-09-17)
+
+
+### Misc
+
+* bump the gomod group with 2 updates ([#195](https://github.com/vincenthsh/fogg/issues/195)) ([570ebf4](https://github.com/vincenthsh/fogg/commit/570ebf473fda22232fd256a0f70552e96667ab80))
+
+
+### BugFixes
+
+* Filter out invalid module inputs ([#198](https://github.com/vincenthsh/fogg/issues/198)) ([f62adea](https://github.com/vincenthsh/fogg/commit/f62adeaa73e0c36681d7513579e6d5e7f7add658))
+* Fogg github actions make setup add pwd to path ([#199](https://github.com/vincenthsh/fogg/issues/199)) ([f6e157e](https://github.com/vincenthsh/fogg/commit/f6e157e805100e870ade96dc5e58f53fbcdb2db3))
+* Wrong fogg_ci job permissions ([#197](https://github.com/vincenthsh/fogg/issues/197)) ([e54a078](https://github.com/vincenthsh/fogg/commit/e54a078f1e15ccfae993663de95415ad005965ac))
+
 ## [0.86.0](https://github.com/vincenthsh/fogg/compare/v0.85.0...v0.86.0) (2023-09-17)
 
 
