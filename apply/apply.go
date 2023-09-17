@@ -22,7 +22,7 @@ import (
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
 	getter "github.com/hashicorp/go-getter"
-	"github.com/hashicorp/hcl2/hclwrite"
+	"github.com/hashicorp/hcl/v2/hclwrite"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/hashicorp/terraform/registry"
 	"github.com/sirupsen/logrus"
@@ -100,6 +100,19 @@ func Apply(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool) error 
 	err = applyGlobal(fs, plan.Global, tfBox, tmpl.Common)
 	if err != nil {
 		return errs.WrapUser(err, "unable to apply global")
+	}
+
+	if plan.GitHubActionsCI.Enabled && plan.GitHubActionsCI.PreCommit.Enabled {
+		// set up pre-commit config
+		preCommit := plan.GitHubActionsCI.PreCommit
+		err = applyTree(fs, tmpl.PreCommitRoot, tmpl.Common, "", preCommit)
+		if err != nil {
+			return errs.WrapUser(err, "unable to apply pre-commit to repo root")
+		}
+		err = applyTree(fs, tmpl.PreCommitActions, tmpl.Common, ".github/actions", preCommit)
+		if err != nil {
+			return errs.WrapUser(err, "unable to apply pre-commit action")
+		}
 	}
 
 	return errs.WrapUser(applyTFE(fs, plan, tmpl), "unable to apply TFE locals.tf.json")

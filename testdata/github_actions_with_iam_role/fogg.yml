@@ -14,4 +14,15 @@ defaults:
       command: lint
       enabled: true
       test_buckets: 7
+      pre_commit:
+        enabled: false
+        config:
+          exclude: ^terraform/envs/test/
+          repos:
+            - repo: https://github.com/pre-commit/pre-commit-hooks
+              rev: v4.4.0
+              hooks:
+                - id: trailing-whitespace
+                - id: end-of-file-fixer
+                - id: no-commit-to-branch
 version: 2

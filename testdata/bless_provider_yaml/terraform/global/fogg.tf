@@ -34,63 +34,38 @@ terraform {
 
   }
   required_providers {
-
     archive = {
-      source = "hashicorp/archive"
-
+      source  = "hashicorp/archive"
       version = "~> 2.0"
-
     }
-
     assert = {
-      source = "bwoznicki/assert"
-
+      source  = "bwoznicki/assert"
       version = "0.0.1"
-
     }
-
     bless = {
-      source = "chanzuckerberg/bless"
-
+      source  = "chanzuckerberg/bless"
       version = "0.0.0"
-
     }
-
     local = {
-      source = "hashicorp/local"
-
+      source  = "hashicorp/local"
       version = "~> 2.0"
-
     }
-
     null = {
-      source = "hashicorp/null"
-
+      source  = "hashicorp/null"
       version = "~> 3.0"
-
     }
-
     okta-head = {
-      source = "okta/okta"
-
+      source  = "okta/okta"
       version = "~> 3.30"
-
     }
-
     random = {
-      source = "hashicorp/random"
-
+      source  = "hashicorp/random"
       version = "~> 3.4"
-
     }
-
     tls = {
-      source = "hashicorp/tls"
-
+      source  = "hashicorp/tls"
       version = "~> 3.0"
-
     }
-
   }
 }
 # tflint-ignore: terraform_unused_declarations

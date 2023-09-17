@@ -50,7 +50,7 @@ execute() {
   srcdir="${tmpdir}"
   (cd "${tmpdir}" && untar "${TARBALL}")
   install -d "${BINDIR}"
-  for binexe in "fogg" ; do
+  for binexe in "fogg"; do
     if [ "$OS" = "windows" ]; then
       binexe="${binexe}.exe"
     fi
@@ -64,6 +64,7 @@ is_supported_platform() {
   case "$platform" in
     darwin/amd64) found=0 ;;
     linux/amd64) found=0 ;;
+    linux/arm64) found=0 ;;
     windows/amd64) found=0 ;;
     darwin/arm64) found=0 ;;
   esac
@@ -350,7 +351,7 @@ PREFIX="$OWNER/$REPO"
 
 # use in logging routines
 log_prefix() {
-	echo "$PREFIX"
+  echo "$PREFIX"
 }
 PLATFORM="${OS}/${ARCH}"
 GITHUB_DOWNLOAD=https://github.com/${OWNER}/${REPO}/releases/download
@@ -377,6 +378,5 @@ TARBALL=${NAME}.${FORMAT}
 TARBALL_URL=${GITHUB_DOWNLOAD}/${TAG}/${TARBALL}
 CHECKSUM=${PROJECT_NAME}_${VERSION}_checksums.txt
 CHECKSUM_URL=${GITHUB_DOWNLOAD}/${TAG}/${CHECKSUM}
-
 
 execute

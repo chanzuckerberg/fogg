@@ -2,16 +2,20 @@ package util
 
 import (
 	"bytes"
+	"encoding/json"
 	"io"
 	"io/fs"
 	"reflect"
+	"sort"
 	"strings"
 	"text/template"
 
 	"github.com/Masterminds/sprig"
 	"github.com/chanzuckerberg/fogg/errs"
+	"github.com/hashicorp/hcl/v2/hclwrite"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	ctyjson "github.com/zclconf/go-cty/cty/json"
 	"gopkg.in/yaml.v3"
 )
 
@@ -47,7 +51,7 @@ func avail(name string, data interface{}) bool {
 // always return a string, even on marshal error (empty string).
 //
 // This is designed to be called from a template.
-func toYAML(v interface{}) string {
+func toYAML(v any) string {
 	var b bytes.Buffer
 	yamlEncoder := yaml.NewEncoder(&b)
 	yamlEncoder.SetIndent(2)
@@ -57,6 +61,78 @@ func toYAML(v interface{}) string {
 		return ""
 	}
 	return strings.TrimSuffix(b.String(), "\n")
+}
+
+// https://github.com/gruntwork-io/terragrunt/blob/v0.51.0/codegen/generate.go#L156
+
+// toHCLBlock generates an HCL Block of certain type and label
+// it marshals to hcl, and returns a string. It will
+// always return a string, even on marshal error (empty string).
+//
+// {{ range $k,$v := .RequiredProviders }}
+// {{ $v.Config | toHclBlock "provider" $k }}
+// {{ end }}
+// This is designed to be called from a template.
+func toHCLBlock(blockType string, name string, config map[string]any) string {
+	f := hclwrite.NewEmptyFile()
+	rootBlock := f.Body().AppendNewBlock(blockType, []string{name})
+	rootBlockBody := rootBlock.Body()
+	var blockKeys []string
+
+	for key := range config {
+		blockKeys = append(blockKeys, key)
+	}
+	sort.Strings(blockKeys)
+	for _, key := range blockKeys {
+		// Since we don't have the cty type information for the config and since config can be arbitrary, we cheat by using
+		// json as an intermediate representation.
+		jsonBytes, err := json.Marshal(config[key])
+		if err != nil {
+			// Swallow errors inside of a template.
+			return ""
+		}
+		var ctyVal ctyjson.SimpleJSONValue
+		if err := ctyVal.UnmarshalJSON(jsonBytes); err != nil {
+			// Swallow errors inside of a template.
+			return ""
+		}
+
+		rootBlockBody.SetAttributeValue(key, ctyVal.Value)
+	}
+	return string(f.Bytes())
+}
+
+// toHCLAssignment generates an HCL assignment. It will
+// always return a string, even on marshal error (empty string).
+//
+// {{- range $k, $v := .ProviderVersions }}
+// {{ toHclAssignment $k $v }}
+// {{- end }}
+//
+//	foo = {
+//	  source  = "hashicorp/archive"
+//	  version = "~> 2.0"
+//	}
+//
+// This is designed to be called from a template.
+func toHCLAssignment(name string, value any) string {
+	f := hclwrite.NewEmptyFile()
+	rootBlockBody := f.Body()
+	// Since we don't have the cty type information for the config and since config can be arbitrary, we cheat by using
+	// json as an intermediate representation.
+	jsonBytes, err := json.Marshal(value)
+	if err != nil {
+		// Swallow errors inside of a template.
+		return ""
+	}
+	var ctyVal ctyjson.SimpleJSONValue
+	if err := ctyVal.UnmarshalJSON(jsonBytes); err != nil {
+		// Swallow errors inside of a template.
+		return ""
+	}
+
+	rootBlockBody.SetAttributeValue(name, ctyVal.Value)
+	return string(f.Bytes())
 }
 
 // deRef is a generic function to dereference a pointer to it's actual value type.
@@ -75,6 +151,8 @@ func OpenTemplate(label string, source io.Reader, templates fs.FS) (*template.Te
 	funcs["toYaml"] = toYAML
 	funcs["deRefStr"] = deRef[string]
 	funcs["deRefBool"] = deRef[bool]
+	funcs["toHclBlock"] = toHCLBlock
+	funcs["toHclAssignment"] = toHCLAssignment
 
 	s, err := io.ReadAll(source)
 	if err != nil {

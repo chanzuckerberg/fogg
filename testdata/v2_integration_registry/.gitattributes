@@ -6,3 +6,6 @@ atlantis.yaml linguist-generated
 .circleci/config.yml linguist-generated
 .terraformignore linguist-generated
 .github/workflows/fogg_ci.yml linguist-generated
+.github/workflows/actions/setup-pre-commit/action.yml linguist-generated
+.pre-commit-config
+requirements.txt

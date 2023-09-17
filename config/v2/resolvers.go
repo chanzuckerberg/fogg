@@ -749,6 +749,73 @@ func ResolveGrafanaProvider(commons ...Common) *GrafanaProvider {
 	return p
 }
 
+func ResolveRequiredProviders(commons ...Common) map[string]*GenericProvider {
+	requiredProviders := make(map[string]*GenericProvider)
+	for _, c := range commons {
+		if c.RequiredProviders == nil {
+			continue
+		}
+		for k, curr := range c.RequiredProviders {
+			prev := requiredProviders[k]
+			var source string
+			var version string
+			enabled := true
+			customProvider := defaultEnabled(false)
+			config := make(map[string]any)
+
+			if prev != nil {
+				source, customProvider, version, enabled = resolveGenericProvider(prev, source, customProvider, version, enabled, config)
+			}
+			if curr == nil {
+				// excplicit set to nil
+				delete(requiredProviders, k)
+			} else {
+				source, customProvider, version, enabled = resolveGenericProvider(curr, source, customProvider, version, enabled, config)
+				requiredProviders[k] = &GenericProvider{
+					CommonProvider: CommonProvider{
+						CustomProvider: customProvider,
+						Enabled:        &enabled,
+						Version:        &version,
+					},
+					Source: source,
+					Config: config,
+				}
+			}
+		}
+	}
+	return requiredProviders
+}
+
+func resolveGenericProvider(
+	p *GenericProvider,
+	source string,
+	customProvider *bool,
+	version string,
+	enabled bool,
+	config map[string]any,
+) (string, *bool, string, bool) {
+	if len(p.Source) != 0 {
+		source = p.Source
+	}
+	if p.CustomProvider != nil {
+		customProvider = p.CustomProvider
+	}
+	if p.Version != nil {
+		version = *p.Version
+	}
+	if p.Enabled != nil {
+		enabled = *p.Enabled
+	}
+	for key, value := range p.Config {
+		if value == nil {
+			delete(config, key)
+		} else {
+			config[key] = value
+		}
+	}
+	return source, customProvider, version, enabled
+}
+
 func ResolveTfLint(commons ...Common) TfLint {
 	enabled := false
 	for _, c := range commons {
@@ -796,6 +863,9 @@ func ResolveGitHubActionsCI(commons ...Common) *GitHubActionsCI {
 	enabled := false
 	buildevents := false
 	testCommand := "check"
+	preCommitConfig := PreCommitSetup{
+		Enabled: false,
+	}
 
 	for _, c := range commons {
 		if c.Tools != nil && c.Tools.GitHubActionsCI != nil {
@@ -807,6 +877,9 @@ func ResolveGitHubActionsCI(commons ...Common) *GitHubActionsCI {
 			}
 			if c.Tools.GitHubActionsCI.Buildevents != nil {
 				buildevents = *c.Tools.GitHubActionsCI.Buildevents
+			}
+			if c.Tools.GitHubActionsCI.PreCommit != nil {
+				preCommitConfig = *c.Tools.GitHubActionsCI.PreCommit
 			}
 		}
 	}
@@ -820,6 +893,7 @@ func ResolveGitHubActionsCI(commons ...Common) *GitHubActionsCI {
 			AWSIAMRoleName: roleName,
 			AWSRegion:      region,
 			Command:        &testCommand,
+			PreCommit:      &preCommitConfig,
 		},
 	}
 }

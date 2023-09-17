@@ -7,17 +7,17 @@
 
 CMD="$1"
 
-TMP=`mktemp`
-TMP2=`mktemp`
-terraform-docs md . > "$TMP"
-sed '/^<!-- START -->$/,/<!-- END -->/{//!d;}' README.md | sed "/^<!-- START -->$/r $TMP" > $TMP2
+TMP=$(mktemp)
+TMP2=$(mktemp)
+terraform-docs md . >"$TMP"
+sed '/^<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->$/,/<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->/{//!d;}' README.md | sed "/^<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->$/r $TMP" >$TMP2
 
 case "$CMD" in
-    update)
-        mv $TMP2 README.md
+update)
+    mv $TMP2 README.md
     ;;
-    check)
-        diff $TMP2 README.md >/dev/null
+check)
+    diff $TMP2 README.md >/dev/null
     ;;
 esac
 

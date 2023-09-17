@@ -1,0 +1,53 @@
+version: 2
+defaults:
+  terraform_version: 1.1.1
+  owner: foo@example.com
+  project: foo
+  backend:
+    bucket: bucket
+    profile: foo
+    region: region
+  # legacy hardcoded providers
+  providers:
+    assert:
+      version: 0.0.1
+    sops: {}
+  # ad-hoc required providers and optional config
+  required_providers:
+    foo:
+      version: "~> 0.2"
+      source: "czi/foo"
+      config:
+        foo_host: nonprod
+    bar:
+      version: "~> 0.1.0"
+      source: "czi/bar"
+    qux:
+      version: "~> 0.1.0"
+      source: "czi/qux"
+    baz:
+      version: "~> 0.1.0"
+      source: "czi/baz"
+      custom_provider: true
+envs:
+  prd:
+    required_providers:
+      foo:
+        config:
+          foo_host: prod
+          foo_tls: true
+      # no qux provider in prd
+      qux: null
+      baz:
+        custom_provider: false
+        config:
+          baz_token: prod_token_arn
+    components:
+      network: {}
+  stg:
+    required_providers:
+      bar:
+        # bump bar version in stg
+        version: "~> 0.3"
+    components:
+      network: {}

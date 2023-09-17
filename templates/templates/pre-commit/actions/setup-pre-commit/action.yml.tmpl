@@ -1,0 +1,26 @@
+{{ template "fogg_header" }}
+name: Set up pre-commit
+description: Set up pre-commit with cache support
+
+inputs:
+  requirements:
+    description: The pip requirements file to use
+    required: true
+    default: "./requirements.txt"
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+        cache: "pip"
+    # need a requirements.txt file for actions/setup-python to hash the cache key.
+    - run: python -m pip install -r {{`${{ inputs.requirements }}`}}
+      shell: bash
+    # also store pre-commit cache
+    - uses: actions/cache@v3
+      with:
+        path: ~/.cache/pre-commit/
+        key: pre-commit-4|{{`${{ env.pythonLocation }}`}}|{{`${{ hashFiles('.pre-commit-config.yaml')}}`}}

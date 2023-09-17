@@ -27,6 +27,8 @@ type CIConfig struct {
 	TestBuckets [][]CIProject
 	AWSProfiles ciAwsProfiles
 	Buildevents bool
+
+	PreCommit PreCommitConfig
 }
 
 type CircleCIConfig struct {
@@ -43,6 +45,15 @@ type AtlantisConfig struct {
 	Enabled bool
 	Envs    *map[string]Env
 	RepoCfg *atlantis.RepoCfg
+}
+
+type PreCommitConfig struct {
+	Enabled            bool
+	Requirements       []string
+	Config             *v2.PreCommitConfig
+	GitHubActionSteps  []v2.GitHubActionStep
+	HooksSkippedInMake []string
+	ExtraArgs          []string
 }
 
 type TravisCIConfig struct {
@@ -278,6 +289,7 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 	ciConfig := &CIConfig{
 		FoggVersion: foggVersion,
 		Env:         env,
+		PreCommit:   p.buildGithubActionsPreCommitConfig(c, foggVersion),
 	}
 
 	if c.Defaults.Tools != nil && c.Defaults.Tools.GitHubActionsCI != nil &&
@@ -419,5 +431,71 @@ func (p *Plan) buildAtlantisConfig(c *v2.Config, foggVersion string) AtlantisCon
 		Enabled: enabled,
 		Envs:    &p.Envs,
 		RepoCfg: &repoCfg,
+	}
+}
+
+func (p *Plan) buildGithubActionsPreCommitConfig(c *v2.Config, foggVersion string) PreCommitConfig {
+	// defaults
+	enabled := false
+	config := v2.PreCommitConfig{}
+	preCommitVersion := "3.4.0"
+	requirements := []string{}
+	steps := []v2.GitHubActionStep{}
+	hooksSkippedInMake := []string{}
+	extraArgs := []string{}
+
+	if c.Defaults.Tools != nil &&
+		c.Defaults.Tools.GitHubActionsCI != nil &&
+		c.Defaults.Tools.GitHubActionsCI.PreCommit != nil {
+		setup := c.Defaults.Tools.GitHubActionsCI.PreCommit
+		enabled = setup.Enabled
+		config = *setup.Config
+
+		if setup.Version != nil {
+			preCommitVersion = *setup.Version
+		}
+
+		if setup.GitHubActionSteps != nil && len(setup.GitHubActionSteps) > 0 {
+			steps = append(steps, setup.GitHubActionSteps...)
+		}
+
+		if setup.ExtraArgs != nil && len(setup.ExtraArgs) > 0 {
+			extraArgs = append(extraArgs, setup.ExtraArgs...)
+		}
+
+		if len(config.Repos) > 0 {
+			for ri, r := range config.Repos {
+				if r.Hooks == nil || len(r.Hooks) == 0 {
+					continue
+				}
+				for hi, h := range r.Hooks {
+					if h.SkipInMake != nil && *h.SkipInMake {
+						hooksSkippedInMake = append(hooksSkippedInMake, h.ID)
+					}
+					// drop from yaml output to avoid pre-commit invalid field warnings
+					config.Repos[ri].Hooks[hi].SkipInMake = nil
+				}
+			}
+		}
+
+		// ensure pre-commit is in requirements.txt
+		requirements = append(requirements,
+			fmt.Sprintf("pre-commit==%s", preCommitVersion),
+		)
+		// add any other dependencies (for GH setup-python Action with pip cache)
+		for pkg, version := range setup.PipCache {
+			requirements = append(requirements,
+				fmt.Sprintf("%s==%s", pkg, version),
+			)
+		}
+	}
+
+	return PreCommitConfig{
+		Enabled:            enabled,
+		Requirements:       requirements,
+		Config:             &config,
+		GitHubActionSteps:  steps,
+		HooksSkippedInMake: hooksSkippedInMake,
+		ExtraArgs:          extraArgs,
 	}
 }

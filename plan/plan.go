@@ -53,6 +53,7 @@ type ComponentCommon struct {
 	Owner                 string                     `yaml:"owner"`
 	Project               string                     `yaml:"project"`
 	ProviderConfiguration ProviderConfiguration      `yaml:"providers_configuration"`
+	RequiredProviders     map[string]GenericProvider `yaml:"required_providers"`
 	ProviderVersions      map[string]ProviderVersion `yaml:"provider_versions"`
 	IntegrationRegistry   *string                    `yaml:"integration_registry"`
 
@@ -147,9 +148,11 @@ type ProviderConfiguration struct {
 	Sops                   *SopsProvider       `yaml:"sops"`
 }
 
+// json tags required for toHCLAssignment function
+// in util/template.go
 type ProviderVersion struct {
-	Source  string  `yaml:"source"`
-	Version *string `yaml:"version"`
+	Source  string  `yaml:"source" json:"source"`
+	Version *string `yaml:"version" json:"version"`
 }
 
 var utilityProviders = map[string]ProviderVersion{
@@ -228,9 +231,9 @@ type AssertProvider struct {
 }
 
 type CommonProvider struct {
-	CustomProvider bool   `yaml:"custom_provider,omitempty"`
-	Enabled        bool   `yaml:"enabled,omitempty"`
-	Version        string `yaml:"version,omitempty"`
+	CustomProvider bool   `yaml:"custom_provider,omitempty" json:"custom_provider,omitempty"`
+	Enabled        bool   `yaml:"enabled,omitempty" json:"enabled,omitempty"`
+	Version        string `yaml:"version,omitempty" json:"version,omitempty"`
 }
 
 // SnowflakeProvider represents Snowflake DB provider configuration
@@ -285,6 +288,12 @@ type KubernetesProvider struct {
 
 type GrafanaProvider struct {
 	CommonProvider `yaml:",inline"`
+}
+
+type GenericProvider struct {
+	CommonProvider `yaml:",inline" json:",inline"`
+	Source         string         `yaml:"source" json:"source"`
+	Config         map[string]any `yaml:"config" json:"config"`
 }
 
 // BackendKind is a enum of backends we support
@@ -1149,6 +1158,36 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
+	requiredProvidersPlan := make(map[string]GenericProvider)
+	for k, rp := range v2.ResolveRequiredProviders(commons...) {
+		// default enabled = true
+		if rp.Enabled == nil || (rp.Enabled != nil && *rp.Enabled) {
+			customProvider := false
+			if rp.CustomProvider != nil {
+				customProvider = *rp.CustomProvider
+			}
+			if rp.Version == nil {
+				// this is also caught in validate.go, just in case
+				logrus.Errorf("Required provider %s is missing version", k)
+			}
+			version := *rp.Version
+			requiredProvidersPlan[k] = GenericProvider{
+				CommonProvider: CommonProvider{
+					Enabled:        rp.Enabled == nil || (rp.Enabled != nil && *rp.Enabled),
+					CustomProvider: customProvider,
+					Version:        version,
+				},
+				Config: rp.Config,
+			}
+
+			// add this required provider to the providerVersions block
+			providerVersions[k] = ProviderVersion{
+				Source:  rp.Source,
+				Version: &version,
+			}
+		}
+	}
+
 	tflintConfig := v2.ResolveTfLint(commons...)
 
 	tfLintPlan := TfLint{
@@ -1253,6 +1292,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Tfe:                    tfePlan,
 			Sops:                   sopsPlan,
 		},
+		RequiredProviders:   requiredProvidersPlan,
 		ProviderVersions:    providerVersions,
 		IntegrationRegistry: v2.ResolveOptionalString(v2.IntegrationRegistryGetter, commons...),
 		TfLint:              tfLintPlan,

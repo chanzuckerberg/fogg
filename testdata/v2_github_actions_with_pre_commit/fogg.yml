@@ -1,0 +1,98 @@
+version: 2
+plugins:
+  custom_plugins:
+    tflint:
+      format: zip
+      url: https://github.com/terraform-linters/tflint/releases/download/v0.48.0/tflint_{{.OS}}_{{.Arch}}.zip
+    actionlint:
+      format: tar
+      url: https://github.com/rhysd/actionlint/releases/download/v1.6.25/actionlint_1.6.25_{{.OS}}_{{.Arch}}.tar.gz
+    terraform-docs:
+      format: tar
+      url: https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-{{.OS}}-{{.Arch}}.tar.gz
+defaults:
+  backend:
+    bucket: bucket
+    profile: foo
+    region: region
+  owner: foo@example.com
+  project: foo
+  providers: {}
+  terraform_version: 1.5.7
+  tools:
+    github_actions_ci:
+      enabled: true
+      aws_iam_role_name: infraci
+      aws_region: awsregion
+      pre_commit:
+        enabled: true
+        pip_cache:
+          # required for word_list extension
+          pyahocorasick: "2.0.0"
+        github_actions_setup:
+          # tflint,actionlint,... are installed as fogg plugins
+          - uses: mfinelli/setup-shfmt@v2
+            with:
+              shfmt-version: 3.7.0
+          - uses: lumaxis/shellcheck-problem-matchers@v2
+          - uses: actions/cache@v3
+            name: Cache tflint plugin dir
+            with:
+              path: ~/.tflint.d/plugins
+              key: tflint-${{ hashFiles('.tflint.hcl') }}
+        # extra args for pre-commit run command
+        extra_args:
+          - --all-files
+        config:
+          exclude: ^terraform/envs/test/
+          repos:
+            - repo: https://github.com/pre-commit/pre-commit-hooks
+              rev: v4.4.0
+              hooks:
+                - id: trailing-whitespace
+                - id: end-of-file-fixer
+                - id: no-commit-to-branch
+            - repo: https://github.com/syntaqx/git-hooks
+              rev: v0.0.18
+              hooks:
+                - id: shfmt
+                  exclude: ^scripts/update-readme.sh
+            - repo: https://github.com/rhysd/actionlint
+              rev: v1.6.25
+              hooks:
+                - id: actionlint-system
+                  # custom fogg field to skip hook
+                  # in built-in pre-commit make target
+                  skip_in_make: true
+            - repo: https://github.com/antonbabenko/pre-commit-terraform
+              rev: v1.83.2
+              hooks:
+                - id: terraform_fmt
+                  skip_in_make: true
+                - id: terraform_tflint
+                  skip_in_make: true
+                  args:
+                    - "--arg=--format=compact"
+                    - "--hook-config=--delegate-chdir"
+                    - "--args=--config=__GIT_WORKING_DIR__/.tflint.hcl"
+                    - "--args=--fix" # autofix
+                - id: terraform_docs
+                  skip_in_make: true
+                  args:
+                    - --hook-config=--path-to-file=README.md
+                    - --hook-config=--add-to-existing-file=true
+                    - --hook-config=--create-file-if-not-exist=true
+            - repo: https://github.com/Yelp/detect-secrets
+              rev: v1.4.0
+              hooks:
+                - id: detect-secrets
+                  skip_in_make: true
+                  args: ["--baseline", ".secrets-baseline"]
+            - repo: local
+              hooks:
+                - id: my-local-hook
+                  skip_in_make: true
+                  name: Local hook
+                  entry: scripts/pre-commit-hooks/ my-local-hook.sh
+                  language: script
+                  files: ^terraform/modules/.*\.tf$

@@ -188,6 +188,21 @@ func (p *BlessProvider) Validate(component string) error {
 	return errs
 }
 
+func (p *GenericProvider) Validate(name string, component string) error {
+	var errs *multierror.Error
+	if p == nil {
+		return nil // nothing to do
+	}
+
+	if len(p.Source) == 0 {
+		errs = multierror.Append(errs, fmt.Errorf("required provider %q requires non-empty source in %s", name, component))
+	}
+	if p.Version == nil || len(*p.Version) == 0 {
+		errs = multierror.Append(errs, fmt.Errorf("required provider %q requires version in %s", name, component))
+	}
+	return errs
+}
+
 func (p *SnowflakeProvider) Validate(component string) error {
 	var errs *multierror.Error
 	if p == nil {
@@ -248,6 +263,18 @@ func (c *Config) ValidateBlessProviders() error {
 		p := ResolveBlessProvider(comms...)
 		if err := p.Validate(component); err != nil {
 			errs = multierror.Append(errs, err)
+		}
+	})
+	return errs
+}
+
+func (c *Config) ValidateGenericProviders() error {
+	var errs *multierror.Error
+	c.WalkComponents(func(component string, comms ...Common) {
+		for name, p := range ResolveRequiredProviders(comms...) {
+			if err := p.Validate(name, component); err != nil {
+				errs = multierror.Append(errs, err)
+			}
 		}
 	})
 	return errs

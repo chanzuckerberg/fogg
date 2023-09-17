@@ -15,6 +15,8 @@ import (
 //
 //go:embed templates/.github/*
 //go:embed templates/atlantis/*
+//go:embed templates/pre-commit/*
+//go:embed templates/pre-commit/root/.pre-commit-config.yaml.tmpl
 //go:embed templates/circleci/.circleci/*
 //go:embed templates/common/*
 //go:embed templates/component/*
@@ -24,7 +26,6 @@ import (
 //go:embed templates/module-invocation/*
 //go:embed templates/repo
 //go:embed templates/repo/scripts/*
-//go:embed templates/repo/.tflint.hcl
 //go:embed templates/repo/.fogg-version.tmpl
 //go:embed templates/repo/.gitattributes
 //go:embed templates/repo/.gitignore
@@ -46,6 +47,8 @@ type T struct {
 	CircleCI         fs.FS
 	GitHubActionsCI  fs.FS
 	Atlantis         fs.FS
+	PreCommitRoot    fs.FS
+	PreCommitActions fs.FS
 	TFE              fs.FS
 }
 
@@ -72,5 +75,7 @@ var Templates = &T{
 	CircleCI:         mustFSSub("templates/circleci"),
 	GitHubActionsCI:  mustFSSub("templates/.github"),
 	Atlantis:         mustFSSub("templates/atlantis"),
+	PreCommitRoot:    mustFSSub("templates/pre-commit/root"),
+	PreCommitActions: mustFSSub("templates/pre-commit/actions"),
 	TFE:              mustFSSub("templates/tfe"),
 }

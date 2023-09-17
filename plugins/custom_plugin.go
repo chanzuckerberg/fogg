@@ -227,11 +227,18 @@ func (cp *CustomPlugin) processTar(fs afero.Fs, reader io.Reader, targetDir stri
 
 		switch header.Typeflag {
 		case tar.TypeDir: // if its a dir and it doesn't exist create it
+			logrus.Debugf("processing tar - dir: %s", target)
 			err := fs.MkdirAll(target, 0755)
 			if err != nil {
 				return errs.WrapUserf(err, "tar: could not create directory %s", target)
 			}
 		case tar.TypeReg: // if it is a file create it, preserving the file mode
+			logrus.Debugf("processing tar - file: %s", target)
+			dir := filepath.Dir(target)
+			err := fs.MkdirAll(dir, 0755)
+			if err != nil {
+				return errs.WrapUserf(err, "tar: could not create directory %s", target)
+			}
 			destFile, err := fs.OpenFile(target, os.O_RDWR|os.O_CREATE|os.O_TRUNC, os.FileMode(header.Mode))
 			if err != nil {
 				return errs.WrapUserf(err, "tar: could not open destination file for %s", target)

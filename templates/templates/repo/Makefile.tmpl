@@ -146,4 +146,15 @@ clean-global: ## clean in terraform/global
 	$(MAKE) -C terraform/global clean || exit $$?
 .PHONY: clean-global
 
+{{- if .GitHubActionsCI }}
+{{- if and .GitHubActionsCI.PreCommit .GitHubActionsCI.PreCommit.Enabled }}
+{{- $skip := "" }}
+{{- if not (eq (len .GitHubActionsCI.PreCommit.HooksSkippedInMake) 0) }}
+	{{- $skip = print "SKIP=" (.GitHubActionsCI.PreCommit.HooksSkippedInMake | join ",") }}
+{{- end }}
+
+pre-commit: ## fast pre-commit test
+	-{{ $skip }} pre-commit run --all-files
+{{- end }}
+{{- end }}
 {{ template "make_help"  }}

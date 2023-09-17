@@ -75,14 +75,15 @@ type TFE struct {
 }
 
 type Common struct {
-	Backend          *Backend          `yaml:"backend,omitempty"`
-	ExtraVars        map[string]string `yaml:"extra_vars,omitempty"`
-	Owner            *string           `yaml:"owner,omitempty"`
-	Project          *string           `yaml:"project,omitempty"`
-	Providers        *Providers        `yaml:"providers,omitempty"`
-	DependsOn        *DependsOn        `yaml:"depends_on,omitempty"`
-	TerraformVersion *string           `yaml:"terraform_version,omitempty"`
-	Tools            *Tools            `yaml:"tools,omitempty"`
+	Backend           *Backend                    `yaml:"backend,omitempty"`
+	ExtraVars         map[string]string           `yaml:"extra_vars,omitempty"`
+	Owner             *string                     `yaml:"owner,omitempty"`
+	Project           *string                     `yaml:"project,omitempty"`
+	Providers         *Providers                  `yaml:"providers,omitempty"`
+	RequiredProviders map[string]*GenericProvider `yaml:"required_providers,omitempty"`
+	DependsOn         *DependsOn                  `yaml:"depends_on,omitempty"`
+	TerraformVersion  *string                     `yaml:"terraform_version,omitempty"`
+	Tools             *Tools                      `yaml:"tools,omitempty"`
 	// Store output for Integrations (only ssm supported atm)
 	IntegrationRegistry *string `yaml:"integration_registry,omitempty"`
 }
@@ -219,11 +220,10 @@ type AssertProvider struct {
 }
 
 // CommonProvider encapsulates common properties across providers
-// TODO refactor other providers to use CommonProvider inline
 type CommonProvider struct {
-	CustomProvider *bool   `yaml:"custom_provider,omitempty"`
-	Enabled        *bool   `yaml:"enabled,omitempty"`
-	Version        *string `yaml:"version,omitempty"`
+	CustomProvider *bool   `yaml:"custom_provider,omitempty" json:"custom_provider,omitempty"`
+	Enabled        *bool   `yaml:"enabled,omitempty" json:"enabled,omitempty"`
+	Version        *string `yaml:"version,omitempty" json:"version,omitempty"`
 }
 
 // Auth0Provider is the terraform provider for the Auth0 service.
@@ -339,6 +339,13 @@ type KubernetesProvider struct {
 	CommonProvider `yaml:",inline"`
 }
 
+// GenericProvider is a generic terraform provider.
+type GenericProvider struct {
+	CommonProvider `yaml:",inline" json:",inline"`
+	Source         string         `yaml:"source" json:"source"`
+	Config         map[string]any `yaml:"config" json:"config"`
+}
+
 // Backend is used to configure a terraform backend
 type Backend struct {
 	Kind *string `yaml:"kind,omitempty" validate:"omitempty,oneof=s3 remote"`
@@ -380,6 +387,58 @@ type CommonCI struct {
 	Buildevents    *bool                       `yaml:"buildevents,omitempty"`
 	Providers      map[string]CIProviderConfig `yaml:"providers,omitempty"`
 	Env            map[string]string           `yaml:"env,omitempty"`
+	PreCommit      *PreCommitSetup             `yaml:"pre_commit,omitempty"`
+}
+
+type PreCommitSetup struct {
+	Enabled bool    `yaml:"enabled"`
+	Version *string `yaml:"version,omitempty"`
+	// Pip requirements for better CI cache usage
+	PipCache map[string]string `yaml:"pip_cache,omitempty"`
+	// Additional CI steps for pre-commit setup
+	GitHubActionSteps []GitHubActionStep `yaml:"github_actions_setup,omitempty"`
+	// Extra Args to pass into pre-commit call
+	ExtraArgs []string `yaml:"extra_args,omitempty"`
+	// Simplified pre-commit config (with custom fields such as `skip_in_make`)
+	Config *PreCommitConfig `yaml:"config,omitempty"`
+}
+
+type GitHubActionStep struct {
+	Name *string           `yaml:"name,omitempty"`
+	Uses *string           `yaml:"uses,omitempty"`
+	With map[string]string `yaml:"with,omitempty"`
+	Run  *string           `yaml:"run,omitempty"`
+}
+
+type PreCommitConfig struct {
+	Files    string `yaml:"files,omitempty"`
+	Exclude  string `yaml:"exclude,omitempty"`
+	FailFast *bool  `yaml:"fail_fast,omitempty"`
+	Repos    []Repo `yaml:"repos"`
+}
+
+type Repo struct {
+	Repo  string  `yaml:"repo"`
+	Rev   *string `yaml:"rev,omitempty"`
+	Hooks []Hook  `yaml:"hooks"`
+}
+
+type Hook struct {
+	ID                     string   `yaml:"id"`
+	Name                   *string  `yaml:"name,omitempty"`
+	Alias                  *string  `yaml:"alias,omitempty"`
+	Args                   []string `yaml:"args,omitempty"`
+	Exclude                *string  `yaml:"exclude,omitempty"`
+	Files                  *string  `yaml:"files,omitempty"`
+	AdditionalDependencies []string `yaml:"additional_dependencies,omitempty"`
+	RequireSerial          *bool    `yaml:"require_serial,omitempty"`
+	// required for repo = "local" hooks
+	Entry    *string `yaml:"entry,omitempty"`
+	Language *string `yaml:"language,omitempty"`
+	// skip in make target (for quick pre-commit autofix after fogg apply)
+	// this field is set to nil to avoid pre-commit warnings on invalid field
+	// see:plan/ci.go -> buildGithubActionsPreCommitConfig
+	SkipInMake *bool `yaml:"skip_in_make,omitempty"`
 }
 
 type DependsOn struct {

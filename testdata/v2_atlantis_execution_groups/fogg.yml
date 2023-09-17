@@ -1,0 +1,56 @@
+defaults:
+  backend:
+    bucket: buck
+    profile: profile
+    region: us-west-2
+  extra_vars:
+    foo: bar1
+  owner: foo@example.com
+  project: proj
+  tools:
+    atlantis:
+      enabled: true
+      version: 3
+      automerge: true
+      parallel_plan: true
+      parallel_apply: true
+  providers:
+    aws:
+      account_id: 00456
+      profile: profile
+      region: us-west-2
+      version: 0.12.0
+  terraform_version: 0.100.0
+envs:
+  test:
+    components:
+      network:
+        modules:
+          - name: "network"
+            source: "terraform-aws-modules/vpc/aws"
+            version: "5.1.2"
+            variables:
+              - name
+              - cidr
+              - azs
+              - private_subnets
+              - public_subnets
+              - tags
+          - source: "terraform/modules/my_module"
+      cluster-blue:
+        modules:
+          - name: "cluster-blue"
+            source: "terraform-aws-modules/eks/aws"
+            version: "19.16.0"
+            variables: []
+      cluster-blue:
+        depends_on:
+        - network
+        modules:
+          - name: "cluster-blue"
+            source: "terraform-aws-modules/eks/aws"
+            version: "19.16.0"
+            variables: []
+modules:
+  my_module: {}
+version: 2
