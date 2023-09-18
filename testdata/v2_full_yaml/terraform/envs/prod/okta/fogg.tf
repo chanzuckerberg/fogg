@@ -167,7 +167,7 @@ variable "tags" {
     owner                  = "foo@example.com"
     terraformLastApplyTime = timestamp()
     terraformWorkspaceDir  = "/terraform/envs/prod/okta"
-    gitRepository          = "git@github.com:chanzuckerberg/fogg"
+    gitRepository          = "https://github.com/chanzuckerberg/fogg"
     gitSHA                 = data.external.git_sha.result.sha
     gitUser                = data.external.git_user.result.name
     gitEmail               = data.external.git_email.result.email
