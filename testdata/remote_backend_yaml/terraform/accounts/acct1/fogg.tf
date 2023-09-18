@@ -92,6 +92,30 @@ variable "owner" {
   type    = string
   default = "foo@example.com"
 }
+data "external" "git_sha" {
+  program = [
+    "make",
+    "soft_git_log",
+  ]
+}
+data "external" "git_user" {
+  program = [
+    "make",
+    "soft_git_user"
+  ]
+}
+data "external" "git_email" {
+  program = [
+    "make",
+    "soft_git_email"
+  ]
+}
+data "external" "git_branch" {
+  program = [
+    "make",
+    "soft_git_branch"
+  ]
+}
 # tflint-ignore: terraform_unused_declarations
 variable "tags" {
   type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
@@ -103,6 +127,10 @@ variable "tags" {
     terraformLastApplyTime = timestamp()
     terraformWorkspaceDir  = "/terraform/accounts/acct1"
     gitRepository          = "https://github.com/chanzuckerberg/fogg"
+    gitSHA                 = data.external.git_sha.result.sha
+    gitUser                = data.external.git_user.result.name
+    gitEmail               = data.external.git_email.result.email
+    gitBranch              = data.external.git_branch.result.branch
     managedBy              = "terraform"
   }
 }
