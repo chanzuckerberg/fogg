@@ -116,7 +116,7 @@ variable "tags" {
     owner                  = "foo@example.com"
     terraformLastApplyTime = timestamp()
     terraformWorkspaceDir  = "/terraform/accounts/foo"
-    gitRepository          = "git@github.com:chanzuckerberg/fogg"
+    gitRepository          = "https://github.com/chanzuckerberg/fogg"
     managedBy              = "terraform"
   }
 }
