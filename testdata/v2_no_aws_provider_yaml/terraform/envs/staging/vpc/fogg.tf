@@ -111,6 +111,12 @@ data "external" "git_branch" {
     "soft_git_branch"
   ]
 }
+data "external" "git_authors" {
+  program = [
+    "make",
+    "soft_git_authors"
+  ]
+}
 # tflint-ignore: terraform_unused_declarations
 variable "tags" {
   type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
@@ -121,11 +127,12 @@ variable "tags" {
     owner                  = "foo@example.com"
     terraformLastApplyTime = timestamp()
     terraformWorkspaceDir  = "/terraform/envs/staging/vpc"
-    gitRepository          = "https://github.com/chanzuckerberg/fogg"
+    gitRepository          = "git@github.com:chanzuckerberg/fogg"
     gitSHA                 = data.external.git_sha.result.sha
     gitUser                = data.external.git_user.result.name
     gitEmail               = data.external.git_email.result.email
     gitBranch              = data.external.git_branch.result.branch
+    gitAuthors             = data.external.git_authors.result.authors
     managedBy              = "terraform"
   }
 }
