@@ -148,6 +148,10 @@ variable "tags" {
     terraformLastApplyTime = timestamp()
     terraformWorkspaceDir  = "/terraform/envs/bar/bam"
     gitRepository          = "https://github.com/chanzuckerberg/fogg"
+    gitSHA                 = data.external.git_sha.result.sha
+    gitUser                = data.external.git_user.result.name
+    gitEmail               = data.external.git_email.result.email
+    gitBranch              = data.external.git_branch.result.branch
     managedBy              = "terraform"
   }
 }
