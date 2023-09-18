@@ -125,6 +125,12 @@ data "external" "git_email" {
     "soft_git_email"
   ]
 }
+data "external" "git_branch" {
+  program = [
+    "make",
+    "soft_git_branch"
+  ]
+}
 # tflint-ignore: terraform_unused_declarations
 variable "tags" {
   type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
@@ -139,6 +145,7 @@ variable "tags" {
     gitSHA                 = data.external.git_sha.result.sha
     gitUser                = data.external.git_user.result.name
     gitEmail               = data.external.git_email.result.email
+    gitBranch              = data.external.git_branch.result.branch
     managedBy              = "terraform"
   }
 }

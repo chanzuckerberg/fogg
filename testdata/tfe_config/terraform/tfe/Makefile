@@ -22,3 +22,5 @@ soft_git_user:
 	@echo "{\"name\": \"$$(git config --global --get user.name)\"}" || echo "{ \"user\": \"unknown\" }"
 soft_git_email:
 	@echo "{\"email\": \"$$(git config --global --get user.email)\"}" || echo "{ \"email\": \"unknown\" }"
+soft_git_branch:
+	@echo "{\"branch\": \"$$(git rev-parse --abbrev-ref HEAD)\"}" || echo "{ \"branch\": \"unknown\" }"
