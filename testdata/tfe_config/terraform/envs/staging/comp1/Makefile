@@ -22,3 +22,13 @@ help: ## display help for this makefile
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 .PHONY: help
 
+
+SHELL := bash
+soft_git_log:
+	@git log --pretty=format:"{ \"sha\": \"%H\" }" -1 HEAD || echo "{ \"sha\": \"unknown\" }"
+soft_git_user:
+	@echo "{\"name\": \"$$(git config --global --get user.name)\"}" || echo "{ \"user\": \"unknown\" }"
+soft_git_email:
+	@echo "{\"email\": \"$$(git config --global --get user.email)\"}" || echo "{ \"email\": \"unknown\" }"
+soft_git_branch:
+	@echo "{\"branch\": \"$$(git rev-parse --abbrev-ref HEAD)\"}" || echo "{ \"branch\": \"unknown\" }"
