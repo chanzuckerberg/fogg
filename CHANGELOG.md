@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.90.0](https://github.com/chanzuckerberg/fogg/compare/v0.89.5...v0.90.0) (2023-09-18)
+
+
+### Features
+
+* (CCIE-1585) Add more detailed ownership tags to fogg components ([#918](https://github.com/chanzuckerberg/fogg/issues/918)) ([6832494](https://github.com/chanzuckerberg/fogg/commit/6832494cbaf2030639e735702c89bb21ea3f1b23))
+
 ### [0.89.5](https://github.com/chanzuckerberg/fogg/compare/v0.89.4...v0.89.5) (2023-09-12)
 
 
