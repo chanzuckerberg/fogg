@@ -33,4 +33,4 @@ soft_git_email:
 soft_git_branch:
 	@echo "{\"branch\": \"$$(git rev-parse --abbrev-ref HEAD)\"}" || echo "{ \"branch\": \"unknown\" }"
 soft_git_authors:
-	@echo "{\"authors\": \"$$(git log --format='%an' -- . | grep "\[bot]\" | head -10)\"}" || echo "{ \"authors\": \"unknown\" }"
+	@echo "{\"authors\": \"$$(git log --format=\"%an\" -- . | grep -v "[bot]" | head -10)\"}" || echo "{ \"authors\": \"unknown\" }"
