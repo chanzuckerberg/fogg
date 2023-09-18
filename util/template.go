@@ -39,11 +39,17 @@ func avail(name string, data interface{}) bool {
 }
 
 // OpenTemplate will read `source` for a template, parse, configure and return a template.Template
-func OpenTemplate(label string, source io.Reader, templates fs.FS) (*template.Template, error) {
+func OpenTemplate(label string, source io.Reader, templates fs.FS, optionalFuncMaps ...template.FuncMap) (*template.Template, error) {
 	// TODO we should probably cache these rather than open and parse them for every apply
 	funcs := sprig.TxtFuncMap()
 	funcs["dict"] = dict
 	funcs["avail"] = avail
+
+	for _, fm := range optionalFuncMaps {
+		for k, v := range fm {
+			funcs[k] = v
+		}
+	}
 
 	s, err := io.ReadAll(source)
 	if err != nil {
