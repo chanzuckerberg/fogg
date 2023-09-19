@@ -8,6 +8,17 @@ provider "aws" {
     role_arn     = "{{ .RoleArn }}"
   }
   {{ end }}
+  default_tags {
+    tags = {
+      TFC_RUN_ID                               = var.TFC_RUN_ID
+      TFC_WORKSPACE_NAME                       = var.TFC_WORKSPACE_NAME
+      TFC_WORKSPACE_SLUG                       = var.TFC_WORKSPACE_SLUG
+      TFC_CONFIGURATION_VERSION_GIT_BRANCH     = var.TFC_CONFIGURATION_VERSION_GIT_BRANCH
+      TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA = var.TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA
+      TFC_CONFIGURATION_VERSION_GIT_TAG        = var.TFC_CONFIGURATION_VERSION_GIT_TAG
+      TFC_PROJECT_NAME                         = var.TFC_PROJECT_NAME
+    }
+  }
   allowed_account_ids = ["{{ .AccountID }}"]
 }
 {{ end }}
