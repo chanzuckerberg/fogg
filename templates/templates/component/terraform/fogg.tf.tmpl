@@ -34,7 +34,6 @@ variable "TFC_PROJECT_NAME" {
   {{ range $p := .ProviderConfiguration.AWSAdditionalProviders }}
     {{ template "aws_provider" $p}}
   {{ end }}
-
 {{ end }}
 
 {{ if .ProviderConfiguration.Snowflake }}{{ if not .ProviderConfiguration.Snowflake.CustomProvider }}
@@ -147,6 +146,8 @@ variable "owner" {
 }
 
 # tflint-ignore: terraform_unused_declarations
+# DEPRECATED: this field is deprecated in favor or 
+# AWS provider default tags.
 variable "tags" {
   type =  object({project: string, env: string, service: string, owner: string, managedBy: string})
   default = {

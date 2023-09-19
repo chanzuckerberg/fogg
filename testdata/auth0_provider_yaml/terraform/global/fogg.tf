@@ -129,6 +129,8 @@ variable "owner" {
   default = "foo@example.com"
 }
 # tflint-ignore: terraform_unused_declarations
+# DEPRECATED: this field is deprecated in favor or 
+# AWS provider default tags.
 variable "tags" {
   type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
   default = {

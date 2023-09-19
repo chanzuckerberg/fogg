@@ -37,6 +37,8 @@ provider "aws" {
     role_arn = "arn:aws:iam::00456:role/foo"
   }
 
+  # this is the new way of injecting AWS tags to all AWS resources
+  # var.tags should be considered deprecated
   default_tags {
     tags = {
       TFC_RUN_ID                               = var.TFC_RUN_ID
@@ -46,6 +48,11 @@ provider "aws" {
       TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA = var.TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA
       TFC_CONFIGURATION_VERSION_GIT_TAG        = var.TFC_CONFIGURATION_VERSION_GIT_TAG
       TFC_PROJECT_NAME                         = var.TFC_PROJECT_NAME
+      project                                  = var.tags.project
+      env                                      = var.tags.env
+      service                                  = var.tags.service
+      owner                                    = var.tags.owner
+      managedBy                                = "terraform"
     }
   }
   allowed_account_ids = ["00456"]
@@ -62,6 +69,8 @@ provider "aws" {
     role_arn = "arn:aws:iam::different_account:role/foo"
   }
 
+  # this is the new way of injecting AWS tags to all AWS resources
+  # var.tags should be considered deprecated
   default_tags {
     tags = {
       TFC_RUN_ID                               = var.TFC_RUN_ID
@@ -71,6 +80,11 @@ provider "aws" {
       TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA = var.TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA
       TFC_CONFIGURATION_VERSION_GIT_TAG        = var.TFC_CONFIGURATION_VERSION_GIT_TAG
       TFC_PROJECT_NAME                         = var.TFC_PROJECT_NAME
+      project                                  = var.tags.project
+      env                                      = var.tags.env
+      service                                  = var.tags.service
+      owner                                    = var.tags.owner
+      managedBy                                = "terraform"
     }
   }
   allowed_account_ids = ["different_account"]
@@ -86,6 +100,8 @@ provider "aws" {
     role_arn = "arn:aws:iam::different_account:role/foo"
   }
 
+  # this is the new way of injecting AWS tags to all AWS resources
+  # var.tags should be considered deprecated
   default_tags {
     tags = {
       TFC_RUN_ID                               = var.TFC_RUN_ID
@@ -95,6 +111,11 @@ provider "aws" {
       TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA = var.TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA
       TFC_CONFIGURATION_VERSION_GIT_TAG        = var.TFC_CONFIGURATION_VERSION_GIT_TAG
       TFC_PROJECT_NAME                         = var.TFC_PROJECT_NAME
+      project                                  = var.tags.project
+      env                                      = var.tags.env
+      service                                  = var.tags.service
+      owner                                    = var.tags.owner
+      managedBy                                = "terraform"
     }
   }
   allowed_account_ids = ["different_account"]
@@ -110,6 +131,8 @@ provider "aws" {
     role_arn = "arn:aws:iam::different_account:role/foo"
   }
 
+  # this is the new way of injecting AWS tags to all AWS resources
+  # var.tags should be considered deprecated
   default_tags {
     tags = {
       TFC_RUN_ID                               = var.TFC_RUN_ID
@@ -119,6 +142,11 @@ provider "aws" {
       TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA = var.TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA
       TFC_CONFIGURATION_VERSION_GIT_TAG        = var.TFC_CONFIGURATION_VERSION_GIT_TAG
       TFC_PROJECT_NAME                         = var.TFC_PROJECT_NAME
+      project                                  = var.tags.project
+      env                                      = var.tags.env
+      service                                  = var.tags.service
+      owner                                    = var.tags.owner
+      managedBy                                = "terraform"
     }
   }
   allowed_account_ids = ["different_account"]
@@ -134,6 +162,8 @@ provider "aws" {
     role_arn = "arn:aws:iam::another_different_account:role/foo"
   }
 
+  # this is the new way of injecting AWS tags to all AWS resources
+  # var.tags should be considered deprecated
   default_tags {
     tags = {
       TFC_RUN_ID                               = var.TFC_RUN_ID
@@ -143,6 +173,11 @@ provider "aws" {
       TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA = var.TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA
       TFC_CONFIGURATION_VERSION_GIT_TAG        = var.TFC_CONFIGURATION_VERSION_GIT_TAG
       TFC_PROJECT_NAME                         = var.TFC_PROJECT_NAME
+      project                                  = var.tags.project
+      env                                      = var.tags.env
+      service                                  = var.tags.service
+      owner                                    = var.tags.owner
+      managedBy                                = "terraform"
     }
   }
   allowed_account_ids = ["another_different_account"]
@@ -158,6 +193,8 @@ provider "aws" {
     role_arn = "arn:aws:iam::another_different_account:role/foo"
   }
 
+  # this is the new way of injecting AWS tags to all AWS resources
+  # var.tags should be considered deprecated
   default_tags {
     tags = {
       TFC_RUN_ID                               = var.TFC_RUN_ID
@@ -167,6 +204,11 @@ provider "aws" {
       TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA = var.TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA
       TFC_CONFIGURATION_VERSION_GIT_TAG        = var.TFC_CONFIGURATION_VERSION_GIT_TAG
       TFC_PROJECT_NAME                         = var.TFC_PROJECT_NAME
+      project                                  = var.tags.project
+      env                                      = var.tags.env
+      service                                  = var.tags.service
+      owner                                    = var.tags.owner
+      managedBy                                = "terraform"
     }
   }
   allowed_account_ids = ["another_different_account"]
@@ -182,6 +224,8 @@ provider "aws" {
     role_arn = "arn:aws:iam::789:role/different_role"
   }
 
+  # this is the new way of injecting AWS tags to all AWS resources
+  # var.tags should be considered deprecated
   default_tags {
     tags = {
       TFC_RUN_ID                               = var.TFC_RUN_ID
@@ -191,6 +235,11 @@ provider "aws" {
       TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA = var.TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA
       TFC_CONFIGURATION_VERSION_GIT_TAG        = var.TFC_CONFIGURATION_VERSION_GIT_TAG
       TFC_PROJECT_NAME                         = var.TFC_PROJECT_NAME
+      project                                  = var.tags.project
+      env                                      = var.tags.env
+      service                                  = var.tags.service
+      owner                                    = var.tags.owner
+      managedBy                                = "terraform"
     }
   }
   allowed_account_ids = ["789"]
@@ -206,6 +255,8 @@ provider "aws" {
     role_arn = "arn:aws:iam::789:role/different_role"
   }
 
+  # this is the new way of injecting AWS tags to all AWS resources
+  # var.tags should be considered deprecated
   default_tags {
     tags = {
       TFC_RUN_ID                               = var.TFC_RUN_ID
@@ -215,6 +266,11 @@ provider "aws" {
       TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA = var.TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA
       TFC_CONFIGURATION_VERSION_GIT_TAG        = var.TFC_CONFIGURATION_VERSION_GIT_TAG
       TFC_PROJECT_NAME                         = var.TFC_PROJECT_NAME
+      project                                  = var.tags.project
+      env                                      = var.tags.env
+      service                                  = var.tags.service
+      owner                                    = var.tags.owner
+      managedBy                                = "terraform"
     }
   }
   allowed_account_ids = ["789"]
@@ -230,6 +286,8 @@ provider "aws" {
     role_arn = "arn:aws:iam::789:role/different_role"
   }
 
+  # this is the new way of injecting AWS tags to all AWS resources
+  # var.tags should be considered deprecated
   default_tags {
     tags = {
       TFC_RUN_ID                               = var.TFC_RUN_ID
@@ -239,6 +297,11 @@ provider "aws" {
       TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA = var.TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA
       TFC_CONFIGURATION_VERSION_GIT_TAG        = var.TFC_CONFIGURATION_VERSION_GIT_TAG
       TFC_PROJECT_NAME                         = var.TFC_PROJECT_NAME
+      project                                  = var.tags.project
+      env                                      = var.tags.env
+      service                                  = var.tags.service
+      owner                                    = var.tags.owner
+      managedBy                                = "terraform"
     }
   }
   allowed_account_ids = ["789"]
@@ -254,6 +317,8 @@ provider "aws" {
     role_arn = "arn:aws:iam::00456:role/foo"
   }
 
+  # this is the new way of injecting AWS tags to all AWS resources
+  # var.tags should be considered deprecated
   default_tags {
     tags = {
       TFC_RUN_ID                               = var.TFC_RUN_ID
@@ -263,6 +328,11 @@ provider "aws" {
       TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA = var.TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA
       TFC_CONFIGURATION_VERSION_GIT_TAG        = var.TFC_CONFIGURATION_VERSION_GIT_TAG
       TFC_PROJECT_NAME                         = var.TFC_PROJECT_NAME
+      project                                  = var.tags.project
+      env                                      = var.tags.env
+      service                                  = var.tags.service
+      owner                                    = var.tags.owner
+      managedBy                                = "terraform"
     }
   }
   allowed_account_ids = ["00456"]
@@ -278,6 +348,8 @@ provider "aws" {
     role_arn = "arn:aws:iam::00456:role/foo"
   }
 
+  # this is the new way of injecting AWS tags to all AWS resources
+  # var.tags should be considered deprecated
   default_tags {
     tags = {
       TFC_RUN_ID                               = var.TFC_RUN_ID
@@ -287,6 +359,11 @@ provider "aws" {
       TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA = var.TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA
       TFC_CONFIGURATION_VERSION_GIT_TAG        = var.TFC_CONFIGURATION_VERSION_GIT_TAG
       TFC_PROJECT_NAME                         = var.TFC_PROJECT_NAME
+      project                                  = var.tags.project
+      env                                      = var.tags.env
+      service                                  = var.tags.service
+      owner                                    = var.tags.owner
+      managedBy                                = "terraform"
     }
   }
   allowed_account_ids = ["00456"]
@@ -411,6 +488,8 @@ variable "owner" {
   default = "foo@example.com"
 }
 # tflint-ignore: terraform_unused_declarations
+# DEPRECATED: this field is deprecated in favor or 
+# AWS provider default tags.
 variable "tags" {
   type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
   default = {
