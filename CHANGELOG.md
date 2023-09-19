@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.90.1](https://github.com/chanzuckerberg/fogg/compare/v0.90.0...v0.90.1) (2023-09-19)
+
+
+### BugFixes
+
+* version bump re-release ([#939](https://github.com/chanzuckerberg/fogg/issues/939)) ([2d6b782](https://github.com/chanzuckerberg/fogg/commit/2d6b78249fedd1a2736fd572e62dd740c734492a))
+
 ## [0.90.0](https://github.com/chanzuckerberg/fogg/compare/v0.89.5...v0.90.0) (2023-09-18)
 
 
