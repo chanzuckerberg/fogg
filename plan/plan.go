@@ -46,7 +46,7 @@ type ComponentCommon struct {
 	Accounts              map[string]*json.Number    `yaml:"all_accounts"`
 	Backend               Backend                    `yaml:"backend"`
 	ComponentBackends     map[string]Backend         `yaml:"comonent_backends"`
-	Env                   string                     `yaml:"env"`
+	Env                   string                     ` yaml:"env"`
 	ExtraVars             map[string]string          `yaml:"extra_vars"`
 	Name                  string                     `yaml:"name"`
 	Owner                 string                     `yaml:"owner"`
