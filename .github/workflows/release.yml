@@ -6,7 +6,7 @@ on:
 name: release-please
 jobs:
   release-please:
-    runs-on: [self-hosted, ARM64, linux]
+    runs-on: self-hosted
     steps:
       - uses: actions/github-script@v5
         id: configure-changelog
@@ -38,17 +38,16 @@ jobs:
           changelog-types: ${{ steps.configure-changelog.outputs.result }}
           token: ${{ steps.generate_token.outputs.token }}
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
         # we need to fetch all history and tags
         # so we build the proper version
         with:
           fetch-depth: 0
         if: ${{ steps.release.outputs.release_created }}
 
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v3
         with:
           go-version-file: go.mod
-          cache: true
         if: ${{ steps.release.outputs.release_created }}
 
       - name: Run GoReleaser

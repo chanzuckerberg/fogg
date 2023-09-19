@@ -8,12 +8,10 @@ import (
 	"io/fs"
 	"net/url"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"sort"
 	"strings"
-	"text/template"
 
 	"github.com/pkg/errors"
 	"golang.org/x/exp/slices"
@@ -523,24 +521,10 @@ func removeExtension(path string) string {
 	return strings.TrimSuffix(path, filepath.Ext(path))
 }
 
-func getGitRemoteOriginURL(cwd ...string) string {
-	dir := "."
-	if len(cwd) > 0 {
-		dir = cwd[0]
-	}
-	cmd := exec.Command("git", "remote", "get-url", "--push", "origin")
-	cmd.Dir = dir
-	out, err := cmd.Output()
-	if err != nil {
-		logrus.Warnf("unable to get git output: %s", err)
-		return ""
-	}
-	return strings.TrimSpace(string(out))
-}
-
 func applyTemplate(sourceFile io.Reader, commonTemplates fs.FS, dest afero.Fs, path string, overrides interface{}) error {
-	dir := filepath.Dir(path)
-	err := dest.MkdirAll(dir, 0775)
+	dir, _ := filepath.Split(path)
+	ospath := filepath.FromSlash(dir)
+	err := dest.MkdirAll(ospath, 0775)
 	if err != nil {
 		return errs.WrapUserf(err, "couldn't create %s directory", dir)
 	}
@@ -550,14 +534,7 @@ func applyTemplate(sourceFile io.Reader, commonTemplates fs.FS, dest afero.Fs, p
 	if err != nil {
 		return errs.WrapUser(err, "unable to open file")
 	}
-	t, e := util.OpenTemplate(path, sourceFile, commonTemplates, []template.FuncMap{
-		{
-			"cwd": func() string {
-				return filepath.Dir(writer.Name())
-			},
-			"git_origin": getGitRemoteOriginURL,
-		},
-	}...)
+	t, e := util.OpenTemplate(path, sourceFile, commonTemplates)
 	if e != nil {
 		return e
 	}

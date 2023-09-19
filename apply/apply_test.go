@@ -29,25 +29,6 @@ func init() {
 	logrus.SetFormatter(formatter)
 }
 
-type testGitRemote struct {
-	path            string
-	expectedRemotes []string
-}
-
-func TestGetGitRemoteOriginURL(t *testing.T) {
-	r := require.New(t)
-	sshRemote := "git@github.com:chanzuckerberg/fogg"
-	httpsRemote := "https://github.com/chanzuckerberg/fogg"
-	acceptableRemotes := []string{sshRemote, httpsRemote}
-	tests := []testGitRemote{
-		{path: ".", expectedRemotes: acceptableRemotes},
-	}
-	for _, test := range tests {
-		remote := getGitRemoteOriginURL(test.path)
-		r.Contains(test.expectedRemotes, remote)
-	}
-}
-
 func randomString(n int) string {
 	var letter = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 
