@@ -6,7 +6,7 @@ on:
 name: release-please
 jobs:
   release-please:
-    runs-on: self-hosted
+    runs-on: [self-hosted, ARM64, linux]
     steps:
       - uses: actions/github-script@v5
         id: configure-changelog

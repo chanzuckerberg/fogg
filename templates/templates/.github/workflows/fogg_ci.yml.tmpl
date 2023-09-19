@@ -12,9 +12,9 @@ concurrency:
 jobs:
   fogg-apply:
     {{ if (eq (len $githubActionsCI.RunsOn) 0) -}}
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, ARM64, linux]
     {{ else -}}
-    runs-on: [{{ range $index, $element := $githubActionsCI.RunsOn -}}
+    runs-on: [self-hosted, ARM64, linux]
         {{if $index}},{{end -}}
         {{$element -}}
     {{end -}}]
@@ -57,9 +57,9 @@ jobs:
             commit from fogg_ci -- ran fogg apply and pushed
   find-changed-dirs:
     {{ if (eq (len $githubActionsCI.RunsOn) 0) -}}
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, ARM64, linux]
     {{ else -}}
-    runs-on: [{{ range $index, $element := $githubActionsCI.RunsOn -}}
+    runs-on: [self-hosted, ARM64, linux]
         {{if $index}},{{end -}}
         {{$element -}}
     {{end -}}]
@@ -94,9 +94,9 @@ jobs:
             core.setOutput("allChanges", allChanges)
   lint-changed-dirs:
     {{ if (eq (len $githubActionsCI.RunsOn) 0) -}}
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, ARM64, linux]
     {{ else -}}
-    runs-on: [{{ range $index, $element := $githubActionsCI.RunsOn -}}
+    runs-on: [self-hosted, ARM64, linux]
         {{if $index}},{{end -}}
         {{$element -}}
     {{end -}}]
