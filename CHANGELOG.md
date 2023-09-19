@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.91.0](https://github.com/chanzuckerberg/fogg/compare/v0.90.1...v0.91.0) (2023-09-19)
+
+
+### Features
+
+* add default tags to AWS provider ([#941](https://github.com/chanzuckerberg/fogg/issues/941)) ([9d6b8d2](https://github.com/chanzuckerberg/fogg/commit/9d6b8d21fbeb7e8e61e75f46a0f15ea9806d515f))
+
 ### [0.90.1](https://github.com/chanzuckerberg/fogg/compare/v0.90.0...v0.90.1) (2023-09-19)
 
 
