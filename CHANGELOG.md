@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.91.0](https://github.com/chanzuckerberg/fogg/compare/v0.90.1...v0.91.0) (2023-09-19)
+
+
+### Features
+
+* add default tags to AWS provider ([#941](https://github.com/chanzuckerberg/fogg/issues/941)) ([9d6b8d2](https://github.com/chanzuckerberg/fogg/commit/9d6b8d21fbeb7e8e61e75f46a0f15ea9806d515f))
+
+### [0.90.1](https://github.com/chanzuckerberg/fogg/compare/v0.90.0...v0.90.1) (2023-09-19)
+
+
+### BugFixes
+
+* version bump re-release ([#939](https://github.com/chanzuckerberg/fogg/issues/939)) ([2d6b782](https://github.com/chanzuckerberg/fogg/commit/2d6b78249fedd1a2736fd572e62dd740c734492a))
+
+## [0.90.0](https://github.com/chanzuckerberg/fogg/compare/v0.89.5...v0.90.0) (2023-09-18)
+
+
+### Features
+
+* (CCIE-1585) Add more detailed ownership tags to fogg components ([#918](https://github.com/chanzuckerberg/fogg/issues/918)) ([6832494](https://github.com/chanzuckerberg/fogg/commit/6832494cbaf2030639e735702c89bb21ea3f1b23))
+
+### [0.89.5](https://github.com/chanzuckerberg/fogg/compare/v0.89.4...v0.89.5) (2023-09-12)
+
+
+### Misc
+
+* Bump github.com/go-errors/errors from 1.4.2 to 1.5.0 ([#923](https://github.com/chanzuckerberg/fogg/issues/923)) ([b1a9415](https://github.com/chanzuckerberg/fogg/commit/b1a9415d604f8a5be7b43f96d8c8b1b65aed5084))
+
 ### [0.89.4](https://github.com/chanzuckerberg/fogg/compare/v0.89.3...v0.89.4) (2023-09-11)
 
 
