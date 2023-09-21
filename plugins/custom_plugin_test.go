@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -28,7 +29,7 @@ func TestCustomPluginTar(t *testing.T) {
 	r.NoError(err)
 	defer os.RemoveAll(d)
 
-	cacheDir, err := ioutil.TempDir("", "")
+	cacheDir, err := os.MkdirTemp("", "")
 	r.NoError(err)
 	defer os.RemoveAll(cacheDir)
 	cache := plugins.GetPluginCache(cacheDir)

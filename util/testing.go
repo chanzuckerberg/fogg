@@ -2,7 +2,6 @@ package util
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -36,11 +35,11 @@ func ProjectRoot() string {
 func TestFile(name string) ([]byte, error) {
 	// always look for yaml, json deprecated
 	path := filepath.Join(ProjectRoot(), "testdata", name, "fogg.yml")
-	return ioutil.ReadFile(path)
+	return os.ReadFile(path)
 }
 
 func TestFs() (afero.Fs, string, error) {
-	d, err := ioutil.TempDir("", "fogg")
+	d, err := os.MkdirTemp("", "fogg")
 	if err != nil {
 		return nil, "", err
 	}

@@ -5,7 +5,6 @@ package util
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -16,7 +15,7 @@ import (
 
 func TestDownloadModule(t *testing.T) {
 	r := require.New(t)
-	dir, e := ioutil.TempDir("", "fogg")
+	dir, e := os.MkdirTemp("", "fogg")
 	r.Nil(e)
 
 	pwd, e := os.Getwd()
