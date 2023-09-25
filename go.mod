@@ -7,12 +7,12 @@ replace github.com/spf13/afero => github.com/chanzuckerberg/afero v0.0.0-2019051
 require (
 	github.com/Masterminds/sprig v2.22.0+incompatible
 	github.com/antzucaro/matchr v0.0.0-20191224151129-ab6ba461ddec
-	github.com/aws/aws-sdk-go v1.45.11
+	github.com/aws/aws-sdk-go v1.45.15
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/chanzuckerberg/go-misc v1.10.6
+	github.com/chanzuckerberg/go-misc v1.10.7
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc
 	github.com/fatih/color v1.15.0
-	github.com/go-errors/errors v1.5.0
+	github.com/go-errors/errors v1.5.1
 	github.com/go-git/go-git/v5 v5.9.0
 	github.com/google/go-github/v27 v27.0.6
 	github.com/hashicorp/go-getter v1.7.2
