@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.86.2](https://github.com/vincenthsh/fogg/compare/v0.86.1...v0.86.2) (2023-09-26)
+
+
+### Misc
+
+* Bump github/actions from v4.0.0 to v4.1.0 ([#202](https://github.com/vincenthsh/fogg/issues/202)) ([b21127f](https://github.com/vincenthsh/fogg/commit/b21127fd98c12279ff467d1798b9d4fd5d43d9a4))
+* bump the gomod group with 3 updates ([#200](https://github.com/vincenthsh/fogg/issues/200)) ([b1206cf](https://github.com/vincenthsh/fogg/commit/b1206cfe488b57f2726687a7b4a6879426c0ea30))
+
 ## [0.86.1](https://github.com/vincenthsh/fogg/compare/v0.86.0...v0.86.1) (2023-09-17)
 
 
