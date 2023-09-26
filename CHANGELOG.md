@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.86.3](https://github.com/vincenthsh/fogg/compare/v0.86.2...v0.86.3) (2023-09-26)
+
+
+### Misc
+
+* Don't ignore envrc file ([#203](https://github.com/vincenthsh/fogg/issues/203)) ([97c1a0b](https://github.com/vincenthsh/fogg/commit/97c1a0b2a0af2e178b8b7982a2d1e2c5f9847387))
+
 ## [0.86.2](https://github.com/vincenthsh/fogg/compare/v0.86.1...v0.86.2) (2023-09-26)
 
 
