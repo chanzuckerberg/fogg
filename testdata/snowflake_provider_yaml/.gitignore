@@ -28,7 +28,6 @@
 
 .DS_Store
 .vscode
-.envrc
 
 # Scala language server
 .metals
