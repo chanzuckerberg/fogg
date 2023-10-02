@@ -1,7 +1,6 @@
 module github.com/chanzuckerberg/fogg
 
 go 1.21
-
 replace github.com/spf13/afero => github.com/chanzuckerberg/afero v0.0.0-20190514223411-36a9495a9b51
 
 replace github.com/hashicorp/terraform => github.com/hashicorp/terraform v0.14.9
@@ -11,7 +10,7 @@ require (
 	github.com/antzucaro/matchr v0.0.0-20221106193745-7bed6ef61ef9
 	github.com/aws/aws-sdk-go v1.45.19
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/chanzuckerberg/go-misc v1.10.6
+	github.com/chanzuckerberg/go-misc v1.10.7
 	github.com/davecgh/go-spew v1.1.1
 	github.com/fatih/color v1.15.0
 	github.com/go-errors/errors v1.5.1
