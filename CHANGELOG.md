@@ -1,5 +1,22 @@
 # Changelog
 
+### [0.91.1](https://github.com/chanzuckerberg/fogg/compare/v0.91.0...v0.91.1) (2023-10-03)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.45.14 to 1.45.15 ([#948](https://github.com/chanzuckerberg/fogg/issues/948)) ([44c95df](https://github.com/chanzuckerberg/fogg/commit/44c95df59fba03a604b84f171fe4ad0d79be7a0a))
+* Bump github.com/aws/aws-sdk-go from 1.45.15 to 1.45.19 ([#949](https://github.com/chanzuckerberg/fogg/issues/949)) ([3288d8b](https://github.com/chanzuckerberg/fogg/commit/3288d8b6f46f30fb3b8e2431451f3989fd78887d))
+* Bump github.com/aws/aws-sdk-go from 1.45.6 to 1.45.14 ([#944](https://github.com/chanzuckerberg/fogg/issues/944)) ([4909ffb](https://github.com/chanzuckerberg/fogg/commit/4909ffb14cc8f165ddf98d5fff34421ff99c4624))
+* Bump github.com/go-errors/errors from 1.5.0 to 1.5.1 ([#946](https://github.com/chanzuckerberg/fogg/issues/946)) ([1a27f43](https://github.com/chanzuckerberg/fogg/commit/1a27f43c5559dced02b0a78e37100aae3941b136))
+* Bump github.com/go-git/go-git/v5 from 5.8.1 to 5.9.0 ([#947](https://github.com/chanzuckerberg/fogg/issues/947)) ([ad28b76](https://github.com/chanzuckerberg/fogg/commit/ad28b76f9dfd472a51617a734b13afbb7e69d1c2))
+
+
+### BugFixes
+
+* add a default value for potentially empty tags ([fed7aa3](https://github.com/chanzuckerberg/fogg/commit/fed7aa3dbe8296fd951d7397d229496bd7bf5de2))
+* Remove deprecated ioutil package ([#932](https://github.com/chanzuckerberg/fogg/issues/932)) ([19b04b0](https://github.com/chanzuckerberg/fogg/commit/19b04b08bf9554b46069d22fd57f4a697dbb11a2))
+
 ## [0.91.0](https://github.com/chanzuckerberg/fogg/compare/v0.90.1...v0.91.0) (2023-09-19)
 
 
