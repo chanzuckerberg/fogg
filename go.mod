@@ -1,6 +1,7 @@
 module github.com/chanzuckerberg/fogg
 
-go 1.21
+go 1.20
+
 replace github.com/spf13/afero => github.com/chanzuckerberg/afero v0.0.0-20190514223411-36a9495a9b51
 
 replace github.com/hashicorp/terraform => github.com/hashicorp/terraform v0.14.9
