@@ -32,7 +32,7 @@ jobs:
           echo "$(pwd)/.fogg/bin" >> "${GITHUB_PATH}"
       {{- if not (eq (len $githubActionsCI.DefaultAWSIAMRoleName) 0) }}
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4.0.0
+        uses: aws-actions/configure-aws-credentials@v4.0.1
         with:
           role-to-assume: {{ $githubActionsCI.DefaultAWSIAMRoleName }}
           aws-region: {{ $githubActionsCI.DefaultAWSRegion }}

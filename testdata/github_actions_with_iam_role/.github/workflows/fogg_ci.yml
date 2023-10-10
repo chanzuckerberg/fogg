@@ -28,7 +28,7 @@ jobs:
           make setup
           echo "$(pwd)/.fogg/bin" >> "${GITHUB_PATH}"
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4.0.0
+        uses: aws-actions/configure-aws-credentials@v4.0.1
         with:
           role-to-assume: infraci
           aws-region: us-east-1
