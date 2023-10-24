@@ -1,0 +1,17 @@
+version: 2
+envs:
+  dev:
+    components:
+      network:
+        modules:
+          - name: "network"
+            source: "terraform-aws-modules/vpc/aws"
+            version: "5.1.2"
+            variables:
+              - name
+              - cidr
+              - azs
+              - private_subnets
+              - public_subnets
+              - tags
+          - source: "terraform/modules/my_module"

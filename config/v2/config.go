@@ -4,12 +4,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
+	"maps"
+	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/plugins"
 	"github.com/runatlantis/atlantis/server/core/config/raw"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	yaml "gopkg.in/yaml.v3"
 )
@@ -32,10 +36,95 @@ func ReadConfig(fs afero.Fs, b []byte, configFile string) (*Config, error) {
 		decoder := yaml.NewDecoder(reader)
 		decoder.KnownFields(true)
 		e = decoder.Decode(c)
+		if e == nil && c.ConfDir != nil && *c.ConfDir != "" {
+			logrus.Debugf("Conf dir is %q\n", *c.ConfDir)
+			e = ReadConfDir(fs, c)
+		}
+
 	default:
 		return nil, errs.NewUserf("File type %s is not supported", ext)
 	}
 	return c, e
+}
+
+func ReadConfDir(fs afero.Fs, c *Config) error {
+	info, e := fs.Stat(*c.ConfDir)
+	if e != nil {
+		return errs.WrapUserf(e, "unable to find conf_dir %q", *c.ConfDir)
+	}
+	if !info.IsDir() {
+		return errs.WrapUserf(e, "conf_dir %q must be a directory", *c.ConfDir)
+	}
+	logrus.Debugf("Walking Conf dir %q\n", *c.ConfDir)
+	partialConfigs := []*Config{c}
+	e = afero.Walk(fs, *c.ConfDir, func(path string, info os.FileInfo, err error) error {
+		// TODO: ignore more files?
+		if info.IsDir() {
+			logrus.Debugf("Ignoring %q\n", path)
+			return nil
+		}
+		logrus.Debugf("Opening %q\n", path)
+		partial, e := fs.Open(path)
+		if e != nil {
+			logrus.Debugf("Ignoring error opening %q\n", path)
+			return nil
+		}
+		b, e := io.ReadAll(partial)
+		if e != nil {
+			return errs.WrapUserf(e, "unable to read partial config %q", path)
+		}
+		pc, e := ReadConfig(fs, b, path)
+		if e != nil {
+			return errs.WrapUserf(e, "unable to parse partial config %q", path)
+		}
+		logrus.Debugf("appending partialConfig %q\n", path)
+		partialConfigs = append(partialConfigs, pc)
+		return nil
+	})
+	if e != nil {
+		return errs.WrapUserf(e, "unable to walk conf_dir %q", *c.ConfDir)
+	}
+	// merge partialConfigs into c
+	mergeConfigs(partialConfigs...)
+	return e
+}
+
+func mergeConfigs(confs ...*Config) {
+	if len(confs) < 2 {
+		return
+	}
+	mergedConfig, tail := confs[0], confs[1:]
+	for _, pc := range tail {
+		if mergedConfig.Accounts == nil {
+			if pc.Accounts != nil {
+				mergedConfig.Accounts = pc.Accounts
+			}
+		} else {
+			if pc.Accounts != nil {
+				maps.Copy(mergedConfig.Accounts, pc.Accounts)
+			}
+		}
+
+		if mergedConfig.Envs == nil {
+			if pc.Envs != nil {
+				mergedConfig.Envs = pc.Envs
+			}
+		} else {
+			if pc.Envs != nil {
+				maps.Copy(mergedConfig.Envs, pc.Envs)
+			}
+		}
+
+		if mergedConfig.Modules == nil {
+			if pc.Modules != nil {
+				mergedConfig.Modules = pc.Modules
+			}
+		} else {
+			if pc.Modules != nil {
+				maps.Copy(mergedConfig.Modules, pc.Modules)
+			}
+		}
+	}
 }
 
 func (c *Config) Write(fs afero.Fs, path string) error {
@@ -60,6 +149,7 @@ type Config struct {
 	Plugins  Plugins            `yaml:"plugins,omitempty"`
 	Version  int                `validate:"required,eq=2"`
 	TFE      *TFE               `yaml:"tfe,omitempty"`
+	ConfDir  *string            `yaml:"conf_dir,omitempty"`
 }
 
 type TFE struct {

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/chanzuckerberg/fogg/apply"
@@ -29,6 +30,7 @@ func TestIntegration(t *testing.T) {
 		{"snowflake_provider_yaml"},
 		{"v2_full_yaml"},
 		{"v2_minimal_valid_yaml"},
+		{"v2_split_yaml"},
 		{"v2_no_aws_provider_yaml"},
 		{"github_actions"},
 		{"github_actions_with_iam_role"},
@@ -54,9 +56,9 @@ func TestIntegration(t *testing.T) {
 			testdataFs := afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(util.ProjectRoot(), "testdata", tt.fileName))
 			configFile := "fogg.yml"
 			if *updateGoldenFiles {
-				// delete all files except fogg.yml
+				// delete all files except fogg.yml and conf.d directory
 				e := afero.Walk(testdataFs, ".", func(path string, info os.FileInfo, err error) error {
-					if !info.IsDir() && !(path == configFile) {
+					if !info.IsDir() && !(path == configFile) && !(strings.Contains(path, "fogg.d")) {
 						return testdataFs.Remove(path)
 					}
 					return nil
@@ -84,6 +86,22 @@ func TestIntegration(t *testing.T) {
 				configMode, e := testdataFs.Stat(configFile)
 				r.NoError(e)
 				r.NoError(afero.WriteFile(fs, configFile, configContents, configMode.Mode()))
+				// if fogg.d exists, copy all partial configs too
+				confDir, e := testdataFs.Stat("fogg.d")
+				fs.Mkdir("fogg.d", 0700)
+				if e == nil && confDir.IsDir() {
+					afero.Walk(testdataFs, "fogg.d", func(path string, info os.FileInfo, err error) error {
+						if !info.IsDir() {
+							partialConfigContents, e := afero.ReadFile(testdataFs, path)
+							r.NoError(e)
+							partialConfigMode, e := testdataFs.Stat(configFile)
+							r.NoError(e)
+							r.NoError(afero.WriteFile(fs, path, partialConfigContents, partialConfigMode.Mode()))
+							return nil
+						}
+						return nil
+					})
+				}
 
 				conf, e := config.FindAndReadConfig(fs, configFile)
 				r.NoError(e)

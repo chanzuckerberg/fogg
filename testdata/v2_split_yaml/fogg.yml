@@ -1,0 +1,14 @@
+version: 2
+defaults:
+  backend:
+    bucket: bucket
+    profile: foo
+    region: region
+  owner: foo@example.com
+  project: foo
+  providers: {}
+  terraform_version: 1.1.1
+# split conf to fogg.d directory
+conf_dir: fogg.d
+modules:
+  my_module: {}
