@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.87.0](https://github.com/vincenthsh/fogg/compare/v0.86.3...v0.87.0) (2023-10-24)
+
+
+### Features
+
+* Support splitting fogg config into directory with partials ([#218](https://github.com/vincenthsh/fogg/issues/218)) ([3a3a5f1](https://github.com/vincenthsh/fogg/commit/3a3a5f129927346b3a803ee0791392bdeddbc9d8))
+
+
+### Misc
+
+* bump the atlantis group with 1 update ([#208](https://github.com/vincenthsh/fogg/issues/208)) ([a4f900d](https://github.com/vincenthsh/fogg/commit/a4f900d1aa5564809056afdd1ad98fe14ab5f077))
+* bump the github-actions group with 1 update ([#205](https://github.com/vincenthsh/fogg/issues/205)) ([f7f6897](https://github.com/vincenthsh/fogg/commit/f7f689781d4280c27fbb95bd06619123521679c9))
+* bump the gomod group with 1 update ([#207](https://github.com/vincenthsh/fogg/issues/207)) ([48ef5b3](https://github.com/vincenthsh/fogg/commit/48ef5b329d2287292113fb94b887908c01784bc5))
+* bump the gomod group with 1 update ([#214](https://github.com/vincenthsh/fogg/issues/214)) ([a7af629](https://github.com/vincenthsh/fogg/commit/a7af629fba701a0241e005c1f2fa04978d3647ea))
+* bump the gomod group with 2 updates ([#210](https://github.com/vincenthsh/fogg/issues/210)) ([873a20c](https://github.com/vincenthsh/fogg/commit/873a20c7be2a37a85fbd5bcd9be946b79c44e464))
+* bump the gomod group with 2 updates ([#216](https://github.com/vincenthsh/fogg/issues/216)) ([90e0c86](https://github.com/vincenthsh/fogg/commit/90e0c86f95b0debbbbc49f2b95a4e11859842710))
+* bump the terraform group with 1 update ([#215](https://github.com/vincenthsh/fogg/issues/215)) ([19b83f8](https://github.com/vincenthsh/fogg/commit/19b83f8e2182b169539d4dabd6d0b587292dab69))
+* bump the terraform group with 2 updates ([#213](https://github.com/vincenthsh/fogg/issues/213)) ([2354dbf](https://github.com/vincenthsh/fogg/commit/2354dbf8e0a0c3642e494932e511858f315a35eb))
+* templates - bump gh-actions group with 1 update ([#217](https://github.com/vincenthsh/fogg/issues/217)) ([48d5550](https://github.com/vincenthsh/fogg/commit/48d55504448c35080c2d32ebd0d016421e5b5926))
+* templates - Bump the github-actions group with 1 update ([#211](https://github.com/vincenthsh/fogg/issues/211)) ([0cc38f9](https://github.com/vincenthsh/fogg/commit/0cc38f9d4981a68c3bdb24a7f794626663b685fe))
+
 ## [0.86.3](https://github.com/vincenthsh/fogg/compare/v0.86.2...v0.86.3) (2023-09-26)
 
 
