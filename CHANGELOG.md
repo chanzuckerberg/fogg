@@ -1,5 +1,24 @@
 # Changelog
 
+### [0.91.2](https://github.com/chanzuckerberg/fogg/compare/v0.91.1...v0.91.2) (2023-10-30)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.45.19 to 1.45.24 ([#950](https://github.com/chanzuckerberg/fogg/issues/950)) ([580c8bd](https://github.com/chanzuckerberg/fogg/commit/580c8bda9b0a84a66a2a486301c97a526ccd1788))
+* Bump github.com/aws/aws-sdk-go from 1.45.24 to 1.45.25 ([#955](https://github.com/chanzuckerberg/fogg/issues/955)) ([ba28161](https://github.com/chanzuckerberg/fogg/commit/ba28161be3404b3f9199d971c441ada94fa1c00b))
+* Bump github.com/aws/aws-sdk-go from 1.45.25 to 1.46.1 ([#956](https://github.com/chanzuckerberg/fogg/issues/956)) ([878a185](https://github.com/chanzuckerberg/fogg/commit/878a1851d9736715bab08ce7e4371fbe33552797))
+* Bump github.com/aws/aws-sdk-go from 1.46.1 to 1.46.6 ([#962](https://github.com/chanzuckerberg/fogg/issues/962)) ([c0dd59a](https://github.com/chanzuckerberg/fogg/commit/c0dd59a20c9613e0584320c1a39b611326effbba))
+* Bump github.com/chanzuckerberg/go-misc from 1.10.6 to 1.10.7 ([#945](https://github.com/chanzuckerberg/fogg/issues/945)) ([6e15b5f](https://github.com/chanzuckerberg/fogg/commit/6e15b5fd94a56bb6476124a382afec4432b0e3b3))
+* Bump github.com/chanzuckerberg/go-misc from 1.10.7 to 1.10.8 ([#958](https://github.com/chanzuckerberg/fogg/issues/958)) ([bd7b0bb](https://github.com/chanzuckerberg/fogg/commit/bd7b0bb6cd5a6217b4c6159838fc35b8694a4134))
+* Bump github.com/chanzuckerberg/go-misc from 1.10.8 to 1.10.10 ([#960](https://github.com/chanzuckerberg/fogg/issues/960)) ([46e9b64](https://github.com/chanzuckerberg/fogg/commit/46e9b640887eb86e81b3b7d4ab5289cd1b8d1917))
+* Bump github.com/go-git/go-git/v5 from 5.9.0 to 5.10.0 ([#961](https://github.com/chanzuckerberg/fogg/issues/961)) ([2e3b318](https://github.com/chanzuckerberg/fogg/commit/2e3b31818522e0b4abf347dc47caa4fdfa232d68))
+* Bump github.com/hashicorp/go-getter from 1.7.2 to 1.7.3 ([#954](https://github.com/chanzuckerberg/fogg/issues/954)) ([a666f9f](https://github.com/chanzuckerberg/fogg/commit/a666f9f83ccaa4f775ab86b2f239ef57a9428921))
+* Bump github.com/hashicorp/hcl/v2 from 2.18.0 to 2.18.1 ([#951](https://github.com/chanzuckerberg/fogg/issues/951)) ([6d7ca26](https://github.com/chanzuckerberg/fogg/commit/6d7ca2653b39ccc1409ecf1a140f0b74757872c2))
+* Bump github.com/hashicorp/hcl/v2 from 2.18.1 to 2.19.1 ([#957](https://github.com/chanzuckerberg/fogg/issues/957)) ([7c14c28](https://github.com/chanzuckerberg/fogg/commit/7c14c282570992d568df00513d11354907cb9d67))
+* Bump golang.org/x/net from 0.15.0 to 0.17.0 ([#953](https://github.com/chanzuckerberg/fogg/issues/953)) ([b180786](https://github.com/chanzuckerberg/fogg/commit/b180786dd5b7ff28e1d5456233a3819263216dbf))
+* Bump google.golang.org/grpc from 1.57.0 to 1.57.1 ([#959](https://github.com/chanzuckerberg/fogg/issues/959)) ([58e2660](https://github.com/chanzuckerberg/fogg/commit/58e2660fd1ca7b406591156768353d793e9d5726))
+
 ### [0.91.1](https://github.com/chanzuckerberg/fogg/compare/v0.91.0...v0.91.1) (2023-10-03)
 
 
