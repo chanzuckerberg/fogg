@@ -2,6 +2,7 @@ package plan
 
 import (
 	"fmt"
+	"slices"
 	"sort"
 	"strings"
 
@@ -398,12 +399,14 @@ func (p *Plan) buildAtlantisConfig(c *v2.Config, foggVersion string) AtlantisCon
 						strings.TrimPrefix(*d.ModuleSource, "terraform/"),
 					))
 				}
+				modifiedModules := []string{}
 				for _, m := range d.Modules {
-					if strings.HasPrefix(*m.Source, "terraform/modules/") {
+					if strings.HasPrefix(*m.Source, "terraform/modules/") && !slices.Contains(modifiedModules, *m.Source) {
 						whenModified = append(whenModified, fmt.Sprintf(
 							"../../../%s/**/*.tf",
 							strings.TrimPrefix(*m.Source, "terraform/"),
 						))
+						modifiedModules = append(modifiedModules, *m.Source)
 					}
 				}
 

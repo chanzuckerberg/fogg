@@ -42,6 +42,7 @@ func TestIntegration(t *testing.T) {
 		{"v2_aws_ignore_tags"},
 		{"v2_tf_registry_module"},
 		{"v2_tf_registry_module_atlantis"},
+		{"v2_tf_registry_module_atlantis_dup_module"},
 		{"v2_integration_registry"},
 		{"v2_github_actions_with_pre_commit"},
 		{"generic_providers_yaml"},
