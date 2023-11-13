@@ -1,5 +1,16 @@
 # Changelog
 
+### [0.91.3](https://github.com/chanzuckerberg/fogg/compare/v0.91.2...v0.91.3) (2023-11-13)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.46.6 to 1.47.3 ([#965](https://github.com/chanzuckerberg/fogg/issues/965)) ([3bb4e13](https://github.com/chanzuckerberg/fogg/commit/3bb4e13628a08313ef560e0df55f215f1cebad78))
+* Bump github.com/aws/aws-sdk-go from 1.47.3 to 1.47.9 ([#968](https://github.com/chanzuckerberg/fogg/issues/968)) ([0d57084](https://github.com/chanzuckerberg/fogg/commit/0d5708452c3af4c1da88c0307a1c8d0e309660ae))
+* Bump github.com/chanzuckerberg/go-misc from 1.10.10 to 1.10.11 ([#966](https://github.com/chanzuckerberg/fogg/issues/966)) ([fee7dc7](https://github.com/chanzuckerberg/fogg/commit/fee7dc7656ecb455cf8192fd5b372f04a4b702de))
+* Bump github.com/fatih/color from 1.15.0 to 1.16.0 ([#963](https://github.com/chanzuckerberg/fogg/issues/963)) ([6e99792](https://github.com/chanzuckerberg/fogg/commit/6e99792ad9db2712b7465db81167854ccf67cdc6))
+* Bump github.com/spf13/cobra from 1.7.0 to 1.8.0 ([#964](https://github.com/chanzuckerberg/fogg/issues/964)) ([e476213](https://github.com/chanzuckerberg/fogg/commit/e476213121bbe0506f6ace3ce3c843ce8e014f8c))
+
 ### [0.91.2](https://github.com/chanzuckerberg/fogg/compare/v0.91.1...v0.91.2) (2023-10-30)
 
 
