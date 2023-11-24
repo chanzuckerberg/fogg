@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.87.1](https://github.com/vincenthsh/fogg/compare/v0.87.0...v0.87.1) (2023-11-20)
+
+
+### Misc
+
+* bump the github-actions group with 1 update ([#223](https://github.com/vincenthsh/fogg/issues/223)) ([d065af4](https://github.com/vincenthsh/fogg/commit/d065af4590edbf447835fbb1ec4bb0c72515bb0d))
+* bump the github-actions group with 1 update ([#227](https://github.com/vincenthsh/fogg/issues/227)) ([e1e521e](https://github.com/vincenthsh/fogg/commit/e1e521e0eddea39c4689b1aa41c0138fe805bbe8))
+* bump the gomod group with 2 updates ([#225](https://github.com/vincenthsh/fogg/issues/225)) ([9f66e09](https://github.com/vincenthsh/fogg/commit/9f66e09ac59a166ccd8c9a93645b9d1bc84e1fff))
+* bump the gomod group with 2 updates ([#226](https://github.com/vincenthsh/fogg/issues/226)) ([df4f8d3](https://github.com/vincenthsh/fogg/commit/df4f8d33a4d0bc2991c221701c0be067dbaae4a8))
+* bump the gomod group with 3 updates ([#219](https://github.com/vincenthsh/fogg/issues/219)) ([5f67c98](https://github.com/vincenthsh/fogg/commit/5f67c98061c27886b9e213be91ee590cc0d9ddca))
+* bump the gomod group with 4 updates ([#221](https://github.com/vincenthsh/fogg/issues/221)) ([89b3caa](https://github.com/vincenthsh/fogg/commit/89b3caa937a985933fbaa42413d1173025948fa7))
+
+
+### BugFixes
+
+* Remove duplicate modules from atlantis.yml ([#222](https://github.com/vincenthsh/fogg/issues/222)) ([2e8b2b4](https://github.com/vincenthsh/fogg/commit/2e8b2b4bce9a8e2ae41fea3f20160a9156aadf4c))
+
 ## [0.87.0](https://github.com/vincenthsh/fogg/compare/v0.86.3...v0.87.0) (2023-10-24)
 
 
