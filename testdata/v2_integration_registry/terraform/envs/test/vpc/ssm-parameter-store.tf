@@ -5,6 +5,7 @@
 # module "foo_vpc" ssm Parameter Store integration registry entries (non sensitive)
 resource "aws_ssm_parameter" "foo_azs_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.azs != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_azs"
   type           = "String"
   tier           = "Standard"
@@ -13,6 +14,7 @@ resource "aws_ssm_parameter" "foo_azs_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_cgw_arns_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.cgw_arns != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_cgw_arns"
   type           = "String"
   tier           = "Standard"
@@ -21,6 +23,7 @@ resource "aws_ssm_parameter" "foo_cgw_arns_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_cgw_ids_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.cgw_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_cgw_ids"
   type           = "String"
   tier           = "Standard"
@@ -29,6 +32,7 @@ resource "aws_ssm_parameter" "foo_cgw_ids_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_database_internet_gateway_route_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.database_internet_gateway_route_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_database_internet_gateway_route_id"
   type           = "String"
   tier           = "Standard"
@@ -37,6 +41,7 @@ resource "aws_ssm_parameter" "foo_database_internet_gateway_route_id_no_default_
 }
 resource "aws_ssm_parameter" "foo_database_ipv6_egress_route_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.database_ipv6_egress_route_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_database_ipv6_egress_route_id"
   type           = "String"
   tier           = "Standard"
@@ -45,6 +50,7 @@ resource "aws_ssm_parameter" "foo_database_ipv6_egress_route_id_no_default_tags"
 }
 resource "aws_ssm_parameter" "foo_database_nat_gateway_route_ids_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.database_nat_gateway_route_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_database_nat_gateway_route_ids"
   type           = "String"
   tier           = "Standard"
@@ -53,6 +59,7 @@ resource "aws_ssm_parameter" "foo_database_nat_gateway_route_ids_no_default_tags
 }
 resource "aws_ssm_parameter" "foo_database_network_acl_arn_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.database_network_acl_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_database_network_acl_arn"
   type           = "String"
   tier           = "Standard"
@@ -61,6 +68,7 @@ resource "aws_ssm_parameter" "foo_database_network_acl_arn_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_database_network_acl_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.database_network_acl_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_database_network_acl_id"
   type           = "String"
   tier           = "Standard"
@@ -69,6 +77,7 @@ resource "aws_ssm_parameter" "foo_database_network_acl_id_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_database_route_table_association_ids_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.database_route_table_association_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_database_route_table_association_ids"
   type           = "String"
   tier           = "Standard"
@@ -77,6 +86,7 @@ resource "aws_ssm_parameter" "foo_database_route_table_association_ids_no_defaul
 }
 resource "aws_ssm_parameter" "foo_database_route_table_ids_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.database_route_table_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_database_route_table_ids"
   type           = "String"
   tier           = "Standard"
@@ -85,6 +95,7 @@ resource "aws_ssm_parameter" "foo_database_route_table_ids_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_database_subnet_arns_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.database_subnet_arns != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_database_subnet_arns"
   type           = "String"
   tier           = "Standard"
@@ -93,6 +104,7 @@ resource "aws_ssm_parameter" "foo_database_subnet_arns_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_database_subnet_group_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.database_subnet_group != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_database_subnet_group"
   type           = "String"
   tier           = "Standard"
@@ -101,6 +113,7 @@ resource "aws_ssm_parameter" "foo_database_subnet_group_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_database_subnet_group_name_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.database_subnet_group_name != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_database_subnet_group_name"
   type           = "String"
   tier           = "Standard"
@@ -109,6 +122,7 @@ resource "aws_ssm_parameter" "foo_database_subnet_group_name_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_database_subnets_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.database_subnets != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_database_subnets"
   type           = "String"
   tier           = "Standard"
@@ -117,6 +131,7 @@ resource "aws_ssm_parameter" "foo_database_subnets_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_database_subnets_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.database_subnets_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_database_subnets_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -125,6 +140,7 @@ resource "aws_ssm_parameter" "foo_database_subnets_cidr_blocks_no_default_tags" 
 }
 resource "aws_ssm_parameter" "foo_database_subnets_ipv6_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.database_subnets_ipv6_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_database_subnets_ipv6_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -133,6 +149,7 @@ resource "aws_ssm_parameter" "foo_database_subnets_ipv6_cidr_blocks_no_default_t
 }
 resource "aws_ssm_parameter" "foo_default_network_acl_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.default_network_acl_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_default_network_acl_id"
   type           = "String"
   tier           = "Standard"
@@ -141,6 +158,7 @@ resource "aws_ssm_parameter" "foo_default_network_acl_id_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_default_route_table_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.default_route_table_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_default_route_table_id"
   type           = "String"
   tier           = "Standard"
@@ -149,6 +167,7 @@ resource "aws_ssm_parameter" "foo_default_route_table_id_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_default_security_group_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.default_security_group_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_default_security_group_id"
   type           = "String"
   tier           = "Standard"
@@ -157,6 +176,7 @@ resource "aws_ssm_parameter" "foo_default_security_group_id_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_default_vpc_arn_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.default_vpc_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_default_vpc_arn"
   type           = "String"
   tier           = "Standard"
@@ -165,6 +185,7 @@ resource "aws_ssm_parameter" "foo_default_vpc_arn_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_default_vpc_cidr_block_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.default_vpc_cidr_block != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_default_vpc_cidr_block"
   type           = "String"
   tier           = "Standard"
@@ -173,6 +194,7 @@ resource "aws_ssm_parameter" "foo_default_vpc_cidr_block_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_default_vpc_default_network_acl_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.default_vpc_default_network_acl_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_default_vpc_default_network_acl_id"
   type           = "String"
   tier           = "Standard"
@@ -181,6 +203,7 @@ resource "aws_ssm_parameter" "foo_default_vpc_default_network_acl_id_no_default_
 }
 resource "aws_ssm_parameter" "foo_default_vpc_default_route_table_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.default_vpc_default_route_table_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_default_vpc_default_route_table_id"
   type           = "String"
   tier           = "Standard"
@@ -189,6 +212,7 @@ resource "aws_ssm_parameter" "foo_default_vpc_default_route_table_id_no_default_
 }
 resource "aws_ssm_parameter" "foo_default_vpc_default_security_group_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.default_vpc_default_security_group_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_default_vpc_default_security_group_id"
   type           = "String"
   tier           = "Standard"
@@ -197,6 +221,7 @@ resource "aws_ssm_parameter" "foo_default_vpc_default_security_group_id_no_defau
 }
 resource "aws_ssm_parameter" "foo_default_vpc_enable_dns_hostnames_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.default_vpc_enable_dns_hostnames != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_default_vpc_enable_dns_hostnames"
   type           = "String"
   tier           = "Standard"
@@ -205,6 +230,7 @@ resource "aws_ssm_parameter" "foo_default_vpc_enable_dns_hostnames_no_default_ta
 }
 resource "aws_ssm_parameter" "foo_default_vpc_enable_dns_support_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.default_vpc_enable_dns_support != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_default_vpc_enable_dns_support"
   type           = "String"
   tier           = "Standard"
@@ -213,6 +239,7 @@ resource "aws_ssm_parameter" "foo_default_vpc_enable_dns_support_no_default_tags
 }
 resource "aws_ssm_parameter" "foo_default_vpc_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.default_vpc_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_default_vpc_id"
   type           = "String"
   tier           = "Standard"
@@ -221,6 +248,7 @@ resource "aws_ssm_parameter" "foo_default_vpc_id_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_default_vpc_instance_tenancy_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.default_vpc_instance_tenancy != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_default_vpc_instance_tenancy"
   type           = "String"
   tier           = "Standard"
@@ -229,6 +257,7 @@ resource "aws_ssm_parameter" "foo_default_vpc_instance_tenancy_no_default_tags" 
 }
 resource "aws_ssm_parameter" "foo_default_vpc_main_route_table_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.default_vpc_main_route_table_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_default_vpc_main_route_table_id"
   type           = "String"
   tier           = "Standard"
@@ -237,6 +266,7 @@ resource "aws_ssm_parameter" "foo_default_vpc_main_route_table_id_no_default_tag
 }
 resource "aws_ssm_parameter" "foo_dhcp_options_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.dhcp_options_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_dhcp_options_id"
   type           = "String"
   tier           = "Standard"
@@ -245,6 +275,7 @@ resource "aws_ssm_parameter" "foo_dhcp_options_id_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_egress_only_internet_gateway_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.egress_only_internet_gateway_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_egress_only_internet_gateway_id"
   type           = "String"
   tier           = "Standard"
@@ -253,6 +284,7 @@ resource "aws_ssm_parameter" "foo_egress_only_internet_gateway_id_no_default_tag
 }
 resource "aws_ssm_parameter" "foo_elasticache_network_acl_arn_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.elasticache_network_acl_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_elasticache_network_acl_arn"
   type           = "String"
   tier           = "Standard"
@@ -261,6 +293,7 @@ resource "aws_ssm_parameter" "foo_elasticache_network_acl_arn_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_elasticache_network_acl_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.elasticache_network_acl_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_elasticache_network_acl_id"
   type           = "String"
   tier           = "Standard"
@@ -269,6 +302,7 @@ resource "aws_ssm_parameter" "foo_elasticache_network_acl_id_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_elasticache_route_table_association_ids_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.elasticache_route_table_association_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_elasticache_route_table_association_ids"
   type           = "String"
   tier           = "Standard"
@@ -277,6 +311,7 @@ resource "aws_ssm_parameter" "foo_elasticache_route_table_association_ids_no_def
 }
 resource "aws_ssm_parameter" "foo_elasticache_route_table_ids_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.elasticache_route_table_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_elasticache_route_table_ids"
   type           = "String"
   tier           = "Standard"
@@ -285,6 +320,7 @@ resource "aws_ssm_parameter" "foo_elasticache_route_table_ids_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_elasticache_subnet_arns_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.elasticache_subnet_arns != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_elasticache_subnet_arns"
   type           = "String"
   tier           = "Standard"
@@ -293,6 +329,7 @@ resource "aws_ssm_parameter" "foo_elasticache_subnet_arns_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_elasticache_subnet_group_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.elasticache_subnet_group != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_elasticache_subnet_group"
   type           = "String"
   tier           = "Standard"
@@ -301,6 +338,7 @@ resource "aws_ssm_parameter" "foo_elasticache_subnet_group_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_elasticache_subnet_group_name_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.elasticache_subnet_group_name != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_elasticache_subnet_group_name"
   type           = "String"
   tier           = "Standard"
@@ -309,6 +347,7 @@ resource "aws_ssm_parameter" "foo_elasticache_subnet_group_name_no_default_tags"
 }
 resource "aws_ssm_parameter" "foo_elasticache_subnets_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.elasticache_subnets != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_elasticache_subnets"
   type           = "String"
   tier           = "Standard"
@@ -317,6 +356,7 @@ resource "aws_ssm_parameter" "foo_elasticache_subnets_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_elasticache_subnets_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.elasticache_subnets_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_elasticache_subnets_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -325,6 +365,7 @@ resource "aws_ssm_parameter" "foo_elasticache_subnets_cidr_blocks_no_default_tag
 }
 resource "aws_ssm_parameter" "foo_elasticache_subnets_ipv6_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.elasticache_subnets_ipv6_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_elasticache_subnets_ipv6_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -333,6 +374,7 @@ resource "aws_ssm_parameter" "foo_elasticache_subnets_ipv6_cidr_blocks_no_defaul
 }
 resource "aws_ssm_parameter" "foo_igw_arn_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.igw_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_igw_arn"
   type           = "String"
   tier           = "Standard"
@@ -341,6 +383,7 @@ resource "aws_ssm_parameter" "foo_igw_arn_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_igw_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.igw_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_igw_id"
   type           = "String"
   tier           = "Standard"
@@ -349,6 +392,7 @@ resource "aws_ssm_parameter" "foo_igw_id_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_intra_network_acl_arn_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.intra_network_acl_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_intra_network_acl_arn"
   type           = "String"
   tier           = "Standard"
@@ -357,6 +401,7 @@ resource "aws_ssm_parameter" "foo_intra_network_acl_arn_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_intra_network_acl_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.intra_network_acl_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_intra_network_acl_id"
   type           = "String"
   tier           = "Standard"
@@ -365,6 +410,7 @@ resource "aws_ssm_parameter" "foo_intra_network_acl_id_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_intra_route_table_association_ids_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.intra_route_table_association_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_intra_route_table_association_ids"
   type           = "String"
   tier           = "Standard"
@@ -373,6 +419,7 @@ resource "aws_ssm_parameter" "foo_intra_route_table_association_ids_no_default_t
 }
 resource "aws_ssm_parameter" "foo_intra_route_table_ids_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.intra_route_table_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_intra_route_table_ids"
   type           = "String"
   tier           = "Standard"
@@ -381,6 +428,7 @@ resource "aws_ssm_parameter" "foo_intra_route_table_ids_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_intra_subnet_arns_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.intra_subnet_arns != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_intra_subnet_arns"
   type           = "String"
   tier           = "Standard"
@@ -389,6 +437,7 @@ resource "aws_ssm_parameter" "foo_intra_subnet_arns_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_intra_subnets_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.intra_subnets != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_intra_subnets"
   type           = "String"
   tier           = "Standard"
@@ -397,6 +446,7 @@ resource "aws_ssm_parameter" "foo_intra_subnets_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_intra_subnets_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.intra_subnets_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_intra_subnets_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -405,6 +455,7 @@ resource "aws_ssm_parameter" "foo_intra_subnets_cidr_blocks_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_intra_subnets_ipv6_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.intra_subnets_ipv6_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_intra_subnets_ipv6_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -413,6 +464,7 @@ resource "aws_ssm_parameter" "foo_intra_subnets_ipv6_cidr_blocks_no_default_tags
 }
 resource "aws_ssm_parameter" "foo_name_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.name != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_name"
   type           = "String"
   tier           = "Standard"
@@ -421,6 +473,7 @@ resource "aws_ssm_parameter" "foo_name_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_nat_ids_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.nat_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_nat_ids"
   type           = "String"
   tier           = "Standard"
@@ -429,6 +482,7 @@ resource "aws_ssm_parameter" "foo_nat_ids_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_nat_public_ips_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.nat_public_ips != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_nat_public_ips"
   type           = "String"
   tier           = "Standard"
@@ -437,6 +491,7 @@ resource "aws_ssm_parameter" "foo_nat_public_ips_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_natgw_ids_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.natgw_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_natgw_ids"
   type           = "String"
   tier           = "Standard"
@@ -445,6 +500,7 @@ resource "aws_ssm_parameter" "foo_natgw_ids_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_outpost_network_acl_arn_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.outpost_network_acl_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_outpost_network_acl_arn"
   type           = "String"
   tier           = "Standard"
@@ -453,6 +509,7 @@ resource "aws_ssm_parameter" "foo_outpost_network_acl_arn_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_outpost_network_acl_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.outpost_network_acl_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_outpost_network_acl_id"
   type           = "String"
   tier           = "Standard"
@@ -461,6 +518,7 @@ resource "aws_ssm_parameter" "foo_outpost_network_acl_id_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_outpost_subnet_arns_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.outpost_subnet_arns != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_outpost_subnet_arns"
   type           = "String"
   tier           = "Standard"
@@ -469,6 +527,7 @@ resource "aws_ssm_parameter" "foo_outpost_subnet_arns_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_outpost_subnets_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.outpost_subnets != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_outpost_subnets"
   type           = "String"
   tier           = "Standard"
@@ -477,6 +536,7 @@ resource "aws_ssm_parameter" "foo_outpost_subnets_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_outpost_subnets_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.outpost_subnets_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_outpost_subnets_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -485,6 +545,7 @@ resource "aws_ssm_parameter" "foo_outpost_subnets_cidr_blocks_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_outpost_subnets_ipv6_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.outpost_subnets_ipv6_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_outpost_subnets_ipv6_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -493,6 +554,7 @@ resource "aws_ssm_parameter" "foo_outpost_subnets_ipv6_cidr_blocks_no_default_ta
 }
 resource "aws_ssm_parameter" "foo_private_ipv6_egress_route_ids_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.private_ipv6_egress_route_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_private_ipv6_egress_route_ids"
   type           = "String"
   tier           = "Standard"
@@ -501,6 +563,7 @@ resource "aws_ssm_parameter" "foo_private_ipv6_egress_route_ids_no_default_tags"
 }
 resource "aws_ssm_parameter" "foo_private_nat_gateway_route_ids_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.private_nat_gateway_route_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_private_nat_gateway_route_ids"
   type           = "String"
   tier           = "Standard"
@@ -509,6 +572,7 @@ resource "aws_ssm_parameter" "foo_private_nat_gateway_route_ids_no_default_tags"
 }
 resource "aws_ssm_parameter" "foo_private_network_acl_arn_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.private_network_acl_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_private_network_acl_arn"
   type           = "String"
   tier           = "Standard"
@@ -517,6 +581,7 @@ resource "aws_ssm_parameter" "foo_private_network_acl_arn_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_private_network_acl_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.private_network_acl_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_private_network_acl_id"
   type           = "String"
   tier           = "Standard"
@@ -525,6 +590,7 @@ resource "aws_ssm_parameter" "foo_private_network_acl_id_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_private_route_table_association_ids_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.private_route_table_association_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_private_route_table_association_ids"
   type           = "String"
   tier           = "Standard"
@@ -533,6 +599,7 @@ resource "aws_ssm_parameter" "foo_private_route_table_association_ids_no_default
 }
 resource "aws_ssm_parameter" "foo_private_route_table_ids_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.private_route_table_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_private_route_table_ids"
   type           = "String"
   tier           = "Standard"
@@ -541,6 +608,7 @@ resource "aws_ssm_parameter" "foo_private_route_table_ids_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_private_subnet_arns_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.private_subnet_arns != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_private_subnet_arns"
   type           = "String"
   tier           = "Standard"
@@ -549,6 +617,7 @@ resource "aws_ssm_parameter" "foo_private_subnet_arns_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_private_subnets_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.private_subnets != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_private_subnets"
   type           = "String"
   tier           = "Standard"
@@ -557,6 +626,7 @@ resource "aws_ssm_parameter" "foo_private_subnets_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_private_subnets_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.private_subnets_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_private_subnets_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -565,6 +635,7 @@ resource "aws_ssm_parameter" "foo_private_subnets_cidr_blocks_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_private_subnets_ipv6_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.private_subnets_ipv6_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_private_subnets_ipv6_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -573,6 +644,7 @@ resource "aws_ssm_parameter" "foo_private_subnets_ipv6_cidr_blocks_no_default_ta
 }
 resource "aws_ssm_parameter" "foo_public_internet_gateway_ipv6_route_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.public_internet_gateway_ipv6_route_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_public_internet_gateway_ipv6_route_id"
   type           = "String"
   tier           = "Standard"
@@ -581,6 +653,7 @@ resource "aws_ssm_parameter" "foo_public_internet_gateway_ipv6_route_id_no_defau
 }
 resource "aws_ssm_parameter" "foo_public_internet_gateway_route_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.public_internet_gateway_route_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_public_internet_gateway_route_id"
   type           = "String"
   tier           = "Standard"
@@ -589,6 +662,7 @@ resource "aws_ssm_parameter" "foo_public_internet_gateway_route_id_no_default_ta
 }
 resource "aws_ssm_parameter" "foo_public_network_acl_arn_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.public_network_acl_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_public_network_acl_arn"
   type           = "String"
   tier           = "Standard"
@@ -597,6 +671,7 @@ resource "aws_ssm_parameter" "foo_public_network_acl_arn_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_public_network_acl_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.public_network_acl_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_public_network_acl_id"
   type           = "String"
   tier           = "Standard"
@@ -605,6 +680,7 @@ resource "aws_ssm_parameter" "foo_public_network_acl_id_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_public_route_table_association_ids_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.public_route_table_association_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_public_route_table_association_ids"
   type           = "String"
   tier           = "Standard"
@@ -613,6 +689,7 @@ resource "aws_ssm_parameter" "foo_public_route_table_association_ids_no_default_
 }
 resource "aws_ssm_parameter" "foo_public_route_table_ids_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.public_route_table_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_public_route_table_ids"
   type           = "String"
   tier           = "Standard"
@@ -621,6 +698,7 @@ resource "aws_ssm_parameter" "foo_public_route_table_ids_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_public_subnet_arns_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.public_subnet_arns != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_public_subnet_arns"
   type           = "String"
   tier           = "Standard"
@@ -629,6 +707,7 @@ resource "aws_ssm_parameter" "foo_public_subnet_arns_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_public_subnets_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.public_subnets != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_public_subnets"
   type           = "String"
   tier           = "Standard"
@@ -637,6 +716,7 @@ resource "aws_ssm_parameter" "foo_public_subnets_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_public_subnets_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.public_subnets_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_public_subnets_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -645,6 +725,7 @@ resource "aws_ssm_parameter" "foo_public_subnets_cidr_blocks_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_public_subnets_ipv6_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.public_subnets_ipv6_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_public_subnets_ipv6_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -653,6 +734,7 @@ resource "aws_ssm_parameter" "foo_public_subnets_ipv6_cidr_blocks_no_default_tag
 }
 resource "aws_ssm_parameter" "foo_redshift_network_acl_arn_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.redshift_network_acl_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_redshift_network_acl_arn"
   type           = "String"
   tier           = "Standard"
@@ -661,6 +743,7 @@ resource "aws_ssm_parameter" "foo_redshift_network_acl_arn_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_redshift_network_acl_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.redshift_network_acl_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_redshift_network_acl_id"
   type           = "String"
   tier           = "Standard"
@@ -669,6 +752,7 @@ resource "aws_ssm_parameter" "foo_redshift_network_acl_id_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_redshift_public_route_table_association_ids_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.redshift_public_route_table_association_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_redshift_public_route_table_association_ids"
   type           = "String"
   tier           = "Standard"
@@ -677,6 +761,7 @@ resource "aws_ssm_parameter" "foo_redshift_public_route_table_association_ids_no
 }
 resource "aws_ssm_parameter" "foo_redshift_route_table_association_ids_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.redshift_route_table_association_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_redshift_route_table_association_ids"
   type           = "String"
   tier           = "Standard"
@@ -685,6 +770,7 @@ resource "aws_ssm_parameter" "foo_redshift_route_table_association_ids_no_defaul
 }
 resource "aws_ssm_parameter" "foo_redshift_route_table_ids_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.redshift_route_table_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_redshift_route_table_ids"
   type           = "String"
   tier           = "Standard"
@@ -693,6 +779,7 @@ resource "aws_ssm_parameter" "foo_redshift_route_table_ids_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_redshift_subnet_arns_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.redshift_subnet_arns != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_redshift_subnet_arns"
   type           = "String"
   tier           = "Standard"
@@ -701,6 +788,7 @@ resource "aws_ssm_parameter" "foo_redshift_subnet_arns_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_redshift_subnet_group_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.redshift_subnet_group != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_redshift_subnet_group"
   type           = "String"
   tier           = "Standard"
@@ -709,6 +797,7 @@ resource "aws_ssm_parameter" "foo_redshift_subnet_group_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_redshift_subnets_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.redshift_subnets != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_redshift_subnets"
   type           = "String"
   tier           = "Standard"
@@ -717,6 +806,7 @@ resource "aws_ssm_parameter" "foo_redshift_subnets_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_redshift_subnets_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.redshift_subnets_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_redshift_subnets_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -725,6 +815,7 @@ resource "aws_ssm_parameter" "foo_redshift_subnets_cidr_blocks_no_default_tags" 
 }
 resource "aws_ssm_parameter" "foo_redshift_subnets_ipv6_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.redshift_subnets_ipv6_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_redshift_subnets_ipv6_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -733,6 +824,7 @@ resource "aws_ssm_parameter" "foo_redshift_subnets_ipv6_cidr_blocks_no_default_t
 }
 resource "aws_ssm_parameter" "foo_this_customer_gateway_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.this_customer_gateway != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_this_customer_gateway"
   type           = "String"
   tier           = "Standard"
@@ -741,6 +833,7 @@ resource "aws_ssm_parameter" "foo_this_customer_gateway_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_vgw_arn_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.vgw_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_vgw_arn"
   type           = "String"
   tier           = "Standard"
@@ -749,6 +842,7 @@ resource "aws_ssm_parameter" "foo_vgw_arn_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_vgw_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.vgw_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_vgw_id"
   type           = "String"
   tier           = "Standard"
@@ -757,6 +851,7 @@ resource "aws_ssm_parameter" "foo_vgw_id_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_vpc_arn_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.vpc_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_vpc_arn"
   type           = "String"
   tier           = "Standard"
@@ -765,6 +860,7 @@ resource "aws_ssm_parameter" "foo_vpc_arn_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_vpc_cidr_block_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.vpc_cidr_block != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_vpc_cidr_block"
   type           = "String"
   tier           = "Standard"
@@ -773,6 +869,7 @@ resource "aws_ssm_parameter" "foo_vpc_cidr_block_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_vpc_enable_dns_hostnames_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.vpc_enable_dns_hostnames != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_vpc_enable_dns_hostnames"
   type           = "String"
   tier           = "Standard"
@@ -781,6 +878,7 @@ resource "aws_ssm_parameter" "foo_vpc_enable_dns_hostnames_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_vpc_enable_dns_support_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.vpc_enable_dns_support != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_vpc_enable_dns_support"
   type           = "String"
   tier           = "Standard"
@@ -789,6 +887,7 @@ resource "aws_ssm_parameter" "foo_vpc_enable_dns_support_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_vpc_flow_log_cloudwatch_iam_role_arn_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.vpc_flow_log_cloudwatch_iam_role_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_vpc_flow_log_cloudwatch_iam_role_arn"
   type           = "String"
   tier           = "Standard"
@@ -797,6 +896,7 @@ resource "aws_ssm_parameter" "foo_vpc_flow_log_cloudwatch_iam_role_arn_no_defaul
 }
 resource "aws_ssm_parameter" "foo_vpc_flow_log_destination_arn_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.vpc_flow_log_destination_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_vpc_flow_log_destination_arn"
   type           = "String"
   tier           = "Standard"
@@ -805,6 +905,7 @@ resource "aws_ssm_parameter" "foo_vpc_flow_log_destination_arn_no_default_tags" 
 }
 resource "aws_ssm_parameter" "foo_vpc_flow_log_destination_type_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.vpc_flow_log_destination_type != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_vpc_flow_log_destination_type"
   type           = "String"
   tier           = "Standard"
@@ -813,6 +914,7 @@ resource "aws_ssm_parameter" "foo_vpc_flow_log_destination_type_no_default_tags"
 }
 resource "aws_ssm_parameter" "foo_vpc_flow_log_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.vpc_flow_log_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_vpc_flow_log_id"
   type           = "String"
   tier           = "Standard"
@@ -821,6 +923,7 @@ resource "aws_ssm_parameter" "foo_vpc_flow_log_id_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_vpc_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.vpc_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_vpc_id"
   type           = "String"
   tier           = "Standard"
@@ -829,6 +932,7 @@ resource "aws_ssm_parameter" "foo_vpc_id_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_vpc_instance_tenancy_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.vpc_instance_tenancy != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_vpc_instance_tenancy"
   type           = "String"
   tier           = "Standard"
@@ -837,6 +941,7 @@ resource "aws_ssm_parameter" "foo_vpc_instance_tenancy_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_vpc_ipv6_association_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.vpc_ipv6_association_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_vpc_ipv6_association_id"
   type           = "String"
   tier           = "Standard"
@@ -845,6 +950,7 @@ resource "aws_ssm_parameter" "foo_vpc_ipv6_association_id_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_vpc_ipv6_cidr_block_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.vpc_ipv6_cidr_block != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_vpc_ipv6_cidr_block"
   type           = "String"
   tier           = "Standard"
@@ -853,6 +959,7 @@ resource "aws_ssm_parameter" "foo_vpc_ipv6_cidr_block_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_vpc_main_route_table_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.vpc_main_route_table_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_vpc_main_route_table_id"
   type           = "String"
   tier           = "Standard"
@@ -861,6 +968,7 @@ resource "aws_ssm_parameter" "foo_vpc_main_route_table_id_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_vpc_owner_id_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.vpc_owner_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_vpc_owner_id"
   type           = "String"
   tier           = "Standard"
@@ -869,6 +977,7 @@ resource "aws_ssm_parameter" "foo_vpc_owner_id_no_default_tags" {
 }
 resource "aws_ssm_parameter" "foo_vpc_secondary_cidr_blocks_no_default_tags" {
   provider       = aws.no_default_tags
+  count          = module.foo_vpc.vpc_secondary_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/foo_vpc_secondary_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -878,6 +987,7 @@ resource "aws_ssm_parameter" "foo_vpc_secondary_cidr_blocks_no_default_tags" {
 
 # module "bar_vpc" ssm Parameter Store integration registry entries (non sensitive)
 resource "aws_ssm_parameter" "bar_azs" {
+  count          = module.bar_vpc.azs != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_azs"
   type           = "String"
   tier           = "Standard"
@@ -885,6 +995,7 @@ resource "aws_ssm_parameter" "bar_azs" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_cgw_arns" {
+  count          = module.bar_vpc.cgw_arns != null ? 1 : 0
   name           = "/${var.env}/${var.component}/customer_gateways"
   type           = "String"
   tier           = "Standard"
@@ -892,6 +1003,7 @@ resource "aws_ssm_parameter" "bar_cgw_arns" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_cgw_ids" {
+  count          = module.bar_vpc.cgw_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_cgw_ids"
   type           = "String"
   tier           = "Standard"
@@ -899,6 +1011,7 @@ resource "aws_ssm_parameter" "bar_cgw_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_database_internet_gateway_route_id" {
+  count          = module.bar_vpc.database_internet_gateway_route_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_database_internet_gateway_route_id"
   type           = "String"
   tier           = "Standard"
@@ -906,6 +1019,7 @@ resource "aws_ssm_parameter" "bar_database_internet_gateway_route_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_database_ipv6_egress_route_id" {
+  count          = module.bar_vpc.database_ipv6_egress_route_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_database_ipv6_egress_route_id"
   type           = "String"
   tier           = "Standard"
@@ -913,6 +1027,7 @@ resource "aws_ssm_parameter" "bar_database_ipv6_egress_route_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_database_nat_gateway_route_ids" {
+  count          = module.bar_vpc.database_nat_gateway_route_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_database_nat_gateway_route_ids"
   type           = "String"
   tier           = "Standard"
@@ -920,6 +1035,7 @@ resource "aws_ssm_parameter" "bar_database_nat_gateway_route_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_database_network_acl_arn" {
+  count          = module.bar_vpc.database_network_acl_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_database_network_acl_arn"
   type           = "String"
   tier           = "Standard"
@@ -927,6 +1043,7 @@ resource "aws_ssm_parameter" "bar_database_network_acl_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_database_network_acl_id" {
+  count          = module.bar_vpc.database_network_acl_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_database_network_acl_id"
   type           = "String"
   tier           = "Standard"
@@ -934,6 +1051,7 @@ resource "aws_ssm_parameter" "bar_database_network_acl_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_database_route_table_association_ids" {
+  count          = module.bar_vpc.database_route_table_association_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_database_route_table_association_ids"
   type           = "String"
   tier           = "Standard"
@@ -941,6 +1059,7 @@ resource "aws_ssm_parameter" "bar_database_route_table_association_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_database_route_table_ids" {
+  count          = module.bar_vpc.database_route_table_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_database_route_table_ids"
   type           = "String"
   tier           = "Standard"
@@ -948,6 +1067,7 @@ resource "aws_ssm_parameter" "bar_database_route_table_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_database_subnet_arns" {
+  count          = module.bar_vpc.database_subnet_arns != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_database_subnet_arns"
   type           = "String"
   tier           = "Standard"
@@ -955,6 +1075,7 @@ resource "aws_ssm_parameter" "bar_database_subnet_arns" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_database_subnet_group" {
+  count          = module.bar_vpc.database_subnet_group != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_database_subnet_group"
   type           = "String"
   tier           = "Standard"
@@ -962,6 +1083,7 @@ resource "aws_ssm_parameter" "bar_database_subnet_group" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_database_subnet_group_name" {
+  count          = module.bar_vpc.database_subnet_group_name != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_database_subnet_group_name"
   type           = "String"
   tier           = "Standard"
@@ -969,6 +1091,7 @@ resource "aws_ssm_parameter" "bar_database_subnet_group_name" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_database_subnets" {
+  count          = module.bar_vpc.database_subnets != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_database_subnets"
   type           = "String"
   tier           = "Standard"
@@ -976,6 +1099,7 @@ resource "aws_ssm_parameter" "bar_database_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_database_subnets_cidr_blocks" {
+  count          = module.bar_vpc.database_subnets_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_database_subnets_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -983,6 +1107,7 @@ resource "aws_ssm_parameter" "bar_database_subnets_cidr_blocks" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_database_subnets_ipv6_cidr_blocks" {
+  count          = module.bar_vpc.database_subnets_ipv6_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_database_subnets_ipv6_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -990,6 +1115,7 @@ resource "aws_ssm_parameter" "bar_database_subnets_ipv6_cidr_blocks" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_default_network_acl_id" {
+  count          = module.bar_vpc.default_network_acl_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_default_network_acl_id"
   type           = "String"
   tier           = "Standard"
@@ -997,6 +1123,7 @@ resource "aws_ssm_parameter" "bar_default_network_acl_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_default_route_table_id" {
+  count          = module.bar_vpc.default_route_table_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_default_route_table_id"
   type           = "String"
   tier           = "Standard"
@@ -1004,6 +1131,7 @@ resource "aws_ssm_parameter" "bar_default_route_table_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_default_security_group_id" {
+  count          = module.bar_vpc.default_security_group_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_default_security_group_id"
   type           = "String"
   tier           = "Standard"
@@ -1011,6 +1139,7 @@ resource "aws_ssm_parameter" "bar_default_security_group_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_default_vpc_arn" {
+  count          = module.bar_vpc.default_vpc_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_default_vpc_arn"
   type           = "String"
   tier           = "Standard"
@@ -1018,6 +1147,7 @@ resource "aws_ssm_parameter" "bar_default_vpc_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_default_vpc_cidr_block" {
+  count          = module.bar_vpc.default_vpc_cidr_block != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_default_vpc_cidr_block"
   type           = "String"
   tier           = "Standard"
@@ -1025,6 +1155,7 @@ resource "aws_ssm_parameter" "bar_default_vpc_cidr_block" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_default_vpc_default_network_acl_id" {
+  count          = module.bar_vpc.default_vpc_default_network_acl_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_default_vpc_default_network_acl_id"
   type           = "String"
   tier           = "Standard"
@@ -1032,6 +1163,7 @@ resource "aws_ssm_parameter" "bar_default_vpc_default_network_acl_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_default_vpc_default_route_table_id" {
+  count          = module.bar_vpc.default_vpc_default_route_table_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_default_vpc_default_route_table_id"
   type           = "String"
   tier           = "Standard"
@@ -1039,6 +1171,7 @@ resource "aws_ssm_parameter" "bar_default_vpc_default_route_table_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_default_vpc_default_security_group_id" {
+  count          = module.bar_vpc.default_vpc_default_security_group_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_default_vpc_default_security_group_id"
   type           = "String"
   tier           = "Standard"
@@ -1046,6 +1179,7 @@ resource "aws_ssm_parameter" "bar_default_vpc_default_security_group_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_default_vpc_enable_dns_hostnames" {
+  count          = module.bar_vpc.default_vpc_enable_dns_hostnames != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_default_vpc_enable_dns_hostnames"
   type           = "String"
   tier           = "Standard"
@@ -1053,6 +1187,7 @@ resource "aws_ssm_parameter" "bar_default_vpc_enable_dns_hostnames" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_default_vpc_enable_dns_support" {
+  count          = module.bar_vpc.default_vpc_enable_dns_support != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_default_vpc_enable_dns_support"
   type           = "String"
   tier           = "Standard"
@@ -1060,6 +1195,7 @@ resource "aws_ssm_parameter" "bar_default_vpc_enable_dns_support" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_default_vpc_id" {
+  count          = module.bar_vpc.default_vpc_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_default_vpc_id"
   type           = "String"
   tier           = "Standard"
@@ -1067,6 +1203,7 @@ resource "aws_ssm_parameter" "bar_default_vpc_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_default_vpc_instance_tenancy" {
+  count          = module.bar_vpc.default_vpc_instance_tenancy != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_default_vpc_instance_tenancy"
   type           = "String"
   tier           = "Standard"
@@ -1074,6 +1211,7 @@ resource "aws_ssm_parameter" "bar_default_vpc_instance_tenancy" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_default_vpc_main_route_table_id" {
+  count          = module.bar_vpc.default_vpc_main_route_table_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_default_vpc_main_route_table_id"
   type           = "String"
   tier           = "Standard"
@@ -1081,6 +1219,7 @@ resource "aws_ssm_parameter" "bar_default_vpc_main_route_table_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_dhcp_options_id" {
+  count          = module.bar_vpc.dhcp_options_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_dhcp_options_id"
   type           = "String"
   tier           = "Standard"
@@ -1088,6 +1227,7 @@ resource "aws_ssm_parameter" "bar_dhcp_options_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_egress_only_internet_gateway_id" {
+  count          = module.bar_vpc.egress_only_internet_gateway_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_egress_only_internet_gateway_id"
   type           = "String"
   tier           = "Standard"
@@ -1095,6 +1235,7 @@ resource "aws_ssm_parameter" "bar_egress_only_internet_gateway_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_elasticache_network_acl_arn" {
+  count          = module.bar_vpc.elasticache_network_acl_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_elasticache_network_acl_arn"
   type           = "String"
   tier           = "Standard"
@@ -1102,6 +1243,7 @@ resource "aws_ssm_parameter" "bar_elasticache_network_acl_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_elasticache_network_acl_id" {
+  count          = module.bar_vpc.elasticache_network_acl_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_elasticache_network_acl_id"
   type           = "String"
   tier           = "Standard"
@@ -1109,6 +1251,7 @@ resource "aws_ssm_parameter" "bar_elasticache_network_acl_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_elasticache_route_table_association_ids" {
+  count          = module.bar_vpc.elasticache_route_table_association_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_elasticache_route_table_association_ids"
   type           = "String"
   tier           = "Standard"
@@ -1116,6 +1259,7 @@ resource "aws_ssm_parameter" "bar_elasticache_route_table_association_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_elasticache_route_table_ids" {
+  count          = module.bar_vpc.elasticache_route_table_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_elasticache_route_table_ids"
   type           = "String"
   tier           = "Standard"
@@ -1123,6 +1267,7 @@ resource "aws_ssm_parameter" "bar_elasticache_route_table_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_elasticache_subnet_arns" {
+  count          = module.bar_vpc.elasticache_subnet_arns != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_elasticache_subnet_arns"
   type           = "String"
   tier           = "Standard"
@@ -1130,6 +1275,7 @@ resource "aws_ssm_parameter" "bar_elasticache_subnet_arns" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_elasticache_subnet_group" {
+  count          = module.bar_vpc.elasticache_subnet_group != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_elasticache_subnet_group"
   type           = "String"
   tier           = "Standard"
@@ -1137,6 +1283,7 @@ resource "aws_ssm_parameter" "bar_elasticache_subnet_group" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_elasticache_subnet_group_name" {
+  count          = module.bar_vpc.elasticache_subnet_group_name != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_elasticache_subnet_group_name"
   type           = "String"
   tier           = "Standard"
@@ -1144,6 +1291,7 @@ resource "aws_ssm_parameter" "bar_elasticache_subnet_group_name" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_elasticache_subnets" {
+  count          = module.bar_vpc.elasticache_subnets != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_elasticache_subnets"
   type           = "String"
   tier           = "Standard"
@@ -1151,6 +1299,7 @@ resource "aws_ssm_parameter" "bar_elasticache_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_elasticache_subnets_cidr_blocks" {
+  count          = module.bar_vpc.elasticache_subnets_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_elasticache_subnets_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -1158,6 +1307,7 @@ resource "aws_ssm_parameter" "bar_elasticache_subnets_cidr_blocks" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_elasticache_subnets_ipv6_cidr_blocks" {
+  count          = module.bar_vpc.elasticache_subnets_ipv6_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_elasticache_subnets_ipv6_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -1165,6 +1315,7 @@ resource "aws_ssm_parameter" "bar_elasticache_subnets_ipv6_cidr_blocks" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_igw_arn" {
+  count          = module.bar_vpc.igw_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_igw_arn"
   type           = "String"
   tier           = "Standard"
@@ -1172,6 +1323,7 @@ resource "aws_ssm_parameter" "bar_igw_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_igw_id" {
+  count          = module.bar_vpc.igw_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_igw_id"
   type           = "String"
   tier           = "Standard"
@@ -1179,6 +1331,7 @@ resource "aws_ssm_parameter" "bar_igw_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_intra_network_acl_arn" {
+  count          = module.bar_vpc.intra_network_acl_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_intra_network_acl_arn"
   type           = "String"
   tier           = "Standard"
@@ -1186,6 +1339,7 @@ resource "aws_ssm_parameter" "bar_intra_network_acl_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_intra_network_acl_id" {
+  count          = module.bar_vpc.intra_network_acl_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_intra_network_acl_id"
   type           = "String"
   tier           = "Standard"
@@ -1193,6 +1347,7 @@ resource "aws_ssm_parameter" "bar_intra_network_acl_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_intra_route_table_association_ids" {
+  count          = module.bar_vpc.intra_route_table_association_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_intra_route_table_association_ids"
   type           = "String"
   tier           = "Standard"
@@ -1200,6 +1355,7 @@ resource "aws_ssm_parameter" "bar_intra_route_table_association_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_intra_route_table_ids" {
+  count          = module.bar_vpc.intra_route_table_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_intra_route_table_ids"
   type           = "String"
   tier           = "Standard"
@@ -1207,6 +1363,7 @@ resource "aws_ssm_parameter" "bar_intra_route_table_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_intra_subnet_arns" {
+  count          = module.bar_vpc.intra_subnet_arns != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_intra_subnet_arns"
   type           = "String"
   tier           = "Standard"
@@ -1214,6 +1371,7 @@ resource "aws_ssm_parameter" "bar_intra_subnet_arns" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_intra_subnets" {
+  count          = module.bar_vpc.intra_subnets != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_intra_subnets"
   type           = "String"
   tier           = "Standard"
@@ -1221,6 +1379,7 @@ resource "aws_ssm_parameter" "bar_intra_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_intra_subnets_cidr_blocks" {
+  count          = module.bar_vpc.intra_subnets_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_intra_subnets_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -1228,6 +1387,7 @@ resource "aws_ssm_parameter" "bar_intra_subnets_cidr_blocks" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_intra_subnets_ipv6_cidr_blocks" {
+  count          = module.bar_vpc.intra_subnets_ipv6_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_intra_subnets_ipv6_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -1235,6 +1395,7 @@ resource "aws_ssm_parameter" "bar_intra_subnets_ipv6_cidr_blocks" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_name" {
+  count          = module.bar_vpc.name != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_name"
   type           = "String"
   tier           = "Standard"
@@ -1242,6 +1403,7 @@ resource "aws_ssm_parameter" "bar_name" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_nat_ids" {
+  count          = module.bar_vpc.nat_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_nat_ids"
   type           = "String"
   tier           = "Standard"
@@ -1249,6 +1411,7 @@ resource "aws_ssm_parameter" "bar_nat_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_nat_public_ips" {
+  count          = module.bar_vpc.nat_public_ips != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_nat_public_ips"
   type           = "String"
   tier           = "Standard"
@@ -1256,6 +1419,7 @@ resource "aws_ssm_parameter" "bar_nat_public_ips" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_natgw_ids" {
+  count          = module.bar_vpc.natgw_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_natgw_ids"
   type           = "String"
   tier           = "Standard"
@@ -1263,6 +1427,7 @@ resource "aws_ssm_parameter" "bar_natgw_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_outpost_network_acl_arn" {
+  count          = module.bar_vpc.outpost_network_acl_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_outpost_network_acl_arn"
   type           = "String"
   tier           = "Standard"
@@ -1270,6 +1435,7 @@ resource "aws_ssm_parameter" "bar_outpost_network_acl_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_outpost_network_acl_id" {
+  count          = module.bar_vpc.outpost_network_acl_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_outpost_network_acl_id"
   type           = "String"
   tier           = "Standard"
@@ -1277,6 +1443,7 @@ resource "aws_ssm_parameter" "bar_outpost_network_acl_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_outpost_subnet_arns" {
+  count          = module.bar_vpc.outpost_subnet_arns != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_outpost_subnet_arns"
   type           = "String"
   tier           = "Standard"
@@ -1284,6 +1451,7 @@ resource "aws_ssm_parameter" "bar_outpost_subnet_arns" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_outpost_subnets" {
+  count          = module.bar_vpc.outpost_subnets != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_outpost_subnets"
   type           = "String"
   tier           = "Standard"
@@ -1291,6 +1459,7 @@ resource "aws_ssm_parameter" "bar_outpost_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_outpost_subnets_cidr_blocks" {
+  count          = module.bar_vpc.outpost_subnets_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_outpost_subnets_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -1298,6 +1467,7 @@ resource "aws_ssm_parameter" "bar_outpost_subnets_cidr_blocks" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_outpost_subnets_ipv6_cidr_blocks" {
+  count          = module.bar_vpc.outpost_subnets_ipv6_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_outpost_subnets_ipv6_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -1305,6 +1475,7 @@ resource "aws_ssm_parameter" "bar_outpost_subnets_ipv6_cidr_blocks" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_private_ipv6_egress_route_ids" {
+  count          = module.bar_vpc.private_ipv6_egress_route_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_private_ipv6_egress_route_ids"
   type           = "String"
   tier           = "Standard"
@@ -1312,6 +1483,7 @@ resource "aws_ssm_parameter" "bar_private_ipv6_egress_route_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_private_nat_gateway_route_ids" {
+  count          = module.bar_vpc.private_nat_gateway_route_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_private_nat_gateway_route_ids"
   type           = "String"
   tier           = "Standard"
@@ -1319,6 +1491,7 @@ resource "aws_ssm_parameter" "bar_private_nat_gateway_route_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_private_network_acl_arn" {
+  count          = module.bar_vpc.private_network_acl_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_private_network_acl_arn"
   type           = "String"
   tier           = "Standard"
@@ -1326,6 +1499,7 @@ resource "aws_ssm_parameter" "bar_private_network_acl_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_private_network_acl_id" {
+  count          = module.bar_vpc.private_network_acl_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_private_network_acl_id"
   type           = "String"
   tier           = "Standard"
@@ -1333,6 +1507,7 @@ resource "aws_ssm_parameter" "bar_private_network_acl_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_private_route_table_association_ids" {
+  count          = module.bar_vpc.private_route_table_association_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_private_route_table_association_ids"
   type           = "String"
   tier           = "Standard"
@@ -1340,6 +1515,7 @@ resource "aws_ssm_parameter" "bar_private_route_table_association_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_private_route_table_ids" {
+  count          = module.bar_vpc.private_route_table_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_private_route_table_ids"
   type           = "String"
   tier           = "Standard"
@@ -1347,6 +1523,7 @@ resource "aws_ssm_parameter" "bar_private_route_table_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_private_subnet_arns" {
+  count          = module.bar_vpc.private_subnet_arns != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_private_subnet_arns"
   type           = "String"
   tier           = "Standard"
@@ -1354,6 +1531,7 @@ resource "aws_ssm_parameter" "bar_private_subnet_arns" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_private_subnets" {
+  count          = module.bar_vpc.private_subnets != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_private_subnets"
   type           = "String"
   tier           = "Standard"
@@ -1361,6 +1539,7 @@ resource "aws_ssm_parameter" "bar_private_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_private_subnets_cidr_blocks" {
+  count          = module.bar_vpc.private_subnets_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_private_subnets_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -1368,6 +1547,7 @@ resource "aws_ssm_parameter" "bar_private_subnets_cidr_blocks" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_private_subnets_ipv6_cidr_blocks" {
+  count          = module.bar_vpc.private_subnets_ipv6_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_private_subnets_ipv6_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -1375,6 +1555,7 @@ resource "aws_ssm_parameter" "bar_private_subnets_ipv6_cidr_blocks" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_public_internet_gateway_ipv6_route_id" {
+  count          = module.bar_vpc.public_internet_gateway_ipv6_route_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_public_internet_gateway_ipv6_route_id"
   type           = "String"
   tier           = "Standard"
@@ -1382,6 +1563,7 @@ resource "aws_ssm_parameter" "bar_public_internet_gateway_ipv6_route_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_public_internet_gateway_route_id" {
+  count          = module.bar_vpc.public_internet_gateway_route_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_public_internet_gateway_route_id"
   type           = "String"
   tier           = "Standard"
@@ -1389,6 +1571,7 @@ resource "aws_ssm_parameter" "bar_public_internet_gateway_route_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_public_network_acl_arn" {
+  count          = module.bar_vpc.public_network_acl_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_public_network_acl_arn"
   type           = "String"
   tier           = "Standard"
@@ -1396,6 +1579,7 @@ resource "aws_ssm_parameter" "bar_public_network_acl_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_public_network_acl_id" {
+  count          = module.bar_vpc.public_network_acl_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_public_network_acl_id"
   type           = "String"
   tier           = "Standard"
@@ -1403,6 +1587,7 @@ resource "aws_ssm_parameter" "bar_public_network_acl_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_public_route_table_association_ids" {
+  count          = module.bar_vpc.public_route_table_association_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_public_route_table_association_ids"
   type           = "String"
   tier           = "Standard"
@@ -1410,6 +1595,7 @@ resource "aws_ssm_parameter" "bar_public_route_table_association_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_public_route_table_ids" {
+  count          = module.bar_vpc.public_route_table_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_public_route_table_ids"
   type           = "String"
   tier           = "Standard"
@@ -1417,6 +1603,7 @@ resource "aws_ssm_parameter" "bar_public_route_table_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_public_subnet_arns" {
+  count          = module.bar_vpc.public_subnet_arns != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_public_subnet_arns"
   type           = "String"
   tier           = "Standard"
@@ -1424,6 +1611,7 @@ resource "aws_ssm_parameter" "bar_public_subnet_arns" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_public_subnets" {
+  count          = module.bar_vpc.public_subnets != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_public_subnets"
   type           = "String"
   tier           = "Standard"
@@ -1431,6 +1619,7 @@ resource "aws_ssm_parameter" "bar_public_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_public_subnets_cidr_blocks" {
+  count          = module.bar_vpc.public_subnets_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_public_subnets_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -1438,6 +1627,7 @@ resource "aws_ssm_parameter" "bar_public_subnets_cidr_blocks" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_public_subnets_ipv6_cidr_blocks" {
+  count          = module.bar_vpc.public_subnets_ipv6_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_public_subnets_ipv6_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -1445,6 +1635,7 @@ resource "aws_ssm_parameter" "bar_public_subnets_ipv6_cidr_blocks" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_redshift_network_acl_arn" {
+  count          = module.bar_vpc.redshift_network_acl_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_redshift_network_acl_arn"
   type           = "String"
   tier           = "Standard"
@@ -1452,6 +1643,7 @@ resource "aws_ssm_parameter" "bar_redshift_network_acl_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_redshift_network_acl_id" {
+  count          = module.bar_vpc.redshift_network_acl_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_redshift_network_acl_id"
   type           = "String"
   tier           = "Standard"
@@ -1459,6 +1651,7 @@ resource "aws_ssm_parameter" "bar_redshift_network_acl_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_redshift_public_route_table_association_ids" {
+  count          = module.bar_vpc.redshift_public_route_table_association_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_redshift_public_route_table_association_ids"
   type           = "String"
   tier           = "Standard"
@@ -1466,6 +1659,7 @@ resource "aws_ssm_parameter" "bar_redshift_public_route_table_association_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_redshift_route_table_association_ids" {
+  count          = module.bar_vpc.redshift_route_table_association_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_redshift_route_table_association_ids"
   type           = "String"
   tier           = "Standard"
@@ -1473,6 +1667,7 @@ resource "aws_ssm_parameter" "bar_redshift_route_table_association_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_redshift_route_table_ids" {
+  count          = module.bar_vpc.redshift_route_table_ids != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_redshift_route_table_ids"
   type           = "String"
   tier           = "Standard"
@@ -1480,6 +1675,7 @@ resource "aws_ssm_parameter" "bar_redshift_route_table_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_redshift_subnet_arns" {
+  count          = module.bar_vpc.redshift_subnet_arns != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_redshift_subnet_arns"
   type           = "String"
   tier           = "Standard"
@@ -1487,6 +1683,7 @@ resource "aws_ssm_parameter" "bar_redshift_subnet_arns" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_redshift_subnet_group" {
+  count          = module.bar_vpc.redshift_subnet_group != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_redshift_subnet_group"
   type           = "String"
   tier           = "Standard"
@@ -1494,6 +1691,7 @@ resource "aws_ssm_parameter" "bar_redshift_subnet_group" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_redshift_subnets" {
+  count          = module.bar_vpc.redshift_subnets != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_redshift_subnets"
   type           = "String"
   tier           = "Standard"
@@ -1501,6 +1699,7 @@ resource "aws_ssm_parameter" "bar_redshift_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_redshift_subnets_cidr_blocks" {
+  count          = module.bar_vpc.redshift_subnets_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_redshift_subnets_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -1508,6 +1707,7 @@ resource "aws_ssm_parameter" "bar_redshift_subnets_cidr_blocks" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_redshift_subnets_ipv6_cidr_blocks" {
+  count          = module.bar_vpc.redshift_subnets_ipv6_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_redshift_subnets_ipv6_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -1515,6 +1715,7 @@ resource "aws_ssm_parameter" "bar_redshift_subnets_ipv6_cidr_blocks" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_this_customer_gateway" {
+  count          = module.bar_vpc.this_customer_gateway != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_this_customer_gateway"
   type           = "String"
   tier           = "Standard"
@@ -1522,6 +1723,7 @@ resource "aws_ssm_parameter" "bar_this_customer_gateway" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_vgw_arn" {
+  count          = module.bar_vpc.vgw_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_vgw_arn"
   type           = "String"
   tier           = "Standard"
@@ -1529,6 +1731,7 @@ resource "aws_ssm_parameter" "bar_vgw_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_vgw_id" {
+  count          = module.bar_vpc.vgw_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_vgw_id"
   type           = "String"
   tier           = "Standard"
@@ -1536,6 +1739,7 @@ resource "aws_ssm_parameter" "bar_vgw_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_vpc_arn" {
+  count          = module.bar_vpc.vpc_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_vpc_arn"
   type           = "String"
   tier           = "Standard"
@@ -1543,6 +1747,7 @@ resource "aws_ssm_parameter" "bar_vpc_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_vpc_cidr_block" {
+  count          = module.bar_vpc.vpc_cidr_block != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_vpc_cidr_block"
   type           = "String"
   tier           = "Standard"
@@ -1550,6 +1755,7 @@ resource "aws_ssm_parameter" "bar_vpc_cidr_block" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_vpc_enable_dns_hostnames" {
+  count          = module.bar_vpc.vpc_enable_dns_hostnames != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_vpc_enable_dns_hostnames"
   type           = "String"
   tier           = "Standard"
@@ -1557,6 +1763,7 @@ resource "aws_ssm_parameter" "bar_vpc_enable_dns_hostnames" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_vpc_enable_dns_support" {
+  count          = module.bar_vpc.vpc_enable_dns_support != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_vpc_enable_dns_support"
   type           = "String"
   tier           = "Standard"
@@ -1564,6 +1771,7 @@ resource "aws_ssm_parameter" "bar_vpc_enable_dns_support" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_vpc_flow_log_cloudwatch_iam_role_arn" {
+  count          = module.bar_vpc.vpc_flow_log_cloudwatch_iam_role_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_vpc_flow_log_cloudwatch_iam_role_arn"
   type           = "String"
   tier           = "Standard"
@@ -1571,6 +1779,7 @@ resource "aws_ssm_parameter" "bar_vpc_flow_log_cloudwatch_iam_role_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_vpc_flow_log_destination_arn" {
+  count          = module.bar_vpc.vpc_flow_log_destination_arn != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_vpc_flow_log_destination_arn"
   type           = "String"
   tier           = "Standard"
@@ -1578,6 +1787,7 @@ resource "aws_ssm_parameter" "bar_vpc_flow_log_destination_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_vpc_flow_log_destination_type" {
+  count          = module.bar_vpc.vpc_flow_log_destination_type != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_vpc_flow_log_destination_type"
   type           = "String"
   tier           = "Standard"
@@ -1585,6 +1795,7 @@ resource "aws_ssm_parameter" "bar_vpc_flow_log_destination_type" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_vpc_flow_log_id" {
+  count          = module.bar_vpc.vpc_flow_log_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_vpc_flow_log_id"
   type           = "String"
   tier           = "Standard"
@@ -1592,6 +1803,7 @@ resource "aws_ssm_parameter" "bar_vpc_flow_log_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_vpc_id" {
+  count          = module.bar_vpc.vpc_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_vpc_id"
   type           = "String"
   tier           = "Standard"
@@ -1599,6 +1811,7 @@ resource "aws_ssm_parameter" "bar_vpc_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_vpc_instance_tenancy" {
+  count          = module.bar_vpc.vpc_instance_tenancy != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_vpc_instance_tenancy"
   type           = "String"
   tier           = "Standard"
@@ -1606,6 +1819,7 @@ resource "aws_ssm_parameter" "bar_vpc_instance_tenancy" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_vpc_ipv6_association_id" {
+  count          = module.bar_vpc.vpc_ipv6_association_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_vpc_ipv6_association_id"
   type           = "String"
   tier           = "Standard"
@@ -1613,6 +1827,7 @@ resource "aws_ssm_parameter" "bar_vpc_ipv6_association_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_vpc_ipv6_cidr_block" {
+  count          = module.bar_vpc.vpc_ipv6_cidr_block != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_vpc_ipv6_cidr_block"
   type           = "String"
   tier           = "Standard"
@@ -1620,6 +1835,7 @@ resource "aws_ssm_parameter" "bar_vpc_ipv6_cidr_block" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_vpc_main_route_table_id" {
+  count          = module.bar_vpc.vpc_main_route_table_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_vpc_main_route_table_id"
   type           = "String"
   tier           = "Standard"
@@ -1627,6 +1843,7 @@ resource "aws_ssm_parameter" "bar_vpc_main_route_table_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_vpc_owner_id" {
+  count          = module.bar_vpc.vpc_owner_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_vpc_owner_id"
   type           = "String"
   tier           = "Standard"
@@ -1634,6 +1851,7 @@ resource "aws_ssm_parameter" "bar_vpc_owner_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "bar_vpc_secondary_cidr_blocks" {
+  count          = module.bar_vpc.vpc_secondary_cidr_blocks != null ? 1 : 0
   name           = "/${var.env}/${var.component}/bar_vpc_secondary_cidr_blocks"
   type           = "String"
   tier           = "Standard"
@@ -1643,6 +1861,7 @@ resource "aws_ssm_parameter" "bar_vpc_secondary_cidr_blocks" {
 
 # module "baz_vpc" ssm Parameter Store integration registry entries (non sensitive)
 resource "aws_ssm_parameter" "baz_azs" {
+  count          = module.baz_vpc.azs != null ? 1 : 0
   name           = "/${var.env}/${var.component}/network/baz/azs"
   type           = "String"
   tier           = "Standard"
@@ -1650,7 +1869,7 @@ resource "aws_ssm_parameter" "baz_azs" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "baz_database_subnets" {
-  for_each       = module.baz_vpc.database_subnets
+  for_each       = module.baz_vpc.database_subnets != null ? module.baz_vpc.database_subnets : {}
   name           = "/${var.env}/${var.component}/network/baz/subnets/database/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1658,7 +1877,7 @@ resource "aws_ssm_parameter" "baz_database_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "baz_private_subnets" {
-  for_each       = module.baz_vpc.private_subnets
+  for_each       = module.baz_vpc.private_subnets != null ? module.baz_vpc.private_subnets : {}
   name           = "/${var.env}/${var.component}/network/baz/subnets/private/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1666,7 +1885,7 @@ resource "aws_ssm_parameter" "baz_private_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "baz_public_subnets" {
-  for_each       = module.baz_vpc.public_subnets
+  for_each       = module.baz_vpc.public_subnets != null ? module.baz_vpc.public_subnets : {}
   name           = "/${var.env}/${var.component}/network/baz/subnets/public/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1674,6 +1893,7 @@ resource "aws_ssm_parameter" "baz_public_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "baz_vpc_id" {
+  count          = module.baz_vpc.vpc_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/network/baz/vpc_id"
   type           = "String"
   tier           = "Standard"
@@ -1683,6 +1903,7 @@ resource "aws_ssm_parameter" "baz_vpc_id" {
 
 # module "corge_vpc" ssm Parameter Store integration registry entries (non sensitive)
 resource "aws_ssm_parameter" "corge_azs" {
+  count          = module.corge_vpc.azs != null ? 1 : 0
   name           = "/${var.env}/network/corge_azs"
   type           = "String"
   tier           = "Standard"
@@ -1690,7 +1911,7 @@ resource "aws_ssm_parameter" "corge_azs" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "corge_database_subnets" {
-  for_each       = module.corge_vpc.database_subnets
+  for_each       = module.corge_vpc.database_subnets != null ? module.corge_vpc.database_subnets : {}
   name           = "/${var.env}/network/subnets/database/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1698,7 +1919,7 @@ resource "aws_ssm_parameter" "corge_database_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "corge_private_subnets" {
-  for_each       = module.corge_vpc.private_subnets
+  for_each       = module.corge_vpc.private_subnets != null ? module.corge_vpc.private_subnets : {}
   name           = "/${var.env}/network/subnets/private/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1706,7 +1927,7 @@ resource "aws_ssm_parameter" "corge_private_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "corge_public_subnets" {
-  for_each       = module.corge_vpc.public_subnets
+  for_each       = module.corge_vpc.public_subnets != null ? module.corge_vpc.public_subnets : {}
   name           = "/${var.env}/network/subnets/public/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1714,6 +1935,7 @@ resource "aws_ssm_parameter" "corge_public_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "corge_vpc_id" {
+  count          = module.corge_vpc.vpc_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/network/corge_vpc_id"
   type           = "String"
   tier           = "Standard"
@@ -1723,6 +1945,7 @@ resource "aws_ssm_parameter" "corge_vpc_id" {
 
 # module "grault_vpc" ssm Parameter Store integration registry entries (non sensitive)
 resource "aws_ssm_parameter" "grault_azs" {
+  count          = module.grault_vpc.azs != null ? 1 : 0
   name           = "/${var.env}/network/vpc_azs"
   type           = "String"
   tier           = "Standard"
@@ -1730,7 +1953,7 @@ resource "aws_ssm_parameter" "grault_azs" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "grault_database_subnets" {
-  for_each       = module.grault_vpc.database_subnets
+  for_each       = module.grault_vpc.database_subnets != null ? module.grault_vpc.database_subnets : {}
   name           = "/${var.env}/${var.component}/network/subnets/database/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1738,7 +1961,7 @@ resource "aws_ssm_parameter" "grault_database_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "grault_private_subnets" {
-  for_each       = module.grault_vpc.private_subnets
+  for_each       = module.grault_vpc.private_subnets != null ? module.grault_vpc.private_subnets : {}
   name           = "/${var.env}/${var.component}/network/subnets/private/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1746,7 +1969,7 @@ resource "aws_ssm_parameter" "grault_private_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "grault_public_subnets" {
-  for_each       = module.grault_vpc.public_subnets
+  for_each       = module.grault_vpc.public_subnets != null ? module.grault_vpc.public_subnets : {}
   name           = "/${var.env}/${var.component}/network/subnets/public/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1754,6 +1977,7 @@ resource "aws_ssm_parameter" "grault_public_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "grault_vpc_id" {
+  count          = module.grault_vpc.vpc_id != null ? 1 : 0
   name           = "/${var.env}/${var.component}/network/vpc_id"
   type           = "String"
   tier           = "Standard"
@@ -1767,9 +1991,9 @@ resource "aws_ssm_parameter" "grault_vpc_id" {
 
 # module "vpc_map_integrate_all" ssm Parameter Store integration registry entries (non sensitive)
 resource "aws_ssm_parameter" "map_integrate_all_azs" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.azs != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.azs
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_azs/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1777,9 +2001,9 @@ resource "aws_ssm_parameter" "map_integrate_all_azs" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_cgw_arns" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.cgw_arns != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.cgw_arns
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_cgw_arns/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1787,9 +2011,9 @@ resource "aws_ssm_parameter" "map_integrate_all_cgw_arns" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_cgw_ids" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.cgw_ids != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.cgw_ids
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_cgw_ids/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1797,9 +2021,9 @@ resource "aws_ssm_parameter" "map_integrate_all_cgw_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_database_internet_gateway_route_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.database_internet_gateway_route_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.database_internet_gateway_route_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_database_internet_gateway_route_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1807,9 +2031,9 @@ resource "aws_ssm_parameter" "map_integrate_all_database_internet_gateway_route_
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_database_ipv6_egress_route_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.database_ipv6_egress_route_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.database_ipv6_egress_route_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_database_ipv6_egress_route_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1817,9 +2041,9 @@ resource "aws_ssm_parameter" "map_integrate_all_database_ipv6_egress_route_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_database_nat_gateway_route_ids" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.database_nat_gateway_route_ids != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.database_nat_gateway_route_ids
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_database_nat_gateway_route_ids/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1827,9 +2051,9 @@ resource "aws_ssm_parameter" "map_integrate_all_database_nat_gateway_route_ids" 
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_database_network_acl_arn" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.database_network_acl_arn != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.database_network_acl_arn
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_database_network_acl_arn/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1837,9 +2061,9 @@ resource "aws_ssm_parameter" "map_integrate_all_database_network_acl_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_database_network_acl_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.database_network_acl_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.database_network_acl_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_database_network_acl_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1847,9 +2071,9 @@ resource "aws_ssm_parameter" "map_integrate_all_database_network_acl_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_database_route_table_association_ids" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.database_route_table_association_ids != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.database_route_table_association_ids
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_database_route_table_association_ids/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1857,9 +2081,9 @@ resource "aws_ssm_parameter" "map_integrate_all_database_route_table_association
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_database_route_table_ids" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.database_route_table_ids != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.database_route_table_ids
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_database_route_table_ids/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1867,9 +2091,9 @@ resource "aws_ssm_parameter" "map_integrate_all_database_route_table_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_database_subnet_arns" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.database_subnet_arns != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.database_subnet_arns
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_database_subnet_arns/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1877,9 +2101,9 @@ resource "aws_ssm_parameter" "map_integrate_all_database_subnet_arns" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_database_subnet_group" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.database_subnet_group != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.database_subnet_group
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_database_subnet_group/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1887,9 +2111,9 @@ resource "aws_ssm_parameter" "map_integrate_all_database_subnet_group" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_database_subnet_group_name" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.database_subnet_group_name != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.database_subnet_group_name
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_database_subnet_group_name/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1897,9 +2121,9 @@ resource "aws_ssm_parameter" "map_integrate_all_database_subnet_group_name" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_database_subnets" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.database_subnets != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.database_subnets
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_database_subnets/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1907,9 +2131,9 @@ resource "aws_ssm_parameter" "map_integrate_all_database_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_database_subnets_cidr_blocks" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.database_subnets_cidr_blocks != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.database_subnets_cidr_blocks
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_database_subnets_cidr_blocks/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1917,9 +2141,9 @@ resource "aws_ssm_parameter" "map_integrate_all_database_subnets_cidr_blocks" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_database_subnets_ipv6_cidr_blocks" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.database_subnets_ipv6_cidr_blocks != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.database_subnets_ipv6_cidr_blocks
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_database_subnets_ipv6_cidr_blocks/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1927,9 +2151,9 @@ resource "aws_ssm_parameter" "map_integrate_all_database_subnets_ipv6_cidr_block
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_default_network_acl_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.default_network_acl_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.default_network_acl_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_default_network_acl_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1937,9 +2161,9 @@ resource "aws_ssm_parameter" "map_integrate_all_default_network_acl_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_default_route_table_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.default_route_table_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.default_route_table_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_default_route_table_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1947,9 +2171,9 @@ resource "aws_ssm_parameter" "map_integrate_all_default_route_table_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_default_security_group_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.default_security_group_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.default_security_group_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_default_security_group_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1957,9 +2181,9 @@ resource "aws_ssm_parameter" "map_integrate_all_default_security_group_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_default_vpc_arn" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.default_vpc_arn != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.default_vpc_arn
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_default_vpc_arn/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1967,9 +2191,9 @@ resource "aws_ssm_parameter" "map_integrate_all_default_vpc_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_default_vpc_cidr_block" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.default_vpc_cidr_block != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.default_vpc_cidr_block
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_default_vpc_cidr_block/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1977,9 +2201,9 @@ resource "aws_ssm_parameter" "map_integrate_all_default_vpc_cidr_block" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_default_vpc_default_network_acl_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.default_vpc_default_network_acl_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.default_vpc_default_network_acl_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_default_vpc_default_network_acl_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1987,9 +2211,9 @@ resource "aws_ssm_parameter" "map_integrate_all_default_vpc_default_network_acl_
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_default_vpc_default_route_table_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.default_vpc_default_route_table_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.default_vpc_default_route_table_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_default_vpc_default_route_table_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -1997,9 +2221,9 @@ resource "aws_ssm_parameter" "map_integrate_all_default_vpc_default_route_table_
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_default_vpc_default_security_group_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.default_vpc_default_security_group_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.default_vpc_default_security_group_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_default_vpc_default_security_group_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2007,9 +2231,9 @@ resource "aws_ssm_parameter" "map_integrate_all_default_vpc_default_security_gro
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_default_vpc_enable_dns_hostnames" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.default_vpc_enable_dns_hostnames != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.default_vpc_enable_dns_hostnames
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_default_vpc_enable_dns_hostnames/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2017,9 +2241,9 @@ resource "aws_ssm_parameter" "map_integrate_all_default_vpc_enable_dns_hostnames
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_default_vpc_enable_dns_support" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.default_vpc_enable_dns_support != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.default_vpc_enable_dns_support
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_default_vpc_enable_dns_support/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2027,9 +2251,9 @@ resource "aws_ssm_parameter" "map_integrate_all_default_vpc_enable_dns_support" 
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_default_vpc_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.default_vpc_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.default_vpc_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_default_vpc_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2037,9 +2261,9 @@ resource "aws_ssm_parameter" "map_integrate_all_default_vpc_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_default_vpc_instance_tenancy" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.default_vpc_instance_tenancy != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.default_vpc_instance_tenancy
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_default_vpc_instance_tenancy/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2047,9 +2271,9 @@ resource "aws_ssm_parameter" "map_integrate_all_default_vpc_instance_tenancy" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_default_vpc_main_route_table_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.default_vpc_main_route_table_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.default_vpc_main_route_table_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_default_vpc_main_route_table_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2057,9 +2281,9 @@ resource "aws_ssm_parameter" "map_integrate_all_default_vpc_main_route_table_id"
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_dhcp_options_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.dhcp_options_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.dhcp_options_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_dhcp_options_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2067,9 +2291,9 @@ resource "aws_ssm_parameter" "map_integrate_all_dhcp_options_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_egress_only_internet_gateway_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.egress_only_internet_gateway_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.egress_only_internet_gateway_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_egress_only_internet_gateway_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2077,9 +2301,9 @@ resource "aws_ssm_parameter" "map_integrate_all_egress_only_internet_gateway_id"
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_elasticache_network_acl_arn" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.elasticache_network_acl_arn != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.elasticache_network_acl_arn
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_elasticache_network_acl_arn/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2087,9 +2311,9 @@ resource "aws_ssm_parameter" "map_integrate_all_elasticache_network_acl_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_elasticache_network_acl_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.elasticache_network_acl_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.elasticache_network_acl_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_elasticache_network_acl_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2097,9 +2321,9 @@ resource "aws_ssm_parameter" "map_integrate_all_elasticache_network_acl_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_elasticache_route_table_association_ids" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.elasticache_route_table_association_ids != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.elasticache_route_table_association_ids
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_elasticache_route_table_association_ids/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2107,9 +2331,9 @@ resource "aws_ssm_parameter" "map_integrate_all_elasticache_route_table_associat
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_elasticache_route_table_ids" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.elasticache_route_table_ids != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.elasticache_route_table_ids
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_elasticache_route_table_ids/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2117,9 +2341,9 @@ resource "aws_ssm_parameter" "map_integrate_all_elasticache_route_table_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_elasticache_subnet_arns" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.elasticache_subnet_arns != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.elasticache_subnet_arns
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_elasticache_subnet_arns/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2127,9 +2351,9 @@ resource "aws_ssm_parameter" "map_integrate_all_elasticache_subnet_arns" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_elasticache_subnet_group" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.elasticache_subnet_group != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.elasticache_subnet_group
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_elasticache_subnet_group/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2137,9 +2361,9 @@ resource "aws_ssm_parameter" "map_integrate_all_elasticache_subnet_group" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_elasticache_subnet_group_name" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.elasticache_subnet_group_name != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.elasticache_subnet_group_name
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_elasticache_subnet_group_name/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2147,9 +2371,9 @@ resource "aws_ssm_parameter" "map_integrate_all_elasticache_subnet_group_name" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_elasticache_subnets" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.elasticache_subnets != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.elasticache_subnets
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_elasticache_subnets/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2157,9 +2381,9 @@ resource "aws_ssm_parameter" "map_integrate_all_elasticache_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_elasticache_subnets_cidr_blocks" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.elasticache_subnets_cidr_blocks != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.elasticache_subnets_cidr_blocks
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_elasticache_subnets_cidr_blocks/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2167,9 +2391,9 @@ resource "aws_ssm_parameter" "map_integrate_all_elasticache_subnets_cidr_blocks"
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_elasticache_subnets_ipv6_cidr_blocks" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.elasticache_subnets_ipv6_cidr_blocks != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.elasticache_subnets_ipv6_cidr_blocks
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_elasticache_subnets_ipv6_cidr_blocks/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2177,9 +2401,9 @@ resource "aws_ssm_parameter" "map_integrate_all_elasticache_subnets_ipv6_cidr_bl
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_igw_arn" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.igw_arn != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.igw_arn
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_igw_arn/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2187,9 +2411,9 @@ resource "aws_ssm_parameter" "map_integrate_all_igw_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_igw_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.igw_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.igw_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_igw_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2197,9 +2421,9 @@ resource "aws_ssm_parameter" "map_integrate_all_igw_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_intra_network_acl_arn" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.intra_network_acl_arn != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.intra_network_acl_arn
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_intra_network_acl_arn/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2207,9 +2431,9 @@ resource "aws_ssm_parameter" "map_integrate_all_intra_network_acl_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_intra_network_acl_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.intra_network_acl_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.intra_network_acl_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_intra_network_acl_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2217,9 +2441,9 @@ resource "aws_ssm_parameter" "map_integrate_all_intra_network_acl_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_intra_route_table_association_ids" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.intra_route_table_association_ids != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.intra_route_table_association_ids
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_intra_route_table_association_ids/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2227,9 +2451,9 @@ resource "aws_ssm_parameter" "map_integrate_all_intra_route_table_association_id
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_intra_route_table_ids" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.intra_route_table_ids != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.intra_route_table_ids
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_intra_route_table_ids/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2237,9 +2461,9 @@ resource "aws_ssm_parameter" "map_integrate_all_intra_route_table_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_intra_subnet_arns" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.intra_subnet_arns != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.intra_subnet_arns
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_intra_subnet_arns/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2247,9 +2471,9 @@ resource "aws_ssm_parameter" "map_integrate_all_intra_subnet_arns" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_intra_subnets" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.intra_subnets != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.intra_subnets
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_intra_subnets/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2257,9 +2481,9 @@ resource "aws_ssm_parameter" "map_integrate_all_intra_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_intra_subnets_cidr_blocks" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.intra_subnets_cidr_blocks != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.intra_subnets_cidr_blocks
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_intra_subnets_cidr_blocks/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2267,9 +2491,9 @@ resource "aws_ssm_parameter" "map_integrate_all_intra_subnets_cidr_blocks" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_intra_subnets_ipv6_cidr_blocks" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.intra_subnets_ipv6_cidr_blocks != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.intra_subnets_ipv6_cidr_blocks
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_intra_subnets_ipv6_cidr_blocks/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2277,9 +2501,9 @@ resource "aws_ssm_parameter" "map_integrate_all_intra_subnets_ipv6_cidr_blocks" 
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_name" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.name != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.name
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_name/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2287,9 +2511,9 @@ resource "aws_ssm_parameter" "map_integrate_all_name" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_nat_ids" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.nat_ids != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.nat_ids
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_nat_ids/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2297,9 +2521,9 @@ resource "aws_ssm_parameter" "map_integrate_all_nat_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_nat_public_ips" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.nat_public_ips != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.nat_public_ips
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_nat_public_ips/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2307,9 +2531,9 @@ resource "aws_ssm_parameter" "map_integrate_all_nat_public_ips" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_natgw_ids" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.natgw_ids != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.natgw_ids
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_natgw_ids/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2317,9 +2541,9 @@ resource "aws_ssm_parameter" "map_integrate_all_natgw_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_outpost_network_acl_arn" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.outpost_network_acl_arn != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.outpost_network_acl_arn
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_outpost_network_acl_arn/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2327,9 +2551,9 @@ resource "aws_ssm_parameter" "map_integrate_all_outpost_network_acl_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_outpost_network_acl_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.outpost_network_acl_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.outpost_network_acl_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_outpost_network_acl_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2337,9 +2561,9 @@ resource "aws_ssm_parameter" "map_integrate_all_outpost_network_acl_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_outpost_subnet_arns" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.outpost_subnet_arns != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.outpost_subnet_arns
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_outpost_subnet_arns/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2347,9 +2571,9 @@ resource "aws_ssm_parameter" "map_integrate_all_outpost_subnet_arns" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_outpost_subnets" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.outpost_subnets != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.outpost_subnets
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_outpost_subnets/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2357,9 +2581,9 @@ resource "aws_ssm_parameter" "map_integrate_all_outpost_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_outpost_subnets_cidr_blocks" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.outpost_subnets_cidr_blocks != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.outpost_subnets_cidr_blocks
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_outpost_subnets_cidr_blocks/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2367,9 +2591,9 @@ resource "aws_ssm_parameter" "map_integrate_all_outpost_subnets_cidr_blocks" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_outpost_subnets_ipv6_cidr_blocks" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.outpost_subnets_ipv6_cidr_blocks != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.outpost_subnets_ipv6_cidr_blocks
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_outpost_subnets_ipv6_cidr_blocks/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2377,9 +2601,9 @@ resource "aws_ssm_parameter" "map_integrate_all_outpost_subnets_ipv6_cidr_blocks
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_private_ipv6_egress_route_ids" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.private_ipv6_egress_route_ids != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.private_ipv6_egress_route_ids
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_private_ipv6_egress_route_ids/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2387,9 +2611,9 @@ resource "aws_ssm_parameter" "map_integrate_all_private_ipv6_egress_route_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_private_nat_gateway_route_ids" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.private_nat_gateway_route_ids != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.private_nat_gateway_route_ids
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_private_nat_gateway_route_ids/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2397,9 +2621,9 @@ resource "aws_ssm_parameter" "map_integrate_all_private_nat_gateway_route_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_private_network_acl_arn" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.private_network_acl_arn != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.private_network_acl_arn
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_private_network_acl_arn/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2407,9 +2631,9 @@ resource "aws_ssm_parameter" "map_integrate_all_private_network_acl_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_private_network_acl_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.private_network_acl_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.private_network_acl_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_private_network_acl_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2417,9 +2641,9 @@ resource "aws_ssm_parameter" "map_integrate_all_private_network_acl_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_private_route_table_association_ids" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.private_route_table_association_ids != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.private_route_table_association_ids
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_private_route_table_association_ids/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2427,9 +2651,9 @@ resource "aws_ssm_parameter" "map_integrate_all_private_route_table_association_
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_private_route_table_ids" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.private_route_table_ids != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.private_route_table_ids
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_private_route_table_ids/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2437,9 +2661,9 @@ resource "aws_ssm_parameter" "map_integrate_all_private_route_table_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_private_subnet_arns" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.private_subnet_arns != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.private_subnet_arns
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_private_subnet_arns/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2447,9 +2671,9 @@ resource "aws_ssm_parameter" "map_integrate_all_private_subnet_arns" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_private_subnets" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.private_subnets != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.private_subnets
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_private_subnets/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2457,9 +2681,9 @@ resource "aws_ssm_parameter" "map_integrate_all_private_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_private_subnets_cidr_blocks" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.private_subnets_cidr_blocks != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.private_subnets_cidr_blocks
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_private_subnets_cidr_blocks/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2467,9 +2691,9 @@ resource "aws_ssm_parameter" "map_integrate_all_private_subnets_cidr_blocks" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_private_subnets_ipv6_cidr_blocks" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.private_subnets_ipv6_cidr_blocks != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.private_subnets_ipv6_cidr_blocks
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_private_subnets_ipv6_cidr_blocks/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2477,9 +2701,9 @@ resource "aws_ssm_parameter" "map_integrate_all_private_subnets_ipv6_cidr_blocks
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_public_internet_gateway_ipv6_route_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.public_internet_gateway_ipv6_route_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.public_internet_gateway_ipv6_route_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_public_internet_gateway_ipv6_route_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2487,9 +2711,9 @@ resource "aws_ssm_parameter" "map_integrate_all_public_internet_gateway_ipv6_rou
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_public_internet_gateway_route_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.public_internet_gateway_route_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.public_internet_gateway_route_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_public_internet_gateway_route_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2497,9 +2721,9 @@ resource "aws_ssm_parameter" "map_integrate_all_public_internet_gateway_route_id
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_public_network_acl_arn" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.public_network_acl_arn != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.public_network_acl_arn
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_public_network_acl_arn/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2507,9 +2731,9 @@ resource "aws_ssm_parameter" "map_integrate_all_public_network_acl_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_public_network_acl_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.public_network_acl_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.public_network_acl_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_public_network_acl_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2517,9 +2741,9 @@ resource "aws_ssm_parameter" "map_integrate_all_public_network_acl_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_public_route_table_association_ids" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.public_route_table_association_ids != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.public_route_table_association_ids
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_public_route_table_association_ids/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2527,9 +2751,9 @@ resource "aws_ssm_parameter" "map_integrate_all_public_route_table_association_i
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_public_route_table_ids" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.public_route_table_ids != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.public_route_table_ids
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_public_route_table_ids/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2537,9 +2761,9 @@ resource "aws_ssm_parameter" "map_integrate_all_public_route_table_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_public_subnet_arns" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.public_subnet_arns != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.public_subnet_arns
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_public_subnet_arns/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2547,9 +2771,9 @@ resource "aws_ssm_parameter" "map_integrate_all_public_subnet_arns" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_public_subnets" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.public_subnets != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.public_subnets
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_public_subnets/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2557,9 +2781,9 @@ resource "aws_ssm_parameter" "map_integrate_all_public_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_public_subnets_cidr_blocks" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.public_subnets_cidr_blocks != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.public_subnets_cidr_blocks
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_public_subnets_cidr_blocks/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2567,9 +2791,9 @@ resource "aws_ssm_parameter" "map_integrate_all_public_subnets_cidr_blocks" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_public_subnets_ipv6_cidr_blocks" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.public_subnets_ipv6_cidr_blocks != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.public_subnets_ipv6_cidr_blocks
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_public_subnets_ipv6_cidr_blocks/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2577,9 +2801,9 @@ resource "aws_ssm_parameter" "map_integrate_all_public_subnets_ipv6_cidr_blocks"
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_redshift_network_acl_arn" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.redshift_network_acl_arn != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.redshift_network_acl_arn
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_redshift_network_acl_arn/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2587,9 +2811,9 @@ resource "aws_ssm_parameter" "map_integrate_all_redshift_network_acl_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_redshift_network_acl_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.redshift_network_acl_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.redshift_network_acl_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_redshift_network_acl_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2597,9 +2821,9 @@ resource "aws_ssm_parameter" "map_integrate_all_redshift_network_acl_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_redshift_public_route_table_association_ids" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.redshift_public_route_table_association_ids != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.redshift_public_route_table_association_ids
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_redshift_public_route_table_association_ids/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2607,9 +2831,9 @@ resource "aws_ssm_parameter" "map_integrate_all_redshift_public_route_table_asso
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_redshift_route_table_association_ids" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.redshift_route_table_association_ids != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.redshift_route_table_association_ids
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_redshift_route_table_association_ids/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2617,9 +2841,9 @@ resource "aws_ssm_parameter" "map_integrate_all_redshift_route_table_association
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_redshift_route_table_ids" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.redshift_route_table_ids != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.redshift_route_table_ids
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_redshift_route_table_ids/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2627,9 +2851,9 @@ resource "aws_ssm_parameter" "map_integrate_all_redshift_route_table_ids" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_redshift_subnet_arns" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.redshift_subnet_arns != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.redshift_subnet_arns
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_redshift_subnet_arns/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2637,9 +2861,9 @@ resource "aws_ssm_parameter" "map_integrate_all_redshift_subnet_arns" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_redshift_subnet_group" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.redshift_subnet_group != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.redshift_subnet_group
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_redshift_subnet_group/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2647,9 +2871,9 @@ resource "aws_ssm_parameter" "map_integrate_all_redshift_subnet_group" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_redshift_subnets" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.redshift_subnets != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.redshift_subnets
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_redshift_subnets/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2657,9 +2881,9 @@ resource "aws_ssm_parameter" "map_integrate_all_redshift_subnets" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_redshift_subnets_cidr_blocks" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.redshift_subnets_cidr_blocks != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.redshift_subnets_cidr_blocks
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_redshift_subnets_cidr_blocks/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2667,9 +2891,9 @@ resource "aws_ssm_parameter" "map_integrate_all_redshift_subnets_cidr_blocks" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_redshift_subnets_ipv6_cidr_blocks" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.redshift_subnets_ipv6_cidr_blocks != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.redshift_subnets_ipv6_cidr_blocks
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_redshift_subnets_ipv6_cidr_blocks/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2677,9 +2901,9 @@ resource "aws_ssm_parameter" "map_integrate_all_redshift_subnets_ipv6_cidr_block
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_this_customer_gateway" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.this_customer_gateway != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.this_customer_gateway
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_this_customer_gateway/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2687,9 +2911,9 @@ resource "aws_ssm_parameter" "map_integrate_all_this_customer_gateway" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_vgw_arn" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.vgw_arn != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.vgw_arn
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_vgw_arn/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2697,9 +2921,9 @@ resource "aws_ssm_parameter" "map_integrate_all_vgw_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_vgw_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.vgw_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.vgw_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_vgw_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2707,9 +2931,9 @@ resource "aws_ssm_parameter" "map_integrate_all_vgw_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_vpc_arn" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.vpc_arn != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.vpc_arn
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_vpc_arn/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2717,9 +2941,9 @@ resource "aws_ssm_parameter" "map_integrate_all_vpc_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_vpc_cidr_block" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.vpc_cidr_block != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.vpc_cidr_block
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_vpc_cidr_block/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2727,9 +2951,9 @@ resource "aws_ssm_parameter" "map_integrate_all_vpc_cidr_block" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_vpc_enable_dns_hostnames" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.vpc_enable_dns_hostnames != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.vpc_enable_dns_hostnames
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_vpc_enable_dns_hostnames/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2737,9 +2961,9 @@ resource "aws_ssm_parameter" "map_integrate_all_vpc_enable_dns_hostnames" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_vpc_enable_dns_support" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.vpc_enable_dns_support != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.vpc_enable_dns_support
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_vpc_enable_dns_support/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2747,9 +2971,9 @@ resource "aws_ssm_parameter" "map_integrate_all_vpc_enable_dns_support" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_vpc_flow_log_cloudwatch_iam_role_arn" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.vpc_flow_log_cloudwatch_iam_role_arn != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.vpc_flow_log_cloudwatch_iam_role_arn
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_vpc_flow_log_cloudwatch_iam_role_arn/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2757,9 +2981,9 @@ resource "aws_ssm_parameter" "map_integrate_all_vpc_flow_log_cloudwatch_iam_role
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_vpc_flow_log_destination_arn" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.vpc_flow_log_destination_arn != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.vpc_flow_log_destination_arn
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_vpc_flow_log_destination_arn/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2767,9 +2991,9 @@ resource "aws_ssm_parameter" "map_integrate_all_vpc_flow_log_destination_arn" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_vpc_flow_log_destination_type" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.vpc_flow_log_destination_type != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.vpc_flow_log_destination_type
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_vpc_flow_log_destination_type/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2777,9 +3001,9 @@ resource "aws_ssm_parameter" "map_integrate_all_vpc_flow_log_destination_type" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_vpc_flow_log_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.vpc_flow_log_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.vpc_flow_log_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_vpc_flow_log_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2787,9 +3011,9 @@ resource "aws_ssm_parameter" "map_integrate_all_vpc_flow_log_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_vpc_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.vpc_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.vpc_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_vpc_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2797,9 +3021,9 @@ resource "aws_ssm_parameter" "map_integrate_all_vpc_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_vpc_instance_tenancy" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.vpc_instance_tenancy != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.vpc_instance_tenancy
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_vpc_instance_tenancy/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2807,9 +3031,9 @@ resource "aws_ssm_parameter" "map_integrate_all_vpc_instance_tenancy" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_vpc_ipv6_association_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.vpc_ipv6_association_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.vpc_ipv6_association_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_vpc_ipv6_association_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2817,9 +3041,9 @@ resource "aws_ssm_parameter" "map_integrate_all_vpc_ipv6_association_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_vpc_ipv6_cidr_block" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.vpc_ipv6_cidr_block != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.vpc_ipv6_cidr_block
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_vpc_ipv6_cidr_block/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2827,9 +3051,9 @@ resource "aws_ssm_parameter" "map_integrate_all_vpc_ipv6_cidr_block" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_vpc_main_route_table_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.vpc_main_route_table_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.vpc_main_route_table_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_vpc_main_route_table_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2837,9 +3061,9 @@ resource "aws_ssm_parameter" "map_integrate_all_vpc_main_route_table_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_vpc_owner_id" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.vpc_owner_id != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.vpc_owner_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_vpc_owner_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2847,9 +3071,9 @@ resource "aws_ssm_parameter" "map_integrate_all_vpc_owner_id" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_all_vpc_secondary_cidr_blocks" {
-  for_each = { for k, v in module.vpc_map_integrate_all :
+  for_each = module.vpc_map_integrate_all.vpc_secondary_cidr_blocks != null ? { for k, v in module.vpc_map_integrate_all :
     k => v.vpc_secondary_cidr_blocks
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/map_integrate_all_vpc_secondary_cidr_blocks/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2859,9 +3083,9 @@ resource "aws_ssm_parameter" "map_integrate_all_vpc_secondary_cidr_blocks" {
 
 # module "vpc_map_integrate_selected" ssm Parameter Store integration registry entries (non sensitive)
 resource "aws_ssm_parameter" "map_integrate_selected_azs" {
-  for_each = { for k, v in module.vpc_map_integrate_selected :
+  for_each = module.vpc_map_integrate_selected.azs != null ? { for k, v in module.vpc_map_integrate_selected :
     k => v.azs
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/network/integrate_selected/azs/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2870,9 +3094,9 @@ resource "aws_ssm_parameter" "map_integrate_selected_azs" {
 }
 resource "aws_ssm_parameter" "map_integrate_selected_azs_prd" {
   provider = aws.prd
-  for_each = { for k, v in module.vpc_map_integrate_selected :
+  for_each = module.vpc_map_integrate_selected.azs != null ? { for k, v in module.vpc_map_integrate_selected :
     k => v.azs
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/network/integrate_selected/azs/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2881,9 +3105,9 @@ resource "aws_ssm_parameter" "map_integrate_selected_azs_prd" {
 }
 resource "aws_ssm_parameter" "map_integrate_selected_azs_stg" {
   provider = aws.stg
-  for_each = { for k, v in module.vpc_map_integrate_selected :
+  for_each = module.vpc_map_integrate_selected.azs != null ? { for k, v in module.vpc_map_integrate_selected :
     k => v.azs
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/network/integrate_selected/azs/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2891,15 +3115,17 @@ resource "aws_ssm_parameter" "map_integrate_selected_azs_stg" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_selected_database_subnets" {
-  for_each = { for output in flatten([
-    for module_key, module_outputs in module.vpc_map_integrate_selected : [
-      for output_key, output_value in module_outputs.database_subnets : {
-        module_key   = module_key
-        output_key   = output_key
-        output_value = output_value
-      }
-    ]
-  ]) : "${output.module_key}/${output.output_key}" => output }
+  for_each = module.vpc_map_integrate_selected.database_subnets != null ? {
+    for output in flatten([
+      for module_key, module_outputs in module.vpc_map_integrate_selected : [
+        for output_key, output_value in module_outputs.database_subnets : {
+          module_key   = module_key
+          output_key   = output_key
+          output_value = output_value
+        }
+      ]
+    ]) : "${output.module_key}/${output.output_key}" => output
+  } : {}
   name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/database/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2908,15 +3134,17 @@ resource "aws_ssm_parameter" "map_integrate_selected_database_subnets" {
 }
 resource "aws_ssm_parameter" "map_integrate_selected_database_subnets_prd" {
   provider = aws.prd
-  for_each = { for output in flatten([
-    for module_key, module_outputs in module.vpc_map_integrate_selected : [
-      for output_key, output_value in module_outputs.database_subnets : {
-        module_key   = module_key
-        output_key   = output_key
-        output_value = output_value
-      }
-    ]
-  ]) : "${output.module_key}/${output.output_key}" => output }
+  for_each = module.vpc_map_integrate_selected.database_subnets != null ? {
+    for output in flatten([
+      for module_key, module_outputs in module.vpc_map_integrate_selected : [
+        for output_key, output_value in module_outputs.database_subnets : {
+          module_key   = module_key
+          output_key   = output_key
+          output_value = output_value
+        }
+      ]
+    ]) : "${output.module_key}/${output.output_key}" => output
+  } : {}
   name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/database/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2925,15 +3153,17 @@ resource "aws_ssm_parameter" "map_integrate_selected_database_subnets_prd" {
 }
 resource "aws_ssm_parameter" "map_integrate_selected_database_subnets_stg" {
   provider = aws.stg
-  for_each = { for output in flatten([
-    for module_key, module_outputs in module.vpc_map_integrate_selected : [
-      for output_key, output_value in module_outputs.database_subnets : {
-        module_key   = module_key
-        output_key   = output_key
-        output_value = output_value
-      }
-    ]
-  ]) : "${output.module_key}/${output.output_key}" => output }
+  for_each = module.vpc_map_integrate_selected.database_subnets != null ? {
+    for output in flatten([
+      for module_key, module_outputs in module.vpc_map_integrate_selected : [
+        for output_key, output_value in module_outputs.database_subnets : {
+          module_key   = module_key
+          output_key   = output_key
+          output_value = output_value
+        }
+      ]
+    ]) : "${output.module_key}/${output.output_key}" => output
+  } : {}
   name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/database/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2941,15 +3171,17 @@ resource "aws_ssm_parameter" "map_integrate_selected_database_subnets_stg" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_selected_private_subnets" {
-  for_each = { for output in flatten([
-    for module_key, module_outputs in module.vpc_map_integrate_selected : [
-      for output_key, output_value in module_outputs.private_subnets : {
-        module_key   = module_key
-        output_key   = output_key
-        output_value = output_value
-      }
-    ]
-  ]) : "${output.module_key}/${output.output_key}" => output }
+  for_each = module.vpc_map_integrate_selected.private_subnets != null ? {
+    for output in flatten([
+      for module_key, module_outputs in module.vpc_map_integrate_selected : [
+        for output_key, output_value in module_outputs.private_subnets : {
+          module_key   = module_key
+          output_key   = output_key
+          output_value = output_value
+        }
+      ]
+    ]) : "${output.module_key}/${output.output_key}" => output
+  } : {}
   name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/private/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2958,15 +3190,17 @@ resource "aws_ssm_parameter" "map_integrate_selected_private_subnets" {
 }
 resource "aws_ssm_parameter" "map_integrate_selected_private_subnets_prd" {
   provider = aws.prd
-  for_each = { for output in flatten([
-    for module_key, module_outputs in module.vpc_map_integrate_selected : [
-      for output_key, output_value in module_outputs.private_subnets : {
-        module_key   = module_key
-        output_key   = output_key
-        output_value = output_value
-      }
-    ]
-  ]) : "${output.module_key}/${output.output_key}" => output }
+  for_each = module.vpc_map_integrate_selected.private_subnets != null ? {
+    for output in flatten([
+      for module_key, module_outputs in module.vpc_map_integrate_selected : [
+        for output_key, output_value in module_outputs.private_subnets : {
+          module_key   = module_key
+          output_key   = output_key
+          output_value = output_value
+        }
+      ]
+    ]) : "${output.module_key}/${output.output_key}" => output
+  } : {}
   name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/private/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2975,15 +3209,17 @@ resource "aws_ssm_parameter" "map_integrate_selected_private_subnets_prd" {
 }
 resource "aws_ssm_parameter" "map_integrate_selected_private_subnets_stg" {
   provider = aws.stg
-  for_each = { for output in flatten([
-    for module_key, module_outputs in module.vpc_map_integrate_selected : [
-      for output_key, output_value in module_outputs.private_subnets : {
-        module_key   = module_key
-        output_key   = output_key
-        output_value = output_value
-      }
-    ]
-  ]) : "${output.module_key}/${output.output_key}" => output }
+  for_each = module.vpc_map_integrate_selected.private_subnets != null ? {
+    for output in flatten([
+      for module_key, module_outputs in module.vpc_map_integrate_selected : [
+        for output_key, output_value in module_outputs.private_subnets : {
+          module_key   = module_key
+          output_key   = output_key
+          output_value = output_value
+        }
+      ]
+    ]) : "${output.module_key}/${output.output_key}" => output
+  } : {}
   name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/private/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -2991,15 +3227,17 @@ resource "aws_ssm_parameter" "map_integrate_selected_private_subnets_stg" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_selected_public_subnets" {
-  for_each = { for output in flatten([
-    for module_key, module_outputs in module.vpc_map_integrate_selected : [
-      for output_key, output_value in module_outputs.public_subnets : {
-        module_key   = module_key
-        output_key   = output_key
-        output_value = output_value
-      }
-    ]
-  ]) : "${output.module_key}/${output.output_key}" => output }
+  for_each = module.vpc_map_integrate_selected.public_subnets != null ? {
+    for output in flatten([
+      for module_key, module_outputs in module.vpc_map_integrate_selected : [
+        for output_key, output_value in module_outputs.public_subnets : {
+          module_key   = module_key
+          output_key   = output_key
+          output_value = output_value
+        }
+      ]
+    ]) : "${output.module_key}/${output.output_key}" => output
+  } : {}
   name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/public/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -3008,15 +3246,17 @@ resource "aws_ssm_parameter" "map_integrate_selected_public_subnets" {
 }
 resource "aws_ssm_parameter" "map_integrate_selected_public_subnets_prd" {
   provider = aws.prd
-  for_each = { for output in flatten([
-    for module_key, module_outputs in module.vpc_map_integrate_selected : [
-      for output_key, output_value in module_outputs.public_subnets : {
-        module_key   = module_key
-        output_key   = output_key
-        output_value = output_value
-      }
-    ]
-  ]) : "${output.module_key}/${output.output_key}" => output }
+  for_each = module.vpc_map_integrate_selected.public_subnets != null ? {
+    for output in flatten([
+      for module_key, module_outputs in module.vpc_map_integrate_selected : [
+        for output_key, output_value in module_outputs.public_subnets : {
+          module_key   = module_key
+          output_key   = output_key
+          output_value = output_value
+        }
+      ]
+    ]) : "${output.module_key}/${output.output_key}" => output
+  } : {}
   name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/public/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -3025,15 +3265,17 @@ resource "aws_ssm_parameter" "map_integrate_selected_public_subnets_prd" {
 }
 resource "aws_ssm_parameter" "map_integrate_selected_public_subnets_stg" {
   provider = aws.stg
-  for_each = { for output in flatten([
-    for module_key, module_outputs in module.vpc_map_integrate_selected : [
-      for output_key, output_value in module_outputs.public_subnets : {
-        module_key   = module_key
-        output_key   = output_key
-        output_value = output_value
-      }
-    ]
-  ]) : "${output.module_key}/${output.output_key}" => output }
+  for_each = module.vpc_map_integrate_selected.public_subnets != null ? {
+    for output in flatten([
+      for module_key, module_outputs in module.vpc_map_integrate_selected : [
+        for output_key, output_value in module_outputs.public_subnets : {
+          module_key   = module_key
+          output_key   = output_key
+          output_value = output_value
+        }
+      ]
+    ]) : "${output.module_key}/${output.output_key}" => output
+  } : {}
   name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/public/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -3041,9 +3283,9 @@ resource "aws_ssm_parameter" "map_integrate_selected_public_subnets_stg" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_selected_vpc_id" {
-  for_each = { for k, v in module.vpc_map_integrate_selected :
+  for_each = module.vpc_map_integrate_selected.vpc_id != null ? { for k, v in module.vpc_map_integrate_selected :
     k => v.vpc_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/network/integrate_selected/vpc_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -3052,9 +3294,9 @@ resource "aws_ssm_parameter" "map_integrate_selected_vpc_id" {
 }
 resource "aws_ssm_parameter" "map_integrate_selected_vpc_id_prd" {
   provider = aws.prd
-  for_each = { for k, v in module.vpc_map_integrate_selected :
+  for_each = module.vpc_map_integrate_selected.vpc_id != null ? { for k, v in module.vpc_map_integrate_selected :
     k => v.vpc_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/network/integrate_selected/vpc_id/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -3063,9 +3305,9 @@ resource "aws_ssm_parameter" "map_integrate_selected_vpc_id_prd" {
 }
 resource "aws_ssm_parameter" "map_integrate_selected_vpc_id_stg" {
   provider = aws.stg
-  for_each = { for k, v in module.vpc_map_integrate_selected :
+  for_each = module.vpc_map_integrate_selected.vpc_id != null ? { for k, v in module.vpc_map_integrate_selected :
     k => v.vpc_id
-  }
+  } : {}
   name           = "/${var.env}/${var.component}/network/integrate_selected/vpc_id/${each.key}"
   type           = "String"
   tier           = "Standard"

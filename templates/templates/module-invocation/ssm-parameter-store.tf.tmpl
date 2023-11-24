@@ -29,35 +29,38 @@
         {{- end -}}
         {{- if $outer.ModuleForEach }}
           {{- if .ForEach }}
-            for_each = { for output in flatten([
-              for module_key, module_outputs in module.{{$outer.ModuleName}}: [
-                for output_key, output_value in module_outputs.{{.Output.Name}}: {
-                  module_key   = module_key
-                  output_key   = output_key
-                  output_value = output_value
-                }
-              ]
-            ]): "${output.module_key}/${output.output_key}" => output }
+            for_each = module.{{$outer.ModuleName}}.{{.Output.Name}} != null ? { 
+              for output in flatten([
+                for module_key, module_outputs in module.{{$outer.ModuleName}}: [
+                  for output_key, output_value in module_outputs.{{.Output.Name}}: {
+                    module_key   = module_key
+                    output_key   = output_key
+                    output_value = output_value
+                  }
+                ]
+              ]): "${output.module_key}/${output.output_key}" => output
+            } : {}
             {{- if .PathForEach }}
               name  = "{{ $fullPath }}/{{ .PathForEach }}/${each.key}"
             {{- else }}
               name  = "{{ $fullPath }}/${each.key}"
             {{- end }}
           {{- else }}
-            for_each = { for k, v in module.{{$outer.ModuleName}}:
+            for_each = module.{{$outer.ModuleName}}.{{.Output.Name}} != null ? { for k, v in module.{{$outer.ModuleName}}:
               k => v.{{.Output.Name}}
-            }
+            } : {}
             name  = "{{ $fullPath }}/${each.key}"
           {{- end }}
         {{- else }}
           {{- if .ForEach }}
-            for_each = module.{{$outer.ModuleName}}.{{.Output.Name}}
+            for_each = module.{{$outer.ModuleName}}.{{.Output.Name}} != null ? module.{{$outer.ModuleName}}.{{.Output.Name}} : {}
             {{- if .PathForEach }}
               name  = "{{ $fullPath }}/{{ .PathForEach }}/${each.key}"
             {{- else }}
               name  = "{{ $fullPath }}/${each.key}"
             {{- end }}
           {{- else }}
+            count = module.{{$outer.ModuleName}}.{{.Output.Name}} != null ? 1 : 0
             name  = "{{ $fullPath }}"
           {{- end }}
         {{- end }}
