@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.91.7](https://github.com/chanzuckerberg/fogg/compare/v0.91.6...v0.91.7) (2023-12-11)
+
+
+### Misc
+
+* Bump github.com/chanzuckerberg/go-misc from 1.10.14 to 1.11.0 ([#977](https://github.com/chanzuckerberg/fogg/issues/977)) ([ec08162](https://github.com/chanzuckerberg/fogg/commit/ec08162c5b59a2b23e51526222fde6a4f7a2f61c))
+* Bump github.com/go-git/go-git/v5 from 5.10.1 to 5.11.0 ([#979](https://github.com/chanzuckerberg/fogg/issues/979)) ([b84c521](https://github.com/chanzuckerberg/fogg/commit/b84c521cefd6390d180a30574cf695488e1181f4))
+
 ### [0.91.6](https://github.com/chanzuckerberg/fogg/compare/v0.91.5...v0.91.6) (2023-12-04)
 
 
