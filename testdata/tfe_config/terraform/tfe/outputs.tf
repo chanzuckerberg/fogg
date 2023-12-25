@@ -23,7 +23,7 @@ output "endpoint" {
 
 output "master_password" {
   value     = module.aws-aurora-postgres.master_password
-  sensitive = false
+  sensitive = true
 }
 
 output "master_username" {
