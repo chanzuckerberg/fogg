@@ -1,5 +1,14 @@
 # Changelog
 
+### [0.91.9](https://github.com/chanzuckerberg/fogg/compare/v0.91.8...v0.91.9) (2024-01-01)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.48.16 to 1.49.4 ([#982](https://github.com/chanzuckerberg/fogg/issues/982)) ([5e409bf](https://github.com/chanzuckerberg/fogg/commit/5e409bfc04a4b63afba006bd360f5bef3aaf5e2e))
+* Bump github.com/aws/aws-sdk-go from 1.49.4 to 1.49.13 ([#986](https://github.com/chanzuckerberg/fogg/issues/986)) ([5aa03b6](https://github.com/chanzuckerberg/fogg/commit/5aa03b64016611a3e0d37d92f9750308c15b1823))
+* Bump golang.org/x/crypto from 0.16.0 to 0.17.0 ([#984](https://github.com/chanzuckerberg/fogg/issues/984)) ([fdad103](https://github.com/chanzuckerberg/fogg/commit/fdad103036234587a0f7d65b1dc80e64f8534bfb))
+
 ### [0.91.8](https://github.com/chanzuckerberg/fogg/compare/v0.91.7...v0.91.8) (2023-12-12)
 
 
