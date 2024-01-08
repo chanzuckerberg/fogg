@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.91.10](https://github.com/chanzuckerberg/fogg/compare/v0.91.9...v0.91.10) (2024-01-08)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.49.13 to 1.49.16 ([#987](https://github.com/chanzuckerberg/fogg/issues/987)) ([13adde7](https://github.com/chanzuckerberg/fogg/commit/13adde7a222207e21e980ec41c5293ca86805a0c))
+* Bump github.com/cloudflare/circl from 1.3.3 to 1.3.7 ([#989](https://github.com/chanzuckerberg/fogg/issues/989)) ([39b1695](https://github.com/chanzuckerberg/fogg/commit/39b1695cbbbbbaadf95a6fa5ca5edcfff08184fa))
+
 ### [0.91.9](https://github.com/chanzuckerberg/fogg/compare/v0.91.8...v0.91.9) (2024-01-01)
 
 
