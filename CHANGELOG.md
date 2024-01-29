@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.91.13](https://github.com/chanzuckerberg/fogg/compare/v0.91.12...v0.91.13) (2024-01-29)
+
+
+### Misc
+
+* Bump github.com/chanzuckerberg/go-misc from 1.11.0 to 1.11.1 ([#994](https://github.com/chanzuckerberg/fogg/issues/994)) ([1b3a6be](https://github.com/chanzuckerberg/fogg/commit/1b3a6be217f8e3b4860e3f6800ba5dc86d2c70e4))
+
 ### [0.91.12](https://github.com/chanzuckerberg/fogg/compare/v0.91.11...v0.91.12) (2024-01-22)
 
 
