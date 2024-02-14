@@ -20,7 +20,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
       - name: Cache Fogg
         id: cache-fogg
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.fogg/cache
           key: fogg-cache-${{ hashFiles('**/.fogg-version') }}
@@ -28,7 +28,7 @@ jobs:
           make setup
           echo "$(pwd)/.fogg/bin" >> "${GITHUB_PATH}"
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4.0.1
+        uses: aws-actions/configure-aws-credentials@v4.0.2
         with:
           role-to-assume: foo
           aws-region: bar
