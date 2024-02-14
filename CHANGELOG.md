@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.88.1](https://github.com/vincenthsh/fogg/compare/v0.88.0...v0.88.1) (2024-02-14)
+
+
+### Bug Fixes
+
+* Integration Registry for nested for entries bug ([#251](https://github.com/vincenthsh/fogg/issues/251)) ([001a654](https://github.com/vincenthsh/fogg/commit/001a6541398fa64ea1accb6b684f47ffc07afbf9))
+
 ## [0.88.0](https://github.com/vincenthsh/fogg/compare/v0.87.1...v0.88.0) (2024-02-14)
 
 
