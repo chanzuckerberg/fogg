@@ -57,9 +57,9 @@ func TestIntegration(t *testing.T) {
 			testdataFs := afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(util.ProjectRoot(), "testdata", tt.fileName))
 			configFile := "fogg.yml"
 			if *updateGoldenFiles {
-				// delete all files except fogg.yml and conf.d directory
+				// delete all files except fogg.yml and conf.d, foo_modules directories
 				e := afero.Walk(testdataFs, ".", func(path string, info os.FileInfo, err error) error {
-					if !info.IsDir() && !(path == configFile) && !(strings.Contains(path, "fogg.d")) {
+					if !info.IsDir() && !(path == configFile) && !(strings.Contains(path, "fogg.d")) && !(strings.Contains(path, "foo_modules")) {
 						return testdataFs.Remove(path)
 					}
 					return nil
@@ -95,10 +95,24 @@ func TestIntegration(t *testing.T) {
 						if !info.IsDir() {
 							partialConfigContents, e := afero.ReadFile(testdataFs, path)
 							r.NoError(e)
-							partialConfigMode, e := testdataFs.Stat(configFile)
-							r.NoError(e)
-							r.NoError(afero.WriteFile(fs, path, partialConfigContents, partialConfigMode.Mode()))
+							r.NoError(afero.WriteFile(fs, path, partialConfigContents, info.Mode()))
 							return nil
+						}
+						return nil
+					})
+				}
+				// if foo_modules exists, copy these too...
+				fooModulesDir, e := testdataFs.Stat("foo_modules")
+				fs.Mkdir("foo_modules", 0700)
+				if e == nil && fooModulesDir.IsDir() {
+					afero.Walk(testdataFs, "foo_modules", func(path string, info os.FileInfo, err error) error {
+						if !info.IsDir() {
+							moduleFileContents, e := afero.ReadFile(testdataFs, path)
+							r.NoError(e)
+							r.NoError(afero.WriteFile(fs, path, moduleFileContents, info.Mode()))
+							return nil
+						} else {
+							fs.Mkdir(path, 0700)
 						}
 						return nil
 					})

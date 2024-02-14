@@ -10,6 +10,9 @@ defaults:
   tools:
     atlantis:
       enabled: true
+      module_prefixes:
+        - terraform/modules/
+        - foo_modules/
       version: 3
       automerge: true
       parallel_plan: true
@@ -39,6 +42,7 @@ envs:
               - tags
               - banana
           - source: "terraform/modules/my_module"
+          - source: "foo_modules/bar"
 modules:
   my_module: {}
 version: 2

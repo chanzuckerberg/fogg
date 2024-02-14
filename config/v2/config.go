@@ -207,7 +207,13 @@ type GitHubActionsCI struct {
 }
 
 type Atlantis struct {
-	Enabled     *bool `yaml:"enabled,omitempty"`
+	// enable Atlantis integration
+	// default: false
+	Enabled *bool `yaml:"enabled,omitempty"`
+	// list of module source prefixes for auto plan when modified
+	// default: "terraform/modules/"
+	ModulePrefixes []string `yaml:"module_prefixes,omitempty"`
+	// Raw atlantis RepoCfg struct
 	raw.RepoCfg `yaml:",inline"`
 }
 

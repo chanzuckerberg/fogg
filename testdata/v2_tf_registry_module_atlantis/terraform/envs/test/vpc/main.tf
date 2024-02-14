@@ -16,3 +16,7 @@ module "vpc" {
 module "my_module" {
   source = "../../../modules/my_module"
 }
+
+module "bar" {
+  source = "../../../../foo_modules/bar"
+}

@@ -657,3 +657,4 @@ output "vpc_secondary_cidr_blocks" {
   sensitive = false
 }
 # module "my_module" outputs
+# module "bar" outputs

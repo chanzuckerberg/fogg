@@ -11,7 +11,8 @@ projects:
       when_modified:
         - '*.tf'
         - '!remote-states.tf'
-        - ../../../modules/my_module/**/*.tf
+        - ../../../../terraform/modules/my_module/**/*.tf
+        - ../../../../terraform/modules/my_module/**/*.tf.json
       enabled: true
     apply_requirements:
       - approved
