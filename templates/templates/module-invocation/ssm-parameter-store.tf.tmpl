@@ -29,17 +29,17 @@
         {{- end -}}
         {{- if $outer.ModuleForEach }}
           {{- if .ForEach }}
-            for_each = module.{{$outer.ModuleName}}.{{.Output.Name}} != null ? { 
-              for output in flatten([
+              for_each = { for output in flatten([
                 for module_key, module_outputs in module.{{$outer.ModuleName}}: [
                   for output_key, output_value in module_outputs.{{.Output.Name}}: {
-                    module_key   = module_key
-                    output_key   = output_key
-                    output_value = output_value
+                      module_key   = module_key
+                      output_key   = output_key
+                      output_value = output_value
                   }
+                  if module_outputs.{{.Output.Name}} != null
                 ]
               ]): "${output.module_key}/${output.output_key}" => output
-            } : {}
+            }
             {{- if .PathForEach }}
               name  = "{{ $fullPath }}/{{ .PathForEach }}/${each.key}"
             {{- else }}

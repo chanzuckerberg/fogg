@@ -3115,17 +3115,17 @@ resource "aws_ssm_parameter" "map_integrate_selected_azs_stg" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_selected_database_subnets" {
-  for_each = module.vpc_map_integrate_selected.database_subnets != null ? {
-    for output in flatten([
-      for module_key, module_outputs in module.vpc_map_integrate_selected : [
-        for output_key, output_value in module_outputs.database_subnets : {
-          module_key   = module_key
-          output_key   = output_key
-          output_value = output_value
-        }
-      ]
+  for_each = { for output in flatten([
+    for module_key, module_outputs in module.vpc_map_integrate_selected : [
+      for output_key, output_value in module_outputs.database_subnets : {
+        module_key   = module_key
+        output_key   = output_key
+        output_value = output_value
+      }
+      if module_outputs.database_subnets != null
+    ]
     ]) : "${output.module_key}/${output.output_key}" => output
-  } : {}
+  }
   name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/database/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -3134,17 +3134,17 @@ resource "aws_ssm_parameter" "map_integrate_selected_database_subnets" {
 }
 resource "aws_ssm_parameter" "map_integrate_selected_database_subnets_prd" {
   provider = aws.prd
-  for_each = module.vpc_map_integrate_selected.database_subnets != null ? {
-    for output in flatten([
-      for module_key, module_outputs in module.vpc_map_integrate_selected : [
-        for output_key, output_value in module_outputs.database_subnets : {
-          module_key   = module_key
-          output_key   = output_key
-          output_value = output_value
-        }
-      ]
+  for_each = { for output in flatten([
+    for module_key, module_outputs in module.vpc_map_integrate_selected : [
+      for output_key, output_value in module_outputs.database_subnets : {
+        module_key   = module_key
+        output_key   = output_key
+        output_value = output_value
+      }
+      if module_outputs.database_subnets != null
+    ]
     ]) : "${output.module_key}/${output.output_key}" => output
-  } : {}
+  }
   name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/database/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -3153,17 +3153,17 @@ resource "aws_ssm_parameter" "map_integrate_selected_database_subnets_prd" {
 }
 resource "aws_ssm_parameter" "map_integrate_selected_database_subnets_stg" {
   provider = aws.stg
-  for_each = module.vpc_map_integrate_selected.database_subnets != null ? {
-    for output in flatten([
-      for module_key, module_outputs in module.vpc_map_integrate_selected : [
-        for output_key, output_value in module_outputs.database_subnets : {
-          module_key   = module_key
-          output_key   = output_key
-          output_value = output_value
-        }
-      ]
+  for_each = { for output in flatten([
+    for module_key, module_outputs in module.vpc_map_integrate_selected : [
+      for output_key, output_value in module_outputs.database_subnets : {
+        module_key   = module_key
+        output_key   = output_key
+        output_value = output_value
+      }
+      if module_outputs.database_subnets != null
+    ]
     ]) : "${output.module_key}/${output.output_key}" => output
-  } : {}
+  }
   name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/database/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -3171,17 +3171,17 @@ resource "aws_ssm_parameter" "map_integrate_selected_database_subnets_stg" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_selected_private_subnets" {
-  for_each = module.vpc_map_integrate_selected.private_subnets != null ? {
-    for output in flatten([
-      for module_key, module_outputs in module.vpc_map_integrate_selected : [
-        for output_key, output_value in module_outputs.private_subnets : {
-          module_key   = module_key
-          output_key   = output_key
-          output_value = output_value
-        }
-      ]
+  for_each = { for output in flatten([
+    for module_key, module_outputs in module.vpc_map_integrate_selected : [
+      for output_key, output_value in module_outputs.private_subnets : {
+        module_key   = module_key
+        output_key   = output_key
+        output_value = output_value
+      }
+      if module_outputs.private_subnets != null
+    ]
     ]) : "${output.module_key}/${output.output_key}" => output
-  } : {}
+  }
   name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/private/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -3190,17 +3190,17 @@ resource "aws_ssm_parameter" "map_integrate_selected_private_subnets" {
 }
 resource "aws_ssm_parameter" "map_integrate_selected_private_subnets_prd" {
   provider = aws.prd
-  for_each = module.vpc_map_integrate_selected.private_subnets != null ? {
-    for output in flatten([
-      for module_key, module_outputs in module.vpc_map_integrate_selected : [
-        for output_key, output_value in module_outputs.private_subnets : {
-          module_key   = module_key
-          output_key   = output_key
-          output_value = output_value
-        }
-      ]
+  for_each = { for output in flatten([
+    for module_key, module_outputs in module.vpc_map_integrate_selected : [
+      for output_key, output_value in module_outputs.private_subnets : {
+        module_key   = module_key
+        output_key   = output_key
+        output_value = output_value
+      }
+      if module_outputs.private_subnets != null
+    ]
     ]) : "${output.module_key}/${output.output_key}" => output
-  } : {}
+  }
   name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/private/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -3209,17 +3209,17 @@ resource "aws_ssm_parameter" "map_integrate_selected_private_subnets_prd" {
 }
 resource "aws_ssm_parameter" "map_integrate_selected_private_subnets_stg" {
   provider = aws.stg
-  for_each = module.vpc_map_integrate_selected.private_subnets != null ? {
-    for output in flatten([
-      for module_key, module_outputs in module.vpc_map_integrate_selected : [
-        for output_key, output_value in module_outputs.private_subnets : {
-          module_key   = module_key
-          output_key   = output_key
-          output_value = output_value
-        }
-      ]
+  for_each = { for output in flatten([
+    for module_key, module_outputs in module.vpc_map_integrate_selected : [
+      for output_key, output_value in module_outputs.private_subnets : {
+        module_key   = module_key
+        output_key   = output_key
+        output_value = output_value
+      }
+      if module_outputs.private_subnets != null
+    ]
     ]) : "${output.module_key}/${output.output_key}" => output
-  } : {}
+  }
   name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/private/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -3227,17 +3227,17 @@ resource "aws_ssm_parameter" "map_integrate_selected_private_subnets_stg" {
   tags           = var.tags
 }
 resource "aws_ssm_parameter" "map_integrate_selected_public_subnets" {
-  for_each = module.vpc_map_integrate_selected.public_subnets != null ? {
-    for output in flatten([
-      for module_key, module_outputs in module.vpc_map_integrate_selected : [
-        for output_key, output_value in module_outputs.public_subnets : {
-          module_key   = module_key
-          output_key   = output_key
-          output_value = output_value
-        }
-      ]
+  for_each = { for output in flatten([
+    for module_key, module_outputs in module.vpc_map_integrate_selected : [
+      for output_key, output_value in module_outputs.public_subnets : {
+        module_key   = module_key
+        output_key   = output_key
+        output_value = output_value
+      }
+      if module_outputs.public_subnets != null
+    ]
     ]) : "${output.module_key}/${output.output_key}" => output
-  } : {}
+  }
   name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/public/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -3246,17 +3246,17 @@ resource "aws_ssm_parameter" "map_integrate_selected_public_subnets" {
 }
 resource "aws_ssm_parameter" "map_integrate_selected_public_subnets_prd" {
   provider = aws.prd
-  for_each = module.vpc_map_integrate_selected.public_subnets != null ? {
-    for output in flatten([
-      for module_key, module_outputs in module.vpc_map_integrate_selected : [
-        for output_key, output_value in module_outputs.public_subnets : {
-          module_key   = module_key
-          output_key   = output_key
-          output_value = output_value
-        }
-      ]
+  for_each = { for output in flatten([
+    for module_key, module_outputs in module.vpc_map_integrate_selected : [
+      for output_key, output_value in module_outputs.public_subnets : {
+        module_key   = module_key
+        output_key   = output_key
+        output_value = output_value
+      }
+      if module_outputs.public_subnets != null
+    ]
     ]) : "${output.module_key}/${output.output_key}" => output
-  } : {}
+  }
   name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/public/${each.key}"
   type           = "String"
   tier           = "Standard"
@@ -3265,17 +3265,17 @@ resource "aws_ssm_parameter" "map_integrate_selected_public_subnets_prd" {
 }
 resource "aws_ssm_parameter" "map_integrate_selected_public_subnets_stg" {
   provider = aws.stg
-  for_each = module.vpc_map_integrate_selected.public_subnets != null ? {
-    for output in flatten([
-      for module_key, module_outputs in module.vpc_map_integrate_selected : [
-        for output_key, output_value in module_outputs.public_subnets : {
-          module_key   = module_key
-          output_key   = output_key
-          output_value = output_value
-        }
-      ]
+  for_each = { for output in flatten([
+    for module_key, module_outputs in module.vpc_map_integrate_selected : [
+      for output_key, output_value in module_outputs.public_subnets : {
+        module_key   = module_key
+        output_key   = output_key
+        output_value = output_value
+      }
+      if module_outputs.public_subnets != null
+    ]
     ]) : "${output.module_key}/${output.output_key}" => output
-  } : {}
+  }
   name           = "/${var.env}/${var.component}/network/integrate_selected/subnets/public/${each.key}"
   type           = "String"
   tier           = "Standard"
