@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.88.0](https://github.com/vincenthsh/fogg/compare/v0.87.1...v0.88.0) (2024-02-14)
+
+
+### Features
+
+* Allow outputs integration into the registry even when output is null ([#228](https://github.com/vincenthsh/fogg/issues/228)) ([342f880](https://github.com/vincenthsh/fogg/commit/342f880688d03f4270631fb06733dfa9f884c01d))
+* Atlantis custom module source prefix list and CDKTF support ([#249](https://github.com/vincenthsh/fogg/issues/249)) ([669fc8d](https://github.com/vincenthsh/fogg/commit/669fc8d05a75d2873e65a9aea513190a18027f0a))
+
 ## [0.87.1](https://github.com/vincenthsh/fogg/compare/v0.87.0...v0.87.1) (2023-11-20)
 
 
