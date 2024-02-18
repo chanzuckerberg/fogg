@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.0](https://github.com/chanzuckerberg/fogg/compare/v0.91.16...v0.92.0) (2024-02-18)
+
+
+### Features
+
+* allow to opt out of aws accounts variable ([#1002](https://github.com/chanzuckerberg/fogg/issues/1002)) ([12b407f](https://github.com/chanzuckerberg/fogg/commit/12b407f5d4d3cf19ca68face25a885be550ba1f6))
+
 ### [0.91.16](https://github.com/chanzuckerberg/fogg/compare/v0.91.15...v0.91.16) (2024-02-12)
 
 
