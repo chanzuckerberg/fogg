@@ -27,6 +27,7 @@ accounts:
         version: 0.4.2
         aws_region: us-west-2
   foo:
+    needs_aws_accounts_variable: true
     providers:
       aws:
         account_id: 123
@@ -39,6 +40,7 @@ accounts:
       accounts: []
       components: []
 defaults:
+  needs_aws_accounts_variable: false
   backend:
     bucket: buck
     profile: profile

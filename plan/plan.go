@@ -42,17 +42,18 @@ type Common struct {
 type ComponentCommon struct {
 	Common `yaml:",inline"`
 
-	AccountBackends       map[string]Backend         `yaml:"account_backends"`
-	Accounts              map[string]*json.Number    `yaml:"all_accounts"`
-	Backend               Backend                    `yaml:"backend"`
-	ComponentBackends     map[string]Backend         `yaml:"comonent_backends"`
-	Env                   string                     ` yaml:"env"`
-	ExtraVars             map[string]string          `yaml:"extra_vars"`
-	Name                  string                     `yaml:"name"`
-	Owner                 string                     `yaml:"owner"`
-	Project               string                     `yaml:"project"`
-	ProviderConfiguration ProviderConfiguration      `yaml:"providers_configuration"`
-	ProviderVersions      map[string]ProviderVersion `yaml:"provider_versions"`
+	AccountBackends          map[string]Backend         `yaml:"account_backends"`
+	Accounts                 map[string]*json.Number    `yaml:"all_accounts"`
+	Backend                  Backend                    `yaml:"backend"`
+	ComponentBackends        map[string]Backend         `yaml:"comonent_backends"`
+	Env                      string                     ` yaml:"env"`
+	ExtraVars                map[string]string          `yaml:"extra_vars"`
+	Name                     string                     `yaml:"name"`
+	Owner                    string                     `yaml:"owner"`
+	Project                  string                     `yaml:"project"`
+	ProviderConfiguration    ProviderConfiguration      `yaml:"providers_configuration"`
+	ProviderVersions         map[string]ProviderVersion `yaml:"provider_versions"`
+	NeedsAWSAccountsVariable bool                       `yaml:"needs_aws_accounts_variable"`
 
 	TfLint TfLint `yaml:"tf_lint"`
 
@@ -1254,7 +1255,8 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	}
 
 	return ComponentCommon{
-		Backend: backend,
+		NeedsAWSAccountsVariable: v2.ResolveAWSAccountsNeeded(commons...),
+		Backend:                  backend,
 		ProviderConfiguration: ProviderConfiguration{
 			Assert:                 assertPlan,
 			Auth0:                  auth0Plan,

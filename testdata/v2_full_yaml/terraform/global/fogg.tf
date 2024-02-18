@@ -179,10 +179,3 @@ variable "foo" {
   type    = string
   default = "bar1"
 }
-# tflint-ignore: terraform_unused_declarations
-variable "aws_accounts" {
-  type = map(string)
-  default = {
-
-  }
-}

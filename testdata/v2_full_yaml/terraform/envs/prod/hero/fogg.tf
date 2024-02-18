@@ -211,14 +211,3 @@ data "terraform_remote_state" "global" {
 
   }
 }
-# tflint-ignore: terraform_unused_declarations
-variable "aws_accounts" {
-  type = map(string)
-  default = {
-
-    bar = "00456"
-
-    foo = "123"
-
-  }
-}
