@@ -75,14 +75,15 @@ type TFE struct {
 }
 
 type Common struct {
-	Backend          *Backend          `yaml:"backend,omitempty"`
-	ExtraVars        map[string]string `yaml:"extra_vars,omitempty"`
-	Owner            *string           `yaml:"owner,omitempty"`
-	Project          *string           `yaml:"project,omitempty"`
-	Providers        *Providers        `yaml:"providers,omitempty"`
-	DependsOn        *DependsOn        `yaml:"depends_on,omitempty"`
-	TerraformVersion *string           `yaml:"terraform_version,omitempty"`
-	Tools            *Tools            `yaml:"tools,omitempty"`
+	Backend                  *Backend          `yaml:"backend,omitempty"`
+	ExtraVars                map[string]string `yaml:"extra_vars,omitempty"`
+	Owner                    *string           `yaml:"owner,omitempty"`
+	Project                  *string           `yaml:"project,omitempty"`
+	Providers                *Providers        `yaml:"providers,omitempty"`
+	DependsOn                *DependsOn        `yaml:"depends_on,omitempty"`
+	TerraformVersion         *string           `yaml:"terraform_version,omitempty"`
+	Tools                    *Tools            `yaml:"tools,omitempty"`
+	NeedsAWSAccountsVariable *bool             `yaml:"needs_aws_accounts_variable,omitempty"`
 }
 
 type Defaults struct {

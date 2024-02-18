@@ -308,6 +308,21 @@ func ResolveGithubProvider(commons ...Common) *GithubProvider {
 	}
 }
 
+func AWSAccountsNeededGetter(comm Common) *bool {
+	if comm.NeedsAWSAccountsVariable != nil {
+		return comm.NeedsAWSAccountsVariable
+	}
+	return nil
+}
+
+func ResolveAWSAccountsNeeded(commons ...Common) bool {
+	accountsNeeded := lastNonNilBool(AWSAccountsNeededGetter, commons...)
+	if accountsNeeded == nil {
+		return true
+	}
+	return *accountsNeeded
+}
+
 func ResolveSnowflakeProvider(commons ...Common) *SnowflakeProvider {
 	account := lastNonNil(SnowflakeProviderAccountGetter, commons...)
 	role := lastNonNil(SnowflakeProviderRoleGetter, commons...)

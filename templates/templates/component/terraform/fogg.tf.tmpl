@@ -201,6 +201,7 @@ data "terraform_remote_state" "{{ $name }}" {
 }
 {{ end }}
 
+{{ if .NeedsAWSAccountsVariable }}
 # tflint-ignore: terraform_unused_declarations
 variable "aws_accounts" {
   type =  map(string)
@@ -210,3 +211,4 @@ variable "aws_accounts" {
   {{ end }}
   }
 }
+{{end}}
