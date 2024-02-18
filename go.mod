@@ -1,8 +1,6 @@
 module github.com/chanzuckerberg/fogg
 
-go 1.21
-
-toolchain go1.21.1
+go 1.20
 
 replace github.com/spf13/afero => github.com/chanzuckerberg/afero v0.0.0-20190514223411-36a9495a9b51
 
