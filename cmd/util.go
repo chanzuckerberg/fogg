@@ -16,12 +16,12 @@ import (
 )
 
 func openGitOrExit(fs afero.Fs) {
-	/*_, err := fs.Stat(".git")
+	_, err := fs.Stat(".git")
 	if err != nil {
 		// assuming this means no repository
 		logrus.Fatal("fogg must be run from the root of a git repo")
 		os.Exit(1)
-	}*/
+	}
 }
 
 func readAndValidateConfig(fs afero.Fs, configFile string) (*v2.Config, []string, error) {
