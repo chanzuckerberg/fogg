@@ -35,6 +35,7 @@ jobs:
         with:
           release-type: simple
           bump-minor-pre-major: true
+          bump-patch-for-minor-pre-major: true
           changelog-types: ${{ steps.configure-changelog.outputs.result }}
           token: ${{ steps.generate_token.outputs.token }}
 
