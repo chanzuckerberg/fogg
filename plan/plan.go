@@ -178,7 +178,7 @@ var utilityProviders = map[string]ProviderVersion{
 	},
 	"okta-head": {
 		Source:  "okta/okta",
-		Version: ptr.String("~> 3.30"),
+		Version: ptr.String("> 3.30"),
 	},
 }
 
