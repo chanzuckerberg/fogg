@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.92.3](https://github.com/chanzuckerberg/fogg/compare/v0.92.2...v0.92.3) (2024-03-06)
+
+
+### Misc
+
+* Bump github.com/hashicorp/hcl/v2 from 2.19.1 to 2.20.0 ([#1009](https://github.com/chanzuckerberg/fogg/issues/1009)) ([e8bd23c](https://github.com/chanzuckerberg/fogg/commit/e8bd23ce507f9f2e373362edea2b1792c1cbf6f8))
+* **main:** release 0.92.2 ([#1008](https://github.com/chanzuckerberg/fogg/issues/1008)) ([158e343](https://github.com/chanzuckerberg/fogg/commit/158e34346de5ef0565d713368ddc80e829ad170a))
+
+
+### BugFixes
+
+* allow bumps for patches/fixes--more in description ([#1015](https://github.com/chanzuckerberg/fogg/issues/1015)) ([04b5247](https://github.com/chanzuckerberg/fogg/commit/04b52478eca97d22800c72b014a5bcd6a1e1ad53))
+* loosen upgrade options for okta-head provider ([#1012](https://github.com/chanzuckerberg/fogg/issues/1012)) ([fcdf63b](https://github.com/chanzuckerberg/fogg/commit/fcdf63b2500fc79f0806fa1e323da651e87719e8))
+* release please latest version ([#1014](https://github.com/chanzuckerberg/fogg/issues/1014)) ([00daa8b](https://github.com/chanzuckerberg/fogg/commit/00daa8bd396833e4bc3c8d5950c3e169427051e2))
+
 ### [0.92.2](https://github.com/chanzuckerberg/fogg/compare/v0.92.1...v0.92.2) (2024-02-26)
 
 

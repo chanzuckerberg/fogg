@@ -30,11 +30,12 @@ jobs:
           private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
 
       - name: release please
-        uses: google-github-actions/release-please-action@v3.0.0
+        uses: google-github-actions/release-please-action@v3.7.13
         id: release
         with:
           release-type: simple
           bump-minor-pre-major: true
+          bump-patch-for-minor-pre-major: true
           changelog-types: ${{ steps.configure-changelog.outputs.result }}
           token: ${{ steps.generate_token.outputs.token }}
 
