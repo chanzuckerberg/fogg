@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.4](https://github.com/chanzuckerberg/fogg/compare/v0.92.3...v0.92.4) (2024-03-07)
+
+
+### Misc
+
+* Bump github.com/stretchr/testify from 1.8.4 to 1.9.0 ([#1011](https://github.com/chanzuckerberg/fogg/issues/1011)) ([7ae3ea4](https://github.com/chanzuckerberg/fogg/commit/7ae3ea492a69e3ff935eae9de253d7b6dd3c6c9d))
+
 ## [0.92.3](https://github.com/chanzuckerberg/fogg/compare/v0.92.2...v0.92.3) (2024-03-06)
 
 
