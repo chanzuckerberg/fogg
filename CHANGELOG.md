@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.89.0](https://github.com/vincenthsh/fogg/compare/v0.88.1...v0.89.0) (2024-03-18)
+
+
+### Features
+
+* Modify atlantis integration for depends_on configuration ([#260](https://github.com/vincenthsh/fogg/issues/260)) ([0b9727f](https://github.com/vincenthsh/fogg/commit/0b9727f2b3ce02b032e61181aa102aca39d4aa91))
+
 ## [0.88.1](https://github.com/vincenthsh/fogg/compare/v0.88.0...v0.88.1) (2024-02-14)
 
 
