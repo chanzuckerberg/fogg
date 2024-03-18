@@ -1,6 +1,8 @@
 module github.com/chanzuckerberg/fogg
 
-go 1.21.1
+go 1.22.0
+
+toolchain go1.22.1
 
 replace github.com/spf13/afero => github.com/chanzuckerberg/afero v0.0.0-20190514223411-36a9495a9b51
 
@@ -27,7 +29,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/peterbourgon/diskv v2.0.1+incompatible
 	github.com/pkg/errors v0.9.1
-	github.com/runatlantis/atlantis v0.27.1
+	github.com/runatlantis/atlantis v0.27.2
 	github.com/segmentio/go-prompt v1.2.1-0.20161017233205-f0d19b6901ad
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/afero v1.11.0
