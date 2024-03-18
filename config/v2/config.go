@@ -213,6 +213,9 @@ type Atlantis struct {
 	// list of module source prefixes for auto plan when modified
 	// default: "terraform/modules/"
 	ModulePrefixes []string `yaml:"module_prefixes,omitempty"`
+	// autoplan remote-states (only if depends_on is provided)
+	// default: false
+	AutoplanRemoteStates *bool `yaml:"autoplan_remote_states,omitempty"`
 	// Raw atlantis RepoCfg struct
 	raw.RepoCfg `yaml:",inline"`
 }
