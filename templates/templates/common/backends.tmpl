@@ -7,7 +7,9 @@
     encrypt = true
     region = "{{ .S3.Region }}"
     {{if .S3.Profile}}profile = "{{ .S3.Profile }}"{{end }}
-    {{if .S3.RoleArn}}role_arn = "{{ .S3.RoleArn }}"{{end }}
+    {{if .S3.RoleArn}}assume_role = {
+      role_arn = "{{ .S3.RoleArn }}"
+    }{{end }}
   {{ else if eq .Kind "remote" }}
     hostname = "{{ .Remote.HostName }}"
     organization = "{{ .Remote.Organization }}"
@@ -25,7 +27,9 @@
     key            = "{{ .S3.KeyPath }}"
     region = "{{ .S3.Region }}"
     {{if .S3.Profile}}profile = "{{ .S3.Profile }}"{{end }}
-    {{if .S3.RoleArn}}role_arn = "{{ .S3.RoleArn }}"{{end }}
+    {{if .S3.RoleArn}}assume_role = {
+      role_arn = "{{ .S3.RoleArn }}"
+    }{{end }}
   {{ else if eq .Kind "remote" }}
     hostname = "{{ .Remote.HostName }}"
     organization = "{{ .Remote.Organization }}"

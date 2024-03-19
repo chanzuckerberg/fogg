@@ -8,10 +8,12 @@ data "terraform_remote_state" "global" {
 
     bucket = "buck"
 
-    key     = "terraform/proj/global.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
+    key    = "terraform/proj/global.tfstate"
+    region = "us-west-2"
 
+    assume_role = {
+      role_arn = "arn:aws:iam::12345:role/role"
+    }
 
   }
 }
@@ -23,10 +25,12 @@ data "terraform_remote_state" "vpc" {
 
     bucket = "buck"
 
-    key     = "terraform/proj/envs/test/components/vpc.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
+    key    = "terraform/proj/envs/test/components/vpc.tfstate"
+    region = "us-west-2"
 
+    assume_role = {
+      role_arn = "arn:aws:iam::12345:role/role"
+    }
 
   }
 }

@@ -21,8 +21,10 @@ terraform {
     key     = "terraform/proj/envs/test/components/vpc.tfstate"
     encrypt = true
     region  = "us-west-2"
-    profile = "profile"
 
+    assume_role = {
+      role_arn = "arn:aws:iam::12345:role/role"
+    }
 
   }
   required_providers {

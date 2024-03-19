@@ -1,7 +1,8 @@
 defaults:
   backend:
     bucket: buck
-    profile: profile
+    role: role
+    account_id: "12345"
     region: us-west-2
   extra_vars:
     foo: bar1
