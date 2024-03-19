@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.90.0](https://github.com/vincenthsh/fogg/compare/v0.89.0...v0.90.0) (2024-03-19)
+
+
+### Features
+
+* update aws arn role block ([#267](https://github.com/vincenthsh/fogg/issues/267)) ([7902825](https://github.com/vincenthsh/fogg/commit/7902825f13ee53f8cafad0584b884dde4c5fdaa2))
+
 ## [0.89.0](https://github.com/vincenthsh/fogg/compare/v0.88.1...v0.89.0) (2024-03-18)
 
 
