@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.92.6](https://github.com/chanzuckerberg/fogg/compare/v0.92.5...v0.92.6) (2024-03-25)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.50.35 to 1.51.1 ([#1024](https://github.com/chanzuckerberg/fogg/issues/1024)) ([bbe68e3](https://github.com/chanzuckerberg/fogg/commit/bbe68e3ad2533ff9a40d8ee996ebf4efc2323e73))
+* Bump github.com/aws/aws-sdk-go from 1.51.1 to 1.51.6 ([#1025](https://github.com/chanzuckerberg/fogg/issues/1025)) ([2932805](https://github.com/chanzuckerberg/fogg/commit/293280547835c1ee397b7184cecb4a085682bb8e))
+* Bump google.golang.org/protobuf from 1.31.0 to 1.33.0 ([#1022](https://github.com/chanzuckerberg/fogg/issues/1022)) ([2c54263](https://github.com/chanzuckerberg/fogg/commit/2c5426305fa07a87a81e2c29fd1322dd9d6c038f))
+
 ## [0.92.5](https://github.com/chanzuckerberg/fogg/compare/v0.92.4...v0.92.5) (2024-03-11)
 
 
