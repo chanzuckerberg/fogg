@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.7](https://github.com/chanzuckerberg/fogg/compare/v0.92.6...v0.92.7) (2024-04-01)
+
+
+### Misc
+
+* Bump github.com/hashicorp/hcl/v2 from 2.20.0 to 2.20.1 ([#1026](https://github.com/chanzuckerberg/fogg/issues/1026)) ([e9c9b3f](https://github.com/chanzuckerberg/fogg/commit/e9c9b3f425626c3bafd827322b3f88501f7e104c))
+
 ## [0.92.6](https://github.com/chanzuckerberg/fogg/compare/v0.92.5...v0.92.6) (2024-03-25)
 
 
