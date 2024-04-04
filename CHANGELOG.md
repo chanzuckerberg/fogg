@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.8](https://github.com/chanzuckerberg/fogg/compare/v0.92.7...v0.92.8) (2024-04-04)
+
+
+### BugFixes
+
+* newline with multiple provider aliases ([#1030](https://github.com/chanzuckerberg/fogg/issues/1030)) ([477de59](https://github.com/chanzuckerberg/fogg/commit/477de593f6c247548d434121ac201d4ec2f209c4))
+
 ## [0.92.7](https://github.com/chanzuckerberg/fogg/compare/v0.92.6...v0.92.7) (2024-04-01)
 
 
