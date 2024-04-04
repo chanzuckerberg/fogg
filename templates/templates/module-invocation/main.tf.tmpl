@@ -11,6 +11,6 @@ module "{{.ModuleName}}" {
   providers = {
     {{ range $k, $v := .ProviderAliases -}}
     {{$k}} = {{$v}}
-    {{- end}}
+    {{end -}}
   }{{ end }}
 }
