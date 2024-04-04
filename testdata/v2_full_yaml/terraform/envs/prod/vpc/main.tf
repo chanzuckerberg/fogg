@@ -53,6 +53,6 @@ module "prod-vpc" {
 
 
   providers = {
-    aws.alias1 = aws.alias2
+    aws.alias1 = aws.alias2aws.alias3 = aws.alias4
   }
 }
