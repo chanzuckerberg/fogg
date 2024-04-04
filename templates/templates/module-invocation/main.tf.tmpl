@@ -10,6 +10,7 @@ module "{{.ModuleName}}" {
   {{ if .ProviderAliases -}}
   providers = {
     {{ range $k, $v := .ProviderAliases -}}
-    {{$k}} = {{$v}}{{ end}}
+    {{$k}} = {{$v}}
+    {{end -}}
   }{{ end }}
 }
