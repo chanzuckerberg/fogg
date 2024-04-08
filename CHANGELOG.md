@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.92.8](https://github.com/chanzuckerberg/fogg/compare/v0.92.7...v0.92.8) (2024-04-04)
+
+
+### BugFixes
+
+* newline with multiple provider aliases ([#1030](https://github.com/chanzuckerberg/fogg/issues/1030)) ([477de59](https://github.com/chanzuckerberg/fogg/commit/477de593f6c247548d434121ac201d4ec2f209c4))
+
+## [0.92.7](https://github.com/chanzuckerberg/fogg/compare/v0.92.6...v0.92.7) (2024-04-01)
+
+
+### Misc
+
+* Bump github.com/hashicorp/hcl/v2 from 2.20.0 to 2.20.1 ([#1026](https://github.com/chanzuckerberg/fogg/issues/1026)) ([e9c9b3f](https://github.com/chanzuckerberg/fogg/commit/e9c9b3f425626c3bafd827322b3f88501f7e104c))
+
 ## [0.92.6](https://github.com/chanzuckerberg/fogg/compare/v0.92.5...v0.92.6) (2024-03-25)
 
 
