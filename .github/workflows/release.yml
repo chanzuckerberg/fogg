@@ -26,8 +26,6 @@ jobs:
         id: release
         with:
           release-type: simple
-          bump-minor-pre-major: true
-          changelog-types: ${{ steps.configure-changelog.outputs.result }}
           # https://github.com/google-github-actions/release-please-action#github-credentials
           token: ${{ secrets.VINCENT_PAT }}
 
