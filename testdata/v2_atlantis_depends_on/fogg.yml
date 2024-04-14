@@ -50,6 +50,8 @@ envs:
         depends_on:
           components:
             - vpc
+          relative_globs:
+            - "../../foo.yaml"
         modules:
           - source: "terraform/modules/my_module"
 modules:

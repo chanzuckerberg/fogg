@@ -543,6 +543,8 @@ type Hook struct {
 type DependsOn struct {
 	Accounts   []string `yaml:"accounts"`
 	Components []string `yaml:"components"`
+	//RelativeGlobs to the component
+	RelativeGlobs []string `yaml:"relative_globs"`
 }
 
 type CIProviderConfig struct {

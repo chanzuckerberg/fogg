@@ -1348,3 +1348,10 @@ func DependsOnComponentsGetter(comm Common) []string {
 	}
 	return comm.DependsOn.Components
 }
+
+func DependsOnRelativeGlobsGetter(comm Common) []string {
+	if comm.DependsOn == nil {
+		return nil
+	}
+	return comm.DependsOn.RelativeGlobs
+}

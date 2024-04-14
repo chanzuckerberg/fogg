@@ -12,6 +12,7 @@ projects:
         - '*.tf'
         - ../../../../terraform/modules/my_module/**/*.tf
         - ../../../../terraform/modules/my_module/**/*.tf.json
+        - ../../foo.yaml
       enabled: true
     apply_requirements:
       - approved

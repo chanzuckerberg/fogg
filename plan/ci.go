@@ -408,6 +408,10 @@ func (p *Plan) buildAtlantisConfig(c *v2.Config, foggVersion string) AtlantisCon
 					}
 				}
 				autoplanRemoteState := autoplanRemoteStates && d.HasDependsOn
+				whenModified := generateWhenModified(uniqueModuleSources, d.PathToRepoRoot, modulePrefixes, autoplanRemoteState)
+				if d.AutoplanRelativeGlobs != nil {
+					whenModified = append(whenModified, d.AutoplanRelativeGlobs...)
+				}
 				projects = append(projects, atlantis.Project{
 					Name:              util.Ptr(fmt.Sprintf("%s_%s", envName, cName)),
 					Dir:               util.Ptr(fmt.Sprintf("terraform/envs/%s/%s", envName, cName)),
@@ -416,7 +420,7 @@ func (p *Plan) buildAtlantisConfig(c *v2.Config, foggVersion string) AtlantisCon
 					ApplyRequirements: []string{atlantis.ApprovedRequirement},
 					Autoplan: &atlantis.Autoplan{
 						Enabled:      util.Ptr(true),
-						WhenModified: generateWhenModified(uniqueModuleSources, d.PathToRepoRoot, modulePrefixes, autoplanRemoteState),
+						WhenModified: whenModified,
 					},
 				})
 			}
