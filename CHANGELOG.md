@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.91.0](https://github.com/vincenthsh/fogg/compare/v0.90.0...v0.91.0) (2024-04-14)
+
+
+### Features
+
+* Depends on Globs ([#275](https://github.com/vincenthsh/fogg/issues/275)) ([5aaa83f](https://github.com/vincenthsh/fogg/commit/5aaa83ffaf163e5aa81f30518ca9cebd6779c120))
+
 ## [0.90.0](https://github.com/vincenthsh/fogg/compare/v0.89.0...v0.90.0) (2024-03-19)
 
 
