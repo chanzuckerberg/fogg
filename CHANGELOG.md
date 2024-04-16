@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.92.12](https://github.com/chanzuckerberg/fogg/compare/v0.92.11...v0.92.12) (2024-04-16)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.51.16 to 1.51.21 ([#1037](https://github.com/chanzuckerberg/fogg/issues/1037)) ([2fc6bf3](https://github.com/chanzuckerberg/fogg/commit/2fc6bf3252036fd725ef2106ef95b989f30218fa))
+* Bump github.com/hashicorp/go-getter from 1.7.3 to 1.7.4 ([#1036](https://github.com/chanzuckerberg/fogg/issues/1036)) ([0468830](https://github.com/chanzuckerberg/fogg/commit/0468830aeb840a365560297596fa80c72630bde5))
+
 ## [0.92.11](https://github.com/chanzuckerberg/fogg/compare/v0.92.10...v0.92.11) (2024-04-10)
 
 
