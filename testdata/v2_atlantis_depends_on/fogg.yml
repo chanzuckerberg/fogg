@@ -45,7 +45,13 @@ envs:
               - tags
               - banana
           - source: "terraform/modules/my_module"
+            name: "my_module"
+            depends_on: 
+              - "vpc"
           - source: "foo_modules/bar"
+            depends_on:
+              - "vpc"
+              - "my_module"
       db:
         depends_on:
           components:

@@ -24,5 +24,13 @@ module "{{.ModuleName}}" {
   {{- end}}
   }
   {{- end }}
+
+  {{- if .DependsOn }}
+  depends_on = [
+  {{- range .DependsOn }}
+    module.{{ . }},
+  {{- end }}
+  ]
+  {{- end }}
 }
 {{ end }}

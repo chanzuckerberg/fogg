@@ -607,6 +607,7 @@ type moduleData struct {
 	Outputs                    []*tfconfig.Output
 	IntegrationRegistryEntries []*IntegrationRegistryEntry
 	ProvidersMap               map[string]string
+	DependsOn                  []string
 }
 
 type IntegrationRegistryEntry struct {
@@ -738,6 +739,7 @@ func applyModuleInvocation(
 			Outputs:                    outputs,
 			IntegrationRegistryEntries: integrationRegistryEntries,
 			ProvidersMap:               mi.module.ProvidersMap,
+			DependsOn:                  mi.module.DependsOn,
 		})
 	}
 

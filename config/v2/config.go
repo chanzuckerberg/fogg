@@ -260,6 +260,8 @@ type ComponentModule struct {
 	ProvidersMap map[string]string `yaml:"providers,omitempty"`
 	// For Each metadata argument https://developer.hashicorp.com/terraform/language/modules/syntax#meta-arguments
 	ForEach *string `yaml:"for_each,omitempty"`
+	// Dependencies of this module
+	DependsOn []string `yaml:"depends_on,omitempty"`
 }
 
 type ModuleIntegrationConfig struct {
