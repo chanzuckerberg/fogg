@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.92.0](https://github.com/vincenthsh/fogg/compare/v0.91.0...v0.92.0) (2024-04-24)
+
+
+### Features
+
+* Add Atlantis autoplan for nested modules ([#285](https://github.com/vincenthsh/fogg/issues/285)) ([2b6d6ee](https://github.com/vincenthsh/fogg/commit/2b6d6ee9e47b9ee44e6559c432be070c99366282))
+* add dependency on modules invocation ([#283](https://github.com/vincenthsh/fogg/issues/283)) ([aef1949](https://github.com/vincenthsh/fogg/commit/aef1949bc3335c9f1828336171320d2184ca6de9))
+
 ## [0.91.0](https://github.com/vincenthsh/fogg/compare/v0.90.0...v0.91.0) (2024-04-14)
 
 
