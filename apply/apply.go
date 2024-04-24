@@ -493,6 +493,8 @@ func applyAtlantisConfig(base afero.Fs, atlantisFs fs.FS, common fs.FS, targetBa
 				),
 			)
 		}
+		// sort whenModified to avoid spurious diffs
+		sort.Strings(whenModified)
 		project.Autoplan.WhenModified = whenModified
 	}
 	err := applyTree(base, atlantisFs, common, targetBasePath, config)
