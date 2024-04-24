@@ -401,7 +401,7 @@ func (p *Plan) buildAtlantisConfig(c *v2.Config) AtlantisConfig {
 						uniqueModuleSources = append(uniqueModuleSources, *m.Source)
 					}
 				}
-				whenModified := []string{}
+				whenModified := []string{"*.tf"}
 				if d.AutoplanRelativeGlobs != nil {
 					whenModified = append(whenModified, d.AutoplanRelativeGlobs...)
 				}
