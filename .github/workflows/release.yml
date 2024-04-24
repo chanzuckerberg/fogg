@@ -8,24 +8,10 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v7
-        id: configure-changelog
-        with:
-          result-encoding: string
-          script: |
-            const changelogTypes = [
-              {type: "feat", section: "Features", hidden: false},
-              {type: "chore", section: "Misc", hidden: false},
-              {type: "fix", section: "BugFixes", hidden: false},
-            ]
-
-            return JSON.stringify(changelogTypes)
-
       - name: release please
         uses: google-github-actions/release-please-action@v4.1.0
         id: release
         with:
-          release-type: simple
           # https://github.com/google-github-actions/release-please-action#github-credentials
           token: ${{ secrets.VINCENT_PAT }}
 

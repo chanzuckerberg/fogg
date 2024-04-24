@@ -10,10 +10,10 @@
       "changelog-sections": [
         { "type": "feat", "section": "Features", "hidden": false },
         { "type": "chore", "section": "Misc", "hidden": false },
+        { "type": "ci", "section": "Continuous Integration", "hidden": false },
         { "type": "fix", "section": "BugFixes", "hidden": false }
       ]
     }
   },
-  "bootstrap-sha": "df05ed5f16a6da3f3694e93ad04370a9c16188b0",
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
 }
