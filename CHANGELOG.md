@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.92.1](https://github.com/vincenthsh/fogg/compare/v0.92.0...v0.92.1) (2024-04-24)
+
+
+### Continuous Integration
+
+* Fix go 1.22 caching ([#289](https://github.com/vincenthsh/fogg/issues/289)) ([66b41bd](https://github.com/vincenthsh/fogg/commit/66b41bda1b0e3eb6761397d2eed6c27f2835dc01))
+* Review release please config ([#286](https://github.com/vincenthsh/fogg/issues/286)) ([3b52016](https://github.com/vincenthsh/fogg/commit/3b52016b08dd77697129d427f38685667b66add0))
+
+
+### BugFixes
+
+* Ensure autoplan self ([#288](https://github.com/vincenthsh/fogg/issues/288)) ([5db4cca](https://github.com/vincenthsh/fogg/commit/5db4cca1d5ff1a43baafe5cea42bc14d51c9e70e))
+* Guarantee autoplan order ([#290](https://github.com/vincenthsh/fogg/issues/290)) ([c701bb7](https://github.com/vincenthsh/fogg/commit/c701bb7bee9117b5f2203ce0a0252a80273fe66b))
+* Remove gorelease deprecations ([#291](https://github.com/vincenthsh/fogg/issues/291)) ([250b21c](https://github.com/vincenthsh/fogg/commit/250b21c3fe1312d7bbc6e3ef50df86b977b894c8))
+
 ## [0.92.0](https://github.com/vincenthsh/fogg/compare/v0.91.0...v0.92.0) (2024-04-24)
 
 
