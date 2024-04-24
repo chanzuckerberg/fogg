@@ -417,7 +417,7 @@ func TestApplyModuleInvocation(t *testing.T) {
 			downloadFunc: downloader,
 		},
 	}
-	e := applyModuleInvocation(fs, "mymodule", templates.Templates.ModuleInvocation, templates.Templates.Common, mi, nil)
+	_, e := applyModuleInvocation(fs, "mymodule", templates.Templates.ModuleInvocation, templates.Templates.Common, mi, nil)
 	r.NoError(e)
 
 	s, e := fs.Stat("mymodule")
@@ -460,7 +460,7 @@ func TestApplyModuleInvocationWithEmptyVariables(t *testing.T) {
 			downloadFunc: downloader,
 		},
 	}
-	e := applyModuleInvocation(fs, "mymodule", templates.Templates.ModuleInvocation, templates.Templates.Common, mi, nil)
+	_, e := applyModuleInvocation(fs, "mymodule", templates.Templates.ModuleInvocation, templates.Templates.Common, mi, nil)
 	r.NoError(e)
 
 	s, e := fs.Stat("mymodule")
@@ -503,7 +503,7 @@ func TestApplyModuleInvocationWithOneDefaultVariable(t *testing.T) {
 			downloadFunc: downloader,
 		},
 	}
-	e := applyModuleInvocation(fs, "mymodule", templates.Templates.ModuleInvocation, templates.Templates.Common, mi, nil)
+	_, e := applyModuleInvocation(fs, "mymodule", templates.Templates.ModuleInvocation, templates.Templates.Common, mi, nil)
 	r.NoError(e)
 
 	s, e := fs.Stat("mymodule")
@@ -549,7 +549,7 @@ func TestApplyModuleInvocationWithModuleName(t *testing.T) {
 			downloadFunc: downloader,
 		},
 	}
-	e := applyModuleInvocation(fs, "mymodule", templates.Templates.ModuleInvocation, templates.Templates.Common, mi, nil)
+	_, e := applyModuleInvocation(fs, "mymodule", templates.Templates.ModuleInvocation, templates.Templates.Common, mi, nil)
 	r.NoError(e)
 
 	s, e := fs.Stat("mymodule")
@@ -597,7 +597,7 @@ func TestApplyModuleInvocationWithModulePrefix(t *testing.T) {
 			downloadFunc: downloader,
 		},
 	}
-	e := applyModuleInvocation(fs, "mymodule", templates.Templates.ModuleInvocation, templates.Templates.Common, mi, nil)
+	_, e := applyModuleInvocation(fs, "mymodule", templates.Templates.ModuleInvocation, templates.Templates.Common, mi, nil)
 	r.NoError(e)
 
 	s, e := fs.Stat("mymodule")
@@ -690,7 +690,7 @@ func TestCalculateLocalPath(t *testing.T) {
 
 		t.Run("", func(t *testing.T) {
 			r := require.New(t)
-			p, _, e := calculateModuleAddressForSource(tt.path, tt.moduleAddress, "")
+			p, e := calculateModuleAddressForSource(tt.path, tt.moduleAddress, "")
 			r.Nil(e)
 			r.Equal(tt.expected, p)
 		})

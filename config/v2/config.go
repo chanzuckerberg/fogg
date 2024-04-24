@@ -212,6 +212,8 @@ type Atlantis struct {
 	Enabled *bool `yaml:"enabled,omitempty"`
 	// list of module source prefixes for auto plan when modified
 	// default: "terraform/modules/"
+	//
+	// Deprecated: autoplan now auto detects if module is local
 	ModulePrefixes []string `yaml:"module_prefixes,omitempty"`
 	// autoplan remote-states (only if depends_on is provided)
 	// default: false

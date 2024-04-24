@@ -9,10 +9,9 @@ projects:
     terraform_version: 0.100.0
     autoplan:
       when_modified:
-        - '*.tf'
         - '!remote-states.tf'
-        - ../../../../terraform/modules/my_module/**/*.tf
-        - ../../../../terraform/modules/my_module/**/*.tf.json
+        - ../../../modules/my_module/**/*.tf
+        - ../../../modules/my_module/**/*.tf.json
       enabled: true
     apply_requirements:
       - approved

@@ -399,7 +399,7 @@ func Eval(c *v2.Config) (*Plan, error) {
 	p.TravisCI = p.buildTravisCIConfig(c, v)
 	p.CircleCI = p.buildCircleCIConfig(c, v)
 	p.GitHubActionsCI = p.buildGitHubActionsConfig(c, v)
-	p.Atlantis = p.buildAtlantisConfig(c, v)
+	p.Atlantis = p.buildAtlantisConfig(c)
 	p.TFE, err = p.buildTFE(c)
 	if err != nil {
 		return p, err

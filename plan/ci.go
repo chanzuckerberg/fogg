@@ -4,12 +4,10 @@ import (
 	"fmt"
 	"slices"
 	"sort"
-	"strings"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/util"
 	atlantis "github.com/runatlantis/atlantis/server/core/config/raw"
-	"github.com/sirupsen/logrus"
 )
 
 type CIProject struct {
@@ -381,18 +379,14 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 }
 
 // buildAtlantisConfig must be build after Envs
-func (p *Plan) buildAtlantisConfig(c *v2.Config, foggVersion string) AtlantisConfig {
+func (p *Plan) buildAtlantisConfig(c *v2.Config) AtlantisConfig {
 	enabled := false
 	autoplanRemoteStates := false
 	repoCfg := atlantis.RepoCfg{}
 	if c.Defaults.Tools != nil && c.Defaults.Tools.Atlantis != nil {
 		enabled = *c.Defaults.Tools.Atlantis.Enabled
-		modulePrefixes := c.Defaults.Tools.Atlantis.ModulePrefixes
 		if c.Defaults.Tools.Atlantis.AutoplanRemoteStates != nil {
 			autoplanRemoteStates = *c.Defaults.Tools.Atlantis.AutoplanRemoteStates
-		}
-		if len(modulePrefixes) == 0 {
-			modulePrefixes = append(modulePrefixes, "terraform/modules/")
 		}
 		repoCfg = c.Defaults.Tools.Atlantis.RepoCfg
 		projects := []atlantis.Project{}
@@ -407,10 +401,14 @@ func (p *Plan) buildAtlantisConfig(c *v2.Config, foggVersion string) AtlantisCon
 						uniqueModuleSources = append(uniqueModuleSources, *m.Source)
 					}
 				}
-				autoplanRemoteState := autoplanRemoteStates && d.HasDependsOn
-				whenModified := generateWhenModified(uniqueModuleSources, d.PathToRepoRoot, modulePrefixes, autoplanRemoteState)
+				whenModified := []string{}
 				if d.AutoplanRelativeGlobs != nil {
 					whenModified = append(whenModified, d.AutoplanRelativeGlobs...)
+				}
+				// if global autoplan remote states is disabled or
+				// the component has no dependencies defined, explicitly ignore `remote-states.tf`
+				if !autoplanRemoteStates || !d.HasDependsOn {
+					whenModified = append(whenModified, "!remote-states.tf")
 				}
 				projects = append(projects, atlantis.Project{
 					Name:              util.Ptr(fmt.Sprintf("%s_%s", envName, cName)),
@@ -419,7 +417,8 @@ func (p *Plan) buildAtlantisConfig(c *v2.Config, foggVersion string) AtlantisCon
 					Workspace:         util.Ptr(atlantis.DefaultWorkspace),
 					ApplyRequirements: []string{atlantis.ApprovedRequirement},
 					Autoplan: &atlantis.Autoplan{
-						Enabled:      util.Ptr(true),
+						Enabled: util.Ptr(true),
+						// Additional whenModified entries are added during module inspection in apply phase
 						WhenModified: whenModified,
 					},
 				})
@@ -437,42 +436,6 @@ func (p *Plan) buildAtlantisConfig(c *v2.Config, foggVersion string) AtlantisCon
 		Envs:    &p.Envs,
 		RepoCfg: &repoCfg,
 	}
-}
-
-func generateWhenModified(moduleSources []string, pathToRepoRoot string, modulePrefixes []string, autoplanRemoteState bool) []string {
-	whenModified := []string{
-		"*.tf",
-	}
-	if !autoplanRemoteState {
-		whenModified = append(whenModified, "!remote-states.tf")
-	}
-	for _, moduleSource := range moduleSources {
-		if startsWithPrefix(moduleSource, modulePrefixes) {
-			modulePath := pathToRepoRoot + moduleSource
-			whenModified = append(whenModified,
-				fmt.Sprintf(
-					"%s/**/*.tf",
-					modulePath,
-				), fmt.Sprintf(
-					"%s/**/*.tf.json",
-					modulePath,
-				),
-			)
-		} else {
-			logrus.Debugf("atlantis: moduleSource %q is not part of module_prefix list: %q", moduleSource, modulePrefixes)
-		}
-	}
-	return whenModified
-}
-
-// startsWithPrefix checks if the given string s starts with any of the prefixes in the array.
-func startsWithPrefix(s string, prefixes []string) bool {
-	for _, prefix := range prefixes {
-		if strings.HasPrefix(s, prefix) {
-			return true
-		}
-	}
-	return false
 }
 
 func (p *Plan) buildGithubActionsPreCommitConfig(c *v2.Config, foggVersion string) PreCommitConfig {

@@ -35,14 +35,14 @@ data "terraform_remote_state" "db" {
   }
 }
 # tflint-ignore: terraform_unused_declarations
-data "terraform_remote_state" "recurse_test" {
+data "terraform_remote_state" "vpc" {
   backend = "s3"
   config = {
 
 
     bucket = "buck"
 
-    key    = "terraform/proj/envs/test/components/recurse_test.tfstate"
+    key    = "terraform/proj/envs/test/components/vpc.tfstate"
     region = "us-west-2"
 
     assume_role = {

@@ -73,13 +73,6 @@ func Apply(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool) error 
 		}
 	}
 
-	if plan.Atlantis.Enabled {
-		err = applyTree(fs, tmpl.Atlantis, tmpl.Common, "", plan.Atlantis)
-		if err != nil {
-			return errs.WrapUser(err, "unable to apply Atlantis")
-		}
-	}
-
 	tfBox := tmpl.Components[v2.ComponentKindTerraform]
 	err = applyAccounts(fs, plan, tfBox, tmpl.Common)
 	if err != nil {
@@ -91,9 +84,16 @@ func Apply(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool) error 
 		return errs.WrapUser(err, "unable to apply modules")
 	}
 
-	err = applyEnvs(fs, plan, tmpl.Env, tmpl.Components, tmpl.Common)
+	pathModuleConfigs, err := applyEnvs(fs, plan, tmpl.Env, tmpl.Components, tmpl.Common)
 	if err != nil {
 		return errs.WrapUser(err, "unable to apply envs")
+	}
+
+	if plan.Atlantis.Enabled {
+		err = applyAtlantisConfig(fs, tmpl.Atlantis, tmpl.Common, "", &plan.Atlantis, pathModuleConfigs)
+		if err != nil {
+			return errs.WrapUser(err, "unable to apply Atlantis")
+		}
 	}
 
 	tfBox = tmpl.Components[v2.ComponentKindTerraform]
@@ -270,7 +270,7 @@ func applyTFE(fs afero.Fs, plan *plan.Plan, tmpl *templates.T) error {
 		if err != nil {
 			return errs.WrapUser(err, "unable to make a downloader")
 		}
-		err = applyModuleInvocation(fs, path, templates.Templates.ModuleInvocation, tmpl.Common, mi, nil)
+		_, err = applyModuleInvocation(fs, path, templates.Templates.ModuleInvocation, tmpl.Common, mi, nil)
 		if err != nil {
 			return errs.WrapUser(err, "unable to apply module invocation")
 		}
@@ -361,30 +361,33 @@ func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox, commonBox fs
 	return nil
 }
 
+type PathModuleConfigs map[string]ModuleConfigMap
+
 func applyEnvs(
 	fs afero.Fs,
 	p *plan.Plan,
 	envBox fs.FS,
 	componentBoxes map[v2.ComponentKind]fs.FS,
-	commonBox fs.FS) (err error) {
+	commonBox fs.FS) (pathModuleConfigs PathModuleConfigs, err error) {
 	logrus.Debug("applying envs")
+	pathModuleConfigs = make(PathModuleConfigs)
 	for env, envPlan := range p.Envs {
 		logrus.Debugf("applying %s", env)
 		path := fmt.Sprintf("%s/envs/%s", rootPath, env)
 		err = fs.MkdirAll(path, 0755)
 		if err != nil {
-			return errs.WrapUserf(err, "unable to make directory %s", path)
+			return nil, errs.WrapUserf(err, "unable to make directory %s", path)
 		}
 		err := applyTree(fs, envBox, commonBox, path, envPlan)
 		if err != nil {
-			return errs.WrapUser(err, "unable to apply templates to env")
+			return nil, errs.WrapUser(err, "unable to apply templates to env")
 		}
 		reg := registry.NewClient(nil, nil)
 		for component, componentPlan := range envPlan.Components {
 			path = fmt.Sprintf("%s/envs/%s/%s", rootPath, env, component)
 			err = fs.MkdirAll(path, 0755)
 			if err != nil {
-				return errs.WrapUser(err, "unable to make directories for component")
+				return nil, errs.WrapUser(err, "unable to make directories for component")
 			}
 
 			// NOTE(el): component kind only support TF now
@@ -392,19 +395,19 @@ func applyEnvs(
 			kind := componentPlan.Kind.GetOrDefault()
 			componentBox, ok := componentBoxes[kind]
 			if !ok {
-				return errs.NewUserf("component of kind '%s' not suppoerted, must be 'terraform'", kind)
+				return nil, errs.NewUserf("component of kind '%s' not supported, must be 'terraform'", kind)
 			}
 
 			err := applyTree(fs, componentBox, commonBox, path, componentPlan)
 			if err != nil {
-				return errs.WrapUser(err, "unable to apply templates for component")
+				return nil, errs.WrapUser(err, "unable to apply templates for component")
 			}
 
 			mi := make([]moduleInvocation, 0)
 			if componentPlan.ModuleSource != nil {
 				downloader, err := util.MakeDownloader(*componentPlan.ModuleSource, "", reg)
 				if err != nil {
-					return errs.WrapUser(err, "unable to make a downloader")
+					return nil, errs.WrapUser(err, "unable to make a downloader")
 				}
 				mi = append(mi, moduleInvocation{
 					module: v2.ComponentModule{
@@ -428,20 +431,119 @@ func applyEnvs(
 				}
 				downloader, err := util.MakeDownloader(*m.Source, moduleVersion, reg)
 				if err != nil {
-					return errs.WrapUser(err, "unable to make a downloader")
+					return nil, errs.WrapUser(err, "unable to make a downloader")
 				}
 				mi = append(mi, moduleInvocation{
 					module:       m,
 					downloadFunc: downloader,
 				})
 			}
-			err = applyModuleInvocation(fs, path, templates.Templates.ModuleInvocation, commonBox, mi, componentPlan.IntegrationRegistry)
+			pathModuleConfigs[path], err = applyModuleInvocation(fs, path, templates.Templates.ModuleInvocation, commonBox, mi, componentPlan.IntegrationRegistry)
 			if err != nil {
-				return errs.WrapUser(err, "unable to apply module invocation")
+				return nil, errs.WrapUser(err, "unable to apply module invocation")
 			}
 		}
 	}
+	return pathModuleConfigs, nil
+}
+
+func applyAtlantisConfig(base afero.Fs, atlantisFs fs.FS, common fs.FS, targetBasePath string, config *plan.AtlantisConfig, pathModuleConfigs PathModuleConfigs) (e error) {
+	// add autoplan triggers based on moduleConfigs
+	for _, project := range config.RepoCfg.Projects {
+		uniqueModuleSources := []string{}
+		for moduleSource, module := range pathModuleConfigs[*project.Dir] {
+			if _, err := base.Stat(moduleSource); err != nil {
+				continue
+			}
+			logrus.Debugf(" >> project %s depends on local %s", *project.Name, moduleSource)
+
+			if !slices.Contains(uniqueModuleSources, moduleSource) {
+				uniqueModuleSources = append(uniqueModuleSources, moduleSource)
+			}
+			for _, call := range module.ModuleCalls {
+				fullPath := filepath.Join(moduleSource, call.Source)
+				if _, err := base.Stat(fullPath); err != nil {
+					logrus.Debugf("    %s sources remote %s", moduleSource, call.Source)
+					continue
+				}
+				logrus.Debugf("    %s sources local %s", moduleSource, call.Source)
+				childModuleSource := filepath.Clean(fullPath)
+				if !slices.Contains(uniqueModuleSources, childModuleSource) {
+					uniqueModuleSources = append(uniqueModuleSources, childModuleSource)
+					var err error
+					uniqueModuleSources, err = loadAndRecurseModule(base, childModuleSource, uniqueModuleSources)
+					if err != nil {
+						return errs.WrapUser(err, "unable to recurse modules")
+					}
+				}
+			}
+		}
+		// take whenModified from plan
+		whenModified := project.Autoplan.WhenModified
+		// add uniqueModuleSources to whenModified array
+		for _, moduleSource := range uniqueModuleSources {
+			moduleAddressForSource, _ := calculateModuleAddressForSource(*project.Dir, moduleSource, "")
+			whenModified = append(whenModified,
+				fmt.Sprintf(
+					"%s/**/*.tf",
+					moduleAddressForSource,
+				), fmt.Sprintf(
+					"%s/**/*.tf.json",
+					moduleAddressForSource,
+				),
+			)
+		}
+		project.Autoplan.WhenModified = whenModified
+	}
+	err := applyTree(base, atlantisFs, common, targetBasePath, config)
+	if err != nil {
+		return errs.WrapUser(err, "unable to apply Atlantis")
+	}
 	return nil
+}
+
+func loadAndRecurseModule(base afero.Fs, source string, uniqueModuleSources []string) ([]string, error) {
+	logrus.Debugf("      recurse: loading %s", source)
+	// tfconfig.LoadModule fails in tests only :(
+	module, err := DownloadAndParseLocalModule(base, source)
+	if err != nil {
+		return uniqueModuleSources, errs.WrapUser(err, "Failed to load module from source")
+	}
+	for _, call := range module.ModuleCalls {
+		fullPath := filepath.Join(source, call.Source)
+		if _, err := base.Stat(fullPath); err != nil {
+			logrus.Debugf("    %s sources remote %s", source, call.Source)
+			continue
+		}
+		logrus.Debugf("    %s sources local %s", source, call.Source)
+		childModuleSource := filepath.Clean(fullPath)
+		if !slices.Contains(uniqueModuleSources, childModuleSource) {
+			uniqueModuleSources = append(uniqueModuleSources, childModuleSource)
+			return loadAndRecurseModule(base, childModuleSource, uniqueModuleSources)
+		}
+	}
+	return uniqueModuleSources, nil
+}
+
+// HACK HACK HACK copy of util/module_storage.downloader
+//
+// this function is needed to ensure a copy of the local module exists in the testdataFS
+func DownloadAndParseLocalModule(fs afero.Fs, source string) (*tfconfig.Module, error) {
+	dir, err := util.GetFoggCachePath()
+	if err != nil {
+		return nil, err
+	}
+	// registry client can be nil for local modules
+	d, err := util.DownloadModule(fs, dir, source, "", nil)
+	if err != nil {
+		return nil, errs.WrapUser(err, "unable to download module")
+	}
+	// ensures module source is loaded from testdataFS, else tests fail :(
+	module, diag := tfconfig.LoadModule(d)
+	if diag.HasErrors() {
+		return nil, errs.WrapInternal(diag.Err(), "There was an issue loading the module")
+	}
+	return module, nil
 }
 
 func applyTree(dest afero.Fs, source fs.FS, common fs.FS, targetBasePath string, subst interface{}) (e error) {
@@ -631,6 +733,8 @@ type moduleInvocation struct {
 	downloadFunc util.ModuleDownloader
 }
 
+type ModuleConfigMap map[string]*tfconfig.Module
+
 func applyModuleInvocation(
 	fs afero.Fs,
 	path string,
@@ -638,17 +742,19 @@ func applyModuleInvocation(
 	commonBox fs.FS,
 	moduleInvocations []moduleInvocation,
 	integrationRegistry *string,
-) error {
+) (ModuleConfigMap, error) {
+	moduleConfigs := make(ModuleConfigMap, len(moduleInvocations))
 	e := fs.MkdirAll(path, 0755)
 	if e != nil {
-		return errs.WrapUserf(e, "couldn't create %s directory", path)
+		return nil, errs.WrapUserf(e, "couldn't create %s directory", path)
 	}
 	arr := make([]*moduleData, 0)
 	// TODO: parallel downloads with go routines
 	for _, mi := range moduleInvocations {
 		moduleConfig, e := mi.downloadFunc.DownloadAndParseModule(fs)
+		moduleConfigs[*mi.module.Source] = moduleConfig
 		if e != nil {
-			return errs.WrapUser(e, "could not download or parse module")
+			return nil, errs.WrapUser(e, "could not download or parse module")
 		}
 
 		// This should really be part of the plan stage, not apply. But going to
@@ -728,7 +834,7 @@ func applyModuleInvocation(
 		if mi.module.Version != nil {
 			moduleVersion = *mi.module.Version
 		}
-		moduleAddressForSource, moduleVersion, _ := calculateModuleAddressForSource(path, *mi.module.Source, moduleVersion)
+		moduleAddressForSource, _ := calculateModuleAddressForSource(path, *mi.module.Source, moduleVersion)
 		arr = append(arr, &moduleData{
 			ModuleName:                 moduleName,
 			ModuleSource:               moduleAddressForSource,
@@ -746,7 +852,7 @@ func applyModuleInvocation(
 	// MAIN
 	f, e := box.Open("main.tf.tmpl")
 	if e != nil {
-		return errs.WrapUser(e, "could not open template file")
+		return nil, errs.WrapUser(e, "could not open template file")
 	}
 	e = applyTemplate(
 		f,
@@ -755,48 +861,48 @@ func applyModuleInvocation(
 		filepath.Join(path, "main.tf"),
 		&modulesData{arr})
 	if e != nil {
-		return errs.WrapUser(e, "unable to apply template for main.tf")
+		return nil, errs.WrapUser(e, "unable to apply template for main.tf")
 	}
 	e = fmtHcl(fs, filepath.Join(path, "main.tf"), false)
 	if e != nil {
-		return errs.WrapUser(e, "unable to format main.tf")
+		return nil, errs.WrapUser(e, "unable to format main.tf")
 	}
 
 	// OUTPUTS
 	f, e = box.Open("outputs.tf.tmpl")
 	if e != nil {
-		return errs.WrapUser(e, "could not open template file")
+		return nil, errs.WrapUser(e, "could not open template file")
 	}
 
 	e = applyTemplate(f, commonBox, fs, filepath.Join(path, "outputs.tf"), &modulesData{arr})
 	if e != nil {
-		return errs.WrapUser(e, "unable to apply template for outputs.tf")
+		return nil, errs.WrapUser(e, "unable to apply template for outputs.tf")
 	}
 
 	e = fmtHcl(fs, filepath.Join(path, "outputs.tf"), false)
 	if e != nil {
-		return errs.WrapUser(e, "unable to format outputs.tf")
+		return nil, errs.WrapUser(e, "unable to format outputs.tf")
 	}
 
 	if integrationRegistry != nil && *integrationRegistry == "ssm" {
 		// Integration Registry Entries - ssm parameter store
 		f, e = box.Open("ssm-parameter-store.tf.tmpl")
 		if e != nil {
-			return errs.WrapUser(e, "could not open template file")
+			return nil, errs.WrapUser(e, "could not open template file")
 		}
 
 		e = applyTemplate(f, commonBox, fs, filepath.Join(path, "ssm-parameter-store.tf"), &modulesData{arr})
 		if e != nil {
-			return errs.WrapUser(e, "unable to apply template for ssm-parameter-store.tf")
+			return nil, errs.WrapUser(e, "unable to apply template for ssm-parameter-store.tf")
 		}
 
 		e = fmtHcl(fs, filepath.Join(path, "ssm-parameter-store.tf"), false)
 		if e != nil {
-			return errs.WrapUser(e, "unable to format ssm-parameter-store.tf")
+			return nil, errs.WrapUser(e, "unable to format ssm-parameter-store.tf")
 		}
 	}
 
-	return nil
+	return moduleConfigs, nil
 }
 
 // Evaluate integrationRegistry configuration and return updated list of integrationRegistryEntries
@@ -876,9 +982,12 @@ func integrateOutput(
 	return integrationRegistryEntries
 }
 
-func calculateModuleAddressForSource(path, moduleAddress string, moduleVersion string) (string, string, error) {
+// Convert moduleAddress relative to path.
+//
+// moduleVersion is only needed to test if moduleAddress is a Registry Source Address
+func calculateModuleAddressForSource(path, moduleAddress string, moduleVersion string) (string, error) {
 	if moduleVersion != "" && util.IsRegistrySourceAddr(moduleAddress) {
-		return moduleAddress, moduleVersion, nil
+		return moduleAddress, nil
 	} else {
 		// For cases where the module is a local path, we need to calculate the
 		// relative path from the component to the module.
@@ -888,7 +997,7 @@ func calculateModuleAddressForSource(path, moduleAddress string, moduleVersion s
 		// wrong for local file paths, so we need to calculate that ourselves below
 		s, e := getter.Detect(moduleAddress, path, getter.Detectors)
 		if e != nil {
-			return "", "", e
+			return "", e
 		}
 		u, e := url.Parse(s)
 		if e != nil || u.Scheme == "file" {
@@ -896,12 +1005,12 @@ func calculateModuleAddressForSource(path, moduleAddress string, moduleVersion s
 			// It is possible that this test is unreliable.
 			moduleAddressForSource, e = filepath.Rel(path, moduleAddress)
 			if e != nil {
-				return "", "", e
+				return "", e
 			}
 		} else {
 			moduleAddressForSource = moduleAddress
 		}
-		return moduleAddressForSource, "", nil
+		return moduleAddressForSource, nil
 	}
 }
 
