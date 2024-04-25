@@ -126,7 +126,6 @@ envs:
             version: 2.19.0
           helm:
             enabled: true
-            custom_provider: true
           kubectl:
             enabled: true
     extra_vars:
