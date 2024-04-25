@@ -124,6 +124,11 @@ envs:
             enabled: true
             cluster_component_name: comp1
             version: 2.19.0
+          helm:
+            enabled: true
+            custom_provider: true
+          kubectl:
+            enabled: true
     extra_vars:
       foo: bar2
 modules:

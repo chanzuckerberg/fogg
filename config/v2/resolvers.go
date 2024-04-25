@@ -659,9 +659,10 @@ func ResolveHelmProvider(commons ...Common) *HelmProvider {
 			}
 		}
 	}
-
+	clusterComponentName := lastNonNil(KubernetesProviderClusterComponentNameGetter, commons...)
 	if version != nil {
 		return &HelmProvider{
+			ClusterComponentName: clusterComponentName,
 			CommonProvider: CommonProvider{
 				CustomProvider: lastNonNilBool(HelmProviderCustomProviderGetter, commons...),
 				Enabled:        enabled,
@@ -700,8 +701,10 @@ func ResolveKubectlProvider(commons ...Common) *KubectlProvider {
 		}
 	}
 
+	clusterComponentName := lastNonNil(KubernetesProviderClusterComponentNameGetter, commons...)
 	if version != nil {
 		return &KubectlProvider{
+			ClusterComponentName: clusterComponentName,
 			CommonProvider: CommonProvider{
 				CustomProvider: lastNonNilBool(KubectlProviderCustomProviderGetter, commons...),
 				Enabled:        enabled,
