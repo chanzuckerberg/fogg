@@ -3,8 +3,8 @@
 
 module "{{.ModuleName}}" {
   source = "{{.ModuleSource}}"
-  {{range .Variables -}}
-    {{.}} = local.{{.}}
+  {{range $i, $kv := .Variables -}}
+    {{index $kv 0}} = {{index $kv 1}}
   {{ end}}
 
   {{ if .ProviderAliases -}}

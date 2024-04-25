@@ -14,7 +14,6 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	"golang.org/x/exp/slices"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
@@ -541,6 +540,69 @@ func applyTemplate(sourceFile io.Reader, commonTemplates fs.FS, dest afero.Fs, p
 	return t.Execute(writer, overrides)
 }
 
+func gatherTFModuleVariablesAndValues(component plan.Component, moduleConfig *tfconfig.Module) (map[string]string, error) {
+	// variables: [] -> add all required variables
+	// variables: -> add all required variables plus "test2" and set the value of "test" to be "value"
+	//   - test=value
+	//   - test2
+	variables := map[string]string{}
+	if component.Variables == nil {
+		for _, v := range moduleConfig.Variables {
+			variables[v.Name] = fmt.Sprintf("local.%s", v.Name)
+		}
+		return variables, nil
+	}
+
+	for _, v := range component.Variables {
+		keyValues := strings.SplitN(v, "=", 2)
+		if len(keyValues) < 1 {
+			return nil, fmt.Errorf("this should never happen; variables of a module_source must split into at least one substirng (ie 'key', 'key=value') ")
+		}
+		variables[keyValues[0]] = ""
+		if len(keyValues) == 2 {
+			variables[keyValues[0]] = keyValues[1]
+		}
+	}
+
+	for _, v := range moduleConfig.Variables {
+		// only add the required variables
+		if !v.Required {
+			continue
+		}
+
+		// don't override ones that the user has placed a value for
+		if vVal, ok := variables[v.Name]; ok && vVal != "" {
+			continue
+		}
+
+		variables[v.Name] = fmt.Sprintf("local.%s", v.Name)
+	}
+
+	// make sure all variables have a value
+	for k, v := range variables {
+		if v == "" {
+			variables[k] = fmt.Sprintf("local.%s", k)
+		}
+	}
+
+	return variables, nil
+}
+
+func mapToSortedArray(m map[string]string) [][]string {
+	keys := make([]string, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+
+	keyVals := make([][]string, 0, len(m))
+	sort.Strings(keys)
+	for _, k := range keys {
+		keyVals = append(keyVals, []string{k, m[k]})
+	}
+
+	return keyVals
+}
+
 // This should really be part of the plan stage, not apply. But going to
 // leave it here for now and re-think it when we make this mechanism
 // general purpose.
@@ -548,7 +610,7 @@ type moduleData struct {
 	ModuleName      string
 	ModuleSource    string
 	ProviderAliases map[string]string
-	Variables       []string
+	Variables       [][]string
 	Outputs         []*tfconfig.Output
 }
 
@@ -570,19 +632,11 @@ func applyModuleInvocation(
 		return errs.WrapUser(e, "could not download or parse module")
 	}
 
-	// This should really be part of the plan stage, not apply. But going to
-	// leave it here for now and re-think it when we make this mechanism
-	// general purpose.
-	addAll := component.Variables == nil
-	for _, v := range moduleConfig.Variables {
-		if addAll {
-			component.Variables = append(component.Variables, v.Name)
-		} else {
-			if v.Required && !slices.Contains(component.Variables, v.Name) {
-				component.Variables = append(component.Variables, v.Name)
-			}
-		}
+	variablesValues, err := gatherTFModuleVariablesAndValues(component, moduleConfig)
+	if err != nil {
+		return err
 	}
+
 	sort.Strings(component.Variables)
 
 	outputs := make([]*tfconfig.Output, 0)
@@ -613,7 +667,7 @@ func applyModuleInvocation(
 		ModuleName:      moduleName,
 		ModuleSource:    moduleAddressForSource,
 		ProviderAliases: component.ProviderAliases,
-		Variables:       component.Variables,
+		Variables:       mapToSortedArray(variablesValues),
 		Outputs:         outputs,
 	}
 	e = applyTemplate(

@@ -7,8 +7,8 @@ module "aws-aurora-postgres" {
   database_password     = local.database_password
   database_subnet_group = local.database_subnet_group
   database_username     = local.database_username
-  env                   = local.env
-  owner                 = local.owner
+  env                   = var.tags.env
+  owner                 = var.tags.owner
   project               = local.project
   service               = local.service
   vpc_id                = local.vpc_id
