@@ -20,6 +20,7 @@ import (
 	"github.com/chanzuckerberg/fogg/plan"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/chanzuckerberg/fogg/util"
+	"github.com/chanzuckerberg/go-misc/sets"
 	getter "github.com/hashicorp/go-getter"
 	"github.com/hashicorp/hcl2/hclwrite"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
@@ -582,6 +583,18 @@ func gatherTFModuleVariablesAndValues(component plan.Component, moduleConfig *tf
 	for k, v := range variables {
 		if v == "" {
 			variables[k] = fmt.Sprintf("local.%s", k)
+		}
+	}
+
+	// filter out non-existent variables on the module
+	for k := range variables {
+		ss := sets.NewStringSet()
+		for _, v := range moduleConfig.Variables {
+			ss.Add(v.Name)
+		}
+
+		if !ss.ContainsElement(k) {
+			delete(variables, k)
 		}
 	}
 

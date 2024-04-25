@@ -36,6 +36,7 @@ tfe:
     - env=var.tags.env
     - owner=var.tags.owner
     - project
+    - blah # should be filtered out
   extra_vars:
     TFE_AWS_ACCESS_KEY_ID: ""
     TFE_AWS_SECRET_ACCESS_KEY: ""
