@@ -260,13 +260,11 @@ type KubernetesProvider struct {
 }
 
 type HelmProvider struct {
-	CommonProvider       `yaml:",inline"`
-	ClusterComponentName *string `yaml:"cluster_component_name,omitempty"`
+	CommonProvider `yaml:",inline"`
 }
 
 type KubectlProvider struct {
-	CommonProvider       `yaml:",inline"`
-	ClusterComponentName *string `yaml:"cluster_component_name,omitempty"`
+	CommonProvider `yaml:",inline"`
 }
 
 // Backend is used to configure a terraform backend
