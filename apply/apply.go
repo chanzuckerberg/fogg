@@ -587,12 +587,11 @@ func gatherTFModuleVariablesAndValues(component plan.Component, moduleConfig *tf
 	}
 
 	// filter out non-existent variables on the module
+	ss := sets.NewStringSet()
+	for _, v := range moduleConfig.Variables {
+		ss.Add(v.Name)
+	}
 	for k := range variables {
-		ss := sets.NewStringSet()
-		for _, v := range moduleConfig.Variables {
-			ss.Add(v.Name)
-		}
-
 		if !ss.ContainsElement(k) {
 			delete(variables, k)
 		}
