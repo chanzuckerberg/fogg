@@ -77,7 +77,7 @@ variable "TFC_PROJECT_NAME" {
 {{ end }}{{ end }}
 
 {{- if .ProviderConfiguration.Kubernetes -}}{{- if not .ProviderConfiguration.Kubernetes.CustomProvider -}}
-  {{- template "kubernetes_provider" .ProviderConfiguration.Kubernetes -}}
+  {{- template "kubernetes_provider" .ProviderConfiguration -}}
 {{- end -}}{{- end -}}
 
 terraform {
