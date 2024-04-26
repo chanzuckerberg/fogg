@@ -6,7 +6,6 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
-	"io/ioutil"
 
 	"net/http"
 	"net/http/httptest"
@@ -78,7 +77,7 @@ func TestCustomPluginTarStripComponents(t *testing.T) {
 	r.NoError(err)
 	defer os.RemoveAll(d)
 
-	cacheDir, err := ioutil.TempDir("", "")
+	cacheDir, err := os.MkdirTemp("", "")
 	r.NoError(err)
 	defer os.RemoveAll(cacheDir)
 	cache := plugins.GetPluginCache(cacheDir)
@@ -139,7 +138,7 @@ func TestCustomPluginZip(t *testing.T) {
 	r.NoError(err)
 	defer os.RemoveAll(d)
 
-	cacheDir, err := ioutil.TempDir("", "")
+	cacheDir, err := os.MkdirTemp("", "")
 	r.NoError(err)
 	defer os.RemoveAll(cacheDir)
 	cache := plugins.GetPluginCache(cacheDir)
@@ -189,7 +188,7 @@ func TestCustomPluginBin(t *testing.T) {
 	defer os.RemoveAll(d)
 	fileContents := "some contents"
 
-	cacheDir, err := ioutil.TempDir("", "")
+	cacheDir, err := os.MkdirTemp("", "")
 	r.NoError(err)
 	defer os.RemoveAll(cacheDir)
 	cache := plugins.GetPluginCache(cacheDir)
@@ -220,7 +219,7 @@ func TestCustomPluginBin(t *testing.T) {
 	f, err := fs.Open(customPluginPath)
 	r.Nil(err)
 
-	contents, err := ioutil.ReadAll(f)
+	contents, err := io.ReadAll(f)
 	r.Nil(err)
 	r.Equal(string(contents), fileContents)
 
@@ -233,7 +232,7 @@ func TestCustomPluginBin(t *testing.T) {
 func generateTar(t *testing.T, files []string, dirs []string) string {
 	r := require.New(t)
 
-	f, err := ioutil.TempFile("", "testing")
+	f, err := os.CreateTemp("", "testing")
 	r.Nil(err)
 	defer f.Close()
 	gw := gzip.NewWriter(f)
@@ -269,7 +268,7 @@ func generateTar(t *testing.T, files []string, dirs []string) string {
 // based on https://golangcode.com/create-zip-files-in-go/
 func generateZip(t *testing.T, files []string) string {
 	r := require.New(t)
-	f, err := ioutil.TempFile("", "testing")
+	f, err := os.CreateTemp("", "testing")
 	r.Nil(err)
 
 	defer f.Close()
