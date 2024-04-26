@@ -65,8 +65,22 @@ data "aws_eks_cluster_auth" "cluster" {
 }
 provider "kubernetes" {
   host                   = data.aws_eks_cluster.cluster.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority[0].data)
   token                  = data.aws_eks_cluster_auth.cluster.token
+}
+provider "helm" {
+  kubernetes {
+    host                   = data.aws_eks_cluster.cluster.endpoint
+    cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority[0].data)
+    token                  = data.aws_eks_cluster_auth.cluster.token
+  }
+}
+provider "kubectl" {
+  host                   = data.aws_eks_cluster.cluster.endpoint
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority[0].data)
+  token                  = data.aws_eks_cluster_auth.cluster.token
+  load_config_file       = false
+  apply_retry_count      = 15
 }
 terraform {
   required_version = "=0.100.0"
@@ -100,6 +114,20 @@ terraform {
       source = "hashicorp/aws"
 
       version = "0.12.0"
+
+    }
+
+    helm = {
+      source = "hashicorp/helm"
+
+      version = "2.9.0"
+
+    }
+
+    kubectl = {
+      source = "gavinbunney/kubectl"
+
+      version = "1.14.0"
 
     }
 

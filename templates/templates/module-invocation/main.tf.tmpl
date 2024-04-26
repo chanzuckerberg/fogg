@@ -3,13 +3,14 @@
 
 module "{{.ModuleName}}" {
   source = "{{.ModuleSource}}"
-  {{range .Variables -}}
-    {{.}} = local.{{.}}
+  {{range $i, $kv := .Variables -}}
+    {{index $kv 0}} = {{index $kv 1}}
   {{ end}}
 
   {{ if .ProviderAliases -}}
   providers = {
     {{ range $k, $v := .ProviderAliases -}}
-    {{$k}} = {{$v}}{{ end}}
+    {{$k}} = {{$v}}
+    {{end -}}
   }{{ end }}
 }

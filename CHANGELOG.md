@@ -1,5 +1,73 @@
 # Changelog
 
+## [0.92.13](https://github.com/chanzuckerberg/fogg/compare/v0.92.12...v0.92.13) (2024-04-22)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.51.21 to 1.51.25 ([#1041](https://github.com/chanzuckerberg/fogg/issues/1041)) ([2ffe4fc](https://github.com/chanzuckerberg/fogg/commit/2ffe4fcbb21ab8106328b9448061cd2bb1abdf5e))
+* Bump golang.org/x/net from 0.22.0 to 0.23.0 ([#1039](https://github.com/chanzuckerberg/fogg/issues/1039)) ([10a81d0](https://github.com/chanzuckerberg/fogg/commit/10a81d0b2324af5f7ad12dcfc47e012e37156c8e))
+
+## [0.92.12](https://github.com/chanzuckerberg/fogg/compare/v0.92.11...v0.92.12) (2024-04-16)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.51.16 to 1.51.21 ([#1037](https://github.com/chanzuckerberg/fogg/issues/1037)) ([2fc6bf3](https://github.com/chanzuckerberg/fogg/commit/2fc6bf3252036fd725ef2106ef95b989f30218fa))
+* Bump github.com/hashicorp/go-getter from 1.7.3 to 1.7.4 ([#1036](https://github.com/chanzuckerberg/fogg/issues/1036)) ([0468830](https://github.com/chanzuckerberg/fogg/commit/0468830aeb840a365560297596fa80c72630bde5))
+
+## [0.92.11](https://github.com/chanzuckerberg/fogg/compare/v0.92.10...v0.92.11) (2024-04-10)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.51.11 to 1.51.16 ([#1034](https://github.com/chanzuckerberg/fogg/issues/1034)) ([a1091f2](https://github.com/chanzuckerberg/fogg/commit/a1091f28154f0ebda71658f3209f5307607f9578))
+
+## [0.92.10](https://github.com/chanzuckerberg/fogg/compare/v0.92.9...v0.92.10) (2024-04-08)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.51.6 to 1.51.11 ([#1028](https://github.com/chanzuckerberg/fogg/issues/1028)) ([efcc001](https://github.com/chanzuckerberg/fogg/commit/efcc0018976dbb1db449ac1642160c11cbe3434d))
+
+## [0.92.9](https://github.com/chanzuckerberg/fogg/compare/v0.92.8...v0.92.9) (2024-04-08)
+
+
+### Misc
+
+* Bump github.com/go-git/go-git/v5 from 5.11.0 to 5.12.0 ([#1027](https://github.com/chanzuckerberg/fogg/issues/1027)) ([5d89091](https://github.com/chanzuckerberg/fogg/commit/5d890917e7b90aafbe78aaa6c67bcc33887a33ca))
+
+## [0.92.8](https://github.com/chanzuckerberg/fogg/compare/v0.92.7...v0.92.8) (2024-04-04)
+
+
+### BugFixes
+
+* newline with multiple provider aliases ([#1030](https://github.com/chanzuckerberg/fogg/issues/1030)) ([477de59](https://github.com/chanzuckerberg/fogg/commit/477de593f6c247548d434121ac201d4ec2f209c4))
+
+## [0.92.7](https://github.com/chanzuckerberg/fogg/compare/v0.92.6...v0.92.7) (2024-04-01)
+
+
+### Misc
+
+* Bump github.com/hashicorp/hcl/v2 from 2.20.0 to 2.20.1 ([#1026](https://github.com/chanzuckerberg/fogg/issues/1026)) ([e9c9b3f](https://github.com/chanzuckerberg/fogg/commit/e9c9b3f425626c3bafd827322b3f88501f7e104c))
+
+## [0.92.6](https://github.com/chanzuckerberg/fogg/compare/v0.92.5...v0.92.6) (2024-03-25)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.50.35 to 1.51.1 ([#1024](https://github.com/chanzuckerberg/fogg/issues/1024)) ([bbe68e3](https://github.com/chanzuckerberg/fogg/commit/bbe68e3ad2533ff9a40d8ee996ebf4efc2323e73))
+* Bump github.com/aws/aws-sdk-go from 1.51.1 to 1.51.6 ([#1025](https://github.com/chanzuckerberg/fogg/issues/1025)) ([2932805](https://github.com/chanzuckerberg/fogg/commit/293280547835c1ee397b7184cecb4a085682bb8e))
+* Bump google.golang.org/protobuf from 1.31.0 to 1.33.0 ([#1022](https://github.com/chanzuckerberg/fogg/issues/1022)) ([2c54263](https://github.com/chanzuckerberg/fogg/commit/2c5426305fa07a87a81e2c29fd1322dd9d6c038f))
+
+## [0.92.5](https://github.com/chanzuckerberg/fogg/compare/v0.92.4...v0.92.5) (2024-03-11)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.50.25 to 1.50.32 ([#1013](https://github.com/chanzuckerberg/fogg/issues/1013)) ([3ee0475](https://github.com/chanzuckerberg/fogg/commit/3ee0475cad0643afea460933592cf240ca2cb676))
+* Bump github.com/aws/aws-sdk-go from 1.50.32 to 1.50.35 ([#1021](https://github.com/chanzuckerberg/fogg/issues/1021)) ([5784c6d](https://github.com/chanzuckerberg/fogg/commit/5784c6d09c3a15f8df55084893b4b682fc99f2dc))
+
 ## [0.92.4](https://github.com/chanzuckerberg/fogg/compare/v0.92.3...v0.92.4) (2024-03-07)
 
 
