@@ -74,6 +74,11 @@ type TFE struct {
 	AdditionalGithubRequiredChecks *[]string `yaml:"additional_gh_required_checks,omitempty"`
 }
 
+type ExtraTemplate struct {
+	Overwrite bool
+	Files     map[string]string
+}
+
 type Common struct {
 	Backend                  *Backend          `yaml:"backend,omitempty"`
 	ExtraVars                map[string]string `yaml:"extra_vars,omitempty"`
@@ -84,6 +89,7 @@ type Common struct {
 	TerraformVersion         *string           `yaml:"terraform_version,omitempty"`
 	Tools                    *Tools            `yaml:"tools,omitempty"`
 	NeedsAWSAccountsVariable *bool             `yaml:"needs_aws_accounts_variable,omitempty"`
+	ExtraTemplates           *[]ExtraTemplate  `yaml:"extra_template,omitempty"`
 }
 
 type Defaults struct {
