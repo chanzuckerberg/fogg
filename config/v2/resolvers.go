@@ -659,7 +659,6 @@ func ResolveHelmProvider(commons ...Common) *HelmProvider {
 			}
 		}
 	}
-
 	if version != nil {
 		return &HelmProvider{
 			CommonProvider: CommonProvider{
