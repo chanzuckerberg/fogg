@@ -21,7 +21,7 @@ release:
 
 brews:
   - description: 'Terraform without pain.'
-    tap:
+    repository:
       owner: chanzuckerberg
       name: homebrew-tap
     homepage: 'https://github.com/chanzuckerberg/fogg'
