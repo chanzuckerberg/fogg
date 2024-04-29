@@ -290,26 +290,35 @@ func ResolveAWSAccountsNeeded(commons ...Common) bool {
 	return *accountsNeeded
 }
 
-func ExtraTemplatesGetter(comm Common) *[]ExtraTemplate {
-	if comm.ExtraTemplates != nil {
-		templates := []ExtraTemplate{}
-		for _, v := range *comm.ExtraTemplates {
-			templates = append(templates, ExtraTemplate{
-				Overwrite: v.Overwrite,
-				Files:     v.Files,
-			})
+func ResolveExtraTemplates(commons ...Common) map[string]ExtraTemplate {
+	templates := map[string]ExtraTemplate{}
+	for _, common := range commons {
+		if common.ExtraTemplates == nil {
+			continue
 		}
-		return &templates
-	}
-	return nil
-}
 
-func ResolveExtraTemplates(commons ...Common) []ExtraTemplate {
-	templates := lastNonNil(ExtraTemplatesGetter, commons...)
-	if templates == nil {
-		return []ExtraTemplate{}
+		for filename, cfg := range *common.ExtraTemplates {
+			if _, exists := templates[filename]; !exists {
+				templates[filename] = cfg
+				continue
+			}
+
+			prevTempl := ExtraTemplate{
+				Overwrite: templates[filename].Overwrite,
+				Content:   templates[filename].Content,
+			}
+
+			if cfg.Overwrite != nil {
+				prevTempl.Overwrite = cfg.Overwrite
+			}
+			if cfg.Content != nil {
+				prevTempl.Content = cfg.Content
+			}
+			templates[filename] = prevTempl
+		}
 	}
-	return *templates
+
+	return templates
 }
 
 func ResolveSnowflakeProvider(commons ...Common) *SnowflakeProvider {

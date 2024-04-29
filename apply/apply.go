@@ -299,25 +299,23 @@ func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates, commonTemplates fs.FS) 
 }
 
 func applyExtraTemplates(fs afero.Fs, p plan.ComponentCommon, commonBox fs.FS, path string) error {
-	for _, templateCfg := range p.ExtraTemplates {
-		for filename, template := range templateCfg.Files {
-			target := getTargetPath(path, filename)
-			_, err := fs.Stat(target)
-			if err == nil && !templateCfg.Overwrite {
-				// file exists and we don't want to overwrite
-				continue
-			}
+	for filename, templateCfg := range p.ExtraTemplates {
+		target := getTargetPath(path, filename)
+		_, err := fs.Stat(target)
+		if err == nil && !templateCfg.Overwrite {
+			// file exists and we don't want to overwrite
+			continue
+		}
 
-			err = applyTemplate(strings.NewReader(template), commonBox, fs, target, p)
+		err = applyTemplate(strings.NewReader(templateCfg.Content), commonBox, fs, target, p)
+		if err != nil {
+			return errs.WrapUser(err, "applying extra templates")
+		}
+
+		if filepath.Ext(filename) == ".tf" {
+			err = fmtHcl(fs, target, true)
 			if err != nil {
-				return errs.WrapUser(err, "applying extra templates")
-			}
-
-			if filepath.Ext(filename) == ".tf" {
-				err = fmtHcl(fs, target, true)
-				if err != nil {
-					return errs.WrapUser(err, "formating HCL of extra templates")
-				}
+				return errs.WrapUser(err, "formating HCL of extra templates")
 			}
 		}
 	}

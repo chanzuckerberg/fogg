@@ -40,7 +40,7 @@ type Common struct {
 
 type ExtraTemplate struct {
 	Overwrite bool
-	Files     map[string]string
+	Content   string
 }
 
 // ComponentCommon represents common fields for components
@@ -59,7 +59,7 @@ type ComponentCommon struct {
 	ProviderConfiguration    ProviderConfiguration      `yaml:"providers_configuration"`
 	ProviderVersions         map[string]ProviderVersion `yaml:"provider_versions"`
 	NeedsAWSAccountsVariable bool                       `yaml:"needs_aws_accounts_variable"`
-	ExtraTemplates           []ExtraTemplate            `yaml:"extra_templates"`
+	ExtraTemplates           map[string]ExtraTemplate   `yaml:"extra_templates"`
 
 	TfLint TfLint `yaml:"tf_lint"`
 
@@ -1260,12 +1260,20 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
-	extraTemplates := []ExtraTemplate{}
-	for _, v := range v2.ResolveExtraTemplates(commons...) {
-		extraTemplates = append(extraTemplates, ExtraTemplate{
-			Files:     v.Files,
-			Overwrite: v.Overwrite,
-		})
+	extraTemplates := map[string]ExtraTemplate{}
+	for k, v := range v2.ResolveExtraTemplates(commons...) {
+		resolvedTempl := ExtraTemplate{}
+
+		if v.Content != nil {
+			resolvedTempl.Content = *v.Content
+		}
+		if v.Overwrite != nil {
+			resolvedTempl.Overwrite = *v.Overwrite
+		}
+		extraTemplates[k] = ExtraTemplate{
+			Overwrite: resolvedTempl.Overwrite,
+			Content:   resolvedTempl.Content,
+		}
 	}
 
 	return ComponentCommon{
