@@ -89,7 +89,7 @@ type Common struct {
 	TerraformVersion         *string           `yaml:"terraform_version,omitempty"`
 	Tools                    *Tools            `yaml:"tools,omitempty"`
 	NeedsAWSAccountsVariable *bool             `yaml:"needs_aws_accounts_variable,omitempty"`
-	ExtraTemplates           *[]ExtraTemplate  `yaml:"extra_template,omitempty"`
+	ExtraTemplates           *[]ExtraTemplate  `yaml:"extra_templates,omitempty"`
 }
 
 type Defaults struct {
