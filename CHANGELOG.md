@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.92.14](https://github.com/chanzuckerberg/fogg/compare/v0.92.13...v0.92.14) (2024-04-29)
+
+
+### Features
+
+* allow variables to specify values in main.tf ([#1043](https://github.com/chanzuckerberg/fogg/issues/1043)) ([4ca082b](https://github.com/chanzuckerberg/fogg/commit/4ca082bd85c15d6be114491bec710507212af3a8))
+* extra_templates allows users to control templates ([#1046](https://github.com/chanzuckerberg/fogg/issues/1046)) ([f13687a](https://github.com/chanzuckerberg/fogg/commit/f13687a9f3c3b3745ed9b0e07aa617ad0ceb1b53))
+* generate provider configs for kubectl & helm ([#1044](https://github.com/chanzuckerberg/fogg/issues/1044)) ([d832a3c](https://github.com/chanzuckerberg/fogg/commit/d832a3c3b1bdb70e925de50604d1c3a80ff6fe0d))
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.51.25 to 1.51.30 ([#1047](https://github.com/chanzuckerberg/fogg/issues/1047)) ([a43b364](https://github.com/chanzuckerberg/fogg/commit/a43b36433126cb553d1342fd7ac1c5333af1977d))
+
+
+### BugFixes
+
+* goreleaser small fixes to move away from deprecated configs ([#1018](https://github.com/chanzuckerberg/fogg/issues/1018)) ([efe3bd2](https://github.com/chanzuckerberg/fogg/commit/efe3bd2c4486a447805484885066e395a69af850))
+* remove deprecated ioutil package given go new version ([#1017](https://github.com/chanzuckerberg/fogg/issues/1017)) ([44388ff](https://github.com/chanzuckerberg/fogg/commit/44388ffc1aa4295173ebca412de36a4762e35b2b))
+
 ## [0.92.13](https://github.com/chanzuckerberg/fogg/compare/v0.92.12...v0.92.13) (2024-04-22)
 
 
