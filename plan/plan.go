@@ -38,6 +38,11 @@ type Common struct {
 	TerraformVersion string `yaml:"terraform_version"`
 }
 
+type ExtraTemplate struct {
+	Overwrite bool
+	Content   string
+}
+
 // ComponentCommon represents common fields for components
 type ComponentCommon struct {
 	Common `yaml:",inline"`
@@ -54,6 +59,7 @@ type ComponentCommon struct {
 	ProviderConfiguration    ProviderConfiguration      `yaml:"providers_configuration"`
 	ProviderVersions         map[string]ProviderVersion `yaml:"provider_versions"`
 	NeedsAWSAccountsVariable bool                       `yaml:"needs_aws_accounts_variable"`
+	ExtraTemplates           map[string]ExtraTemplate   `yaml:"extra_templates"`
 
 	TfLint TfLint `yaml:"tf_lint"`
 
@@ -1254,7 +1260,24 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
+	extraTemplates := map[string]ExtraTemplate{}
+	for k, v := range v2.ResolveExtraTemplates(commons...) {
+		resolvedTempl := ExtraTemplate{}
+
+		if v.Content != nil {
+			resolvedTempl.Content = *v.Content
+		}
+		if v.Overwrite != nil {
+			resolvedTempl.Overwrite = *v.Overwrite
+		}
+		extraTemplates[k] = ExtraTemplate{
+			Overwrite: resolvedTempl.Overwrite,
+			Content:   resolvedTempl.Content,
+		}
+	}
+
 	return ComponentCommon{
+		ExtraTemplates:           extraTemplates,
 		NeedsAWSAccountsVariable: v2.ResolveAWSAccountsNeeded(commons...),
 		Backend:                  backend,
 		ProviderConfiguration: ProviderConfiguration{

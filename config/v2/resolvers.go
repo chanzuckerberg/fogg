@@ -6,45 +6,12 @@ import (
 	"github.com/chanzuckerberg/fogg/util"
 )
 
-// lastNonNilBool, despite its name can return nil if all results are nil
-func lastNonNilBool(getter func(Common) *bool, commons ...Common) *bool {
-	var s *bool
-	for _, c := range commons {
-		t := getter(c)
-		if t != nil {
-			s = t
-		}
-	}
-	return s
+type Nillable interface {
+	*bool | *float64 | *int64 | *string | []string | *[]ExtraTemplate
 }
 
-// lastNonNil, despite its name can return nil if all results are nil
-func lastNonNil(getter func(Common) *string, commons ...Common) *string {
-	var s *string
-	for _, c := range commons {
-		t := getter(c)
-		if t != nil {
-			s = t
-		}
-	}
-	return s
-}
-
-// lastNonNilInt64, despite its name can return nil if all results are nil
-func lastNonNilInt64(getter func(Common) *int64, commons ...Common) *int64 {
-	var s *int64
-	for _, c := range commons {
-		t := getter(c)
-		if t != nil {
-			s = t
-		}
-	}
-	return s
-}
-
-// lastNonNilStringSlice, despite its name can return nil if all results are nil
-func lastNonNilStringSlice(getter func(Common) []string, commons ...Common) []string {
-	var s []string
+func lastNonNil[T Nillable](getter func(Common) T, commons ...Common) T {
+	var s T
 	for _, c := range commons {
 		t := getter(c)
 		if t != nil {
@@ -61,7 +28,7 @@ func ResolveRequiredString(getter func(Common) *string, commons ...Common) strin
 
 // ResolveRequiredInt64 will resolve the value and panic if it is nil. Only to be used after validations are run.
 func ResolveRequiredInt64(getter func(Common) *int64, commons ...Common) int64 {
-	return *lastNonNilInt64(getter, commons...)
+	return *lastNonNil(getter, commons...)
 }
 
 func ResolveOptionalString(getter func(Common) *string, commons ...Common) *string {
@@ -69,7 +36,7 @@ func ResolveOptionalString(getter func(Common) *string, commons ...Common) *stri
 }
 
 func ResolveOptionalStringSlice(getter func(Common) []string, commons ...Common) []string {
-	return lastNonNilStringSlice(getter, commons...)
+	return lastNonNil(getter, commons...)
 }
 
 func ResolveStringArray(def []string, override []string) []string {
@@ -302,7 +269,7 @@ func ResolveGithubProvider(commons ...Common) *GithubProvider {
 		BaseURL: lastNonNil(GithubProviderBaseURLGetter, commons...),
 		CommonProvider: CommonProvider{
 			Enabled:        enabled,
-			CustomProvider: lastNonNilBool(GithubProviderCustomProviderGetter, commons...),
+			CustomProvider: lastNonNil(GithubProviderCustomProviderGetter, commons...),
 			Version:        lastNonNil(GithubProviderVersionGetter, commons...),
 		},
 	}
@@ -316,11 +283,42 @@ func AWSAccountsNeededGetter(comm Common) *bool {
 }
 
 func ResolveAWSAccountsNeeded(commons ...Common) bool {
-	accountsNeeded := lastNonNilBool(AWSAccountsNeededGetter, commons...)
+	accountsNeeded := lastNonNil(AWSAccountsNeededGetter, commons...)
 	if accountsNeeded == nil {
 		return true
 	}
 	return *accountsNeeded
+}
+
+func ResolveExtraTemplates(commons ...Common) map[string]ExtraTemplate {
+	templates := map[string]ExtraTemplate{}
+	for _, common := range commons {
+		if common.ExtraTemplates == nil {
+			continue
+		}
+
+		for filename, cfg := range *common.ExtraTemplates {
+			if _, exists := templates[filename]; !exists {
+				templates[filename] = cfg
+				continue
+			}
+
+			prevTempl := ExtraTemplate{
+				Overwrite: templates[filename].Overwrite,
+				Content:   templates[filename].Content,
+			}
+
+			if cfg.Overwrite != nil {
+				prevTempl.Overwrite = cfg.Overwrite
+			}
+			if cfg.Content != nil {
+				prevTempl.Content = cfg.Content
+			}
+			templates[filename] = prevTempl
+		}
+	}
+
+	return templates
 }
 
 func ResolveSnowflakeProvider(commons ...Common) *SnowflakeProvider {
@@ -335,7 +333,7 @@ func ResolveSnowflakeProvider(commons ...Common) *SnowflakeProvider {
 			Role:    role,
 			Region:  region,
 			CommonProvider: CommonProvider{
-				CustomProvider: lastNonNilBool(SnowflakeProviderCustomProviderGetter, commons...),
+				CustomProvider: lastNonNil(SnowflakeProviderCustomProviderGetter, commons...),
 				Enabled:        defaultEnabled(true),
 				Version:        version,
 			},
@@ -359,7 +357,7 @@ func ResolveOktaProvider(commons ...Common) *OktaProvider {
 		BaseURL:           baseURL,
 		RegistryNamespace: registryNamespace,
 		CommonProvider: CommonProvider{
-			CustomProvider: lastNonNilBool(OktaProviderCustomProviderGetter, commons...),
+			CustomProvider: lastNonNil(OktaProviderCustomProviderGetter, commons...),
 			Enabled:        defaultEnabled(true),
 			Version:        lastNonNil(OktaProviderVersionGetter, commons...),
 		},
@@ -381,7 +379,7 @@ func ResolveBlessProvider(commons ...Common) *BlessProvider {
 		AWSRegion:  region,
 		RoleArn:    roleArn,
 		CommonProvider: CommonProvider{
-			CustomProvider: lastNonNilBool(BlessProviderCustomProviderGetter, commons...),
+			CustomProvider: lastNonNil(BlessProviderCustomProviderGetter, commons...),
 			Enabled:        defaultEnabled(true),
 			Version:        lastNonNil(BlessProviderVersionGetter, commons...),
 		},
@@ -406,7 +404,7 @@ func ResolveHerokuProvider(commons ...Common) *HerokuProvider {
 	if version != nil {
 		return &HerokuProvider{
 			CommonProvider: CommonProvider{
-				CustomProvider: lastNonNilBool(HerokuProviderCustomProviderGetter, commons...),
+				CustomProvider: lastNonNil(HerokuProviderCustomProviderGetter, commons...),
 				Enabled:        defaultEnabled(true),
 				Version:        version,
 			},
@@ -432,7 +430,7 @@ func ResolveDatadogProvider(commons ...Common) *DatadogProvider {
 	if version != nil {
 		return &DatadogProvider{
 			CommonProvider: CommonProvider{
-				CustomProvider: lastNonNilBool(DatadogProviderCustomProviderGetter, commons...),
+				CustomProvider: lastNonNil(DatadogProviderCustomProviderGetter, commons...),
 				Enabled:        defaultEnabled(true),
 				Version:        version,
 			},
@@ -458,7 +456,7 @@ func ResolvePagerdutyProvider(commons ...Common) *PagerdutyProvider {
 	if version != nil {
 		return &PagerdutyProvider{
 			CommonProvider: CommonProvider{
-				CustomProvider: lastNonNilBool(PagerDutyProviderCustomProviderGetter, commons...),
+				CustomProvider: lastNonNil(PagerDutyProviderCustomProviderGetter, commons...),
 				Enabled:        defaultEnabled(true),
 				Version:        version,
 			},
@@ -484,7 +482,7 @@ func ResolveOpsGenieProvider(commons ...Common) *OpsGenieProvider {
 	if version != nil {
 		return &OpsGenieProvider{
 			CommonProvider: CommonProvider{
-				CustomProvider: lastNonNilBool(OpsGenieProviderCustomProviderGetter, commons...),
+				CustomProvider: lastNonNil(OpsGenieProviderCustomProviderGetter, commons...),
 				Enabled:        defaultEnabled(true),
 				Version:        version,
 			},
@@ -507,7 +505,7 @@ func ResolveDatabricksProvider(commons ...Common) *DatabricksProvider {
 	if version != nil {
 		return &DatabricksProvider{
 			CommonProvider: CommonProvider{
-				CustomProvider: lastNonNilBool(DatabricksProviderCustomProviderGetter, commons...),
+				CustomProvider: lastNonNil(DatabricksProviderCustomProviderGetter, commons...),
 				Enabled:        defaultEnabled(true),
 				Version:        version,
 			},
@@ -534,7 +532,7 @@ func ResolveSentryProvider(commons ...Common) *SentryProvider {
 	if version != nil {
 		return &SentryProvider{
 			CommonProvider: CommonProvider{
-				CustomProvider: lastNonNilBool(SentryProviderCustomProviderGetter, commons...),
+				CustomProvider: lastNonNil(SentryProviderCustomProviderGetter, commons...),
 				Enabled:        defaultEnabled(true),
 				Version:        version,
 			},
@@ -580,7 +578,7 @@ func ResolveTfeProvider(commons ...Common) *TfeProvider {
 	if version != nil {
 		return &TfeProvider{
 			CommonProvider: CommonProvider{
-				CustomProvider: lastNonNilBool(TFEProviderCustomProviderGetter, commons...),
+				CustomProvider: lastNonNil(TFEProviderCustomProviderGetter, commons...),
 				Enabled:        enabled,
 				Version:        version,
 			},
@@ -623,7 +621,7 @@ func ResolveKubernetesProvider(commons ...Common) *KubernetesProvider {
 		return &KubernetesProvider{
 			ClusterComponentName: clusterComponentName,
 			CommonProvider: CommonProvider{
-				CustomProvider: lastNonNilBool(KubernetesProviderCustomProviderGetter, commons...),
+				CustomProvider: lastNonNil(KubernetesProviderCustomProviderGetter, commons...),
 				Enabled:        enabled,
 				Version:        version,
 			},
@@ -662,7 +660,7 @@ func ResolveHelmProvider(commons ...Common) *HelmProvider {
 	if version != nil {
 		return &HelmProvider{
 			CommonProvider: CommonProvider{
-				CustomProvider: lastNonNilBool(HelmProviderCustomProviderGetter, commons...),
+				CustomProvider: lastNonNil(HelmProviderCustomProviderGetter, commons...),
 				Enabled:        enabled,
 				Version:        version,
 			},
@@ -702,7 +700,7 @@ func ResolveKubectlProvider(commons ...Common) *KubectlProvider {
 	if version != nil {
 		return &KubectlProvider{
 			CommonProvider: CommonProvider{
-				CustomProvider: lastNonNilBool(KubectlProviderCustomProviderGetter, commons...),
+				CustomProvider: lastNonNil(KubectlProviderCustomProviderGetter, commons...),
 				Enabled:        enabled,
 				Version:        version,
 			},
@@ -742,7 +740,7 @@ func ResolveGrafanaProvider(commons ...Common) *GrafanaProvider {
 	if version != nil {
 		return &GrafanaProvider{
 			CommonProvider: CommonProvider{
-				CustomProvider: lastNonNilBool(GrafanaProviderCustomProviderGetter, commons...),
+				CustomProvider: lastNonNil(GrafanaProviderCustomProviderGetter, commons...),
 				Enabled:        enabled,
 				Version:        version,
 			},
