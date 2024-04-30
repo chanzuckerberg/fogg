@@ -58,10 +58,10 @@ provider "aws" {
 
 provider "assert" {}
 data "aws_eks_cluster" "cluster" {
-  name = data.terraform_remote_state.comp1.outputs.cluster_id
+  name = comp1
 }
 data "aws_eks_cluster_auth" "cluster" {
-  name = data.terraform_remote_state.comp1.outputs.cluster_id
+  name = comp1
 }
 provider "kubernetes" {
   host                   = data.aws_eks_cluster.cluster.endpoint
