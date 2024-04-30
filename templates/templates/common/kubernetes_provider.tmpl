@@ -1,11 +1,11 @@
 {{ define "kubernetes_provider" -}}
 {{ if .Kubernetes.ClusterComponentName -}}
   data "aws_eks_cluster" "cluster" {
-    name = data.terraform_remote_state.{{ .Kubernetes.ClusterComponentName }}.outputs.cluster_id
+    name = {{ .Kubernetes.ClusterComponentName }}
   }
 
   data "aws_eks_cluster_auth" "cluster" {
-    name = data.terraform_remote_state.{{ .Kubernetes.ClusterComponentName }}.outputs.cluster_id
+    name = {{ .Kubernetes.ClusterComponentName }}
   }
 
 provider "kubernetes" {
