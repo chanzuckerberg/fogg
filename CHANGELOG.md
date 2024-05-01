@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.15](https://github.com/chanzuckerberg/fogg/compare/v0.92.14...v0.92.15) (2024-05-01)
+
+
+### BugFixes
+
+* don't assume remote state for eks auth ([#1048](https://github.com/chanzuckerberg/fogg/issues/1048)) ([1a8553c](https://github.com/chanzuckerberg/fogg/commit/1a8553c99512da99efcaad4251be21bedae4a0b6))
+
 ## [0.92.14](https://github.com/chanzuckerberg/fogg/compare/v0.92.13...v0.92.14) (2024-04-29)
 
 
