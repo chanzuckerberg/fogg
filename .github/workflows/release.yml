@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: release please
-        uses: google-github-actions/release-please-action@v4.1.0
+        uses: google-github-actions/release-please-action@v4.1.1
         id: release
         with:
           # https://github.com/google-github-actions/release-please-action#github-credentials
