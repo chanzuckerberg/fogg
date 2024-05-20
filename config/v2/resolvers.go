@@ -2,6 +2,7 @@ package v2
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/chanzuckerberg/fogg/util"
 )
@@ -764,13 +765,13 @@ func ResolveRequiredProviders(commons ...Common) map[string]*GenericProvider {
 			config := make(map[string]any)
 
 			if prev != nil {
-				source, customProvider, version, enabled = resolveGenericProvider(prev, source, customProvider, version, enabled, config)
+				source, customProvider, version, enabled = resolveGenericProvider(prev, source, customProvider, version, enabled, config, commons...)
 			}
 			if curr == nil {
 				// excplicit set to nil
 				delete(requiredProviders, k)
 			} else {
-				source, customProvider, version, enabled = resolveGenericProvider(curr, source, customProvider, version, enabled, config)
+				source, customProvider, version, enabled = resolveGenericProvider(curr, source, customProvider, version, enabled, config, commons...)
 				requiredProviders[k] = &GenericProvider{
 					CommonProvider: CommonProvider{
 						CustomProvider: customProvider,
@@ -793,7 +794,10 @@ func resolveGenericProvider(
 	version string,
 	enabled bool,
 	config map[string]any,
+	commons ...Common,
 ) (string, *bool, string, bool) {
+	awsConfig := ResolveAWSProvider(commons...)
+
 	if len(p.Source) != 0 {
 		source = p.Source
 	}
@@ -810,7 +814,13 @@ func resolveGenericProvider(
 		if value == nil {
 			delete(config, key)
 		} else {
-			config[key] = value
+			// specially for AWS associate assume role
+			if key == "assume_role" {
+				tmp := fmt.Sprintf("arn:aws:iam::%s:role/%s", *awsConfig.AccountID, value)
+				config["assume_role"] = tmp
+			} else {
+				config[key] = value
+			}
 		}
 	}
 	return source, customProvider, version, enabled

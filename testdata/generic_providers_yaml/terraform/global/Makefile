@@ -11,6 +11,10 @@ export AWS_BACKEND_PROFILE := foo
 
 
 
+export AWS_PROVIDER_ROLE_ARN := arn:aws:iam::0000000000000000:role/TerraformExecutionRole
+
+
+
 include ../..//scripts/component.mk
 
 

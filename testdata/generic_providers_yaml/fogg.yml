@@ -12,6 +12,12 @@ defaults:
     assert:
       version: 0.0.1
     sops: {}
+    aws:
+      # use shared-services account as default
+      account_id: "0000000000000000"
+      role: TerraformExecutionRole
+      region: ap-southeast-1
+      version: ~> 5.0
   # ad-hoc required providers and optional config
   required_providers:
     foo:
@@ -42,6 +48,7 @@ envs:
         custom_provider: false
         config:
           baz_token: prod_token_arn
+          aws_assume_role: "TerraformExecutionRole"
     components:
       network: {}
   stg:
