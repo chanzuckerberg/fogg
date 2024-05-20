@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.92.17](https://github.com/chanzuckerberg/fogg/compare/v0.92.16...v0.92.17) (2024-05-20)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.52.2 to 1.53.0 ([#1052](https://github.com/chanzuckerberg/fogg/issues/1052)) ([e1efe36](https://github.com/chanzuckerberg/fogg/commit/e1efe364a0443f0a315aabb35af4d98c80e8253b))
+* Bump github.com/aws/aws-sdk-go from 1.53.0 to 1.53.5 ([#1055](https://github.com/chanzuckerberg/fogg/issues/1055)) ([c35de65](https://github.com/chanzuckerberg/fogg/commit/c35de65f8d125cf1e3f8aaf8a332420c52a6bed3))
+* Bump github.com/fatih/color from 1.16.0 to 1.17.0 ([#1053](https://github.com/chanzuckerberg/fogg/issues/1053)) ([a9617d5](https://github.com/chanzuckerberg/fogg/commit/a9617d59dc36b3e87a19c8aa26032bf69a9e696c))
+
 ## [0.92.16](https://github.com/chanzuckerberg/fogg/compare/v0.92.15...v0.92.16) (2024-05-06)
 
 
