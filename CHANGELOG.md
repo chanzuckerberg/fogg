@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.92.2](https://github.com/vincenthsh/fogg/compare/v0.92.1...v0.92.2) (2024-05-20)
+
+
+### Features
+
+* Add aws_assume_role support for generic providers ([#298](https://github.com/vincenthsh/fogg/issues/298)) ([fc76924](https://github.com/vincenthsh/fogg/commit/fc76924bd4b5c7f864d8fed3a3fae11d32ef2e89))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go in the gomod group ([#294](https://github.com/vincenthsh/fogg/issues/294)) ([6207479](https://github.com/vincenthsh/fogg/commit/6207479204432a7496e25cfe8ae0d44263ddf946))
+* bump github.com/aws/aws-sdk-go in the gomod group ([#296](https://github.com/vincenthsh/fogg/issues/296)) ([3e647b6](https://github.com/vincenthsh/fogg/commit/3e647b67528e64d79e71cdd3c6a77902c4f6cf01))
+* bump the gomod group with 2 updates ([#297](https://github.com/vincenthsh/fogg/issues/297)) ([b267c74](https://github.com/vincenthsh/fogg/commit/b267c741242e1b5659a2ed2e17c437178f97218e))
+
 ## [0.92.1](https://github.com/vincenthsh/fogg/compare/v0.92.0...v0.92.1) (2024-04-24)
 
 
