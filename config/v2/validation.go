@@ -50,6 +50,7 @@ func (c *Config) Validate() ([]string, error) {
 	errs = multierror.Append(errs, c.ValidateSnowflakeProviders())
 	errs = multierror.Append(errs, c.ValidateBlessProviders())
 	errs = multierror.Append(errs, c.ValidateOktaProviders())
+	errs = multierror.Append(errs, c.ValidateGenericProviders())
 	errs = multierror.Append(errs, c.validateModules())
 	errs = multierror.Append(errs, c.ValidateTravis())
 	errs = multierror.Append(errs, c.ValidateGithubActionsCI())
@@ -200,7 +201,16 @@ func (p *GenericProvider) Validate(name string, component string) error {
 	if p.Version == nil || len(*p.Version) == 0 {
 		errs = multierror.Append(errs, fmt.Errorf("required provider %q requires version in %s", name, component))
 	}
-	return errs
+	if p.Config["assume_role"] != nil {
+		// "role" key must be provided in assume_role map
+		valueMap, ok := p.Config["assume_role"].(map[string]any)
+		if !ok {
+			errs = multierror.Append(errs, fmt.Errorf("required provider %q requires 'assume_role' to be map (cast failed) in %s", name, component))
+		} else if valueMap["role"] == nil && valueMap["role_arn"] == nil {
+			errs = multierror.Append(errs, fmt.Errorf("required provider %q requires 'assume_role' map to contain at least 'role' key in %s (received: %v)", name, component, valueMap))
+		}
+	}
+	return errs.ErrorOrNil()
 }
 
 func (p *SnowflakeProvider) Validate(component string) error {
@@ -277,7 +287,7 @@ func (c *Config) ValidateGenericProviders() error {
 			}
 		}
 	})
-	return errs
+	return errs.ErrorOrNil()
 }
 
 func (c *Config) ValidateTravis() error {

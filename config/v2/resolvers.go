@@ -810,18 +810,35 @@ func resolveGenericProvider(
 	if p.Enabled != nil {
 		enabled = *p.Enabled
 	}
+	// special assume role config block handling
+	// if assume_role map is provided, add region
+	requiresRegion := false
 	for key, value := range p.Config {
 		if value == nil {
 			delete(config, key)
 		} else {
-			// specially for AWS associate assume role
-			if key == "assume_role" {
-				tmp := fmt.Sprintf("arn:aws:iam::%s:role/%s", *awsConfig.AccountID, value)
-				config["assume_role"] = tmp
-			} else {
+			switch key {
+			case "assume_role":
+				// build assume_role_block
+				// ref: https://registry.terraform.io/providers/hashicorp/awscc/latest/docs#assume-role
+				// ValidateAWSProvider should ensure AccountID is not nil
+				// GenericProvider.Validate ensures can cast and "role" key exists
+				valueMap := value.(map[string]any)
+				if valueMap["role_arn"] == nil {
+					valueMap["role_arn"] = fmt.Sprintf("arn:aws:iam::%s:role/%s", *awsConfig.AccountID, valueMap["role"])
+					delete(valueMap, "role")
+				}
+				config[key] = valueMap
+				requiresRegion = true
+			default:
 				config[key] = value
 			}
 		}
+	}
+	if requiresRegion && config["region"] == nil {
+		// inherit resolved awsConfig region and accountID
+		// TODO: handle additionalRegions/additionalProvider configuration?
+		config["region"] = *awsConfig.Region
 	}
 	return source, customProvider, version, enabled
 }

@@ -22,6 +22,8 @@ provider "bar" {
 provider "foo" {
   foo_host = "nonprod"
 }
+provider "fred" {
+}
 provider "qux" {
 }
 terraform {
@@ -62,6 +64,10 @@ terraform {
     foo = {
       source  = "czi/foo"
       version = "~> 0.2"
+    }
+    fred = {
+      source  = "czi/bar"
+      version = "~> 0.1.0"
     }
     local = {
       source  = "hashicorp/local"

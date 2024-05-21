@@ -269,6 +269,82 @@ func TestValidateAWSProvider(t *testing.T) {
 	}
 }
 
+func TestValidateGenericProvider(t *testing.T) {
+	validGeneric := &GenericProvider{
+		Source: "foo",
+		CommonProvider: CommonProvider{
+			Version: util.StrPtr("1.1.1"),
+		},
+	}
+	validAssumeRole := &GenericProvider{
+		Source: "foo",
+		CommonProvider: CommonProvider{
+			Version: util.StrPtr("1.1.1"),
+		},
+		Config: map[string]any{
+			"assume_role": map[string]any{
+				"role": "foo",
+			},
+		},
+	}
+
+	invalidNothing := &GenericProvider{}
+	invalidSource := &GenericProvider{
+		Source: "",
+	}
+	invalidAssumeRoleNothing := &GenericProvider{
+		Source: "foo",
+		CommonProvider: CommonProvider{
+			Version: util.StrPtr("1.1.1"),
+		},
+		Config: map[string]any{
+			"assume_role": map[string]string{},
+		},
+	}
+	invalidAssumeRoleConfig := &GenericProvider{
+		Source: "foo",
+		CommonProvider: CommonProvider{
+			Version: util.StrPtr("1.1.1"),
+		},
+		Config: map[string]any{
+			"assume_role": map[string]string{
+				"foo": "bar",
+			},
+		},
+	}
+
+	type args struct {
+		p         *GenericProvider
+		component string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{"valid generic", args{validGeneric, "valid"}, false},
+		{"invalid generic nothing", args{invalidNothing, "invalid"}, true},
+		{"invalid generic source", args{invalidSource, "invalid"}, true},
+		{"valid generic assume_role", args{validAssumeRole, "valid-role"}, false},
+		{"invalid generic assume_role nothing", args{invalidAssumeRoleNothing, "invalid-nothing"}, true},
+		{"invalid generic assume_role missing role", args{invalidAssumeRoleConfig, "invalid-role-missing"}, true},
+	}
+	for _, test := range tests {
+		tt := test
+		t.Run(tt.name, func(t *testing.T) {
+			assert := require.New(t)
+			err := tt.args.p.Validate("generic", tt.args.component)
+
+			if tt.wantErr {
+				assert.Error(err)
+			} else {
+				assert.NoError(err)
+			}
+			// t.Errorf("genericProvider.Validate() error = %v, wantErr %v", err, tt.wantErr)
+		})
+	}
+}
+
 func TestConfig_ValidateAWSProviders(t *testing.T) {
 	tests := []struct {
 		fileName string

@@ -28,6 +28,9 @@ defaults:
     bar:
       version: "~> 0.1.0"
       source: "czi/bar"
+    fred:
+      version: "~> 0.1.0"
+      source: "czi/bar"
     qux:
       version: "~> 0.1.0"
       source: "czi/qux"
@@ -48,7 +51,15 @@ envs:
         custom_provider: false
         config:
           baz_token: prod_token_arn
-          aws_assume_role: "TerraformExecutionRole"
+          assume_role:
+            role: TerraformExecutionRole
+            session_name: "foo"
+      fred:
+        custom_provider: false
+        config:
+          assume_role:
+            role_arn: arn:aws:iam::1111111111111111:role/TerraformExecutionRole
+            session_name: "foo"
     components:
       network: {}
   stg:
