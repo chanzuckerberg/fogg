@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.92.3](https://github.com/vincenthsh/fogg/compare/v0.92.2...v0.92.3) (2024-05-21)
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go in the gomod group ([#302](https://github.com/vincenthsh/fogg/issues/302)) ([095fd29](https://github.com/vincenthsh/fogg/commit/095fd29a0dd0c81805af94c73948dcdf48508d1a))
+* bump google-github-actions/release-please-action ([#300](https://github.com/vincenthsh/fogg/issues/300)) ([53c84af](https://github.com/vincenthsh/fogg/commit/53c84af9991649d32d55db6facc72dd286b86d95))
+
+
+### BugFixes
+
+* generic provider format ([#303](https://github.com/vincenthsh/fogg/issues/303)) ([bb88bac](https://github.com/vincenthsh/fogg/commit/bb88bacabca812153f1f85983be16ceaa70d7239))
+
 ## [0.92.2](https://github.com/vincenthsh/fogg/compare/v0.92.1...v0.92.2) (2024-05-20)
 
 
