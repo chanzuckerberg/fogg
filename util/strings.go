@@ -2,9 +2,27 @@ package util
 
 import (
 	"strings"
+	"unicode"
 
 	"github.com/sirupsen/logrus"
 )
+
+const RootPath = "terraform"
+
+func ConvertToSnake(s string) string {
+	var result string
+	s = strings.Replace(s, "-", "_", -1)
+	v := []rune(s)
+
+	for i := 0; i < len(v); i++ {
+		if i != 0 && unicode.IsUpper(v[i]) && (i+1 < len(v) && !unicode.IsUpper(v[i+1])) {
+			result += "_"
+		}
+		result += strings.ToLower(string(v[i]))
+	}
+
+	return result
+}
 
 func SliceContainsString(haystack []string, needle string) bool {
 	for _, s := range haystack {

@@ -87,8 +87,9 @@ func Test_buildTravisCI_Profiles(t *testing.T) {
 			},
 		},
 	}
-
-	w, err := c.Validate()
+	fs, _, e := util.TestFs()
+	r.NoError(e)
+	w, err := c.Validate(fs)
 	r.NoError(err)
 	r.Len(w, 0)
 
@@ -147,8 +148,9 @@ func Test_buildTravisCI_TestBuckets(t *testing.T) {
 			},
 		},
 	}
-
-	w, err := c.Validate()
+	fs, _, e := util.TestFs()
+	r.NoError(e)
+	w, err := c.Validate(fs)
 	r.NoError(err)
 	r.Len(w, 0)
 
@@ -203,8 +205,9 @@ func Test_buildCircleCI_Profiles(t *testing.T) {
 			},
 		},
 	}
-
-	w, err := c.Validate()
+	fs, _, e := util.TestFs()
+	r.NoError(e)
+	w, err := c.Validate(fs)
 	r.NoError(err)
 	r.Len(w, 0)
 
@@ -265,8 +268,9 @@ func Test_buildCircleCI_ProfilesDisabled(t *testing.T) {
 			},
 		},
 	}
-
-	w, err := c.Validate()
+	fs, _, e := util.TestFs()
+	r.NoError(e)
+	w, err := c.Validate(fs)
 	r.NoError(err)
 	r.Len(w, 0)
 

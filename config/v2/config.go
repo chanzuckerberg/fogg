@@ -549,6 +549,10 @@ type DependsOn struct {
 	Components []string `yaml:"components"`
 	//RelativeGlobs to the component
 	RelativeGlobs []string `yaml:"relative_globs"`
+	//Absolute file paths,
+	//fogg validates their existence and
+	//generates locals block for their content
+	Files []string `yaml:"files"`
 }
 
 type CIProviderConfig struct {

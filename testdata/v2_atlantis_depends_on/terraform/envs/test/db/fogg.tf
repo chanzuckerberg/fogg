@@ -115,3 +115,7 @@ variable "aws_accounts" {
 
   }
 }
+locals {
+  bar         = jsondecode(file("../../../bar.json"))
+  foo_foo_foo = yamldecode(file("../../../foo-fooFoo.yaml"))
+}

@@ -48,6 +48,8 @@ type ComponentCommon struct {
 	Backend               Backend                    `yaml:"backend"`
 	ComponentBackends     map[string]Backend         `yaml:"comonent_backends"`
 	AutoplanRelativeGlobs []string                   `yaml:"autoplan_relative_globs"`
+	AutoplanFiles         []string                   `yaml:"autoplan_files"`
+	LocalsBlock           map[string]any             `yaml:"locals_block"`
 	HasDependsOn          bool                       `yaml:"comonent_backends_filtered"`
 	Env                   string                     ` yaml:"env"`
 	ExtraVars             map[string]string          `yaml:"extra_vars"`
@@ -682,6 +684,8 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 
 			c.ComponentBackends = filtered
 			c.AutoplanRelativeGlobs = v2.ResolveOptionalStringSlice(v2.DependsOnRelativeGlobsGetter, defaults.Common, envConf.Common, componentConf.Common)
+			c.AutoplanFiles = v2.ResolveOptionalStringSlice(v2.DependsOnFilesGetter, defaults.Common, envConf.Common, componentConf.Common)
+			c.LocalsBlock = make(map[string]any)
 			envPlan.Components[name] = c
 		}
 

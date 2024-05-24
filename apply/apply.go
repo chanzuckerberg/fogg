@@ -29,8 +29,6 @@ import (
 	"github.com/spf13/afero"
 )
 
-const rootPath = "terraform"
-
 // Apply will run a plan and apply all the changes to the current repo.
 func Apply(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool) error {
 	if !upgrade {
@@ -241,7 +239,7 @@ func applyTFE(fs afero.Fs, plan *plan.Plan, tmpl *templates.T) error {
 	}
 
 	logrus.Debug("applying tfe")
-	path := fmt.Sprintf("%s/tfe", rootPath)
+	path := fmt.Sprintf("%s/tfe", util.RootPath)
 	err := fs.MkdirAll(path, 0755)
 	if err != nil {
 		return errors.Wrapf(err, "unable to make directory %s", path)
@@ -323,7 +321,7 @@ func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates, commonTemplates fs.FS) 
 
 func applyGlobal(fs afero.Fs, p plan.Component, repoBox, commonBox fs.FS) error {
 	logrus.Debug("applying global")
-	path := fmt.Sprintf("%s/global", rootPath)
+	path := fmt.Sprintf("%s/global", util.RootPath)
 	e := fs.MkdirAll(path, 0755)
 	if e != nil {
 		return errs.WrapUserf(e, "unable to make directory %s", path)
@@ -333,7 +331,7 @@ func applyGlobal(fs afero.Fs, p plan.Component, repoBox, commonBox fs.FS) error 
 
 func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox, commonBox fs.FS) (e error) {
 	for account, accountPlan := range p.Accounts {
-		path := fmt.Sprintf("%s/accounts/%s", rootPath, account)
+		path := fmt.Sprintf("%s/accounts/%s", util.RootPath, account)
 		e = fs.MkdirAll(path, 0755)
 		if e != nil {
 			return errs.WrapUser(e, "unable to make directories for accounts")
@@ -348,7 +346,7 @@ func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox, commonBox fs.FS) (e er
 
 func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox, commonBox fs.FS) (e error) {
 	for module, modulePlan := range p {
-		path := fmt.Sprintf("%s/modules/%s", rootPath, module)
+		path := fmt.Sprintf("%s/modules/%s", util.RootPath, module)
 		e = fs.MkdirAll(path, 0755)
 		if e != nil {
 			return errs.WrapUserf(e, "unable to make path %s", path)
@@ -373,7 +371,7 @@ func applyEnvs(
 	pathModuleConfigs = make(PathModuleConfigs)
 	for env, envPlan := range p.Envs {
 		logrus.Debugf("applying %s", env)
-		path := fmt.Sprintf("%s/envs/%s", rootPath, env)
+		path := fmt.Sprintf("%s/envs/%s", util.RootPath, env)
 		err = fs.MkdirAll(path, 0755)
 		if err != nil {
 			return nil, errs.WrapUserf(err, "unable to make directory %s", path)
@@ -384,7 +382,7 @@ func applyEnvs(
 		}
 		reg := registry.NewClient(nil, nil)
 		for component, componentPlan := range envPlan.Components {
-			path = fmt.Sprintf("%s/envs/%s/%s", rootPath, env, component)
+			path = fmt.Sprintf("%s/envs/%s/%s", util.RootPath, env, component)
 			err = fs.MkdirAll(path, 0755)
 			if err != nil {
 				return nil, errs.WrapUser(err, "unable to make directories for component")
@@ -396,6 +394,25 @@ func applyEnvs(
 			componentBox, ok := componentBoxes[kind]
 			if !ok {
 				return nil, errs.NewUserf("component of kind '%s' not supported, must be 'terraform'", kind)
+			}
+
+			if componentPlan.AutoplanFiles != nil {
+				for _, file := range componentPlan.AutoplanFiles {
+					relPath, _ := filepath.Rel(path, file)
+					ext := filepath.Ext(file)
+					filename := filepath.Base(file)
+					key := strings.TrimSuffix(filename, ext)
+					key = util.ConvertToSnake(key)
+
+					switch ext {
+					case ".yaml", ".yml":
+						componentPlan.LocalsBlock[key] = fmt.Sprintf("yamldecode(file(%q))", relPath)
+					case ".json":
+						componentPlan.LocalsBlock[key] = fmt.Sprintf("jsondecode(file(%q))", relPath)
+					default:
+						componentPlan.LocalsBlock[key] = fmt.Sprintf("file(%q)", relPath)
+					}
+				}
 			}
 
 			err := applyTree(fs, componentBox, commonBox, path, componentPlan)

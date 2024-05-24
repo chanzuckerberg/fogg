@@ -2,15 +2,21 @@ package v2
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 
 	"github.com/chanzuckerberg/fogg/errs"
+	"github.com/chanzuckerberg/fogg/util"
 	multierror "github.com/hashicorp/go-multierror"
 	goVersion "github.com/hashicorp/go-version"
 	"github.com/pkg/errors"
+	"github.com/spf13/afero"
 	validator "gopkg.in/go-playground/validator.v9"
 )
+
+const rootPath = "terraform"
 
 var validCICommands = map[string]struct{}{
 	"check": {},
@@ -18,7 +24,7 @@ var validCICommands = map[string]struct{}{
 }
 
 // Validate validates the config
-func (c *Config) Validate() ([]string, error) {
+func (c *Config) Validate(fs afero.Fs) ([]string, error) {
 	if c == nil {
 		return nil, errs.NewInternal("config is nil")
 	}
@@ -55,6 +61,7 @@ func (c *Config) Validate() ([]string, error) {
 	errs = multierror.Append(errs, c.ValidateTravis())
 	errs = multierror.Append(errs, c.ValidateGithubActionsCI())
 	errs = multierror.Append(errs, c.validateTFE())
+	errs = multierror.Append(errs, c.ValidateFileDependencies(fs))
 
 	// refactor to make it easier to manage these
 	w, e := c.ValidateToolsTfLint()
@@ -501,4 +508,28 @@ func (c *Config) validateModules() error {
 
 func nonEmptyString(s *string) bool {
 	return s != nil && len(*s) > 0
+}
+
+func (c *Config) ValidateFileDependencies(fs afero.Fs) error {
+	var errs *multierror.Error
+	c.WalkComponents(func(component string, comms ...Common) {
+		files := ResolveOptionalStringSlice(DependsOnFilesGetter, comms...)
+		keys := make(map[string]bool)
+		for _, file := range files {
+			ext := filepath.Ext(file)
+			filename := filepath.Base(file)
+			key := strings.TrimSuffix(filename, ext)
+			key = util.ConvertToSnake(key)
+			if keys[key] {
+				errs = multierror.Append(errs, fmt.Errorf("component: %s - local.%s, file dependency naming collision. %v\n", component, key, files))
+			} else {
+				keys[key] = true
+			}
+			if _, err := fs.Stat(file); os.IsNotExist(err) {
+				errs = multierror.Append(errs, fmt.Errorf("component: %s - File does not exist: %s\n", component, file))
+			}
+		}
+	})
+
+	return errs.ErrorOrNil()
 }

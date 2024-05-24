@@ -10,9 +10,11 @@ projects:
     autoplan:
       when_modified:
         - '*.tf'
+        - ../../../bar.json
+        - ../../../foo-fooFoo.yaml
         - ../../../modules/my_module/**/*.tf
         - ../../../modules/my_module/**/*.tf.json
-        - ../../foo.yaml
+        - ./*.enc.yaml
       enabled: true
     apply_requirements:
       - approved

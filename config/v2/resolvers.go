@@ -1382,3 +1382,10 @@ func DependsOnRelativeGlobsGetter(comm Common) []string {
 	}
 	return comm.DependsOn.RelativeGlobs
 }
+
+func DependsOnFilesGetter(comm Common) []string {
+	if comm.DependsOn == nil {
+		return nil
+	}
+	return comm.DependsOn.Files
+}

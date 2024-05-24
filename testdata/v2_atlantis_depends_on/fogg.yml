@@ -56,7 +56,10 @@ envs:
           components:
             - vpc
           relative_globs:
-            - "../../foo.yaml"
+            - "./*.enc.yaml"
+          files:
+            - "terraform/foo-fooFoo.yaml"
+            - "terraform/bar.json"
         modules:
           - source: "terraform/modules/my_module"
 modules:

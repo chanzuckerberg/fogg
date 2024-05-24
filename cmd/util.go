@@ -32,7 +32,7 @@ func readAndValidateConfig(fs afero.Fs, configFile string) (*v2.Config, []string
 	logrus.Debug("CONFIG")
 	logrus.Debugf("%s\n=====", pretty.Sprint(conf))
 
-	warnings, e := conf.Validate()
+	warnings, e := conf.Validate(fs)
 	return conf, warnings, e
 }
 

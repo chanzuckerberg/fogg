@@ -388,7 +388,7 @@ version: 2
 	c, e := v2.ReadConfig(fs, []byte(yml), "fogg.yml")
 	r.NoError(e)
 
-	w, e := c.Validate()
+	w, e := c.Validate(fs)
 	r.NoError(e)
 	r.Len(w, 0)
 

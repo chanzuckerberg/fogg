@@ -150,3 +150,11 @@ variable "aws_accounts" {
   {{ end }}
   }
 }
+
+{{- if .LocalsBlock }}
+locals {
+{{ range $key, $val := .LocalsBlock }}
+  {{ $key }} = {{ $val }}
+{{ end }}
+}
+{{- end }}

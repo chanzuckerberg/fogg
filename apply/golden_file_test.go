@@ -55,12 +55,42 @@ func TestIntegration(t *testing.T) {
 		t.Run(tt.fileName, func(t *testing.T) {
 			r := require.New(t)
 
-			testdataFs := afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(util.ProjectRoot(), "testdata", tt.fileName))
 			configFile := "fogg.yml"
+
+			// delete all files except fogg.yml, foo.yaml, bar.json
+			var fixtureFiles = []string{
+				configFile,
+				"terraform/foo-fooFoo.yaml", // sample file for decode tests
+				"terraform/bar.json",
+			}
+			// delete all dirs except conf.d and foo_modules directories
+			var fixtureDirs = []string{
+				"fogg.d",
+				"foo_modules",
+			}
+
+			isFixtureFile := func(path string) bool {
+				for _, file := range fixtureFiles {
+					if path == file {
+						return true
+					}
+				}
+				return false
+			}
+
+			isInFixtureDir := func(path string) bool {
+				for _, dir := range fixtureDirs {
+					if strings.Contains(path, dir) {
+						return true
+					}
+				}
+				return false
+			}
+
+			testdataFs := afero.NewBasePathFs(afero.NewOsFs(), filepath.Join(util.ProjectRoot(), "testdata", tt.fileName))
 			if *updateGoldenFiles {
-				// delete all files except fogg.yml and conf.d, foo_modules directories
 				e := afero.Walk(testdataFs, ".", func(path string, info os.FileInfo, err error) error {
-					if !info.IsDir() && !(path == configFile) && !(strings.Contains(path, "fogg.d")) && !(strings.Contains(path, "foo_modules")) {
+					if !info.IsDir() && !isFixtureFile(path) && !isInFixtureDir(path) {
 						return testdataFs.Remove(path)
 					}
 					return nil
@@ -72,7 +102,7 @@ func TestIntegration(t *testing.T) {
 				fmt.Printf("conf %#v\n", conf)
 				fmt.Println("READ CONFIG")
 
-				w, e := conf.Validate()
+				w, e := conf.Validate(testdataFs)
 				r.NoError(e)
 				r.Len(w, 0)
 
@@ -82,48 +112,41 @@ func TestIntegration(t *testing.T) {
 				fs, _, e := util.TestFs()
 				r.NoError(e)
 
-				// copy fogg.yml into the tmp test dir (so that it doesn't show up as a diff)
-				configContents, e := afero.ReadFile(testdataFs, configFile)
-				r.NoError(e)
-				configMode, e := testdataFs.Stat(configFile)
-				r.NoError(e)
-				r.NoError(afero.WriteFile(fs, configFile, configContents, configMode.Mode()))
-				// if fogg.d exists, copy all partial configs too
-				confDir, e := testdataFs.Stat("fogg.d")
-				fs.Mkdir("fogg.d", 0700)
-				if e == nil && confDir.IsDir() {
-					afero.Walk(testdataFs, "fogg.d", func(path string, info os.FileInfo, err error) error {
-						if !info.IsDir() {
-							partialConfigContents, e := afero.ReadFile(testdataFs, path)
-							r.NoError(e)
-							r.NoError(afero.WriteFile(fs, path, partialConfigContents, info.Mode()))
-							return nil
-						}
-						return nil
-					})
+				// Copy all fixtures into the tmp test fs (so that they don't show up as a diff)
+				for _, file := range fixtureFiles {
+					if _, err := testdataFs.Stat(file); err == nil {
+						contents, e := afero.ReadFile(testdataFs, file)
+						r.NoError(e)
+						mode, e := testdataFs.Stat(file)
+						r.NoError(e)
+						directory := filepath.Dir(file)
+						e = fs.MkdirAll(directory, 0755)
+						r.NoError(e)
+						r.NoError(afero.WriteFile(fs, file, contents, mode.Mode()))
+					}
 				}
-				// if foo_modules exists, copy these too...
-				fooModulesDir, e := testdataFs.Stat("foo_modules")
-				fs.Mkdir("foo_modules", 0700)
-				if e == nil && fooModulesDir.IsDir() {
-					afero.Walk(testdataFs, "foo_modules", func(path string, info os.FileInfo, err error) error {
-						if !info.IsDir() {
-							moduleFileContents, e := afero.ReadFile(testdataFs, path)
-							r.NoError(e)
-							r.NoError(afero.WriteFile(fs, path, moduleFileContents, info.Mode()))
+				// Copy all fixtures directories into the tmp test fs
+				for _, dir := range fixtureDirs {
+					if dirInfo, err := testdataFs.Stat(dir); err == nil && dirInfo.IsDir() {
+						fs.Mkdir(dir, 0700)
+						afero.Walk(testdataFs, dir, func(path string, info os.FileInfo, err error) error {
+							if !info.IsDir() {
+								contents, e := afero.ReadFile(testdataFs, path)
+								r.NoError(e)
+								r.NoError(afero.WriteFile(fs, path, contents, info.Mode()))
+							} else {
+								fs.Mkdir(path, 0700)
+							}
 							return nil
-						} else {
-							fs.Mkdir(path, 0700)
-						}
-						return nil
-					})
+						})
+					}
 				}
 
 				conf, e := config.FindAndReadConfig(fs, configFile)
 				r.NoError(e)
 				fmt.Printf("conf %#v\n", conf)
 
-				w, e := conf.Validate()
+				w, e := conf.Validate(fs)
 				r.NoError(e)
 				r.Len(w, 0)
 

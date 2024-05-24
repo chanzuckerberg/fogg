@@ -64,7 +64,7 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 	c2, err := v2.ReadConfig(fs, b, "fogg.yml")
 	r.Nil(err)
 
-	w, err := c2.Validate()
+	w, err := c2.Validate(fs)
 	r.NoError(err)
 	r.Len(w, 0)
 
@@ -165,7 +165,7 @@ func buildPlan(t *testing.T, testfile string) *Plan {
 	c2, err := v2.ReadConfig(fs, b, "fogg.yml")
 	r.Nil(err)
 
-	w, err := c2.Validate()
+	w, err := c2.Validate(fs)
 	r.NoError(err)
 	r.Len(w, 0)
 

@@ -91,9 +91,10 @@ func TestValidateBackends(t *testing.T) {
 		tt := test
 		t.Run(tt.kind, func(t *testing.T) {
 			r := require.New(t)
-
+			fs, _, e := util.TestFs()
+			r.NoError(e)
 			c := confBackendKind(t, tt.kind)
-			_, err := c.Validate()
+			_, err := c.Validate(fs)
 			if tt.wantErr {
 				r.Error(err)
 			} else {
@@ -457,6 +458,87 @@ func TestValidateBackend(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := ValidateBackend(tt.backend, tt.name); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBackend() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestValidateFileDependencies(t *testing.T) {
+	r := require.New(t)
+	fs := afero.NewMemMapFs()
+
+	// Create test files
+	err := afero.WriteFile(fs, "file1.txt", []byte("test"), 0644)
+	r.NoError(err)
+	err = afero.WriteFile(fs, "file2.txt", []byte("test"), 0644)
+	r.NoError(err)
+	err = afero.WriteFile(fs, "fileTest.txt", []byte("test"), 0644)
+	r.NoError(err)
+	err = afero.WriteFile(fs, "file-test.txt", []byte("test"), 0644)
+	r.NoError(err)
+
+	var cases = []struct {
+		label   string
+		config  *Config
+		wantErr bool
+	}{
+		{
+			label: "valid config",
+			config: &Config{
+				Defaults: Defaults{
+					Common: Common{
+						DependsOn: &DependsOn{
+							Files: []string{"file1.txt", "file2.txt"},
+						},
+					},
+				},
+				Envs: map[string]Env{
+					"dev": {
+						Common: Common{
+							DependsOn: &DependsOn{
+								Files: []string{"file1.txt"},
+							},
+						},
+						Components: map[string]Component{
+							"web": {
+								Common: Common{
+									DependsOn: &DependsOn{
+										Files: []string{"file2.txt"},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			label: "invalid config",
+			config: &Config{
+				Envs: map[string]Env{
+					"dev": {
+						Components: map[string]Component{
+							"web": {
+								Common: Common{
+									DependsOn: &DependsOn{
+										Files: []string{"fileTest.txt", "file-test.txt"},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			wantErr: true,
+		},
+	}
+
+	for _, test := range cases {
+		tt := test
+		t.Run(tt.label, func(t *testing.T) {
+			if err := tt.config.ValidateFileDependencies(fs); (err != nil) != tt.wantErr {
+				t.Errorf("Config.ValidateFileDependencies(fs) error = %v, wantErr %v (err != nil) %v", err, tt.wantErr, (err != nil))
 			}
 		})
 	}

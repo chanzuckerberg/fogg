@@ -21,7 +21,7 @@ func TestReadConfig(t *testing.T) {
 	c, e := ReadConfig(fs, b, "fogg.yml")
 	r.NoError(e)
 
-	w, e := c.Validate()
+	w, e := c.Validate(fs)
 	r.Error(e)
 	r.Len(w, 0)
 }
@@ -39,7 +39,7 @@ func TestReadConfigYaml(t *testing.T) {
 	c, e := ReadConfig(fs, b2, "fogg.yml")
 	r.NoError(e)
 
-	w, e := c.Validate()
+	w, e := c.Validate(fs)
 	r.NoError(e)
 	r.Len(w, 0)
 }
@@ -59,7 +59,7 @@ func TestReadSnowflakeProviderYaml(t *testing.T) {
 	r.NoError(e)
 	r.NotNil(c)
 
-	w, e := c.Validate()
+	w, e := c.Validate(fs)
 	r.NoError(e)
 	r.Len(w, 0)
 
@@ -85,7 +85,7 @@ func TestReadOktaProvider(t *testing.T) {
 	r.NoError(e)
 	r.NotNil(c)
 
-	w, e := c.Validate()
+	w, e := c.Validate(fs)
 	r.NoError(e)
 	r.Len(w, 0)
 
@@ -110,7 +110,7 @@ func TestReadBlessProviderYaml(t *testing.T) {
 	r.NoError(e)
 	r.NotNil(c)
 
-	w, e := c.Validate()
+	w, e := c.Validate(fs)
 	r.NoError(e)
 	r.Len(w, 0)
 

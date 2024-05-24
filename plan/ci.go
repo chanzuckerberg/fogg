@@ -2,6 +2,7 @@ package plan
 
 import (
 	"fmt"
+	"path/filepath"
 	"slices"
 	"sort"
 
@@ -404,6 +405,13 @@ func (p *Plan) buildAtlantisConfig(c *v2.Config) AtlantisConfig {
 				whenModified := []string{"*.tf"}
 				if d.AutoplanRelativeGlobs != nil {
 					whenModified = append(whenModified, d.AutoplanRelativeGlobs...)
+				}
+				if d.AutoplanFiles != nil {
+					for _, f := range d.AutoplanFiles {
+						path := fmt.Sprintf("%s/envs/%s/%s", util.RootPath, envName, cName)
+						relPath, _ := filepath.Rel(path, f)
+						whenModified = append(whenModified, relPath)
+					}
 				}
 				// if global autoplan remote states is disabled or
 				// the component has no dependencies defined, explicitly ignore `remote-states.tf`
