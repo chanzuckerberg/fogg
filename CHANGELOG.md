@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.92.4](https://github.com/vincenthsh/fogg/compare/v0.92.3...v0.92.4) (2024-05-29)
+
+
+### Features
+
+* DependsOn files ([#305](https://github.com/vincenthsh/fogg/issues/305)) ([76fd9e3](https://github.com/vincenthsh/fogg/commit/76fd9e3b83fc26bada3ffb4ba47a6154e85c1b1d)), closes [#304](https://github.com/vincenthsh/fogg/issues/304)
+
+
+### Misc
+
+* Bump atlantis to 0.28.1 ([#309](https://github.com/vincenthsh/fogg/issues/309)) ([7a64386](https://github.com/vincenthsh/fogg/commit/7a64386a283feeecbcf729cb113567b422a24f75))
+* bump github.com/aws/aws-sdk-go in the gomod group ([#308](https://github.com/vincenthsh/fogg/issues/308)) ([29aed7e](https://github.com/vincenthsh/fogg/commit/29aed7e2454693f31c207efcb66f6e155571a123))
+* bump github.com/hashicorp/go-version in the terraform group ([#307](https://github.com/vincenthsh/fogg/issues/307)) ([2b38171](https://github.com/vincenthsh/fogg/commit/2b38171ada363ccec303f60c6c85a510b9f84ded))
+
 ## [0.92.3](https://github.com/vincenthsh/fogg/compare/v0.92.2...v0.92.3) (2024-05-21)
 
 
