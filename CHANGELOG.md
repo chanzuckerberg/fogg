@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.18](https://github.com/chanzuckerberg/fogg/compare/v0.92.17...v0.92.18) (2024-05-30)
+
+
+### Misc
+
+* Bump github.com/hashicorp/go-version from 1.6.0 to 1.7.0 ([#1056](https://github.com/chanzuckerberg/fogg/issues/1056)) ([28c9cf0](https://github.com/chanzuckerberg/fogg/commit/28c9cf033193baf22678030e2be72e339ce3e246))
+
 ## [0.92.17](https://github.com/chanzuckerberg/fogg/compare/v0.92.16...v0.92.17) (2024-05-20)
 
 
