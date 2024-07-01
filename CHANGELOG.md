@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.92.20](https://github.com/chanzuckerberg/fogg/compare/v0.92.19...v0.92.20) (2024-07-01)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.53.14 to 1.53.19 ([#1061](https://github.com/chanzuckerberg/fogg/issues/1061)) ([89cc479](https://github.com/chanzuckerberg/fogg/commit/89cc47974cd384a670389c91d02aefdf20ad7dab))
+* Bump github.com/aws/aws-sdk-go from 1.53.19 to 1.54.2 ([#1064](https://github.com/chanzuckerberg/fogg/issues/1064)) ([1e2392f](https://github.com/chanzuckerberg/fogg/commit/1e2392f2644566f584f8010ba259c56084fe9bff))
+* Bump github.com/aws/aws-sdk-go from 1.54.2 to 1.54.6 ([#1065](https://github.com/chanzuckerberg/fogg/issues/1065)) ([3947328](https://github.com/chanzuckerberg/fogg/commit/39473288d52be2c9eac434cec0d97c210b520485))
+* Bump github.com/aws/aws-sdk-go from 1.54.6 to 1.54.11 ([#1069](https://github.com/chanzuckerberg/fogg/issues/1069)) ([752fbad](https://github.com/chanzuckerberg/fogg/commit/752fbad9dfb85231fa1cb58865f276cd778e049f))
+* Bump github.com/hashicorp/go-getter from 1.7.4 to 1.7.5 ([#1066](https://github.com/chanzuckerberg/fogg/issues/1066)) ([8b7daee](https://github.com/chanzuckerberg/fogg/commit/8b7daee875582a8e06d3d239096bc4d11c5bdf9e))
+* Bump github.com/hashicorp/go-retryablehttp from 0.7.4 to 0.7.7 ([#1068](https://github.com/chanzuckerberg/fogg/issues/1068)) ([db1d386](https://github.com/chanzuckerberg/fogg/commit/db1d3864ed674392f4c995f2df2ac0f65e4827ef))
+* Bump github.com/hashicorp/hcl/v2 from 2.20.1 to 2.21.0 ([#1067](https://github.com/chanzuckerberg/fogg/issues/1067)) ([2780572](https://github.com/chanzuckerberg/fogg/commit/2780572e65415d299a61bb2071a66140ab4decd3))
+* Bump github.com/spf13/cobra from 1.8.0 to 1.8.1 ([#1063](https://github.com/chanzuckerberg/fogg/issues/1063)) ([e7b70aa](https://github.com/chanzuckerberg/fogg/commit/e7b70aae429ee88ed31f4eac95143232fcc4a06c))
+
 ## [0.92.19](https://github.com/chanzuckerberg/fogg/compare/v0.92.18...v0.92.19) (2024-06-03)
 
 
