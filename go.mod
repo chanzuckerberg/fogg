@@ -7,7 +7,7 @@ replace github.com/spf13/afero => github.com/chanzuckerberg/afero v0.0.0-2019051
 require (
 	github.com/Masterminds/sprig v2.22.0+incompatible
 	github.com/antzucaro/matchr v0.0.0-20191224151129-ab6ba461ddec
-	github.com/aws/aws-sdk-go v1.54.15
+	github.com/aws/aws-sdk-go v1.54.20
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/chanzuckerberg/go-misc v1.11.1
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc
@@ -34,7 +34,7 @@ require (
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.9.0
-	github.com/zclconf/go-cty v1.14.4
+	github.com/zclconf/go-cty v1.15.0
 	golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa
 	gopkg.in/go-playground/validator.v9 v9.31.0
 	gopkg.in/ini.v1 v1.67.0
