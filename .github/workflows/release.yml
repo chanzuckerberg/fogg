@@ -24,7 +24,7 @@ jobs:
       # For why we need to generate a token and not use the default
       - name: Generate token
         id: generate_token
-        uses: chanzuckerberg/github-app-token@v1.1.4
+        uses: tibdex/github-app-token@v2
         with:
           app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
           private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
