@@ -37,7 +37,7 @@ jobs:
           ssh-private-key: |
             ${{ secrets.SHARED_INFRA_DEPLOY_KEY }}
             ${{ secrets.SHARED_INFRA_DEPLOY_KEY2 }}
-
+            
       - run: .fogg/bin/fogg apply
       - uses: EndBug/add-and-commit@v9
         with:
