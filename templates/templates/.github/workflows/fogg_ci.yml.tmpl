@@ -2,7 +2,7 @@
 # Make improvements in fogg, so that everyone can benefit.
 {{- $githubActionsCI := . }}
 
-on: 
+on:
   push:
   merge_group:
 
@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Generate token
         id: generate_token
-        uses: chanzuckerberg/github-app-token@v1.1.4
+        uses: tibdex/github-app-token@v2
         with:
           app_id: {{`${{ secrets.CZI_GITHUB_HELPER_APP_ID }}`}}
           private_key: {{`${{ secrets.CZI_GITHUB_HELPER_PK }}`}}
@@ -35,7 +35,7 @@ jobs:
         with:
           path: ~/.fogg/cache
           key: fogg-cache-{{`${{ hashFiles('**/.fogg-version') }}`}}
-      - run: make setup      
+      - run: make setup
       - run: |
           mkdir -p ~/.ssh/
           ssh-keyscan -H github.com >> ~/.ssh/known_hosts
@@ -109,7 +109,7 @@ jobs:
     steps:
       - name: Generate token
         id: generate_token
-        uses: chanzuckerberg/github-app-token@v1.1.4
+        uses: tibdex/github-app-token@v2
         with:
           app_id: {{`${{ secrets.CZI_GITHUB_HELPER_APP_ID }}`}}
           private_key: {{`${{ secrets.CZI_GITHUB_HELPER_PK }}`}}
