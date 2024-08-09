@@ -7,5 +7,5 @@ atlantis.yaml linguist-generated
 .terraformignore linguist-generated
 .github/workflows/fogg_ci.yml linguist-generated
 .github/workflows/actions/setup-pre-commit/action.yml linguist-generated
-.pre-commit-config
-requirements.txt
+.pre-commit-config linguist-generated
+requirements.txt linguist-generated

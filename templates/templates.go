@@ -19,6 +19,10 @@ import (
 //go:embed templates/pre-commit/root/.pre-commit-config.yaml.tmpl
 //go:embed templates/circleci/.circleci/*
 //go:embed templates/common/*
+//go:embed templates/component/cdktf/.eslintrc.json.tmpl
+//go:embed templates/component/cdktf/.prettierrc.json.tmpl
+//go:embed templates/component/cdktf/.gitignore.create
+//go:embed templates/component/cdktf/.gitattributes.create
 //go:embed templates/component/*
 //go:embed templates/env/*
 //go:embed templates/module/*
@@ -27,13 +31,15 @@ import (
 //go:embed templates/repo
 //go:embed templates/repo/scripts/*
 //go:embed templates/repo/.fogg-version.tmpl
-//go:embed templates/repo/.gitattributes
-//go:embed templates/repo/.gitignore
+//go:embed templates/repo/.gitattributes.tmpl
+//go:embed templates/repo/.gitignore.tmpl
 //go:embed templates/repo/.terraformignore.tmpl
 //go:embed templates/repo/terraform.d/.keep.touch
 //go:embed templates/repo/.terraform.d/plugin-cache/.gitignore
 //go:embed templates/travis-ci/.travis.yml.tmpl
 //go:embed templates/tfe/*
+//go:embed templates/turbo/*
+//go:embed templates/turbo/root/.vscode/settings.json.tmpl
 var templates embed.FS
 
 type T struct {
@@ -49,6 +55,7 @@ type T struct {
 	Atlantis         fs.FS
 	PreCommitRoot    fs.FS
 	PreCommitActions fs.FS
+	TurboRoot        fs.FS
 	TFE              fs.FS
 }
 
@@ -66,6 +73,7 @@ var Templates = &T{
 	Common: mustFSSub("templates/common"),
 	Components: map[v2.ComponentKind]fs.FS{
 		v2.ComponentKindTerraform: mustFSSub("templates/component/terraform"),
+		v2.ComponentKindCDKTF:     mustFSSub("templates/component/cdktf"),
 	},
 	Env:              mustFSSub("templates/env"),
 	Module:           mustFSSub("templates/module"),
@@ -77,5 +85,6 @@ var Templates = &T{
 	Atlantis:         mustFSSub("templates/atlantis"),
 	PreCommitRoot:    mustFSSub("templates/pre-commit/root"),
 	PreCommitActions: mustFSSub("templates/pre-commit/actions"),
+	TurboRoot:        mustFSSub("templates/turbo/root"),
 	TFE:              mustFSSub("templates/tfe"),
 }

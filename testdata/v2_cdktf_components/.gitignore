@@ -7,7 +7,9 @@
 *.tfstate.backup
 *tfvars
 .terraform.lock.hcl
-
+# JS files
+node_modules
+.turbo
 # Module directory
 .terraform/
 
@@ -27,7 +29,6 @@
 /terraform.d/modules
 
 .DS_Store
-.vscode
 
 # Scala language server
 .metals

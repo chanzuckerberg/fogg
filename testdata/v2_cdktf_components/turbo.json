@@ -1,0 +1,9 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "synth": {
+      "inputs": ["./src/**/*", "./.fogg-component.yaml"],
+      "outputs": ["cdk.tf.json", "ci-cdk.tf.json", "assets/**"]
+    }
+  }
+}

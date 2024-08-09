@@ -2,10 +2,11 @@ fogg
 coverage.out
 dist
 .vscode
+!templates/templates/turbo/root/.vscode
+!testdata/**/.vscode
 
 coverage.txt
 
 bin
 node_modules/
 package-lock.json
-package.json

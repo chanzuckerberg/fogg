@@ -1,0 +1,2 @@
+{{ template "fogg_header" }}
+packages:{{ .CdktfComponents | dict | keys | sortAlpha | toYaml | nindent 2 }}

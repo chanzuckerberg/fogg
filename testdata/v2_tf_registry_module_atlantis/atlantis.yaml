@@ -10,7 +10,10 @@ projects:
     autoplan:
       when_modified:
         - '!remote-states.tf'
-        - '*.tf'
+        - '**/*.tf'
+        - '**/*.tf.json'
+        - '**/*.tfvars'
+        - '**/*.tfvars.json'
         - ../../../../foo_modules/bar/**/*.tf
         - ../../../../foo_modules/bar/**/*.tf.json
         - ../../../modules/my_module/**/*.tf

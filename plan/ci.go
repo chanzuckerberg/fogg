@@ -48,6 +48,14 @@ type AtlantisConfig struct {
 	RepoCfg *atlantis.RepoCfg
 }
 
+type TurboConfig struct {
+	Enabled         bool
+	Version         string
+	RootName        string
+	DevDependencies map[string]string
+	CdktfComponents map[string]Component
+}
+
 type PreCommitConfig struct {
 	Enabled            bool
 	Requirements       []string
@@ -379,6 +387,50 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 	}
 }
 
+func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
+	turboConfig := &TurboConfig{
+		Enabled:  false,
+		RootName: "fogg-monorepo",
+		DevDependencies: map[string]string{
+			"@types/node": "^20.6.0",
+			"turbo":       "^2.0.12",
+			"typescript":  "^5.4.0",
+		},
+	}
+
+	if c.Turbo != nil {
+		if c.Turbo.Enabled != nil {
+			turboConfig.Enabled = *c.Turbo.Enabled
+		}
+
+		if c.Turbo.Version != nil {
+			turboConfig.Version = *c.Turbo.Version
+		}
+
+		if c.Turbo.RootName != nil {
+			turboConfig.RootName = *c.Turbo.RootName
+		}
+
+		for _, dep := range c.Turbo.DevDependencies {
+			turboConfig.DevDependencies[dep.Name] = dep.Version
+		}
+
+		turboConfig.CdktfComponents = make(map[string]Component)
+		for env, envPlan := range p.Envs {
+			for component, componentPlan := range envPlan.Components {
+
+				kind := componentPlan.Kind.GetOrDefault()
+				if kind == v2.ComponentKindCDKTF {
+					// applyEnvs implementation detail
+					path := fmt.Sprintf("%s/envs/%s/%s", util.RootPath, env, component)
+					turboConfig.CdktfComponents[path] = componentPlan
+				}
+			}
+		}
+	}
+	return turboConfig
+}
+
 // buildAtlantisConfig must be build after Envs
 func (p *Plan) buildAtlantisConfig(c *v2.Config) AtlantisConfig {
 	enabled := false
@@ -402,7 +454,7 @@ func (p *Plan) buildAtlantisConfig(c *v2.Config) AtlantisConfig {
 						uniqueModuleSources = append(uniqueModuleSources, *m.Source)
 					}
 				}
-				whenModified := []string{"*.tf"}
+				whenModified := []string{"**/*.tf", "**/*.tf.json", "**/*.tfvars", "**/*.tfvars.json"}
 				if d.AutoplanRelativeGlobs != nil {
 					whenModified = append(whenModified, d.AutoplanRelativeGlobs...)
 				}

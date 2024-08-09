@@ -29,6 +29,7 @@ type Plan struct {
 	CircleCI        CircleCIConfig        `yaml:"circleci_ci"`
 	GitHubActionsCI GitHubActionsCIConfig `yaml:"github_actions_ci"`
 	Atlantis        AtlantisConfig        `yaml:"atlantis"`
+	Turbo           *TurboConfig          `yaml:"turbo"`
 	Version         string                `yaml:"version"`
 	TFE             *TFEConfig            `yaml:"tfe"`
 }
@@ -46,11 +47,11 @@ type ComponentCommon struct {
 	AccountBackends       map[string]Backend         `yaml:"account_backends"`
 	Accounts              map[string]*json.Number    `yaml:"all_accounts"`
 	Backend               Backend                    `yaml:"backend"`
-	ComponentBackends     map[string]Backend         `yaml:"comonent_backends"`
+	ComponentBackends     map[string]Backend         `yaml:"component_backends"`
 	AutoplanRelativeGlobs []string                   `yaml:"autoplan_relative_globs"`
 	AutoplanFiles         []string                   `yaml:"autoplan_files"`
 	LocalsBlock           map[string]any             `yaml:"locals_block"`
-	HasDependsOn          bool                       `yaml:"comonent_backends_filtered"`
+	HasDependsOn          bool                       `yaml:"component_backends_filtered"`
 	Env                   string                     ` yaml:"env"`
 	ExtraVars             map[string]string          `yaml:"extra_vars"`
 	Name                  string                     `yaml:"name"`
@@ -60,6 +61,9 @@ type ComponentCommon struct {
 	RequiredProviders     map[string]GenericProvider `yaml:"required_providers"`
 	ProviderVersions      map[string]ProviderVersion `yaml:"provider_versions"`
 	IntegrationRegistry   *string                    `yaml:"integration_registry"`
+
+	CdktfDependencies    map[string]string `yaml:"cdktf_dependencies"`
+	CdktfDevDependencies map[string]string `yaml:"cdktf_dev_dependencies"`
 
 	TfLint TfLint `yaml:"tf_lint"`
 
@@ -396,6 +400,8 @@ func Eval(c *v2.Config) (*Plan, error) {
 	if err != nil {
 		return nil, err
 	}
+	// build after envs to find cdktf components
+	p.Turbo = p.buildTurboRootConfig(c)
 
 	p.Modules = p.buildModules(c)
 	p.TravisCI = p.buildTravisCIConfig(c, v)
@@ -647,6 +653,37 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			componentPlan.Modules = componentConf.Modules
 			componentPlan.ProvidersMap = componentConf.ProvidersMap
 			componentPlan.PathToRepoRoot = "../../../../"
+			componentPlan.CdktfDependencies = map[string]string{
+				"@cdktf/provider-aws":        "^19.29.0",
+				"@cdktf/provider-cloudflare": "^11.16.0", // helpers/fogg-stack depends on this
+				"@cdktf/provider-datadog":    "^11.8.0",  // helpers/fogg-stack depends on this
+				"cdktf":                      "^0.20.8",
+				"constructs":                 "^10.3.0",
+				"js-yaml":                    "^4.1.0",
+			}
+			componentPlan.CdktfDevDependencies = map[string]string{
+				"@types/js-yaml":                    "^4.0.9",
+				"@types/node":                       "^20.6.0",
+				"ts-node":                           "^10.9.2",
+				"@swc/core":                         "^1.7.6",
+				"@typescript-eslint/eslint-plugin":  "^8",
+				"@typescript-eslint/parser":         "^8",
+				"eslint":                            "^8",
+				"eslint-config-prettier":            "^9.1.0",
+				"eslint-import-resolver-typescript": "^3.6.1",
+				"eslint-plugin-import":              "^2.29.1",
+				"eslint-plugin-prettier":            "^5.2.1",
+				"prettier":                          "^3.3.3",
+				"typescript":                        "^5.4.0",
+			}
+
+			for _, dep := range componentConf.CdktfDependencies {
+				componentPlan.CdktfDependencies[dep.Name] = dep.Version
+			}
+
+			for _, dep := range componentConf.CdktfDevDependencies {
+				componentPlan.CdktfDevDependencies[dep.Name] = dep.Version
+			}
 
 			if !envConf.NoGlobal {
 				componentPlan.Global = &p.Global
@@ -659,7 +696,8 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 
 		for componentName, component := range envPlan.Components {
 			// FIXME (el): get rid of non-terraform component kinds
-			if component.Kind.GetOrDefault() != v2.ComponentKindTerraform {
+			kind := component.Kind.GetOrDefault()
+			if !(kind == v2.ComponentKindTerraform || kind == v2.ComponentKindCDKTF) {
 				continue
 			}
 

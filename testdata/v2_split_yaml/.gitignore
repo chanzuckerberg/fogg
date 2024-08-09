@@ -27,7 +27,6 @@
 /terraform.d/modules
 
 .DS_Store
-.vscode
 
 # Scala language server
 .metals

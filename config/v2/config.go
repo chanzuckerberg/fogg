@@ -150,6 +150,7 @@ type Config struct {
 	Version  int                `validate:"required,eq=2"`
 	TFE      *TFE               `yaml:"tfe,omitempty"`
 	ConfDir  *string            `yaml:"conf_dir,omitempty"`
+	Turbo    *TurboConfig       `yaml:"turbo,omitempty"`
 }
 
 type TFE struct {
@@ -229,18 +230,21 @@ type Env struct {
 	Components map[string]Component `yaml:"components,omitempty"`
 }
 
+// TODO: Support cdktf depedencies from a private registry/scope
 type Component struct {
 	Common `yaml:",inline"`
 
-	EKS           *EKSConfig        `yaml:"eks,omitempty"`
-	Kind          *ComponentKind    `yaml:"kind,omitempty"`
-	ModuleSource  *string           `yaml:"module_source,omitempty"`
-	ModuleName    *string           `yaml:"module_name,omitempty"`
-	ModuleForEach *string           `yaml:"module_for_each,omitempty"`
-	ProvidersMap  map[string]string `yaml:"module_providers,omitempty"`
-	Variables     []string          `yaml:"variables,omitempty"`
-	Outputs       []string          `yaml:"outputs,omitempty"`
-	Modules       []ComponentModule `yaml:"modules,omitempty"`
+	EKS                  *EKSConfig             `yaml:"eks,omitempty"`
+	Kind                 *ComponentKind         `yaml:"kind,omitempty"`
+	ModuleSource         *string                `yaml:"module_source,omitempty"`
+	ModuleName           *string                `yaml:"module_name,omitempty"`
+	ModuleForEach        *string                `yaml:"module_for_each,omitempty"`
+	ProvidersMap         map[string]string      `yaml:"module_providers,omitempty"`
+	Variables            []string               `yaml:"variables,omitempty"`
+	Outputs              []string               `yaml:"outputs,omitempty"`
+	Modules              []ComponentModule      `yaml:"modules,omitempty"`
+	CdktfDependencies    []JavascriptDependency `yaml:"cdktf_dependencies,omitempty"`     // Optional additional component dev dependencies, default: []
+	CdktfDevDependencies []JavascriptDependency `yaml:"cdktf_dev_dependencies,omitempty"` // Optional additional component dev dependencies, default: []
 }
 
 type ComponentModule struct {
@@ -563,6 +567,19 @@ type TfLint struct {
 	Enabled *bool `yaml:"enabled,omitempty"`
 }
 
+type TurboConfig struct {
+	Enabled  *bool   `yaml:"enabled,omitempty"`   // Enable Turbo, default: false
+	Version  *string `yaml:"version,omitempty"`   // Optional Turbo version, default: "^2.0.6"
+	RootName *string `yaml:"root_name,omitempty"` // Optional Name for the root package, default: "fogg-monorepo"
+
+	DevDependencies []JavascriptDependency `yaml:"dev_dependencies,omitempty"` // Optional additional root dev dependencies, default: []
+}
+
+type JavascriptDependency struct {
+	Name    string `yaml:"name"`    // npm package name
+	Version string `yaml:"version"` // npm package version
+}
+
 // EKSConfig is the configuration for an eks cluster
 type EKSConfig struct {
 	ClusterName string `yaml:"cluster_name"`
@@ -630,4 +647,6 @@ const (
 	DefaultComponentKind ComponentKind = "terraform"
 	// ComponentKindTerraform is a terraform component
 	ComponentKindTerraform = DefaultComponentKind
+	// ComponentKindCDKTF is a CDKTF component
+	ComponentKindCDKTF ComponentKind = "cdktf"
 )

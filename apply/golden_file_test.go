@@ -46,6 +46,7 @@ func TestIntegration(t *testing.T) {
 		{"v2_integration_registry"},
 		{"v2_github_actions_with_pre_commit"},
 		{"v2_atlantis_depends_on"},
+		{"v2_cdktf_components"},
 		{"generic_providers_yaml"},
 	}
 

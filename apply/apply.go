@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+	"github.com/tkrajina/typescriptify-golang-structs/typescriptify"
 	"golang.org/x/exp/slices"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
@@ -27,6 +28,7 @@ import (
 	"github.com/hashicorp/terraform/registry"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
+	yaml "gopkg.in/yaml.v3"
 )
 
 // Apply will run a plan and apply all the changes to the current repo.
@@ -68,6 +70,13 @@ func Apply(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool) error 
 		err = applyTree(fs, tmpl.GitHubActionsCI, tmpl.Common, ".github", plan.GitHubActionsCI)
 		if err != nil {
 			return errs.WrapUser(err, "unable to apply GitHub Actions CI")
+		}
+	}
+
+	if plan.Turbo.Enabled {
+		err = applyTree(fs, tmpl.TurboRoot, tmpl.Common, "", plan.Turbo)
+		if err != nil {
+			return errs.WrapUser(err, "unable to apply Turbo config")
 		}
 	}
 
@@ -370,13 +379,24 @@ func applyEnvs(
 	logrus.Debug("applying envs")
 	pathModuleConfigs = make(PathModuleConfigs)
 	for env, envPlan := range p.Envs {
+
+		foggTSConverter := typescriptify.New().WithInterface(true).WithCustomJsonTag("yaml").Add(plan.Component{})
+
+		// TODO: Handle tscriptify customCode?
+		customCode := map[string]string{}
+		// TODO: move to fogg npm package
+		foggTS, err := foggTSConverter.Convert(customCode)
+		if err != nil {
+			return nil, errs.WrapUserf(err, "unable to convert Golang structs")
+		}
+
 		logrus.Debugf("applying %s", env)
 		path := fmt.Sprintf("%s/envs/%s", util.RootPath, env)
 		err = fs.MkdirAll(path, 0755)
 		if err != nil {
 			return nil, errs.WrapUserf(err, "unable to make directory %s", path)
 		}
-		err := applyTree(fs, envBox, commonBox, path, envPlan)
+		err = applyTree(fs, envBox, commonBox, path, envPlan)
 		if err != nil {
 			return nil, errs.WrapUser(err, "unable to apply templates to env")
 		}
@@ -388,12 +408,10 @@ func applyEnvs(
 				return nil, errs.WrapUser(err, "unable to make directories for component")
 			}
 
-			// NOTE(el): component kind only support TF now
-			// 					 add a dynamic check to make sure.
 			kind := componentPlan.Kind.GetOrDefault()
 			componentBox, ok := componentBoxes[kind]
 			if !ok {
-				return nil, errs.NewUserf("component of kind '%s' not supported, must be 'terraform'", kind)
+				return nil, errs.NewUserf("component of kind '%s' not supported", kind)
 			}
 
 			if componentPlan.AutoplanFiles != nil {
@@ -420,44 +438,53 @@ func applyEnvs(
 				return nil, errs.WrapUser(err, "unable to apply templates for component")
 			}
 
-			mi := make([]moduleInvocation, 0)
-			if componentPlan.ModuleSource != nil {
-				downloader, err := util.MakeDownloader(*componentPlan.ModuleSource, "", reg)
-				if err != nil {
-					return nil, errs.WrapUser(err, "unable to make a downloader")
+			if kind == v2.ComponentKindTerraform {
+				mi := make([]moduleInvocation, 0)
+				if componentPlan.ModuleSource != nil {
+					downloader, err := util.MakeDownloader(*componentPlan.ModuleSource, "", reg)
+					if err != nil {
+						return nil, errs.WrapUser(err, "unable to make a downloader")
+					}
+					mi = append(mi, moduleInvocation{
+						module: v2.ComponentModule{
+							Name:         componentPlan.ModuleName,
+							Source:       componentPlan.ModuleSource,
+							ForEach:      componentPlan.ModuleForEach,
+							Version:      nil,
+							Variables:    componentPlan.Variables,
+							Outputs:      componentPlan.Outputs,
+							Prefix:       nil,
+							ProvidersMap: componentPlan.ProvidersMap,
+						},
+						downloadFunc: downloader,
+					})
 				}
-				mi = append(mi, moduleInvocation{
-					module: v2.ComponentModule{
-						Name:         componentPlan.ModuleName,
-						Source:       componentPlan.ModuleSource,
-						ForEach:      componentPlan.ModuleForEach,
-						Version:      nil,
-						Variables:    componentPlan.Variables,
-						Outputs:      componentPlan.Outputs,
-						Prefix:       nil,
-						ProvidersMap: componentPlan.ProvidersMap,
-					},
-					downloadFunc: downloader,
-				})
-			}
 
-			for _, m := range componentPlan.Modules {
-				moduleVersion := ""
-				if m.Version != nil {
-					moduleVersion = *m.Version
+				for _, m := range componentPlan.Modules {
+					moduleVersion := ""
+					if m.Version != nil {
+						moduleVersion = *m.Version
+					}
+					downloader, err := util.MakeDownloader(*m.Source, moduleVersion, reg)
+					if err != nil {
+						return nil, errs.WrapUser(err, "unable to make a downloader")
+					}
+					mi = append(mi, moduleInvocation{
+						module:       m,
+						downloadFunc: downloader,
+					})
 				}
-				downloader, err := util.MakeDownloader(*m.Source, moduleVersion, reg)
+				pathModuleConfigs[path], err = applyModuleInvocation(fs, path, templates.Templates.ModuleInvocation, commonBox, mi, componentPlan.IntegrationRegistry)
 				if err != nil {
-					return nil, errs.WrapUser(err, "unable to make a downloader")
+					return nil, errs.WrapUser(err, "unable to apply module invocation")
 				}
-				mi = append(mi, moduleInvocation{
-					module:       m,
-					downloadFunc: downloader,
-				})
-			}
-			pathModuleConfigs[path], err = applyModuleInvocation(fs, path, templates.Templates.ModuleInvocation, commonBox, mi, componentPlan.IntegrationRegistry)
-			if err != nil {
-				return nil, errs.WrapUser(err, "unable to apply module invocation")
+			} else if kind == v2.ComponentKindCDKTF {
+				logrus.Warn("module invocations not templated for kind CDKTF")
+				err := writeStructToTS(fs, foggTS, fmt.Sprintf("%s/src/helpers/fogg-types.generated.ts", path))
+				if err != nil {
+					panic(err.Error())
+				}
+				writeYamlFile(fs, componentPlan, fmt.Sprintf("%s/.fogg-component.yaml", path))
 			}
 		}
 	}
@@ -688,6 +715,45 @@ func createFile(dest afero.Fs, path string, sourceFile io.Reader) error {
 	} else {
 		logrus.Infof("%s skipped", path)
 	}
+	return nil
+}
+
+func writeYamlFile(dest afero.Fs, in interface{}, path string) error {
+	out, err := yaml.Marshal(in)
+	if err != nil {
+		return errs.WrapInternal(err, "yaml: could not marshal")
+	}
+	dir, _ := filepath.Split(path)
+	ospath := filepath.FromSlash(dir)
+	err = dest.MkdirAll(ospath, 0775)
+	if err != nil {
+		return errs.WrapUserf(err, "couldn't create %s directory", dir)
+	}
+	return afero.WriteFile(dest, path, out, 0644)
+}
+
+// helper method supporting afero.Fs to write converted golang structs to a file
+func writeStructToTS(dest afero.Fs, converted string, path string) error {
+	dir, _ := filepath.Split(path)
+	ospath := filepath.FromSlash(dir)
+	err := dest.MkdirAll(ospath, 0775)
+	if err != nil {
+		return errs.WrapUserf(err, "couldn't create %s directory", dir)
+	}
+
+	f, err := dest.Create(path)
+	if err != nil {
+		return errs.WrapUserf(err, "unable to open %q", path)
+	}
+	defer f.Close()
+	if _, err := f.WriteString("/* Do not change, this code is generated from Golang structs */\n\n"); err != nil {
+		return errs.WrapUserf(err, "unable to write to %q", path)
+	}
+	if _, err := f.WriteString(converted); err != nil {
+		return errs.WrapUserf(err, "unable to write to %q", path)
+	}
+
+	logrus.Infof("%s updated", path)
 	return nil
 }
 
