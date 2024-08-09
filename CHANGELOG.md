@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.92.5](https://github.com/vincenthsh/fogg/compare/v0.92.4...v0.92.5) (2024-08-09)
+
+
+### Features
+
+* Add componentKind cdktf ([#328](https://github.com/vincenthsh/fogg/issues/328)) ([1419920](https://github.com/vincenthsh/fogg/commit/1419920101d29e88688bb1e511a10825337870c2))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go ([#318](https://github.com/vincenthsh/fogg/issues/318)) ([0d3d061](https://github.com/vincenthsh/fogg/commit/0d3d061bcdeb2cddaae4303b22eaf3bae7c9b8b5))
+* bump github.com/aws/aws-sdk-go in the gomod group ([#310](https://github.com/vincenthsh/fogg/issues/310)) ([1b7955d](https://github.com/vincenthsh/fogg/commit/1b7955d352388b86d4b1c921216c994ba6be9d4e))
+* bump github.com/aws/aws-sdk-go in the gomod group ([#312](https://github.com/vincenthsh/fogg/issues/312)) ([9c6e0e6](https://github.com/vincenthsh/fogg/commit/9c6e0e685980154d9cbbc8ad581945f5c9b86c9f))
+* bump github.com/aws/aws-sdk-go in the gomod group ([#319](https://github.com/vincenthsh/fogg/issues/319)) ([94d1850](https://github.com/vincenthsh/fogg/commit/94d185032e07761720dc5da3b8d41fc90fe6edc5))
+* bump github.com/aws/aws-sdk-go in the gomod group ([#326](https://github.com/vincenthsh/fogg/issues/326)) ([64da49c](https://github.com/vincenthsh/fogg/commit/64da49ce2a19af33e9c1b7496e6bb56ef419b3e6))
+* bump github.com/aws/aws-sdk-go in the gomod group ([#327](https://github.com/vincenthsh/fogg/issues/327)) ([6057e74](https://github.com/vincenthsh/fogg/commit/6057e748c95fc27542c0ee8fb5538464ece9d5ac))
+* bump github.com/runatlantis/atlantis in the atlantis group ([#315](https://github.com/vincenthsh/fogg/issues/315)) ([de5f851](https://github.com/vincenthsh/fogg/commit/de5f851d3d1e7067e74e6521f4b5ebfd0086866b))
+* bump github.com/runatlantis/atlantis in the atlantis group ([#320](https://github.com/vincenthsh/fogg/issues/320)) ([f8436e2](https://github.com/vincenthsh/fogg/commit/f8436e28ff25cd7f18aa46294998b17d3b4176ac))
+* bump goreleaser/goreleaser-action in the github-actions group ([#313](https://github.com/vincenthsh/fogg/issues/313)) ([901f64a](https://github.com/vincenthsh/fogg/commit/901f64a9e72c140d04e07faf1d8caeaf4cf3a371))
+* bump the gomod group across 1 directory with 2 updates ([#322](https://github.com/vincenthsh/fogg/issues/322)) ([acde753](https://github.com/vincenthsh/fogg/commit/acde75309836660e179f77fb2099ed80528032de))
+* bump the gomod group with 2 updates ([#314](https://github.com/vincenthsh/fogg/issues/314)) ([cfa433c](https://github.com/vincenthsh/fogg/commit/cfa433c6e644443acd7e32348b1594a57d4e5d6c))
+* bump the terraform group with 2 updates ([#316](https://github.com/vincenthsh/fogg/issues/316)) ([f194a73](https://github.com/vincenthsh/fogg/commit/f194a73e0b8b77952036db9595e872ea29920411))
+
 ## [0.92.4](https://github.com/vincenthsh/fogg/compare/v0.92.3...v0.92.4) (2024-05-29)
 
 
