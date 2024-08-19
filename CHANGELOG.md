@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.6](https://github.com/vincenthsh/fogg/compare/v0.92.5...v0.92.6) (2024-08-19)
+
+
+### Features
+
+* Add first version of cdktf module support ([#329](https://github.com/vincenthsh/fogg/issues/329)) ([1f72cc2](https://github.com/vincenthsh/fogg/commit/1f72cc2e883c9ad2d149744e650541be634ba9da))
+
 ## [0.92.5](https://github.com/vincenthsh/fogg/compare/v0.92.4...v0.92.5) (2024-08-09)
 
 
