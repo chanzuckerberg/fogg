@@ -789,3 +789,44 @@ func Test_filepathRel(t *testing.T) {
 		})
 	}
 }
+func Test_dropDirectorySuffix(t *testing.T) {
+	tests := []struct {
+		path      string
+		separator string
+		expected  string
+	}{
+		{
+			path:      "terraform/foo/bar",
+			separator: "/",
+			expected:  "terraform/foo/bar",
+		},
+		{
+			path:      "terraform/foo.sample/bar",
+			separator: "/",
+			expected:  "terraform/foo/bar",
+		},
+		{
+			path:      "terraform/foo.sample/bar.sample/baz.sample/qux",
+			separator: "/",
+			expected:  "terraform/foo/bar/baz/qux",
+		},
+		{
+			path:      "terraform/foo.sample/bar.sample/baz.sample/qux.sample",
+			separator: "/",
+			expected:  "terraform/foo/bar/baz/qux",
+		},
+		{
+			path:      `terraform\foo.sample\bar`,
+			separator: `\`,
+			expected:  `terraform\foo\bar`,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.path, func(t *testing.T) {
+			r := require.New(t)
+			result := dropDirectorySuffix(test.path, test.separator)
+			r.Equal(test.expected, result)
+		})
+	}
+}

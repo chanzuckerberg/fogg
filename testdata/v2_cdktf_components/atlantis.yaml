@@ -14,8 +14,6 @@ projects:
         - '**/*.tf.json'
         - '**/*.tfvars'
         - '**/*.tfvars.json'
-        - ../../../modules/my_module/**/*.tf
-        - ../../../modules/my_module/**/*.tf.json
       enabled: true
     apply_requirements:
       - approved

@@ -343,6 +343,12 @@ type RemoteBackend struct {
 // Module is a module
 type Module struct {
 	Common `yaml:",inline"`
+	Name   string         `yaml:"name"`
+	Kind   *v2.ModuleKind `yaml:"kind,omitempty"`
+
+	CdktfDependencies     map[string]string `yaml:"cdktf_dependencies"`
+	CdktfDevDependencies  map[string]string `yaml:"cdktf_dev_dependencies"`
+	CdktfPeerDependencies map[string]string `yaml:"cdktf_peer_dependencies"`
 }
 
 // Account is an account
@@ -400,10 +406,10 @@ func Eval(c *v2.Config) (*Plan, error) {
 	if err != nil {
 		return nil, err
 	}
-	// build after envs to find cdktf components
-	p.Turbo = p.buildTurboRootConfig(c)
 
 	p.Modules = p.buildModules(c)
+	// build after modules/envs to find cdktf modules,components
+	p.Turbo = p.buildTurboRootConfig(c)
 	p.TravisCI = p.buildTravisCIConfig(c, v)
 	p.CircleCI = p.buildCircleCIConfig(c, v)
 	p.GitHubActionsCI = p.buildGitHubActionsConfig(c, v)
@@ -568,10 +574,52 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 func (p *Plan) buildModules(c *v2.Config) map[string]Module {
 	modulePlans := make(map[string]Module, len(c.Modules))
 	for name, conf := range c.Modules {
-		modulePlan := Module{}
+		packageName := name
+		if conf.PackageName != nil {
+			packageName = *conf.PackageName
+		}
+		modulePlan := Module{
+			Name: packageName,
+			Kind: conf.Kind,
+		}
 
 		modulePlan.PathToRepoRoot = "../../../"
 		modulePlan.TerraformVersion = *v2.ResolveModuleTerraformVersion(c.Defaults, conf)
+
+		modulePlan.CdktfDependencies = map[string]string{}
+		modulePlan.CdktfPeerDependencies = map[string]string{
+			"cdktf":      "^0.20.8",
+			"constructs": "^10.3.0",
+		}
+		modulePlan.CdktfDevDependencies = map[string]string{
+			"@types/node":                       "^20.6.0",
+			"@types/jest":                       "^29.5.12",
+			"jest":                              "^29.7.0",
+			"jest-junit":                        "^15",
+			"ts-jest":                           "^29.2.0",
+			"ts-node":                           "^10.9.2",
+			"@swc/core":                         "^1.7.6",
+			"@typescript-eslint/eslint-plugin":  "^8",
+			"@typescript-eslint/parser":         "^8",
+			"eslint":                            "^8",
+			"eslint-config-prettier":            "^9.1.0",
+			"eslint-import-resolver-typescript": "^3.6.1",
+			"eslint-plugin-import":              "^2.29.1",
+			"eslint-plugin-prettier":            "^5.2.1",
+			"prettier":                          "^3.3.3",
+			"typescript":                        "^5.4.0",
+			"cdktf":                             "^0.20.8",
+			"constructs":                        "^10.3.0",
+		}
+
+		for _, dep := range conf.CdktfDependencies {
+			modulePlan.CdktfDependencies[dep.Name] = dep.Version
+		}
+
+		for _, dep := range conf.CdktfDevDependencies {
+			modulePlan.CdktfDevDependencies[dep.Name] = dep.Version
+		}
+
 		modulePlans[name] = modulePlan
 	}
 	return modulePlans

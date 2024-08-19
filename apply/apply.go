@@ -353,12 +353,17 @@ func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox, commonBox fs.FS) (e er
 	return nil
 }
 
-func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBox, commonBox fs.FS) (e error) {
+func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBoxes map[v2.ModuleKind]fs.FS, commonBox fs.FS) (e error) {
 	for module, modulePlan := range p {
 		path := fmt.Sprintf("%s/modules/%s", util.RootPath, module)
 		e = fs.MkdirAll(path, 0755)
 		if e != nil {
 			return errs.WrapUserf(e, "unable to make path %s", path)
+		}
+		kind := modulePlan.Kind.GetOrDefault()
+		moduleBox, ok := moduleBoxes[kind]
+		if !ok {
+			return errs.NewUserf("module of kind '%s' not supported", kind)
 		}
 		e = applyTree(fs, moduleBox, commonBox, path, modulePlan)
 		if e != nil {
@@ -598,7 +603,16 @@ func applyTree(dest afero.Fs, source fs.FS, common fs.FS, targetBasePath string,
 			return errs.WrapInternal(err, "unable to walk dir")
 		}
 		if d.IsDir() {
-			return nil // skip dirs
+			if strings.HasSuffix(path, ".sample") {
+				target := getTargetPath(targetBasePath, path)
+				logrus.Debugf("checking if %s exists", target)
+				_, err := dest.Stat(target)
+				if err == nil {
+					logrus.Infof("Sample dir %s already exists, skipping", target)
+					return fs.SkipDir
+				}
+			}
+			return nil // skip creating dirs
 		}
 
 		sourceFile, err := source.Open(path)
@@ -606,6 +620,7 @@ func applyTree(dest afero.Fs, source fs.FS, common fs.FS, targetBasePath string,
 			return errs.WrapInternal(err, "could not read source file")
 		}
 
+		path = dropDirectorySuffix(path, string(os.PathSeparator))
 		extension := filepath.Ext(path)
 		target := getTargetPath(targetBasePath, path)
 		targetExtension := filepath.Ext(target)
@@ -661,6 +676,28 @@ func applyTree(dest afero.Fs, source fs.FS, common fs.FS, targetBasePath string,
 
 		return nil
 	})
+}
+
+// test if any parent directory is a .sample directory,
+// return the full path with the `.sample` suffixes removed
+//
+// e.g.:
+//
+//   - `terraform/foo.sample/bar` -> `terraform/foo/bar`
+//   - `terraform/sample/variables` -> `terraform/sample/variables`
+//   - `terraform/sample/variables.sample` -> `terraform/sample/variables`
+func dropDirectorySuffix(path, separator string) string {
+	parts := strings.Split(path, separator)
+
+	for i := 0; i < len(parts); i++ {
+
+		if strings.HasSuffix(parts[i], ".sample") {
+			parts[i] = strings.TrimSuffix(parts[i], ".sample")
+		}
+	}
+
+	path = strings.Join(parts, separator)
+	return path
 }
 
 // collapseLines will convert \n+ to \n to reduce spurious diffs in generated output
@@ -1103,7 +1140,7 @@ func getTargetPath(basePath, path string) string {
 	target := filepath.Join(basePath, path)
 	extension := filepath.Ext(path)
 
-	if extension == ".tmpl" || extension == ".touch" || extension == ".create" || extension == ".rm" || extension == ".ln" {
+	if extension == ".tmpl" || extension == ".touch" || extension == ".create" || extension == ".rm" || extension == ".ln" || extension == ".sample" {
 		target = removeExtension(target)
 	}
 

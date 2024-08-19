@@ -200,9 +200,7 @@ export class FoggStack extends TerraformStack {
   private parseLocalsBlock() {
     if (this.foggComp.locals_block) {
       for (const [key, value] of Object.entries(this.foggComp.locals_block)) {
-        this.locals[key] = new TerraformLocal(this, key, {
-          expression: value,
-        });
+        this.locals[key] = new TerraformLocal(this, key, `\${${value}}`);
       }
     }
   }

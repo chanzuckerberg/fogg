@@ -53,7 +53,7 @@ type TurboConfig struct {
 	Version         string
 	RootName        string
 	DevDependencies map[string]string
-	CdktfComponents map[string]Component
+	CdktfPackages   []string
 }
 
 type PreCommitConfig struct {
@@ -393,6 +393,7 @@ func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
 		RootName: "fogg-monorepo",
 		DevDependencies: map[string]string{
 			"@types/node": "^20.6.0",
+			"@types/jest": "^29.5.12",
 			"turbo":       "^2.0.12",
 			"typescript":  "^5.4.0",
 		},
@@ -415,18 +416,26 @@ func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
 			turboConfig.DevDependencies[dep.Name] = dep.Version
 		}
 
-		turboConfig.CdktfComponents = make(map[string]Component)
+		pkgs := []string{}
+		for module, modulePlan := range p.Modules {
+			kind := modulePlan.Kind.GetOrDefault()
+			if kind == v2.ModuleKindCDKTF {
+				// applyModules implementation detail
+				pkgs = append(pkgs, fmt.Sprintf("%s/modules/%s", util.RootPath, module))
+			}
+		}
+
 		for env, envPlan := range p.Envs {
 			for component, componentPlan := range envPlan.Components {
-
 				kind := componentPlan.Kind.GetOrDefault()
 				if kind == v2.ComponentKindCDKTF {
 					// applyEnvs implementation detail
-					path := fmt.Sprintf("%s/envs/%s/%s", util.RootPath, env, component)
-					turboConfig.CdktfComponents[path] = componentPlan
+					pkgs = append(pkgs, fmt.Sprintf("%s/envs/%s/%s", util.RootPath, env, component))
 				}
 			}
 		}
+		slices.Sort(pkgs)
+		turboConfig.CdktfPackages = pkgs
 	}
 	return turboConfig
 }

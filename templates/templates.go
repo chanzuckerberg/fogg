@@ -25,8 +25,12 @@ import (
 //go:embed templates/component/cdktf/.gitattributes.create
 //go:embed templates/component/*
 //go:embed templates/env/*
+//go:embed templates/module/cdktf/.eslintrc.json.tmpl
+//go:embed templates/module/cdktf/.prettierrc.json.tmpl
+//go:embed templates/module/cdktf/.gitignore.create
+//go:embed templates/module/cdktf/.gitattributes.create
 //go:embed templates/module/*
-//go:embed templates/module/.update-readme.sh.rm
+//go:embed templates/module/terraform/.update-readme.sh.rm
 //go:embed templates/module-invocation/*
 //go:embed templates/repo
 //go:embed templates/repo/scripts/*
@@ -46,7 +50,7 @@ type T struct {
 	Common           fs.FS
 	Components       map[v2.ComponentKind]fs.FS
 	Env              fs.FS
-	Module           fs.FS
+	Module           map[v2.ModuleKind]fs.FS
 	ModuleInvocation fs.FS
 	Repo             fs.FS
 	TravisCI         fs.FS
@@ -75,8 +79,11 @@ var Templates = &T{
 		v2.ComponentKindTerraform: mustFSSub("templates/component/terraform"),
 		v2.ComponentKindCDKTF:     mustFSSub("templates/component/cdktf"),
 	},
-	Env:              mustFSSub("templates/env"),
-	Module:           mustFSSub("templates/module"),
+	Env: mustFSSub("templates/env"),
+	Module: map[v2.ModuleKind]fs.FS{
+		v2.ModuleKindTerraform: mustFSSub("templates/module/terraform"),
+		v2.ModuleKindCDKTF:     mustFSSub("templates/module/cdktf"),
+	},
 	ModuleInvocation: mustFSSub("templates/module-invocation"),
 	Repo:             mustFSSub("templates/repo"),
 	TravisCI:         mustFSSub("templates/travis-ci"),

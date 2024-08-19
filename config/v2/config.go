@@ -472,7 +472,12 @@ type Backend struct {
 
 // Module is a module
 type Module struct {
-	TerraformVersion *string `yaml:"terraform_version,omitempty"`
+	Kind                  *ModuleKind            `yaml:"kind,omitempty"` // terraform or cdktf
+	TerraformVersion      *string                `yaml:"terraform_version,omitempty"`
+	PackageName           *string                `yaml:"package_name,omitempty"`
+	CdktfDependencies     []JavascriptDependency `yaml:"cdktf_dependencies,omitempty"`      // Optional additional module dependencies, default: []
+	CdktfDevDependencies  []JavascriptDependency `yaml:"cdktf_dev_dependencies,omitempty"`  // Optional additional module dev dependencies, default: []
+	CdktfPeerDependencies []JavascriptDependency `yaml:"cdktf_peer_dependencies,omitempty"` // Optional additional module peer dependencies, default: []
 }
 
 // Plugins contains configuration around plugins
@@ -596,6 +601,17 @@ func (ck *ComponentKind) GetOrDefault() ComponentKind {
 	return *ck
 }
 
+// ComponentKind is the kind of this component
+type ModuleKind string
+
+// GetOrDefault gets the component kind or default
+func (ck *ModuleKind) GetOrDefault() ModuleKind {
+	if ck == nil || *ck == "" {
+		return DefaultModuleKind
+	}
+	return *ck
+}
+
 type componentInfo struct {
 	Kind string
 	Name string
@@ -649,4 +665,10 @@ const (
 	ComponentKindTerraform = DefaultComponentKind
 	// ComponentKindCDKTF is a CDKTF component
 	ComponentKindCDKTF ComponentKind = "cdktf"
+	// DefaultComponentKind defaults to terraform component
+	DefaultModuleKind ModuleKind = "terraform"
+	// ModuleKindTerraform is a terraform Module
+	ModuleKindTerraform = DefaultModuleKind
+	// ModuleKindCDKTF is a CDKTF Module
+	ModuleKindCDKTF ModuleKind = "cdktf"
 )

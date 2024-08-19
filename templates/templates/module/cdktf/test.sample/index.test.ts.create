@@ -1,0 +1,16 @@
+import { Testing } from "cdktf";
+import "cdktf/lib/testing/adapters/jest";
+import { MyConstruct } from "../src";
+
+// To learn more about testing see cdk.tf/testing
+describe("Module", () => {
+  it("should synthesize", () => {
+    expect(
+      Testing.synthScope((scope) => {
+        new MyConstruct(scope, "module", {
+          foo: "bar",
+        });
+      }),
+    ).toMatchSnapshot();
+  });
+});

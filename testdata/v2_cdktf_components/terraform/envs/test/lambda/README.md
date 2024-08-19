@@ -1,5 +1,5 @@
-# CDKTF Infra
+# CDKTF Component
 
 ```console
-make synth
+make check-plan
 ```

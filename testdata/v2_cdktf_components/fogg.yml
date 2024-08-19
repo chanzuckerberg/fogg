@@ -59,4 +59,10 @@ envs:
         module_source: "terraform/modules/my_module"
 
 modules:
-  my_module: {}
+  my-tf-module: {}
+  my-cdktf-module:
+    kind: cdktf
+    package_name: "my-cdktf-module-foo"
+    cdktf_dependencies:
+      - name: "@cdktf/tf-module-stack"
+        version: "^5.0.21"

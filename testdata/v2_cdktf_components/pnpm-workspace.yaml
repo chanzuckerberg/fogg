@@ -4,3 +4,4 @@
 packages:
   - terraform/envs/test/lambda
   - terraform/envs/test/network
+  - terraform/modules/my-cdktf-module
