@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.92.23](https://github.com/chanzuckerberg/fogg/compare/v0.92.22...v0.92.23) (2024-08-26)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.54.20 to 1.55.3 ([#1076](https://github.com/chanzuckerberg/fogg/issues/1076)) ([9ed3eaf](https://github.com/chanzuckerberg/fogg/commit/9ed3eafff1e97f4eeffbe839703856627ee1f910))
+* Bump github.com/aws/aws-sdk-go from 1.55.3 to 1.55.5 ([#1078](https://github.com/chanzuckerberg/fogg/issues/1078)) ([cd71a8a](https://github.com/chanzuckerberg/fogg/commit/cd71a8ae3d4ee8ff81de97d5e3391b5439771d2a))
+* Bump github.com/hashicorp/go-getter from 1.7.5 to 1.7.6 ([#1079](https://github.com/chanzuckerberg/fogg/issues/1079)) ([7f8563b](https://github.com/chanzuckerberg/fogg/commit/7f8563b9a98db9043933b3341f80755437f9995e))
+* Bump github.com/hashicorp/hcl/v2 from 2.21.0 to 2.22.0 ([#1080](https://github.com/chanzuckerberg/fogg/issues/1080)) ([2d6516f](https://github.com/chanzuckerberg/fogg/commit/2d6516f3aea9b72fb7bd4229c8e7d59a9ef10d65))
+
 ## [0.92.22](https://github.com/chanzuckerberg/fogg/compare/v0.92.21...v0.92.22) (2024-07-25)
 
 
