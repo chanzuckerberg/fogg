@@ -1,4 +1,5 @@
 import { Testing } from "cdktf";
+import { describe, it, expect } from "vitest";
 import "cdktf/lib/testing/adapters/jest";
 import { MyConstruct } from "../src";
 

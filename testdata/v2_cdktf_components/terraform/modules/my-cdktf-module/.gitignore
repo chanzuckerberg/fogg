@@ -7,8 +7,8 @@ cdktf.log
 .terraform
 .terraform.lock.hcl
 tsconfig.tsbuildinfo
-!jest.config.js
-!setup.js
+!vitest.config.ts
+!vitest.setup.ts
 
 // build outputs
 dist

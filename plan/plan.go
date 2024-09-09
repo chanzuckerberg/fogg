@@ -593,10 +593,7 @@ func (p *Plan) buildModules(c *v2.Config) map[string]Module {
 		}
 		modulePlan.CdktfDevDependencies = map[string]string{
 			"@types/node":                       "^20.6.0",
-			"@types/jest":                       "^29.5.12",
-			"jest":                              "^29.7.0",
-			"jest-junit":                        "^15",
-			"ts-jest":                           "^29.2.0",
+			"vitest":                            "^2.0.5",
 			"ts-node":                           "^10.9.2",
 			"@swc/core":                         "^1.7.6",
 			"@typescript-eslint/eslint-plugin":  "^8",

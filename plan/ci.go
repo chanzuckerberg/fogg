@@ -392,10 +392,11 @@ func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
 		Enabled:  false,
 		RootName: "fogg-monorepo",
 		DevDependencies: map[string]string{
-			"@types/node": "^20.6.0",
-			"@types/jest": "^29.5.12",
-			"turbo":       "^2.0.12",
-			"typescript":  "^5.4.0",
+			"@types/node":  "^20.6.0",
+			"vitest":       "^2.0.5",
+			"cdktf-vitest": "^0.1.2", // https://github.com/duniul/cdktf-vitest
+			"turbo":        "^2.1.1",
+			"typescript":   "^5.4.0",
 		},
 	}
 

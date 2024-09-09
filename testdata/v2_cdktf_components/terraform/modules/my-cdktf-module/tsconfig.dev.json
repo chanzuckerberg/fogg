@@ -24,7 +24,8 @@
     "esModuleInterop": true,
     "noEmitOnError": false,
     "target": "ES2019",
-    "outDir": "dist"
+    "outDir": "dist",
+    "types": ["cdktf-vitest"]
   },
   "include": ["src/**/*.ts", "test/**/*.ts"],
   "exclude": ["node_modules", "cdktf.out"]
