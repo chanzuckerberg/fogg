@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.92.7](https://github.com/vincenthsh/fogg/compare/v0.92.6...v0.92.7) (2024-09-09)
+
+
+### Features
+
+* Migrate from jest to vitest ([#335](https://github.com/vincenthsh/fogg/issues/335)) ([8a4f227](https://github.com/vincenthsh/fogg/commit/8a4f2270f126b60020f97851c346ad60f0d18bce))
+
+
+### Misc
+
+* bump github.com/hashicorp/go-getter in the terraform group ([#331](https://github.com/vincenthsh/fogg/issues/331)) ([f5c5b87](https://github.com/vincenthsh/fogg/commit/f5c5b87a717de6c5c07b7aa610bf8f3351f59967))
+* bump github.com/hashicorp/hcl/v2 in the terraform group ([#333](https://github.com/vincenthsh/fogg/issues/333)) ([40bab9a](https://github.com/vincenthsh/fogg/commit/40bab9a0ffbefb3c432534309d2314d2060fd5e2))
+
 ## [0.92.6](https://github.com/vincenthsh/fogg/compare/v0.92.5...v0.92.6) (2024-08-19)
 
 
