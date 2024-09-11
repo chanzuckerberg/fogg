@@ -9,6 +9,7 @@ import {
   TerraformStack,
   S3Backend,
   S3BackendConfig,
+  DataTerraformRemoteState,
   DataTerraformRemoteStateS3,
   DataTerraformRemoteStateS3Config,
   TerraformHclModule,
@@ -46,6 +47,8 @@ export class FoggStack extends TerraformStack {
   public readonly foggComp: Component;
   public readonly modules: Record<string, TerraformHclModule> = {};
   public readonly locals: Record<string, TerraformLocal> = {};
+  private readonly _providers: Record<string, awsProvider.AwsProvider> = {};
+  private readonly _remoteStates: Record<string, DataTerraformRemoteState> = {};
 
   constructor(scope: Construct, id: string, props: FoggStackProps) {
     super(scope, id);
@@ -78,6 +81,32 @@ export class FoggStack extends TerraformStack {
     const id = (this.foggComp.module_name =
       this.foggComp.module_name ?? "main");
     this.setModuleVariables(id, variables);
+  }
+
+  /**
+   * Return a remote state defined in the fogg component configuration.
+   * @param name - The name of the remote state to get
+   * @returns the DataTerraformRemoteState object
+   * @throws if the remote state is not found
+   */
+  public remoteState(name: string): DataTerraformRemoteState {
+    if (!this._remoteStates[name]) {
+      throw new Error(`Remote state ${name} not found`);
+    }
+    return this._remoteStates[name];
+  }
+
+  /**
+   * Return a provider defined in the fogg component configuration.
+   * @param alias - The alias of the provider to get
+   * @returns the AwsProvider object
+   * @throws if the provider is not found
+   */
+  public awsProvider(alias: string): awsProvider.AwsProvider {
+    if (!this._providers[alias]) {
+      throw new Error(`Provider ${alias} not found`);
+    }
+    return this._providers[alias];
   }
 
   /**
@@ -156,14 +185,11 @@ export class FoggStack extends TerraformStack {
           roleArn: s3Config.role_arn,
         };
       }
-      // console.log(
-      //   `Setting ${id} Remote backend Config ${JSON.stringify(
-      //     remoteStateConfig,
-      //     null,
-      //     2
-      //   )}`
-      // );
-      new DataTerraformRemoteStateS3(this, id, remoteStateConfig);
+      this._remoteStates[id] = new DataTerraformRemoteStateS3(
+        this,
+        id,
+        remoteStateConfig,
+      );
     } else {
       throw new Error(`Unsupported backend configuration ${remoteConfig.kind}`);
     }
@@ -246,6 +272,22 @@ export class FoggStack extends TerraformStack {
       region: config.region,
       alias: config.alias,
     };
+    if (config.default_tags && config.default_tags.enabled) {
+      c.defaultTags = [
+        {
+          tags: {
+            env: this.foggComp.env,
+            owner: this.foggComp.owner,
+            project: this.foggComp.project,
+            managedBy: "terraform",
+            service: this.foggComp.name,
+            ...(this.foggComp.backend.s3?.key_path && {
+              tfstateKey: this.foggComp.backend.s3?.key_path,
+            }),
+          },
+        },
+      ];
+    }
     if (config.profile) {
       c.profile = config.profile;
     } else if (config.role_arn) {
@@ -255,7 +297,11 @@ export class FoggStack extends TerraformStack {
         },
       ];
     }
-    new awsProvider.AwsProvider(this, id, c);
+    this._providers[c.alias ?? "Default"] = new awsProvider.AwsProvider(
+      this,
+      id,
+      c,
+    );
   }
 
   private parseDataDogProviderConfig(_config: DatadogProvider): void {
