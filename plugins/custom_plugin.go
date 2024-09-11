@@ -37,10 +37,12 @@ const (
 
 // CustomPlugin is a custom plugin
 type CustomPlugin struct {
-	URL       string           `validate:"required"`
-	Format    TypePluginFormat `validate:"required"`
-	TarConfig *TarConfig       `yaml:"tar_config,omitempty"`
-	TargetDir string           `yaml:"target_dir,omitempty"`
+	URL       string            `validate:"required"`
+	Format    TypePluginFormat  `validate:"required"`
+	TarConfig *TarConfig        `yaml:"tar_config,omitempty"`
+	TargetDir string            `yaml:"target_dir,omitempty"`
+	OsMap     map[string]string `yaml:"os_map,omitempty"`
+	ArchMap   map[string]string `yaml:"arch_map,omitempty"`
 
 	cache *diskv.Diskv
 }
@@ -62,7 +64,23 @@ func (cp *CustomPlugin) Install(fs afero.Fs, pluginName string) error {
 	if cp.cache == nil {
 		return errs.NewInternal("download cache not configured")
 	}
-	return cp.install(fs, pluginName, cp.URL, runtime.GOOS, runtime.GOARCH)
+	osName := runtime.GOOS
+	if cp.OsMap != nil {
+		if mappedOsName, ok := cp.OsMap[osName]; ok {
+			osName = mappedOsName
+		} else {
+			logrus.Warnf("os %s not found in os_map", osName)
+		}
+	}
+	archName := runtime.GOARCH
+	if cp.ArchMap != nil {
+		if mappedArchName, ok := cp.ArchMap[archName]; ok {
+			archName = mappedArchName
+		} else {
+			logrus.Warnf("arch %s not found in arch_map", archName)
+		}
+	}
+	return cp.install(fs, pluginName, cp.URL, osName, archName)
 }
 
 // Install delegates to install
