@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.92.8](https://github.com/vincenthsh/fogg/compare/v0.92.7...v0.92.8) (2024-09-11)
+
+
+### Features
+
+* Add plugin support for OS and Arch mapping ([#337](https://github.com/vincenthsh/fogg/issues/337)) ([d2407a2](https://github.com/vincenthsh/fogg/commit/d2407a2941a4280beaeb0c0aacc45f9e1af32ee0))
+* CDKTF Component improvements ([#336](https://github.com/vincenthsh/fogg/issues/336)) ([9c0f6bd](https://github.com/vincenthsh/fogg/commit/9c0f6bd7459e51ab7aeda2f9ca1a174fa0a16c73))
+
 ## [0.92.7](https://github.com/vincenthsh/fogg/compare/v0.92.6...v0.92.7) (2024-09-09)
 
 
