@@ -282,6 +282,8 @@ export class FoggStack extends TerraformStack {
             ...(this.foggComp.backend.s3?.key_path && {
               tfstateKey: this.foggComp.backend.s3?.key_path,
             }),
+            ...(this.foggComp.providers_configuration?.aws?.default_tags?.enabled &&
+              (this.foggComp.providers_configuration?.aws?.default_tags?.tags ?? {})),
           },
         },
       ];

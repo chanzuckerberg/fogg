@@ -31,6 +31,12 @@ envs:
   test:
     components:
       lambda:
+        providers:
+          aws:
+            default_tags:
+              enabled: true
+              tags:
+                team: TIES
         kind: cdktf
         cdktf_dependencies:
           - name: "@types/aws-lambda"
@@ -40,6 +46,10 @@ envs:
           - name: iam-floyd
             version: "^0.507.0"
       network:
+        providers:
+          aws:
+            default_tags:
+              enabled: true
         kind: cdktf
         depends_on:
           files:

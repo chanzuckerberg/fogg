@@ -70,7 +70,7 @@ providers_configuration:
         region: us-west-2
         role_arn: arn:aws:iam::123456789012:role/role
         default_tags:
-            enabled: false
+            enabled: true
         ignore_tags:
             enabled: false
     aws_regional_providers:
@@ -80,7 +80,7 @@ providers_configuration:
           region: ap-southeast-1
           role_arn: arn:aws:iam::210987654321:role/role
           default_tags:
-            enabled: false
+            enabled: true
           ignore_tags:
             enabled: false
     bless: null
