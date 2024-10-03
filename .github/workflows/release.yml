@@ -24,8 +24,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          # go-version-file: go.mod
-          go-version: "1.22"
+          go-version-file: go.mod
         if: ${{ steps.release.outputs.release_created }}
 
       - name: Run GoReleaser
