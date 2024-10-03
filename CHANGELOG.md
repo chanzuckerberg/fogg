@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.92.9](https://github.com/vincenthsh/fogg/compare/v0.92.8...v0.92.9) (2024-10-03)
+
+
+### Features
+
+* support for component level default tags ([#340](https://github.com/vincenthsh/fogg/issues/340)) ([6a742c2](https://github.com/vincenthsh/fogg/commit/6a742c2a2855bf44f48a7544c8767462ace9cc40))
+
+
+### Misc
+
+* bump github.com/runatlantis/atlantis from 0.28.4 to 0.30.0 in the atlantis group across 1 directory ([#339](https://github.com/vincenthsh/fogg/issues/339)) ([10c626f](https://github.com/vincenthsh/fogg/commit/10c626f4307cb6ea90a5ffdcbeedccce094ea44f))
+
 ## [0.92.8](https://github.com/vincenthsh/fogg/compare/v0.92.7...v0.92.8) (2024-09-11)
 
 
