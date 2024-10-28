@@ -15,7 +15,7 @@ require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/chanzuckerberg/go-misc v1.11.1
 	github.com/davecgh/go-spew v1.1.1
-	github.com/fatih/color v1.17.0
+	github.com/fatih/color v1.18.0
 	github.com/go-errors/errors v1.5.1
 	github.com/go-git/go-git/v5 v5.12.0
 	github.com/google/go-github/v27 v27.0.6
@@ -118,7 +118,7 @@ require (
 	golang.org/x/net v0.23.0 // indirect
 	golang.org/x/oauth2 v0.16.0 // indirect
 	golang.org/x/sync v0.5.0 // indirect
-	golang.org/x/sys v0.20.0 // indirect
+	golang.org/x/sys v0.25.0 // indirect
 	golang.org/x/term v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.15.0 // indirect
