@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.92.10](https://github.com/vincenthsh/fogg/compare/v0.92.9...v0.92.10) (2024-11-05)
+
+
+### Features
+
+* update aws provider template ([#345](https://github.com/vincenthsh/fogg/issues/345)) ([404c379](https://github.com/vincenthsh/fogg/commit/404c3799304d0612e5540ebdaffe3c26dd84c9d0))
+
+
+### Misc
+
+* bump github.com/fatih/color in the gomod group ([#344](https://github.com/vincenthsh/fogg/issues/344)) ([4238e54](https://github.com/vincenthsh/fogg/commit/4238e543ab8ea519d0489afe09764d39a17ffcfe))
+* bump github.com/tkrajina/typescriptify-golang-structs ([#342](https://github.com/vincenthsh/fogg/issues/342)) ([b62d1e5](https://github.com/vincenthsh/fogg/commit/b62d1e59ea5711f8f250d6093e300fe50354680e))
+
 ## [0.92.9](https://github.com/vincenthsh/fogg/compare/v0.92.8...v0.92.9) (2024-10-03)
 
 
