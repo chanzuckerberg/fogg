@@ -135,6 +135,39 @@ func toHCLAssignment(name string, value any) string {
 	return string(f.Bytes())
 }
 
+// toHCLExpression converts a Go value to its HCL representation as a string.
+// It can be used within templates to include the value in expressions or function calls.
+//
+// tags = merge(var.tags, {{ toHCLExpression .DefaultTags.Tags }})
+//
+//	tags = merge(var.tags, {
+//	  Component  = "Vox"
+//	  Env        = "Foo"
+//	})
+//
+// This is designed to be called from a template.
+func toHCLExpression(value any) string {
+	f := hclwrite.NewEmptyFile()
+	rootBody := f.Body()
+
+	// Since we don't have the cty type information for the value and since it can be arbitrary, we use
+	// JSON as an intermediate representation.
+	jsonBytes, err := json.Marshal(value)
+	if err != nil {
+		// Swallow errors inside of a template.
+		return ""
+	}
+	var ctyVal ctyjson.SimpleJSONValue
+	if err := ctyVal.UnmarshalJSON(jsonBytes); err != nil {
+		// Swallow errors inside of a template.
+		return ""
+	}
+
+	tokens := hclwrite.TokensForValue(ctyVal.Value)
+	rootBody.AppendUnstructuredTokens(tokens)
+	return strings.TrimSpace(string(f.Bytes()))
+}
+
 // deRef is a generic function to dereference a pointer to it's actual value type.
 //
 // This is designed to be called from a template.
@@ -153,6 +186,7 @@ func OpenTemplate(label string, source io.Reader, templates fs.FS) (*template.Te
 	funcs["deRefBool"] = deRef[bool]
 	funcs["toHclBlock"] = toHCLBlock
 	funcs["toHclAssignment"] = toHCLAssignment
+	funcs["toHCLExpression"] = toHCLExpression
 
 	s, err := io.ReadAll(source)
 	if err != nil {

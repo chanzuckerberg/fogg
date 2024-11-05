@@ -7,18 +7,15 @@ provider "aws" {
 
   allowed_account_ids = ["00456"]
   ignore_tags {
-    keys = [
-      "state",
-    ]
-    key_prefixes = [
-      "kubernetes.io/",
-    ]
+    keys         = ["state"]
+    key_prefixes = ["kubernetes.io/"]
   }
   default_tags {
     tags = merge(var.tags, {
-      Component = "Vox"
-      Env       = "Foo"
-      Project   = "Overwrite"
+      Component  = "Vox"
+      Env        = "Foo"
+      Project    = "Overwrite"
+      "hsh:team" = "TIES"
     })
   }
 }

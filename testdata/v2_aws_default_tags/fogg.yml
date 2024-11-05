@@ -82,9 +82,10 @@ envs:
           aws:
             default_tags:
               tags:
-                Component: Vox
+                "Component": Vox
                 # tags are merged and overwrite
-                Project: Overwrite
+                "Project": Overwrite
+                "hsh:team": "TIES"
         modules:
           - source: "terraform/modules/my_module"
   fred:

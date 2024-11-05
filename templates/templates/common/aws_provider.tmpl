@@ -11,30 +11,18 @@ provider "aws" {
   allowed_account_ids = ["{{ .AccountID }}"]
   {{- if and .IgnoreTags (and .IgnoreTags.Enabled (deRefBool .IgnoreTags.Enabled)) }}
   ignore_tags {
-    {{ if and .IgnoreTags.Keys (not (eq (len .IgnoreTags.Keys) 0)) }} keys = [
-    {{- range $k := .IgnoreTags.Keys }}
-      "{{ $k }}",
+    {{- if and .IgnoreTags.Keys (not (eq (len .IgnoreTags.Keys) 0)) }}
+    keys= {{ toHCLExpression .IgnoreTags.Keys }}
     {{- end }}
-    ]
-    {{- end }}
-    {{ if and .IgnoreTags.KeyPrefixes (not (eq (len .IgnoreTags.KeyPrefixes) 0)) }} key_prefixes = [
-    {{- range $k := .IgnoreTags.KeyPrefixes }}
-      "{{ $k }}",
-    {{- end }}
-    ]
+    {{- if and .IgnoreTags.KeyPrefixes (not (eq (len .IgnoreTags.KeyPrefixes) 0)) }}
+    key_prefixes = {{ toHCLExpression .IgnoreTags.KeyPrefixes }}
     {{- end }}
   }
   {{- end }}
   {{- if and .DefaultTags (and .DefaultTags.Enabled (deRefBool .DefaultTags.Enabled)) }}
   default_tags {
     {{- if .DefaultTags.Tags }}
-    tags = merge(var.tags,{
-    {{- range $k, $v := .DefaultTags.Tags }}
-      {{- if $v }}
-      {{ $k }} = "{{ $v }}"
-      {{- end }}
-    {{- end }}
-    })
+    tags = merge(var.tags, {{ toHCLExpression .DefaultTags.Tags }})
     {{- else }}
     tags = var.tags
     {{- end }}
