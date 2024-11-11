@@ -576,6 +576,7 @@ type TurboConfig struct {
 	Enabled  *bool   `yaml:"enabled,omitempty"`   // Enable Turbo, default: false
 	Version  *string `yaml:"version,omitempty"`   // Optional Turbo version, default: "^2.0.6"
 	RootName *string `yaml:"root_name,omitempty"` // Optional Name for the root package, default: "fogg-monorepo"
+	SCMBase  *string `yaml:"scm_base,omitempty"`  // Optional Git comparison base override, default: "main"
 
 	DevDependencies []JavascriptDependency `yaml:"dev_dependencies,omitempty"` // Optional additional root dev dependencies, default: []
 }

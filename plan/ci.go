@@ -52,6 +52,7 @@ type TurboConfig struct {
 	Enabled         bool
 	Version         string
 	RootName        string
+	SCMBase         string
 	DevDependencies map[string]string
 	CdktfPackages   []string
 }
@@ -390,6 +391,7 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
 	turboConfig := &TurboConfig{
 		Enabled:  false,
+		SCMBase:  "main",
 		RootName: "fogg-monorepo",
 		DevDependencies: map[string]string{
 			"@types/node":  "^20.6.0",
@@ -403,6 +405,10 @@ func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
 	if c.Turbo != nil {
 		if c.Turbo.Enabled != nil {
 			turboConfig.Enabled = *c.Turbo.Enabled
+		}
+
+		if c.Turbo.SCMBase != nil {
+			turboConfig.SCMBase = *c.Turbo.SCMBase
 		}
 
 		if c.Turbo.Version != nil {
