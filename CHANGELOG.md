@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.11](https://github.com/vincenthsh/fogg/compare/v0.92.10...v0.92.11) (2024-11-11)
+
+
+### Features
+
+* Add --affected flag for turbo synth ([#346](https://github.com/vincenthsh/fogg/issues/346)) ([8bb7b5e](https://github.com/vincenthsh/fogg/commit/8bb7b5ed8cfd3fcea3b7b7501c9d65573abd42de))
+
 ## [0.92.10](https://github.com/vincenthsh/fogg/compare/v0.92.9...v0.92.10) (2024-11-05)
 
 
