@@ -1,0 +1,17 @@
+*.d.ts
+*.js
+node_modules
+cdktf.out
+cdktf.log
+*terraform.*.tfstate*
+.gen
+.terraform
+.terraform.lock.hcl
+tsconfig.tsbuildinfo
+!jest.config.js
+!setup.js
+
+// build outputs
+cdk.tf.json
+assets
+dist

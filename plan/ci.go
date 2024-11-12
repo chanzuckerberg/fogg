@@ -435,7 +435,7 @@ func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
 		for env, envPlan := range p.Envs {
 			for component, componentPlan := range envPlan.Components {
 				kind := componentPlan.Kind.GetOrDefault()
-				if kind == v2.ComponentKindCDKTF {
+				if kind == v2.ComponentKindCDKTF || kind == v2.ComponentKindEnvtio {
 					// applyEnvs implementation detail
 					pkgs = append(pkgs, fmt.Sprintf("%s/envs/%s/%s", util.RootPath, env, component))
 				}

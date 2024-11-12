@@ -78,6 +78,7 @@ var Templates = &T{
 	Components: map[v2.ComponentKind]fs.FS{
 		v2.ComponentKindTerraform: mustFSSub("templates/component/terraform"),
 		v2.ComponentKindCDKTF:     mustFSSub("templates/component/cdktf"),
+		v2.ComponentKindEnvtio:    mustFSSub("templates/component/envtio"),
 	},
 	Env: mustFSSub("templates/env"),
 	Module: map[v2.ModuleKind]fs.FS{

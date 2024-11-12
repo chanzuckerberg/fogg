@@ -721,6 +721,9 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 				"prettier":                          "^3.3.3",
 				"typescript":                        "^5.4.0",
 			}
+			if componentConf.Kind.GetOrDefault() == v2.ComponentKindEnvtio {
+				componentPlan.CdktfDependencies["@envtio/base"] = "0.0.7"
+			}
 
 			for _, dep := range componentConf.CdktfDependencies {
 				componentPlan.CdktfDependencies[dep.Name] = dep.Version
@@ -740,9 +743,8 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 		componentBackends := make(map[string]Backend)
 
 		for componentName, component := range envPlan.Components {
-			// FIXME (el): get rid of non-terraform component kinds
 			kind := component.Kind.GetOrDefault()
-			if !(kind == v2.ComponentKindTerraform || kind == v2.ComponentKindCDKTF) {
+			if !(kind == v2.ComponentKindTerraform || kind == v2.ComponentKindCDKTF || kind == v2.ComponentKindEnvtio) {
 				continue
 			}
 

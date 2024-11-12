@@ -1,0 +1,293 @@
+path_to_repo_root: ../../../../
+terraform_version: 1.7.5
+account_backends: {}
+all_accounts: {}
+backend:
+    kind: s3
+    s3:
+        account_id: "123456789012"
+        account_name: ""
+        bucket: buck
+        dynamo_table: null
+        key_path: terraform/proj/envs/test/components/lambda.tfstate
+        profile: null
+        region: us-west-2
+        role_arn: arn:aws:iam::123456789012:role/role
+component_backends:
+    lambda:
+        kind: s3
+        s3:
+            account_id: "123456789012"
+            account_name: ""
+            bucket: buck
+            dynamo_table: null
+            key_path: terraform/proj/envs/test/components/lambda.tfstate
+            profile: null
+            region: us-west-2
+            role_arn: arn:aws:iam::123456789012:role/role
+autoplan_relative_globs: []
+autoplan_files: []
+locals_block: {}
+component_backends_filtered: false
+env: test
+extra_vars: {}
+name: lambda
+owner: foo@example.com
+project: proj
+providers_configuration:
+    assert:
+        enabled: true
+        version: 0.0.1
+    auth0: null
+    aws:
+        account_id: "123456789012"
+        alias: null
+        profile: null
+        region: us-west-2
+        role_arn: arn:aws:iam::123456789012:role/role
+        default_tags:
+            enabled: true
+            tags:
+                team: TIES
+        ignore_tags:
+            enabled: false
+    aws_regional_providers:
+        - account_id: "210987654321"
+          alias: shared_services
+          profile: null
+          region: ap-southeast-1
+          role_arn: arn:aws:iam::210987654321:role/role
+          default_tags:
+            enabled: true
+            tags:
+                team: TIES
+          ignore_tags:
+            enabled: false
+    bless: null
+    datadog: null
+    github: null
+    grafana: null
+    heroku: null
+    kubernetes: null
+    okta: null
+    sentry: null
+    snowflake: null
+    tfe: null
+    sops: null
+required_providers: {}
+provider_versions:
+    archive:
+        source: hashicorp/archive
+        version: ~> 2.0
+    assert:
+        source: bwoznicki/assert
+        version: 0.0.1
+    aws:
+        source: hashicorp/aws
+        version: 0.12.0
+    local:
+        source: hashicorp/local
+        version: ~> 2.0
+    "null":
+        source: hashicorp/null
+        version: ~> 3.0
+    okta-head:
+        source: okta/okta
+        version: ~> 3.30
+    random:
+        source: hashicorp/random
+        version: ~> 3.4
+    tls:
+        source: hashicorp/tls
+        version: ~> 3.0
+integration_registry: null
+cdktf_dependencies:
+    '@cdktf/provider-aws': ^19.29.0
+    '@cdktf/provider-cloudflare': ^11.16.0
+    '@cdktf/provider-datadog': ^11.8.0
+    '@envtio/base': 0.0.7
+    '@types/aws-lambda': ^8.10.76
+    cdktf: ^0.20.8
+    constructs: ^10.3.0
+    js-yaml: ^4.1.0
+cdktf_dev_dependencies:
+    '@swc/core': ^1.7.6
+    '@types/js-yaml': ^4.0.9
+    '@types/node': ^20.6.0
+    '@typescript-eslint/eslint-plugin': ^8
+    '@typescript-eslint/parser': ^8
+    eslint: ^8
+    eslint-config-prettier: ^9.1.0
+    eslint-import-resolver-typescript: ^3.6.1
+    eslint-plugin-import: ^2.29.1
+    eslint-plugin-prettier: ^5.2.1
+    prettier: ^3.3.3
+    ts-node: ^10.9.2
+    typescript: ^5.4.0
+tf_lint:
+    enabled: false
+travisci:
+    cicomponent:
+        enabled: false
+        buildevents: false
+        awsprofilename: ""
+        awsrolename: ""
+        awsregion: ""
+        awsaccountid: ""
+        command: ""
+circleci:
+    cicomponent:
+        enabled: false
+        buildevents: false
+        awsprofilename: ""
+        awsrolename: ""
+        awsregion: ""
+        awsaccountid: ""
+        command: ""
+    sshfingerprints: []
+githubactionsci:
+    cicomponent:
+        enabled: false
+        buildevents: false
+        awsprofilename: ""
+        awsrolename: ""
+        awsregion: ""
+        awsaccountid: ""
+        command: ""
+kind: envtio
+module_source: null
+module_name: null
+module_for_each: null
+providers: {}
+variables: []
+outputs: []
+modules: []
+global:
+    path_to_repo_root: ../../
+    terraform_version: 1.7.5
+    account_backends: {}
+    all_accounts: {}
+    backend:
+        kind: s3
+        s3:
+            account_id: "123456789012"
+            account_name: ""
+            bucket: buck
+            dynamo_table: null
+            key_path: terraform/proj/global.tfstate
+            profile: null
+            region: us-west-2
+            role_arn: arn:aws:iam::123456789012:role/role
+    component_backends: {}
+    autoplan_relative_globs: []
+    autoplan_files: []
+    locals_block: {}
+    component_backends_filtered: false
+    env: ""
+    extra_vars: {}
+    name: global
+    owner: foo@example.com
+    project: proj
+    providers_configuration:
+        assert:
+            enabled: true
+            version: 0.0.1
+        auth0: null
+        aws:
+            account_id: "123456789012"
+            alias: null
+            profile: null
+            region: us-west-2
+            role_arn: arn:aws:iam::123456789012:role/role
+            default_tags:
+                enabled: false
+            ignore_tags:
+                enabled: false
+        aws_regional_providers:
+            - account_id: "210987654321"
+              alias: shared_services
+              profile: null
+              region: ap-southeast-1
+              role_arn: arn:aws:iam::210987654321:role/role
+              default_tags:
+                enabled: false
+              ignore_tags:
+                enabled: false
+        bless: null
+        datadog: null
+        github: null
+        grafana: null
+        heroku: null
+        kubernetes: null
+        okta: null
+        sentry: null
+        snowflake: null
+        tfe: null
+        sops: null
+    required_providers: {}
+    provider_versions:
+        archive:
+            source: hashicorp/archive
+            version: ~> 2.0
+        assert:
+            source: bwoznicki/assert
+            version: 0.0.1
+        aws:
+            source: hashicorp/aws
+            version: 0.12.0
+        local:
+            source: hashicorp/local
+            version: ~> 2.0
+        "null":
+            source: hashicorp/null
+            version: ~> 3.0
+        okta-head:
+            source: okta/okta
+            version: ~> 3.30
+        random:
+            source: hashicorp/random
+            version: ~> 3.4
+        tls:
+            source: hashicorp/tls
+            version: ~> 3.0
+    integration_registry: null
+    cdktf_dependencies: {}
+    cdktf_dev_dependencies: {}
+    tf_lint:
+        enabled: false
+    travisci:
+        cicomponent:
+            enabled: false
+            buildevents: false
+            awsprofilename: ""
+            awsrolename: ""
+            awsregion: ""
+            awsaccountid: ""
+            command: ""
+    circleci:
+        cicomponent:
+            enabled: false
+            buildevents: false
+            awsprofilename: ""
+            awsrolename: ""
+            awsregion: ""
+            awsaccountid: ""
+            command: ""
+        sshfingerprints: []
+    githubactionsci:
+        cicomponent:
+            enabled: false
+            buildevents: false
+            awsprofilename: ""
+            awsrolename: ""
+            awsregion: ""
+            awsaccountid: ""
+            command: ""
+    module_source: null
+    module_name: null
+    module_for_each: null
+    providers: {}
+    variables: []
+    outputs: []
+    modules: []
+    global: null
