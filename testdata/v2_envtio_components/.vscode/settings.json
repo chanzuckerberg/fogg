@@ -1,0 +1,6 @@
+{
+  "eslint.workingDirectories":  [
+    "terraform/envs/test/lambda",
+    "terraform/modules/my-envtio-module"
+  ]
+}

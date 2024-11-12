@@ -666,6 +666,8 @@ const (
 	ComponentKindTerraform = DefaultComponentKind
 	// ComponentKindCDKTF is a CDKTF component
 	ComponentKindCDKTF ComponentKind = "cdktf"
+	// ComponentKindEnvtio is a CDKTF component using the envtio framework
+	ComponentKindEnvtio ComponentKind = "envtio"
 	// DefaultComponentKind defaults to terraform component
 	DefaultModuleKind ModuleKind = "terraform"
 	// ModuleKindTerraform is a terraform Module

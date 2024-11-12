@@ -483,7 +483,7 @@ func applyEnvs(
 				if err != nil {
 					return nil, errs.WrapUser(err, "unable to apply module invocation")
 				}
-			} else if kind == v2.ComponentKindCDKTF {
+			} else if kind == v2.ComponentKindCDKTF || kind == v2.ComponentKindEnvtio {
 				logrus.Warn("module invocations not templated for kind CDKTF")
 				err := writeStructToTS(fs, foggTS, fmt.Sprintf("%s/src/helpers/fogg-types.generated.ts", path))
 				if err != nil {

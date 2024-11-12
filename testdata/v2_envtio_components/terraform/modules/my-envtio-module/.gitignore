@@ -1,0 +1,20 @@
+*.d.ts
+*.js
+node_modules
+cdktf.out
+cdktf.log
+*terraform.*.tfstate*
+.terraform
+.terraform.lock.hcl
+tsconfig.tsbuildinfo
+!vitest.config.ts
+!vitest.setup.ts
+
+// build outputs
+dist
+
+// test outputs
+coverage
+/test-reports/
+junit.xml
+/coverage/
