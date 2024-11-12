@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.12](https://github.com/vincenthsh/fogg/compare/v0.92.11...v0.92.12) (2024-11-12)
+
+
+### Features
+
+* Add example envtio component ([#348](https://github.com/vincenthsh/fogg/issues/348)) ([c1c155c](https://github.com/vincenthsh/fogg/commit/c1c155cc21655c21ce5f8be2e590a0c011ddb4a0))
+
 ## [0.92.11](https://github.com/vincenthsh/fogg/compare/v0.92.10...v0.92.11) (2024-11-11)
 
 
