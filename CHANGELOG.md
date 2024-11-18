@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.92.24](https://github.com/chanzuckerberg/fogg/compare/v0.92.23...v0.92.24) (2024-11-18)
+
+
+### Misc
+
+* Bump github.com/fatih/color from 1.17.0 to 1.18.0 ([#1082](https://github.com/chanzuckerberg/fogg/issues/1082)) ([7b63581](https://github.com/chanzuckerberg/fogg/commit/7b6358135e2cc01e9f1b01347222ca336f4e5a1d))
+* Bump github.com/hashicorp/hcl/v2 from 2.22.0 to 2.23.0 ([#1085](https://github.com/chanzuckerberg/fogg/issues/1085)) ([eba56ed](https://github.com/chanzuckerberg/fogg/commit/eba56edf5277d7e150a128de04104748e27f6955))
+
 ## [0.92.23](https://github.com/chanzuckerberg/fogg/compare/v0.92.22...v0.92.23) (2024-08-26)
 
 
