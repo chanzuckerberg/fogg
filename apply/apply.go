@@ -46,6 +46,51 @@ func Apply(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool) error 
 	if err != nil {
 		return errs.WrapUser(err, "unable to evaluate plan")
 	}
+
+	return ApplyPlan(plan, WithApplyPlanFs(fs), WithApplyPlanTemplates(tmpl))
+}
+
+type ApplyPlanContext struct {
+	fs   afero.Fs
+	tmpl *templates.T
+}
+
+func MakeApplyPlanContext() (*ApplyPlanContext, error) {
+	pwd, e := os.Getwd()
+	if e != nil {
+		return nil, e
+	}
+	return &ApplyPlanContext{
+		fs:   afero.NewBasePathFs(afero.NewOsFs(), pwd),
+		tmpl: templates.Templates,
+	}, nil
+}
+
+type ApplyPlanOption func(*ApplyPlanContext)
+
+func WithApplyPlanFs(fs afero.Fs) ApplyPlanOption {
+	return func(ctx *ApplyPlanContext) {
+		ctx.fs = fs
+	}
+}
+
+func WithApplyPlanTemplates(tmpl *templates.T) ApplyPlanOption {
+	return func(ctx *ApplyPlanContext) {
+		ctx.tmpl = tmpl
+	}
+}
+
+func ApplyPlan(plan *plan.Plan, opts ...ApplyPlanOption) error {
+	applyCtx, err := MakeApplyPlanContext()
+	if err != nil {
+		return err
+	}
+	for _, opt := range opts {
+		opt(applyCtx)
+	}
+
+	fs := applyCtx.fs
+	tmpl := applyCtx.tmpl
 	err = applyRepo(fs, plan, tmpl.Repo, tmpl.Common)
 	if err != nil {
 		return errs.WrapUser(err, "unable to apply repo")
