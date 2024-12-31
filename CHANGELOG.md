@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.14](https://github.com/vincenthsh/fogg/compare/v0.92.13...v0.92.14) (2024-12-31)
+
+
+### BugFixes
+
+* publish branch ([13e0ee5](https://github.com/vincenthsh/fogg/commit/13e0ee5838338e39c01b908291efa8805a29cd54))
+
 ## [0.92.13](https://github.com/vincenthsh/fogg/compare/v0.92.12...v0.92.13) (2024-12-31)
 
 
