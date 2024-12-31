@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.92.13](https://github.com/vincenthsh/fogg/compare/v0.92.12...v0.92.13) (2024-12-31)
+
+
+### Features
+
+* Add CDKTF Helpers pkg ([#357](https://github.com/vincenthsh/fogg/issues/357)) ([f1f6347](https://github.com/vincenthsh/fogg/commit/f1f6347490d7094ea9eca726b5073ffc615c59cb))
+
+
+### Misc
+
+* bump github.com/hashicorp/hcl/v2 in the terraform group ([#350](https://github.com/vincenthsh/fogg/issues/350)) ([00ed43a](https://github.com/vincenthsh/fogg/commit/00ed43a9cbd6416e7df7f7cf98dd71ff4a2951f7))
+* bump github.com/stretchr/testify in the gomod group ([#353](https://github.com/vincenthsh/fogg/issues/353)) ([1c81637](https://github.com/vincenthsh/fogg/commit/1c81637274c80b5ac8353d0efb132ed5afe4719f))
+* bump github.com/zclconf/go-cty in the gomod group ([#354](https://github.com/vincenthsh/fogg/issues/354)) ([f06bfa9](https://github.com/vincenthsh/fogg/commit/f06bfa9429c8462a61f9c4556a72226e79a4c8a4))
+* bump the gomod group with 2 updates ([#356](https://github.com/vincenthsh/fogg/issues/356)) ([c2ed461](https://github.com/vincenthsh/fogg/commit/c2ed46152aafa4b715f2e045f81aae76a86c4616))
+
 ## [0.92.12](https://github.com/vincenthsh/fogg/compare/v0.92.11...v0.92.12) (2024-11-12)
 
 

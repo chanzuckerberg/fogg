@@ -1,6 +1,6 @@
 {
   "name": "@vincenthsh/cdktf-fogg-helpers",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Fogg CDKTF Helpers.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
