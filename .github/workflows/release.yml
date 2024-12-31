@@ -4,9 +4,14 @@ on:
       - feat-multi-module-components
 
 name: release-please
+env:
+  CI: true
 jobs:
   release-please:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: release please
         uses: google-github-actions/release-please-action@v4.1.1
@@ -14,6 +19,8 @@ jobs:
         with:
           # https://github.com/google-github-actions/release-please-action#github-credentials
           token: ${{ secrets.VINCENT_PAT }}
+
+      ## publish Go release
 
       - uses: actions/checkout@v4
         # we need to fetch all history and tags
@@ -34,4 +41,35 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.VINCENT_PAT }}
+        if: ${{ steps.release.outputs.release_created }}
+
+      ## publish CDKTF pkg
+
+      # pnpm required for setup-node cache support
+      # ref:
+      # - https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#caching-packages-data
+      # - https://docs.github.com/en/actions/use-cases-and-examples/publishing-packages/publishing-nodejs-packages#publishing-packages-to-github-packages
+      # - https://pnpm.io/using-changesets#publishing
+      - name: Setup pnpm from .packageManager
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+        if: ${{ steps.release.outputs.release_created }}
+      - name: Use Node.js from .nvmrc
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: "pnpm"
+          registry-url: "https://npm.pkg.github.com"
+        if: ${{ steps.release.outputs.release_created }}
+      - name: Run pnpm Build
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm run build
+        if: ${{ steps.release.outputs.release_created }}
+      - name: Run pnpm Publish
+        run: pnpm ci:publish
+        env:
+          # setup-node action sets up .npmrc for NODE_AUTH_TOKEN
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: ${{ steps.release.outputs.release_created }}

@@ -1,0 +1,5 @@
+{
+    "extends": "@handshakes/tsconfig/library.json",
+    "include": ["src/**/*", "test/**/*", "vitest.config.mts", "vitest.setup.mts"],
+    "exclude": ["dist", "build", "node_modules"]
+}

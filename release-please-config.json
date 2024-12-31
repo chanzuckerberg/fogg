@@ -1,19 +1,24 @@
 {
+  "changelog-sections": [
+    { "type": "feat", "section": "Features", "hidden": false },
+    { "type": "chore", "section": "Misc", "hidden": false },
+    { "type": "ci", "section": "Continuous Integration", "hidden": false },
+    { "type": "fix", "section": "BugFixes", "hidden": false }
+  ],
+  "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": true,
+  "draft": false,
+  "prerelease": false,
   "packages": {
     ".": {
-      "changelog-path": "CHANGELOG.md",
-      "release-type": "simple",
-      "bump-minor-pre-major": true,
-      "bump-patch-for-minor-pre-major": true,
-      "draft": false,
-      "prerelease": false,
-      "changelog-sections": [
-        { "type": "feat", "section": "Features", "hidden": false },
-        { "type": "chore", "section": "Misc", "hidden": false },
-        { "type": "ci", "section": "Continuous Integration", "hidden": false },
-        { "type": "fix", "section": "BugFixes", "hidden": false }
-      ]
-    }
+      "release-type": "simple"
+    },
+    "packages/cdktf-fogg-constructs": {}
   },
+  "plugins": [
+    {
+      "type": "node-workspace"
+    }
+  ],
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
 }

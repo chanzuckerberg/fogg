@@ -1,0 +1,60 @@
+{
+  "name": "@vincenthsh/cdktf-fogg-helpers",
+  "version": "0.0.0",
+  "description": "Fogg CDKTF Helpers.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "license": "MIT",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "type-check": "tsc -p ./tsconfig.dev.json --noEmit",
+    "test": "vitest run --passWithNoTests --coverage",
+    "build": "tsc -p ./tsconfig.json --outDir ./dist",
+    "lint": "eslint",
+    "format": "prettier --write \"**/*.{ts,md,json,yaml}\"",
+    "get": "cdktf get",
+    "watch": "tsc -p ./tsconfig.json --outDir ./dist  --watch",
+    "test:watch": "vitest",
+    "go:generate": "cd .hack/fogg-types;go run .",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -rf coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vincenthsh/fogg.git"
+  },
+  "author": "Vincent De Smet",
+  "bugs": {
+    "url": "https://github.com/vincenthsh/fogg/issues"
+  },
+  "homepage": "https://github.com/vincenthsh/fogg#readme",
+  "engines": {
+    "node": ">=18.16.1"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "peerDependencies": {
+    "@cdktf/provider-aws": "^19.44.0",
+    "@cdktf/provider-cloudflare": "^11.16.0",
+    "@cdktf/provider-datadog": "^11.8.0",
+    "cdktf": "^0.20.8",
+    "constructs": "^10.3.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^18.19.1",
+    "@vincenthsh/tsconfig": "workspace:*",
+    "@vitest/coverage-v8": "^2.1.6",
+    "cdktf-cli": "^0.20.8",
+    "cdktf-vitest": "^0.1.2",
+    "typescript": "5.5.4",
+    "unplugin-swc": "^1.4.5",
+    "vitest": "^2.1.6",
+    "deepmerge": "4.3.1"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  }
+}

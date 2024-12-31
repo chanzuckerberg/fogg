@@ -1,0 +1,25 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "type-check": {},
+    "test": {
+      "outputs": ["coverage/**"],
+      "dependsOn": [],
+      "inputs": ["**/*.test.ts", "**/*.test.tsx", "vitest.config.ts"]
+    },
+    "build": {
+      "inputs": ["$TURBO_DEFAULT", ".env*"],
+      "outputs": ["dist/**"],
+      "dependsOn": ["^build"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "format": {
+      "dependsOn": []
+    },
+    "clean": {
+      "cache": false
+    }
+  }
+}

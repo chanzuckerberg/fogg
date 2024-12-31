@@ -5,7 +5,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -13,3 +13,22 @@ jobs:
           go-version-file: go.mod
       - name: Run tests
         run: make test-ci
+  test-cdktf:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      # pnpm required for setup-node cache support
+      # ref: https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#caching-packages-data
+      - name: Setup pnpm from .packageManager
+        with:
+          run_install: false
+        uses: pnpm/action-setup@v4
+      - name: Use Node.js from .nvmrc
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: "pnpm"
+      - name: Run pnpm test
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm run test

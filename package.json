@@ -1,0 +1,28 @@
+{
+  "name": "fogg-npm-monorepo",
+  "description": "Monorepo for Fogg npm packages",
+  "private": true,
+  "scripts": {
+    "type-check": "turbo type-check",
+    "test": "turbo test",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "format": "turbo run prettier",
+    "repo-lint": "sherif",
+    "clean": "turbo clean && rm -rf node_modules",
+    "ci:publish": "pnpm publish -r"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "sherif": "^1.0.2",
+    "turbo": "^2.3.3",
+    "vitest": "^2.1.6"
+  },
+  "packageManager": "pnpm@9.15.2",
+  "engines": {
+    "node": ">=18.20.5"
+  }
+}
