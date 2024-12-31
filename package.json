@@ -10,7 +10,7 @@
     "format": "turbo run prettier",
     "repo-lint": "sherif",
     "clean": "turbo clean && rm -rf node_modules",
-    "ci:publish": "pnpm publish -r"
+    "ci:publish": "pnpm publish -r --publish-branch feat-multi-module-components"
   },
   "keywords": [],
   "author": "",
