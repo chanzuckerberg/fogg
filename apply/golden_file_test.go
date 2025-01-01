@@ -47,7 +47,7 @@ func TestIntegration(t *testing.T) {
 		{"v2_github_actions_with_pre_commit"},
 		{"v2_atlantis_depends_on"},
 		{"v2_cdktf_components"},
-		{"v2_envtio_components"},
+		{"v2_terraconstruct_components"},
 		{"generic_providers_yaml"},
 	}
 

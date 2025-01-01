@@ -1,0 +1,10 @@
+{{ template "fogg_header" }}
+{{- if .Scopes -}}
+{{- range $k, $scope := .Scopes }}
+{{ $k }}:registry="{{ $scope.RegistryUrl }}"
+{{- if $scope.AlwaysAuth }}
+//{{ $scope.RegistryUrl }}:always-auth=true
+{{- end }}
+{{- end }}
+{{ end }}
+auto-install-peers = true

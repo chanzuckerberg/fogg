@@ -1,0 +1,4 @@
+# ignore fogg managed files
+package.json
+.eslintrc.json
+.fogg-component.yaml

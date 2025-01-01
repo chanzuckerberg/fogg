@@ -593,7 +593,7 @@ func (p *Plan) buildModules(c *v2.Config) map[string]Module {
 		}
 		modulePlan.CdktfDevDependencies = map[string]string{
 			"@types/node":                       "^20.6.0",
-			"vitest":                            "^2.0.5",
+			"vitest":                            "^2.1.7", // https://github.com/vitest-dev/vitest/releases
 			"ts-node":                           "^10.9.2",
 			"@swc/core":                         "^1.7.6",
 			"@typescript-eslint/eslint-plugin":  "^8",
@@ -604,8 +604,9 @@ func (p *Plan) buildModules(c *v2.Config) map[string]Module {
 			"eslint-plugin-import":              "^2.29.1",
 			"eslint-plugin-prettier":            "^5.2.1",
 			"prettier":                          "^3.3.3",
-			"typescript":                        "^5.4.0",
+			"typescript":                        "^5.5.4",
 			"cdktf":                             "^0.20.8",
+			"cdktf-cli":                         "^0.20.8", // required to run cdktf get
 			"constructs":                        "^10.3.0",
 		}
 
@@ -699,15 +700,16 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			componentPlan.ProvidersMap = componentConf.ProvidersMap
 			componentPlan.PathToRepoRoot = "../../../../"
 			componentPlan.CdktfDependencies = map[string]string{
-				"@cdktf/provider-aws":        "^19.29.0",
-				"@cdktf/provider-cloudflare": "^11.16.0", // helpers/fogg-stack depends on this
-				"@cdktf/provider-datadog":    "^11.8.0",  // helpers/fogg-stack depends on this
-				"cdktf":                      "^0.20.8",
-				"constructs":                 "^10.3.0",
-				"js-yaml":                    "^4.1.0",
+				// from packages/cdktf-fogg-constructs
+				"@vincenthsh/cdktf-fogg-helpers": "^1.0.0",
+				"@cdktf/provider-aws":            "^19.44.0", // @vincenthsh/cdktf-fogg-helpers peer dependency
+				"@cdktf/provider-cloudflare":     "^11.16.0", // @vincenthsh/cdktf-fogg-helpers peer dependency
+				"@cdktf/provider-datadog":        "^11.8.0",  // @vincenthsh/cdktf-fogg-helpers peer dependency
+				"cdktf":                          "^0.20.8",
+				"constructs":                     "^10.3.0",
 			}
 			componentPlan.CdktfDevDependencies = map[string]string{
-				"@types/js-yaml":                    "^4.0.9",
+				"cdktf-cli":                         "^0.20.8", // required to run `cdktf get``
 				"@types/node":                       "^20.6.0",
 				"ts-node":                           "^10.9.2",
 				"@swc/core":                         "^1.7.6",
@@ -721,8 +723,8 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 				"prettier":                          "^3.3.3",
 				"typescript":                        "^5.4.0",
 			}
-			if componentConf.Kind.GetOrDefault() == v2.ComponentKindEnvtio {
-				componentPlan.CdktfDependencies["@envtio/base"] = "0.0.7"
+			if componentConf.Kind.GetOrDefault() == v2.ComponentKindTerraConstruct {
+				componentPlan.CdktfDependencies["terraconstructs"] = "^0.0.9"
 			}
 
 			for _, dep := range componentConf.CdktfDependencies {
@@ -744,7 +746,7 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 
 		for componentName, component := range envPlan.Components {
 			kind := component.Kind.GetOrDefault()
-			if !(kind == v2.ComponentKindTerraform || kind == v2.ComponentKindCDKTF || kind == v2.ComponentKindEnvtio) {
+			if !(kind == v2.ComponentKindTerraform || kind == v2.ComponentKindCDKTF || kind == v2.ComponentKindTerraConstruct) {
 				continue
 			}
 

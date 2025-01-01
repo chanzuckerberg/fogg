@@ -27,6 +27,9 @@ defaults:
   terraform_version: 1.7.5
 turbo:
   enabled: true
+  scopes:
+    - name: "@myorg"
+      registry_url: "https://domain-123456789012.d.codeartifact.us-west-2.amazonaws.com/npm/repo-name/"
 envs:
   test:
     components:
@@ -45,6 +48,8 @@ envs:
             version: "^0.23.0"
           - name: iam-floyd
             version: "^0.507.0"
+          - name: "@myorg/my-cdktf-constructs"
+            version: "^1.0.0"
       network:
         providers:
           aws:

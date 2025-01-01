@@ -4,27 +4,32 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "get": "cdktf get",
+    "ca:login": "(cd ../../../../ && pnpm run ca:login)",
     "eslint": "eslint . --ext .ts",
     "prettier": "prettier --write .",
-    "synth": "npx ts-node --swc -P ./tsconfig.dev.json src/index.ts"
+    "synth": "npx ts-node --swc -P ./tsconfig.dev.json src/index.ts",
+    "type-check": "tsc -p ./tsconfig.dev.json --noEmit",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -rf coverage"
   },
   "dependencies":   {
-    "@cdktf/provider-aws": "^19.29.0",
+    "@cdktf/provider-aws": "^19.44.0",
     "@cdktf/provider-cloudflare": "^11.16.0",
     "@cdktf/provider-datadog": "^11.8.0",
+    "@myorg/my-cdktf-constructs": "^1.0.0",
     "@types/aws-lambda": "^8.10.76",
+    "@vincenthsh/cdktf-fogg-helpers": "^1.0.0",
     "cdktf": "^0.20.8",
     "constructs": "^10.3.0",
     "esbuild-wasm": "^0.23.0",
-    "iam-floyd": "^0.507.0",
-    "js-yaml": "^4.1.0"
+    "iam-floyd": "^0.507.0"
   },
   "devDependencies":   {
     "@swc/core": "^1.7.6",
-    "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.6.0",
     "@typescript-eslint/eslint-plugin": "^8",
     "@typescript-eslint/parser": "^8",
+    "cdktf-cli": "^0.20.8",
     "eslint": "^8",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.1",

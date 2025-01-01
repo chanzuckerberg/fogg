@@ -18,7 +18,7 @@ importers:
         specifier: ^2.3.3
         version: 2.3.3
       vitest:
-        specifier: ^2.1.6
+        specifier: ^2.1.7
         version: 2.1.8(@types/node@20.17.10)
 
   packages/cdktf-fogg-constructs:
@@ -41,6 +41,9 @@ importers:
       js-yaml:
         specifier: ^4.1.0
         version: 4.1.0
+      terraconstructs:
+        specifier: ^0.0.9
+        version: 0.0.9(@cdktf/provider-aws@19.48.1(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0))(@cdktf/provider-time@10.2.1(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0))(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0)
     devDependencies:
       '@types/js-yaml':
         specifier: ^4.0.9
@@ -214,6 +217,13 @@ packages:
 
   '@cdktf/provider-schema@0.20.10':
     resolution: {integrity: sha512-ibyWBhqAV5/79BAJj3cdpjEsHQ/g5MYO88G85+LSiQgEkr3+bwhXS1s8GMdUtDo6wGirmDXhPzBaHJ4YVqn8pQ==}
+
+  '@cdktf/provider-time@10.2.1':
+    resolution: {integrity: sha512-I4hRjCOS2Kv2TqGxpZojtkpjVMkj9mb9iZZ3mdlKrAC3GGTtqpiIgNLQ3rLh7QiOYPivbaiYiUCFFvLDExgWJA==}
+    engines: {node: '>= 18.12.0'}
+    peerDependencies:
+      cdktf: ^0.20.0
+      constructs: ^10.3.0
 
   '@esbuild/aix-ppc64@0.21.5':
     resolution: {integrity: sha512-1SDgH6ZSPTlggy1yI6+Dbkiz8xzpHJEVAlF/AM1tHPLsf5STom9rwtjE4hKAF20FfXXNTFqEYXyJNWh1GiZedQ==}
@@ -2160,6 +2170,19 @@ packages:
     resolution: {integrity: sha512-ujeqbceABgwMZxEJnk2HDY2DlnUZ+9oEcb1KzTVfYHio0UE6dG71n60d8D2I4qNvleWrrXpmjpt7vZeF1LnMZQ==}
     engines: {node: '>=6'}
 
+  terraconstructs@0.0.9:
+    resolution: {integrity: sha512-n9E8P3tJtOA+TkVkfJ2Fw7icDBblohZ5iYqHcaV40VA2kMPq9xiAdOCoU+L7V9qUjN5KsEXn0xhrQ96NNdX81Q==}
+    engines: {node: '>=18.18.0'}
+    peerDependencies:
+      '@cdktf/provider-aws': ^19.34.0
+      '@cdktf/provider-time': ^10.2.1
+      cdktf: ^0.20.8
+      constructs: ^10.3.0
+    bundledDependencies:
+      - change-case
+      - esbuild-wasm
+      - mime-types
+
   test-exclude@7.0.1:
     resolution: {integrity: sha512-pFYqmTw68LXVjeWJMST4+borgQP2AyMNbg1BpZh9LbyhUeNkeaPF9gzfPGUAnSMV3qPYdWUwDIjjCLiSDOl7vg==}
     engines: {node: '>=18'}
@@ -2248,8 +2271,8 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  typescript@5.8.0-dev.20241230:
-    resolution: {integrity: sha512-cs631S0kQoinvsMJN2vwUNpROxcosWSk5dVr9OSRwpNpyffpA13juQS3bC5hn8UThuFBPobFkrj0p0pW9RxYmg==}
+  typescript@5.8.0-dev.20250101:
+    resolution: {integrity: sha512-a4tA7bccsnhaKh/I3GXm9GhQFgQ6q4HhmeyIW7FFXm2fPMEkwtf3OCSyM4dG/0Z02RW7nsQ4y+Oqfk6GEg9eBQ==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -2692,6 +2715,11 @@ snapshots:
       - constructs
       - debug
       - supports-color
+
+  '@cdktf/provider-time@10.2.1(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0)':
+    dependencies:
+      cdktf: 0.20.10(constructs@10.3.0)
+      constructs: 10.3.0
 
   '@esbuild/aix-ppc64@0.21.5':
     optional: true
@@ -3564,7 +3592,7 @@ snapshots:
     dependencies:
       semver: 7.6.3
       shelljs: 0.8.5
-      typescript: 5.8.0-dev.20241230
+      typescript: 5.8.0-dev.20250101
 
   dunder-proto@1.0.1:
     dependencies:
@@ -4729,6 +4757,13 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
 
+  terraconstructs@0.0.9(@cdktf/provider-aws@19.48.1(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0))(@cdktf/provider-time@10.2.1(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0))(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0):
+    dependencies:
+      '@cdktf/provider-aws': 19.48.1(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0)
+      '@cdktf/provider-time': 10.2.1(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0)
+      cdktf: 0.20.10(constructs@10.3.0)
+      constructs: 10.3.0
+
   test-exclude@7.0.1:
     dependencies:
       '@istanbuljs/schema': 0.1.3
@@ -4794,7 +4829,7 @@ snapshots:
 
   typescript@5.5.4: {}
 
-  typescript@5.8.0-dev.20241230: {}
+  typescript@5.8.0-dev.20250101: {}
 
   undici-types@5.26.5: {}
 

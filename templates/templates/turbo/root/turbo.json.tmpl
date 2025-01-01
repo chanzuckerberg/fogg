@@ -1,9 +1,18 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
+    "test": {
+      "outputs": ["coverage/**"],
+      "dependsOn": [],
+      "inputs": ["**/*.test.ts", "**/*.test.tsx", "vitest.config.ts"]
+    },
     "synth": {
       "inputs": ["./src/**/*", "./.fogg-component.yaml"],
       "outputs": ["cdk.tf.json", "ci-cdk.tf.json", "assets/**"]
+    },
+    "type-check": {},
+    "clean": {
+      "cache": false
     }
   }
 }

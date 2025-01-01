@@ -6,10 +6,13 @@
     ".": "./src/index.ts"
   },
   "scripts": {
+    "get": "cdktf get",
     "test": "vitest run --passWithNoTests --update",
     "eslint": "eslint . --ext .ts",
     "prettier": "prettier --write .",
-    "synth": "npx ts-node --swc -P ./tsconfig.dev.json src/index.ts"
+    "synth": "npx ts-node --swc -P ./tsconfig.dev.json src/index.ts",
+    "type-check": "tsc -p ./tsconfig.dev.json --noEmit",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -rf coverage"
   },
   "dependencies":  {
     "@cdktf/tf-module-stack": "^5.0.21"
@@ -20,6 +23,7 @@
     "@typescript-eslint/eslint-plugin": "^8",
     "@typescript-eslint/parser": "^8",
     "cdktf": "^0.20.8",
+    "cdktf-cli": "^0.20.8",
     "constructs": "^10.3.0",
     "eslint": "^8",
     "eslint-config-prettier": "^9.1.0",
@@ -28,8 +32,8 @@
     "eslint-plugin-prettier": "^5.2.1",
     "prettier": "^3.3.3",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.0",
-    "vitest": "^2.0.5"
+    "typescript": "^5.5.4",
+    "vitest": "^2.1.7"
   },
   "peerDependencies":  {
     "cdktf": "^0.20.8",

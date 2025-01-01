@@ -1,9 +1,5 @@
-// // Use provider-aws constructs directly
-// import { dataAwsAvailabilityZones } from "@cdktf/provider-aws";
-// // Or use CDKTF constructs directly from npm
-// import { MyConstruct } from "@handshakes/my-construct";
+import { FoggStack } from "@vincenthsh/cdktf-fogg-helpers";
 import { Construct } from "constructs";
-import { FoggStack } from "./helpers/fogg-stack";
 
 export class ComponentStack extends FoggStack {
   constructor(scope: Construct, id: string) {
@@ -11,28 +7,7 @@ export class ComponentStack extends FoggStack {
       forceRemoteStates: false,
     });
 
-    // // Configure fogg module variables here
-    // this.setModuleVariables("main", {
-    //   foo: "bar",
-    //   baz: "qux",
-    //   tags: {
-    //     // Use fogg component configuration values
-    //     Project: this.foggComp.project,
-    //     Owner: this.foggComp.owner,
-    //     Environment: this.foggComp.env,
-    //   },
-    // });
-
-    // // Or: create AWS Resources
-    // const azs = new dataAwsAvailabilityZones.DataAwsAvailabilityZones(
-    //   this,
-    //   "azs",
-    //   {}
-    // );
-
-    // // Or: use custom constructs
-    // new MyConstruct(this, "my-construct", {
-    //   foo: "bar",
-    // });
+    // For example usage see:
+    // https://github.com/vincenthsh/fogg/blob/cdktf-fogg-helpers-v1.0.0/packages/cdktf-fogg-constructs
   }
 }

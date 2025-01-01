@@ -23,12 +23,19 @@ import (
 //go:embed templates/component/cdktf/.prettierrc.json.tmpl
 //go:embed templates/component/cdktf/.gitignore.create
 //go:embed templates/component/cdktf/.gitattributes.create
+//go:embed templates/component/cdktf/.prettierignore.create
+//go:embed templates/component/terraconstructs/.eslintrc.json.tmpl
+//go:embed templates/component/terraconstructs/.prettierrc.json.tmpl
+//go:embed templates/component/terraconstructs/.gitignore.create
+//go:embed templates/component/terraconstructs/.gitattributes.create
+//go:embed templates/component/terraconstructs/.prettierignore.create
 //go:embed templates/component/*
 //go:embed templates/env/*
 //go:embed templates/module/cdktf/.eslintrc.json.tmpl
 //go:embed templates/module/cdktf/.prettierrc.json.tmpl
 //go:embed templates/module/cdktf/.gitignore.create
 //go:embed templates/module/cdktf/.gitattributes.create
+//go:embed templates/module/cdktf/.prettierignore.create
 //go:embed templates/module/*
 //go:embed templates/module/terraform/.update-readme.sh.rm
 //go:embed templates/module-invocation/*
@@ -44,6 +51,9 @@ import (
 //go:embed templates/tfe/*
 //go:embed templates/turbo/*
 //go:embed templates/turbo/root/.vscode/settings.json.tmpl
+//go:embed templates/turbo/root/.npmrc.tmpl
+//go:embed templates/turbo/root/.nvmrc.create
+//go:embed templates/turbo/root/.prettierignore.create
 var templates embed.FS
 
 type T struct {
@@ -76,9 +86,9 @@ func mustFSSub(dir string) fs.FS {
 var Templates = &T{
 	Common: mustFSSub("templates/common"),
 	Components: map[v2.ComponentKind]fs.FS{
-		v2.ComponentKindTerraform: mustFSSub("templates/component/terraform"),
-		v2.ComponentKindCDKTF:     mustFSSub("templates/component/cdktf"),
-		v2.ComponentKindEnvtio:    mustFSSub("templates/component/envtio"),
+		v2.ComponentKindTerraform:      mustFSSub("templates/component/terraform"),
+		v2.ComponentKindCDKTF:          mustFSSub("templates/component/cdktf"),
+		v2.ComponentKindTerraConstruct: mustFSSub("templates/component/terraconstructs"),
 	},
 	Env: mustFSSub("templates/env"),
 	Module: map[v2.ModuleKind]fs.FS{

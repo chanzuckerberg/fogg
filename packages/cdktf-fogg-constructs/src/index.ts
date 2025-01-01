@@ -1,4 +1,5 @@
 export * from "./fogg-stack";
+export * from "./fogg-terrastack";
 
 /**
  * Auto generated types

@@ -14,7 +14,6 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/tkrajina/typescriptify-golang-structs/typescriptify"
 	"golang.org/x/exp/slices"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
@@ -384,17 +383,6 @@ func applyEnvs(
 	logrus.Debug("applying envs")
 	pathModuleConfigs = make(PathModuleConfigs)
 	for env, envPlan := range p.Envs {
-
-		foggTSConverter := typescriptify.New().WithInterface(true).WithCustomJsonTag("yaml").Add(plan.Component{})
-
-		// TODO: Handle tscriptify customCode?
-		customCode := map[string]string{}
-		// TODO: move to fogg npm package
-		foggTS, err := foggTSConverter.Convert(customCode)
-		if err != nil {
-			return nil, errs.WrapUserf(err, "unable to convert Golang structs")
-		}
-
 		logrus.Debugf("applying %s", env)
 		path := fmt.Sprintf("%s/envs/%s", util.RootPath, env)
 		err = fs.MkdirAll(path, 0755)
@@ -483,12 +471,8 @@ func applyEnvs(
 				if err != nil {
 					return nil, errs.WrapUser(err, "unable to apply module invocation")
 				}
-			} else if kind == v2.ComponentKindCDKTF || kind == v2.ComponentKindEnvtio {
+			} else if kind == v2.ComponentKindCDKTF || kind == v2.ComponentKindTerraConstruct {
 				logrus.Warn("module invocations not templated for kind CDKTF")
-				err := writeStructToTS(fs, foggTS, fmt.Sprintf("%s/src/helpers/fogg-types.generated.ts", path))
-				if err != nil {
-					panic(err.Error())
-				}
 				writeYamlFile(fs, componentPlan, fmt.Sprintf("%s/.fogg-component.yaml", path))
 			}
 		}
@@ -767,31 +751,6 @@ func writeYamlFile(dest afero.Fs, in interface{}, path string) error {
 		return errs.WrapUserf(err, "couldn't create %s directory", dir)
 	}
 	return afero.WriteFile(dest, path, out, 0644)
-}
-
-// helper method supporting afero.Fs to write converted golang structs to a file
-func writeStructToTS(dest afero.Fs, converted string, path string) error {
-	dir, _ := filepath.Split(path)
-	ospath := filepath.FromSlash(dir)
-	err := dest.MkdirAll(ospath, 0775)
-	if err != nil {
-		return errs.WrapUserf(err, "couldn't create %s directory", dir)
-	}
-
-	f, err := dest.Create(path)
-	if err != nil {
-		return errs.WrapUserf(err, "unable to open %q", path)
-	}
-	defer f.Close()
-	if _, err := f.WriteString("/* Do not change, this code is generated from Golang structs */\n\n"); err != nil {
-		return errs.WrapUserf(err, "unable to write to %q", path)
-	}
-	if _, err := f.WriteString(converted); err != nil {
-		return errs.WrapUserf(err, "unable to write to %q", path)
-	}
-
-	logrus.Infof("%s updated", path)
-	return nil
 }
 
 func removeExtension(path string) string {

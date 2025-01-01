@@ -2,6 +2,109 @@
 
 This CDKTF library provides Helpers to integrate CDKTF applications with Fogg generated component configuration.
 
+## Usage
+
+### FoggStack
+
+FoggStack exposes Fogg component configuration to CDKTF configurations.
+
+> [!NOTE]
+> Refer to [unit tests](https://github.com/vincenthsh/fogg/blob/feat-multi-module-components/packages/cdktf-fogg-constructs/test/fogg-stack.test.ts)
+> for supported functionality.
+
+```typescript
+import { FoggStack } from "@vincenthsh/fogg";
+import { Construct } from "constructs";
+
+export class ComponentStack extends FoggStack {
+  constructor(scope: Construct, id: string) {
+    super(scope, id, {
+      // optionally force Fogg generated Remote State references to be loaded
+      forceRemoteStates: false,
+    });
+
+    // Example setting variables for the single `module_source` backed Component
+    this.setMainModuleVariables({
+      foo: "bar",
+      baz: "qux",
+    });
+  }
+}
+```
+
+Set variables for any TF Module configured for the Component, by `name`:
+
+```typescript
+    // Configure fogg module variables here
+    this.setModuleVariables("my-module-name", {
+      foo: "bar",
+      baz: "qux",
+      tags: {
+        // Use fogg component configuration values
+        Project: this.foggComp.project,
+        Owner: this.foggComp.owner,
+        Environment: this.foggComp.env,
+      },
+    });
+```
+
+Define new AWS Resources directly in component
+
+```typescript
+// Add import statement
+import { dataAwsAvailabilityZones } from "@cdktf/provider-aws";
+
+// Instantiate in Stack body
+    const azs = new dataAwsAvailabilityZones.DataAwsAvailabilityZones(
+      this,
+      "azs",
+      {}
+    );
+```
+
+Add any custom CDKTF Constructs within [Workspace](https://pnpm.io/workspaces) or from NPM registry.
+
+```typescript
+import { MyConstrct } from "@vincenthsh/my-construct"
+
+// instantiate in Stack body
+    new MyConstruct(this, "my-construct", {
+      foo: "bar",
+    });
+```
+
+### FoggTerraStack
+
+FoggTerraStack exposes Fogg component configuration for [TerraConstructs.dev](https://terraconstructs.dev) AwsStacks.
+
+> [!NOTE]
+> Refer to [unit tests](https://github.com/vincenthsh/fogg/blob/feat-multi-module-components/packages/cdktf-fogg-constructs/test/fogg-terrastack.test.ts)
+> for supported functionality.
+
+```typescript
+import { FoggTerraStack } from "@vincenthsh/fogg";
+import { Construct } from "constructs";
+
+export class ComponentStack extends FoggTerraStack {
+  constructor(scope: Construct, id: string) {
+    super(scope, id, {
+      // optionally force Fogg generated Remote State references to be loaded
+      forceRemoteStates: false,
+      // Prefix for resource UUID, should never change for component lifecycle
+      gridUUID: "123-456",
+      // This is used as a tag and may change over time
+      environmentName: "development",
+    });
+
+    // Example setting variables for the single `module_source` backed Component
+    this.setMainModuleVariables({
+      foo: "bar",
+      baz: "qux",
+    });
+  }
+}
+```
+
 ## Compile
 
 ```console
@@ -20,32 +123,3 @@ This CDKTF library provides Helpers to integrate CDKTF applications with Fogg ge
 
 > [!IMPORTANT]
 > To update the snapshopts, run `pnpm run test --update`
-
-## Usage
-
-## FoggStack
-
-FoggStack exposes Fogg component configuration to CDKTF configurations.
-
-> [!NOTE]
-> Refer to [unit tests](./test/fogg-stack.test.ts) for supported functionality.
-
-```typescript
-import { FoggStack } from "@vincenthsh/fogg";
-import { Construct } from "constructs";
-import { }
-
-export class ComponentStack extends FoggStack {
-  constructor(scope: Construct, id: string) {
-    super(scope, id, {
-      forceRemoteStates: false,
-    });
-
-    // Example setting variables for `module_source` backed Component
-    this.setMainModuleVariables({
-      foo: "bar",
-      baz: "qux",
-    });
-  }
-}
-```

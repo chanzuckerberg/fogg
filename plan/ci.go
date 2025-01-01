@@ -5,10 +5,12 @@ import (
 	"path/filepath"
 	"slices"
 	"sort"
+	"strings"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/util"
 	atlantis "github.com/runatlantis/atlantis/server/core/config/raw"
+	"github.com/sirupsen/logrus"
 )
 
 type CIProject struct {
@@ -48,13 +50,17 @@ type AtlantisConfig struct {
 	RepoCfg *atlantis.RepoCfg
 }
 
+// alias v2.JavascriptPackageScope to jsScope for brevity
+type jsScope = v2.JavascriptPackageScope
 type TurboConfig struct {
-	Enabled         bool
-	Version         string
-	RootName        string
-	SCMBase         string
-	DevDependencies map[string]string
-	CdktfPackages   []string
+	Enabled                 bool
+	Version                 string
+	RootName                string
+	SCMBase                 string
+	DevDependencies         map[string]string
+	CdktfPackages           []string
+	Scopes                  map[string]jsScope
+	CodeArtifactLoginScript string
 }
 
 type PreCommitConfig struct {
@@ -388,6 +394,8 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 	}
 }
 
+const noCALoginRequired = "echo 'No CodeArtifact login required'"
+
 func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
 	turboConfig := &TurboConfig{
 		Enabled:  false,
@@ -395,10 +403,18 @@ func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
 		RootName: "fogg-monorepo",
 		DevDependencies: map[string]string{
 			"@types/node":  "^20.6.0",
-			"vitest":       "^2.0.5",
+			"vitest":       "^2.1.7", // https://github.com/vitest-dev/vitest/releases
 			"cdktf-vitest": "^0.1.2", // https://github.com/duniul/cdktf-vitest
-			"turbo":        "^2.1.1",
-			"typescript":   "^5.4.0",
+			"turbo":        "^2.3.3", // https://github.com/vercel/turborepo/releases
+			"typescript":   "^5.5.4",
+		},
+		CodeArtifactLoginScript: noCALoginRequired,
+		// Ensure vincenthsh/fogg's helper pkg scope
+		Scopes: map[string]jsScope{
+			"@vincenthsh": {
+				Name:        "@vincenthsh",
+				RegistryUrl: "https://npm.pkg.github.com",
+			},
 		},
 	}
 
@@ -419,6 +435,12 @@ func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
 			turboConfig.RootName = *c.Turbo.RootName
 		}
 
+		if c.Turbo.Scopes != nil {
+			scopes, loginScript := parseJsScopes(&turboConfig.Scopes, c.Turbo.Scopes)
+			turboConfig.Scopes = *scopes
+			turboConfig.CodeArtifactLoginScript = loginScript
+		}
+
 		for _, dep := range c.Turbo.DevDependencies {
 			turboConfig.DevDependencies[dep.Name] = dep.Version
 		}
@@ -427,7 +449,7 @@ func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
 		for module, modulePlan := range p.Modules {
 			kind := modulePlan.Kind.GetOrDefault()
 			if kind == v2.ModuleKindCDKTF {
-				// applyModules implementation detail
+				// applyModules implementation detail for pnpm-workspace.yaml
 				pkgs = append(pkgs, fmt.Sprintf("%s/modules/%s", util.RootPath, module))
 			}
 		}
@@ -435,8 +457,8 @@ func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
 		for env, envPlan := range p.Envs {
 			for component, componentPlan := range envPlan.Components {
 				kind := componentPlan.Kind.GetOrDefault()
-				if kind == v2.ComponentKindCDKTF || kind == v2.ComponentKindEnvtio {
-					// applyEnvs implementation detail
+				if kind == v2.ComponentKindCDKTF || kind == v2.ComponentKindTerraConstruct {
+					// applyEnvs implementation detail for pnpm-workspace.yaml
 					pkgs = append(pkgs, fmt.Sprintf("%s/envs/%s/%s", util.RootPath, env, component))
 				}
 			}
@@ -445,6 +467,38 @@ func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
 		turboConfig.CdktfPackages = pkgs
 	}
 	return turboConfig
+}
+
+// Merge scopes and detect CodeArtifact registries and generate optional ca:login script
+func parseJsScopes(mergedScopes *map[string]jsScope, new []jsScope) (*map[string]v2.JavascriptPackageScope, string) {
+	caRegistryUrls := map[string]util.CodeArtifactRepository{}
+	for _, newScope := range new {
+		(*mergedScopes)[newScope.Name] = newScope
+		if util.IsCodeArtifactURL(newScope.RegistryUrl) {
+			if _, exists := caRegistryUrls[newScope.RegistryUrl]; !exists {
+				caRepo, err := util.ParseRegistryUrl(newScope.RegistryUrl)
+				if err != nil {
+					logrus.Warnf("Failed to parse CodeArtifact registry URL: %s", newScope.RegistryUrl)
+					continue
+				}
+				caRegistryUrls[newScope.RegistryUrl] = *caRepo
+			}
+		}
+	}
+	// Generate the npm ca:login script for CodeArtifact registries
+	caLoginScript := noCALoginRequired
+	if len(caRegistryUrls) > 0 {
+		loginSteps := make([]string, 0, len(caRegistryUrls))
+		for _, repo := range caRegistryUrls {
+			loginSteps = append(loginSteps, fmt.Sprintf("aws codeartifact login --tool npm --repository %s --domain %s --domain-owner %s --region %s",
+				repo.Name, repo.Domain, repo.AccountId, repo.Region))
+		}
+		// sort for deterministic output
+		sort.Strings(loginSteps)
+		caLoginScript = strings.Join(loginSteps, ";")
+	}
+
+	return mergedScopes, caLoginScript
 }
 
 // buildAtlantisConfig must be build after Envs

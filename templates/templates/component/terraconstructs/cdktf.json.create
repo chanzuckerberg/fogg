@@ -1,0 +1,7 @@
+{
+  "language": "typescript",
+  "codeMakerOutput": "src/.gen",
+  "app": "npx ts-node --swc -P ./tsconfig.dev.json src/index.ts",
+  "terraformProviders": [],
+  "terraformModules": []
+}

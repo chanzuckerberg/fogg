@@ -3,7 +3,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "synth": "TURBO_SCM_BASE='{{ .SCMBase }}' turbo run synth --affected"
+    "ca:login": "{{ .CodeArtifactLoginScript }}",
+    "test": "turbo test",
+    "synth": "TURBO_SCM_BASE='{{ .SCMBase }}' turbo run synth --affected",
+    "type-check": "turbo type-check",
+    "clean": "turbo clean && rm -rf node_modules"
   },
   "engines": {
     "node": "20"

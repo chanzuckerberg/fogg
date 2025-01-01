@@ -1,0 +1,3 @@
+# ignore fogg managed files
+package.json
+.eslintrc.json

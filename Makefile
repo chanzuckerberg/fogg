@@ -9,7 +9,7 @@ export GO111MODULE=on
 all: test install
 
 fmt:
-	~/go/bin/goimports -w -l .
+	~/go/bin/goimports -w -l $(shell find . -type f -name '*.go' -not -path "./node_modules/*")
 .PHONY: fmt
 
 lint-setup: ## setup linter dependencies

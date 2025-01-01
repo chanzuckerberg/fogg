@@ -280,3 +280,98 @@ func Test_buildCircleCI_ProfilesDisabled(t *testing.T) {
 	circle := p.buildCircleCIConfig(c, "0.1.0")
 	r.Len(circle.AWSProfiles, 0)
 }
+
+func Test_parseScopes(t *testing.T) {
+	r := require.New(t)
+
+	t.Run("No new scopes", func(t *testing.T) {
+		defaultScopes := map[string]jsScope{}
+		newScopes := []jsScope{}
+		result, script := parseJsScopes(&defaultScopes, newScopes)
+		r.NotNil(result)
+		r.Equal(noCALoginRequired, script)
+		r.Empty(*result)
+	})
+
+	t.Run("No new scopes, keep defaults", func(t *testing.T) {
+		defaultScopes := map[string]jsScope{
+			"@scope1": {Name: "@scope1", RegistryUrl: "https://registry.npmjs.org"},
+		}
+		newScopes := []jsScope{}
+		result, script := parseJsScopes(&defaultScopes, newScopes)
+		r.NotNil(result)
+		r.Equal(noCALoginRequired, script)
+		r.Len(*result, 1)
+		r.Equal("https://registry.npmjs.org", (*result)["@scope1"].RegistryUrl)
+	})
+
+	t.Run("New scopes without CodeArtifact URLs", func(t *testing.T) {
+		defaultScopes := map[string]jsScope{}
+		newScopes := []jsScope{
+			{Name: "@scope1", RegistryUrl: "https://registry.npmjs.org"},
+			{Name: "@scope2", RegistryUrl: "https://registry.yarnpkg.com"},
+		}
+		result, script := parseJsScopes(&defaultScopes, newScopes)
+		r.NotNil(result)
+		r.Equal(noCALoginRequired, script)
+		r.Len(*result, 2)
+		r.Equal("https://registry.npmjs.org", (*result)["@scope1"].RegistryUrl)
+		r.Equal("https://registry.yarnpkg.com", (*result)["@scope2"].RegistryUrl)
+	})
+
+	t.Run("New scopes without CodeArtifact URLs, merge with defaults", func(t *testing.T) {
+		defaultScopes := map[string]jsScope{
+			"@scope1": {Name: "@scope1", RegistryUrl: "https://registry.yarnpkg.com"},
+		}
+		newScopes := []jsScope{
+			{Name: "@scope1", RegistryUrl: "https://registry.npmjs.org"},
+			{Name: "@scope2", RegistryUrl: "https://registry.yarnpkg.com"},
+		}
+		result, script := parseJsScopes(&defaultScopes, newScopes)
+		r.NotNil(result)
+		r.Equal(noCALoginRequired, script)
+		r.Len(*result, 2)
+		r.Equal("https://registry.npmjs.org", (*result)["@scope1"].RegistryUrl)
+		r.Equal("https://registry.yarnpkg.com", (*result)["@scope2"].RegistryUrl)
+	})
+
+	t.Run("New scopes with CodeArtifact URLs", func(t *testing.T) {
+		mergedScopes := map[string]jsScope{}
+		newScopes := []jsScope{
+			{Name: "@scope1", RegistryUrl: "https://registry.npmjs.org"},
+			{Name: "@scope2", RegistryUrl: "https://domain-123456789012.d.codeartifact.us-west-2.amazonaws.com/npm/repo-name/"},
+			{Name: "@scope3", RegistryUrl: "https://domain-123456789012.d.codeartifact.us-west-2.amazonaws.com/npm/repo-name/"},
+			{Name: "@scope4", RegistryUrl: "https://domain-123456789012.d.codeartifact.us-east-1.amazonaws.com/npm/repo-name/"},
+			{Name: "@scope5", RegistryUrl: "https://domain-210987654321.d.codeartifact.us-west-2.amazonaws.com/npm/repo-name/"},
+		}
+		result, script := parseJsScopes(&mergedScopes, newScopes)
+		r.NotNil(result)
+		r.NotNil(script)
+		r.Len(*result, 5)
+		r.Equal("https://registry.npmjs.org", (*result)["@scope1"].RegistryUrl)
+		r.Equal("https://domain-123456789012.d.codeartifact.us-west-2.amazonaws.com/npm/repo-name/", (*result)["@scope2"].RegistryUrl)
+		r.Equal("https://domain-123456789012.d.codeartifact.us-west-2.amazonaws.com/npm/repo-name/", (*result)["@scope3"].RegistryUrl)
+		r.Equal("https://domain-123456789012.d.codeartifact.us-east-1.amazonaws.com/npm/repo-name/", (*result)["@scope4"].RegistryUrl)
+		r.Equal("https://domain-210987654321.d.codeartifact.us-west-2.amazonaws.com/npm/repo-name/", (*result)["@scope5"].RegistryUrl)
+		expectedScript := "aws codeartifact login --tool npm --repository repo-name --domain domain --domain-owner 123456789012 --region us-east-1;" +
+			"aws codeartifact login --tool npm --repository repo-name --domain domain --domain-owner 123456789012 --region us-west-2;" +
+			"aws codeartifact login --tool npm --repository repo-name --domain domain --domain-owner 210987654321 --region us-west-2"
+		r.Equal(expectedScript, script)
+	})
+
+	t.Run("Merge existing scopes with new scopes", func(t *testing.T) {
+		mergedScopes := map[string]jsScope{
+			"@scope1": {Name: "@scope1", RegistryUrl: "https://registry.npmjs.org"},
+		}
+		newScopes := []jsScope{
+			{Name: "@scope2", RegistryUrl: "https://domain-123456789012.d.codeartifact.us-west-2.amazonaws.com/npm/repo-name/"},
+		}
+		result, script := parseJsScopes(&mergedScopes, newScopes)
+		r.NotNil(result)
+		r.NotNil(script)
+		r.Len(*result, 2)
+		r.Equal("https://registry.npmjs.org", (*result)["@scope1"].RegistryUrl)
+		r.Equal("https://domain-123456789012.d.codeartifact.us-west-2.amazonaws.com/npm/repo-name/", (*result)["@scope2"].RegistryUrl)
+		r.Contains(script, "aws codeartifact login --tool npm --repository repo-name --domain domain --domain-owner 123456789012 --region us-west-2")
+	})
+}

@@ -578,12 +578,19 @@ type TurboConfig struct {
 	RootName *string `yaml:"root_name,omitempty"` // Optional Name for the root package, default: "fogg-monorepo"
 	SCMBase  *string `yaml:"scm_base,omitempty"`  // Optional Git comparison base override, default: "main"
 
-	DevDependencies []JavascriptDependency `yaml:"dev_dependencies,omitempty"` // Optional additional root dev dependencies, default: []
+	Scopes          []JavascriptPackageScope `yaml:"scopes,omitempty"`           // Optional additional scopes, default: []
+	DevDependencies []JavascriptDependency   `yaml:"dev_dependencies,omitempty"` // Optional additional root dev dependencies, default: []
 }
 
 type JavascriptDependency struct {
 	Name    string `yaml:"name"`    // npm package name
 	Version string `yaml:"version"` // npm package version
+}
+
+type JavascriptPackageScope struct {
+	Name        string `yaml:"name"`         // name for example "@vincenthsh"
+	RegistryUrl string `yaml:"registry_url"` // registry url for example "https://npm.pkg.github.com"
+	AlwaysAuth  bool   `yaml:"always_auth"`  // always auth flag, default: false
 }
 
 // EKSConfig is the configuration for an eks cluster
@@ -666,8 +673,8 @@ const (
 	ComponentKindTerraform = DefaultComponentKind
 	// ComponentKindCDKTF is a CDKTF component
 	ComponentKindCDKTF ComponentKind = "cdktf"
-	// ComponentKindEnvtio is a CDKTF component using the envtio framework
-	ComponentKindEnvtio ComponentKind = "envtio"
+	// ComponentKindTerraConstruct is a CDKTF component using the TerraConstructs framework
+	ComponentKindTerraConstruct ComponentKind = "terraconstruct"
 	// DefaultComponentKind defaults to terraform component
 	DefaultModuleKind ModuleKind = "terraform"
 	// ModuleKindTerraform is a terraform Module
