@@ -1,4 +1,4 @@
 {
-  ".": "0.92.14",
-  "packages/cdktf-fogg-constructs": "1.0.0"
+  ".": "0.92.15",
+  "packages/cdktf-fogg-constructs": "1.1.0"
 }
