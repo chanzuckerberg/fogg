@@ -21,11 +21,20 @@ type CodeArtifactRepository struct {
 	AccountId string
 	Region    string
 	Name      string
+	Namespace string
+}
+
+// Returns the `aws codeartifact login` command for the repository with the given `scope`.
+//
+// refer to https://docs.aws.amazon.com/codeartifact/latest/ug/npm-auth.html#configure-npm-login-command
+func (r *CodeArtifactRepository) LoginCommand() string {
+	return fmt.Sprintf("aws codeartifact login --tool npm --repository %s --domain %s --domain-owner %s --region %s --namespace %q",
+		r.Name, r.Domain, r.AccountId, r.Region, r.Namespace)
 }
 
 // Gets AWS details from the Code Artifact `registryUrl`.
 // throws exception if not matching expected pattern
-func ParseRegistryUrl(registryUrl string) (*CodeArtifactRepository, error) {
+func ParseRegistryUrl(scope string, registryUrl string) (*CodeArtifactRepository, error) {
 	// https://github.com/projen/projen/blob/v0.91.4/src/javascript/util.ts#L48
 	regex := regexp.MustCompile(AWS_CODEARTIFACT_CAPTURE_REGEX)
 	matches := regex.FindStringSubmatch(registryUrl)
@@ -37,5 +46,6 @@ func ParseRegistryUrl(registryUrl string) (*CodeArtifactRepository, error) {
 		AccountId: matches[2],
 		Region:    matches[3],
 		Name:      matches[4],
+		Namespace: scope,
 	}, nil
 }

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "ca:login": "{{ .CodeArtifactLoginScript }}",
+    "ca:login": {{ .CodeArtifactLoginScript | quote}},
     "test": "turbo test",
     "synth": "TURBO_SCM_BASE='{{ .SCMBase }}' turbo run synth --affected",
     "type-check": "turbo type-check",

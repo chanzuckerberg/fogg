@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "ca:login": "aws codeartifact login --tool npm --repository repo-name --domain domain --domain-owner 123456789012 --region us-west-2",
+    "ca:login": "aws codeartifact login --tool npm --repository repo-name --domain domain --domain-owner 123456789012 --region us-west-2 --namespace \"@myorg\"",
     "test": "turbo test",
     "synth": "TURBO_SCM_BASE='main' turbo run synth --affected",
     "type-check": "turbo type-check",

@@ -353,9 +353,10 @@ func Test_parseScopes(t *testing.T) {
 		r.Equal("https://domain-123456789012.d.codeartifact.us-west-2.amazonaws.com/npm/repo-name/", (*result)["@scope3"].RegistryUrl)
 		r.Equal("https://domain-123456789012.d.codeartifact.us-east-1.amazonaws.com/npm/repo-name/", (*result)["@scope4"].RegistryUrl)
 		r.Equal("https://domain-210987654321.d.codeartifact.us-west-2.amazonaws.com/npm/repo-name/", (*result)["@scope5"].RegistryUrl)
-		expectedScript := "aws codeartifact login --tool npm --repository repo-name --domain domain --domain-owner 123456789012 --region us-east-1;" +
-			"aws codeartifact login --tool npm --repository repo-name --domain domain --domain-owner 123456789012 --region us-west-2;" +
-			"aws codeartifact login --tool npm --repository repo-name --domain domain --domain-owner 210987654321 --region us-west-2"
+		expectedScript := `aws codeartifact login --tool npm --repository repo-name --domain domain --domain-owner 123456789012 --region us-east-1 --namespace "@scope4";` +
+			`aws codeartifact login --tool npm --repository repo-name --domain domain --domain-owner 123456789012 --region us-west-2 --namespace "@scope2";` +
+			`aws codeartifact login --tool npm --repository repo-name --domain domain --domain-owner 123456789012 --region us-west-2 --namespace "@scope3";` +
+			`aws codeartifact login --tool npm --repository repo-name --domain domain --domain-owner 210987654321 --region us-west-2 --namespace "@scope5"`
 		r.Equal(expectedScript, script)
 	})
 
@@ -372,6 +373,6 @@ func Test_parseScopes(t *testing.T) {
 		r.Len(*result, 2)
 		r.Equal("https://registry.npmjs.org", (*result)["@scope1"].RegistryUrl)
 		r.Equal("https://domain-123456789012.d.codeartifact.us-west-2.amazonaws.com/npm/repo-name/", (*result)["@scope2"].RegistryUrl)
-		r.Contains(script, "aws codeartifact login --tool npm --repository repo-name --domain domain --domain-owner 123456789012 --region us-west-2")
+		r.Contains(script, `aws codeartifact login --tool npm --repository repo-name --domain domain --domain-owner 123456789012 --region us-west-2 --namespace "@scope2"`)
 	})
 }

@@ -471,27 +471,26 @@ func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
 
 // Merge scopes and detect CodeArtifact registries and generate optional ca:login script
 func parseJsScopes(mergedScopes *map[string]jsScope, new []jsScope) (*map[string]v2.JavascriptPackageScope, string) {
-	caRegistryUrls := map[string]util.CodeArtifactRepository{}
+	caRepos := map[string]util.CodeArtifactRepository{}
 	for _, newScope := range new {
 		(*mergedScopes)[newScope.Name] = newScope
 		if util.IsCodeArtifactURL(newScope.RegistryUrl) {
-			if _, exists := caRegistryUrls[newScope.RegistryUrl]; !exists {
-				caRepo, err := util.ParseRegistryUrl(newScope.RegistryUrl)
+			if _, exists := caRepos[newScope.Name]; !exists {
+				caRepo, err := util.ParseRegistryUrl(newScope.Name, newScope.RegistryUrl)
 				if err != nil {
 					logrus.Warnf("Failed to parse CodeArtifact registry URL: %s", newScope.RegistryUrl)
 					continue
 				}
-				caRegistryUrls[newScope.RegistryUrl] = *caRepo
+				caRepos[newScope.Name] = *caRepo
 			}
 		}
 	}
 	// Generate the npm ca:login script for CodeArtifact registries
 	caLoginScript := noCALoginRequired
-	if len(caRegistryUrls) > 0 {
-		loginSteps := make([]string, 0, len(caRegistryUrls))
-		for _, repo := range caRegistryUrls {
-			loginSteps = append(loginSteps, fmt.Sprintf("aws codeartifact login --tool npm --repository %s --domain %s --domain-owner %s --region %s",
-				repo.Name, repo.Domain, repo.AccountId, repo.Region))
+	if len(caRepos) > 0 {
+		loginSteps := make([]string, 0, len(caRepos))
+		for _, repo := range caRepos {
+			loginSteps = append(loginSteps, repo.LoginCommand())
 		}
 		// sort for deterministic output
 		sort.Strings(loginSteps)
