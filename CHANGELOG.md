@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.16](https://github.com/vincenthsh/fogg/compare/v0.92.15...v0.92.16) (2025-01-03)
+
+
+### BugFixes
+
+* CodeArtifact login should include scope ([#362](https://github.com/vincenthsh/fogg/issues/362)) ([9c47977](https://github.com/vincenthsh/fogg/commit/9c479776b5cab47bdfb992960364ed97db25d4a4))
+
 ## [0.92.15](https://github.com/vincenthsh/fogg/compare/v0.92.14...v0.92.15) (2025-01-01)
 
 
