@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/vincenthsh/fogg/compare/cdktf-fogg-helpers-v1.1.0...cdktf-fogg-helpers-v1.2.0) (2025-01-05)
+
+
+### Features
+
+* CDKTF - Improve cross component remote state access ([#364](https://github.com/vincenthsh/fogg/issues/364)) ([89e4cfc](https://github.com/vincenthsh/fogg/commit/89e4cfc238f8bbbfea45b47e4acac51cd06071a9))
+
 ## [1.1.0](https://github.com/vincenthsh/fogg/compare/cdktf-fogg-helpers-v1.0.0...cdktf-fogg-helpers-v1.1.0) (2025-01-01)
 
 
