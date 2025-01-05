@@ -467,7 +467,10 @@ func applyEnvs(
 						downloadFunc: downloader,
 					})
 				}
-				pathModuleConfigs[path], err = applyModuleInvocation(fs, path, templates.Templates.ModuleInvocation, commonBox, mi, componentPlan.IntegrationRegistry)
+				pathModuleConfigs[path], err = applyModuleInvocation(fs, path, templates.Templates.ModuleInvocation, commonBox, mi, &applyModuleInvocationOpts{
+					turboEnabled:        p.Turbo.Enabled,
+					integrationRegistry: componentPlan.IntegrationRegistry,
+				})
 				if err != nil {
 					return nil, errs.WrapUser(err, "unable to apply module invocation")
 				}
@@ -816,13 +819,21 @@ type moduleInvocation struct {
 
 type ModuleConfigMap map[string]*tfconfig.Module
 
+// options for applyModuleInvocation
+type applyModuleInvocationOpts struct {
+	// if set, typescript declaration files will be created for outputs
+	turboEnabled bool
+	// if set, integration registry template will be applied
+	integrationRegistry *string
+}
+
 func applyModuleInvocation(
 	fs afero.Fs,
 	path string,
 	box fs.FS,
 	commonBox fs.FS,
 	moduleInvocations []moduleInvocation,
-	integrationRegistry *string,
+	opts *applyModuleInvocationOpts,
 ) (ModuleConfigMap, error) {
 	moduleConfigs := make(ModuleConfigMap, len(moduleInvocations))
 	e := fs.MkdirAll(path, 0755)
@@ -965,7 +976,7 @@ func applyModuleInvocation(
 		return nil, errs.WrapUser(e, "unable to format outputs.tf")
 	}
 
-	if integrationRegistry != nil && *integrationRegistry == "ssm" {
+	if opts != nil && opts.integrationRegistry != nil && *opts.integrationRegistry == "ssm" {
 		// Integration Registry Entries - ssm parameter store
 		f, e = box.Open("ssm-parameter-store.tf.tmpl")
 		if e != nil {
@@ -980,6 +991,25 @@ func applyModuleInvocation(
 		e = fmtHcl(fs, filepath.Join(path, "ssm-parameter-store.tf"), false)
 		if e != nil {
 			return nil, errs.WrapUser(e, "unable to format ssm-parameter-store.tf")
+		}
+	}
+
+	if opts != nil && opts.turboEnabled {
+		outputCount := 0
+		for _, m := range arr {
+			outputCount += len(m.Outputs)
+		}
+		if outputCount > 0 {
+			// Typescript Declaration File
+			f, e = box.Open("index.d.ts.tmpl")
+			if e != nil {
+				return nil, errs.WrapUser(e, "could not open template file")
+			}
+
+			e = applyTemplate(f, commonBox, fs, filepath.Join(path, "index.d.ts"), &modulesData{arr})
+			if e != nil {
+				return nil, errs.WrapUser(e, "unable to apply template for index.d.ts")
+			}
 		}
 	}
 

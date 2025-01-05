@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import "cdktf/lib/testing/adapters/jest";
-import { App, Testing } from "cdktf";
+import { App, Fn, TerraformOutput, Testing } from "cdktf";
 import merge from "deepmerge";
-import { FoggStack } from "../src/fogg-stack";
+import { FoggStack, OutputSchema } from "../src/fogg-stack";
 import type { Component } from "../src/imports/fogg-types.generated";
 import { Template } from "./assertions";
 
@@ -92,31 +92,117 @@ describe("FoggStack", () => {
     );
   });
 
-  it("creates remote states if forceRemoteStates is true", () => {
-    loadComponentConfig.mockReturnValue(
-      merge(getDefaultComponentConfig(), {
-        component_backends: {
-          network: {
-            kind: "s3",
-            s3: { bucket: "some-bucket" },
+  describe("creates remote states if forceRemoteStates is true", () => {
+    let stack: FoggStack;
+    beforeEach(() => {
+      loadComponentConfig.mockReturnValue(
+        merge(getDefaultComponentConfig(), {
+          component_backends: {
+            network: {
+              kind: "s3",
+              s3: { bucket: "some-bucket" },
+            },
           },
-        },
-      })
-    );
-    const stack = new FoggStack(app, "MyStack", {
-      forceRemoteStates: true,
+        })
+      );
+      stack = new FoggStack(app, "MyStack", {
+        forceRemoteStates: true,
+      });
     });
-    Template.fromStack(stack).toMatchObject({
-      data: {
-        terraform_remote_state: {
-          network: {
-            backend: "s3",
-            config: {
-              bucket: "some-bucket",
+    // with output Typing
+    interface NetworkOutputs {
+      vpc_id: string;
+      app_subnet_ids: string[];
+    }
+    const networkOutputsSchema: OutputSchema<NetworkOutputs> = {
+      vpc_id: "string",
+      app_subnet_ids: "list",
+    };
+    it("as data terraform remote state", () => {
+      Template.fromStack(stack).toMatchObject({
+        data: {
+          terraform_remote_state: {
+            network: {
+              backend: "s3",
+              config: {
+                bucket: "some-bucket",
+              },
             },
           },
         },
-      },
+      });
+    });
+    it("with strongly typed access to simple outputs", () => {
+      const outputs = stack.remoteState<NetworkOutputs>("network");
+      new TerraformOutput(stack, "vpc_id", {
+        value: outputs.vpc_id,
+        staticId: true,
+      });
+      Template.fromStack(stack).toMatchObject({
+        output: {
+          vpc_id: {
+            value: "${data.terraform_remote_state.network.outputs.vpc_id}",
+          },
+        },
+      });
+    });
+    // TODO: This isn't throwing an error...
+    it.todo("throws on incorrectly accessing list items", () => {
+      const outputs = stack.remoteState<NetworkOutputs>("network");
+      new TerraformOutput(stack, "app_subnet1", {
+        value: outputs.app_subnet_ids[0],
+        staticId: true,
+      });
+      expect(() => Testing.synth(stack)).toThrow(
+        /Found an encoded list token string in a scalar string context/
+      );
+    });
+    it("throws on incorrectly accessing list items", () => {
+      const outputs = stack.remoteState<NetworkOutputs>(
+        "network",
+        networkOutputsSchema
+      );
+      new TerraformOutput(stack, "app_subnet1", {
+        // should be Fn.element(outputs.app_subnet_ids, 0)
+        value: outputs.app_subnet_ids[0],
+        staticId: true,
+      });
+      expect(() => Testing.synth(stack)).toThrow(
+        /Found an encoded list token string in a scalar string context/
+      );
+    });
+    it("with strongly typed access to complex outputs", () => {
+      const outputs = stack.remoteState<NetworkOutputs>(
+        "network",
+        networkOutputsSchema
+      );
+      new TerraformOutput(stack, "vpc_id", {
+        value: outputs.vpc_id,
+        staticId: true,
+      });
+      new TerraformOutput(stack, "app_subnet1", {
+        value: Fn.element(outputs.app_subnet_ids, 0),
+        staticId: true,
+      });
+      new TerraformOutput(stack, "app_subnet2", {
+        value: Fn.element(outputs.app_subnet_ids, 1),
+        staticId: true,
+      });
+      Template.fromStack(stack, { snapshot: false }).toMatchObject({
+        output: {
+          app_subnet1: {
+            value:
+              "${element(data.terraform_remote_state.network.outputs.app_subnet_ids, 0)}",
+          },
+          app_subnet2: {
+            value:
+              "${element(data.terraform_remote_state.network.outputs.app_subnet_ids, 1)}",
+          },
+          vpc_id: {
+            value: "${data.terraform_remote_state.network.outputs.vpc_id}",
+          },
+        },
+      });
     });
   });
 

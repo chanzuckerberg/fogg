@@ -18,6 +18,23 @@ data "terraform_remote_state" "global" {
   }
 }
 # tflint-ignore: terraform_unused_declarations
+data "terraform_remote_state" "app" {
+  backend = "s3"
+  config = {
+
+
+    bucket = "buck"
+
+    key    = "terraform/proj/envs/test/components/app.tfstate"
+    region = "us-west-2"
+
+    assume_role = {
+      role_arn = "arn:aws:iam::123456789012:role/role"
+    }
+
+  }
+}
+# tflint-ignore: terraform_unused_declarations
 data "terraform_remote_state" "lambda" {
   backend = "s3"
   config = {
@@ -43,23 +60,6 @@ data "terraform_remote_state" "network" {
     bucket = "buck"
 
     key    = "terraform/proj/envs/test/components/network.tfstate"
-    region = "us-west-2"
-
-    assume_role = {
-      role_arn = "arn:aws:iam::123456789012:role/role"
-    }
-
-  }
-}
-# tflint-ignore: terraform_unused_declarations
-data "terraform_remote_state" "network-old" {
-  backend = "s3"
-  config = {
-
-
-    bucket = "buck"
-
-    key    = "terraform/proj/envs/test/components/network-old.tfstate"
     region = "us-west-2"
 
     assume_role = {

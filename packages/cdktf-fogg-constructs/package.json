@@ -40,7 +40,7 @@
     "@cdktf/provider-cloudflare": "^11.16.0",
     "@cdktf/provider-datadog": "^11.8.0",
     "cdktf": "^0.20.8",
-    "constructs": "^10.3.0",
+    "constructs": "^10.4.0",
     "terraconstructs": "^0.0.9"
   },
   "devDependencies": {

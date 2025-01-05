@@ -25,25 +25,25 @@ importers:
     dependencies:
       '@cdktf/provider-aws':
         specifier: ^19.44.0
-        version: 19.48.1(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0)
+        version: 19.48.1(cdktf@0.20.10(constructs@10.4.2))(constructs@10.4.2)
       '@cdktf/provider-cloudflare':
         specifier: ^11.16.0
-        version: 11.27.1(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0)
+        version: 11.27.1(cdktf@0.20.10(constructs@10.4.2))(constructs@10.4.2)
       '@cdktf/provider-datadog':
         specifier: ^11.8.0
-        version: 11.15.0(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0)
+        version: 11.15.0(cdktf@0.20.10(constructs@10.4.2))(constructs@10.4.2)
       cdktf:
         specifier: ^0.20.8
-        version: 0.20.10(constructs@10.3.0)
+        version: 0.20.10(constructs@10.4.2)
       constructs:
-        specifier: ^10.3.0
-        version: 10.3.0
+        specifier: ^10.4.0
+        version: 10.4.2
       js-yaml:
         specifier: ^4.1.0
         version: 4.1.0
       terraconstructs:
         specifier: ^0.0.9
-        version: 0.0.9(@cdktf/provider-aws@19.48.1(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0))(@cdktf/provider-time@10.2.1(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0))(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0)
+        version: 0.0.9(@cdktf/provider-aws@19.48.1(cdktf@0.20.10(constructs@10.4.2))(constructs@10.4.2))(@cdktf/provider-time@10.2.1(cdktf@0.20.10(constructs@10.4.2))(constructs@10.4.2))(cdktf@0.20.10(constructs@10.4.2))(constructs@10.4.2)
     devDependencies:
       '@types/js-yaml':
         specifier: ^4.0.9
@@ -62,7 +62,7 @@ importers:
         version: 0.20.10(ink@3.2.0(react@17.0.2))(react@17.0.2)
       cdktf-vitest:
         specifier: ^0.1.2
-        version: 0.1.2(cdktf@0.20.10(constructs@10.3.0))(vitest@2.1.8(@types/node@18.19.68))
+        version: 0.1.2(cdktf@0.20.10(constructs@10.4.2))(vitest@2.1.8(@types/node@18.19.68))
       deepmerge:
         specifier: 4.3.1
         version: 4.3.1
@@ -983,6 +983,9 @@ packages:
   constructs@10.3.0:
     resolution: {integrity: sha512-vbK8i3rIb/xwZxSpTjz3SagHn1qq9BChLEfy5Hf6fB3/2eFbrwt2n9kHwQcS0CPTRBesreeAcsJfMq2229FnbQ==}
     engines: {node: '>= 16.14.0'}
+
+  constructs@10.4.2:
+    resolution: {integrity: sha512-wsNxBlAott2qg8Zv87q3eYZYgheb9lchtBfjHzzLHtXbttwSrHPs1NNQbBrmbb1YZvYg2+Vh0Dor76w4mFxJkA==}
 
   convert-to-spaces@1.0.2:
     resolution: {integrity: sha512-cj09EBuObp9gZNQCzc7hByQyrs6jVGE+o9kSJmeUoj+GiPiJvi5LYqEH/Hmme4+MTLHM+Ejtq+FChpjjEnsPdQ==}
@@ -2271,8 +2274,8 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  typescript@5.8.0-dev.20250101:
-    resolution: {integrity: sha512-a4tA7bccsnhaKh/I3GXm9GhQFgQ6q4HhmeyIW7FFXm2fPMEkwtf3OCSyM4dG/0Z02RW7nsQ4y+Oqfk6GEg9eBQ==}
+  typescript@5.8.0-dev.20250104:
+    resolution: {integrity: sha512-xFBxTr8+Eew7d2yBN+I9Y51oceO90SKonhzcz+WQoDEIFJ5VPZm/Hb4bGgmUAcKqx/6YwyJC/5kxWfEI5hVmBA==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -2677,20 +2680,20 @@ snapshots:
       nan: 2.22.0
       prebuild-install: 7.1.2
 
-  '@cdktf/provider-aws@19.48.1(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0)':
+  '@cdktf/provider-aws@19.48.1(cdktf@0.20.10(constructs@10.4.2))(constructs@10.4.2)':
     dependencies:
-      cdktf: 0.20.10(constructs@10.3.0)
-      constructs: 10.3.0
+      cdktf: 0.20.10(constructs@10.4.2)
+      constructs: 10.4.2
 
-  '@cdktf/provider-cloudflare@11.27.1(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0)':
+  '@cdktf/provider-cloudflare@11.27.1(cdktf@0.20.10(constructs@10.4.2))(constructs@10.4.2)':
     dependencies:
-      cdktf: 0.20.10(constructs@10.3.0)
-      constructs: 10.3.0
+      cdktf: 0.20.10(constructs@10.4.2)
+      constructs: 10.4.2
 
-  '@cdktf/provider-datadog@11.15.0(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0)':
+  '@cdktf/provider-datadog@11.15.0(cdktf@0.20.10(constructs@10.4.2))(constructs@10.4.2)':
     dependencies:
-      cdktf: 0.20.10(constructs@10.3.0)
-      constructs: 10.3.0
+      cdktf: 0.20.10(constructs@10.4.2)
+      constructs: 10.4.2
 
   '@cdktf/provider-generator@0.20.10(constructs@10.3.0)':
     dependencies:
@@ -2716,10 +2719,10 @@ snapshots:
       - debug
       - supports-color
 
-  '@cdktf/provider-time@10.2.1(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0)':
+  '@cdktf/provider-time@10.2.1(cdktf@0.20.10(constructs@10.4.2))(constructs@10.4.2)':
     dependencies:
-      cdktf: 0.20.10(constructs@10.3.0)
-      constructs: 10.3.0
+      cdktf: 0.20.10(constructs@10.4.2)
+      constructs: 10.4.2
 
   '@esbuild/aix-ppc64@0.21.5':
     optional: true
@@ -3389,14 +3392,18 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  cdktf-vitest@0.1.2(cdktf@0.20.10(constructs@10.3.0))(vitest@2.1.8(@types/node@18.19.68)):
+  cdktf-vitest@0.1.2(cdktf@0.20.10(constructs@10.4.2))(vitest@2.1.8(@types/node@18.19.68)):
     dependencies:
-      cdktf: 0.20.10(constructs@10.3.0)
+      cdktf: 0.20.10(constructs@10.4.2)
       vitest: 2.1.8(@types/node@18.19.68)
 
   cdktf@0.20.10(constructs@10.3.0):
     dependencies:
       constructs: 10.3.0
+
+  cdktf@0.20.10(constructs@10.4.2):
+    dependencies:
+      constructs: 10.4.2
 
   chai@5.1.2:
     dependencies:
@@ -3495,6 +3502,8 @@ snapshots:
 
   constructs@10.3.0: {}
 
+  constructs@10.4.2: {}
+
   convert-to-spaces@1.0.2: {}
 
   core-util-is@1.0.3: {}
@@ -3592,7 +3601,7 @@ snapshots:
     dependencies:
       semver: 7.6.3
       shelljs: 0.8.5
-      typescript: 5.8.0-dev.20250101
+      typescript: 5.8.0-dev.20250104
 
   dunder-proto@1.0.1:
     dependencies:
@@ -4757,12 +4766,12 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
 
-  terraconstructs@0.0.9(@cdktf/provider-aws@19.48.1(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0))(@cdktf/provider-time@10.2.1(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0))(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0):
+  terraconstructs@0.0.9(@cdktf/provider-aws@19.48.1(cdktf@0.20.10(constructs@10.4.2))(constructs@10.4.2))(@cdktf/provider-time@10.2.1(cdktf@0.20.10(constructs@10.4.2))(constructs@10.4.2))(cdktf@0.20.10(constructs@10.4.2))(constructs@10.4.2):
     dependencies:
-      '@cdktf/provider-aws': 19.48.1(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0)
-      '@cdktf/provider-time': 10.2.1(cdktf@0.20.10(constructs@10.3.0))(constructs@10.3.0)
-      cdktf: 0.20.10(constructs@10.3.0)
-      constructs: 10.3.0
+      '@cdktf/provider-aws': 19.48.1(cdktf@0.20.10(constructs@10.4.2))(constructs@10.4.2)
+      '@cdktf/provider-time': 10.2.1(cdktf@0.20.10(constructs@10.4.2))(constructs@10.4.2)
+      cdktf: 0.20.10(constructs@10.4.2)
+      constructs: 10.4.2
 
   test-exclude@7.0.1:
     dependencies:
@@ -4829,7 +4838,7 @@ snapshots:
 
   typescript@5.5.4: {}
 
-  typescript@5.8.0-dev.20250101: {}
+  typescript@5.8.0-dev.20250104: {}
 
   undici-types@5.26.5: {}
 

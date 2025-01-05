@@ -21,6 +21,8 @@ import {
 } from "./imports/fogg-types.generated";
 import { loadComponentConfig } from "./util/load-component-config";
 
+const DEFAULT_AWS_PROVIDER_ID = "DefaultAwsProvider";
+
 export interface FoggStackProps {
   /**
    * Force remote state configuration
@@ -28,6 +30,20 @@ export interface FoggStackProps {
    */
   forceRemoteStates?: boolean;
 }
+
+/**
+ * Possible Terraform output types
+ * that map to a known remote state getter.
+ */
+type OutputType = "string" | "list" | "number" | "boolean";
+
+/**
+ * A small structure describing each output key
+ * and which underlying `DataTerraformRemoteState` getter should be used
+ */
+export type OutputSchema<T> = {
+  [K in keyof T]: OutputType;
+};
 
 /**
  * Helper stack to wrap Fogg component configuration and set up configured providers and backends.
@@ -67,9 +83,8 @@ export class FoggStack extends TerraformStack {
    * @param variables - The variables to set for the module
    */
   public setMainModuleVariables(variables: Record<string, any>): void {
-    const id = (this.foggComp.module_name =
-      this.foggComp.module_name ?? "main");
-    this.setModuleVariables(id, variables);
+    this.foggComp.module_name = this.foggComp.module_name ?? "main";
+    this.setModuleVariables(this.foggComp.module_name, variables);
   }
 
   /**
@@ -78,11 +93,31 @@ export class FoggStack extends TerraformStack {
    * @returns the DataTerraformRemoteState object
    * @throws if the remote state is not found
    */
-  public remoteState(name: string): DataTerraformRemoteState {
+  public remoteState<T>(name: string, schema?: OutputSchema<T>): T {
     if (!this._remoteStates[name]) {
       throw new Error(`Remote state ${name} not found`);
     }
-    return this._remoteStates[name];
+    return new Proxy(this._remoteStates[name], {
+      get(target, prop: string | symbol, _receiver) {
+        if (typeof prop !== "string") return undefined;
+        if (!schema) {
+          return target.getString(prop);
+        }
+        const type = schema[prop as keyof T];
+        switch (type) {
+          case "string":
+            return target.getString(prop);
+          case "list":
+            return target.getList(prop);
+          case "number":
+            return target.getNumber(prop);
+          case "boolean":
+            return target.getBoolean(prop);
+          default:
+            return target.get(prop);
+        }
+      },
+    }) as unknown as T;
   }
 
   /**
@@ -258,7 +293,7 @@ export class FoggStack extends TerraformStack {
 
   private parseAwsProviderConfig(
     config: AWSProvider,
-    id: string = "Default"
+    id: string = DEFAULT_AWS_PROVIDER_ID
   ): void {
     const c: Mutable<awsProvider.AwsProviderConfig> = {
       region: config.region,
@@ -293,11 +328,8 @@ export class FoggStack extends TerraformStack {
         },
       ];
     }
-    this._providers[c.alias ?? "Default"] = new awsProvider.AwsProvider(
-      this,
-      id,
-      c
-    );
+    this._providers[c.alias ?? DEFAULT_AWS_PROVIDER_ID] =
+      new awsProvider.AwsProvider(this, id, c);
   }
 
   private parseDataDogProviderConfig(_provider: DatadogProvider): void {

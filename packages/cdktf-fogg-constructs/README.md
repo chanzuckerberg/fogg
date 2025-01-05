@@ -13,7 +13,7 @@ FoggStack exposes Fogg component configuration to CDKTF configurations.
 > for supported functionality.
 
 ```typescript
-import { FoggStack } from "@vincenthsh/fogg";
+import { FoggStack } from "@vincenthsh/cdktf-fogg-helpers";
 import { Construct } from "constructs";
 
 export class ComponentStack extends FoggStack {
@@ -30,6 +30,29 @@ export class ComponentStack extends FoggStack {
     });
   }
 }
+```
+
+Get typed Remote State outputs from non CDKTF components:
+
+```typescript
+    interface NetworkOutputs {
+      vpc_id: string;
+      app_subnet_ids: string[];
+    }
+    const outputs = stack.remoteState<NetworkOutputs>("network");
+    new TerraformOutput(stack, "vpc_id", {
+      // network outputs are access through property getters
+      // for example `vpc_id` to get the output named "vpc_id"
+      value: outputs.vpc_id,
+      staticId: true,
+    });
+```
+
+> Fogg generates a [type declaration](https://github.com/vincenthsh/fogg/blob/feat-multi-module-components/testdata/v2_cdktf_components/terraform/envs/test/network-old/index.d.ts)
+for every HCL component.
+
+```typescript
+import { type Outputs as NetworkOutputs } from "../../network";
 ```
 
 Set variables for any TF Module configured for the Component, by `name`:

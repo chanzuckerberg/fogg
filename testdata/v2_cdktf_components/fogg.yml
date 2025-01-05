@@ -50,6 +50,11 @@ envs:
             version: "^0.507.0"
           - name: "@myorg/my-cdktf-constructs"
             version: "^1.0.0"
+      network-old:
+        modules:
+          - name: "vpc"
+            source: "terraform-aws-modules/vpc/aws"
+            version: "4.0.1"
       network:
         providers:
           aws:
