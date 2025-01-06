@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.92.24](https://github.com/chanzuckerberg/fogg/compare/v0.92.23...v0.92.24) (2025-01-06)
+
+
+### Misc
+
+* Bump github.com/fatih/color from 1.17.0 to 1.18.0 ([#1082](https://github.com/chanzuckerberg/fogg/issues/1082)) ([7b63581](https://github.com/chanzuckerberg/fogg/commit/7b6358135e2cc01e9f1b01347222ca336f4e5a1d))
+* Bump github.com/go-git/go-git/v5 from 5.12.0 to 5.13.0 ([#1088](https://github.com/chanzuckerberg/fogg/issues/1088)) ([7b5f1a5](https://github.com/chanzuckerberg/fogg/commit/7b5f1a58a6599771c8416a477a5b592cc8277736))
+* Bump github.com/go-git/go-git/v5 from 5.13.0 to 5.13.1 ([#1089](https://github.com/chanzuckerberg/fogg/issues/1089)) ([14edf7d](https://github.com/chanzuckerberg/fogg/commit/14edf7d83895e7cbf15de0fb8ef8c31f9c5508aa))
+* Bump github.com/hashicorp/hcl/v2 from 2.22.0 to 2.23.0 ([#1085](https://github.com/chanzuckerberg/fogg/issues/1085)) ([eba56ed](https://github.com/chanzuckerberg/fogg/commit/eba56edf5277d7e150a128de04104748e27f6955))
+* Bump github.com/stretchr/testify from 1.9.0 to 1.10.0 ([#1086](https://github.com/chanzuckerberg/fogg/issues/1086)) ([c7078f6](https://github.com/chanzuckerberg/fogg/commit/c7078f6c0a70604c683de209d26504c562a18e54))
+
 ## [0.92.23](https://github.com/chanzuckerberg/fogg/compare/v0.92.22...v0.92.23) (2024-08-26)
 
 
