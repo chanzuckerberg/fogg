@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.92.18](https://github.com/vincenthsh/fogg/compare/v0.92.17...v0.92.18) (2025-01-15)
+
+
+### Misc
+
+* bump github.com/hashicorp/go-getter in the terraform group ([#368](https://github.com/vincenthsh/fogg/issues/368)) ([12d7950](https://github.com/vincenthsh/fogg/commit/12d79509725292fcbab6ef607790d00020354b90))
+* bump the gomod group with 2 updates ([#366](https://github.com/vincenthsh/fogg/issues/366)) ([7918f84](https://github.com/vincenthsh/fogg/commit/7918f84172da309d3ccef2124da9799a0c120684))
+
+
+### BugFixes
+
+* GitHub Action runners need setup-terraform ([#369](https://github.com/vincenthsh/fogg/issues/369)) ([ba4d137](https://github.com/vincenthsh/fogg/commit/ba4d1372f1f17bd7c95611822a6787c918e54a5e))
+
 ## [0.92.17](https://github.com/vincenthsh/fogg/compare/v0.92.16...v0.92.17) (2025-01-05)
 
 
