@@ -41,7 +41,8 @@ type CircleCIConfig struct {
 
 type GitHubActionsCIConfig struct {
 	CIConfig
-	SSHKeySecrets []string
+	TerraformVersion string
+	SSHKeySecrets    []string
 }
 
 type AtlantisConfig struct {
@@ -389,8 +390,9 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 
 	ciConfig = ciConfig.populateBuckets(numBuckets)
 	return GitHubActionsCIConfig{
-		CIConfig:      *ciConfig,
-		SSHKeySecrets: sshKeySecrets,
+		CIConfig:         *ciConfig,
+		SSHKeySecrets:    sshKeySecrets,
+		TerraformVersion: v2.ResolveRequiredString(v2.TerraformVersionGetter, c.Defaults.Common, c.Global.Common),
 	}
 }
 

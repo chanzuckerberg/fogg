@@ -21,6 +21,9 @@ jobs:
         with:
           repository: {{`${{ github.event.pull_request.head.repo.full_name }}`}}
           ref: {{`${{ github.event.pull_request.head.ref }}`}}
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: {{ $githubActionsCI.TerraformVersion }}
       - name: Cache Fogg
         id: cache-fogg
         uses: actions/cache@v4
