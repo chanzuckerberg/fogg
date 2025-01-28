@@ -31,7 +31,7 @@ import (
 )
 
 // Apply will run a plan and apply all the changes to the current repo.
-func Apply(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool) error {
+func Apply(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool, envFilter *string, compFilter *string) error {
 	if !upgrade {
 		toolVersion, err := util.VersionString()
 		if err != nil {
@@ -46,69 +46,72 @@ func Apply(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool) error 
 	if err != nil {
 		return errs.WrapUser(err, "unable to evaluate plan")
 	}
-	err = applyRepo(fs, plan, tmpl.Repo, tmpl.Common)
-	if err != nil {
-		return errs.WrapUser(err, "unable to apply repo")
-	}
 
-	if plan.TravisCI.Enabled {
-		err = applyTree(fs, tmpl.TravisCI, tmpl.Common, "", plan.TravisCI)
+	if envFilter == nil {
+		err = applyRepo(fs, plan, tmpl.Repo, tmpl.Common)
 		if err != nil {
-			return errs.WrapUser(err, "unable to apply travis ci")
+			return errs.WrapUser(err, "unable to apply repo")
+		}
+
+		if plan.TravisCI.Enabled {
+			err = applyTree(fs, tmpl.TravisCI, tmpl.Common, "", plan.TravisCI)
+			if err != nil {
+				return errs.WrapUser(err, "unable to apply travis ci")
+			}
+		}
+
+		if plan.CircleCI.Enabled {
+			err = applyTree(fs, tmpl.CircleCI, tmpl.Common, "", plan.CircleCI)
+			if err != nil {
+				return errs.WrapUser(err, "unable to apply CircleCI")
+			}
+		}
+
+		if plan.GitHubActionsCI.Enabled {
+			err = applyTree(fs, tmpl.GitHubActionsCI, tmpl.Common, ".github", plan.GitHubActionsCI)
+			if err != nil {
+				return errs.WrapUser(err, "unable to apply GitHub Actions CI")
+			}
+		}
+
+		if plan.Turbo.Enabled {
+			err = applyTree(fs, tmpl.TurboRoot, tmpl.Common, "", plan.Turbo)
+			if err != nil {
+				return errs.WrapUser(err, "unable to apply Turbo config")
+			}
+		}
+
+		err = applyModules(fs, plan.Modules, tmpl.Module, tmpl.Common)
+		if err != nil {
+			return errs.WrapUser(err, "unable to apply modules")
+		}
+
+		tfBox := tmpl.Components[v2.ComponentKindTerraform]
+		err = applyAccounts(fs, plan, tfBox, tmpl.Common)
+		if err != nil {
+			return errs.WrapUser(err, "unable to apply accounts")
 		}
 	}
 
-	if plan.CircleCI.Enabled {
-		err = applyTree(fs, tmpl.CircleCI, tmpl.Common, "", plan.CircleCI)
-		if err != nil {
-			return errs.WrapUser(err, "unable to apply CircleCI")
-		}
-	}
-
-	if plan.GitHubActionsCI.Enabled {
-		err = applyTree(fs, tmpl.GitHubActionsCI, tmpl.Common, ".github", plan.GitHubActionsCI)
-		if err != nil {
-			return errs.WrapUser(err, "unable to apply GitHub Actions CI")
-		}
-	}
-
-	if plan.Turbo.Enabled {
-		err = applyTree(fs, tmpl.TurboRoot, tmpl.Common, "", plan.Turbo)
-		if err != nil {
-			return errs.WrapUser(err, "unable to apply Turbo config")
-		}
-	}
-
-	tfBox := tmpl.Components[v2.ComponentKindTerraform]
-	err = applyAccounts(fs, plan, tfBox, tmpl.Common)
-	if err != nil {
-		return errs.WrapUser(err, "unable to apply accounts")
-	}
-
-	err = applyModules(fs, plan.Modules, tmpl.Module, tmpl.Common)
-	if err != nil {
-		return errs.WrapUser(err, "unable to apply modules")
-	}
-
-	pathModuleConfigs, err := applyEnvs(fs, plan, tmpl.Env, tmpl.Components, tmpl.Common)
+	pathModuleConfigs, err := applyEnvs(fs, plan, envFilter, compFilter, tmpl.Env, tmpl.Components, tmpl.Common)
 	if err != nil {
 		return errs.WrapUser(err, "unable to apply envs")
 	}
 
-	if plan.Atlantis.Enabled {
+	if envFilter == nil && plan.Atlantis.Enabled {
 		err = applyAtlantisConfig(fs, tmpl.Atlantis, tmpl.Common, "", &plan.Atlantis, pathModuleConfigs)
 		if err != nil {
 			return errs.WrapUser(err, "unable to apply Atlantis")
 		}
 	}
 
-	tfBox = tmpl.Components[v2.ComponentKindTerraform]
+	tfBox := tmpl.Components[v2.ComponentKindTerraform]
 	err = applyGlobal(fs, plan.Global, tfBox, tmpl.Common)
 	if err != nil {
 		return errs.WrapUser(err, "unable to apply global")
 	}
 
-	if plan.GitHubActionsCI.Enabled && plan.GitHubActionsCI.PreCommit.Enabled {
+	if envFilter == nil && plan.GitHubActionsCI.Enabled && plan.GitHubActionsCI.PreCommit.Enabled {
 		// set up pre-commit config
 		preCommit := plan.GitHubActionsCI.PreCommit
 		err = applyTree(fs, tmpl.PreCommitRoot, tmpl.Common, "", preCommit)
@@ -377,12 +380,17 @@ type PathModuleConfigs map[string]ModuleConfigMap
 func applyEnvs(
 	fs afero.Fs,
 	p *plan.Plan,
+	envFilter *string,
+	compFilter *string,
 	envBox fs.FS,
 	componentBoxes map[v2.ComponentKind]fs.FS,
 	commonBox fs.FS) (pathModuleConfigs PathModuleConfigs, err error) {
 	logrus.Debug("applying envs")
 	pathModuleConfigs = make(PathModuleConfigs)
 	for env, envPlan := range p.Envs {
+		if envFilter != nil && *envFilter != env {
+			continue
+		}
 		logrus.Debugf("applying %s", env)
 		path := fmt.Sprintf("%s/envs/%s", util.RootPath, env)
 		err = fs.MkdirAll(path, 0755)
@@ -395,6 +403,9 @@ func applyEnvs(
 		}
 		reg := registry.NewClient(nil, nil)
 		for component, componentPlan := range envPlan.Components {
+			if compFilter != nil && *compFilter != component {
+				continue
+			}
 			path = fmt.Sprintf("%s/envs/%s/%s", util.RootPath, env, component)
 			err = fs.MkdirAll(path, 0755)
 			if err != nil {

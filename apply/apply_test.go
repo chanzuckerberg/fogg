@@ -392,7 +392,7 @@ version: 2
 	r.NoError(e)
 	r.Len(w, 0)
 
-	e = Apply(fs, c, templates.Templates, false)
+	e = Apply(fs, c, templates.Templates, false, nil, nil)
 	r.NoError(e)
 }
 
@@ -827,6 +827,138 @@ func Test_dropDirectorySuffix(t *testing.T) {
 			r := require.New(t)
 			result := dropDirectorySuffix(test.path, test.separator)
 			r.Equal(test.expected, result)
+		})
+	}
+}
+
+func TestApplyEnvsWithFilter(t *testing.T) {
+	r := require.New(t)
+	tmpl := templates.Templates
+	dest, d, err := util.TestFs()
+	r.NoError(err)
+	defer os.RemoveAll(d)
+
+	conf := &v2.Config{
+		Defaults: v2.Defaults{
+			Common: v2.Common{
+				TerraformVersion: util.Ptr("0.12.0"),
+				Owner:            util.Ptr("owner"),
+				Project:          util.Ptr("project"),
+				Backend: &v2.Backend{
+					Kind:    util.Ptr(string(plan.BackendKindS3)),
+					Bucket:  util.Ptr("bucket"),
+					Region:  util.Ptr("region"),
+					Profile: util.Ptr("profile"),
+				},
+			},
+		},
+		Envs: map[string]v2.Env{
+			"env1": {
+				Components: map[string]v2.Component{
+					"component1": {},
+				},
+			},
+			"env2": {
+				Components: map[string]v2.Component{
+					"component2": {},
+				},
+			},
+		},
+	}
+
+	plan, err := plan.Eval(conf)
+	r.NoError(err)
+	envFilter := "env1"
+
+	pathModuleConfigs, err := applyEnvs(dest, plan, &envFilter, nil, tmpl.Env, tmpl.Components, tmpl.Common)
+	r.NoError(err)
+	r.NotNil(pathModuleConfigs)
+	_, err = dest.Stat("terraform/envs/env1")
+	r.NoError(err)
+	_, err = dest.Stat("terraform/envs/env2")
+	r.Error(err)
+}
+
+func TestApplyEnvsWithCompFilter(t *testing.T) {
+	r := require.New(t)
+	tmpl := templates.Templates
+
+	conf := &v2.Config{
+		Defaults: v2.Defaults{
+			Common: v2.Common{
+				TerraformVersion: util.Ptr("0.12.0"),
+				Owner:            util.Ptr("owner"),
+				Project:          util.Ptr("project"),
+				Backend: &v2.Backend{
+					Kind:    util.Ptr(string(plan.BackendKindS3)),
+					Bucket:  util.Ptr("bucket"),
+					Region:  util.Ptr("region"),
+					Profile: util.Ptr("profile"),
+				},
+			},
+		},
+		Envs: map[string]v2.Env{
+			"env1": {
+				Components: map[string]v2.Component{
+					"component1": {},
+					"component2": {},
+				},
+			},
+			"env2": {
+				Components: map[string]v2.Component{
+					"component2": {},
+				},
+			},
+		},
+	}
+
+	plan, err := plan.Eval(conf)
+	r.NoError(err)
+
+	tests := []struct {
+		envFilter      *string
+		compFilter     *string
+		expectedDirs   []string
+		unexpectedDirs []string
+	}{
+		{util.Ptr("env1"), util.Ptr("component1"), []string{"terraform/envs/env1/component1"}, []string{"terraform/envs/env1/component2", "terraform/envs/env2"}},
+		{util.Ptr("env1"), util.Ptr("component2"), []string{"terraform/envs/env1/component2"}, []string{"terraform/envs/env1/component1", "terraform/envs/env2"}},
+		{util.Ptr("env2"), util.Ptr("component2"), []string{"terraform/envs/env2/component2"}, []string{"terraform/envs/env1"}},
+		{util.Ptr("env1"), nil, []string{"terraform/envs/env1/component1", "terraform/envs/env1/component2"}, []string{"terraform/envs/env2"}},
+		{nil, nil, []string{"terraform/envs/env1/component1", "terraform/envs/env1/component2", "terraform/envs/env2/component2"}, []string{}},
+	}
+
+	for _, tt := range tests {
+		var testName string
+		if tt.envFilter == nil {
+			testName = "all"
+		} else {
+			testName = *tt.envFilter
+			if tt.compFilter != nil {
+				testName += "_" + *tt.compFilter
+			} else {
+				testName += "_all"
+			}
+		}
+
+		t.Run(testName, func(t *testing.T) {
+			dest, d, err := util.TestFs()
+			r.NoError(err)
+			defer os.RemoveAll(d)
+
+			pathModuleConfigs, err := applyEnvs(dest, plan, tt.envFilter, tt.compFilter, tmpl.Env, tmpl.Components, tmpl.Common)
+			r.NoError(err)
+			r.NotNil(pathModuleConfigs)
+
+			for _, dir := range tt.expectedDirs {
+				_, err = dest.Stat(dir)
+				r.NoError(err)
+			}
+
+			for _, dir := range tt.unexpectedDirs {
+				_, err = dest.Stat(dir)
+				r.Error(err)
+			}
 		})
 	}
 }

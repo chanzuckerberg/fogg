@@ -1,14 +1,21 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/chanzuckerberg/fogg/apply"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/spf13/cobra"
 )
 
+var environment string
+var component string
+
 func init() {
 	applyCmd.Flags().StringP("config", "c", "fogg.yml", "Use this to override the fogg config file.")
 	applyCmd.Flags().BoolP("upgrade", "u", false, "Use this when running a new version of fogg")
+	applyCmd.Flags().StringVarP(&environment, "env", "e", "", "Limit apply to specific environment")
+	applyCmd.Flags().StringVarP(&component, "component", "f", "", "Limit apply to specific component (requires env flag)")
 	rootCmd.AddCommand(applyCmd)
 }
 
@@ -36,6 +43,19 @@ var applyCmd = &cobra.Command{
 			return e
 		}
 
+		var envFilter *string
+		if environment != "" {
+			envFilter = &environment
+		}
+
+		var compFilter *string
+		if component != "" {
+			compFilter = &component
+			if envFilter == nil {
+				return fmt.Errorf("component flag requires env flag")
+			}
+		}
+
 		// check that we are at root of initialized git repo
 		openGitOrExit(fs)
 
@@ -48,7 +68,7 @@ var applyCmd = &cobra.Command{
 		}
 
 		// apply
-		e = apply.Apply(fs, config, templates.Templates, upgrade)
+		e = apply.Apply(fs, config, templates.Templates, upgrade, envFilter, compFilter)
 
 		return e
 	},
