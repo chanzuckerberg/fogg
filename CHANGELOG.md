@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.92.19](https://github.com/vincenthsh/fogg/compare/v0.92.18...v0.92.19) (2025-01-28)
+
+
+### Features
+
+* Add --env/--component apply filter flags ([#375](https://github.com/vincenthsh/fogg/issues/375)) ([1f64499](https://github.com/vincenthsh/fogg/commit/1f64499a62354ebd3c73ed89b37c8388310d97eb))
+
+
+### Misc
+
+* bump github.com/hashicorp/go-getter in the terraform group ([#370](https://github.com/vincenthsh/fogg/issues/370)) ([c2321f1](https://github.com/vincenthsh/fogg/commit/c2321f192a50751a4f7b305144a617698388ae36))
+* bump the gomod group with 2 updates ([#371](https://github.com/vincenthsh/fogg/issues/371)) ([54a8c70](https://github.com/vincenthsh/fogg/commit/54a8c70f595b95aee8eeff7004f0749760756a24))
+* bump the gomod group with 2 updates ([#374](https://github.com/vincenthsh/fogg/issues/374)) ([95bf1bc](https://github.com/vincenthsh/fogg/commit/95bf1bc420e773f6472ecf57a8fd79169c39fbe6))
+
 ## [0.92.18](https://github.com/vincenthsh/fogg/compare/v0.92.17...v0.92.18) (2025-01-15)
 
 
