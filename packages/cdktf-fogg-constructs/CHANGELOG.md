@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/vincenthsh/fogg/compare/cdktf-fogg-helpers-v1.2.0...cdktf-fogg-helpers-v1.3.0) (2025-02-01)
+
+
+### Features
+
+* CDKTF construct utility features ([#376](https://github.com/vincenthsh/fogg/issues/376)) ([b2b498f](https://github.com/vincenthsh/fogg/commit/b2b498fa2df7c61d26e80388da34075442edd086))
+
 ## [1.2.0](https://github.com/vincenthsh/fogg/compare/cdktf-fogg-helpers-v1.1.0...cdktf-fogg-helpers-v1.2.0) (2025-01-05)
 
 
