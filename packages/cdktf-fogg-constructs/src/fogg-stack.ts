@@ -11,7 +11,7 @@ import {
   TerraformLocal,
   TerraformStack,
 } from "cdktf";
-import { Construct } from "constructs";
+import { Construct, IConstruct } from "constructs";
 import {
   AWSProvider,
   Backend,
@@ -20,6 +20,7 @@ import {
   GenericProvider,
 } from "./imports/fogg-types.generated";
 import { loadComponentConfig } from "./util/load-component-config";
+import type { Mutable, OutputSchema } from "./util/types";
 
 const DEFAULT_AWS_PROVIDER_ID = "DefaultAwsProvider";
 
@@ -29,35 +30,91 @@ export interface FoggStackProps {
    * @default false - only configure remote states if `component_backends_filtered` is true
    */
   forceRemoteStates?: boolean;
+
+  /**
+   * Default tags to apply to resources on top of the default tags set by the Fogg component configuration
+   *
+   * @default - No additional tags
+   */
+  defaultTags?: Record<string, string>;
+  /**
+   * Tags to ignore on top of the ignoreTags set by the Fogg component configuration
+   */
+  ignoreTags?: awsProvider.AwsProviderIgnoreTags;
 }
 
-/**
- * Possible Terraform output types
- * that map to a known remote state getter.
- */
-type OutputType = "string" | "list" | "number" | "boolean";
+export interface IFoggStack extends IConstruct {
+  /**
+   * The Raw Fogg component configuration
+   */
+  foggComp: Component;
+  /**
+   * A Map of module name to TerraformHclModule Constructs parsed from the fogg component configuration
+   */
+  modules: Record<string, TerraformHclModule>;
+  /**
+   * A Map of local name to TerraformLocal Constructs parsed from the fogg component configuration
+   */
+  locals: Record<string, TerraformLocal>;
+  /**
+   * The AWS region defined in the aws providers configuration (if provided)
+   * or undefined if not set
+   */
+  region?: string;
 
-/**
- * A small structure describing each output key
- * and which underlying `DataTerraformRemoteState` getter should be used
- */
-export type OutputSchema<T> = {
-  [K in keyof T]: OutputType;
-};
+  /**
+   * The default AWS provider
+   */
+  defaultAwsProvider: awsProvider.AwsProvider;
+
+  /**
+   * Set variables for the main module defined in the fogg component configuration.
+   *
+   * @param variables - The variables to set for the module
+   */
+  setMainModuleVariables(variables: Record<string, any>): void;
+  /**
+   * Return a remote state defined in the fogg component configuration.
+   * @param name - The name of the remote state to get
+   * @returns the DataTerraformRemoteState object
+   * @throws if the remote state is not found
+   */
+  remoteState<T>(name: string, schema?: OutputSchema<T>): T;
+  /**
+   * Set variables for a module included in the fogg component modules[] configuration.
+   *
+   * @param name - The module name as defined in the fogg component configuration
+   * @param variables - The variables to set for the module
+   */
+  setModuleVariables(name: string, variables: Record<string, any>): void;
+  /**
+   * Get a local defined in the fogg component configuration.
+   *
+   * @param name the name of the local to get
+   * @returns the TerraformLocal object
+   */
+  getLocal(name: string): TerraformLocal;
+}
 
 /**
  * Helper stack to wrap Fogg component configuration and set up configured providers and backends.
  */
-export class FoggStack extends TerraformStack {
+export class FoggStack extends TerraformStack implements IFoggStack {
   public readonly foggComp: Component;
   public readonly modules: Record<string, TerraformHclModule> = {};
   public readonly locals: Record<string, TerraformLocal> = {};
+  public readonly region?: string;
   private readonly _providers: Record<string, awsProvider.AwsProvider> = {};
   private readonly _remoteStates: Record<string, DataTerraformRemoteState> = {};
+  private readonly _defaultTags?: Record<string, string>;
+  private readonly _ignoreTags?: awsProvider.AwsProviderIgnoreTags;
 
   constructor(scope: Construct, id: string, props: FoggStackProps = {}) {
     super(scope, id);
     this.foggComp = loadComponentConfig();
+    this._defaultTags = props.defaultTags;
+    this._ignoreTags = props.ignoreTags;
+    this.region = this.foggComp.providers_configuration.aws?.region;
 
     this.parseBackendConfig();
     this.parseBundledProviderConfig();
@@ -77,22 +134,11 @@ export class FoggStack extends TerraformStack {
     this.parseModules();
   }
 
-  /**
-   * Set variables for the main module defined in the fogg component configuration.
-   *
-   * @param variables - The variables to set for the module
-   */
   public setMainModuleVariables(variables: Record<string, any>): void {
     this.foggComp.module_name = this.foggComp.module_name ?? "main";
     this.setModuleVariables(this.foggComp.module_name, variables);
   }
 
-  /**
-   * Return a remote state defined in the fogg component configuration.
-   * @param name - The name of the remote state to get
-   * @returns the DataTerraformRemoteState object
-   * @throws if the remote state is not found
-   */
   public remoteState<T>(name: string, schema?: OutputSchema<T>): T {
     if (!this._remoteStates[name]) {
       throw new Error(`Remote state ${name} not found`);
@@ -133,12 +179,13 @@ export class FoggStack extends TerraformStack {
     return this._providers[alias];
   }
 
-  /**
-   * Set variables for a module included in the fogg component modules[] configuration.
-   *
-   * @param name - The module name as defined in the fogg component configuration
-   * @param variables - The variables to set for the module
-   */
+  public get defaultAwsProvider(): awsProvider.AwsProvider {
+    if (!this._providers[DEFAULT_AWS_PROVIDER_ID]) {
+      throw new Error(`Default AWS Provider not defined`);
+    }
+    return this.awsProvider(DEFAULT_AWS_PROVIDER_ID);
+  }
+
   public setModuleVariables(
     name: string,
     variables: Record<string, any>
@@ -151,12 +198,6 @@ export class FoggStack extends TerraformStack {
     }
   }
 
-  /**
-   * Get a local defined in the fogg component configuration.
-   *
-   * @param name the name of the local to get
-   * @returns the TerraformLocal object
-   */
   public getLocal(name: string): TerraformLocal {
     if (!this.locals[name]) {
       throw new Error(`Local ${name} not found`);
@@ -315,10 +356,36 @@ export class FoggStack extends TerraformStack {
               ?.enabled &&
               (this.foggComp.providers_configuration?.aws?.default_tags?.tags ??
                 {})),
+            ...(this._defaultTags ?? {}),
           },
         },
       ];
     }
+    let ignoreTags: awsProvider.AwsProviderIgnoreTags | undefined;
+    if (config.ignore_tags && config.ignore_tags.enabled) {
+      ignoreTags = {
+        keys: config.ignore_tags.keys,
+        keyPrefixes: config.ignore_tags.key_prefixes,
+      };
+    }
+    if (this._ignoreTags) {
+      const keys = new Set([
+        ...(ignoreTags?.keys ?? []),
+        ...(this._ignoreTags.keys ?? []),
+      ]);
+      const keyPrefixes = new Set([
+        ...(ignoreTags?.keyPrefixes ?? []),
+        ...(this._ignoreTags.keyPrefixes ?? []),
+      ]);
+      ignoreTags = {
+        keys: keys.size > 0 ? Array.from(keys) : undefined,
+        keyPrefixes: keyPrefixes.size > 0 ? Array.from(keyPrefixes) : undefined,
+      };
+    }
+    if (ignoreTags) {
+      c.ignoreTags = [ignoreTags];
+    }
+
     if (config.profile) {
       c.profile = config.profile;
     } else if (config.role_arn) {
@@ -345,8 +412,3 @@ export class FoggStack extends TerraformStack {
     }
   }
 }
-
-// helper type to make readonly interface properties mutable
-type Mutable<T> = {
-  -readonly [P in keyof T]: T[P];
-};

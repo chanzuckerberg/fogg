@@ -1,0 +1,12 @@
+{
+  "folders": [
+    {
+      "name": "env-test-lambda",
+      "path": "terraform/envs/test/lambda",
+    },
+    {
+      "name": "module-my-terraconstruct-foo",
+      "path": "terraform/modules/my-terraconstruct-foo",
+    },
+  ],
+}

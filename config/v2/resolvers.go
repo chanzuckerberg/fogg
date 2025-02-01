@@ -1173,6 +1173,13 @@ func ResolveModuleTerraformVersion(def Defaults, module Module) *string {
 	return def.TerraformVersion
 }
 
+func ResolveModuleOwner(def Defaults, module Module) *string {
+	if module.Owner != nil {
+		return module.Owner
+	}
+	return def.Owner
+}
+
 func SnowflakeProviderAccountGetter(comm Common) *string {
 	if comm.Providers != nil && comm.Providers.Snowflake != nil {
 		return comm.Providers.Snowflake.Account

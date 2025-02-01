@@ -12,6 +12,8 @@ import {
 } from "cdktf";
 import { Construct } from "constructs";
 import { AwsStack, AwsStackProps } from "terraconstructs/lib/aws";
+import { IFoggStack } from "./fogg-stack";
+import { type FoggStackProps } from "./fogg-stack";
 import {
   AWSProvider,
   Backend,
@@ -20,31 +22,30 @@ import {
   GenericProvider,
 } from "./imports/fogg-types.generated";
 import { loadComponentConfig } from "./util/load-component-config";
+import type { Mutable, OutputSchema } from "./util/types";
 
 export interface FoggTerraStackProps
-  extends Omit<AwsStackProps, "providerConfig"> {
-  /**
-   * Force remote state configuration
-   * @default false - only configure remote states if `component_backends_filtered` is true
-   */
-  forceRemoteStates?: boolean;
-}
+  extends FoggStackProps,
+    Omit<AwsStackProps, "providerConfig"> {}
 
 // TODO: Convert Fogg component configuration handlers to component class
 
 /**
  * Helper AwsStack to wrap Fogg component configuration and set up configured providers and backends.
  */
-export class FoggTerraStack extends AwsStack {
+export class FoggTerraStack extends AwsStack implements IFoggStack {
   public readonly foggComp: Component;
   public readonly modules: Record<string, TerraformHclModule> = {};
   public readonly locals: Record<string, TerraformLocal> = {};
-  private readonly _providers: Record<string, awsProvider.AwsProvider> = {};
   private readonly _remoteStates: Record<string, DataTerraformRemoteState> = {};
 
   constructor(scope: Construct, id: string, props: FoggTerraStackProps) {
     const foggComp = loadComponentConfig();
-    const awsProviderConfig = parseAwsProviderConfig(foggComp);
+    const awsProviderConfig = parseAwsProviderConfig(
+      foggComp,
+      props.defaultTags,
+      props.ignoreTags
+    );
     super(scope, id, {
       ...props,
       providerConfig: awsProviderConfig,
@@ -80,17 +81,35 @@ export class FoggTerraStack extends AwsStack {
     this.setModuleVariables(id, variables);
   }
 
-  /**
-   * Return a remote state defined in the fogg component configuration.
-   * @param name - The name of the remote state to get
-   * @returns the DataTerraformRemoteState object
-   * @throws if the remote state is not found
-   */
-  public remoteState(name: string): DataTerraformRemoteState {
+  public remoteState<T>(name: string, schema?: OutputSchema<T>): T {
     if (!this._remoteStates[name]) {
       throw new Error(`Remote state ${name} not found`);
     }
-    return this._remoteStates[name];
+    return new Proxy(this._remoteStates[name], {
+      get(target, prop: string | symbol, _receiver) {
+        if (typeof prop !== "string") return undefined;
+        if (!schema) {
+          return target.getString(prop);
+        }
+        const type = schema[prop as keyof T];
+        switch (type) {
+          case "string":
+            return target.getString(prop);
+          case "list":
+            return target.getList(prop);
+          case "number":
+            return target.getNumber(prop);
+          case "boolean":
+            return target.getBoolean(prop);
+          default:
+            return target.get(prop);
+        }
+      },
+    }) as unknown as T;
+  }
+
+  public get defaultAwsProvider(): awsProvider.AwsProvider {
+    return this.provider;
   }
 
   /**
@@ -256,7 +275,9 @@ export class FoggTerraStack extends AwsStack {
 
 // Parse AWS Provider config from Fogg component configuration
 function parseAwsProviderConfig(
-  foggComp: Component
+  foggComp: Component,
+  defaultTags?: Record<string, string>,
+  ignoreTags?: awsProvider.AwsProviderIgnoreTags
 ): awsProvider.AwsProviderConfig {
   const providers = foggComp.providers_configuration;
   if (
@@ -268,14 +289,21 @@ function parseAwsProviderConfig(
     );
   }
   if (providers.aws) {
-    return getAwsProviderConfig(foggComp, providers.aws);
+    return getAwsProviderConfig(
+      foggComp,
+      providers.aws,
+      defaultTags,
+      ignoreTags
+    );
   }
   throw new Error("AWS provider configuration not found");
 }
 
 function getAwsProviderConfig(
   foggComp: Component,
-  config: AWSProvider
+  config: AWSProvider,
+  defaultTags?: Record<string, string>,
+  ignoreTags?: awsProvider.AwsProviderIgnoreTags
 ): awsProvider.AwsProviderConfig {
   const c: Mutable<awsProvider.AwsProviderConfig> = {
     region: config.region,
@@ -295,9 +323,34 @@ function getAwsProviderConfig(
           }),
           ...(foggComp.providers_configuration?.aws?.default_tags?.enabled &&
             (foggComp.providers_configuration?.aws?.default_tags?.tags ?? {})),
+          ...(defaultTags ?? {}),
         },
       },
     ];
+  }
+  let _ignoreTags: awsProvider.AwsProviderIgnoreTags | undefined;
+  if (config.ignore_tags && config.ignore_tags.enabled) {
+    _ignoreTags = {
+      keys: config.ignore_tags.keys,
+      keyPrefixes: config.ignore_tags.key_prefixes,
+    };
+  }
+  if (ignoreTags) {
+    const keys = new Set([
+      ...(_ignoreTags?.keys ?? []),
+      ...(ignoreTags.keys ?? []),
+    ]);
+    const keyPrefixes = new Set([
+      ...(_ignoreTags?.keyPrefixes ?? []),
+      ...(ignoreTags.keyPrefixes ?? []),
+    ]);
+    _ignoreTags = {
+      keys: keys.size > 0 ? Array.from(keys) : undefined,
+      keyPrefixes: keyPrefixes.size > 0 ? Array.from(keyPrefixes) : undefined,
+    };
+  }
+  if (_ignoreTags) {
+    c.ignoreTags = [_ignoreTags];
   }
   if (config.profile) {
     c.profile = config.profile;
@@ -310,8 +363,3 @@ function getAwsProviderConfig(
   }
   return c;
 }
-
-// helper type to make readonly interface properties mutable
-type Mutable<T> = {
-  -readonly [P in keyof T]: T[P];
-};

@@ -962,3 +962,59 @@ func TestApplyEnvsWithCompFilter(t *testing.T) {
 		})
 	}
 }
+
+func TestPreservePackageVersion(t *testing.T) {
+	r := require.New(t)
+
+	moduleName := "cdktf-test"
+	defaultVersion := "0.0.0"
+	modulePlan := plan.Module{
+		Name:                  moduleName,
+		Kind:                  util.Ptr(v2.ModuleKindCDKTF),
+		Version:               defaultVersion,
+		Publish:               false,
+		Author:                "author",
+		CdktfDependencies:     map[string]string{},
+		CdktfDevDependencies:  map[string]string{},
+		CdktfPeerDependencies: map[string]string{},
+	}
+
+	tests := []struct {
+		version *string
+	}{
+		{nil},
+		{util.Ptr("1.2.3")},
+	}
+
+	for _, tt := range tests {
+		var expectedVersion string
+		if tt.version == nil {
+			expectedVersion = defaultVersion
+		} else {
+			expectedVersion = *tt.version
+		}
+
+		t.Run(expectedVersion, func(t *testing.T) {
+			fs, d, err := util.TestFs()
+			r.NoError(err)
+			defer os.RemoveAll(d)
+			path := fmt.Sprintf("%s/modules/%s", util.RootPath, moduleName)
+			if tt.version != nil {
+				writeMockPackageJson(fs, path, expectedVersion)
+			}
+			preservePackageJsonVersion(fs, &modulePlan, path+"/package.json")
+			r.Equal(expectedVersion, modulePlan.Version)
+		})
+	}
+}
+
+func writeMockPackageJson(fs afero.Fs, path string, version string) error {
+	packageJsonPath := path + "/package.json"
+	e := fs.MkdirAll(path, 0755)
+	if e != nil {
+		return e
+	}
+	contents := fmt.Sprintf(`{ "version": "%s" }`, version)
+	e = writeFile(fs, packageJsonPath, contents)
+	return e
+}

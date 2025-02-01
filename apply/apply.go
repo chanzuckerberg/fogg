@@ -367,6 +367,9 @@ func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBoxes map[v2.Modu
 		if !ok {
 			return errs.NewUserf("module of kind '%s' not supported", kind)
 		}
+		if kind == v2.ModuleKindCDKTF {
+			preservePackageJsonVersion(fs, &modulePlan, path+"/package.json")
+		}
 		e = applyTree(fs, moduleBox, commonBox, path, modulePlan)
 		if e != nil {
 			return errs.WrapUser(e, "unable to apply tree")
@@ -646,7 +649,7 @@ func applyTree(dest afero.Fs, source fs.FS, common fs.FS, targetBasePath string,
 				return errs.WrapUserf(e, "unable to create file %s", target)
 			}
 		} else if extension == ".rm" {
-			e = os.Remove(target)
+			e = dest.Remove(target)
 			if e != nil && !os.IsNotExist(e) {
 				return errs.WrapUserf(e, "unable to remove %s", target)
 			}
@@ -674,6 +677,38 @@ func applyTree(dest afero.Fs, source fs.FS, common fs.FS, targetBasePath string,
 
 		return nil
 	})
+}
+
+// preservePackageJsonVersion reads package.json file if it exists and preserves the version in the module plan
+func preservePackageJsonVersion(dest afero.Fs, modulePlan *plan.Module, target string) error {
+	_, err := dest.Stat(target)
+	if err != nil {
+		return nil
+	}
+	logrus.Debugf("parsing %s", target)
+	targetFile, err := dest.Open(target)
+	if err != nil {
+		return errs.WrapInternal(err, "could not open package.json")
+	}
+	pkgBytes, err := io.ReadAll(targetFile)
+	if err != nil {
+		return errs.WrapInternal(err, "could not read package.json")
+	}
+	var packageJSON map[string]interface{}
+	err = json.Unmarshal(pkgBytes, &packageJSON)
+	if err != nil {
+		return errs.WrapInternal(err, "could not unmarshal package.json")
+	}
+	version, hasVersionField := packageJSON["version"]
+	if !hasVersionField {
+		return nil
+	}
+	versionString, ok := version.(string)
+	if !ok {
+		return errs.WrapInternal(err, "could not convert package version to string")
+	}
+	modulePlan.Version = versionString
+	return nil
 }
 
 // test if any parent directory is a .sample directory,

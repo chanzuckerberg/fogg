@@ -4,7 +4,7 @@
 include scripts/common.mk
 
 ENVS=test
-MODULES=my-cdktf-module my-tf-module
+MODULES=my-cdktf-module my-cdktf-published-module my-tf-module
 ACCOUNTS=
 
 all: check

@@ -8,8 +8,7 @@ cdktf.log
 .terraform
 .terraform.lock.hcl
 tsconfig.tsbuildinfo
-!jest.config.js
-!setup.js
+!eslint.config.mjs
 
 // build outputs
 cdk.tf.json

@@ -342,9 +342,12 @@ type RemoteBackend struct {
 
 // Module is a module
 type Module struct {
-	Common `yaml:",inline"`
-	Name   string         `yaml:"name"`
-	Kind   *v2.ModuleKind `yaml:"kind,omitempty"`
+	Common  `yaml:",inline"`
+	Name    string         `yaml:"name"`
+	Publish bool           `yaml:"publish"`
+	Version string         `yaml:"version"`
+	Author  string         `yaml:"author"`
+	Kind    *v2.ModuleKind `yaml:"kind,omitempty"`
 
 	CdktfDependencies     map[string]string `yaml:"cdktf_dependencies"`
 	CdktfDevDependencies  map[string]string `yaml:"cdktf_dev_dependencies"`
@@ -578,36 +581,49 @@ func (p *Plan) buildModules(c *v2.Config) map[string]Module {
 		if conf.PackageName != nil {
 			packageName = *conf.PackageName
 		}
+		publish := false
+		if conf.Publish != nil {
+			publish = *conf.Publish
+		}
 		modulePlan := Module{
-			Name: packageName,
-			Kind: conf.Kind,
+			Name:    packageName,
+			Kind:    conf.Kind,
+			Publish: publish,
 		}
 
 		modulePlan.PathToRepoRoot = "../../../"
+		modulePlan.Version = "0.0.0" // apply will preserve existing version if exists
 		modulePlan.TerraformVersion = *v2.ResolveModuleTerraformVersion(c.Defaults, conf)
-
+		modulePlan.Author = *v2.ResolveModuleOwner(c.Defaults, conf)
 		modulePlan.CdktfDependencies = map[string]string{}
 		modulePlan.CdktfPeerDependencies = map[string]string{
-			"cdktf":      "^0.20.8",
-			"constructs": "^10.3.0",
+			"cdktf":      "^0.20.11",
+			"constructs": "^10.4.0",
 		}
 		modulePlan.CdktfDevDependencies = map[string]string{
-			"@types/node":                       "^20.6.0",
-			"vitest":                            "^2.1.7", // https://github.com/vitest-dev/vitest/releases
-			"ts-node":                           "^10.9.2",
-			"@swc/core":                         "^1.7.6",
-			"@typescript-eslint/eslint-plugin":  "^8",
-			"@typescript-eslint/parser":         "^8",
-			"eslint":                            "^8",
-			"eslint-config-prettier":            "^9.1.0",
-			"eslint-import-resolver-typescript": "^3.6.1",
-			"eslint-plugin-import":              "^2.29.1",
-			"eslint-plugin-prettier":            "^5.2.1",
-			"prettier":                          "^3.3.3",
-			"typescript":                        "^5.5.4",
-			"cdktf":                             "^0.20.8",
-			"cdktf-cli":                         "^0.20.8", // required to run cdktf get
-			"constructs":                        "^10.3.0",
+			"@swc/core":           "^1.10.12",
+			"@types/node":         "^20.17.16",
+			"constructs":          "^10.4.0",
+			"cdktf":               "^0.20.11",
+			"cdktf-cli":           "^0.20.11", // required to run cdktf get
+			"cdktf-vitest":        "^0.1.2",   // https://github.com/duniul/cdktf-vitest
+			"ts-node":             "^10.9.2",
+			"typescript":          "^5.7.3",
+			"vitest":              "^2.1.8", // https://github.com/vitest-dev/vitest/releases
+			"@vitest/coverage-v8": "^2.1.8",
+			"unplugin-swc":        "^1.5.1",
+			// eslint/prettier v9
+			"@types/eslint-config-prettier":    "^6.11.3",
+			"@typescript-eslint/eslint-plugin": "^8.22.0",
+			"@typescript-eslint/parser":        "^8.22.0",
+			"eslint":                           "^9.19.0",
+			"eslint-config-prettier":           "^9.1.0",
+			"eslint-config-turbo":              "^2.3.4",
+			"eslint-plugin-only-warn":          "^1.1.0",
+			"eslint-plugin-turbo":              "^2.3.4",
+			"globals":                          "^15.14.0",
+			"typescript-eslint":                "^8.22.0",
+			"prettier":                         "^3.4.2",
 		}
 
 		for _, dep := range conf.CdktfDependencies {
@@ -701,27 +717,31 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 			componentPlan.PathToRepoRoot = "../../../../"
 			componentPlan.CdktfDependencies = map[string]string{
 				// from packages/cdktf-fogg-constructs
-				"@vincenthsh/cdktf-fogg-helpers": "^1.0.0",
-				"@cdktf/provider-aws":            "^19.44.0", // @vincenthsh/cdktf-fogg-helpers peer dependency
-				"@cdktf/provider-cloudflare":     "^11.16.0", // @vincenthsh/cdktf-fogg-helpers peer dependency
-				"@cdktf/provider-datadog":        "^11.8.0",  // @vincenthsh/cdktf-fogg-helpers peer dependency
-				"cdktf":                          "^0.20.8",
-				"constructs":                     "^10.3.0",
+				"@vincenthsh/cdktf-fogg-helpers": "^1.3.0",
+				"@cdktf/provider-aws":            "^19.50.0", // @vincenthsh/cdktf-fogg-helpers peer dependency
+				"@cdktf/provider-cloudflare":     "^11.29.0", // @vincenthsh/cdktf-fogg-helpers peer dependency
+				"@cdktf/provider-datadog":        "^11.17.2", // @vincenthsh/cdktf-fogg-helpers peer dependency
+				"cdktf":                          "^0.20.11",
+				"constructs":                     "^10.4.0",
 			}
 			componentPlan.CdktfDevDependencies = map[string]string{
-				"cdktf-cli":                         "^0.20.8", // required to run `cdktf get``
-				"@types/node":                       "^20.6.0",
-				"ts-node":                           "^10.9.2",
-				"@swc/core":                         "^1.7.6",
-				"@typescript-eslint/eslint-plugin":  "^8",
-				"@typescript-eslint/parser":         "^8",
-				"eslint":                            "^8",
-				"eslint-config-prettier":            "^9.1.0",
-				"eslint-import-resolver-typescript": "^3.6.1",
-				"eslint-plugin-import":              "^2.29.1",
-				"eslint-plugin-prettier":            "^5.2.1",
-				"prettier":                          "^3.3.3",
-				"typescript":                        "^5.4.0",
+				"@swc/core":   "^1.10.12",
+				"@types/node": "^20.17.16",
+				"cdktf-cli":   "^0.20.11", // required to run `cdktf get``
+				"ts-node":     "^10.9.2",
+				"typescript":  "^5.7.3",
+				// eslint/prettier v9
+				"@types/eslint-config-prettier":    "^6.11.3",
+				"@typescript-eslint/eslint-plugin": "^8.22.0",
+				"@typescript-eslint/parser":        "^8.22.0",
+				"eslint":                           "^9.19.0",
+				"eslint-config-prettier":           "^9.1.0",
+				"eslint-config-turbo":              "^2.3.4",
+				"eslint-plugin-only-warn":          "^1.1.0",
+				"eslint-plugin-turbo":              "^2.3.4",
+				"globals":                          "^15.14.0",
+				"typescript-eslint":                "^8.22.0",
+				"prettier":                         "^3.4.2",
 			}
 			if componentConf.Kind.GetOrDefault() == v2.ComponentKindTerraConstruct {
 				componentPlan.CdktfDependencies["terraconstructs"] = "^0.0.9"

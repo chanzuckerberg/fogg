@@ -60,6 +60,7 @@ type TurboConfig struct {
 	SCMBase                 string
 	DevDependencies         map[string]string
 	CdktfPackages           []string
+	Workspaces              []vsCodeWorkspace
 	Scopes                  map[string]jsScope
 	CodeArtifactLoginScript string
 }
@@ -398,17 +399,18 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 
 const noCALoginRequired = "echo 'No CodeArtifact login required'"
 
+type vsCodeWorkspace struct {
+	Name string
+	Path string
+}
+
 func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
 	turboConfig := &TurboConfig{
 		Enabled:  false,
 		SCMBase:  "main",
 		RootName: "fogg-monorepo",
 		DevDependencies: map[string]string{
-			"@types/node":  "^20.6.0",
-			"vitest":       "^2.1.7", // https://github.com/vitest-dev/vitest/releases
-			"cdktf-vitest": "^0.1.2", // https://github.com/duniul/cdktf-vitest
-			"turbo":        "^2.3.3", // https://github.com/vercel/turborepo/releases
-			"typescript":   "^5.5.4",
+			"turbo": "^2.3.4", // https://github.com/vercel/turborepo/releases
 		},
 		CodeArtifactLoginScript: noCALoginRequired,
 		// Ensure vincenthsh/fogg's helper pkg scope
@@ -448,11 +450,17 @@ func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
 		}
 
 		pkgs := []string{}
+		workspaces := []vsCodeWorkspace{}
 		for module, modulePlan := range p.Modules {
 			kind := modulePlan.Kind.GetOrDefault()
 			if kind == v2.ModuleKindCDKTF {
 				// applyModules implementation detail for pnpm-workspace.yaml
-				pkgs = append(pkgs, fmt.Sprintf("%s/modules/%s", util.RootPath, module))
+				path := fmt.Sprintf("%s/modules/%s", util.RootPath, module)
+				pkgs = append(pkgs, path)
+				workspaces = append(workspaces, vsCodeWorkspace{
+					Name: fmt.Sprintf("module-%s", module),
+					Path: path,
+				})
 			}
 		}
 
@@ -461,12 +469,21 @@ func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
 				kind := componentPlan.Kind.GetOrDefault()
 				if kind == v2.ComponentKindCDKTF || kind == v2.ComponentKindTerraConstruct {
 					// applyEnvs implementation detail for pnpm-workspace.yaml
-					pkgs = append(pkgs, fmt.Sprintf("%s/envs/%s/%s", util.RootPath, env, component))
+					path := fmt.Sprintf("%s/envs/%s/%s", util.RootPath, env, component)
+					pkgs = append(pkgs, path)
+					workspaces = append(workspaces, vsCodeWorkspace{
+						Name: fmt.Sprintf("env-%s-%s", env, component),
+						Path: path,
+					})
 				}
 			}
 		}
 		slices.Sort(pkgs)
+		sort.Slice(workspaces, func(i, j int) bool {
+			return workspaces[i].Name < workspaces[j].Name
+		})
 		turboConfig.CdktfPackages = pkgs
+		turboConfig.Workspaces = workspaces
 	}
 	return turboConfig
 }

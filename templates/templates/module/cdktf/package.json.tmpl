@@ -1,17 +1,30 @@
 {
   "name": "{{ .Name }}",
-  "version": "0.0.0",
+  "version": "{{ .Version }}",
+  "author": "{{ .Author }}",
+  {{- if .Publish}}
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  {{- else}}
   "private": true,
   "exports": {
     ".": "./src/index.ts"
   },
+  {{- end}}
   "scripts": {
     "get": "cdktf get",
-    "test": "vitest run --passWithNoTests --update",
-    "eslint": "eslint . --ext .ts",
+    "ca:login": "pnpm -w run ca:login",
+    {{- if .Publish}}
+    "build": "if [ -d dist ]; then tsc --build -v; else tsc --build -v --force; fi",
+    "watch": "tsc --build --watch",
+    {{- end}}
+    "lint": "eslint",
+    "test": "vitest run --passWithNoTests  --coverage",
     "prettier": "prettier --write .",
-    "synth": "npx ts-node --swc -P ./tsconfig.dev.json src/index.ts",
-    "type-check": "tsc -p ./tsconfig.dev.json --noEmit",
+    "type-check": "tsc -p ./tsconfig.json --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -rf coverage"
   },
   "dependencies":{{ .CdktfDependencies | toPrettyJson | indent 2 }},

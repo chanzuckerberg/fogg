@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import "cdktf/lib/testing/adapters/jest";
-import { App, Testing } from "cdktf";
+import { App, Fn, TerraformOutput, Testing } from "cdktf";
 import merge from "deepmerge";
 import { FoggTerraStack } from "../src/fogg-terrastack";
 import type { Component } from "../src/imports/fogg-types.generated";
+import { type OutputSchema } from "../src/util/types";
 import { Template } from "./assertions";
 
 // hoisted mock, can't capture variable for vi.fn() mock
@@ -131,6 +132,122 @@ describe("FoggTerraStack", () => {
     });
   });
 
+  describe("creates remote states if forceRemoteStates is true", () => {
+    let stack: FoggTerraStack;
+    beforeEach(() => {
+      loadComponentConfig.mockReturnValue(
+        merge(getDefaultComponentConfig(), {
+          component_backends: {
+            network: {
+              kind: "s3",
+              s3: { bucket: "some-bucket" },
+            },
+          },
+        })
+      );
+      stack = new FoggTerraStack(app, "MyStack", {
+        forceRemoteStates: true,
+        gridUUID,
+        environmentName,
+      });
+    });
+    // with output Typing
+    interface NetworkOutputs {
+      vpc_id: string;
+      app_subnet_ids: string[];
+    }
+    const networkOutputsSchema: OutputSchema<NetworkOutputs> = {
+      vpc_id: "string",
+      app_subnet_ids: "list",
+    };
+    it("as data terraform remote state", () => {
+      Template.fromStack(stack).toMatchObject({
+        data: {
+          terraform_remote_state: {
+            network: {
+              backend: "s3",
+              config: {
+                bucket: "some-bucket",
+              },
+            },
+          },
+        },
+      });
+    });
+    it("with strongly typed access to simple outputs", () => {
+      const outputs = stack.remoteState<NetworkOutputs>("network");
+      new TerraformOutput(stack, "vpc_id", {
+        value: outputs.vpc_id,
+        staticId: true,
+      });
+      Template.fromStack(stack).toMatchObject({
+        output: {
+          vpc_id: {
+            value: "${data.terraform_remote_state.network.outputs.vpc_id}",
+          },
+        },
+      });
+    });
+    // TODO: This isn't throwing an error...
+    it.todo("throws on incorrectly accessing list items", () => {
+      const outputs = stack.remoteState<NetworkOutputs>("network");
+      new TerraformOutput(stack, "app_subnet1", {
+        value: outputs.app_subnet_ids[0],
+        staticId: true,
+      });
+      expect(() => Testing.synth(stack)).toThrow(
+        /Found an encoded list token string in a scalar string context/
+      );
+    });
+    it("throws on incorrectly accessing list items", () => {
+      const outputs = stack.remoteState<NetworkOutputs>(
+        "network",
+        networkOutputsSchema
+      );
+      new TerraformOutput(stack, "app_subnet1", {
+        // should be Fn.element(outputs.app_subnet_ids, 0)
+        value: outputs.app_subnet_ids[0],
+        staticId: true,
+      });
+      expect(() => Testing.synth(stack)).toThrow(
+        /Found an encoded list token string in a scalar string context/
+      );
+    });
+    it("with strongly typed access to complex outputs", () => {
+      const outputs = stack.remoteState<NetworkOutputs>(
+        "network",
+        networkOutputsSchema
+      );
+      new TerraformOutput(stack, "vpc_id", {
+        value: outputs.vpc_id,
+        staticId: true,
+      });
+      new TerraformOutput(stack, "app_subnet1", {
+        value: Fn.element(outputs.app_subnet_ids, 0),
+        staticId: true,
+      });
+      new TerraformOutput(stack, "app_subnet2", {
+        value: Fn.element(outputs.app_subnet_ids, 1),
+        staticId: true,
+      });
+      Template.fromStack(stack, { snapshot: false }).toMatchObject({
+        output: {
+          app_subnet1: {
+            value:
+              "${element(data.terraform_remote_state.network.outputs.app_subnet_ids, 0)}",
+          },
+          app_subnet2: {
+            value:
+              "${element(data.terraform_remote_state.network.outputs.app_subnet_ids, 1)}",
+          },
+          vpc_id: {
+            value: "${data.terraform_remote_state.network.outputs.vpc_id}",
+          },
+        },
+      });
+    });
+  });
+
   it("exposes file dependencies through locals", async () => {
     // GIVEN
     loadComponentConfig.mockReturnValue(
@@ -236,6 +353,29 @@ describe("FoggTerraStack", () => {
     );
   });
 
+  it("exposes default Aws provider", async () => {
+    // GIVEN
+    loadComponentConfig.mockReturnValue(
+      merge(getDefaultComponentConfig(), {
+        providers_configuration: {
+          aws: {
+            account_id: "123456789012",
+            region: "us-west-2",
+            role_arn: "arn:aws:iam::123456789012:role/role",
+          },
+        },
+      })
+    );
+    // WHEN
+    const stack = new FoggTerraStack(app, "MyStack", {
+      gridUUID,
+      environmentName,
+    });
+
+    // THEN
+    expect(stack.defaultAwsProvider).toBeDefined();
+  });
+
   it("throws on aliased providers", async () => {
     // GIVEN
     loadComponentConfig.mockReturnValue(
@@ -265,7 +405,7 @@ describe("FoggTerraStack", () => {
     );
   });
 
-  it("sets default tags", async () => {
+  it("sets foggComponent default tags", async () => {
     // GIVEN
     loadComponentConfig.mockReturnValue(
       merge(getDefaultComponentConfig(), {
@@ -303,6 +443,174 @@ describe("FoggTerraStack", () => {
                   managedBy: "terraform",
                   service: "fake-name",
                 },
+              },
+            ],
+          },
+        ],
+      },
+    });
+  });
+
+  it("sets foggComponent ignore tags", async () => {
+    // GIVEN
+    loadComponentConfig.mockReturnValue(
+      merge(getDefaultComponentConfig(), {
+        providers_configuration: {
+          aws: {
+            account_id: "123456789012",
+            region: "us-west-2",
+            ignore_tags: {
+              enabled: true,
+              keys: ["foo", "bar"],
+            },
+          },
+        },
+      })
+    );
+    // WHEN
+    const stack = new FoggTerraStack(app, "MyStack", {
+      gridUUID,
+      environmentName,
+    });
+    // THEN
+    Template.fromStack(stack).toMatchObject({
+      provider: {
+        aws: [
+          {
+            region: "us-west-2",
+            ignore_tags: [
+              {
+                keys: ["foo", "bar"],
+              },
+            ],
+          },
+        ],
+      },
+    });
+  });
+
+  it("sets foggComponent default and constructor default tags", async () => {
+    // GIVEN
+    loadComponentConfig.mockReturnValue(
+      merge(getDefaultComponentConfig(), {
+        providers_configuration: {
+          aws: {
+            account_id: "123456789012",
+            region: "us-west-2",
+            default_tags: {
+              enabled: true,
+              tags: {
+                env: "test",
+                owner: "me",
+              },
+            },
+          },
+        },
+      })
+    );
+    // WHEN
+    const stack = new FoggTerraStack(app, "MyStack", {
+      gridUUID,
+      environmentName,
+      defaultTags: {
+        owner: "me2",
+        service: "my-service",
+        purpose: "my-purpose",
+      },
+    });
+    // THEN
+    Template.fromStack(stack).toMatchObject({
+      provider: {
+        aws: [
+          {
+            region: "us-west-2",
+            default_tags: [
+              {
+                tags: {
+                  env: "test",
+                  owner: "me2",
+                  managedBy: "terraform",
+                  service: "my-service",
+                  purpose: "my-purpose",
+                },
+              },
+            ],
+          },
+        ],
+      },
+    });
+  });
+
+  it("sets foggComponent ignore and constructor ignore tags", async () => {
+    // GIVEN
+    loadComponentConfig.mockReturnValue(
+      merge(getDefaultComponentConfig(), {
+        providers_configuration: {
+          aws: {
+            account_id: "123456789012",
+            region: "us-west-2",
+            ignore_tags: {
+              enabled: true,
+              keys: ["foo", "bar"],
+            },
+          },
+        },
+      })
+    );
+    // WHEN
+    const stack = new FoggTerraStack(app, "MyStack", {
+      gridUUID,
+      environmentName,
+      ignoreTags: {
+        keys: ["foo", "bar", "baz"],
+      },
+    });
+    // THEN
+    Template.fromStack(stack).toMatchObject({
+      provider: {
+        aws: [
+          {
+            region: "us-west-2",
+            ignore_tags: [
+              {
+                keys: ["foo", "bar", "baz"],
+              },
+            ],
+          },
+        ],
+      },
+    });
+  });
+
+  it("sets constructor ignore tags", async () => {
+    // GIVEN
+    loadComponentConfig.mockReturnValue(
+      merge(getDefaultComponentConfig(), {
+        providers_configuration: {
+          aws: {
+            account_id: "123456789012",
+            region: "us-west-2",
+          },
+        },
+      })
+    );
+    // WHEN
+    const stack = new FoggTerraStack(app, "MyStack", {
+      gridUUID,
+      environmentName,
+      ignoreTags: {
+        keys: ["foo", "bar", "baz"],
+      },
+    });
+    // THEN
+    Template.fromStack(stack).toMatchObject({
+      provider: {
+        aws: [
+          {
+            region: "us-west-2",
+            ignore_tags: [
+              {
+                keys: ["foo", "bar", "baz"],
               },
             ],
           },
@@ -354,6 +662,7 @@ describe("FoggTerraStack", () => {
       environmentName,
     });
     // THEN
+    expect(stack.region).toBe("us-fake-1");
     Template.fromStack(stack).toMatchObject({
       provider: {
         aws: [
@@ -372,15 +681,12 @@ describe("FoggTerraStack", () => {
         required_providers: {
           aws: {
             source: "aws",
-            version: "5.82.2",
           },
           cloudflare: {
             source: "cloudflare/cloudflare",
-            version: "4.49.1",
           },
           datadog: {
             source: "DataDog/datadog",
-            version: "3.50.0",
           },
         },
       },

@@ -86,3 +86,7 @@ modules:
     cdktf_dependencies:
       - name: "@cdktf/tf-module-stack"
         version: "^5.0.21"
+  my-cdktf-published-module:
+    kind: cdktf
+    publish: true
+    package_name: "my-cdktf-module-foo"

@@ -475,6 +475,8 @@ type Module struct {
 	Kind                  *ModuleKind            `yaml:"kind,omitempty"` // terraform or cdktf
 	TerraformVersion      *string                `yaml:"terraform_version,omitempty"`
 	PackageName           *string                `yaml:"package_name,omitempty"`
+	Publish               *bool                  `yaml:"publish,omitempty"`
+	Owner                 *string                `yaml:"author,omitempty"`
 	CdktfDependencies     []JavascriptDependency `yaml:"cdktf_dependencies,omitempty"`      // Optional additional module dependencies, default: []
 	CdktfDevDependencies  []JavascriptDependency `yaml:"cdktf_dev_dependencies,omitempty"`  // Optional additional module dev dependencies, default: []
 	CdktfPeerDependencies []JavascriptDependency `yaml:"cdktf_peer_dependencies,omitempty"` // Optional additional module peer dependencies, default: []

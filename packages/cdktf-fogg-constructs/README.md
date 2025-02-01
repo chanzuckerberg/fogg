@@ -25,6 +25,8 @@ export class ComponentStack extends FoggStack {
 
     // Example setting variables for the single `module_source` backed Component
     this.setMainModuleVariables({
+      // The component aws region is exposed directly
+      region: this.region ?? "us-east-1",
       foo: "bar",
       baz: "qux",
     });
@@ -107,6 +109,9 @@ FoggTerraStack exposes Fogg component configuration for [TerraConstructs.dev](ht
 ```typescript
 import { FoggTerraStack } from "@vincenthsh/fogg";
 import { Construct } from "constructs";
+import { Duration } from "terraconstructs";
+import { Bucket } from "terraconstructs/lib/aws/storage";
+import { Queue } from "terraconstructs/lib/aws/notify";
 
 export class ComponentStack extends FoggTerraStack {
   constructor(scope: Construct, id: string) {
@@ -119,10 +124,17 @@ export class ComponentStack extends FoggTerraStack {
       environmentName: "development",
     });
 
-    // Example setting variables for the single `module_source` backed Component
-    this.setMainModuleVariables({
-      foo: "bar",
-      baz: "qux",
+    // Use Advanced https://terraconstructs.dev L2 Constructs.
+    new Bucket(this, "MyEventBridgeBucket", {
+      forceDestroy: true,
+      eventBridgeEnabled: true,
+      enforceSSL: true,
+    });
+
+    new Queue(stack, "Queue", {
+      namePrefix: "queue.fifo",
+      messageRetentionSeconds: Duration.days(14).toSeconds(),
+      visibilityTimeoutSeconds: Duration.minutes(15).toSeconds(),
     });
   }
 }

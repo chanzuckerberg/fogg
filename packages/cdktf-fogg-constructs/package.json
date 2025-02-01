@@ -36,24 +36,24 @@
     "js-yaml": "^4.1.0"
   },
   "peerDependencies": {
-    "@cdktf/provider-aws": "^19.44.0",
-    "@cdktf/provider-cloudflare": "^11.16.0",
-    "@cdktf/provider-datadog": "^11.8.0",
-    "cdktf": "^0.20.8",
+    "@cdktf/provider-aws": "^19.50.0",
+    "@cdktf/provider-cloudflare": "^11.29.0",
+    "@cdktf/provider-datadog": "^11.17.2",
+    "cdktf": "^0.20.11",
     "constructs": "^10.4.0",
-    "terraconstructs": "^0.0.9"
+    "terraconstructs": "^0.0.11"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^18.19.1",
     "@vincenthsh/tsconfig": "workspace:*",
-    "@vitest/coverage-v8": "^2.1.6",
-    "cdktf-cli": "^0.20.8",
+    "@vitest/coverage-v8": "^2.1.8",
+    "cdktf-cli": "^0.20.11",
     "cdktf-vitest": "^0.1.2",
-    "typescript": "5.5.4",
-    "unplugin-swc": "^1.4.5",
-    "vitest": "^2.1.6",
-    "deepmerge": "4.3.1"
+    "deepmerge": "4.3.1",
+    "typescript": "5.7.3",
+    "unplugin-swc": "^1.5.1",
+    "vitest": "^2.1.8"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"

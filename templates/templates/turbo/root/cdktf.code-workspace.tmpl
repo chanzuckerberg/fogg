@@ -1,0 +1,10 @@
+{
+  "folders": [
+    {{- range $index, $ws := .Workspaces }}
+    {
+      "name": "{{$ws.Name}}",
+      "path": "{{$ws.Path}}",
+    },
+    {{- end }}
+  ],
+}

@@ -489,11 +489,15 @@ func (c *Config) validateModules() error {
 	minTFVersion := goVersion.Must(goVersion.NewVersion("0.12.0"))
 
 	for name, module := range c.Modules {
+		author := ResolveModuleOwner(c.Defaults, module)
+		if author == nil {
+			return fmt.Errorf("must set owner for module %s at either defaults or module level", name)
+		}
+
 		version := ResolveModuleTerraformVersion(c.Defaults, module)
 		if version == nil {
 			return fmt.Errorf("must set terrform version for module %s at either defaults or module level", name)
 		}
-
 		v, err := goVersion.NewVersion(*version)
 		if err != nil {
 			return errs.WrapUserf(err, "Could not parse semver terraform version [%s]", *version)

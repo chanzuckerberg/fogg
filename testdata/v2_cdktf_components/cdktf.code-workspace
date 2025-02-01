@@ -1,0 +1,20 @@
+{
+  "folders": [
+    {
+      "name": "env-test-lambda",
+      "path": "terraform/envs/test/lambda",
+    },
+    {
+      "name": "env-test-network",
+      "path": "terraform/envs/test/network",
+    },
+    {
+      "name": "module-my-cdktf-module",
+      "path": "terraform/modules/my-cdktf-module",
+    },
+    {
+      "name": "module-my-cdktf-published-module",
+      "path": "terraform/modules/my-cdktf-published-module",
+    },
+  ],
+}

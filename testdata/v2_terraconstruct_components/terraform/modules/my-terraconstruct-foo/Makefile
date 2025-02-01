@@ -2,7 +2,7 @@
 # Make improvements in fogg, so that everyone can benefit.
 
 lint:
-	pnpm run eslint
+	pnpm run lint
 .PHONY: lint
 
 fmt:

@@ -2,8 +2,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import "cdktf/lib/testing/adapters/jest";
 import { App, Fn, TerraformOutput, Testing } from "cdktf";
 import merge from "deepmerge";
-import { FoggStack, OutputSchema } from "../src/fogg-stack";
+import { FoggStack } from "../src/fogg-stack";
 import type { Component } from "../src/imports/fogg-types.generated";
+import { type OutputSchema } from "../src/util/types";
 import { Template } from "./assertions";
 
 // hoisted mock, can't capture variable for vi.fn() mock
@@ -299,6 +300,26 @@ describe("FoggStack", () => {
     );
   });
 
+  it("exposes default Aws provider", async () => {
+    // GIVEN
+    loadComponentConfig.mockReturnValue(
+      merge(getDefaultComponentConfig(), {
+        providers_configuration: {
+          aws: {
+            account_id: "123456789012",
+            region: "us-west-2",
+            role_arn: "arn:aws:iam::123456789012:role/role",
+          },
+        },
+      })
+    );
+    // WHEN
+    const stack = new FoggStack(app, "MyStack");
+
+    // THEN
+    expect(stack.defaultAwsProvider).toBeDefined();
+  });
+
   it("exposes aliased providers", async () => {
     // GIVEN
     loadComponentConfig.mockReturnValue(
@@ -348,7 +369,7 @@ describe("FoggStack", () => {
     });
   });
 
-  it("sets default tags", async () => {
+  it("sets foggComponent default tags", async () => {
     // GIVEN
     loadComponentConfig.mockReturnValue(
       merge(getDefaultComponentConfig(), {
@@ -383,6 +404,165 @@ describe("FoggStack", () => {
                   managedBy: "terraform",
                   service: "fake-name",
                 },
+              },
+            ],
+          },
+        ],
+      },
+    });
+  });
+
+  it("sets foggComponent ignore tags", async () => {
+    // GIVEN
+    loadComponentConfig.mockReturnValue(
+      merge(getDefaultComponentConfig(), {
+        providers_configuration: {
+          aws: {
+            account_id: "123456789012",
+            region: "us-west-2",
+            ignore_tags: {
+              enabled: true,
+              keys: ["foo", "bar"],
+            },
+          },
+        },
+      })
+    );
+    // WHEN
+    const stack = new FoggStack(app, "MyStack");
+    // THEN
+    Template.fromStack(stack).toMatchObject({
+      provider: {
+        aws: [
+          {
+            region: "us-west-2",
+            ignore_tags: [
+              {
+                keys: ["foo", "bar"],
+              },
+            ],
+          },
+        ],
+      },
+    });
+  });
+
+  it("sets foggComponent default and constructor default tags", async () => {
+    // GIVEN
+    loadComponentConfig.mockReturnValue(
+      merge(getDefaultComponentConfig(), {
+        providers_configuration: {
+          aws: {
+            account_id: "123456789012",
+            region: "us-west-2",
+            default_tags: {
+              enabled: true,
+              tags: {
+                env: "test",
+                owner: "me",
+              },
+            },
+          },
+        },
+      })
+    );
+    // WHEN
+    const stack = new FoggStack(app, "MyStack", {
+      defaultTags: {
+        owner: "me2",
+        service: "my-service",
+        purpose: "my-purpose",
+      },
+    });
+    // THEN
+    Template.fromStack(stack).toMatchObject({
+      provider: {
+        aws: [
+          {
+            region: "us-west-2",
+            default_tags: [
+              {
+                tags: {
+                  env: "test",
+                  owner: "me2",
+                  managedBy: "terraform",
+                  service: "my-service",
+                  purpose: "my-purpose",
+                },
+              },
+            ],
+          },
+        ],
+      },
+    });
+  });
+
+  it("sets foggComponent ignore and constructor ignore tags", async () => {
+    // GIVEN
+    loadComponentConfig.mockReturnValue(
+      merge(getDefaultComponentConfig(), {
+        providers_configuration: {
+          aws: {
+            account_id: "123456789012",
+            region: "us-west-2",
+            ignore_tags: {
+              enabled: true,
+              keys: ["foo", "bar"],
+            },
+          },
+        },
+      })
+    );
+    // WHEN
+    const stack = new FoggStack(app, "MyStack", {
+      ignoreTags: {
+        keys: ["foo", "bar", "baz"],
+      },
+    });
+    // THEN
+    Template.fromStack(stack).toMatchObject({
+      provider: {
+        aws: [
+          {
+            region: "us-west-2",
+            ignore_tags: [
+              {
+                keys: ["foo", "bar", "baz"],
+              },
+            ],
+          },
+        ],
+      },
+    });
+  });
+
+  it("sets constructor ignore tags", async () => {
+    // GIVEN
+    loadComponentConfig.mockReturnValue(
+      merge(getDefaultComponentConfig(), {
+        providers_configuration: {
+          aws: {
+            account_id: "123456789012",
+            region: "us-west-2",
+          },
+        },
+      })
+    );
+    // WHEN
+    const stack = new FoggStack(app, "MyStack", {
+      ignoreTags: {
+        keys: ["foo", "bar", "baz"],
+      },
+    });
+    // THEN
+    Template.fromStack(stack).toMatchObject({
+      provider: {
+        aws: [
+          {
+            region: "us-west-2",
+            ignore_tags: [
+              {
+                keys: ["foo", "bar", "baz"],
               },
             ],
           },
@@ -428,6 +608,7 @@ describe("FoggStack", () => {
     // WHEN
     const stack = new FoggStack(app, "MyStack");
     // THEN
+    expect(stack.region).toBe("us-fake-1");
     Template.fromStack(stack).toMatchObject({
       provider: {
         aws: [
@@ -446,15 +627,12 @@ describe("FoggStack", () => {
         required_providers: {
           aws: {
             source: "aws",
-            version: "5.82.2",
           },
           cloudflare: {
             source: "cloudflare/cloudflare",
-            version: "4.49.1",
           },
           datadog: {
             source: "DataDog/datadog",
-            version: "3.50.0",
           },
         },
       },

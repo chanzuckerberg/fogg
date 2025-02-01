@@ -1,32 +1,5 @@
 {
-  "compilerOptions": {
-    "alwaysStrict": true,
-
-    "experimentalDecorators": true,
-    "inlineSourceMap": true,
-    "inlineSources": true,
-    "lib": ["es2018"],
-    "module": "CommonJS",
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "resolveJsonModule": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "strictPropertyInitialization": true,
-    "stripInternal": true,
-    "incremental": true,
-    "skipLibCheck": true,
-    "declaration": false,
-    "esModuleInterop": true,
-    "noEmitOnError": false,
-    "target": "ES2019",
-    "outDir": "dist",
-    "types": ["cdktf-vitest"]
-  },
-  "include": ["src/**/*.ts", "test/**/*.ts"],
-  "exclude": ["node_modules", "cdktf.out"]
+    "extends": "./tsconfig.json",
+    "include": ["src/**/*", "test/**/*", "vitest.config.mts", "vitest.setup.mts"],
+    "exclude": ["node_modules", "dist", "coverage", "**/.pnpm/**", "**/dist/**"]
 }
