@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.21](https://github.com/vincenthsh/fogg/compare/v0.92.20...v0.92.21) (2025-02-03)
+
+
+### BugFixes
+
+* TS Language Service performance issues ([#378](https://github.com/vincenthsh/fogg/issues/378)) ([e1b04cf](https://github.com/vincenthsh/fogg/commit/e1b04cff43978d0aac2adac7d9297c47a9ef556f))
+
 ## [0.92.20](https://github.com/vincenthsh/fogg/compare/v0.92.19...v0.92.20) (2025-02-01)
 
 
