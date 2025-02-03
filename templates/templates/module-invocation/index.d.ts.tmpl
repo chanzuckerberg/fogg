@@ -1,5 +1,10 @@
 {{ template "fogg_header_js" }}
-export interface Outputs {
+/**
+ * Outputs for:
+ * - Environment: "{{ .Env }}"
+ * - Component: "{{ .ComponentName }}"
+ */
+export interface {{ .ComponentNameTitle }}Outputs {
 {{- range .Modules }}
   // module "{{.ModuleName}}" outputs
   {{- $outer := . -}}

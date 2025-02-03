@@ -1,7 +1,11 @@
 {
   "eslint.workingDirectories":  [
+    "terraform/envs/test/app",
+    "terraform/envs/test/empty",
     "terraform/envs/test/lambda",
     "terraform/envs/test/network",
+    "terraform/envs/test/network-old",
+    "terraform/modules/foo",
     "terraform/modules/my-cdktf-module",
     "terraform/modules/my-cdktf-published-module"
   ]

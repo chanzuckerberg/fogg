@@ -33,7 +33,17 @@ turbo:
 envs:
   test:
     components:
+      empty:
+        depends_on:
+          components: []
+        # component with no module invocation but custom package_json fields
+        package_json:
+          exports:
+            ".": "./index.d.ts"
       lambda:
+        depends_on:
+          components:
+            - network
         providers:
           aws:
             default_tags:
@@ -79,7 +89,7 @@ envs:
         module_source: "terraform/modules/my_module"
 
 modules:
-  my-tf-module: {}
+  foo: {}
   my-cdktf-module:
     kind: cdktf
     package_name: "my-cdktf-module-foo"
@@ -89,4 +99,4 @@ modules:
   my-cdktf-published-module:
     kind: cdktf
     publish: true
-    package_name: "my-cdktf-module-foo"
+    package_name: "@myorg/module"

@@ -25,6 +25,17 @@ component_backends:
             profile: null
             region: us-west-2
             role_arn: arn:aws:iam::123456789012:role/role
+    empty:
+        kind: s3
+        s3:
+            account_id: "123456789012"
+            account_name: ""
+            bucket: buck
+            dynamo_table: null
+            key_path: terraform/proj/envs/test/components/empty.tfstate
+            profile: null
+            region: us-west-2
+            role_arn: arn:aws:iam::123456789012:role/role
     lambda:
         kind: s3
         s3:
@@ -156,6 +167,7 @@ cdktf_dev_dependencies:
     ts-node: ^10.9.2
     typescript: ^5.7.3
     typescript-eslint: ^8.22.0
+package_fields: {}
 tf_lint:
     enabled: false
 travisci:
@@ -295,6 +307,7 @@ global:
     integration_registry: null
     cdktf_dependencies: {}
     cdktf_dev_dependencies: {}
+    package_fields: {}
     tf_lint:
         enabled: false
     travisci:

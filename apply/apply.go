@@ -81,19 +81,19 @@ func Apply(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool, envFil
 			}
 		}
 
-		err = applyModules(fs, plan.Modules, tmpl.Module, tmpl.Common)
+		err = applyModules(fs, plan.Modules, plan.Turbo, tmpl.Module, tmpl.Common, tmpl.TurboModule)
 		if err != nil {
 			return errs.WrapUser(err, "unable to apply modules")
 		}
 
 		tfBox := tmpl.Components[v2.ComponentKindTerraform]
-		err = applyAccounts(fs, plan, tfBox, tmpl.Common)
+		err = applyAccounts(fs, plan, tfBox, tmpl.Common, tmpl.TurboComponent)
 		if err != nil {
 			return errs.WrapUser(err, "unable to apply accounts")
 		}
 	}
 
-	pathModuleConfigs, err := applyEnvs(fs, plan, envFilter, compFilter, tmpl.Env, tmpl.Components, tmpl.Common)
+	pathModuleConfigs, err := applyEnvs(fs, plan, envFilter, compFilter, tmpl.Env, tmpl.Components, tmpl.Common, tmpl.TurboComponent)
 	if err != nil {
 		return errs.WrapUser(err, "unable to apply envs")
 	}
@@ -106,7 +106,7 @@ func Apply(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool, envFil
 	}
 
 	tfBox := tmpl.Components[v2.ComponentKindTerraform]
-	err = applyGlobal(fs, plan.Global, tfBox, tmpl.Common)
+	err = applyGlobal(fs, plan.Global, plan.Turbo, tfBox, tmpl.Common, tmpl.TurboComponent)
 	if err != nil {
 		return errs.WrapUser(err, "unable to apply global")
 	}
@@ -330,17 +330,27 @@ func applyRepo(fs afero.Fs, p *plan.Plan, repoTemplates, commonTemplates fs.FS) 
 	return applyTree(fs, repoTemplates, commonTemplates, "", p)
 }
 
-func applyGlobal(fs afero.Fs, p plan.Component, repoBox, commonBox fs.FS) error {
+func applyGlobal(fs afero.Fs, p plan.Component, turbo *plan.TurboConfig, tfBox, commonBox, turboComponentBox fs.FS) error {
 	logrus.Debug("applying global")
 	path := fmt.Sprintf("%s/global", util.RootPath)
 	e := fs.MkdirAll(path, 0755)
 	if e != nil {
 		return errs.WrapUserf(e, "unable to make directory %s", path)
 	}
-	return applyTree(fs, repoBox, commonBox, path, p)
+	e = applyTree(fs, tfBox, commonBox, path, p)
+	if e != nil {
+		return errs.WrapUser(e, "unable to apply global component")
+	}
+	if turbo.Enabled {
+		e = applyTree(fs, turboComponentBox, commonBox, path, p)
+		if e != nil {
+			return errs.WrapUser(e, "unable to apply turbo templates to global")
+		}
+	}
+	return nil
 }
 
-func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox, commonBox fs.FS) (e error) {
+func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox, commonBox, turboComponentBox fs.FS) (e error) {
 	for account, accountPlan := range p.Accounts {
 		path := fmt.Sprintf("%s/accounts/%s", util.RootPath, account)
 		e = fs.MkdirAll(path, 0755)
@@ -351,11 +361,17 @@ func applyAccounts(fs afero.Fs, p *plan.Plan, accountBox, commonBox fs.FS) (e er
 		if e != nil {
 			return errs.WrapUser(e, "unable to apply templates to account")
 		}
+		if p.Turbo.Enabled {
+			e = applyTree(fs, turboComponentBox, commonBox, path, accountPlan)
+			if e != nil {
+				return errs.WrapUser(e, "unable to apply turbo templates to account")
+			}
+		}
 	}
 	return nil
 }
 
-func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBoxes map[v2.ModuleKind]fs.FS, commonBox fs.FS) (e error) {
+func applyModules(fs afero.Fs, p map[string]plan.Module, turbo *plan.TurboConfig, moduleBoxes map[v2.ModuleKind]fs.FS, commonBox, turboModuleBox fs.FS) (e error) {
 	for module, modulePlan := range p {
 		path := fmt.Sprintf("%s/modules/%s", util.RootPath, module)
 		e = fs.MkdirAll(path, 0755)
@@ -367,8 +383,12 @@ func applyModules(fs afero.Fs, p map[string]plan.Module, moduleBoxes map[v2.Modu
 		if !ok {
 			return errs.NewUserf("module of kind '%s' not supported", kind)
 		}
-		if kind == v2.ModuleKindCDKTF {
-			preservePackageJsonVersion(fs, &modulePlan, path+"/package.json")
+		preservePackageJsonVersion(fs, &modulePlan, path+"/package.json")
+		if turbo.Enabled {
+			e = applyTree(fs, turboModuleBox, commonBox, path, modulePlan)
+			if e != nil {
+				return errs.WrapUser(e, "unable to apply turbo templates to module")
+			}
 		}
 		e = applyTree(fs, moduleBox, commonBox, path, modulePlan)
 		if e != nil {
@@ -387,7 +407,8 @@ func applyEnvs(
 	compFilter *string,
 	envBox fs.FS,
 	componentBoxes map[v2.ComponentKind]fs.FS,
-	commonBox fs.FS) (pathModuleConfigs PathModuleConfigs, err error) {
+	commonBox, turboComponentBox fs.FS,
+) (pathModuleConfigs PathModuleConfigs, err error) {
 	logrus.Debug("applying envs")
 	pathModuleConfigs = make(PathModuleConfigs)
 	for env, envPlan := range p.Envs {
@@ -440,6 +461,13 @@ func applyEnvs(
 				}
 			}
 
+			if p.Turbo.Enabled {
+				// TODO: Should preserve the package.json version in the componentPlan
+				err = applyTree(fs, turboComponentBox, commonBox, path, componentPlan)
+				if err != nil {
+					return nil, errs.WrapUser(err, "unable to apply turbo templates for component")
+				}
+			}
 			err := applyTree(fs, componentBox, commonBox, path, componentPlan)
 			if err != nil {
 				return nil, errs.WrapUser(err, "unable to apply templates for component")
@@ -481,7 +509,12 @@ func applyEnvs(
 						downloadFunc: downloader,
 					})
 				}
+
 				pathModuleConfigs[path], err = applyModuleInvocation(fs, path, templates.Templates.ModuleInvocation, commonBox, mi, &applyModuleInvocationOpts{
+					Env:                 env,
+					Owner:               componentPlan.Owner,
+					ComponentName:       component,
+					ComponentNameTitle:  util.ConvertToTitleCase(component),
 					turboEnabled:        p.Turbo.Enabled,
 					integrationRegistry: componentPlan.IntegrationRegistry,
 				})
@@ -855,7 +888,11 @@ type IntegrationRegistryEntry struct {
 }
 
 type modulesData struct {
-	Modules []*moduleData
+	Env                string        // environment of component invoking the modules
+	Owner              string        // owner of component invoking the modules
+	ComponentName      string        // name of component invoking the modules
+	ComponentNameTitle string        // TitleCased name of the component invoking the modules
+	Modules            []*moduleData // data for each module being invoked
 }
 
 type moduleInvocation struct {
@@ -867,6 +904,14 @@ type ModuleConfigMap map[string]*tfconfig.Module
 
 // options for applyModuleInvocation
 type applyModuleInvocationOpts struct {
+	// environment of component invoking the modules
+	Env string
+	// owner of component invoking the modules
+	Owner string
+	// name of component invoking the modules
+	ComponentName string
+	// The TitleCased name of the component this module is invoked in
+	ComponentNameTitle string
 	// if set, typescript declaration files will be created for outputs
 	turboEnabled bool
 	// if set, integration registry template will be applied
@@ -987,6 +1032,20 @@ func applyModuleInvocation(
 		})
 	}
 
+	var env, owner, componentName, componentNameTitle string
+	if opts != nil {
+		env = opts.Env
+		owner = opts.Owner
+		componentName = opts.ComponentName
+		componentNameTitle = opts.ComponentNameTitle
+	}
+	templateData := modulesData{
+		Env:                env,
+		Owner:              owner,
+		ComponentName:      componentName,
+		ComponentNameTitle: componentNameTitle,
+		Modules:            arr,
+	}
 	// MAIN
 	f, e := box.Open("main.tf.tmpl")
 	if e != nil {
@@ -997,7 +1056,7 @@ func applyModuleInvocation(
 		commonBox,
 		fs,
 		filepath.Join(path, "main.tf"),
-		&modulesData{arr})
+		&templateData)
 	if e != nil {
 		return nil, errs.WrapUser(e, "unable to apply template for main.tf")
 	}
@@ -1012,7 +1071,7 @@ func applyModuleInvocation(
 		return nil, errs.WrapUser(e, "could not open template file")
 	}
 
-	e = applyTemplate(f, commonBox, fs, filepath.Join(path, "outputs.tf"), &modulesData{arr})
+	e = applyTemplate(f, commonBox, fs, filepath.Join(path, "outputs.tf"), &templateData)
 	if e != nil {
 		return nil, errs.WrapUser(e, "unable to apply template for outputs.tf")
 	}
@@ -1022,6 +1081,7 @@ func applyModuleInvocation(
 		return nil, errs.WrapUser(e, "unable to format outputs.tf")
 	}
 
+	// TODO: Deprecate integrationRegistry
 	if opts != nil && opts.integrationRegistry != nil && *opts.integrationRegistry == "ssm" {
 		// Integration Registry Entries - ssm parameter store
 		f, e = box.Open("ssm-parameter-store.tf.tmpl")
@@ -1029,7 +1089,7 @@ func applyModuleInvocation(
 			return nil, errs.WrapUser(e, "could not open template file")
 		}
 
-		e = applyTemplate(f, commonBox, fs, filepath.Join(path, "ssm-parameter-store.tf"), &modulesData{arr})
+		e = applyTemplate(f, commonBox, fs, filepath.Join(path, "ssm-parameter-store.tf"), &templateData)
 		if e != nil {
 			return nil, errs.WrapUser(e, "unable to apply template for ssm-parameter-store.tf")
 		}
@@ -1046,15 +1106,21 @@ func applyModuleInvocation(
 			outputCount += len(m.Outputs)
 		}
 		if outputCount > 0 {
-			// Typescript Declaration File
-			f, e = box.Open("index.d.ts.tmpl")
-			if e != nil {
-				return nil, errs.WrapUser(e, "could not open template file")
+			workspaceConfigFiles := []string{
+				"index.d.ts.tmpl",
+				"package.json.tmpl",
+				"tsconfig.json.tmpl",
 			}
+			for _, configFile := range workspaceConfigFiles {
+				f, e = box.Open(configFile)
+				if e != nil {
+					return nil, errs.WrapUser(e, "could not open template file")
+				}
 
-			e = applyTemplate(f, commonBox, fs, filepath.Join(path, "index.d.ts"), &modulesData{arr})
-			if e != nil {
-				return nil, errs.WrapUser(e, "unable to apply template for index.d.ts")
+				e = applyTemplate(f, commonBox, fs, filepath.Join(path, removeExtension(configFile)), &templateData)
+				if e != nil {
+					return nil, errs.WrapUser(e, "unable to apply template")
+				}
 			}
 		}
 	}

@@ -109,7 +109,7 @@ cdktf_dependencies:
     '@vincenthsh/cdktf-fogg-helpers': ^1.3.0
     cdktf: ^0.20.11
     constructs: ^10.4.0
-    terraconstructs: ^0.0.9
+    terraconstructs: ^0.0.11
 cdktf_dev_dependencies:
     '@swc/core': ^1.10.12
     '@types/eslint-config-prettier': ^6.11.3
@@ -127,6 +127,7 @@ cdktf_dev_dependencies:
     ts-node: ^10.9.2
     typescript: ^5.7.3
     typescript-eslint: ^8.22.0
+package_fields: {}
 tf_lint:
     enabled: false
 travisci:
@@ -256,6 +257,7 @@ global:
     integration_registry: null
     cdktf_dependencies: {}
     cdktf_dev_dependencies: {}
+    package_fields: {}
     tf_lint:
         enabled: false
     travisci:

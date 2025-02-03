@@ -17,6 +17,20 @@ projects:
       enabled: true
     apply_requirements:
       - approved
+  - name: test_empty
+    dir: terraform/envs/test/empty
+    workspace: default
+    terraform_version: 1.7.5
+    autoplan:
+      when_modified:
+        - '!remote-states.tf'
+        - '**/*.tf'
+        - '**/*.tf.json'
+        - '**/*.tfvars'
+        - '**/*.tfvars.json'
+      enabled: true
+    apply_requirements:
+      - approved
   - name: test_lambda
     dir: terraform/envs/test/lambda
     workspace: default

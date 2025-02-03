@@ -56,7 +56,7 @@ export default [
       ".git/**",
       "**/node_modules/**",
       "coverage/**",
-      "**/.pnpm/**"
+      "**/.pnpm/**",
     ],
   },
 ];

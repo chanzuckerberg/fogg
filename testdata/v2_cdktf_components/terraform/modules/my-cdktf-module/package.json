@@ -12,7 +12,7 @@
     "lint": "eslint",
     "test": "vitest run --passWithNoTests  --coverage",
     "prettier": "prettier --write .",
-    "type-check": "tsc -p ./tsconfig.json --noEmit",
+    "type-check": "tsc --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -rf coverage"
   },
   "dependencies":  {

@@ -870,7 +870,7 @@ func TestApplyEnvsWithFilter(t *testing.T) {
 	r.NoError(err)
 	envFilter := "env1"
 
-	pathModuleConfigs, err := applyEnvs(dest, plan, &envFilter, nil, tmpl.Env, tmpl.Components, tmpl.Common)
+	pathModuleConfigs, err := applyEnvs(dest, plan, &envFilter, nil, tmpl.Env, tmpl.Components, tmpl.Common, tmpl.TurboComponent)
 	r.NoError(err)
 	r.NotNil(pathModuleConfigs)
 	_, err = dest.Stat("terraform/envs/env1")
@@ -946,7 +946,7 @@ func TestApplyEnvsWithCompFilter(t *testing.T) {
 			r.NoError(err)
 			defer os.RemoveAll(d)
 
-			pathModuleConfigs, err := applyEnvs(dest, plan, tt.envFilter, tt.compFilter, tmpl.Env, tmpl.Components, tmpl.Common)
+			pathModuleConfigs, err := applyEnvs(dest, plan, tt.envFilter, tt.compFilter, tmpl.Env, tmpl.Components, tmpl.Common, tmpl.TurboComponent)
 			r.NoError(err)
 			r.NotNil(pathModuleConfigs)
 

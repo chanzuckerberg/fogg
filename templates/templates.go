@@ -73,6 +73,8 @@ type T struct {
 	PreCommitRoot    fs.FS
 	PreCommitActions fs.FS
 	TurboRoot        fs.FS
+	TurboComponent   fs.FS
+	TurboModule      fs.FS
 	TFE              fs.FS
 }
 
@@ -107,5 +109,7 @@ var Templates = &T{
 	PreCommitRoot:    mustFSSub("templates/pre-commit/root"),
 	PreCommitActions: mustFSSub("templates/pre-commit/actions"),
 	TurboRoot:        mustFSSub("templates/turbo/root"),
+	TurboComponent:   mustFSSub("templates/turbo/component"),
+	TurboModule:      mustFSSub("templates/turbo/module"),
 	TFE:              mustFSSub("templates/tfe"),
 }

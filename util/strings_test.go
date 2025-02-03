@@ -28,3 +28,26 @@ func TestConvertCamelToSnake(t *testing.T) {
 		})
 	}
 }
+func TestConvertToTitleCase(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{"Empty string", "", ""},
+		{"Single word", "hello", "Hello"},
+		{"Multiple words", "hello-world", "HelloWorld"},
+		{"Mixed case", "hello-World-foo-Bar", "HelloWorldFooBar"},
+		{"All uppercase", "HELLO-WORLD", "HelloWorld"},
+		{"All lowercase", "hello-world", "HelloWorld"},
+		{"Hyphenated words", "hello-world-foo-bar", "HelloWorldFooBar"},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			r := require.New(t)
+			result := ConvertToTitleCase(test.input)
+			r.Equal(test.expected, result)
+		})
+	}
+}

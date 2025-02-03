@@ -18,13 +18,13 @@
     "get": "cdktf get",
     "ca:login": "pnpm -w run ca:login",
     {{- if .Publish}}
-    "build": "if [ -d dist ]; then tsc --build -v; else tsc --build -v --force; fi",
-    "watch": "tsc --build --watch",
+    "build": "tsc",
+    "watch": "tsc --watch",
     {{- end}}
     "lint": "eslint",
     "test": "vitest run --passWithNoTests  --coverage",
     "prettier": "prettier --write .",
-    "type-check": "tsc -p ./tsconfig.json --noEmit",
+    "type-check": "tsc --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -rf coverage"
   },
   "dependencies":{{ .CdktfDependencies | toPrettyJson | indent 2 }},

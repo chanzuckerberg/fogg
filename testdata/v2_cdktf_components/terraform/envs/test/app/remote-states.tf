@@ -18,6 +18,23 @@ data "terraform_remote_state" "global" {
   }
 }
 # tflint-ignore: terraform_unused_declarations
+data "terraform_remote_state" "empty" {
+  backend = "s3"
+  config = {
+
+
+    bucket = "buck"
+
+    key    = "terraform/proj/envs/test/components/empty.tfstate"
+    region = "us-west-2"
+
+    assume_role = {
+      role_arn = "arn:aws:iam::123456789012:role/role"
+    }
+
+  }
+}
+# tflint-ignore: terraform_unused_declarations
 data "terraform_remote_state" "lambda" {
   backend = "s3"
   config = {

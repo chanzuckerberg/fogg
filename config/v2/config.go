@@ -245,6 +245,7 @@ type Component struct {
 	Modules              []ComponentModule      `yaml:"modules,omitempty"`
 	CdktfDependencies    []JavascriptDependency `yaml:"cdktf_dependencies,omitempty"`     // Optional additional component dev dependencies, default: []
 	CdktfDevDependencies []JavascriptDependency `yaml:"cdktf_dev_dependencies,omitempty"` // Optional additional component dev dependencies, default: []
+	PackageJsonFields    map[string]any         `yaml:"package_json,omitempty"`           // Fields to add into package.json, only used by non-cdktf components
 }
 
 type ComponentModule struct {

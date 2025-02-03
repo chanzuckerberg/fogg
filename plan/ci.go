@@ -410,7 +410,7 @@ func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
 		SCMBase:  "main",
 		RootName: "fogg-monorepo",
 		DevDependencies: map[string]string{
-			"turbo": "^2.3.4", // https://github.com/vercel/turborepo/releases
+			"turbo": "^2.4.0", // https://github.com/vercel/turborepo/releases
 		},
 		CodeArtifactLoginScript: noCALoginRequired,
 		// Ensure vincenthsh/fogg's helper pkg scope
@@ -452,11 +452,11 @@ func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
 		pkgs := []string{}
 		workspaces := []vsCodeWorkspace{}
 		for module, modulePlan := range p.Modules {
+			// applyModules implementation detail for pnpm-workspace.yaml
+			path := fmt.Sprintf("%s/modules/%s", util.RootPath, module)
+			pkgs = append(pkgs, path)
 			kind := modulePlan.Kind.GetOrDefault()
 			if kind == v2.ModuleKindCDKTF {
-				// applyModules implementation detail for pnpm-workspace.yaml
-				path := fmt.Sprintf("%s/modules/%s", util.RootPath, module)
-				pkgs = append(pkgs, path)
 				workspaces = append(workspaces, vsCodeWorkspace{
 					Name: fmt.Sprintf("module-%s", module),
 					Path: path,
@@ -466,11 +466,11 @@ func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
 
 		for env, envPlan := range p.Envs {
 			for component, componentPlan := range envPlan.Components {
+				// applyEnvs implementation detail for pnpm-workspace.yaml
+				path := fmt.Sprintf("%s/envs/%s/%s", util.RootPath, env, component)
+				pkgs = append(pkgs, path)
 				kind := componentPlan.Kind.GetOrDefault()
 				if kind == v2.ComponentKindCDKTF || kind == v2.ComponentKindTerraConstruct {
-					// applyEnvs implementation detail for pnpm-workspace.yaml
-					path := fmt.Sprintf("%s/envs/%s/%s", util.RootPath, env, component)
-					pkgs = append(pkgs, path)
 					workspaces = append(workspaces, vsCodeWorkspace{
 						Name: fmt.Sprintf("env-%s-%s", env, component),
 						Path: path,

@@ -5,6 +5,8 @@ import (
 	"unicode"
 
 	"github.com/sirupsen/logrus"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 const RootPath = "terraform"
@@ -22,6 +24,16 @@ func ConvertToSnake(s string) string {
 	}
 
 	return result
+}
+
+func ConvertToTitleCase(s string) string {
+	// split by -, title case each word, then join with -
+	words := strings.Split(s, "-")
+	titleCaser := cases.Title(language.English)
+	for i, word := range words {
+		words[i] = titleCaser.String(word)
+	}
+	return strings.Join(words, "")
 }
 
 func SliceContainsString(haystack []string, needle string) bool {

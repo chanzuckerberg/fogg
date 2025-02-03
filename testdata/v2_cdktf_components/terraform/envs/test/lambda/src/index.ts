@@ -3,21 +3,18 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { App } from "cdktf";
+import { App } from "cdktf/lib/app";
 import { ComponentStack } from "./stack";
 
 const outdir = "cdktf.out";
 const app = new App({
   outdir,
 });
-const stack = new ComponentStack(app, "fogg");
+const stack = new ComponentStack(app, "Default");
 app.synth();
 
 // Copy the generated Terraform code to the current directory to keep relative directory references
-const stackSynthDir = path.join(
-  outdir,
-  app.manifest.forStack(stack).workingDirectory,
-);
+const stackSynthDir = path.join(outdir, app.manifest.forStack(stack).workingDirectory);
 
 fs.cpSync(stackSynthDir, ".", { recursive: true });
 fs.rmSync(outdir, { recursive: true });

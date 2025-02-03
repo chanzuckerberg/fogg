@@ -8,8 +8,8 @@
     "ca:login": "pnpm -w run ca:login",
     "lint": "eslint",
     "prettier": "prettier --write .",
-    "synth": "npx ts-node --swc -P ./tsconfig.json src/index.ts",
-    "type-check": "tsc -p ./tsconfig.json --noEmit",
+    "synth": "ts-node -P ./tsconfig.json src/index.ts",
+    "type-check": "tsc --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -rf coverage"
   },
   "dependencies":   {
@@ -20,7 +20,7 @@
     "@vincenthsh/cdktf-fogg-helpers": "^1.3.0",
     "cdktf": "^0.20.11",
     "constructs": "^10.4.0",
-    "terraconstructs": "^0.0.9"
+    "terraconstructs": "^0.0.11"
   },
   "devDependencies":   {
     "@swc/core": "^1.10.12",
