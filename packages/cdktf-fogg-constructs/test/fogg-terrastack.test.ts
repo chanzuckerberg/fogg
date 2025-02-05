@@ -743,6 +743,7 @@ function getDefaultComponentConfig(): Component {
         region: "us-fake-1",
       },
     },
+    package_fields: {},
     component_backends: {},
     autoplan_relative_globs: [],
     autoplan_files: [],

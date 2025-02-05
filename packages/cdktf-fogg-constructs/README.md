@@ -54,7 +54,7 @@ Get typed Remote State outputs from non CDKTF components:
 for every HCL component.
 
 ```typescript
-import { type Outputs as NetworkOutputs } from "../../network";
+import { type NetworkOldOutputs } from "test-network-old";
 ```
 
 Set variables for any TF Module configured for the Component, by `name`:

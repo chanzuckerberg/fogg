@@ -233,6 +233,7 @@ export interface Component {
     integration_registry?: string;
     cdktf_dependencies: {[key: string]: string};
     cdktf_dev_dependencies: {[key: string]: string};
+    package_fields: {[key: string]: any};
     tf_lint: TfLint;
     TravisCI: TravisCIComponent;
     CircleCI: CircleCIComponent;
