@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.92.22](https://github.com/vincenthsh/fogg/compare/v0.92.21...v0.92.22) (2025-02-05)
+
+
+### Misc
+
+* bump github.com/spf13/pflag in the gomod group ([#380](https://github.com/vincenthsh/fogg/issues/380)) ([d18c82f](https://github.com/vincenthsh/fogg/commit/d18c82febec1a1b842345a8677b1cee1e4e7a235))
+* Bump vitest for security issue ([#382](https://github.com/vincenthsh/fogg/issues/382)) ([acada48](https://github.com/vincenthsh/fogg/commit/acada48fc24d2121eaf13d848b4d8ece2874d166))
+
 ## [0.92.21](https://github.com/vincenthsh/fogg/compare/v0.92.20...v0.92.21) (2025-02-03)
 
 

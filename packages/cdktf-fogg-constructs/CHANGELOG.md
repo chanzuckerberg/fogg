@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/vincenthsh/fogg/compare/cdktf-fogg-helpers-v1.3.0...cdktf-fogg-helpers-v1.3.1) (2025-02-05)
+
+
+### Misc
+
+* Bump vitest for security issue ([#382](https://github.com/vincenthsh/fogg/issues/382)) ([acada48](https://github.com/vincenthsh/fogg/commit/acada48fc24d2121eaf13d848b4d8ece2874d166))
+
 ## [1.3.0](https://github.com/vincenthsh/fogg/compare/cdktf-fogg-helpers-v1.2.0...cdktf-fogg-helpers-v1.3.0) (2025-02-01)
 
 
