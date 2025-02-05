@@ -607,8 +607,8 @@ func (p *Plan) buildModules(c *v2.Config) map[string]Module {
 			"cdktf-vitest":        "^0.1.2",   // https://github.com/duniul/cdktf-vitest
 			"ts-node":             "^10.9.2",
 			"typescript":          "^5.7.3",
-			"vitest":              "^2.1.8", // https://github.com/vitest-dev/vitest/releases
-			"@vitest/coverage-v8": "^2.1.8",
+			"vitest":              "^2.1.9", // https://github.com/vitest-dev/vitest/releases
+			"@vitest/coverage-v8": "^2.1.9",
 			"unplugin-swc":        "^1.5.1",
 			// eslint/prettier v9
 			"@types/eslint-config-prettier":    "^6.11.3",
