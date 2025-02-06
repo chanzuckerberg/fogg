@@ -9,6 +9,6 @@ on:
 
 jobs:
   conventional_commit_title:
-    runs-on: [self-hosted, ARM64, linux]
+    runs-on: ARM64
     steps:
       - uses: chanzuckerberg/github-actions/.github/actions/conventional-commits@main

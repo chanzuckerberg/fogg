@@ -9,7 +9,7 @@ concurrency:
     cancel-in-progress: true
 jobs:
   dependabot:
-    runs-on: [self-hosted, ARM64, linux]
+    runs-on: ARM64
     if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
       - name: Generate token
