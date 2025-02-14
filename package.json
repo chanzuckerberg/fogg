@@ -19,7 +19,8 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "sherif": "^1.2.0",
-    "turbo": "^2.4.0"
+    "turbo": "^2.4.0",
+    "vitest": "^2.1.9"
   },
   "packageManager": "pnpm@9.15.2",
   "engines": {

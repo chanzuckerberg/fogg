@@ -3,20 +3,20 @@ import {
   StackAnnotation,
   TerraformStack,
   Testing,
-} from "cdktf";
-import { TerraformConstructor } from "cdktf/lib/testing/matchers";
-import { MetadataEntry } from "constructs";
-import { Assertion, expect } from "vitest";
+} from 'cdktf'
+import { TerraformConstructor } from 'cdktf/lib/testing/matchers'
+import { MetadataEntry } from 'constructs'
+import { Assertion, expect } from 'vitest'
 
 export interface SynthOptions {
   /**
    * snapshot full synthesized template
    */
-  snapshot?: boolean;
+  snapshot?: boolean
   /**
    * Run all validations on the stack before synth
    */
-  runValidations?: boolean;
+  runValidations?: boolean
 }
 
 /**
@@ -28,11 +28,11 @@ export class Template {
    */
   static fromStack(
     stack: TerraformStack,
-    options: SynthOptions = {}
+    options: SynthOptions = {},
   ): Assertion<any> {
-    const synthesized = Template.getSynthString(stack, options);
-    const parsed = JSON.parse(synthesized);
-    return expect(parsed);
+    const synthesized = Template.getSynthString(stack, options)
+    const parsed = JSON.parse(synthesized)
+    return expect(parsed)
   }
   /**
    * Create Vitest Assertions for the synthesized JSON string
@@ -43,10 +43,10 @@ export class Template {
    */
   static synth(
     stack: TerraformStack,
-    options: SynthOptions = {}
+    options: SynthOptions = {},
   ): Assertion<any> {
-    const synthesized = Template.getSynthString(stack, options);
-    return expect(synthesized);
+    const synthesized = Template.getSynthString(stack, options)
+    return expect(synthesized)
   }
 
   /**
@@ -59,14 +59,14 @@ export class Template {
   static resources(
     stack: TerraformStack,
     type: TerraformConstructor,
-    options: SynthOptions = {}
+    options: SynthOptions = {},
   ): Assertion<any> {
-    const synthesized = Template.getSynthString(stack, options);
-    const parsed = JSON.parse(synthesized);
+    const synthesized = Template.getSynthString(stack, options)
+    const parsed = JSON.parse(synthesized)
     const resources = parsed.resource
       ? Object.values(parsed.resource[type.tfResourceType] ?? {})
-      : [];
-    return expect(resources);
+      : []
+    return expect(resources)
   }
 
   /**
@@ -79,27 +79,27 @@ export class Template {
   static dataSources(
     stack: TerraformStack,
     type: TerraformConstructor,
-    options: SynthOptions = {}
+    options: SynthOptions = {},
   ): Assertion<any> {
-    const synthesized = Template.getSynthString(stack, options);
-    const parsed = JSON.parse(synthesized);
+    const synthesized = Template.getSynthString(stack, options)
+    const parsed = JSON.parse(synthesized)
     const dataSources = parsed.data
       ? Object.values(parsed.data[type.tfResourceType] ?? {})
-      : [];
-    return expect(dataSources);
+      : []
+    return expect(dataSources)
   }
 
   private static getSynthString(
     stack: TerraformStack,
-    options: SynthOptions = {}
+    options: SynthOptions = {},
   ): string {
-    const { snapshot = false, runValidations = false } = options;
-    stack.prepareStack(); // required to add pre-synth resources
-    const result = Testing.synth(stack, runValidations);
+    const { snapshot = false, runValidations = false } = options
+    stack.prepareStack() // required to add pre-synth resources
+    const result = Testing.synth(stack, runValidations)
     if (snapshot) {
-      expect(result).toMatchSnapshot();
+      expect(result).toMatchSnapshot()
     }
-    return result;
+    return result
   }
 }
 
@@ -119,19 +119,19 @@ export class Annotations {
           level: metadata.type as AnnotationMetadataEntryType,
           message: metadata.data,
           stacktrace: metadata.trace,
-        }))
+        })),
       )
-      .reduce((list, metadatas) => [...list, ...metadatas], []); // Array.flat()
-    return new Annotations(annotations);
+      .reduce((list, metadatas) => [...list, ...metadatas], []) // Array.flat()
+    return new Annotations(annotations)
   }
 
   private constructor(private readonly annotations: StackAnnotation[]) {}
 
   public get warnings(): StackAnnotation[] {
-    return this.annotations.filter(isWarningAnnotation);
+    return this.annotations.filter(isWarningAnnotation)
   }
   public get errors(): StackAnnotation[] {
-    return this.annotations.filter(isErrorAnnotation);
+    return this.annotations.filter(isErrorAnnotation)
   }
 
   /**
@@ -141,19 +141,19 @@ export class Annotations {
     ...expectedWarnings: Array<Partial<StackAnnotationMatcher>>
   ) {
     const warningMatchers = expectedWarnings.map((warning) => {
-      const transformed: Partial<StackAnnotationMatcher> = {};
+      const transformed: Partial<StackAnnotationMatcher> = {}
       for (const key in warning) {
-        const value = warning[key as keyof StackAnnotationMatcher];
+        const value = warning[key as keyof StackAnnotationMatcher]
         if (value instanceof RegExp) {
           transformed[key as keyof StackAnnotationMatcher] =
-            expect.stringMatching(value);
+            expect.stringMatching(value)
         } else {
-          transformed[key as keyof StackAnnotationMatcher] = value;
+          transformed[key as keyof StackAnnotationMatcher] = value
         }
       }
-      return expect.objectContaining(transformed);
-    });
-    expect(this.warnings).toEqual(expect.arrayContaining(warningMatchers));
+      return expect.objectContaining(transformed)
+    })
+    expect(this.warnings).toEqual(expect.arrayContaining(warningMatchers))
   }
 }
 
@@ -162,20 +162,20 @@ const annotationMetadataEntryTypes = [
   AnnotationMetadataEntryType.INFO,
   AnnotationMetadataEntryType.WARN,
   AnnotationMetadataEntryType.ERROR,
-] as string[];
+] as string[]
 function isAnnotationMetadata(metadata: MetadataEntry): boolean {
-  return annotationMetadataEntryTypes.includes(metadata.type);
+  return annotationMetadataEntryTypes.includes(metadata.type)
 }
 
 function isErrorAnnotation(annotation: StackAnnotation): boolean {
-  return annotation.level === AnnotationMetadataEntryType.ERROR;
+  return annotation.level === AnnotationMetadataEntryType.ERROR
 }
 
 function isWarningAnnotation(annotation: StackAnnotation): boolean {
-  return annotation.level === AnnotationMetadataEntryType.WARN;
+  return annotation.level === AnnotationMetadataEntryType.WARN
 }
 
 export interface StackAnnotationMatcher {
-  constructPath: string | RegExp;
-  message: string | RegExp;
+  constructPath: string | RegExp
+  message: string | RegExp
 }

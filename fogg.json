@@ -9,10 +9,10 @@
   },
   "accounts": {
     "foo": {
-        "account_id": 123
+      "account_id": 123
     },
     "bar": {
-        "account_id": 456
+      "account_id": 456
     }
   }
 }

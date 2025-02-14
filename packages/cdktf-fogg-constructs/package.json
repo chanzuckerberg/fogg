@@ -5,9 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
-  "files": [
-    "dist/**"
-  ],
+  "files": ["dist/**"],
   "scripts": {
     "type-check": "tsc -p ./tsconfig.dev.json --noEmit",
     "test": "vitest run --passWithNoTests --coverage",
@@ -33,7 +31,8 @@
     "node": ">=18.16.1"
   },
   "dependencies": {
-    "js-yaml": "^4.1.0"
+    "js-yaml": "^4.1.0",
+    "ts-morph": "^25.0.1"
   },
   "peerDependencies": {
     "@cdktf/provider-aws": "^19.50.0",

@@ -1,5 +1,5 @@
-import swc from "unplugin-swc";
-import { defineConfig } from "vitest/config";
+import swc from 'unplugin-swc'
+import { defineConfig } from 'vitest/config'
 
 // refer to: https://vitest.dev/config/
 export default defineConfig({
@@ -10,4 +10,4 @@ export default defineConfig({
     isolate: false,
     setupFiles: [`${__dirname}/vitest.setup.mts`],
   },
-});
+})
