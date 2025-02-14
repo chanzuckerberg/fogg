@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.92.23](https://github.com/vincenthsh/fogg/compare/v0.92.22...v0.92.23) (2025-02-14)
+
+
+### Features
+
+* Fogg CDKTF Remote State helpers ([#388](https://github.com/vincenthsh/fogg/issues/388)) ([0efefd1](https://github.com/vincenthsh/fogg/commit/0efefd1be0b9a6b5b7d316eabe5d7f93d5f601d5))
+
+
+### Misc
+
+* bump golang.org/x/text from 0.21.0 to 0.22.0 in the gomod group ([#386](https://github.com/vincenthsh/fogg/issues/386)) ([65ccb3b](https://github.com/vincenthsh/fogg/commit/65ccb3ba34aedecd33d0dd33ea4b6f5ff177f220))
+* Update fogg-types ([#383](https://github.com/vincenthsh/fogg/issues/383)) ([830063a](https://github.com/vincenthsh/fogg/commit/830063a98c04fea88021c33f1bc2d884ba3b5983))
+
 ## [0.92.22](https://github.com/vincenthsh/fogg/compare/v0.92.21...v0.92.22) (2025-02-05)
 
 

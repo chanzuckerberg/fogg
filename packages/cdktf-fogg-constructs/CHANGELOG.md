@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.4.0](https://github.com/vincenthsh/fogg/compare/cdktf-fogg-helpers-v1.3.1...cdktf-fogg-helpers-v1.4.0) (2025-02-14)
+
+
+### Features
+
+* Fogg CDKTF Remote State helpers ([#388](https://github.com/vincenthsh/fogg/issues/388)) ([0efefd1](https://github.com/vincenthsh/fogg/commit/0efefd1be0b9a6b5b7d316eabe5d7f93d5f601d5))
+
+
+### Misc
+
+* Update fogg-types ([#383](https://github.com/vincenthsh/fogg/issues/383)) ([830063a](https://github.com/vincenthsh/fogg/commit/830063a98c04fea88021c33f1bc2d884ba3b5983))
+
 ## [1.3.1](https://github.com/vincenthsh/fogg/compare/cdktf-fogg-helpers-v1.3.0...cdktf-fogg-helpers-v1.3.1) (2025-02-05)
 
 
