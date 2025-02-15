@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/vincenthsh/fogg/compare/cdktf-fogg-helpers-v1.4.0...cdktf-fogg-helpers-v1.4.1) (2025-02-15)
+
+
+### BugFixes
+
+* remotestateproxy output wrappers bug ([#389](https://github.com/vincenthsh/fogg/issues/389)) ([4a9a6a5](https://github.com/vincenthsh/fogg/commit/4a9a6a52b7b2094a32cc9aa6621ba4468d448b89))
+
 ## [1.4.0](https://github.com/vincenthsh/fogg/compare/cdktf-fogg-helpers-v1.3.1...cdktf-fogg-helpers-v1.4.0) (2025-02-14)
 
 

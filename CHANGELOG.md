@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.24](https://github.com/vincenthsh/fogg/compare/v0.92.23...v0.92.24) (2025-02-15)
+
+
+### BugFixes
+
+* remotestateproxy output wrappers bug ([#389](https://github.com/vincenthsh/fogg/issues/389)) ([4a9a6a5](https://github.com/vincenthsh/fogg/commit/4a9a6a52b7b2094a32cc9aa6621ba4468d448b89))
+
 ## [0.92.23](https://github.com/vincenthsh/fogg/compare/v0.92.22...v0.92.23) (2025-02-14)
 
 
