@@ -1,4 +1,4 @@
-import { DataTerraformRemoteState, Token } from 'cdktf'
+import { DataTerraformRemoteState, StringListMap, Token } from 'cdktf'
 import { Fn } from 'cdktf'
 
 export interface ListOutput<T = string> {
@@ -8,10 +8,9 @@ export interface ListOutput<T = string> {
   element(index: number): T
 
   /**
-   * Optionally, you might want to get the entire list token
-   * if you need to pass it along as-is.
+   * Returns the remote state token, use Fn.element to access elements.
    */
-  value(): T[]
+  readonly token: string[]
 }
 
 /**
@@ -35,7 +34,7 @@ export interface MapOutput<T, K extends keyof T = keyof T, V = string> {
   /**
    * Returns the entire map as a Token.
    */
-  value(): T
+  readonly token: string
 }
 
 /**
@@ -77,13 +76,15 @@ export class RemoteStateAccessProxy<T extends Record<string, any>> {
         switch (declaredType) {
           case 'string':
             return this.data.getString(prop)
-          case 'list':
-            return {
+          case 'list': {
+            const listWrapper: ListOutput<T> = {
               element: (index: number) => {
                 return Fn.element(this.data.getList(prop), index)
               },
-              value: () => this.data.getList(prop),
+              token: this.data.getList(prop),
             }
+            return listWrapper
+          }
           // TODO: nested proxy to throw on incorrectly accessing list items
           // to validate numeric indexing, return a proxy which throws on numeric props
           // if (/^\d+$/.test(prop)) {
@@ -91,14 +92,16 @@ export class RemoteStateAccessProxy<T extends Record<string, any>> {
           //     'Numeric indexing remote state outputs is not supported. Either use Fn.element(..) or provide outputSchema as "list" and use element(...) instead.'
           //   );
           // }
-          case 'map':
-            return {
+          case 'map': {
+            const mapWrapper: MapOutput<T> = {
               lookup: (key: string, defaultValue?: string) =>
                 Fn.lookup(this.data.get(prop), key, defaultValue ?? ''),
               lookupNested: (...path: string[]) =>
                 Fn.lookupNested(this.data.get(prop), path),
-              value: () => Token.asStringMap(this.data.get(prop)),
+              token: this.data.getString(prop),
             }
+            return mapWrapper
+          }
           case 'number':
             return this.data.getNumber(prop)
           case 'boolean':
