@@ -60,6 +60,7 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: "pnpm"
+          registry-url: 'https://registry.npmjs.org'
         if: ${{ steps.release.outputs.release_created }}
       - name: Run pnpm Build
         run: |
