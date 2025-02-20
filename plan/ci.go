@@ -413,13 +413,6 @@ func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
 			"turbo": "^2.4.0", // https://github.com/vercel/turborepo/releases
 		},
 		CodeArtifactLoginScript: noCALoginRequired,
-		// Ensure vincenthsh/fogg's helper pkg scope
-		Scopes: map[string]jsScope{
-			"@vincenthsh": {
-				Name:        "@vincenthsh",
-				RegistryUrl: "https://npm.pkg.github.com",
-			},
-		},
 	}
 
 	if c.Turbo != nil {
@@ -489,10 +482,19 @@ func (p *Plan) buildTurboRootConfig(c *v2.Config) *TurboConfig {
 }
 
 // Merge scopes and detect CodeArtifact registries and generate optional ca:login script
-func parseJsScopes(mergedScopes *map[string]jsScope, new []jsScope) (*map[string]v2.JavascriptPackageScope, string) {
+func parseJsScopes(defaultScopes *map[string]jsScope, new []jsScope) (*map[string]jsScope, string) {
+	var mergedScopes map[string]jsScope
+	if defaultScopes != nil && len(*defaultScopes) > 0 {
+		mergedScopes = *defaultScopes
+	} else {
+		mergedScopes = make(map[string]jsScope)
+	}
 	caRepos := map[string]util.CodeArtifactRepository{}
+	if defaultScopes == nil && len(new) == 0 {
+		return &mergedScopes, noCALoginRequired
+	}
 	for _, newScope := range new {
-		(*mergedScopes)[newScope.Name] = newScope
+		mergedScopes[newScope.Name] = newScope
 		if util.IsCodeArtifactURL(newScope.RegistryUrl) {
 			if _, exists := caRepos[newScope.Name]; !exists {
 				caRepo, err := util.ParseRegistryUrl(newScope.Name, newScope.RegistryUrl)
@@ -516,7 +518,7 @@ func parseJsScopes(mergedScopes *map[string]jsScope, new []jsScope) (*map[string
 		caLoginScript = strings.Join(loginSteps, ";")
 	}
 
-	return mergedScopes, caLoginScript
+	return &mergedScopes, caLoginScript
 }
 
 // buildAtlantisConfig must be build after Envs

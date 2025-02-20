@@ -60,7 +60,6 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: "pnpm"
-          registry-url: "https://npm.pkg.github.com"
         if: ${{ steps.release.outputs.release_created }}
       - name: Run pnpm Build
         run: |
@@ -71,5 +70,5 @@ jobs:
         run: pnpm ci:publish
         env:
           # setup-node action sets up .npmrc for NODE_AUTH_TOKEN
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         if: ${{ steps.release.outputs.release_created }}

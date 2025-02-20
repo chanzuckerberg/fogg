@@ -336,7 +336,7 @@ func Test_parseScopes(t *testing.T) {
 	})
 
 	t.Run("New scopes with CodeArtifact URLs", func(t *testing.T) {
-		mergedScopes := map[string]jsScope{}
+		var mergedScopes *map[string]jsScope
 		newScopes := []jsScope{
 			{Name: "@scope1", RegistryUrl: "https://registry.npmjs.org"},
 			{Name: "@scope2", RegistryUrl: "https://domain-123456789012.d.codeartifact.us-west-2.amazonaws.com/npm/repo-name/"},
@@ -344,7 +344,7 @@ func Test_parseScopes(t *testing.T) {
 			{Name: "@scope4", RegistryUrl: "https://domain-123456789012.d.codeartifact.us-east-1.amazonaws.com/npm/repo-name/"},
 			{Name: "@scope5", RegistryUrl: "https://domain-210987654321.d.codeartifact.us-west-2.amazonaws.com/npm/repo-name/"},
 		}
-		result, script := parseJsScopes(&mergedScopes, newScopes)
+		result, script := parseJsScopes(mergedScopes, newScopes)
 		r.NotNil(result)
 		r.NotNil(script)
 		r.Len(*result, 5)
