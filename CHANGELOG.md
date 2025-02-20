@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.27](https://github.com/vincenthsh/fogg/compare/v0.92.26...v0.92.27) (2025-02-20)
+
+
+### BugFixes
+
+* missing publishConfig for scoped packages ([#396](https://github.com/vincenthsh/fogg/issues/396)) ([b799469](https://github.com/vincenthsh/fogg/commit/b7994695a533f10471880650edf89771d2a5d05d))
+
 ## [0.92.26](https://github.com/vincenthsh/fogg/compare/v0.92.25...v0.92.26) (2025-02-20)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.2](https://github.com/vincenthsh/fogg/compare/cdktf-fogg-helpers-v1.5.1...cdktf-fogg-helpers-v1.5.2) (2025-02-20)
+
+
+### BugFixes
+
+* missing publishConfig for scoped packages ([#396](https://github.com/vincenthsh/fogg/issues/396)) ([b799469](https://github.com/vincenthsh/fogg/commit/b7994695a533f10471880650edf89771d2a5d05d))
+
 ## [1.5.1](https://github.com/vincenthsh/fogg/compare/cdktf-fogg-helpers-v1.5.0...cdktf-fogg-helpers-v1.5.1) (2025-02-20)
 
 
