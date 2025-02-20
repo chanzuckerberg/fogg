@@ -106,7 +106,7 @@ cdktf_dependencies:
     '@cdktf/provider-cloudflare': ^11.29.0
     '@cdktf/provider-datadog': ^11.17.2
     '@types/aws-lambda': ^8.10.76
-    '@vincenthsh/cdktf-fogg-helpers': ^1.5.1
+    '@vincenthsh/cdktf-fogg-helpers': ^1.5.2
     cdktf: ^0.20.11
     constructs: ^10.4.0
     terraconstructs: ^0.0.11

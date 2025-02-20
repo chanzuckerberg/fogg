@@ -107,7 +107,7 @@ cdktf_dependencies:
     '@cdktf/provider-datadog': ^11.17.2
     '@myorg/my-cdktf-constructs': ^1.0.0
     '@types/aws-lambda': ^8.10.76
-    '@vincenthsh/cdktf-fogg-helpers': ^1.5.1
+    '@vincenthsh/cdktf-fogg-helpers': ^1.5.2
     cdktf: ^0.20.11
     constructs: ^10.4.0
     esbuild-wasm: ^0.23.0
