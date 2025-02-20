@@ -147,7 +147,7 @@ cdktf_dependencies:
     '@cdktf/provider-aws': ^19.50.0
     '@cdktf/provider-cloudflare': ^11.29.0
     '@cdktf/provider-datadog': ^11.17.2
-    '@vincenthsh/cdktf-fogg-helpers': ^1.5.0
+    '@vincenthsh/cdktf-fogg-helpers': ^1.5.1
     cdktf: ^0.20.11
     constructs: ^10.4.0
 cdktf_dev_dependencies:
