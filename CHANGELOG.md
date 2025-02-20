@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.92.25](https://github.com/vincenthsh/fogg/compare/v0.92.24...v0.92.25) (2025-02-20)
+
+
+### Features
+
+* Use NPMJS instead of GH Pkg npm registry ([#393](https://github.com/vincenthsh/fogg/issues/393)) ([5d546ad](https://github.com/vincenthsh/fogg/commit/5d546ad5e685660a98f846425cd26ddf5417c540))
+
+
+### Misc
+
+* bump github.com/spf13/cobra in the gomod group ([#391](https://github.com/vincenthsh/fogg/issues/391)) ([763ac7e](https://github.com/vincenthsh/fogg/commit/763ac7e91389de0c0a514601731ec74207189225))
+
 ## [0.92.24](https://github.com/vincenthsh/fogg/compare/v0.92.23...v0.92.24) (2025-02-15)
 
 

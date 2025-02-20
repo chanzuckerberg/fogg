@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/vincenthsh/fogg/compare/cdktf-fogg-helpers-v1.4.1...cdktf-fogg-helpers-v1.5.0) (2025-02-20)
+
+
+### Features
+
+* Use NPMJS instead of GH Pkg npm registry ([#393](https://github.com/vincenthsh/fogg/issues/393)) ([5d546ad](https://github.com/vincenthsh/fogg/commit/5d546ad5e685660a98f846425cd26ddf5417c540))
+
 ## [1.4.1](https://github.com/vincenthsh/fogg/compare/cdktf-fogg-helpers-v1.4.0...cdktf-fogg-helpers-v1.4.1) (2025-02-15)
 
 
