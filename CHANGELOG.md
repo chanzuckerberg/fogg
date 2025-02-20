@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.92.26](https://github.com/vincenthsh/fogg/compare/v0.92.25...v0.92.26) (2025-02-20)
+
+
+### BugFixes
+
+* missing registry-url for publish action ([#395](https://github.com/vincenthsh/fogg/issues/395)) ([2934f14](https://github.com/vincenthsh/fogg/commit/2934f148dada55750a54f5a4ba5b6c38ea90fc30))
+* release.yml ([eb8b4e8](https://github.com/vincenthsh/fogg/commit/eb8b4e8e14a98eeae6f81ca671232f5b7c58eb4d))
+
 ## [0.92.25](https://github.com/vincenthsh/fogg/compare/v0.92.24...v0.92.25) (2025-02-20)
 
 

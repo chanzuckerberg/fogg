@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/vincenthsh/fogg/compare/cdktf-fogg-helpers-v1.5.0...cdktf-fogg-helpers-v1.5.1) (2025-02-20)
+
+
+### BugFixes
+
+* missing registry-url for publish action ([#395](https://github.com/vincenthsh/fogg/issues/395)) ([2934f14](https://github.com/vincenthsh/fogg/commit/2934f148dada55750a54f5a4ba5b6c38ea90fc30))
+
 ## [1.5.0](https://github.com/vincenthsh/fogg/compare/cdktf-fogg-helpers-v1.4.1...cdktf-fogg-helpers-v1.5.0) (2025-02-20)
 
 
