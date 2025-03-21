@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Generate token
         id: generate_token
-        uses: tibdex/github-app-token@v2
+        uses: actions/create-github-app-token@v1
         with:
           app_id: {{`${{ secrets.CZI_GITHUB_HELPER_APP_ID }}`}}
           private_key: {{`${{ secrets.CZI_GITHUB_HELPER_PK }}`}}
@@ -50,7 +50,7 @@ jobs:
       - run: .fogg/bin/fogg apply
         env:
           FOGG_GITHUBAPPTOKEN: {{`${{ steps.generate_token.outputs.token }}`}}{{ end }}
-      - uses: EndBug/add-and-commit@v9
+      - uses: EndBug/add-and-commit@5442017c908921e9bee9dfca7978ca6901143bf0
         with:
           add: -A
           message: |
@@ -109,7 +109,7 @@ jobs:
     steps:
       - name: Generate token
         id: generate_token
-        uses: tibdex/github-app-token@v2
+        uses: actions/create-github-app-token@v1
         with:
           app_id: {{`${{ secrets.CZI_GITHUB_HELPER_APP_ID }}`}}
           private_key: {{`${{ secrets.CZI_GITHUB_HELPER_PK }}`}}
@@ -130,7 +130,7 @@ jobs:
         run: |
           cd {{`${{matrix.tfmodule}}`}}
           make fmt
-      - uses: EndBug/add-and-commit@v9
+      - uses: EndBug/add-and-commit@5442017c908921e9bee9dfca7978ca6901143bf0
         with:
           add: -A
           message: |

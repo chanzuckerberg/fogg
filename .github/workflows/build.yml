@@ -6,7 +6,7 @@ jobs:
     steps:
       - name: Generate token
         id: generate_token
-        uses: tibdex/github-app-token@v2
+        uses: actions/create-github-app-token@v1
         with:
           app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
           private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
@@ -21,7 +21,7 @@ jobs:
       - name: Run tests
         run: make update-golden-files
       - name: Commit updated mod tidy
-        uses: EndBug/add-and-commit@v9
+        uses: EndBug/add-and-commit@5442017c908921e9bee9dfca7978ca6901143bf0
         with:
           add: -A
           message: commit from ci -- updated golden files
