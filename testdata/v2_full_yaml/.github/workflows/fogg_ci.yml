@@ -39,7 +39,7 @@ jobs:
             ${{ secrets.SHARED_INFRA_DEPLOY_KEY2 }}
             
       - run: .fogg/bin/fogg apply
-      - uses: EndBug/add-and-commit@v9
+      - uses: EndBug/add-and-commit@5442017c908921e9bee9dfca7978ca6901143bf0
         with:
           add: -A
           message: |
@@ -105,7 +105,7 @@ jobs:
         run: |
           cd ${{matrix.tfmodule}}
           make fmt
-      - uses: EndBug/add-and-commit@v9
+      - uses: EndBug/add-and-commit@5442017c908921e9bee9dfca7978ca6901143bf0
         with:
           add: -A
           message: |
