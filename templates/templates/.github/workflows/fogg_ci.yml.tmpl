@@ -24,8 +24,8 @@ jobs:
         id: generate_token
         uses: actions/create-github-app-token@v1
         with:
-          app_id: {{`${{ secrets.CZI_GITHUB_HELPER_APP_ID }}`}}
-          private_key: {{`${{ secrets.CZI_GITHUB_HELPER_PK }}`}}
+          app-id: {{`${{ secrets.CZI_GITHUB_HELPER_APP_ID }}`}}
+          private-key: {{`${{ secrets.CZI_GITHUB_HELPER_PK }}`}}
       - uses: actions/checkout@v3
         with:
           token: {{`${{ steps.generate_token.outputs.token }}`}}
@@ -111,8 +111,8 @@ jobs:
         id: generate_token
         uses: actions/create-github-app-token@v1
         with:
-          app_id: {{`${{ secrets.CZI_GITHUB_HELPER_APP_ID }}`}}
-          private_key: {{`${{ secrets.CZI_GITHUB_HELPER_PK }}`}}
+          app-id: {{`${{ secrets.CZI_GITHUB_HELPER_APP_ID }}`}}
+          private-key: {{`${{ secrets.CZI_GITHUB_HELPER_PK }}`}}
       - uses: actions/checkout@v3
         with:
           token: {{`${{ steps.generate_token.outputs.token }}`}}
