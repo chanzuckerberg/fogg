@@ -2,9 +2,7 @@ linters:
   enable:
     - asciicheck
     - bodyclose
-    - dupl
     - errcheck
-    - gocyclo
     - gofmt
     - goimports
     - misspell

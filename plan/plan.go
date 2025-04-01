@@ -923,7 +923,6 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		(blessConfig.AWSProfile != nil || blessConfig.RoleArn != nil) &&
 		blessConfig.AWSRegion != nil &&
 		(blessConfig.Enabled == nil || (blessConfig.Enabled != nil && *blessConfig.Enabled)) {
-
 		customProvider := false
 		if blessConfig.CustomProvider != nil {
 			customProvider = *blessConfig.CustomProvider

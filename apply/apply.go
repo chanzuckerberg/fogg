@@ -143,7 +143,6 @@ func updateLocalsFromPlan(locals *LocalsTFE, p *plan.Plan) {
 	// if there is a planned env or account that isn't in the locals, add it
 	for accountName, account := range p.Accounts {
 		if _, ok := locals.Locals.Accounts[accountName]; !ok && account.Backend.Kind == plan.BackendKindRemote {
-
 			locals.Locals.Accounts[accountName] = MakeTFEWorkspace(p.Global.Common.TerraformVersion)
 		}
 	}

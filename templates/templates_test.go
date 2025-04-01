@@ -41,5 +41,4 @@ func TestOpenTemplate(t *testing.T) {
 			r.NotNil(temp.Templates())
 		})
 	}
-
 }

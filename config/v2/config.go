@@ -356,7 +356,7 @@ type componentInfo struct {
 }
 
 // PathToComponentType given a path, return information about that component
-func (c Config) PathToComponentType(path string) (componentInfo, error) { //nolint
+func (c Config) PathToComponentType(path string) (componentInfo, error) {
 	t := componentInfo{}
 
 	path = strings.TrimRight(path, "/")
