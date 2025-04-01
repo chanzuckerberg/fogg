@@ -142,6 +142,7 @@ type ProviderConfiguration struct {
 	Datadog                *DatadogProvider    `yaml:"datadog"`
 	Github                 *GithubProvider     `yaml:"github"`
 	Grafana                *GrafanaProvider    `yaml:"grafana"`
+	Htpasswd               *HtpasswdProvider   `yaml:"htpasswd"`
 	Heroku                 *HerokuProvider     `yaml:"heroku"`
 	Kubernetes             *KubernetesProvider `yaml:"kubernetes"`
 	Helm                   *HelmProvider       `yaml:"helm"`
@@ -288,6 +289,10 @@ type HelmProvider struct {
 }
 
 type KubectlProvider struct {
+	CommonProvider `yaml:",inline"`
+}
+
+type HtpasswdProvider struct {
 	CommonProvider `yaml:",inline"`
 }
 
@@ -1152,6 +1157,32 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
+	var htpasswdPlan *HtpasswdProvider
+
+	htpasswdConfig := v2.ResolveHtpasswdProvider(commons...)
+	if htpasswdConfig != nil && (htpasswdConfig.Enabled == nil || (htpasswdConfig.Enabled != nil && *htpasswdConfig.Enabled)) {
+		customProvider := false
+		if htpasswdConfig.CustomProvider != nil {
+			customProvider = *htpasswdConfig.CustomProvider
+		}
+		version := "1.2.1"
+		if htpasswdConfig.Version != nil {
+			version = *htpasswdConfig.Version
+		}
+		htpasswdPlan = &HtpasswdProvider{
+			CommonProvider: CommonProvider{
+				Version:        version,
+				Enabled:        htpasswdConfig.Enabled == nil || (htpasswdConfig.Enabled != nil && *htpasswdConfig.Enabled),
+				CustomProvider: customProvider,
+			},
+		}
+
+		providerVersions["htpasswd"] = ProviderVersion{
+			Source:  "loafoe/htpasswd",
+			Version: &version,
+		}
+	}
+
 	var grafanaPlan *GrafanaProvider
 
 	grafanaConfig := v2.ResolveGrafanaProvider(commons...)
@@ -1289,6 +1320,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Datadog:                datadogPlan,
 			Github:                 githubPlan,
 			Grafana:                grafanaPlan,
+			Htpasswd:               htpasswdPlan,
 			Heroku:                 herokuPlan,
 			Kubernetes:             k8sPlan,
 			Helm:                   helmPlan,

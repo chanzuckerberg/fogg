@@ -25,6 +25,7 @@ func TestIntegration(t *testing.T) {
 		{"auth0_provider_yaml"},
 		{"okta_provider_yaml"},
 		{"github_provider_yaml"},
+		{"htpasswd_provider_yaml"},
 		{"bless_provider_yaml"},
 		{"snowflake_provider_yaml"},
 		{"v2_full_yaml"},

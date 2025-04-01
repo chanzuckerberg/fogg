@@ -709,6 +709,46 @@ func ResolveKubectlProvider(commons ...Common) *KubectlProvider {
 	return p
 }
 
+func ResolveHtpasswdProvider(commons ...Common) *HtpasswdProvider {
+	var p *HtpasswdProvider
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.Htpasswd == nil {
+			continue
+		}
+		p = c.Providers.Htpasswd
+		if p.CustomProvider == nil {
+			p.CustomProvider = defaultEnabled(false)
+		}
+	}
+	var version *string
+	var enabled *bool
+
+	for _, c := range commons {
+		if c.Providers != nil && c.Providers.Htpasswd != nil {
+			t := c.Providers.Htpasswd
+
+			if t.Enabled != nil {
+				enabled = t.Enabled
+			}
+
+			if t.Version != nil {
+				version = t.Version
+			}
+		}
+	}
+
+	if version != nil {
+		return &HtpasswdProvider{
+			CommonProvider: CommonProvider{
+				CustomProvider: lastNonNil(HtpasswdProviderCustomProviderGetter, commons...),
+				Enabled:        enabled,
+				Version:        version,
+			},
+		}
+	}
+	return p
+}
+
 func ResolveGrafanaProvider(commons ...Common) *GrafanaProvider {
 	var p *GrafanaProvider
 	for _, c := range commons {
@@ -973,6 +1013,12 @@ func PagerDutyProviderCustomProviderGetter(comm Common) *bool {
 func DatadogProviderCustomProviderGetter(comm Common) *bool {
 	if comm.Providers != nil && comm.Providers.Datadog != nil {
 		return comm.Providers.Datadog.CommonProvider.CustomProvider
+	}
+	return nil
+}
+func HtpasswdProviderCustomProviderGetter(comm Common) *bool {
+	if comm.Providers != nil && comm.Providers.Htpasswd != nil {
+		return comm.Providers.Htpasswd.CommonProvider.CustomProvider
 	}
 	return nil
 }

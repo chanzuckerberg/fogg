@@ -156,6 +156,7 @@ type Providers struct {
 	Snowflake  *SnowflakeProvider  `yaml:"snowflake,omitempty"`
 	Tfe        *TfeProvider        `yaml:"tfe,omitempty"`
 	Kubectl    *KubectlProvider    `yaml:"kubectl,omitempty"`
+	Htpasswd   *HtpasswdProvider   `yaml:"htpasswd,omitempty"`
 }
 
 type AssertProvider struct {
@@ -270,6 +271,10 @@ type HelmProvider struct {
 }
 
 type KubectlProvider struct {
+	CommonProvider `yaml:",inline"`
+}
+
+type HtpasswdProvider struct {
 	CommonProvider `yaml:",inline"`
 }
 
