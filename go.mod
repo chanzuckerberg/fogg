@@ -38,7 +38,7 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/zclconf/go-cty v1.16.2
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56
-	golang.org/x/text v0.23.0
+	golang.org/x/text v0.24.0
 	gopkg.in/go-playground/validator.v9 v9.31.0
 	gopkg.in/ini.v1 v1.67.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -129,7 +129,7 @@ require (
 	golang.org/x/mod v0.21.0 // indirect
 	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/oauth2 v0.18.0 // indirect
-	golang.org/x/sync v0.12.0 // indirect
+	golang.org/x/sync v0.13.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/term v0.29.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
