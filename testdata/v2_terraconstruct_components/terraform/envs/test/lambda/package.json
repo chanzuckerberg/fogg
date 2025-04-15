@@ -8,7 +8,7 @@
     "ca:login": "pnpm -w run ca:login",
     "lint": "eslint",
     "prettier": "prettier --write .",
-    "synth": "ts-node -P ./tsconfig.json src/index.ts",
+    "synth": "ts-node --swc -P ./tsconfig.json src/index.ts",
     "type-check": "tsc --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -rf coverage"
   },
