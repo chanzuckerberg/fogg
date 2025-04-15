@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.92.28](https://github.com/vincenthsh/fogg/compare/v0.92.27...v0.92.28) (2025-04-15)
+
+
+### Misc
+
+* bump github.com/go-git/go-git/v5 in the gomod group ([#399](https://github.com/vincenthsh/fogg/issues/399)) ([67054f3](https://github.com/vincenthsh/fogg/commit/67054f30878c01f38c7cae630fdcb0b10ffc4026))
+* bump github.com/go-git/go-git/v5 in the gomod group ([#404](https://github.com/vincenthsh/fogg/issues/404)) ([c2994c7](https://github.com/vincenthsh/fogg/commit/c2994c78330e4feeafe6fa9ffd86c960a12bf8bd))
+* bump golang.org/x/text from 0.22.0 to 0.23.0 in the gomod group ([#402](https://github.com/vincenthsh/fogg/issues/402)) ([3f0fd50](https://github.com/vincenthsh/fogg/commit/3f0fd504a03653de40c585165717ebac2150b408))
+* bump golang.org/x/text from 0.23.0 to 0.24.0 in the gomod group ([#403](https://github.com/vincenthsh/fogg/issues/403)) ([86db5ae](https://github.com/vincenthsh/fogg/commit/86db5ae692db0ba4f87fccb763b712344e18c5e7))
+
+
+### BugFixes
+
+* use swc for component synth scripts ([#405](https://github.com/vincenthsh/fogg/issues/405)) ([ddf2083](https://github.com/vincenthsh/fogg/commit/ddf2083da6051680024b02b3baedf28b9dab5410))
+
 ## [0.92.27](https://github.com/vincenthsh/fogg/compare/v0.92.26...v0.92.27) (2025-02-20)
 
 
