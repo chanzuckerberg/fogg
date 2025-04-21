@@ -143,7 +143,7 @@ type ProviderConfiguration struct {
 	Github                 *GithubProvider     `yaml:"github"`
 	Grafana                *GrafanaProvider    `yaml:"grafana"`
 	Heroku                 *HerokuProvider     `yaml:"heroku"`
-	Kafka            	   *KafkaProvider 	   `yaml:"kafka"`
+	Kafka                  *KafkaProvider      `yaml:"kafka"`
 	Kubernetes             *KubernetesProvider `yaml:"kubernetes"`
 	Helm                   *HelmProvider       `yaml:"helm"`
 	Kubectl                *KubectlProvider    `yaml:"kubectl"`
@@ -1321,7 +1321,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Github:                 githubPlan,
 			Grafana:                grafanaPlan,
 			Heroku:                 herokuPlan,
-			Kafka:            		kafkaPlan,
+			Kafka:                  kafkaPlan,
 			Kubernetes:             k8sPlan,
 			Helm:                   helmPlan,
 			Kubectl:                kubectlPlan,
