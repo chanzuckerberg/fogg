@@ -147,7 +147,7 @@ type Providers struct {
 	Github     *GithubProvider     `yaml:"github,omitempty"`
 	Grafana    *GrafanaProvider    `yaml:"grafana,omitempty"`
 	Heroku     *HerokuProvider     `yaml:"heroku,omitempty"`
-	Kafka	   *KafkaProvider     `yaml:"kafka,omitempty"`
+	Kafka	   *KafkaProvider      `yaml:"kafka,omitempty"`
 	Kubernetes *KubernetesProvider `yaml:"kubernetes,omitempty"`
 	Helm       *HelmProvider       `yaml:"helm,omitempty"`
 	Okta       *OktaProvider       `yaml:"okta,omitempty"`
