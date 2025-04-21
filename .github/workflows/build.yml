@@ -6,10 +6,10 @@ jobs:
     steps:
       - name: Generate token
         id: generate_token
-        uses: tibdex/github-app-token@v2
+        uses: actions/create-github-app-token@v1
         with:
-          app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
-          private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
+          app-id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
+          private-key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
       - uses: actions/checkout@v3
         with:
           token: ${{ steps.generate_token.outputs.token }}
