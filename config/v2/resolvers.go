@@ -749,6 +749,46 @@ func ResolveGrafanaProvider(commons ...Common) *GrafanaProvider {
 	return p
 }
 
+func ResolveKafkaProvider(commons ...Common) *KafkaProvider {
+	var p *KafkaProvider
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.Kafka == nil {
+			continue
+		}
+		p = c.Providers.Kafka
+		if p.CustomProvider == nil {
+			p.CustomProvider = defaultEnabled(false)
+		}
+	}
+	var version *string
+	var enabled *bool
+
+	for _, c := range commons {
+		if c.Providers != nil && c.Providers.Kafka != nil {
+			t := c.Providers.Kafka
+
+			if t.Enabled != nil {
+				enabled = t.Enabled
+			}
+
+			if t.Version != nil {
+				version = t.Version
+			}
+		}
+	}
+
+	if version != nil {
+		return &KafkaProvider{
+			CommonProvider: CommonProvider{
+				CustomProvider: lastNonNil(KafkaProviderCustomProviderGetter, commons...),
+				Enabled:        enabled,
+				Version:        version,
+			},
+		}
+	}
+	return p
+}
+
 func ResolveTfLint(commons ...Common) TfLint {
 	enabled := false
 	for _, c := range commons {
@@ -1031,6 +1071,13 @@ func KubernetesProviderCustomProviderGetter(comm Common) *bool {
 func HelmProviderCustomProviderGetter(comm Common) *bool {
 	if comm.Providers != nil && comm.Providers.Helm != nil {
 		return comm.Providers.Helm.CommonProvider.CustomProvider
+	}
+	return nil
+}
+
+func KafkaProviderCustomProviderGetter(comm Common) *bool {
+	if comm.Providers != nil && comm.Providers.Kafka != nil {
+		return comm.Providers.Kafka.CommonProvider.CustomProvider
 	}
 	return nil
 }

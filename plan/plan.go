@@ -143,6 +143,7 @@ type ProviderConfiguration struct {
 	Github                 *GithubProvider     `yaml:"github"`
 	Grafana                *GrafanaProvider    `yaml:"grafana"`
 	Heroku                 *HerokuProvider     `yaml:"heroku"`
+	Kafka            	   *KafkaProvider 	   `yaml:"kafka"`
 	Kubernetes             *KubernetesProvider `yaml:"kubernetes"`
 	Helm                   *HelmProvider       `yaml:"helm"`
 	Kubectl                *KubectlProvider    `yaml:"kubectl"`
@@ -284,6 +285,10 @@ type KubernetesProvider struct {
 }
 
 type HelmProvider struct {
+	CommonProvider `yaml:",inline"`
+}
+
+type KafkaProvider struct {
 	CommonProvider `yaml:",inline"`
 }
 
@@ -1126,6 +1131,32 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		}
 	}
 
+	var kafkaPlan *KafkaProvider
+
+	kafkaConfig := v2.ResolveKafkaProvider(commons...)
+	if kafkaConfig != nil && (kafkaConfig.Enabled == nil || (kafkaConfig.Enabled != nil && *kafkaConfig.Enabled)) {
+		customProvider := false
+		if kafkaConfig.CustomProvider != nil {
+			customProvider = *kafkaConfig.CustomProvider
+		}
+		version := "0.9.0"
+		if kafkaConfig.Version != nil {
+			version = *kafkaConfig.Version
+		}
+		kafkaPlan = &KafkaProvider{
+			CommonProvider: CommonProvider{
+				Version:        version,
+				Enabled:        kafkaConfig.Enabled == nil || (kafkaConfig.Enabled != nil && *kafkaConfig.Enabled),
+				CustomProvider: customProvider,
+			},
+		}
+
+		providerVersions["kafka"] = ProviderVersion{
+			Source:  "Mongey/kafka",
+			Version: &version,
+		}
+	}
+
 	var kubectlPlan *KubectlProvider
 
 	kubcectlConfig := v2.ResolveKubectlProvider(commons...)
@@ -1290,6 +1321,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 			Github:                 githubPlan,
 			Grafana:                grafanaPlan,
 			Heroku:                 herokuPlan,
+			Kafka:            		kafkaPlan,
 			Kubernetes:             k8sPlan,
 			Helm:                   helmPlan,
 			Kubectl:                kubectlPlan,
