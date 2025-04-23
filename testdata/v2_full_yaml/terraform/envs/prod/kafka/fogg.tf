@@ -57,8 +57,6 @@ provider "aws" {
 
 
 provider "assert" {}
-
-provider "datadog" {}
 terraform {
   required_version = "=0.100.0"
 
@@ -66,7 +64,7 @@ terraform {
 
     bucket = "buck"
 
-    key     = "terraform/proj/envs/prod/components/datadog.tfstate"
+    key     = "terraform/proj/envs/prod/components/kafka.tfstate"
     encrypt = true
     region  = "us-west-2"
     profile = "profile"
@@ -96,10 +94,10 @@ terraform {
 
     }
 
-    datadog = {
-      source = "datadog/datadog"
+    kafka = {
+      source = "Mongey/kafka"
 
-      version = "3.20.0"
+      version = "0.9.0"
 
     }
 
@@ -158,7 +156,7 @@ variable "region" {
 # tflint-ignore: terraform_unused_declarations
 variable "component" {
   type    = string
-  default = "datadog"
+  default = "kafka"
 }
 # tflint-ignore: terraform_unused_declarations
 variable "aws_profile" {
@@ -178,7 +176,7 @@ variable "tags" {
   default = {
     project   = "proj"
     env       = "prod"
-    service   = "datadog"
+    service   = "kafka"
     owner     = "foo@example.com"
     managedBy = "terraform"
   }
@@ -203,6 +201,20 @@ data "terraform_remote_state" "global" {
 
   }
 }
+data "terraform_remote_state" "datadog" {
+  backend = "s3"
+  config = {
+
+
+    bucket = "buck"
+
+    key     = "terraform/proj/envs/prod/components/datadog.tfstate"
+    region  = "us-west-2"
+    profile = "profile"
+
+
+  }
+}
 data "terraform_remote_state" "hero" {
   backend = "s3"
   config = {
@@ -211,20 +223,6 @@ data "terraform_remote_state" "hero" {
     bucket = "buck"
 
     key     = "terraform/proj/envs/prod/components/hero.tfstate"
-    region  = "us-west-2"
-    profile = "profile"
-
-
-  }
-}
-data "terraform_remote_state" "kafka" {
-  backend = "s3"
-  config = {
-
-
-    bucket = "buck"
-
-    key     = "terraform/proj/envs/prod/components/kafka.tfstate"
     region  = "us-west-2"
     profile = "profile"
 

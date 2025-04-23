@@ -110,13 +110,6 @@ terraform {
 
     }
 
-    kafka = {
-      source = "Mongey/kafka"
-
-      version = "0.9.0"
-
-    }
-
     local = {
       source = "hashicorp/local"
 

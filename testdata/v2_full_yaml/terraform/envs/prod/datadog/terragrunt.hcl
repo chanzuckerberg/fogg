@@ -1,6 +1,7 @@
 dependencies {
   paths = [
     "../hero",
+    "../kafka",
     "../okta",
     "../sentry",
     "../vpc",
