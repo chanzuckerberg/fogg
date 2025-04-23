@@ -105,7 +105,9 @@ envs:
           "aws.alias1": "aws.alias2"
           "aws.alias3": "aws.alias4"
       kafka:
-        version: 0.9.0
+        providers:
+          kafka:
+            version: 0.9.0
   staging:
     backend:
       kind: remote
