@@ -36,6 +36,8 @@ accounts:
         aws_profile: prof
         version: 0.4.2
         aws_region: us-west-2
+      kafka:
+        version: 0.9.0
     depends_on:
       accounts: []
       components: []
