@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.92.24](https://github.com/chanzuckerberg/fogg/compare/v0.92.23...v0.92.24) (2025-04-21)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.55.5 to 1.55.6 ([#1093](https://github.com/chanzuckerberg/fogg/issues/1093)) ([a36c928](https://github.com/chanzuckerberg/fogg/commit/a36c9281b5074a372941cde705bcbb077d608544))
+* Bump github.com/fatih/color from 1.17.0 to 1.18.0 ([#1082](https://github.com/chanzuckerberg/fogg/issues/1082)) ([7b63581](https://github.com/chanzuckerberg/fogg/commit/7b6358135e2cc01e9f1b01347222ca336f4e5a1d))
+* Bump github.com/go-git/go-git/v5 from 5.12.0 to 5.13.0 ([#1088](https://github.com/chanzuckerberg/fogg/issues/1088)) ([7b5f1a5](https://github.com/chanzuckerberg/fogg/commit/7b5f1a58a6599771c8416a477a5b592cc8277736))
+* Bump github.com/go-git/go-git/v5 from 5.13.0 to 5.13.1 ([#1089](https://github.com/chanzuckerberg/fogg/issues/1089)) ([14edf7d](https://github.com/chanzuckerberg/fogg/commit/14edf7d83895e7cbf15de0fb8ef8c31f9c5508aa))
+* Bump github.com/go-git/go-git/v5 from 5.13.1 to 5.13.2 ([#1095](https://github.com/chanzuckerberg/fogg/issues/1095)) ([a209762](https://github.com/chanzuckerberg/fogg/commit/a20976274db6e1b8756646a44b7ffe74c522ffc6))
+* Bump github.com/go-git/go-git/v5 from 5.13.2 to 5.16.0 ([#1108](https://github.com/chanzuckerberg/fogg/issues/1108)) ([34d70c4](https://github.com/chanzuckerberg/fogg/commit/34d70c455417b0aebe7c12f0f96bd42ddb2c20ab))
+* Bump github.com/hashicorp/go-getter from 1.7.6 to 1.7.8 ([#1094](https://github.com/chanzuckerberg/fogg/issues/1094)) ([aa100f4](https://github.com/chanzuckerberg/fogg/commit/aa100f41eeaa6d236ee16f72b559f0934f6b360b))
+* Bump github.com/hashicorp/hcl/v2 from 2.22.0 to 2.23.0 ([#1085](https://github.com/chanzuckerberg/fogg/issues/1085)) ([eba56ed](https://github.com/chanzuckerberg/fogg/commit/eba56edf5277d7e150a128de04104748e27f6955))
+* Bump github.com/spf13/cobra from 1.8.1 to 1.9.1 ([#1098](https://github.com/chanzuckerberg/fogg/issues/1098)) ([147b23b](https://github.com/chanzuckerberg/fogg/commit/147b23bf9537c38c448144d60eb0da222b9daa3b))
+* Bump github.com/stretchr/testify from 1.9.0 to 1.10.0 ([#1086](https://github.com/chanzuckerberg/fogg/issues/1086)) ([c7078f6](https://github.com/chanzuckerberg/fogg/commit/c7078f6c0a70604c683de209d26504c562a18e54))
+* Bump golang.org/x/crypto from 0.32.0 to 0.35.0 ([#1106](https://github.com/chanzuckerberg/fogg/issues/1106)) ([58c7006](https://github.com/chanzuckerberg/fogg/commit/58c7006ba71917ee7eb99758a62f8cb2fe7b9d83))
+* CCIE-4313 replace tibdex/github-app-token ([#1110](https://github.com/chanzuckerberg/fogg/issues/1110)) ([4a0d9f9](https://github.com/chanzuckerberg/fogg/commit/4a0d9f940e6884146db3d04854a13f2e4687a1dc))
+* remove deprecated tags ([#1092](https://github.com/chanzuckerberg/fogg/issues/1092)) ([067c7b8](https://github.com/chanzuckerberg/fogg/commit/067c7b8034cd70d7504133dceeb99d4ae634c939))
+
+
+### BugFixes
+
+* Update runs-on to use ARM64 or X64 ([#1097](https://github.com/chanzuckerberg/fogg/issues/1097)) ([d9189f3](https://github.com/chanzuckerberg/fogg/commit/d9189f37a9bbde2a924a1718c6be1839b7c046f0))
+
 ## [0.92.23](https://github.com/chanzuckerberg/fogg/compare/v0.92.22...v0.92.23) (2024-08-26)
 
 
