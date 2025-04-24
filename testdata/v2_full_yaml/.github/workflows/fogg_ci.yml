@@ -14,10 +14,11 @@ jobs:
     steps:
       - name: Generate token
         id: generate_token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.CZI_GITHUB_HELPER_APP_ID }}
           private-key: ${{ secrets.CZI_GITHUB_HELPER_PK }}
+          owner: ${{ github.repository_owner }}
       - uses: actions/checkout@v3
         with:
           token: ${{ steps.generate_token.outputs.token }}
@@ -84,10 +85,11 @@ jobs:
     steps:
       - name: Generate token
         id: generate_token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.CZI_GITHUB_HELPER_APP_ID }}
           private-key: ${{ secrets.CZI_GITHUB_HELPER_PK }}
+          owner: ${{ github.repository_owner }}
       - uses: actions/checkout@v3
         with:
           token: ${{ steps.generate_token.outputs.token }}
