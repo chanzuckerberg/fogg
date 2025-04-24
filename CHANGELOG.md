@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.26](https://github.com/chanzuckerberg/fogg/compare/v0.92.25...v0.92.26) (2025-04-24)
+
+
+### BugFixes
+
+* make token work for all repos ([#1112](https://github.com/chanzuckerberg/fogg/issues/1112)) ([5773dcd](https://github.com/chanzuckerberg/fogg/commit/5773dcdda64a1a72c082f6a7f9d50738bed5883c))
+
 ## [0.92.25](https://github.com/chanzuckerberg/fogg/compare/v0.92.24...v0.92.25) (2025-04-24)
 
 
