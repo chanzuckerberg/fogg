@@ -6,7 +6,7 @@ jobs:
     steps:
       - name: Generate token
         id: generate_token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
           private-key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
@@ -54,7 +54,7 @@ jobs:
         uses: reviewdog/action-golangci-lint@v2
         with:
           reporter: github-pr-review
-          golangci_lint_version: v1.64.8 # pin golangci-lint version 
+          golangci_lint_version: v1.64.8 # pin golangci-lint version
           golangci_lint_flags: "--config=./.golangci.yml --out-format=line-number -v --timeout 5m"
       - name: terraform fmt
         run: terraform fmt -check -diff -recursive testdata

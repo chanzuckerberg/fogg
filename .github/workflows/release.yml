@@ -24,10 +24,11 @@ jobs:
       # For why we need to generate a token and not use the default
       - name: Generate token
         id: generate_token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
           private-key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
+          owner: ${{ github.repository_owner }}
 
       - name: release please
         uses: google-github-actions/release-please-action@v3.7.13
