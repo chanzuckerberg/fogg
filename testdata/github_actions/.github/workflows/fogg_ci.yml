@@ -10,14 +10,15 @@ concurrency:
 
 jobs:
   fogg-apply:
-    runs-on: [self-hosted,ARM64]
+    runs-on: [ARM64]
     steps:
       - name: Generate token
         id: generate_token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.CZI_GITHUB_HELPER_APP_ID }}
           private-key: ${{ secrets.CZI_GITHUB_HELPER_PK }}
+          owner: ${{ github.repository_owner }}
       - uses: actions/checkout@v3
         with:
           token: ${{ steps.generate_token.outputs.token }}
@@ -40,7 +41,7 @@ jobs:
           message: |
             commit from fogg_ci -- ran fogg apply and pushed
   find-changed-dirs:
-    runs-on: [self-hosted,ARM64]
+    runs-on: [ARM64]
     outputs:
       allChanges: ${{ steps.changedDirs.outputs.allChanges }}
     steps:
@@ -70,7 +71,7 @@ jobs:
             console.log(`changedEnvs: ${JSON.stringify(changedEnvs)}`)
             core.setOutput("allChanges", allChanges)
   lint-changed-dirs:
-    runs-on: [self-hosted,ARM64]
+    runs-on: [ARM64]
     needs: find-changed-dirs
     strategy:
       matrix:
