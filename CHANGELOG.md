@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.25](https://github.com/chanzuckerberg/fogg/compare/v0.92.24...v0.92.25) (2025-04-24)
+
+
+### Features
+
+* CDI-4005 - add new provider for kafka ([#1109](https://github.com/chanzuckerberg/fogg/issues/1109)) ([28f4625](https://github.com/chanzuckerberg/fogg/commit/28f462512ac42c4e8f30b76215a12f829ab3eb98))
+
 ## [0.92.24](https://github.com/chanzuckerberg/fogg/compare/v0.92.23...v0.92.24) (2025-04-21)
 
 
