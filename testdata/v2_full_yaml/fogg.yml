@@ -104,6 +104,10 @@ envs:
         provider_aliases: 
           "aws.alias1": "aws.alias2"
           "aws.alias3": "aws.alias4"
+      kafka:
+        providers:
+          kafka:
+            version: 0.9.0
   staging:
     backend:
       kind: remote
