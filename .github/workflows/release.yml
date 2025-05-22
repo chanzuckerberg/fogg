@@ -26,8 +26,8 @@ jobs:
         id: generate_token
         uses: actions/create-github-app-token@v2
         with:
-          app-id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
-          private-key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
+          app-id: ${{ secrets.GH_ACTIONS_HELPER_APP_ID }}
+          private-key: ${{ secrets.GH_ACTIONS_HELPER_PK }}
           owner: ${{ github.repository_owner }}
 
       - name: release please
