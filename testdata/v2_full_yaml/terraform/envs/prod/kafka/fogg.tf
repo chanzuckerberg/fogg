@@ -118,7 +118,7 @@ terraform {
     okta-head = {
       source = "okta/okta"
 
-      version = "> 3.30"
+      version = "> 4.19"
 
     }
 
