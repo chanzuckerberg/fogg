@@ -32,7 +32,7 @@ jobs:
           token: {{`${{ steps.generate_token.outputs.token }}`}}
       - name: Cache Fogg
         id: cache-fogg
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.fogg/cache
           key: fogg-cache-{{`${{ hashFiles('**/.fogg-version') }}`}}
