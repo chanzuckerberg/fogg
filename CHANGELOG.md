@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.92.28](https://github.com/chanzuckerberg/fogg/compare/v0.92.27...v0.92.28) (2025-06-24)
+
+
+### Misc
+
+* Bump github.com/go-git/go-git/v5 from 5.16.0 to 5.16.2 ([#1120](https://github.com/chanzuckerberg/fogg/issues/1120)) ([8710af5](https://github.com/chanzuckerberg/fogg/commit/8710af586dacae11617f2c5fa4c342d7c55e42b6))
+* upgrade actions/cache to v4 ([#1122](https://github.com/chanzuckerberg/fogg/issues/1122)) ([c37a72d](https://github.com/chanzuckerberg/fogg/commit/c37a72db25633f2c0c948d4d9b8b435c3334ff81))
+* upgrade actions/checkout to v4 ([#1123](https://github.com/chanzuckerberg/fogg/issues/1123)) ([774cec1](https://github.com/chanzuckerberg/fogg/commit/774cec1fbe6ea87eed0edbfb65098f341f952fee))
+
 ## [0.92.27](https://github.com/chanzuckerberg/fogg/compare/v0.92.26...v0.92.27) (2025-05-22)
 
 
