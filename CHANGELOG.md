@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.92.29](https://github.com/vincenthsh/fogg/compare/v0.92.28...v0.92.29) (2025-07-21)
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go in the gomod group ([#408](https://github.com/vincenthsh/fogg/issues/408)) ([c72908a](https://github.com/vincenthsh/fogg/commit/c72908a5600af69c14eca2adb05ea9ec91ad9cc3))
+* bump github.com/go-git/go-git/v5 in the gomod group ([#406](https://github.com/vincenthsh/fogg/issues/406)) ([e534816](https://github.com/vincenthsh/fogg/commit/e5348162a2f7a0576c1ef7964920f3528611e488))
+* bump github.com/hashicorp/hcl/v2 in the terraform group ([#413](https://github.com/vincenthsh/fogg/issues/413)) ([7b467f7](https://github.com/vincenthsh/fogg/commit/7b467f75bea5b113cfcf237627bb99e702167601))
+* bump github.com/runatlantis/atlantis ([#385](https://github.com/vincenthsh/fogg/issues/385)) ([b824da7](https://github.com/vincenthsh/fogg/commit/b824da7f06fd61091ba0ff6b82bbb78b6a751cc0))
+* bump github.com/runatlantis/atlantis in the atlantis group ([#412](https://github.com/vincenthsh/fogg/issues/412)) ([78a438b](https://github.com/vincenthsh/fogg/commit/78a438ba62eba997bc22107a313fb0d3915df34e))
+* bump github.com/zclconf/go-cty in the gomod group ([#410](https://github.com/vincenthsh/fogg/issues/410)) ([fe035b0](https://github.com/vincenthsh/fogg/commit/fe035b01ab621bbb905bf63739c3e028e7c0e8a5))
+* bump golang.org/x/text from 0.24.0 to 0.25.0 in the gomod group ([#409](https://github.com/vincenthsh/fogg/issues/409)) ([1cbf649](https://github.com/vincenthsh/fogg/commit/1cbf649856e5baf403516917e62ed07f48f7755d))
+* bump golang.org/x/text from 0.26.0 to 0.27.0 in the gomod group ([#414](https://github.com/vincenthsh/fogg/issues/414)) ([424f862](https://github.com/vincenthsh/fogg/commit/424f86232967873765aa05f5866ff1f8c603e7bb))
+* bump the gomod group with 2 updates ([#411](https://github.com/vincenthsh/fogg/issues/411)) ([442734a](https://github.com/vincenthsh/fogg/commit/442734a90ded0b702f1afcf6997c1081341cb44a))
+
+
+### BugFixes
+
+* add GITHUB_TOKEN as env var for pre-commit hook ([#415](https://github.com/vincenthsh/fogg/issues/415)) ([98e3347](https://github.com/vincenthsh/fogg/commit/98e33470442e1f271be983becb61ded78fb5bc2d))
+
 ## [0.92.28](https://github.com/vincenthsh/fogg/compare/v0.92.27...v0.92.28) (2025-04-15)
 
 
