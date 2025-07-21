@@ -54,3 +54,5 @@ jobs:
           FOGG_GITHUBTOKEN: ${{ secrets.GITHUB_TOKEN }}
       # run full pre-commit
       - run: pre-commit run --show-diff-on-failure --color=always --all-files
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

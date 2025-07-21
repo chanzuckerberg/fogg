@@ -54,6 +54,8 @@ jobs:
           FOGG_GITHUBTOKEN: {{`${{ secrets.GITHUB_TOKEN }}`}}
       # run full pre-commit
       - run: {{ list "pre-commit run --show-diff-on-failure --color=always" ($githubActionsCI.PreCommit.ExtraArgs | join " ") | join " " }}
+        env:
+          GITHUB_TOKEN: {{`${{ secrets.GITHUB_TOKEN }}`}}
       {{- else }}
       - run: fogg apply
         env:
