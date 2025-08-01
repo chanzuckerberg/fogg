@@ -7,6 +7,7 @@ import (
 	"compress/gzip"
 	"crypto/sha256"
 	"encoding/base64"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -193,7 +194,13 @@ func (cp *CustomPlugin) processBin(fs afero.Fs, name string, file io.Reader, tar
 
 // https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
 func (cp *CustomPlugin) processTar(fs afero.Fs, reader io.Reader, targetDir string) error {
-	err := fs.MkdirAll(targetDir, 0755)
+	basePath, err := fs.(*afero.BasePathFs).RealPath(targetDir)
+	if err != nil {
+		return errs.WrapUserf(err, "Could not get real path for %s", targetDir)
+	}
+	fmt.Errorf("basePath", basePath)
+
+	err = fs.MkdirAll(targetDir, 0755)
 	if err != nil {
 		return errs.WrapUserf(err, "Could not create directory %s", targetDir)
 	}
