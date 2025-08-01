@@ -222,8 +222,16 @@ func (cp *CustomPlugin) processTar(fs afero.Fs, reader io.Reader, targetDir stri
 		if len(splitTarget) <= cp.TarConfig.getStripComponents() {
 			continue
 		}
-		target := filepath.Join(targetDir,
-			filepath.Join(splitTarget[cp.TarConfig.getStripComponents():]...))
+
+		relativeTargetPath := filepath.Join(splitTarget[cp.TarConfig.getStripComponents():]...)
+		combinedPath := filepath.Join(targetDir, relativeTargetPath)
+		sanitizedPath := filepath.Clean(combinedPath)
+		//  By checking that the final, cleaned path still starts with the targetDir, you are guaranteeing that the file cannot be written outside the intended directory.
+		if !strings.HasPrefix(sanitizedPath, targetDir) {
+			logrus.Warnf("Security alert: Skipping file '%s' which attempts directory traversal. Final path: %s", header.Name, sanitizedPath)
+			continue
+		}
+		target := sanitizedPath
 
 		switch header.Typeflag {
 		case tar.TypeDir: // if its a dir and it doesn't exist create it
