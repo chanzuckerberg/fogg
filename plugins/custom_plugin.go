@@ -7,7 +7,6 @@ import (
 	"compress/gzip"
 	"crypto/sha256"
 	"encoding/base64"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -194,13 +193,7 @@ func (cp *CustomPlugin) processBin(fs afero.Fs, name string, file io.Reader, tar
 
 // https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
 func (cp *CustomPlugin) processTar(fs afero.Fs, reader io.Reader, targetDir string) error {
-	basePath, err := fs.(*afero.BasePathFs).RealPath(targetDir)
-	if err != nil {
-		return errs.WrapUserf(err, "Could not get real path for %s", targetDir)
-	}
-	fmt.Errorf("basePath", basePath)
-
-	err = fs.MkdirAll(targetDir, 0755)
+	err := fs.MkdirAll(targetDir, 0755)
 	if err != nil {
 		return errs.WrapUserf(err, "Could not create directory %s", targetDir)
 	}
@@ -229,8 +222,16 @@ func (cp *CustomPlugin) processTar(fs afero.Fs, reader io.Reader, targetDir stri
 		if len(splitTarget) <= cp.TarConfig.getStripComponents() {
 			continue
 		}
-		target := filepath.Join(targetDir,
-			filepath.Join(splitTarget[cp.TarConfig.getStripComponents():]...))
+
+		relativeTargetPath := filepath.Join(splitTarget[cp.TarConfig.getStripComponents():]...)
+		combinedPath := filepath.Join(targetDir, relativeTargetPath)
+		sanitizedPath := filepath.Clean(combinedPath)
+		//  By checking that the final, cleaned path still starts with the targetDir, you are guaranteeing that the file cannot be written outside the intended directory.
+		if !strings.HasPrefix(sanitizedPath, targetDir) {
+			logrus.Warnf("Security alert: Skipping file '%s' which attempts directory traversal. Final path: %s", header.Name, sanitizedPath)
+			continue
+		}
+		target := sanitizedPath
 
 		switch header.Typeflag {
 		case tar.TypeDir: // if its a dir and it doesn't exist create it
