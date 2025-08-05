@@ -1304,6 +1304,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 					CustomProvider: customProvider,
 					Version:        version,
 				},
+				Source: rp.Source,
 				Config: rp.Config,
 			}
 
