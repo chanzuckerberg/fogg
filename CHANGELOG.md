@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.31](https://github.com/vincenthsh/fogg/compare/v0.92.30...v0.92.31) (2025-08-05)
+
+
+### BugFixes
+
+* Suggested fix for cdktf synth issues ([#421](https://github.com/vincenthsh/fogg/issues/421)) ([e9fd989](https://github.com/vincenthsh/fogg/commit/e9fd9892b4e49e313eab5fb15dabff83040274e6))
+
 ## [0.92.30](https://github.com/vincenthsh/fogg/compare/v0.92.29...v0.92.30) (2025-08-05)
 
 
