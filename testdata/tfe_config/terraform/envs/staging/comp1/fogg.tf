@@ -41,18 +41,16 @@ provider "aws" {
   # var.tags should be considered deprecated
   default_tags {
     tags = {
-      TFC_RUN_ID                               = coalesce(var.TFC_RUN_ID, "unknown")
-      TFC_WORKSPACE_NAME                       = coalesce(var.TFC_WORKSPACE_NAME, "unknown")
-      TFC_WORKSPACE_SLUG                       = coalesce(var.TFC_WORKSPACE_SLUG, "unknown")
-      TFC_CONFIGURATION_VERSION_GIT_BRANCH     = coalesce(var.TFC_CONFIGURATION_VERSION_GIT_BRANCH, "unknown")
-      TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA = coalesce(var.TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA, "unknown")
-      TFC_CONFIGURATION_VERSION_GIT_TAG        = coalesce(var.TFC_CONFIGURATION_VERSION_GIT_TAG, "unknown")
-      TFC_PROJECT_NAME                         = coalesce(var.TFC_PROJECT_NAME, "unknown")
-      project                                  = coalesce(var.tags.project, "unknown")
-      env                                      = coalesce(var.tags.env, "unknown")
-      service                                  = coalesce(var.tags.service, "unknown")
-      owner                                    = coalesce(var.tags.owner, "unknown")
-      managedBy                                = "terraform"
+      TFC_WORKSPACE_NAME                   = coalesce(var.TFC_WORKSPACE_NAME, "unknown")
+      TFC_WORKSPACE_SLUG                   = coalesce(var.TFC_WORKSPACE_SLUG, "unknown")
+      TFC_CONFIGURATION_VERSION_GIT_BRANCH = coalesce(var.TFC_CONFIGURATION_VERSION_GIT_BRANCH, "unknown")
+      TFC_CONFIGURATION_VERSION_GIT_TAG    = coalesce(var.TFC_CONFIGURATION_VERSION_GIT_TAG, "unknown")
+      TFC_PROJECT_NAME                     = coalesce(var.TFC_PROJECT_NAME, "unknown")
+      project                              = coalesce(var.tags.project, "unknown")
+      env                                  = coalesce(var.tags.env, "unknown")
+      service                              = coalesce(var.tags.service, "unknown")
+      owner                                = coalesce(var.tags.owner, "unknown")
+      managedBy                            = "terraform"
     }
   }
   allowed_account_ids = ["626314663667"]
