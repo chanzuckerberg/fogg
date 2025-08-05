@@ -37,6 +37,10 @@ envs:
               enabled: true
               tags:
                 team: TIES
+        required_providers:
+          cloudflare:
+            source: cloudflare/cloudflare
+            version: "~> 4.0"
         kind: terraconstruct # required to ensure AwsStack is extended
         cdktf_dependencies:
           - name: "@types/aws-lambda"
