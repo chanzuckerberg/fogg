@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.92.28](https://github.com/chanzuckerberg/fogg/compare/v0.92.27...v0.92.28) (2025-08-05)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go from 1.55.7 to 1.55.8 ([#1129](https://github.com/chanzuckerberg/fogg/issues/1129)) ([0215205](https://github.com/chanzuckerberg/fogg/commit/02152059834831b5562bddd97ba05a3dee51ac37))
+* Bump github.com/go-git/go-git/v5 from 5.16.0 to 5.16.2 ([#1120](https://github.com/chanzuckerberg/fogg/issues/1120)) ([8710af5](https://github.com/chanzuckerberg/fogg/commit/8710af586dacae11617f2c5fa4c342d7c55e42b6))
+* Bump github.com/hashicorp/hcl/v2 from 2.23.0 to 2.24.0 ([#1124](https://github.com/chanzuckerberg/fogg/issues/1124)) ([c2fffd9](https://github.com/chanzuckerberg/fogg/commit/c2fffd9d00d81d65a3423c9e08e203c08ca09292))
+* Bump github.com/spf13/pflag from 1.0.6 to 1.0.7 ([#1126](https://github.com/chanzuckerberg/fogg/issues/1126)) ([d34e5b3](https://github.com/chanzuckerberg/fogg/commit/d34e5b331ae3692f24e7b5551e879990e12ee44e))
+* Bump golang.org/x/oauth2 from 0.16.0 to 0.27.0 ([#1125](https://github.com/chanzuckerberg/fogg/issues/1125)) ([fe42456](https://github.com/chanzuckerberg/fogg/commit/fe42456cbdaaccffb1addbe92895959cb4ab2a1d))
+* CCIE-4984 conform to open sourcing guidelines ([#1128](https://github.com/chanzuckerberg/fogg/issues/1128)) ([e684184](https://github.com/chanzuckerberg/fogg/commit/e684184574984197c78f3c715f494881e44908c3))
+* upgrade actions/cache to v4 ([#1122](https://github.com/chanzuckerberg/fogg/issues/1122)) ([c37a72d](https://github.com/chanzuckerberg/fogg/commit/c37a72db25633f2c0c948d4d9b8b435c3334ff81))
+* upgrade actions/checkout to v4 ([#1123](https://github.com/chanzuckerberg/fogg/issues/1123)) ([774cec1](https://github.com/chanzuckerberg/fogg/commit/774cec1fbe6ea87eed0edbfb65098f341f952fee))
+
+
+### BugFixes
+
+* Adjust default tags to avoid unnecessary churn ([#1131](https://github.com/chanzuckerberg/fogg/issues/1131)) ([bcb6097](https://github.com/chanzuckerberg/fogg/commit/bcb60974334bb6e9417ce71d8b19891791fbf093))
+* fix security alert Arbitrary file access during archive extraction ([#1127](https://github.com/chanzuckerberg/fogg/issues/1127)) ([876b921](https://github.com/chanzuckerberg/fogg/commit/876b921e92d520860017616a4317a3887186287a))
+
 ## [0.92.27](https://github.com/chanzuckerberg/fogg/compare/v0.92.26...v0.92.27) (2025-05-22)
 
 
