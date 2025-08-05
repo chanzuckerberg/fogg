@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.92.30](https://github.com/vincenthsh/fogg/compare/v0.92.29...v0.92.30) (2025-08-05)
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go in the gomod group ([#418](https://github.com/vincenthsh/fogg/issues/418)) ([ed2a1f8](https://github.com/vincenthsh/fogg/commit/ed2a1f84812a1cb06fcd3fd396a4e60a3e195bc2))
+* bump github.com/runatlantis/atlantis in the atlantis group ([#419](https://github.com/vincenthsh/fogg/issues/419)) ([71297b5](https://github.com/vincenthsh/fogg/commit/71297b5bcece563f2dc52be16e1b4f0f05830714))
+* bump github.com/spf13/pflag in the gomod group ([#416](https://github.com/vincenthsh/fogg/issues/416)) ([30cacdc](https://github.com/vincenthsh/fogg/commit/30cacdc6bb68d577f0c13161a882e28b10b5606e))
+
+
+### BugFixes
+
+* Add missing assignment for required_providers source field ([#420](https://github.com/vincenthsh/fogg/issues/420)) ([1c22dc3](https://github.com/vincenthsh/fogg/commit/1c22dc304488435cc4022f646696453da4a0bd20))
+
 ## [0.92.29](https://github.com/vincenthsh/fogg/compare/v0.92.28...v0.92.29) (2025-07-21)
 
 
