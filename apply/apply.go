@@ -109,6 +109,7 @@ type TeamPermissions struct {
 	Plan  *[]string `json:"plan,omitempty"`
 	Read  *[]string `json:"read,omitempty"`
 	Write *[]string `json:"write,omitempty"`
+	Admin *[]string `json:"admin,omitempty"`
 }
 type TFEWorkspace struct {
 	TriggerPrefixes         *[]string        `json:"trigger_prefixes,omitempty"`
