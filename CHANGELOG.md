@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.29](https://github.com/chanzuckerberg/fogg/compare/v0.92.28...v0.92.29) (2025-08-11)
+
+
+### Features
+
+* CDI-4361 - Allow for admin teamprivilege type for TFE workspace ([#1132](https://github.com/chanzuckerberg/fogg/issues/1132)) ([d532a0d](https://github.com/chanzuckerberg/fogg/commit/d532a0d7e84678c78ca87af15a76b8e410d54e14))
+
 ## [0.92.28](https://github.com/chanzuckerberg/fogg/compare/v0.92.27...v0.92.28) (2025-08-05)
 
 
