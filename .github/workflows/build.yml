@@ -7,7 +7,7 @@ jobs:
   test:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
@@ -16,7 +16,7 @@ jobs:
   test-cdktf:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       # pnpm required for setup-node cache support
       # ref: https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#caching-packages-data
       - name: Setup pnpm from .packageManager
