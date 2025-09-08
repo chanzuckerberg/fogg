@@ -29,7 +29,7 @@ jobs:
           fetch-depth: 0
         if: ${{ steps.release.outputs.release_created }}
 
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
         if: ${{ steps.release.outputs.release_created }}
@@ -56,7 +56,7 @@ jobs:
           run_install: false
         if: ${{ steps.release.outputs.release_created }}
       - name: Use Node.js from .nvmrc
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
           cache: "pnpm"
