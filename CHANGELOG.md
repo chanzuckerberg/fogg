@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.31](https://github.com/chanzuckerberg/fogg/compare/v0.92.30...v0.92.31) (2025-09-24)
+
+
+### BugFixes
+
+* Make get-git-refs-hash executable and add hash key ([#1145](https://github.com/chanzuckerberg/fogg/issues/1145)) ([0e5c848](https://github.com/chanzuckerberg/fogg/commit/0e5c848c7cbd68137989d19c511cf9396dee9a52))
+
 ## [0.92.30](https://github.com/chanzuckerberg/fogg/compare/v0.92.29...v0.92.30) (2025-09-24)
 
 
