@@ -5,7 +5,7 @@ set -euo pipefail
 # Extract Git module sources with refs from fogg.yml and resolve them to commit SHAs
 # This creates a hash that changes when any Git ref points to a different commit
 
-cd "$(dirname "$0")/../.."
+cd "$(dirname "$0")/.."
 
 # Extract all Git module sources with refs from fogg.yml
 git_refs=$(grep -E "module_source:.*\?ref=" fogg.yml | \
