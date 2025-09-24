@@ -22,6 +22,11 @@ jobs:
       - uses: actions/checkout@v3
         with:
           token: ${{ steps.generate_token.outputs.token }}
+      - name: Get Git refs hash
+        id: git-refs-hash
+        run: |
+          hash=$(scripts/get-git-refs-hash.sh)
+          echo "hash=$hash" >> $GITHUB_OUTPUT
       - name: Cache Fogg
         id: cache-fogg
         uses: actions/cache@v4
