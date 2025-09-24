@@ -32,7 +32,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.fogg/cache
-          key: fogg-cache-${{ hashFiles('**/.fogg-version') }}
+          key: fogg-cache-${{ hashFiles('**/.fogg-version') }}-${{ steps.git-refs-hash.outputs.hash }}
       - run: make setup
       - run: |
           mkdir -p ~/.ssh/
