@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.92.30](https://github.com/chanzuckerberg/fogg/compare/v0.92.29...v0.92.30) (2025-09-24)
+
+
+### Misc
+
+* Bump github.com/hashicorp/go-getter from 1.7.8 to 1.7.9 ([#1134](https://github.com/chanzuckerberg/fogg/issues/1134)) ([5ff2851](https://github.com/chanzuckerberg/fogg/commit/5ff28513ba8bb57c806d2f68b8fe638e20283aaf))
+* Bump github.com/hashicorp/go-getter from 1.7.9 to 1.8.0 ([#1141](https://github.com/chanzuckerberg/fogg/issues/1141)) ([34202d1](https://github.com/chanzuckerberg/fogg/commit/34202d1bb8fd0d367a0f58d45c006dd2f029bbb7))
+* Bump github.com/hashicorp/go-getter from 1.8.0 to 1.8.1 ([#1143](https://github.com/chanzuckerberg/fogg/issues/1143)) ([e82e7dd](https://github.com/chanzuckerberg/fogg/commit/e82e7ddbaa4f138b7ef4520bf97b87de16115fad))
+* Bump github.com/spf13/cobra from 1.9.1 to 1.10.1 ([#1140](https://github.com/chanzuckerberg/fogg/issues/1140)) ([b94009b](https://github.com/chanzuckerberg/fogg/commit/b94009b05e334ea7b9d02b591cee2455caaea4a8))
+* Bump github.com/spf13/pflag from 1.0.7 to 1.0.10 ([#1142](https://github.com/chanzuckerberg/fogg/issues/1142)) ([76c3eea](https://github.com/chanzuckerberg/fogg/commit/76c3eeac0e81d5b8b29e087d2b784af5a34488e0))
+* Bump github.com/stretchr/testify from 1.10.0 to 1.11.0 ([#1135](https://github.com/chanzuckerberg/fogg/issues/1135)) ([c4451e1](https://github.com/chanzuckerberg/fogg/commit/c4451e1b9bff7deb2cad2f7e1bec90975acad78f))
+* Bump github.com/stretchr/testify from 1.11.0 to 1.11.1 ([#1139](https://github.com/chanzuckerberg/fogg/issues/1139)) ([9b94df5](https://github.com/chanzuckerberg/fogg/commit/9b94df502dcb4542ee6e7012a219bca0bba04a90))
+* Bump github.com/ulikunitz/xz from 0.5.11 to 0.5.14 ([#1138](https://github.com/chanzuckerberg/fogg/issues/1138)) ([26a89f5](https://github.com/chanzuckerberg/fogg/commit/26a89f53dfefcfa34a5d1a9a2248afbec0df4deb))
+
+
+### BugFixes
+
+* major version caching ([#1144](https://github.com/chanzuckerberg/fogg/issues/1144)) ([fdaa3c4](https://github.com/chanzuckerberg/fogg/commit/fdaa3c42254f8737e431b641b6d859a390e674ad))
+
 ## [0.92.29](https://github.com/chanzuckerberg/fogg/compare/v0.92.28...v0.92.29) (2025-08-11)
 
 
