@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.32](https://github.com/chanzuckerberg/fogg/compare/v0.92.31...v0.92.32) (2025-10-01)
+
+
+### BugFixes
+
+* Pin go-getter to 1.7.8 ([#1147](https://github.com/chanzuckerberg/fogg/issues/1147)) ([fe35d3a](https://github.com/chanzuckerberg/fogg/commit/fe35d3a32936975b6a2c55564f0a90f7ef675aa5))
+
 ## [0.92.31](https://github.com/chanzuckerberg/fogg/compare/v0.92.30...v0.92.31) (2025-09-24)
 
 
