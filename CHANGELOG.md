@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.33](https://github.com/chanzuckerberg/fogg/compare/v0.92.32...v0.92.33) (2025-10-06)
+
+
+### Misc
+
+* Bump github.com/go-git/go-git/v5 from 5.16.2 to 5.16.3 ([#1149](https://github.com/chanzuckerberg/fogg/issues/1149)) ([e24b133](https://github.com/chanzuckerberg/fogg/commit/e24b1332044db74087006b58174f826ef84681ca))
+
 ## [0.92.32](https://github.com/chanzuckerberg/fogg/compare/v0.92.31...v0.92.32) (2025-10-01)
 
 
