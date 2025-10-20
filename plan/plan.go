@@ -1284,7 +1284,7 @@ func resolveComponentCommon(commons ...v2.Common) (ComponentCommon, error) {
 
 	if backendConf != nil {
 		if backendConf.Kind == nil {
-			return ComponentCommon{}, fmt.Errorf("unable to resolve backend kind")
+			return ComponentCommon{}, fmt.Errorf("backend kind is required but not specified")
 		}
 
 		switch *backendConf.Kind {
@@ -1298,6 +1298,7 @@ func resolveComponentCommon(commons ...v2.Common) (ComponentCommon, error) {
 
 			var roleArn *string
 			if backendConf.Role != nil {
+				// we know from our validations that if role is set, then account id must also be set
 				if backendConf.AccountID == nil {
 					return ComponentCommon{}, fmt.Errorf("s3 backend with role requires account_id to be set")
 				}
