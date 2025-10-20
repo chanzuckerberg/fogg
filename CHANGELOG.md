@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.34](https://github.com/chanzuckerberg/fogg/compare/v0.92.33...v0.92.34) (2025-10-20)
+
+
+### BugFixes
+
+* Fix panic on a new repo apply ([#1151](https://github.com/chanzuckerberg/fogg/issues/1151)) ([052a83f](https://github.com/chanzuckerberg/fogg/commit/052a83fea18a6d1560af754b1d6539f8f5444d7f))
+
 ## [0.92.33](https://github.com/chanzuckerberg/fogg/compare/v0.92.32...v0.92.33) (2025-10-06)
 
 
