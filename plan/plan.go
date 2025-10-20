@@ -387,8 +387,14 @@ func Eval(c *v2.Config) (*Plan, error) {
 	p.Version = v
 
 	var err error
-	p.Global = p.buildGlobal(c)
-	p.Accounts = p.buildAccounts(c)
+	p.Global, err = p.buildGlobal(c)
+	if err != nil {
+		return nil, err
+	}
+	p.Accounts, err = p.buildAccounts(c)
+	if err != nil {
+		return nil, err
+	}
 	p.Envs, err = p.buildEnvs(c)
 	if err != nil {
 		return nil, err
@@ -457,7 +463,11 @@ func (p *Plan) buildTFE(c *v2.Config) (*TFEConfig, error) {
 		ExcludedGithubRequiredChecks:   []string{},
 		AdditionalGithubRequiredChecks: []string{},
 	}
-	tfeConfig.ComponentCommon = resolveComponentCommon(c.Defaults.Common, c.Global.Common, c.TFE.Common)
+	componentCommon, err := resolveComponentCommon(c.Defaults.Common, c.Global.Common, c.TFE.Common)
+	if err != nil {
+		return nil, err
+	}
+	tfeConfig.ComponentCommon = componentCommon
 	tfeConfig.ModuleSource = c.TFE.ModuleSource
 	tfeConfig.ModuleName = c.TFE.ModuleName
 	if c.TFE.ProviderAliases != nil {
@@ -509,14 +519,18 @@ func (p *Plan) buildTFE(c *v2.Config) (*TFEConfig, error) {
 	return tfeConfig, nil
 }
 
-func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
+func (p *Plan) buildAccounts(c *v2.Config) (map[string]Account, error) {
 	defaults := c.Defaults
 
 	accountPlans := make(map[string]Account, len(c.Accounts))
 	for name, acct := range c.Accounts {
 		accountPlan := Account{}
 
-		accountPlan.ComponentCommon = resolveComponentCommon(defaults.Common, acct.Common)
+		componentCommon, err := resolveComponentCommon(defaults.Common, acct.Common)
+		if err != nil {
+			return nil, err
+		}
+		accountPlan.ComponentCommon = componentCommon
 		accountPlan.Name = name
 		accountPlan.Account = name // for backwards compat
 		accountPlan.Env = "accounts"
@@ -558,7 +572,7 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 		accountPlans[name] = a
 	}
 
-	return accountPlans
+	return accountPlans, nil
 }
 
 func (p *Plan) buildModules(c *v2.Config) map[string]Module {
@@ -579,14 +593,18 @@ func newEnvPlan() Env {
 	return ep
 }
 
-func (p *Plan) buildGlobal(conf *v2.Config) Component {
+func (p *Plan) buildGlobal(conf *v2.Config) (Component, error) {
 	// Global just uses defaults because that's the way sicc worked. We should make it directly configurable.
 	componentPlan := Component{}
 	componentPlan.Accounts = resolveAccounts(conf.Accounts)
 	defaults := conf.Defaults
 	global := conf.Global
 
-	componentPlan.ComponentCommon = resolveComponentCommon(defaults.Common, global.Common)
+	componentCommon, err := resolveComponentCommon(defaults.Common, global.Common)
+	if err != nil {
+		return Component{}, err
+	}
+	componentPlan.ComponentCommon = componentCommon
 
 	if componentPlan.ComponentCommon.Backend.Kind == BackendKindS3 {
 		componentPlan.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/global.tfstate", componentPlan.ComponentCommon.Project)
@@ -598,7 +616,7 @@ func (p *Plan) buildGlobal(conf *v2.Config) Component {
 	componentPlan.ExtraVars = resolveExtraVars(defaults.ExtraVars, global.ExtraVars)
 	componentPlan.PathToRepoRoot = "../../"
 
-	return componentPlan
+	return componentPlan, nil
 }
 
 // buildEnvs must be build after accounts
@@ -619,7 +637,11 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 				return nil, errs.WrapUser(fmt.Errorf("Component %s can't have same name as account", componentName), "Invalid component name")
 			}
 
-			componentPlan.ComponentCommon = resolveComponentCommon(defaults.Common, envConf.Common, componentConf.Common)
+			componentCommon, err := resolveComponentCommon(defaults.Common, envConf.Common, componentConf.Common)
+			if err != nil {
+				return nil, err
+			}
+			componentPlan.ComponentCommon = componentCommon
 			accountRemoteStates := v2.ResolveOptionalStringSlice(v2.DependsOnAccountsGetter, defaults.Common, envConf.Common, componentConf.Common)
 			accountBackends := map[string]Backend{}
 			for k, v := range p.Accounts {
@@ -760,7 +782,7 @@ func resolveAWSProvider(commons ...v2.Common) (plan *AWSProvider, providers []AW
 	return
 }
 
-func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
+func resolveComponentCommon(commons ...v2.Common) (ComponentCommon, error) {
 	providerVersions := copyMap(utilityProviders)
 	awsPlan, additionalProviders, awsVersion := resolveAWSProvider(commons...)
 	if awsVersion != nil {
@@ -1261,10 +1283,25 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	var backend Backend
 
 	if backendConf != nil {
-		if *backendConf.Kind == "s3" {
+		if backendConf.Kind == nil {
+			return ComponentCommon{}, fmt.Errorf("backend kind is required")
+		}
+
+		switch *backendConf.Kind {
+		case "s3":
+			if backendConf.Bucket == nil {
+				return ComponentCommon{}, fmt.Errorf("when backend kind is 's3', bucket is required")
+			}
+			if backendConf.Region == nil {
+				return ComponentCommon{}, fmt.Errorf("when backend kind is 's3', region is required")
+			}
+
 			var roleArn *string
 			if backendConf.Role != nil {
 				// we know from our validations that if role is set, then account id must also be set
+				if backendConf.AccountID == nil {
+					return ComponentCommon{}, fmt.Errorf("when backend kind is 's3' and role is set, account_id is required")
+				}
 				tmp := fmt.Sprintf("arn:aws:iam::%s:role/%s", *backendConf.AccountID, *backendConf.Role)
 				roleArn = &tmp
 			}
@@ -1280,7 +1317,14 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 					DynamoTable: backendConf.DynamoTable,
 				},
 			}
-		} else if *backendConf.Kind == "remote" {
+		case "remote":
+			if backendConf.HostName == nil {
+				return ComponentCommon{}, fmt.Errorf("when backend kind is 'remote', host_name is required")
+			}
+			if backendConf.Organization == nil {
+				return ComponentCommon{}, fmt.Errorf("when backend kind is 'remote', organization is required")
+			}
+
 			backend = Backend{
 				Kind: BackendKindRemote,
 				Remote: &RemoteBackend{
@@ -1339,7 +1383,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		TravisCI:         travisPlan,
 		CircleCI:         circlePlan,
 		GitHubActionsCI:  githubActionsPlan,
-	}
+	}, nil
 }
 
 func resolveExtraVars(vars ...map[string]string) map[string]string {
