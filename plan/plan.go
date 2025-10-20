@@ -1284,23 +1284,23 @@ func resolveComponentCommon(commons ...v2.Common) (ComponentCommon, error) {
 
 	if backendConf != nil {
 		if backendConf.Kind == nil {
-			return ComponentCommon{}, fmt.Errorf("backend kind is required but not specified")
+			return ComponentCommon{}, fmt.Errorf("backend kind is required")
 		}
 
 		switch *backendConf.Kind {
 		case "s3":
 			if backendConf.Bucket == nil {
-				return ComponentCommon{}, fmt.Errorf("s3 backend requires bucket to be set")
+				return ComponentCommon{}, fmt.Errorf("when backend kind is 's3', bucket is required")
 			}
 			if backendConf.Region == nil {
-				return ComponentCommon{}, fmt.Errorf("s3 backend requires region to be set")
+				return ComponentCommon{}, fmt.Errorf("when backend kind is 's3', region is required")
 			}
 
 			var roleArn *string
 			if backendConf.Role != nil {
 				// we know from our validations that if role is set, then account id must also be set
 				if backendConf.AccountID == nil {
-					return ComponentCommon{}, fmt.Errorf("s3 backend with role requires account_id to be set")
+					return ComponentCommon{}, fmt.Errorf("when backend kind is 's3' and role is set, account_id is required")
 				}
 				tmp := fmt.Sprintf("arn:aws:iam::%s:role/%s", *backendConf.AccountID, *backendConf.Role)
 				roleArn = &tmp
@@ -1319,10 +1319,10 @@ func resolveComponentCommon(commons ...v2.Common) (ComponentCommon, error) {
 			}
 		case "remote":
 			if backendConf.HostName == nil {
-				return ComponentCommon{}, fmt.Errorf("remote backend requires host_name to be set")
+				return ComponentCommon{}, fmt.Errorf("when backend kind is 'remote', host_name is required")
 			}
 			if backendConf.Organization == nil {
-				return ComponentCommon{}, fmt.Errorf("remote backend requires organization to be set")
+				return ComponentCommon{}, fmt.Errorf("when backend kind is 'remote', organization is required")
 			}
 
 			backend = Backend{
