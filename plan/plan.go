@@ -1283,6 +1283,10 @@ func resolveComponentCommon(commons ...v2.Common) (ComponentCommon, error) {
 	var backend Backend
 
 	if backendConf != nil {
+		if backendConf.Kind == nil {
+			return ComponentCommon{}, fmt.Errorf("unable to resolve backend kind")
+		}
+
 		switch *backendConf.Kind {
 		case "s3":
 			if backendConf.Bucket == nil {
