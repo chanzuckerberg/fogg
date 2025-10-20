@@ -56,7 +56,7 @@ jobs:
           run_install: false
         if: ${{ steps.release.outputs.release_created }}
       - name: Use Node.js from .nvmrc
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
           cache: "pnpm"
