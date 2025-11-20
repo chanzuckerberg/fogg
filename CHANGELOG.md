@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.35](https://github.com/chanzuckerberg/fogg/compare/v0.92.34...v0.92.35) (2025-11-20)
+
+
+### Misc
+
+* Bump golang.org/x/crypto from 0.41.0 to 0.45.0 ([#1153](https://github.com/chanzuckerberg/fogg/issues/1153)) ([b83e974](https://github.com/chanzuckerberg/fogg/commit/b83e97438470be00bb1911e5773ef00c324bfb46))
+
 ## [0.92.34](https://github.com/chanzuckerberg/fogg/compare/v0.92.33...v0.92.34) (2025-10-20)
 
 
