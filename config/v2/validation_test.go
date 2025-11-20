@@ -104,6 +104,34 @@ func TestValidateBackends(t *testing.T) {
 	}
 }
 
+func TestValidateGridEndpointRequired(t *testing.T) {
+	req := require.New(t)
+	enabled := true
+	c := &Config{
+		Defaults: Defaults{
+			Common: Common{
+				Grid: &GridConfig{Enabled: &enabled},
+			},
+		},
+	}
+	err := c.ValidateGrid()
+	req.Error(err)
+}
+
+func TestValidateGridEndpointProvided(t *testing.T) {
+	req := require.New(t)
+	enabled := true
+	endpoint := "https://example"
+	c := &Config{
+		Defaults: Defaults{
+			Common: Common{
+				Grid: &GridConfig{Enabled: &enabled, Endpoint: &endpoint},
+			},
+		},
+	}
+	req.NoError(c.ValidateGrid())
+}
+
 func confBackendKind(t *testing.T, kind string) Config {
 	r := require.New(t)
 	base := Config{
@@ -153,7 +181,7 @@ func confAcctOwner(def, acct string) Config {
 		},
 		Accounts: map[string]Account{
 			"foo": {
-				Common{
+				Common: Common{
 					Owner: util.StrPtr(acct),
 				},
 			},

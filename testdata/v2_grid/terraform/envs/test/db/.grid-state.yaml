@@ -1,0 +1,9 @@
+guid: 33333333-4444-5555-6666-777777777777
+logicalId: proj-test-db
+labels:
+    managed-by: fogg
+dependencies:
+    - guid: 11111111-2222-3333-4444-555555555555
+      output: database_subnet_group
+    - guid: 11111111-2222-3333-4444-555555555555
+      output: vpc_id

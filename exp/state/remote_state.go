@@ -68,7 +68,7 @@ func Run(fs afero.Fs, configFile, path string) error {
 			c.Common.DependsOn = &v2.DependsOn{}
 		}
 
-		c.DependsOn.Accounts = accounts
+		c.DependsOn.Accounts = stringSliceToDependencyList(accounts)
 		conf.Accounts[component.Name] = c
 	case "envs":
 		c := conf.Envs[component.Env].Components[component.Name]
@@ -77,8 +77,8 @@ func Run(fs afero.Fs, configFile, path string) error {
 			c.Common.DependsOn = &v2.DependsOn{}
 		}
 
-		c.DependsOn.Accounts = accounts
-		c.DependsOn.Components = components
+		c.DependsOn.Accounts = stringSliceToDependencyList(accounts)
+		c.DependsOn.Components = stringSliceToDependencyList(components)
 
 		conf.Envs[component.Env].Components[component.Name] = c
 	default:
@@ -122,4 +122,15 @@ func collectRemoteStateReferences(path string) ([]string, error) {
 
 	sort.Strings(refNames)
 	return refNames, nil
+}
+
+func stringSliceToDependencyList(slice []string) v2.DependencyList {
+	if len(slice) == 0 {
+		return nil
+	}
+	result := make(v2.DependencyList)
+	for _, item := range slice {
+		result[item] = []string{}
+	}
+	return result
 }

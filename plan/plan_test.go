@@ -68,7 +68,7 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 	r.NoError(err)
 	r.Len(w, 0)
 
-	plan, e := Eval(c2)
+	plan, e := Eval(fs, c2)
 	r.NoError(e)
 	r.NotNil(plan)
 	r.NotNil(plan.Accounts)
@@ -169,7 +169,7 @@ func buildPlan(t *testing.T, testfile string) *Plan {
 	r.NoError(err)
 	r.Len(w, 0)
 
-	plan, e := Eval(c2)
+	plan, e := Eval(fs, c2)
 	r.NoError(e)
 	r.NotNil(plan)
 

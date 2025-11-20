@@ -100,8 +100,7 @@ variable "tags" {
     service    = "recurse_test"
     owner      = "foo@example.com"
     tfstateKey = "terraform/proj/envs/test/components/recurse_test.tfstate"
-
-    managedBy = "terraform"
+    managedBy  = "terraform"
   }
 }
 variable "foo" {

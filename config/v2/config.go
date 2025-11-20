@@ -176,7 +176,8 @@ type Common struct {
 	TerraformVersion  *string                     `yaml:"terraform_version,omitempty"`
 	Tools             *Tools                      `yaml:"tools,omitempty"`
 	// Store output for Integrations (only ssm supported atm)
-	IntegrationRegistry *string `yaml:"integration_registry,omitempty"`
+	IntegrationRegistry *string     `yaml:"integration_registry,omitempty"`
+	Grid                *GridConfig `yaml:"grid,omitempty"`
 }
 
 type Defaults struct {
@@ -246,6 +247,12 @@ type Component struct {
 	CdktfDependencies    []JavascriptDependency `yaml:"cdktf_dependencies,omitempty"`     // Optional additional component dev dependencies, default: []
 	CdktfDevDependencies []JavascriptDependency `yaml:"cdktf_dev_dependencies,omitempty"` // Optional additional component dev dependencies, default: []
 	PackageJsonFields    map[string]any         `yaml:"package_json,omitempty"`           // Fields to add into package.json, only used by non-cdktf components
+}
+
+type GridConfig struct {
+	Enabled  *bool   `yaml:"enabled,omitempty"`
+	GUID     *string `yaml:"guid,omitempty"`
+	Endpoint *string `yaml:"endpoint,omitempty"`
 }
 
 type ComponentModule struct {
@@ -456,7 +463,7 @@ type GenericProvider struct {
 
 // Backend is used to configure a terraform backend
 type Backend struct {
-	Kind *string `yaml:"kind,omitempty" validate:"omitempty,oneof=s3 remote"`
+	Kind *string `yaml:"kind,omitempty" validate:"omitempty,oneof=s3 remote http"`
 
 	// fields used for S3 backend
 	AccountID   *string `yaml:"account_id,omitempty"`
@@ -469,6 +476,17 @@ type Backend struct {
 	// fields used for remote backend
 	HostName     *string `yaml:"host_name,omitempty"`
 	Organization *string `yaml:"organization,omitempty"`
+
+	// fields used for http backend
+	BaseAddress   *string `yaml:"base_address,omitempty"`
+	Address       *string `yaml:"address,omitempty"`
+	LockAddress   *string `yaml:"lock_address,omitempty"`
+	UnlockAddress *string `yaml:"unlock_address,omitempty"`
+	UpdateMethod  *string `yaml:"update_method,omitempty"`
+	LockMethod    *string `yaml:"lock_method,omitempty"`
+	UnlockMethod  *string `yaml:"unlock_method,omitempty"`
+	Username      *string `yaml:"username,omitempty"`
+	Password      *string `yaml:"password,omitempty"`
 }
 
 // Module is a module
@@ -557,14 +575,36 @@ type Hook struct {
 }
 
 type DependsOn struct {
-	Accounts   []string `yaml:"accounts"`
-	Components []string `yaml:"components"`
+	Accounts   DependencyList `yaml:"accounts"`
+	Components DependencyList `yaml:"components"`
 	//RelativeGlobs to the component
 	RelativeGlobs []string `yaml:"relative_globs"`
 	//Absolute file paths,
 	//fogg validates their existence and
 	//generates locals block for their content
 	Files []string `yaml:"files"`
+}
+
+// DependencyList is a map of dependencies to their outputs
+type DependencyList map[string][]string
+
+func (d *DependencyList) UnmarshalYAML(value *yaml.Node) error {
+	var list []string
+	if err := value.Decode(&list); err == nil {
+		*d = make(map[string][]string)
+		for _, item := range list {
+			(*d)[item] = []string{}
+		}
+		return nil
+	}
+
+	var m map[string][]string
+	if err := value.Decode(&m); err == nil {
+		*d = m
+		return nil
+	}
+
+	return fmt.Errorf("failed to unmarshal DependsOn: expected list of strings or map of string to list of strings")
 }
 
 type CIProviderConfig struct {

@@ -42,7 +42,7 @@ var componentsListCmd = &cobra.Command{
 			return errs.WrapUser(err, "unable to parse config file")
 		}
 
-		p, err := plan.Eval(config)
+		p, err := plan.Eval(fs, config)
 		if err != nil {
 			return err
 		}

@@ -42,7 +42,7 @@ func Apply(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool, envFil
 			return errs.NewUserf("fogg version (%s) is different than version currently used to manage repo (%s). To upgrade add --upgrade.", toolVersion, repoVersion)
 		}
 	}
-	plan, err := plan.Eval(conf)
+	plan, err := plan.Eval(fs, conf)
 	if err != nil {
 		return errs.WrapUser(err, "unable to evaluate plan")
 	}
@@ -122,6 +122,10 @@ func Apply(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool, envFil
 		if err != nil {
 			return errs.WrapUser(err, "unable to apply pre-commit action")
 		}
+	}
+
+	if err := applyGrid(fs, conf, plan); err != nil {
+		return errs.WrapUser(err, "unable to apply grid markers")
 	}
 
 	return errs.WrapUser(applyTFE(fs, plan, tmpl), "unable to apply TFE locals.tf.json")

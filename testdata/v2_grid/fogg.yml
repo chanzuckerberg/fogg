@@ -1,0 +1,110 @@
+defaults:
+  backend:
+    kind: s3
+    bucket: some-bucket
+    region: us-west-2
+    profile: profile
+  grid:
+    enabled: false
+    endpoint: http://localhost:8080
+  owner: foo@example.com
+  project: proj
+  tools:
+    atlantis:
+      enabled: true
+      # if depends_on is defined, don't ignore `remote-state.tf`
+      autoplan_remote_states: true
+      version: 3
+      automerge: true
+      parallel_plan: true
+      parallel_apply: true
+  providers:
+    aws:
+      account_id: 00456
+      profile: profile
+      region: us-west-2
+      version: 0.12.0
+  terraform_version: 0.100.0
+global:
+  grid:
+    enabled: true
+    guid: "00000000-1111-2222-3333-444444444444"
+envs:
+  test:
+    components:
+      vpc:
+        depends_on:
+          components: []
+        grid:
+          enabled: true
+          guid: "11111111-2222-3333-4444-555555555555"
+        modules:
+          - name: "vpc"
+            source: "terraform-aws-modules/vpc/aws"
+            version: "4.0.1"
+            for_each: "local.map"
+            variables:
+              - name
+              - cidr
+              - azs
+              - private_subnets
+              - public_subnets
+              - tags
+              - banana
+          - source: "terraform/modules/my_module"
+            name: "my_module"
+            depends_on:
+              - "vpc"
+          - source: "foo_modules/bar"
+            depends_on:
+              - "vpc"
+              - "my_module"
+      recurse_test:
+        grid:
+          enabled: true
+          guid: "22222222-3333-4444-5555-666666666666"
+        module_source: "foo_modules/parent_module"
+      cluster:
+        grid:
+          enabled: true
+          guid: "44444444-5555-6666-7777-888888888888"
+        depends_on:
+          components:
+            vpc:
+              - vpc_id
+              - private_subnet_ids
+          relative_globs:
+            - "./*.enc.yaml"
+          files:
+            - "terraform/foo-fooFoo.yaml"
+            - "terraform/bar.json"
+        modules:
+          - source: "terraform/modules/my_module"
+      db:
+        grid:
+          enabled: true
+          guid: "33333333-4444-5555-6666-777777777777"
+        depends_on:
+          components:
+            vpc:
+              - vpc_id
+              - database_subnet_group
+          relative_globs:
+            - "./*.enc.yaml"
+          files:
+            - "terraform/foo-fooFoo.yaml"
+            - "terraform/bar.json"
+        modules:
+          - source: "terraform/modules/my_module"
+      legacy:
+        grid:
+          # won't be migrated, will be removed in near future
+          enabled: false
+        depends_on:
+          components:
+            - vpc
+        modules:
+          - source: "terraform/modules/my_module"
+modules:
+  my_module: {}
+version: 2

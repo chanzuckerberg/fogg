@@ -2,14 +2,14 @@ SHA=$(shell git rev-parse --short HEAD)
 VERSION=$(shell cat VERSION)
 DIRTY=false
 # TODO add release flag
-GO_PACKAGE=$(shell go list)
+GO_PACKAGE=$(shell go list -m)
 LDFLAGS=-ldflags "-w -s -X $(GO_PACKAGE)/util.GitSha=${SHA} -X $(GO_PACKAGE)/util.Version=${VERSION} -X $(GO_PACKAGE)/util.Dirty=${DIRTY}"
 export GO111MODULE=on
 
 all: test install
 
 fmt:
-	~/go/bin/goimports -w -l $(shell find . -type f -name '*.go' -not -path "./node_modules/*")
+	goimports -w -l $(shell find . -type f -name '*.go' -not -path "./node_modules/*")
 .PHONY: fmt
 
 lint-setup: ## setup linter dependencies
@@ -52,36 +52,40 @@ lint-all: lint-setup ## run the fast go linters
 TEMPLATES := $(shell find templates -not -name "*.go")
 
 build: fmt ## build the binary
-	go build ${LDFLAGS} .
+	go build ${LDFLAGS} -o fogg ./cmd/fogg
+	go build ${LDFLAGS} -o grid-sync ./cmd/grid-sync
 .PHONY: build
 
 coverage: ## run the go coverage tool, reading file coverage.out
 	go tool cover -html=coverage.out
 .PHONY: coverage
 
+TEST_PACKAGES := $(shell go list -f '{{if .TestGoFiles}}{{.ImportPath}}{{end}}' ./...)
+
 test: fmt ## run tests
  ifeq (, $(shell which gotest))
-	go test -failfast -cover ./...
+	go test -failfast -cover $(TEST_PACKAGES)
  else
-	gotest -failfast -cover ./...
+	gotest -failfast -cover $(TEST_PACKAGES)
  endif
 .PHONY: test
 
 test-ci: ## run tests
-	go test -race -coverprofile=coverage.out -covermode=atomic ./...
+	go test -race -coverprofile=coverage.out -covermode=atomic $(TEST_PACKAGES)
 .PHONY: test-ci
 
 test-offline: ## run only tests that don't require internet
-	go test -tags=offline ./...
+	go test -tags=offline $(TEST_PACKAGES)
 .PHONY: test-offline
 
 test-coverage: ## run the test with proper coverage reporting
-	go test -race -coverprofile=coverage.out -covermode=atomic ./...
+	go test -race -coverprofile=coverage.out -covermode=atomic $(TEST_PACKAGES)
 	go tool cover -html=coverage.out
 .PHONY: test-coverage
 
 install: ## install the fogg binary in $GOPATH/bin
-	go install ${LDFLAGS} .
+	go install ${LDFLAGS} ./cmd/fogg
+	go install ${LDFLAGS} ./cmd/grid-sync
 .PHONY: install
 
 help: ## display help for this makefile

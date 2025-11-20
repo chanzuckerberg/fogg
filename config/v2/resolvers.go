@@ -55,6 +55,18 @@ func lastNonNilStringSlice(getter func(Common) []string, commons ...Common) []st
 	return s
 }
 
+// lastNonNilDependencyList, despite its name can return nil if all results are nil
+func lastNonNilDependencyList(getter func(Common) DependencyList, commons ...Common) DependencyList {
+	var s DependencyList
+	for _, c := range commons {
+		t := getter(c)
+		if t != nil {
+			s = t
+		}
+	}
+	return s
+}
+
 // ResolveRequiredString will resolve the value and panic if it is nil. Only to be used after validations are run.
 func ResolveRequiredString(getter func(Common) *string, commons ...Common) string {
 	return *lastNonNil(getter, commons...)
@@ -71,6 +83,10 @@ func ResolveOptionalString(getter func(Common) *string, commons ...Common) *stri
 
 func ResolveOptionalStringSlice(getter func(Common) []string, commons ...Common) []string {
 	return lastNonNilStringSlice(getter, commons...)
+}
+
+func ResolveDependencyList(getter func(Common) DependencyList, commons ...Common) DependencyList {
+	return lastNonNilDependencyList(getter, commons...)
 }
 
 func ResolveStringArray(def []string, override []string) []string {
@@ -1369,14 +1385,14 @@ func CircleCISSHFingerprintsGetter(comm Common) []string {
 	return comm.Tools.CircleCI.SSHKeyFingerprints
 }
 
-func DependsOnAccountsGetter(comm Common) []string {
+func DependsOnAccountsGetter(comm Common) DependencyList {
 	if comm.DependsOn == nil {
 		return nil
 	}
 	return comm.DependsOn.Accounts
 }
 
-func DependsOnComponentsGetter(comm Common) []string {
+func DependsOnComponentsGetter(comm Common) DependencyList {
 	if comm.DependsOn == nil {
 		return nil
 	}

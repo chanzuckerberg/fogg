@@ -85,8 +85,7 @@ variable "tags" {
     service    = "global"
     owner      = "foo@example.com"
     tfstateKey = "terraform/foofoo/global.tfstate"
-
-    managedBy = "terraform"
+    managedBy  = "terraform"
   }
 }
 # tflint-ignore: terraform_unused_declarations

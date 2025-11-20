@@ -16,6 +16,15 @@
     workspaces {
       name = "{{ .Remote.Workspace }}"
     }
+  {{ else if eq .Kind "http" }}
+    address = "{{ .HTTP.Address }}"
+    {{ if .HTTP.LockAddress }}lock_address = "{{ .HTTP.LockAddress }}"{{ end }}
+    {{ if .HTTP.UnlockAddress }}unlock_address = "{{ .HTTP.UnlockAddress }}"{{ end }}
+    {{ if .HTTP.UpdateMethod }}update_method = "{{ .HTTP.UpdateMethod }}"{{ end }}
+    {{ if .HTTP.LockMethod }}lock_method = "{{ .HTTP.LockMethod }}"{{ end }}
+    {{ if .HTTP.UnlockMethod }}unlock_method = "{{ .HTTP.UnlockMethod }}"{{ end }}
+    {{ if .HTTP.Username }}username = "{{ .HTTP.Username }}"{{ end }}
+    {{ if .HTTP.Password }}password = "{{ .HTTP.Password }}"{{ end }}
   {{ end }}
   }
 {{ end }}
@@ -36,5 +45,14 @@
     workspaces = {
       name = "{{ .Remote.Workspace }}"
     }
+  {{ else if eq .Kind "http" }}
+    address = "{{ .HTTP.Address }}"
+    {{ if .HTTP.LockAddress }}lock_address = "{{ .HTTP.LockAddress }}"{{ end }}
+    {{ if .HTTP.UnlockAddress }}unlock_address = "{{ .HTTP.UnlockAddress }}"{{ end }}
+    {{ if .HTTP.UpdateMethod }}update_method = "{{ .HTTP.UpdateMethod }}"{{ end }}
+    {{ if .HTTP.LockMethod }}lock_method = "{{ .HTTP.LockMethod }}"{{ end }}
+    {{ if .HTTP.UnlockMethod }}unlock_method = "{{ .HTTP.UnlockMethod }}"{{ end }}
+    {{ if .HTTP.Username }}username = "{{ .HTTP.Username }}"{{ end }}
+    {{ if .HTTP.Password }}password = "{{ .HTTP.Password }}"{{ end }}
   {{ end }}
 {{ end }}

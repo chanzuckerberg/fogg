@@ -126,8 +126,10 @@ variable "tags" {
     {{- with .Backend }}
     {{- if eq .Kind "s3" }}
     tfstateKey = "{{ .S3.KeyPath }}"
-    {{ else if eq .Kind "remote" }}
+    {{- else if eq .Kind "remote" }}
     tfstateKey = "{{ .Remote.HostName }}/{{ .Remote.Organization }}/{{ .Remote.Workspace }}"
+    {{- else if eq .Kind "http" }}
+    tfstateKey = "{{ .HTTP.LogicalID }}"
     {{- end }}
     {{- end }}
     managedBy = "terraform"

@@ -1,0 +1,9 @@
+guid: 44444444-5555-6666-7777-888888888888
+logicalId: proj-test-cluster
+labels:
+    managed-by: fogg
+dependencies:
+    - guid: 11111111-2222-3333-4444-555555555555
+      output: private_subnet_ids
+    - guid: 11111111-2222-3333-4444-555555555555
+      output: vpc_id

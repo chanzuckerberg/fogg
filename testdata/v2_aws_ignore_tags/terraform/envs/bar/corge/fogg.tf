@@ -109,8 +109,7 @@ variable "tags" {
     service    = "corge"
     owner      = "foo@example.com"
     tfstateKey = "terraform/proj/envs/bar/components/corge.tfstate"
-
-    managedBy = "terraform"
+    managedBy  = "terraform"
   }
 }
 variable "foo" {

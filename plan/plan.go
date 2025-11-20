@@ -16,7 +16,11 @@ import (
 
 	"github.com/go-git/go-git/v5"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/afero"
 	yaml "gopkg.in/yaml.v3"
+
+	"github.com/chanzuckerberg/fogg/config/markers"
+	"github.com/google/uuid"
 )
 
 // Plan represents a set of actions to take
@@ -71,6 +75,8 @@ type ComponentCommon struct {
 	TravisCI        TravisCIComponent
 	CircleCI        CircleCIComponent
 	GitHubActionsCI GitHubActionsComponent
+
+	Grid *v2.GridConfig `yaml:"grid,omitempty"`
 }
 
 type TravisCIComponent struct {
@@ -312,6 +318,7 @@ const (
 	// BackendKindS3 is https://www.terraform.io/docs/backends/types/s3.html
 	BackendKindS3     BackendKind = "s3"
 	BackendKindRemote BackendKind = "remote"
+	BackendKindHTTP   BackendKind = "http"
 )
 
 // Backend represents a plan for configuring the terraform backend. Only one struct member can be
@@ -320,6 +327,7 @@ type Backend struct {
 	Kind   BackendKind    `yaml:"kind"`
 	S3     *S3Backend     `yaml:"s3,omitempty"`
 	Remote *RemoteBackend `yaml:"remote,omitempty"`
+	HTTP   *HTTPBackend   `yaml:"http,omitempty"`
 }
 
 // S3Backend represents aws backend configuration
@@ -339,6 +347,20 @@ type RemoteBackend struct {
 	HostName     string `yaml:"host_name"`
 	Organization string `yaml:"organization"`
 	Workspace    string `yaml:"workspace"`
+}
+
+// HTTPBackend represents a plan to configure a terraform http backend
+type HTTPBackend struct {
+	BaseAddress   *string `yaml:"base_address,omitempty"`
+	Address       *string `yaml:"address,omitempty"`
+	LockAddress   *string `yaml:"lock_address,omitempty"`
+	UnlockAddress *string `yaml:"unlock_address,omitempty"`
+	UpdateMethod  *string `yaml:"update_method,omitempty"`
+	LockMethod    *string `yaml:"lock_method,omitempty"`
+	UnlockMethod  *string `yaml:"unlock_method,omitempty"`
+	Username      *string `yaml:"username,omitempty"`
+	Password      *string `yaml:"password,omitempty"`
+	LogicalID     string  `yaml:"logical_id,omitempty"` // Grid logical ID for tfstateKey
 }
 
 // Module is a module
@@ -392,7 +414,7 @@ type TfLint struct {
 }
 
 // Eval evaluates a config
-func Eval(c *v2.Config) (*Plan, error) {
+func Eval(fs afero.Fs, c *v2.Config) (*Plan, error) {
 	if c == nil {
 		return nil, errors.New("config is nil")
 	}
@@ -404,9 +426,9 @@ func Eval(c *v2.Config) (*Plan, error) {
 	p.Version = v
 
 	var err error
-	p.Global = p.buildGlobal(c)
-	p.Accounts = p.buildAccounts(c)
-	p.Envs, err = p.buildEnvs(c)
+	p.Global = p.buildGlobal(fs, c)
+	p.Accounts = p.buildAccounts(fs, c)
+	p.Envs, err = p.buildEnvs(fs, c)
 	if err != nil {
 		return nil, err
 	}
@@ -418,7 +440,7 @@ func Eval(c *v2.Config) (*Plan, error) {
 	p.CircleCI = p.buildCircleCIConfig(c, v)
 	p.GitHubActionsCI = p.buildGitHubActionsConfig(c, v)
 	p.Atlantis = p.buildAtlantisConfig(c)
-	p.TFE, err = p.buildTFE(c)
+	p.TFE, err = p.buildTFE(fs, c)
 	if err != nil {
 		return p, err
 	}
@@ -462,7 +484,7 @@ func parseGithubOrgRepoFromGit(path string) (string, string, error) {
 	return "", "", errors.New("unable to find a valid origin remote URL")
 }
 
-func (p *Plan) buildTFE(c *v2.Config) (*TFEConfig, error) {
+func (p *Plan) buildTFE(fs afero.Fs, c *v2.Config) (*TFEConfig, error) {
 	if c.TFE == nil {
 		return nil, nil
 	}
@@ -477,7 +499,8 @@ func (p *Plan) buildTFE(c *v2.Config) (*TFEConfig, error) {
 		ExcludedGithubRequiredChecks:   []string{},
 		AdditionalGithubRequiredChecks: []string{},
 	}
-	tfeConfig.ComponentCommon = resolveComponentCommon(c.Defaults.Common, c.Global.Common, c.TFE.Common)
+
+	tfeConfig.ComponentCommon = resolveComponentCommon(fs, "terraform/tfe", c.Defaults.Common, c.Global.Common, c.TFE.Common)
 	tfeConfig.ModuleSource = c.TFE.ModuleSource
 	tfeConfig.ModuleName = c.TFE.ModuleName
 
@@ -485,6 +508,8 @@ func (p *Plan) buildTFE(c *v2.Config) (*TFEConfig, error) {
 		tfeConfig.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/%s.tfstate", "tfe", "tfe")
 	} else if tfeConfig.ComponentCommon.Backend.Kind == BackendKindRemote {
 		tfeConfig.ComponentCommon.Backend.Remote.Workspace = "tfe"
+	} else if tfeConfig.ComponentCommon.Backend.Kind == BackendKindHTTP {
+		// HTTP backend logic is handled in resolveComponentCommon
 	} else {
 		panic(fmt.Sprintf("Invalid backend kind of %s", tfeConfig.ComponentCommon.Backend.Kind))
 	}
@@ -523,14 +548,15 @@ func (p *Plan) buildTFE(c *v2.Config) (*TFEConfig, error) {
 	return tfeConfig, nil
 }
 
-func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
+func (p *Plan) buildAccounts(fs afero.Fs, c *v2.Config) map[string]Account {
 	defaults := c.Defaults
 
 	accountPlans := make(map[string]Account, len(c.Accounts))
 	for name, acct := range c.Accounts {
 		accountPlan := Account{}
 
-		accountPlan.ComponentCommon = resolveComponentCommon(defaults.Common, acct.Common)
+		path := fmt.Sprintf("terraform/accounts/%s", name)
+		accountPlan.ComponentCommon = resolveComponentCommon(fs, path, defaults.Common, acct.Common)
 		accountPlan.Name = name
 		accountPlan.Account = name // for backwards compat
 		accountPlan.Env = "accounts"
@@ -539,6 +565,9 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 			accountPlan.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/accounts/%s.tfstate", accountPlan.ComponentCommon.Project, name)
 		} else if accountPlan.ComponentCommon.Backend.Kind == BackendKindRemote {
 			accountPlan.ComponentCommon.Backend.Remote.Workspace = fmt.Sprintf("accounts-%s", name)
+		} else if accountPlan.ComponentCommon.Backend.Kind == BackendKindHTTP {
+			// HTTP backend logic is handled in resolveComponentCommon, but set LogicalID here
+			accountPlan.ComponentCommon.Backend.HTTP.LogicalID = fmt.Sprintf("%s-accounts-%s", accountPlan.ComponentCommon.Project, name)
 		} else {
 			panic(fmt.Sprintf("Invalid backend kind of %s", accountPlan.ComponentCommon.Backend.Kind))
 		}
@@ -555,7 +584,8 @@ func (p *Plan) buildAccounts(c *v2.Config) map[string]Account {
 	}
 
 	for name, acct := range c.Accounts {
-		accountRemoteStates := v2.ResolveOptionalStringSlice(v2.DependsOnAccountsGetter, defaults.Common, acct.Common)
+		accountDependencies := v2.ResolveDependencyList(v2.DependsOnAccountsGetter, defaults.Common, acct.Common)
+		accountRemoteStates := dependencyListKeys(accountDependencies)
 		a := accountPlans[name]
 		filtered := map[string]Backend{}
 
@@ -650,19 +680,23 @@ func newEnvPlan() Env {
 	return ep
 }
 
-func (p *Plan) buildGlobal(conf *v2.Config) Component {
+func (p *Plan) buildGlobal(fs afero.Fs, conf *v2.Config) Component {
 	// Global just uses defaults because that's the way sicc worked. We should make it directly configurable.
 	componentPlan := Component{}
 	componentPlan.Accounts = resolveAccounts(conf.Accounts)
 	defaults := conf.Defaults
 	global := conf.Global
 
-	componentPlan.ComponentCommon = resolveComponentCommon(defaults.Common, global.Common)
+	path := "terraform/global"
+	componentPlan.ComponentCommon = resolveComponentCommon(fs, path, defaults.Common, global.Common)
 
 	if componentPlan.ComponentCommon.Backend.Kind == BackendKindS3 {
 		componentPlan.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/global.tfstate", componentPlan.ComponentCommon.Project)
 	} else if componentPlan.ComponentCommon.Backend.Kind == BackendKindRemote {
 		componentPlan.ComponentCommon.Backend.Remote.Workspace = "global"
+	} else if componentPlan.ComponentCommon.Backend.Kind == BackendKindHTTP {
+		// HTTP backend logic is handled in resolveComponentCommon, but set LogicalID here
+		componentPlan.ComponentCommon.Backend.HTTP.LogicalID = fmt.Sprintf("%s-global", componentPlan.ComponentCommon.Project)
 	}
 
 	componentPlan.Name = "global"
@@ -673,7 +707,7 @@ func (p *Plan) buildGlobal(conf *v2.Config) Component {
 }
 
 // buildEnvs must be build after accounts
-func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
+func (p *Plan) buildEnvs(fs afero.Fs, conf *v2.Config) (map[string]Env, error) {
 	envPlans := make(map[string]Env, len(conf.Envs))
 	defaults := conf.Defaults
 
@@ -690,8 +724,10 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 				return nil, errs.WrapUser(fmt.Errorf("Component %s can't have same name as account", componentName), "Invalid component name")
 			}
 
-			componentPlan.ComponentCommon = resolveComponentCommon(defaults.Common, envConf.Common, componentConf.Common)
-			accountRemoteStates := v2.ResolveOptionalStringSlice(v2.DependsOnAccountsGetter, defaults.Common, envConf.Common, componentConf.Common)
+			path := fmt.Sprintf("terraform/envs/%s/%s", envName, componentName)
+			componentPlan.ComponentCommon = resolveComponentCommon(fs, path, defaults.Common, envConf.Common, componentConf.Common)
+			accountDependencies := v2.ResolveDependencyList(v2.DependsOnAccountsGetter, defaults.Common, envConf.Common, componentConf.Common)
+			accountRemoteStates := dependencyListKeys(accountDependencies)
 			accountBackends := map[string]Backend{}
 			for k, v := range p.Accounts {
 				if accountRemoteStates == nil || util.SliceContainsString(accountRemoteStates, k) {
@@ -706,6 +742,9 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 				componentPlan.ComponentCommon.Backend.S3.KeyPath = fmt.Sprintf("terraform/%s/envs/%s/components/%s.tfstate", componentPlan.ComponentCommon.Project, envName, componentName)
 			} else if componentPlan.ComponentCommon.Backend.Kind == BackendKindRemote {
 				componentPlan.ComponentCommon.Backend.Remote.Workspace = fmt.Sprintf("%s-%s", envName, componentName)
+			} else if componentPlan.ComponentCommon.Backend.Kind == BackendKindHTTP {
+				// HTTP backend logic is handled in resolveComponentCommon, but set LogicalID here
+				componentPlan.ComponentCommon.Backend.HTTP.LogicalID = fmt.Sprintf("%s-%s-%s", componentPlan.ComponentCommon.Project, envName, componentName)
 			} else {
 				panic(fmt.Sprintf("Invalid backend kind of %s", componentPlan.ComponentCommon.Backend.Kind))
 			}
@@ -783,7 +822,8 @@ func (p *Plan) buildEnvs(conf *v2.Config) (map[string]Env, error) {
 		}
 
 		for name, componentConf := range conf.Envs[envName].Components {
-			componentRemoteStates := v2.ResolveOptionalStringSlice(v2.DependsOnComponentsGetter, defaults.Common, envConf.Common, componentConf.Common)
+			componentDependencies := v2.ResolveDependencyList(v2.DependsOnComponentsGetter, defaults.Common, envConf.Common, componentConf.Common)
+			componentRemoteStates := dependencyListKeys(componentDependencies)
 			c := envPlan.Components[name]
 			filtered := map[string]Backend{}
 
@@ -886,7 +926,7 @@ func resolveAWSProvider(commons ...v2.Common) (plan *AWSProvider, providers []AW
 	return
 }
 
-func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
+func resolveComponentCommon(fs afero.Fs, path string, commons ...v2.Common) ComponentCommon {
 	providerVersions := copyMap(utilityProviders)
 	awsPlan, additionalProviders, awsVersion := resolveAWSProvider(commons...)
 	if awsVersion != nil {
@@ -1366,11 +1406,56 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 	}
 
 	project := v2.ResolveRequiredString(v2.ProjectGetter, commons...)
+	gridConf := v2.ResolveGrid(commons...)
 
 	backendConf := v2.ResolveBackend(commons...)
 	var backend Backend
 
-	if backendConf != nil {
+	// Check Grid first - if Grid is enabled, always use HTTP backend
+	if gridConf != nil && gridConf.Enabled != nil && *gridConf.Enabled {
+		if gridConf.Endpoint == nil || *gridConf.Endpoint == "" {
+			panic(fmt.Sprintf("grid endpoint missing for %s; validation should have enforced this", path))
+		}
+		endpoint := *gridConf.Endpoint
+
+		guid := ""
+		if gridConf.GUID != nil && *gridConf.GUID != "" {
+			guid = *gridConf.GUID
+		} else {
+			// Try to load from marker
+			markerPath := filepath.Join(path, ".grid-state.yaml")
+			exists, err := afero.Exists(fs, markerPath)
+			if err == nil && exists {
+				m, err := markers.LoadMarker(markerPath)
+				if err == nil && m.GUID != "" {
+					guid = m.GUID
+				}
+			}
+			// If still empty, generate new v7 UUID
+			if guid == "" {
+				newUUID, err := uuid.NewV7()
+				if err != nil {
+					panic(fmt.Sprintf("failed to generate UUID v7: %v", err))
+				}
+				guid = newUUID.String()
+			}
+		}
+
+		// Update the Grid config with the resolved GUID so it can be used by applyGrid
+		if gridConf.GUID == nil || *gridConf.GUID == "" {
+			gridConf.GUID = &guid
+		}
+
+		backend = Backend{
+			Kind: BackendKindHTTP,
+			HTTP: &HTTPBackend{
+				Address:       ptr.String(fmt.Sprintf("%s/tfstate/%s", endpoint, guid)),
+				LockAddress:   ptr.String(fmt.Sprintf("%s/tfstate/%s/lock", endpoint, guid)),
+				UnlockAddress: ptr.String(fmt.Sprintf("%s/tfstate/%s/unlock", endpoint, guid)),
+			},
+		}
+	} else if backendConf != nil {
+		// Use explicit backend configuration
 		if *backendConf.Kind == "s3" {
 			var roleArn *string
 			if backendConf.Role != nil {
@@ -1396,6 +1481,21 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 				Remote: &RemoteBackend{
 					HostName:     *backendConf.HostName,
 					Organization: *backendConf.Organization,
+				},
+			}
+		} else if *backendConf.Kind == "http" {
+			backend = Backend{
+				Kind: BackendKindHTTP,
+				HTTP: &HTTPBackend{
+					BaseAddress:   backendConf.BaseAddress,
+					Address:       backendConf.Address,
+					LockAddress:   backendConf.LockAddress,
+					UnlockAddress: backendConf.UnlockAddress,
+					UpdateMethod:  backendConf.UpdateMethod,
+					LockMethod:    backendConf.LockMethod,
+					UnlockMethod:  backendConf.UnlockMethod,
+					Username:      backendConf.Username,
+					Password:      backendConf.Password,
 				},
 			}
 		}
@@ -1432,6 +1532,7 @@ func resolveComponentCommon(commons ...v2.Common) ComponentCommon {
 		CircleCI:            circlePlan,
 		GitHubActionsCI:     githubActionsPlan,
 		PackageJsonFields:   make(map[string]any, 0),
+		Grid:                gridConf,
 	}
 }
 
@@ -1462,4 +1563,18 @@ func copyMap(in map[string]ProviderVersion) map[string]ProviderVersion {
 		out[k] = v
 	}
 	return out
+}
+
+// dependencyListKeys extracts the keys from a DependencyList map
+// Keys are sorted to ensure deterministic output across runs
+func dependencyListKeys(deps v2.DependencyList) []string {
+	if deps == nil {
+		return nil
+	}
+	keys := make([]string, 0, len(deps))
+	for k := range deps {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
 }

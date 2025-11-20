@@ -866,7 +866,7 @@ func TestApplyEnvsWithFilter(t *testing.T) {
 		},
 	}
 
-	plan, err := plan.Eval(conf)
+	plan, err := plan.Eval(dest, conf)
 	r.NoError(err)
 	envFilter := "env1"
 
@@ -912,7 +912,7 @@ func TestApplyEnvsWithCompFilter(t *testing.T) {
 		},
 	}
 
-	plan, err := plan.Eval(conf)
+	plan, err := plan.Eval(nil, conf)
 	r.NoError(err)
 
 	tests := []struct {

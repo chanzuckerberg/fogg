@@ -40,7 +40,7 @@ var planCmd = &cobra.Command{
 			return e
 		}
 
-		p, e := plan.Eval(config)
+		p, e := plan.Eval(fs, config)
 		if e != nil {
 			return e
 		}

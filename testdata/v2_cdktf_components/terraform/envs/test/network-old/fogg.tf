@@ -113,8 +113,7 @@ variable "tags" {
     service    = "network-old"
     owner      = "foo@example.com"
     tfstateKey = "terraform/proj/envs/test/components/network-old.tfstate"
-
-    managedBy = "terraform"
+    managedBy  = "terraform"
   }
 }
 # tflint-ignore: terraform_unused_declarations

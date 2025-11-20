@@ -51,6 +51,7 @@ func (c *Config) Validate(fs afero.Fs) ([]string, error) {
 	errs = multierror.Append(errs, c.validateInheritedStringField("project", ProjectGetter, nonEmptyString))
 	errs = multierror.Append(errs, c.validateInheritedStringField("terraform version", TerraformVersionGetter, nonEmptyString))
 	errs = multierror.Append(errs, c.ValidateBackends())
+	errs = multierror.Append(errs, c.ValidateGrid())
 	errs = multierror.Append(errs, c.validateAWSProviderAuth())
 	errs = multierror.Append(errs, c.ValidateAWSProviders())
 	errs = multierror.Append(errs, c.ValidateSnowflakeProviders())
@@ -178,6 +179,35 @@ func (c *Config) ValidateBackends() error {
 			errs = multierror.Append(errs, e)
 		}
 	})
+	return errs.ErrorOrNil()
+}
+
+func (c *Config) ValidateGrid() error {
+	var errs *multierror.Error
+
+	c.WalkComponents(func(component string, commons ...Common) {
+		grid := ResolveGrid(commons...)
+		if grid == nil {
+			return
+		}
+
+		// If Grid config exists but Enabled is nil, that's an error
+		if grid.Enabled == nil {
+			errs = multierror.Append(errs, fmt.Errorf("grid.enabled must be explicitly set (true/false) when grid config is present (component %s)", component))
+			return
+		}
+
+		// If not enabled, nothing else to validate
+		if !*grid.Enabled {
+			return
+		}
+
+		// If enabled, endpoint is required
+		if grid.Endpoint == nil || strings.TrimSpace(*grid.Endpoint) == "" {
+			errs = multierror.Append(errs, fmt.Errorf("grid endpoint must be set when grid is enabled (component %s)", component))
+		}
+	})
+
 	return errs.ErrorOrNil()
 }
 
