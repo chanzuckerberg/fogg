@@ -1,0 +1,150 @@
+accounts:
+  bar:
+    depends_on:
+      accounts:
+        - foo
+        - bar
+      components: []
+    providers:
+      aws:
+        account_id: 00456
+        additional_regions:
+          - us-east-1
+          - us-east-2
+        role: foo
+        additional_providers:
+          another_account_different_role:
+            account_id: 789
+            role: different_role
+          another_account_same_role:
+            account_id: different_account
+          another_account_more_regions:
+            account_id: another_different_account
+            additional_regions:
+              - eu-west-2
+      bless:
+        role_arn: arn:aws:iam::1234567890:role/roll
+        version: 0.4.2
+        aws_region: us-west-2
+  foo:
+    needs_aws_accounts_variable: true
+    providers:
+      aws:
+        account_id: 123
+        role: roll
+      bless:
+        aws_profile: prof
+        version: 0.4.2
+        aws_region: us-west-2
+    depends_on:
+      accounts: []
+      components: []
+defaults:
+  needs_default_tf_providers:
+    - tls
+  needs_aws_accounts_variable: false
+  backend:
+    bucket: buck
+    profile: profile
+    region: us-west-2
+  extra_vars:
+    foo: bar1
+  owner: foo2@example.com
+  project: proj
+  providers:
+    aws:
+      account_id: 00456
+      profile: profile
+      region: us-west-2
+      version: 0.12.0
+  terraform_version: 0.100.0
+  tools:
+    github_actions_ci:
+      enabled: true
+      command: lint
+      aws_iam_role_name: foo
+      ssh_key_secrets:
+        - SHARED_INFRA_DEPLOY_KEY
+        - SHARED_INFRA_DEPLOY_KEY2
+      env:
+        FOO: bar
+envs:
+  prod:
+    components:
+      hero:
+        providers:
+          heroku: {}
+          grafana:
+            enabled: true
+            version: 1.1.1
+        depends_on:
+          accounts: []
+          components: []
+      datadog:
+        providers:
+          datadog: {}
+      sentry:
+        providers:
+          sentry:
+            version: 1.2.3
+        depends_on:
+          accounts:
+            - foo
+            - bar
+          components:
+            - okta
+            - hero
+      okta:
+        providers:
+          okta:
+            org_name: foo
+            base_url: https://foo.okta.com/
+            registry_namespace: acme
+      vpc:
+        module_source: github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0
+        module_name: prod-vpc
+        provider_aliases:
+          "aws.alias1": "aws.alias2"
+          "aws.alias3": "aws.alias4"
+      kafka:
+        providers:
+          kafka:
+            version: 0.9.0
+  staging:
+    backend:
+      kind: remote
+      host_name: example.com
+      organization: foo
+    components:
+      comp1:
+        backend:
+          profile: comp1
+      comp2: {}
+      vpc:
+        extra_vars:
+          foo: bar3
+        module_source: github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0
+      k8s-comp:
+        providers:
+          kubernetes:
+            enabled: true
+            cluster_component_name: comp1
+            version: 2.19.0
+          helm:
+            enabled: true
+          kubectl:
+            enabled: true
+    extra_vars:
+      foo: bar2
+modules:
+  my_module: {}
+plugins:
+  custom_plugins:
+    custom:
+      format: zip
+      url: https://example.com/custom.zip
+  terraform_providers:
+    provider:
+      format: tar
+      url: https://example.com/provider.tar.gz
+version: 2

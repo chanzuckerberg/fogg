@@ -2,7 +2,6 @@ package apply_test
 
 import (
 	"flag"
-	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -22,6 +21,7 @@ func TestIntegration(t *testing.T) {
 	var testCases = []struct {
 		fileName string
 	}{
+		{"v2_full_yaml_no_default_providers"},
 		{"auth0_provider_yaml"},
 		{"okta_provider_yaml"},
 		{"github_provider_yaml"},
@@ -57,8 +57,6 @@ func TestIntegration(t *testing.T) {
 
 				conf, e := config.FindAndReadConfig(testdataFs, "fogg.yml")
 				r.NoError(e)
-				fmt.Printf("conf %#v\n", conf)
-				fmt.Println("READ CONFIG")
 
 				w, e := conf.Validate()
 				r.NoError(e)
@@ -85,7 +83,6 @@ func TestIntegration(t *testing.T) {
 
 				conf, e := config.FindAndReadConfig(fs, fileName)
 				r.NoError(e)
-				fmt.Printf("conf %#v\n", conf)
 
 				w, e := conf.Validate()
 				r.NoError(e)
@@ -95,11 +92,7 @@ func TestIntegration(t *testing.T) {
 				r.NoError(e)
 
 				r.NoError(afero.Walk(testdataFs, ".", func(path string, info os.FileInfo, err error) error {
-					logrus.Debug("================================================")
-					logrus.Debug(path)
-					if !info.Mode().IsRegular() {
-						logrus.Debug("dir or link")
-					} else {
+					if info.Mode().IsRegular() {
 						i1, e1 := testdataFs.Stat(path)
 						r.NotNil(i1)
 						r.NoError(e1)

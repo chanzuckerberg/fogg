@@ -92,7 +92,6 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 	r.NotNil(plan.Envs["staging"].Components["k8s-comp"].ProviderConfiguration.Kubernetes)
 	r.NotNil(plan.Envs["staging"].Components["k8s-comp"].ProviderConfiguration.Kubernetes.ClusterComponentName)
 
-	logrus.Debugf("%#v\n", plan.Envs["staging"].Components["vpc"].ModuleSource)
 	r.NotNil(*plan.Envs["staging"].Components["vpc"].ModuleSource)
 	r.Equal("github.com/terraform-aws-modules/terraform-aws-vpc?ref=v1.30.0", *plan.Envs["staging"].Components["vpc"].ModuleSource)
 	r.Nil(plan.Envs["staging"].Components["vpc"].ModuleName)
