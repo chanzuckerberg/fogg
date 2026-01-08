@@ -22,19 +22,19 @@ func TestIntegration(t *testing.T) {
 		fileName string
 	}{
 		{"v2_full_yaml_no_default_providers"},
-		// {"auth0_provider_yaml"},
-		// {"okta_provider_yaml"},
-		// {"github_provider_yaml"},
-		// {"bless_provider_yaml"},
-		// {"snowflake_provider_yaml"},
-		// {"v2_full_yaml"},
-		// {"v2_minimal_valid_yaml"},
-		// {"v2_no_aws_provider_yaml"},
-		// {"github_actions"},
-		// {"circleci"},
-		// {"tfe_provider_yaml"},
-		// {"remote_backend_yaml"},
-		//		{"tfe_config"},
+		{"auth0_provider_yaml"},
+		{"okta_provider_yaml"},
+		{"github_provider_yaml"},
+		{"bless_provider_yaml"},
+		{"snowflake_provider_yaml"},
+		{"v2_full_yaml"},
+		{"v2_minimal_valid_yaml"},
+		{"v2_no_aws_provider_yaml"},
+		{"github_actions"},
+		{"circleci"},
+		{"tfe_provider_yaml"},
+		{"remote_backend_yaml"},
+		{"tfe_config"},
 	}
 
 	for _, test := range testCases {
