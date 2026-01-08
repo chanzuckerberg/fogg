@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.92.35](https://github.com/chanzuckerberg/fogg/compare/v0.92.34...v0.92.35) (2026-01-08)
+
+
+### Features
+
+* allow people to set their own default providers ([#1159](https://github.com/chanzuckerberg/fogg/issues/1159)) ([79db395](https://github.com/chanzuckerberg/fogg/commit/79db395c2f1f4b71e784f7aefe39c7ceb4c8f579))
+
+
+### Misc
+
+* Bump github.com/go-git/go-git/v5 from 5.16.3 to 5.16.4 ([#1156](https://github.com/chanzuckerberg/fogg/issues/1156)) ([e4fdddd](https://github.com/chanzuckerberg/fogg/commit/e4fdddd144242178a29b59851f32a98afe76510a))
+* Bump github.com/hashicorp/go-version from 1.7.0 to 1.8.0 ([#1157](https://github.com/chanzuckerberg/fogg/issues/1157)) ([2e880f4](https://github.com/chanzuckerberg/fogg/commit/2e880f42192950efd4fd09fec29f2bddb99d0e14))
+* Bump github.com/spf13/cobra from 1.10.1 to 1.10.2 ([#1158](https://github.com/chanzuckerberg/fogg/issues/1158)) ([0655d53](https://github.com/chanzuckerberg/fogg/commit/0655d5324fd406c8b19cfbd0565765577cb8d6b4))
+* Bump golang.org/x/crypto from 0.41.0 to 0.45.0 ([#1153](https://github.com/chanzuckerberg/fogg/issues/1153)) ([b83e974](https://github.com/chanzuckerberg/fogg/commit/b83e97438470be00bb1911e5773ef00c324bfb46))
+
 ## [0.92.34](https://github.com/chanzuckerberg/fogg/compare/v0.92.33...v0.92.34) (2025-10-20)
 
 
