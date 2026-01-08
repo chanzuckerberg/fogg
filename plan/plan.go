@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
 
@@ -784,6 +785,26 @@ func resolveAWSProvider(commons ...v2.Common) (plan *AWSProvider, providers []AW
 
 func resolveComponentCommon(commons ...v2.Common) (ComponentCommon, error) {
 	providerVersions := copyMap(utilityProviders)
+
+	var allowListedProviders *map[string]ProviderVersion
+	for _, common := range commons {
+		if common.NeedsDefaultTFProviders == nil {
+			continue
+		}
+		if allowListedProviders == nil {
+			allowListedProviders = &map[string]ProviderVersion{}
+		}
+		for provider := range utilityProviders {
+			if slices.Contains(*common.NeedsDefaultTFProviders, provider) {
+				(*allowListedProviders)[provider] = utilityProviders[provider]
+			}
+		}
+	}
+
+	if allowListedProviders != nil {
+		providerVersions = *allowListedProviders
+	}
+
 	awsPlan, additionalProviders, awsVersion := resolveAWSProvider(commons...)
 	if awsVersion != nil {
 		providerVersions["aws"] = ProviderVersion{

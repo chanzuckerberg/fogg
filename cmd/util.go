@@ -8,7 +8,6 @@ import (
 	"github.com/chanzuckerberg/fogg/config"
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
-	"github.com/kr/pretty"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
@@ -29,8 +28,6 @@ func readAndValidateConfig(fs afero.Fs, configFile string) (*v2.Config, []string
 	if err != nil {
 		return nil, nil, err
 	}
-	logrus.Debug("CONFIG")
-	logrus.Debugf("%s\n=====", pretty.Sprint(conf))
 
 	warnings, e := conf.Validate()
 	return conf, warnings, e

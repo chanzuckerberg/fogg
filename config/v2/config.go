@@ -89,6 +89,7 @@ type Common struct {
 	TerraformVersion         *string                   `yaml:"terraform_version,omitempty"`
 	Tools                    *Tools                    `yaml:"tools,omitempty"`
 	NeedsAWSAccountsVariable *bool                     `yaml:"needs_aws_accounts_variable,omitempty"`
+	NeedsDefaultTFProviders  *[]string                 `yaml:"needs_default_tf_providers,omitempty"`
 	ExtraTemplates           *map[string]ExtraTemplate `yaml:"extra_templates,omitempty"`
 }
 

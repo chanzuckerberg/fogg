@@ -220,7 +220,6 @@ func applyTFE(fs afero.Fs, plan *plan.Plan, tmpl *templates.T) error {
 		return nil
 	}
 
-	logrus.Debug("applying tfe")
 	path := filepath.Join(rootPath, "tfe")
 	err := fs.MkdirAll(path, 0755)
 	if err != nil {
@@ -325,7 +324,6 @@ func applyExtraTemplates(fs afero.Fs, p plan.ComponentCommon, commonBox fs.FS, p
 }
 
 func applyGlobal(fs afero.Fs, p plan.Component, repoBox, commonBox fs.FS) error {
-	logrus.Debug("applying global")
 	path := fmt.Sprintf("%s/global", rootPath)
 	e := fs.MkdirAll(path, 0755)
 	if e != nil {
@@ -380,9 +378,7 @@ func applyEnvs(
 	envBox fs.FS,
 	componentBoxes map[v2.ComponentKind]fs.FS,
 	commonBox fs.FS) (err error) {
-	logrus.Debug("applying envs")
 	for env, envPlan := range p.Envs {
-		logrus.Debugf("applying %s", env)
 		path := fmt.Sprintf("%s/envs/%s", rootPath, env)
 		err = fs.MkdirAll(path, 0755)
 		if err != nil {
@@ -476,7 +472,6 @@ func applyTree(dest afero.Fs, source fs.FS, common fs.FS, targetBasePath string,
 			if e != nil && !os.IsNotExist(e) {
 				return errs.WrapUserf(e, "unable to remove %s", target)
 			}
-			logrus.Infof("%s removed", target)
 		} else if extension == ".ln" {
 			linkTargetBytes, err := io.ReadAll(sourceFile)
 			if err != nil {
@@ -495,7 +490,6 @@ func applyTree(dest afero.Fs, source fs.FS, common fs.FS, targetBasePath string,
 			if e != nil {
 				return errs.WrapUser(e, "unable to copy file")
 			}
-			logrus.Infof("%s copied", target)
 		}
 
 		return nil
@@ -532,7 +526,6 @@ func touchFile(dest afero.Fs, path string) error {
 
 	_, err = dest.Stat(path)
 	if err != nil { // TODO we might not want to do this for all errors
-		logrus.Infof("%s touched", path)
 		_, err = dest.Create(path)
 		if err != nil {
 			return errs.WrapUser(err, "unable to touch file")
@@ -546,7 +539,6 @@ func touchFile(dest afero.Fs, path string) error {
 func createFile(dest afero.Fs, path string, sourceFile io.Reader) error {
 	_, err := dest.Stat(path)
 	if err != nil { // TODO we might not want to do this for all errors
-		logrus.Infof("%s created", path)
 		err = afero.WriteReader(dest, path, sourceFile)
 		if err != nil {
 			return errs.WrapUser(err, "unable to create file")
@@ -569,7 +561,6 @@ func applyTemplate(sourceFile io.Reader, commonTemplates fs.FS, dest afero.Fs, p
 		return errs.WrapUserf(err, "couldn't create %s directory", dir)
 	}
 
-	logrus.Infof("%s templated", path)
 	writer, err := dest.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return errs.WrapUser(err, "unable to open file")
@@ -791,7 +782,6 @@ func getTargetPath(basePath, path string) string {
 }
 
 func linkFile(fs afero.Fs, name, target string) error {
-	logrus.Debugf("linking %s to %s", name, target)
 	linker, ok := fs.(afero.Symlinker)
 
 	if !ok {
@@ -799,11 +789,7 @@ func linkFile(fs afero.Fs, name, target string) error {
 	}
 
 	relativePath := filepathRel(name, target)
-	logrus.Debugf("relative link %s", relativePath)
-
-	logrus.Debugf("removing link at %s", name)
 	err := fs.Remove(name)
-	logrus.Debugf("error removing file %s (probably ok): %s", name, err)
 
 	_, err = linker.SymlinkIfPossible(relativePath, name)
 	return err

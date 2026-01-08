@@ -9,7 +9,6 @@ import (
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/util"
 	goVersion "github.com/hashicorp/go-version"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	yaml "gopkg.in/yaml.v3"
 )
@@ -76,7 +75,6 @@ func FindConfig(fs afero.Fs, configFile string) ([]byte, int, error) {
 	if err != nil {
 		return nil, 0, err
 	}
-	logrus.Debugf("config file version: %#v\n", v)
 	return b, v, nil
 }
 

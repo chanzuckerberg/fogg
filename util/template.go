@@ -9,7 +9,6 @@ import (
 	"github.com/Masterminds/sprig"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 )
 
 func dict(in interface{}) map[string]interface{} {
@@ -18,7 +17,6 @@ func dict(in interface{}) map[string]interface{} {
 		r := make(map[string]interface{})
 		for _, key := range v.MapKeys() {
 			strct := v.MapIndex(key)
-			logrus.Debug(key.Interface(), strct.Interface())
 			r[key.String()] = strct.Interface()
 		}
 		return r
