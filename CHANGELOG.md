@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.36](https://github.com/chanzuckerberg/fogg/compare/v0.92.35...v0.92.36) (2026-01-12)
+
+
+### Misc
+
+* Bump gopkg.in/ini.v1 from 1.67.0 to 1.67.1 ([#1160](https://github.com/chanzuckerberg/fogg/issues/1160)) ([b319613](https://github.com/chanzuckerberg/fogg/commit/b319613b0cc48d7212742c278702c112fad78a2b))
+
 ## [0.92.35](https://github.com/chanzuckerberg/fogg/compare/v0.92.34...v0.92.35) (2026-01-08)
 
 
