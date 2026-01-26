@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.92.36](https://github.com/chanzuckerberg/fogg/compare/v0.92.35...v0.92.36) (2026-01-26)
+
+
+### Misc
+
+* Bump github.com/sirupsen/logrus from 1.9.3 to 1.9.4 ([#1162](https://github.com/chanzuckerberg/fogg/issues/1162)) ([e3a5b3d](https://github.com/chanzuckerberg/fogg/commit/e3a5b3d00f29a1cc671c7770d4da10fc4b91ee7f))
+* Bump gopkg.in/ini.v1 from 1.67.0 to 1.67.1 ([#1160](https://github.com/chanzuckerberg/fogg/issues/1160)) ([b319613](https://github.com/chanzuckerberg/fogg/commit/b319613b0cc48d7212742c278702c112fad78a2b))
+
+
+### BugFixes
+
+* revert gitignore tflock files ([#1163](https://github.com/chanzuckerberg/fogg/issues/1163)) ([ee88d44](https://github.com/chanzuckerberg/fogg/commit/ee88d44c063bace8d2af36515409cd28f5a0dba9))
+
 ## [0.92.35](https://github.com/chanzuckerberg/fogg/compare/v0.92.34...v0.92.35) (2026-01-08)
 
 
