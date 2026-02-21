@@ -94,73 +94,55 @@ type Downloader struct {
 	Source string
 }
 
-// Changes a URL to use the git protocol over HTTPS instead of SSH.
-// If the URL was not a remote URL or an git/SSH protocol,
-// it will return the path that was passed in. If it does
-// convert it properly, it will add Github credentials to the path
-func convertSSHToGithubHTTPURL(sURL, token string) string {
-	// only detect the remote destinations
-	s, err := getter.Detect(sURL, token, []getter.Detector{
-		&getter.GitLabDetector{},
-		&getter.GitHubDetector{},
-		&getter.GitDetector{},
-		&getter.BitBucketDetector{},
-		&getter.S3Detector{},
-		&getter.GCSDetector{},
-	})
-	if err != nil {
-		logrus.Debug(err)
-		return sURL
-	}
-
-	splits := strings.Split(s, "git::ssh://git@")
-	if len(splits) != 2 {
-		return sURL
-	}
-	u, err := url.Parse(fmt.Sprintf("https://%s", splits[1]))
-	if err != nil {
-		logrus.Debug(err)
-		return sURL
-	}
-	u.User = url.User(token)
-
-	// we want to force the git protocol
-	return fmt.Sprintf("git::%s", u.String())
+var _gitDetectors = []getter.Detector{
+	&getter.GitLabDetector{},
+	&getter.GitHubDetector{},
+	&getter.GitDetector{},
+	&getter.BitBucketDetector{},
+	&getter.S3Detector{},
+	&getter.GCSDetector{},
 }
 
-// Changes a URL to use the git protocol over HTTPS instead of SSH.
-// This function should be used when using Github App credentials
-// since it requires the use of "x-access-token", as the user
-// which is not required by a Github Personal Access token.
-// This function returns a string to use and
-func convertSSHToGithubAppHTTPURL(sURL, token string) string {
-	// only detect the remote destinations
-	s, err := getter.Detect(sURL, token, []getter.Detector{
-		&getter.GitLabDetector{},
-		&getter.GitHubDetector{},
-		&getter.GitDetector{},
-		&getter.BitBucketDetector{},
-		&getter.S3Detector{},
-		&getter.GCSDetector{},
-	})
+// injectGitHubCredentials normalizes a module source URL and injects GitHub
+// credentials into it. Handles SSH (git@github.com:…), HTTPS
+// (git::https://github.com/…), and GitHub shorthand (github.com/…) formats.
+// Non-GitHub and local-path sources are returned unchanged.
+func injectGitHubCredentials(sURL string, userInfo *url.Userinfo) string {
+	s, err := getter.Detect(sURL, "", _gitDetectors)
 	if err != nil {
 		logrus.Debug(err)
 		return sURL
 	}
 
-	splits := strings.Split(s, "git::ssh://git@")
-	if len(splits) != 2 {
+	if !strings.Contains(s, "github.com") {
 		return sURL
 	}
-	u, err := url.Parse(fmt.Sprintf("https://%s", splits[1]))
-	if err != nil {
-		logrus.Debug(err)
-		return sURL
-	}
-	u.User = url.UserPassword("x-access-token", token)
 
-	// we want to force the git protocol
-	return fmt.Sprintf("git::%s", u)
+	// SSH: git::ssh://git@github.com/owner/repo…
+	if parts := strings.SplitN(s, "git::ssh://git@", 2); len(parts) == 2 {
+		u, err := url.Parse("https://" + parts[1])
+		if err != nil {
+			logrus.Debug(err)
+			return sURL
+		}
+		u.User = userInfo
+		return fmt.Sprintf("git::%s", u.String())
+	}
+
+	// HTTPS: git::https://github.com/owner/repo… (with or without existing creds)
+	if parts := strings.SplitN(s, "git::", 2); len(parts) == 2 {
+		u, err := url.Parse(parts[1])
+		if err != nil {
+			logrus.Debug(err)
+			return sURL
+		}
+		if u.Scheme == "https" {
+			u.User = userInfo
+			return fmt.Sprintf("git::%s", u.String())
+		}
+	}
+
+	return sURL
 }
 
 func MakeDownloader(src string) (*Downloader, error) {
@@ -174,9 +156,9 @@ func MakeDownloader(src string) (*Downloader, error) {
 		return nil, errs.WrapUser(err, "unable to parse Github tokens")
 	}
 	if httpAuth.GithubToken != nil {
-		src = convertSSHToGithubHTTPURL(src, *httpAuth.GithubToken)
+		src = injectGitHubCredentials(src, url.User(*httpAuth.GithubToken))
 	} else if httpAuth.GithubAppToken != nil {
-		src = convertSSHToGithubAppHTTPURL(src, *httpAuth.GithubAppToken)
+		src = injectGitHubCredentials(src, url.UserPassword("x-access-token", *httpAuth.GithubAppToken))
 	}
 	return &Downloader{Source: src}, nil
 }

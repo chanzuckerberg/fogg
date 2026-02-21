@@ -27,9 +27,16 @@ while IFS= read -r git_ref; do
         repo_url=$(echo "$full_ref" | cut -d'?' -f1)
         ref=$(echo "$full_ref" | sed -E 's/.*\?ref=//')
         
+        # Strip go-getter "git::" prefix if present
+        if [[ "$repo_url" == git::* ]]; then
+            repo_url="${repo_url#git::}"
+        fi
+
         # Convert SSH URLs to HTTPS for git ls-remote
         if [[ "$repo_url" == git@github.com:* ]]; then
             repo_url=$(echo "$repo_url" | sed 's/git@github.com:/https:\/\/github.com\//')
+        elif [[ "$repo_url" == ssh://git@github.com/* ]]; then
+            repo_url=$(echo "$repo_url" | sed 's|ssh://git@github.com/|https://github.com/|')
         elif [[ "$repo_url" == github.com/* ]]; then
             repo_url="https://$repo_url"
         fi
