@@ -140,11 +140,20 @@ func MakeTFEWorkspace(tfVersion string) *TFEWorkspace {
 	}
 }
 
+func tfVersionOrDefault(version, fallback string) string {
+	if version != "" {
+		return version
+	}
+	return fallback
+}
+
 func updateLocalsFromPlan(locals *LocalsTFE, p *plan.Plan) {
+	globalVersion := p.Global.TerraformVersion
+
 	// if there is a planned env or account that isn't in the locals, add it
 	for accountName, account := range p.Accounts {
 		if _, ok := locals.Locals.Accounts[accountName]; !ok && account.Backend.Kind == plan.BackendKindRemote {
-			locals.Locals.Accounts[accountName] = MakeTFEWorkspace(account.TerraformVersion)
+			locals.Locals.Accounts[accountName] = MakeTFEWorkspace(tfVersionOrDefault(account.TerraformVersion, globalVersion))
 		}
 	}
 	for envName := range p.Envs {
@@ -153,22 +162,27 @@ func updateLocalsFromPlan(locals *LocalsTFE, p *plan.Plan) {
 		}
 		for componentName, comp := range p.Envs[envName].Components {
 			if _, ok := locals.Locals.Envs[envName][componentName]; !ok && comp.Backend.Kind == plan.BackendKindRemote {
-				locals.Locals.Envs[envName][componentName] = MakeTFEWorkspace(comp.TerraformVersion)
+				locals.Locals.Envs[envName][componentName] = MakeTFEWorkspace(tfVersionOrDefault(comp.TerraformVersion, globalVersion))
 			}
 		}
 	}
 
+	// sync terraform_version for existing workspaces when the plan specifies one
 	for accountName, account := range p.Accounts {
-		if ws, ok := locals.Locals.Accounts[accountName]; ok && account.Backend.Kind == plan.BackendKindRemote && account.TerraformVersion != "" {
-			v := account.TerraformVersion
-			ws.TerraformVersion = &v
+		if ws, ok := locals.Locals.Accounts[accountName]; ok && account.Backend.Kind == plan.BackendKindRemote {
+			v := tfVersionOrDefault(account.TerraformVersion, globalVersion)
+			if v != "" {
+				ws.TerraformVersion = &v
+			}
 		}
 	}
 	for envName := range p.Envs {
 		for componentName, comp := range p.Envs[envName].Components {
-			if ws, ok := locals.Locals.Envs[envName][componentName]; ok && comp.Backend.Kind == plan.BackendKindRemote && comp.TerraformVersion != "" {
-				v := comp.TerraformVersion
-				ws.TerraformVersion = &v
+			if ws, ok := locals.Locals.Envs[envName][componentName]; ok && comp.Backend.Kind == plan.BackendKindRemote {
+				v := tfVersionOrDefault(comp.TerraformVersion, globalVersion)
+				if v != "" {
+					ws.TerraformVersion = &v
+				}
 			}
 		}
 	}
