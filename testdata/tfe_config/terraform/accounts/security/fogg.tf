@@ -52,14 +52,14 @@ provider "aws" {
 
 provider "assert" {}
 terraform {
-  required_version = "=1.9.8"
+  required_version = "=1.6.3"
 
   backend "remote" {
 
     hostname     = "si.prod.tfe.czi.technology"
     organization = "shared-infra"
     workspaces {
-      name = "staging-vpc"
+      name = "accounts-security"
     }
 
   }
@@ -126,7 +126,7 @@ terraform {
 # tflint-ignore: terraform_unused_declarations
 variable "env" {
   type    = string
-  default = "staging"
+  default = "accounts"
 }
 # tflint-ignore: terraform_unused_declarations
 variable "project" {
@@ -141,7 +141,12 @@ variable "region" {
 # tflint-ignore: terraform_unused_declarations
 variable "component" {
   type    = string
-  default = "vpc"
+  default = "security"
+}
+# tflint-ignore: terraform_unused_declarations
+variable "account" {
+  type    = string
+  default = "security"
 }
 # tflint-ignore: terraform_unused_declarations
 variable "owner" {
@@ -155,8 +160,8 @@ variable "tags" {
   type = object({ project : string, env : string, service : string, owner : string, managedBy : string })
   default = {
     project   = "foo"
-    env       = "staging"
-    service   = "vpc"
+    env       = "accounts"
+    service   = "security"
     owner     = "foo@example.com"
     managedBy = "terraform"
   }
@@ -171,46 +176,6 @@ data "terraform_remote_state" "global" {
     organization = "shared-infra"
     workspaces = {
       name = "global"
-    }
-
-  }
-}
-data "terraform_remote_state" "api" {
-  backend = "remote"
-  config = {
-
-
-    hostname     = "si.prod.tfe.czi.technology"
-    organization = "shared-infra"
-    workspaces = {
-      name = "staging-api"
-    }
-
-  }
-}
-data "terraform_remote_state" "comp1" {
-  backend = "s3"
-  config = {
-
-
-    bucket         = "buck2"
-    dynamodb_table = "blah"
-    key            = "terraform/foo/envs/staging/components/comp1.tfstate"
-    region         = "us-west-2"
-    profile        = "czi-tfe"
-
-
-  }
-}
-data "terraform_remote_state" "database" {
-  backend = "remote"
-  config = {
-
-
-    hostname     = "si.prod.tfe.czi.technology"
-    organization = "shared-infra"
-    workspaces = {
-      name = "staging-database"
     }
 
   }

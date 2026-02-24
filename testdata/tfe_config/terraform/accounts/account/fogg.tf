@@ -193,6 +193,19 @@ data "terraform_remote_state" "account" {
 
   }
 }
+data "terraform_remote_state" "security" {
+  backend = "remote"
+  config = {
+
+
+    hostname     = "si.prod.tfe.czi.technology"
+    organization = "shared-infra"
+    workspaces = {
+      name = "accounts-security"
+    }
+
+  }
+}
 # tflint-ignore: terraform_unused_declarations
 variable "aws_accounts" {
   type = map(string)

@@ -177,6 +177,32 @@ data "terraform_remote_state" "global" {
 
   }
 }
+data "terraform_remote_state" "api" {
+  backend = "remote"
+  config = {
+
+
+    hostname     = "si.prod.tfe.czi.technology"
+    organization = "shared-infra"
+    workspaces = {
+      name = "staging-api"
+    }
+
+  }
+}
+data "terraform_remote_state" "database" {
+  backend = "remote"
+  config = {
+
+
+    hostname     = "si.prod.tfe.czi.technology"
+    organization = "shared-infra"
+    workspaces = {
+      name = "staging-database"
+    }
+
+  }
+}
 data "terraform_remote_state" "vpc" {
   backend = "remote"
   config = {
@@ -199,6 +225,19 @@ data "terraform_remote_state" "account" {
     organization = "shared-infra"
     workspaces = {
       name = "accounts-account"
+    }
+
+  }
+}
+data "terraform_remote_state" "security" {
+  backend = "remote"
+  config = {
+
+
+    hostname     = "si.prod.tfe.czi.technology"
+    organization = "shared-infra"
+    workspaces = {
+      name = "accounts-security"
     }
 
   }

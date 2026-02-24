@@ -25,9 +25,15 @@ envs:
           account_id: "612168857605"
       vpc:
         terraform_version: 1.9.8
+      database:
+        terraform_version: 1.7.5
+      api:
+        terraform_version: 1.5.0
   comp2: {}
 accounts:
   account: {}
+  security:
+    terraform_version: 1.6.3
 tfe:
   terraform_version: 1.2.6
   gh_org: chanzuckerberg

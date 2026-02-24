@@ -1,7 +1,7 @@
 dependencies {
   paths = [
     "../api",
-    "../database",
+    "../comp1",
     "../vpc",
     "../../../accounts/account",
     "../../../accounts/security",

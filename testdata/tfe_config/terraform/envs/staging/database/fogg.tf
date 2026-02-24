@@ -52,14 +52,14 @@ provider "aws" {
 
 provider "assert" {}
 terraform {
-  required_version = "=1.9.8"
+  required_version = "=1.7.5"
 
   backend "remote" {
 
     hostname     = "si.prod.tfe.czi.technology"
     organization = "shared-infra"
     workspaces {
-      name = "staging-vpc"
+      name = "staging-database"
     }
 
   }
@@ -141,7 +141,7 @@ variable "region" {
 # tflint-ignore: terraform_unused_declarations
 variable "component" {
   type    = string
-  default = "vpc"
+  default = "database"
 }
 # tflint-ignore: terraform_unused_declarations
 variable "owner" {
@@ -156,7 +156,7 @@ variable "tags" {
   default = {
     project   = "foo"
     env       = "staging"
-    service   = "vpc"
+    service   = "database"
     owner     = "foo@example.com"
     managedBy = "terraform"
   }
@@ -202,7 +202,7 @@ data "terraform_remote_state" "comp1" {
 
   }
 }
-data "terraform_remote_state" "database" {
+data "terraform_remote_state" "vpc" {
   backend = "remote"
   config = {
 
@@ -210,7 +210,7 @@ data "terraform_remote_state" "database" {
     hostname     = "si.prod.tfe.czi.technology"
     organization = "shared-infra"
     workspaces = {
-      name = "staging-database"
+      name = "staging-vpc"
     }
 
   }
