@@ -144,8 +144,7 @@ func updateLocalsFromPlan(locals *LocalsTFE, p *plan.Plan) {
 	// if there is a planned env or account that isn't in the locals, add it
 	for accountName, account := range p.Accounts {
 		if _, ok := locals.Locals.Accounts[accountName]; !ok && account.Backend.Kind == plan.BackendKindRemote {
-
-			locals.Locals.Accounts[accountName] = MakeTFEWorkspace(p.Global.Common.TerraformVersion)
+			locals.Locals.Accounts[accountName] = MakeTFEWorkspace(account.Common.TerraformVersion)
 		}
 	}
 	for envName := range p.Envs {
@@ -154,7 +153,23 @@ func updateLocalsFromPlan(locals *LocalsTFE, p *plan.Plan) {
 		}
 		for componentName, comp := range p.Envs[envName].Components {
 			if _, ok := locals.Locals.Envs[envName][componentName]; !ok && comp.Backend.Kind == plan.BackendKindRemote {
-				locals.Locals.Envs[envName][componentName] = MakeTFEWorkspace(p.Global.Common.TerraformVersion)
+				locals.Locals.Envs[envName][componentName] = MakeTFEWorkspace(comp.Common.TerraformVersion)
+			}
+		}
+	}
+
+	// sync terraform_version for existing workspaces when the plan specifies one
+	for accountName, account := range p.Accounts {
+		if ws, ok := locals.Locals.Accounts[accountName]; ok && account.Backend.Kind == plan.BackendKindRemote && account.Common.TerraformVersion != "" {
+			v := account.Common.TerraformVersion
+			ws.TerraformVersion = &v
+		}
+	}
+	for envName := range p.Envs {
+		for componentName, comp := range p.Envs[envName].Components {
+			if ws, ok := locals.Locals.Envs[envName][componentName]; ok && comp.Backend.Kind == plan.BackendKindRemote && comp.Common.TerraformVersion != "" {
+				v := comp.Common.TerraformVersion
+				ws.TerraformVersion = &v
 			}
 		}
 	}
