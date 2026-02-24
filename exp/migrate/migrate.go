@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/antzucaro/matchr"
-	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/pkg/errors"
 	prompt "github.com/segmentio/go-prompt"
