@@ -1,5 +1,5 @@
 dependencies {
   paths = [
-    "../security",
+    "../account",
   ]
 }

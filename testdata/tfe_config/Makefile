@@ -5,7 +5,7 @@ include scripts/common.mk
 
 ENVS=comp2 staging
 MODULES=
-ACCOUNTS=account
+ACCOUNTS=account security
 
 all: check
 

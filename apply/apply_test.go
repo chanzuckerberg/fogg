@@ -203,6 +203,285 @@ func TestUpdateLocalsFromPlan(t *testing.T) {
 	}
 }
 
+func TestUpdateLocalsFromPlan_ComponentTerraformVersion(t *testing.T) {
+	t.Run("new env component uses component terraform_version not global", func(t *testing.T) {
+		r := require.New(t)
+
+		globalVersion := "1.0.0"
+		componentVersion := "1.5.0"
+
+		locals := LocalsTFE{
+			Locals: &Locals{
+				Accounts: map[string]*TFEWorkspace{},
+				Envs:     map[string]map[string]*TFEWorkspace{},
+			},
+		}
+
+		p := &plan.Plan{
+			Global: plan.Component{
+				ComponentCommon: plan.ComponentCommon{
+					Common: plan.Common{TerraformVersion: globalVersion},
+				},
+			},
+			Accounts: map[string]plan.Account{},
+			Envs: map[string]plan.Env{
+				"staging": {
+					Components: map[string]plan.Component{
+						"web": {
+							ComponentCommon: plan.ComponentCommon{
+								Common: plan.Common{TerraformVersion: componentVersion},
+								Backend: plan.Backend{
+									Kind: plan.BackendKindRemote,
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		updateLocalsFromPlan(&locals, p)
+
+		r.NotNil(locals.Locals.Envs["staging"]["web"])
+		r.NotNil(locals.Locals.Envs["staging"]["web"].TerraformVersion)
+		r.Equal(componentVersion, *locals.Locals.Envs["staging"]["web"].TerraformVersion,
+			"new env component workspace should use the component's terraform_version, not global")
+	})
+
+	t.Run("new account uses account terraform_version not global", func(t *testing.T) {
+		r := require.New(t)
+
+		globalVersion := "1.0.0"
+		accountVersion := "1.3.0"
+
+		locals := LocalsTFE{
+			Locals: &Locals{
+				Accounts: map[string]*TFEWorkspace{},
+				Envs:     map[string]map[string]*TFEWorkspace{},
+			},
+		}
+
+		p := &plan.Plan{
+			Global: plan.Component{
+				ComponentCommon: plan.ComponentCommon{
+					Common: plan.Common{TerraformVersion: globalVersion},
+				},
+			},
+			Accounts: map[string]plan.Account{
+				"prod-account": {
+					ComponentCommon: plan.ComponentCommon{
+						Common: plan.Common{TerraformVersion: accountVersion},
+						Backend: plan.Backend{
+							Kind: plan.BackendKindRemote,
+						},
+					},
+				},
+			},
+			Envs: map[string]plan.Env{},
+		}
+
+		updateLocalsFromPlan(&locals, p)
+
+		r.NotNil(locals.Locals.Accounts["prod-account"])
+		r.NotNil(locals.Locals.Accounts["prod-account"].TerraformVersion)
+		r.Equal(accountVersion, *locals.Locals.Accounts["prod-account"].TerraformVersion,
+			"new account workspace should use the account's terraform_version, not global")
+	})
+
+	t.Run("existing workspace terraform_version updated when component version changes", func(t *testing.T) {
+		r := require.New(t)
+
+		oldVersion := "1.0.0"
+		newVersion := "1.6.0"
+
+		locals := LocalsTFE{
+			Locals: &Locals{
+				Accounts: map[string]*TFEWorkspace{},
+				Envs: map[string]map[string]*TFEWorkspace{
+					"staging": {
+						"web": MakeTFEWorkspace(oldVersion),
+					},
+				},
+			},
+		}
+		r.Equal(oldVersion, *locals.Locals.Envs["staging"]["web"].TerraformVersion)
+
+		p := &plan.Plan{
+			Global: plan.Component{
+				ComponentCommon: plan.ComponentCommon{
+					Common: plan.Common{TerraformVersion: "1.0.0"},
+				},
+			},
+			Accounts: map[string]plan.Account{},
+			Envs: map[string]plan.Env{
+				"staging": {
+					Components: map[string]plan.Component{
+						"web": {
+							ComponentCommon: plan.ComponentCommon{
+								Common: plan.Common{TerraformVersion: newVersion},
+								Backend: plan.Backend{
+									Kind: plan.BackendKindRemote,
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		updateLocalsFromPlan(&locals, p)
+
+		r.NotNil(locals.Locals.Envs["staging"]["web"])
+		r.NotNil(locals.Locals.Envs["staging"]["web"].TerraformVersion)
+		r.Equal(newVersion, *locals.Locals.Envs["staging"]["web"].TerraformVersion,
+			"existing workspace should have terraform_version updated to match the component's plan")
+	})
+
+	t.Run("existing account terraform_version updated when account version changes", func(t *testing.T) {
+		r := require.New(t)
+
+		oldVersion := "1.0.0"
+		newVersion := "1.4.0"
+
+		locals := LocalsTFE{
+			Locals: &Locals{
+				Accounts: map[string]*TFEWorkspace{
+					"prod-account": MakeTFEWorkspace(oldVersion),
+				},
+				Envs: map[string]map[string]*TFEWorkspace{},
+			},
+		}
+		r.Equal(oldVersion, *locals.Locals.Accounts["prod-account"].TerraformVersion)
+
+		p := &plan.Plan{
+			Global: plan.Component{
+				ComponentCommon: plan.ComponentCommon{
+					Common: plan.Common{TerraformVersion: "1.0.0"},
+				},
+			},
+			Accounts: map[string]plan.Account{
+				"prod-account": {
+					ComponentCommon: plan.ComponentCommon{
+						Common: plan.Common{TerraformVersion: newVersion},
+						Backend: plan.Backend{
+							Kind: plan.BackendKindRemote,
+						},
+					},
+				},
+			},
+			Envs: map[string]plan.Env{},
+		}
+
+		updateLocalsFromPlan(&locals, p)
+
+		r.NotNil(locals.Locals.Accounts["prod-account"])
+		r.NotNil(locals.Locals.Accounts["prod-account"].TerraformVersion)
+		r.Equal(newVersion, *locals.Locals.Accounts["prod-account"].TerraformVersion,
+			"existing account workspace should have terraform_version updated to match the account's plan")
+	})
+
+	t.Run("component without explicit version falls back correctly", func(t *testing.T) {
+		r := require.New(t)
+
+		globalVersion := "1.2.0"
+
+		locals := LocalsTFE{
+			Locals: &Locals{
+				Accounts: map[string]*TFEWorkspace{},
+				Envs:     map[string]map[string]*TFEWorkspace{},
+			},
+		}
+
+		// When a component doesn't set its own terraform_version,
+		// resolveComponentCommon gives it the global/default version.
+		// The plan should reflect that resolved value.
+		p := &plan.Plan{
+			Global: plan.Component{
+				ComponentCommon: plan.ComponentCommon{
+					Common: plan.Common{TerraformVersion: globalVersion},
+				},
+			},
+			Accounts: map[string]plan.Account{},
+			Envs: map[string]plan.Env{
+				"dev": {
+					Components: map[string]plan.Component{
+						"api": {
+							ComponentCommon: plan.ComponentCommon{
+								Common: plan.Common{TerraformVersion: globalVersion},
+								Backend: plan.Backend{
+									Kind: plan.BackendKindRemote,
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		updateLocalsFromPlan(&locals, p)
+
+		r.NotNil(locals.Locals.Envs["dev"]["api"])
+		r.NotNil(locals.Locals.Envs["dev"]["api"].TerraformVersion)
+		r.Equal(globalVersion, *locals.Locals.Envs["dev"]["api"].TerraformVersion,
+			"component inheriting global version should use that version")
+	})
+
+	t.Run("multiple components with different versions in same env", func(t *testing.T) {
+		r := require.New(t)
+
+		globalVersion := "1.0.0"
+		webVersion := "1.5.0"
+		apiVersion := "1.3.0"
+
+		locals := LocalsTFE{
+			Locals: &Locals{
+				Accounts: map[string]*TFEWorkspace{},
+				Envs:     map[string]map[string]*TFEWorkspace{},
+			},
+		}
+
+		p := &plan.Plan{
+			Global: plan.Component{
+				ComponentCommon: plan.ComponentCommon{
+					Common: plan.Common{TerraformVersion: globalVersion},
+				},
+			},
+			Accounts: map[string]plan.Account{},
+			Envs: map[string]plan.Env{
+				"staging": {
+					Components: map[string]plan.Component{
+						"web": {
+							ComponentCommon: plan.ComponentCommon{
+								Common: plan.Common{TerraformVersion: webVersion},
+								Backend: plan.Backend{
+									Kind: plan.BackendKindRemote,
+								},
+							},
+						},
+						"api": {
+							ComponentCommon: plan.ComponentCommon{
+								Common: plan.Common{TerraformVersion: apiVersion},
+								Backend: plan.Backend{
+									Kind: plan.BackendKindRemote,
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		updateLocalsFromPlan(&locals, p)
+
+		r.NotNil(locals.Locals.Envs["staging"]["web"])
+		r.Equal(webVersion, *locals.Locals.Envs["staging"]["web"].TerraformVersion,
+			"web component should have its own terraform_version")
+		r.NotNil(locals.Locals.Envs["staging"]["api"])
+		r.Equal(apiVersion, *locals.Locals.Envs["staging"]["api"].TerraformVersion,
+			"api component should have its own terraform_version")
+	})
+}
+
 func TestRemoveExtension(t *testing.T) {
 	r := require.New(t)
 	x := removeExtension("foo")

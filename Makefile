@@ -14,39 +14,39 @@ fmt:
 
 lint-setup: ## setup linter dependencies
 	## See: https://github.com/igorshubovych/markdownlint-cli
-	## Used by ReviewDog via .reviewdog.yml configs to lint markdown files in this project
 	npm install markdownlint-cli
 
-	## See https://golangci-lint.run/usage/install/#ci-installation
-	## Used by ReviewDog
-	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh
+	## See https://golangci-lint.run/docs/welcome/install/
+ifeq (, $(shell command -v golangci-lint 2>/dev/null))
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b ./bin
+else
+	@echo "golangci-lint installed at $$(which golangci-lint)"
+endif
 
 	## See https://github.com/reviewdog/reviewdog#installation
-	## Note: If yor're on Darwin with an ARM64 chip (Apple Silicon/Apple M1), know that
-	##   at this point in time reviewdog doesn't publish Darmwin/arm64 binaries. You can
-	##   get around this by either installing reviewdog manually or getting it via Homebrew
-	##   and using Rosetta 2: https://support.apple.com/en-us/HT211861
-ifeq (, $(shell command -v reviewdog --version))
-	curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh
+ifeq (, $(shell command -v reviewdog 2>/dev/null))
+	curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b ./bin
 else
-	@echo "Reviewdog installed at $$(which reviewdog)"
+	@echo "reviewdog installed at $$(which reviewdog)"
 endif
-.PHONY: linter-setup
+.PHONY: lint-setup
+
+REVIEWDOG := $(or $(shell command -v reviewdog 2>/dev/null),./bin/reviewdog)
 
 lint-tf:
 	terraform fmt -check -diff -recursive testdata
 
-lint: lint-setup ## run lint andn print results
-	./bin/reviewdog -conf .reviewdog.yml  -diff "git diff main"
+lint: lint-setup ## run lint and print results
+	$(REVIEWDOG) -conf .reviewdog.yml  -diff "git diff main"
 .PHONY: lint
 
 lint-ci: lint-setup ## run lint in CI, posting to PRs
-	./bin/reviewdog -conf .reviewdog.yml  -reporter=github-pr-review -tee -level=info
+	$(REVIEWDOG) -conf .reviewdog.yml  -reporter=github-pr-review -tee -level=info
 .PHONY: lint-ci
 
 lint-all: lint-setup ## run the fast go linters
 	# doesn't seem to be a way to get reviewdog to not filter by diff
-	./bin/reviewdog -conf .reviewdog.yml  -filter-mode nofilter
+	$(REVIEWDOG) -conf .reviewdog.yml  -filter-mode nofilter
 .PHONY: lint-all
 
 TEMPLATES := $(shell find templates -not -name "*.go")

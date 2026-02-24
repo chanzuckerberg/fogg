@@ -7,11 +7,40 @@
         "branch": "main",
         "auto_apply": true,
         "remote_apply": true
+      },
+      "security": {
+        "trigger_prefixes": [],
+        "terraform_version": "1.6.3",
+        "branch": "main",
+        "auto_apply": true,
+        "remote_apply": true
       }
     },
     "envs": {
       "comp2": {},
-      "staging": {}
+      "staging": {
+        "api": {
+          "trigger_prefixes": [],
+          "terraform_version": "1.5.0",
+          "branch": "main",
+          "auto_apply": true,
+          "remote_apply": true
+        },
+        "database": {
+          "trigger_prefixes": [],
+          "terraform_version": "1.7.5",
+          "branch": "main",
+          "auto_apply": true,
+          "remote_apply": true
+        },
+        "vpc": {
+          "trigger_prefixes": [],
+          "terraform_version": "1.9.8",
+          "branch": "main",
+          "auto_apply": true,
+          "remote_apply": true
+        }
+      }
     },
     "default_terraform_version": "1.2.6"
   }

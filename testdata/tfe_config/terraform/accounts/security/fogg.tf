@@ -52,14 +52,14 @@ provider "aws" {
 
 provider "assert" {}
 terraform {
-  required_version = "=1.1.1"
+  required_version = "=1.6.3"
 
   backend "remote" {
 
     hostname     = "si.prod.tfe.czi.technology"
     organization = "shared-infra"
     workspaces {
-      name = "accounts-account"
+      name = "accounts-security"
     }
 
   }
@@ -141,12 +141,12 @@ variable "region" {
 # tflint-ignore: terraform_unused_declarations
 variable "component" {
   type    = string
-  default = "account"
+  default = "security"
 }
 # tflint-ignore: terraform_unused_declarations
 variable "account" {
   type    = string
-  default = "account"
+  default = "security"
 }
 # tflint-ignore: terraform_unused_declarations
 variable "owner" {
@@ -161,7 +161,7 @@ variable "tags" {
   default = {
     project   = "foo"
     env       = "accounts"
-    service   = "account"
+    service   = "security"
     owner     = "foo@example.com"
     managedBy = "terraform"
   }

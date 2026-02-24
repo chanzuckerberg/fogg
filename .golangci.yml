@@ -1,22 +1,23 @@
+version: "2"
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+
 linters:
   enable:
     - asciicheck
     - bodyclose
-    - deadcode
     - dupl
     - errcheck
-    - exportloopref
     - gocyclo
-    - gofmt
-    - goimports
-    - golint
-    - megacheck
     - misspell
     - nolintlint
+    - revive
     - rowserrcheck
-    - scopelint
-    - structcheck
+    - staticcheck
     - unconvert
     - unparam
-    - varcheck
+    - unused
     - whitespace
