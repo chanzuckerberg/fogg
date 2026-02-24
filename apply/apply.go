@@ -158,7 +158,6 @@ func updateLocalsFromPlan(locals *LocalsTFE, p *plan.Plan) {
 		}
 	}
 
-	// sync terraform_version for existing workspaces when the plan specifies one
 	for accountName, account := range p.Accounts {
 		if ws, ok := locals.Locals.Accounts[accountName]; ok && account.Backend.Kind == plan.BackendKindRemote && account.Common.TerraformVersion != "" {
 			v := account.Common.TerraformVersion
