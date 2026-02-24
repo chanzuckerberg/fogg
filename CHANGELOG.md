@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.92.37](https://github.com/chanzuckerberg/fogg/compare/v0.92.36...v0.92.37) (2026-02-24)
+
+
+### Misc
+
+* Bump github.com/go-git/go-git/v5 from 5.16.4 to 5.16.5 ([#1164](https://github.com/chanzuckerberg/fogg/issues/1164)) ([18a553a](https://github.com/chanzuckerberg/fogg/commit/18a553a9e6701031de5da6ecc052d825b1ab0932))
+
+
+### BugFixes
+
+* use component-level terraform_version in TFE locals.tf.json ([#1167](https://github.com/chanzuckerberg/fogg/issues/1167)) ([23759c4](https://github.com/chanzuckerberg/fogg/commit/23759c4daaf2cc7235d48669182825390c34177e))
+
 ## [0.92.36](https://github.com/chanzuckerberg/fogg/compare/v0.92.35...v0.92.36) (2026-01-26)
 
 
