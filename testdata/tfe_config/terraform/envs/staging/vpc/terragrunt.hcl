@@ -1,6 +1,6 @@
 dependencies {
   paths = [
-    "../vpc",
+    "../comp1",
     "../../../accounts/account",
   ]
 }

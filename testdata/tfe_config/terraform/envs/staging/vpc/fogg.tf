@@ -52,17 +52,15 @@ provider "aws" {
 
 provider "assert" {}
 terraform {
-  required_version = "=1.1.1"
+  required_version = "=1.3.0"
 
-  backend "s3" {
+  backend "remote" {
 
-    bucket         = "buck2"
-    dynamodb_table = "blah"
-    key            = "terraform/foo/envs/staging/components/comp1.tfstate"
-    encrypt        = true
-    region         = "us-west-2"
-    profile        = "czi-tfe"
-
+    hostname     = "si.prod.tfe.czi.technology"
+    organization = "shared-infra"
+    workspaces {
+      name = "staging-vpc"
+    }
 
   }
   required_providers {
@@ -143,7 +141,7 @@ variable "region" {
 # tflint-ignore: terraform_unused_declarations
 variable "component" {
   type    = string
-  default = "comp1"
+  default = "vpc"
 }
 # tflint-ignore: terraform_unused_declarations
 variable "owner" {
@@ -158,7 +156,7 @@ variable "tags" {
   default = {
     project   = "foo"
     env       = "staging"
-    service   = "comp1"
+    service   = "vpc"
     owner     = "foo@example.com"
     managedBy = "terraform"
   }
@@ -177,16 +175,17 @@ data "terraform_remote_state" "global" {
 
   }
 }
-data "terraform_remote_state" "vpc" {
-  backend = "remote"
+data "terraform_remote_state" "comp1" {
+  backend = "s3"
   config = {
 
 
-    hostname     = "si.prod.tfe.czi.technology"
-    organization = "shared-infra"
-    workspaces = {
-      name = "staging-vpc"
-    }
+    bucket         = "buck2"
+    dynamodb_table = "blah"
+    key            = "terraform/foo/envs/staging/components/comp1.tfstate"
+    region         = "us-west-2"
+    profile        = "czi-tfe"
+
 
   }
 }

@@ -23,6 +23,8 @@ envs:
           profile: czi-tfe
           region: us-west-2
           account_id: "612168857605"
+      vpc:
+        terraform_version: 1.3.0
   comp2: {}
 accounts:
   account: {}
