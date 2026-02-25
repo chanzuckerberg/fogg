@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.38](https://github.com/chanzuckerberg/fogg/compare/v0.92.37...v0.92.38) (2026-02-25)
+
+
+### Misc
+
+* Bump github.com/cloudflare/circl from 1.6.1 to 1.6.3 ([#1168](https://github.com/chanzuckerberg/fogg/issues/1168)) ([655f167](https://github.com/chanzuckerberg/fogg/commit/655f1671bc7d45806e1a6d67a01f2404425776d2))
+
 ## [0.92.37](https://github.com/chanzuckerberg/fogg/compare/v0.92.36...v0.92.37) (2026-02-24)
 
 
