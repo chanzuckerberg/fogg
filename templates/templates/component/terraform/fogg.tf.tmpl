@@ -72,6 +72,11 @@ variable "TFC_PROJECT_NAME" {
   {{- template "kubernetes_provider" .ProviderConfiguration -}}
 {{- end -}}{{- end -}}
 
+{{ range $name, $p := .ProviderConfiguration.Custom }}{{ if not $p.CustomProvider }}
+provider "{{ $name }}" {
+{{ renderHCLBody $p.Config 2 }}}
+{{ end }}{{ end }}
+
 terraform {
   required_version = "={{ .TerraformVersion }}"
 

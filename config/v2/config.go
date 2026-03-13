@@ -139,25 +139,26 @@ type Component struct {
 }
 
 type Providers struct {
-	Assert     *AssertProvider     `yaml:"assert,omitempty"`
-	Auth0      *Auth0Provider      `yaml:"auth0,omitempty"`
-	AWS        *AWSProvider        `yaml:"aws,omitempty"`
-	Bless      *BlessProvider      `yaml:"bless,omitempty"`
-	Databricks *DatabricksProvider `yaml:"databricks,omitempty"`
-	Datadog    *DatadogProvider    `yaml:"datadog,omitempty"`
-	Github     *GithubProvider     `yaml:"github,omitempty"`
-	Grafana    *GrafanaProvider    `yaml:"grafana,omitempty"`
-	Heroku     *HerokuProvider     `yaml:"heroku,omitempty"`
-	Kafka      *KafkaProvider      `yaml:"kafka,omitempty"`
-	Kubernetes *KubernetesProvider `yaml:"kubernetes,omitempty"`
-	Helm       *HelmProvider       `yaml:"helm,omitempty"`
-	Okta       *OktaProvider       `yaml:"okta,omitempty"`
-	OpsGenie   *OpsGenieProvider   `yaml:"opsgenie,omitempty"`
-	Pagerduty  *PagerdutyProvider  `yaml:"pagerduty,omitempty"`
-	Sentry     *SentryProvider     `yaml:"sentry,omitempty"`
-	Snowflake  *SnowflakeProvider  `yaml:"snowflake,omitempty"`
-	Tfe        *TfeProvider        `yaml:"tfe,omitempty"`
-	Kubectl    *KubectlProvider    `yaml:"kubectl,omitempty"`
+	Assert     *AssertProvider            `yaml:"assert,omitempty"`
+	Auth0      *Auth0Provider             `yaml:"auth0,omitempty"`
+	AWS        *AWSProvider               `yaml:"aws,omitempty"`
+	Bless      *BlessProvider             `yaml:"bless,omitempty"`
+	Databricks *DatabricksProvider        `yaml:"databricks,omitempty"`
+	Datadog    *DatadogProvider           `yaml:"datadog,omitempty"`
+	Github     *GithubProvider            `yaml:"github,omitempty"`
+	Grafana    *GrafanaProvider           `yaml:"grafana,omitempty"`
+	Heroku     *HerokuProvider            `yaml:"heroku,omitempty"`
+	Kafka      *KafkaProvider             `yaml:"kafka,omitempty"`
+	Kubernetes *KubernetesProvider        `yaml:"kubernetes,omitempty"`
+	Helm       *HelmProvider              `yaml:"helm,omitempty"`
+	Okta       *OktaProvider              `yaml:"okta,omitempty"`
+	OpsGenie   *OpsGenieProvider          `yaml:"opsgenie,omitempty"`
+	Pagerduty  *PagerdutyProvider         `yaml:"pagerduty,omitempty"`
+	Sentry     *SentryProvider            `yaml:"sentry,omitempty"`
+	Snowflake  *SnowflakeProvider         `yaml:"snowflake,omitempty"`
+	Tfe        *TfeProvider               `yaml:"tfe,omitempty"`
+	Kubectl    *KubectlProvider           `yaml:"kubectl,omitempty"`
+	Custom     map[string]*CustomProvider `yaml:"custom,omitempty"`
 }
 
 type AssertProvider struct {
@@ -277,6 +278,12 @@ type KubectlProvider struct {
 
 type KafkaProvider struct {
 	CommonProvider `yaml:",inline"`
+}
+
+type CustomProvider struct {
+	CommonProvider `yaml:",inline"`
+	Source         *string        `yaml:"source,omitempty"`
+	Config         map[string]any `yaml:"config,omitempty"`
 }
 
 // Backend is used to configure a terraform backend

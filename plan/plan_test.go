@@ -262,3 +262,69 @@ func TestGrafanaProvider(t *testing.T) {
 	// disabled(plan.Accounts["foo"].ComponentCommon)
 	enabled(plan.Envs["prod"].Components["hero"].ComponentCommon)
 }
+
+func TestResolveCustomProviderConfig(t *testing.T) {
+	roleArn := "arn:aws:iam::123456789:role/tfe-si"
+	awsPlan := &AWSProvider{
+		AccountID: json.Number("123456789"),
+		Region:    "us-west-2",
+		RoleArn:   &roleArn,
+	}
+
+	t.Run("nil config", func(t *testing.T) {
+		r := require.New(t)
+		result, err := resolveCustomProviderConfig(nil, customProviderTemplateContext{AWS: awsPlan})
+		r.NoError(err)
+		r.Nil(result)
+	})
+
+	t.Run("no templates", func(t *testing.T) {
+		r := require.New(t)
+		config := map[string]any{"region": "eu-west-1"}
+		result, err := resolveCustomProviderConfig(config, customProviderTemplateContext{AWS: awsPlan})
+		r.NoError(err)
+		r.Equal("eu-west-1", result["region"])
+	})
+
+	t.Run("template with AWS region", func(t *testing.T) {
+		r := require.New(t)
+		config := map[string]any{"region": "{{ .AWS.Region }}"}
+		result, err := resolveCustomProviderConfig(config, customProviderTemplateContext{AWS: awsPlan})
+		r.NoError(err)
+		r.Equal("us-west-2", result["region"])
+	})
+
+	t.Run("template with AWS RoleArn", func(t *testing.T) {
+		r := require.New(t)
+		config := map[string]any{
+			"assume_role": map[string]any{
+				"role_arn": "{{ .AWS.RoleArn }}",
+			},
+		}
+		result, err := resolveCustomProviderConfig(config, customProviderTemplateContext{AWS: awsPlan})
+		r.NoError(err)
+		nested := result["assume_role"].(map[string]any)
+		r.Equal("arn:aws:iam::123456789:role/tfe-si", nested["role_arn"])
+	})
+
+	t.Run("nil AWS provider", func(t *testing.T) {
+		r := require.New(t)
+		config := map[string]any{"region": "{{ .AWS.Region }}"}
+		_, err := resolveCustomProviderConfig(config, customProviderTemplateContext{AWS: nil})
+		r.Error(err)
+	})
+
+	t.Run("non-template values pass through", func(t *testing.T) {
+		r := require.New(t)
+		config := map[string]any{
+			"count":   42,
+			"enabled": true,
+			"items":   []any{"a", "b"},
+		}
+		result, err := resolveCustomProviderConfig(config, customProviderTemplateContext{AWS: awsPlan})
+		r.NoError(err)
+		r.Equal(42, result["count"])
+		r.Equal(true, result["enabled"])
+		r.Equal([]any{"a", "b"}, result["items"])
+	})
+}

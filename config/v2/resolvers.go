@@ -1306,3 +1306,47 @@ func KubernetesProviderClusterComponentNameGetter(comm Common) *string {
 	}
 	return comm.Providers.Kubernetes.ClusterComponentName
 }
+
+func ResolveCustomProviders(commons ...Common) map[string]*CustomProvider {
+	resolved := map[string]*CustomProvider{}
+	for _, c := range commons {
+		if c.Providers == nil || c.Providers.Custom == nil {
+			continue
+		}
+		for name, p := range c.Providers.Custom {
+			if existing, ok := resolved[name]; ok {
+				if p.Source != nil {
+					existing.Source = p.Source
+				}
+				if p.Version != nil {
+					existing.Version = p.Version
+				}
+				if p.Enabled != nil {
+					existing.Enabled = p.Enabled
+				}
+				if p.CustomProvider != nil {
+					existing.CustomProvider = p.CustomProvider
+				}
+				if p.Config != nil {
+					if existing.Config == nil {
+						existing.Config = map[string]any{}
+					}
+					for k, v := range p.Config {
+						existing.Config[k] = v
+					}
+				}
+			} else {
+				cp := *p
+				if cp.Config != nil {
+					cfgCopy := make(map[string]any, len(cp.Config))
+					for k, v := range cp.Config {
+						cfgCopy[k] = v
+					}
+					cp.Config = cfgCopy
+				}
+				resolved[name] = &cp
+			}
+		}
+	}
+	return resolved
+}
