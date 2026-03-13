@@ -39,6 +39,7 @@ func avail(name string, data interface{}) bool {
 	return v.FieldByName(name).IsValid()
 }
 
+// RenderHCLBody renders a map of config values as HCL body content with sorted keys.
 func RenderHCLBody(config map[string]any, indent int) string {
 	if len(config) == 0 {
 		return ""
@@ -61,7 +62,7 @@ func RenderHCLBody(config map[string]any, indent int) string {
 func renderHCLEntry(sb *strings.Builder, key string, val any, prefix string, baseIndent int) {
 	switch v := val.(type) {
 	case map[string]any:
-		sb.WriteString(fmt.Sprintf("%s%s {\n", prefix, key))
+		fmt.Fprintf(sb, "%s%s {\n", prefix, key)
 		innerPrefix := prefix + strings.Repeat(" ", baseIndent)
 
 		innerKeys := make([]string, 0, len(v))
@@ -72,25 +73,25 @@ func renderHCLEntry(sb *strings.Builder, key string, val any, prefix string, bas
 		for _, ik := range innerKeys {
 			renderHCLEntry(sb, ik, v[ik], innerPrefix, baseIndent)
 		}
-		sb.WriteString(fmt.Sprintf("%s}\n", prefix))
+		fmt.Fprintf(sb, "%s}\n", prefix)
 	case []any:
 		items := make([]string, len(v))
 		for i, item := range v {
 			items[i] = fmt.Sprintf("%q", fmt.Sprint(item))
 		}
-		sb.WriteString(fmt.Sprintf("%s%s = [%s]\n", prefix, key, strings.Join(items, ", ")))
+		fmt.Fprintf(sb, "%s%s = [%s]\n", prefix, key, strings.Join(items, ", "))
 	case bool:
-		sb.WriteString(fmt.Sprintf("%s%s = %t\n", prefix, key, v))
+		fmt.Fprintf(sb, "%s%s = %t\n", prefix, key, v)
 	case float64:
 		if v == float64(int(v)) {
-			sb.WriteString(fmt.Sprintf("%s%s = %d\n", prefix, key, int(v)))
+			fmt.Fprintf(sb, "%s%s = %d\n", prefix, key, int(v))
 		} else {
-			sb.WriteString(fmt.Sprintf("%s%s = %g\n", prefix, key, v))
+			fmt.Fprintf(sb, "%s%s = %g\n", prefix, key, v)
 		}
 	case int:
-		sb.WriteString(fmt.Sprintf("%s%s = %d\n", prefix, key, v))
+		fmt.Fprintf(sb, "%s%s = %d\n", prefix, key, v)
 	default:
-		sb.WriteString(fmt.Sprintf("%s%s = %q\n", prefix, key, fmt.Sprint(v)))
+		fmt.Fprintf(sb, "%s%s = %q\n", prefix, key, fmt.Sprint(v))
 	}
 }
 
