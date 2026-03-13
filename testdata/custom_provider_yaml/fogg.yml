@@ -1,0 +1,23 @@
+defaults:
+  backend:
+    bucket: bucket
+    profile: foo
+    region: region
+  owner: foo@example.com
+  project: foo
+  providers:
+    aws:
+      account_id: "123456789"
+      region: us-west-2
+      role: tfe-si
+      version: "~> 4.0"
+    custom:
+      awscc:
+        source: hashicorp/awscc
+        version: "~> 1.0"
+        config:
+          region: us-east-1
+          assume_role:
+            role_arn: "{{ .AWS.RoleArn }}"
+  terraform_version: 1.1.1
+version: 2

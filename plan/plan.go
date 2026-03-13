@@ -1,12 +1,14 @@
 package plan
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"path/filepath"
 	"slices"
 	"sort"
 	"strings"
+	"text/template"
 
 	"github.com/pkg/errors"
 
@@ -135,23 +137,24 @@ func (c CIComponent) generateCIConfig(
 }
 
 type ProviderConfiguration struct {
-	Assert                 *AssertProvider     `yaml:"assert"`
-	Auth0                  *Auth0Provider      `yaml:"auth0"`
-	AWS                    *AWSProvider        `yaml:"aws"`
-	AWSAdditionalProviders []AWSProvider       `yaml:"aws_regional_providers"`
-	Bless                  *BlessProvider      `yaml:"bless"`
-	Datadog                *DatadogProvider    `yaml:"datadog"`
-	Github                 *GithubProvider     `yaml:"github"`
-	Grafana                *GrafanaProvider    `yaml:"grafana"`
-	Heroku                 *HerokuProvider     `yaml:"heroku"`
-	Kafka                  *KafkaProvider      `yaml:"kafka"`
-	Kubernetes             *KubernetesProvider `yaml:"kubernetes"`
-	Helm                   *HelmProvider       `yaml:"helm"`
-	Kubectl                *KubectlProvider    `yaml:"kubectl"`
-	Okta                   *OktaProvider       `yaml:"okta"`
-	Sentry                 *SentryProvider     `yaml:"sentry"`
-	Snowflake              *SnowflakeProvider  `yaml:"snowflake"`
-	Tfe                    *TfeProvider        `yaml:"tfe"`
+	Assert                 *AssertProvider            `yaml:"assert"`
+	Auth0                  *Auth0Provider             `yaml:"auth0"`
+	AWS                    *AWSProvider               `yaml:"aws"`
+	AWSAdditionalProviders []AWSProvider              `yaml:"aws_regional_providers"`
+	Bless                  *BlessProvider             `yaml:"bless"`
+	Datadog                *DatadogProvider           `yaml:"datadog"`
+	Github                 *GithubProvider            `yaml:"github"`
+	Grafana                *GrafanaProvider           `yaml:"grafana"`
+	Heroku                 *HerokuProvider            `yaml:"heroku"`
+	Kafka                  *KafkaProvider             `yaml:"kafka"`
+	Kubernetes             *KubernetesProvider        `yaml:"kubernetes"`
+	Helm                   *HelmProvider              `yaml:"helm"`
+	Kubectl                *KubectlProvider           `yaml:"kubectl"`
+	Okta                   *OktaProvider              `yaml:"okta"`
+	Sentry                 *SentryProvider            `yaml:"sentry"`
+	Snowflake              *SnowflakeProvider         `yaml:"snowflake"`
+	Tfe                    *TfeProvider               `yaml:"tfe"`
+	Custom                 map[string]*CustomProvider `yaml:"custom"`
 }
 
 type ProviderVersion struct {
@@ -299,6 +302,12 @@ type KubectlProvider struct {
 
 type GrafanaProvider struct {
 	CommonProvider `yaml:",inline"`
+}
+
+type CustomProvider struct {
+	CommonProvider `yaml:",inline"`
+	Source         string         `yaml:"source"`
+	Config         map[string]any `yaml:"config,omitempty"`
 }
 
 // BackendKind is a enum of backends we support
@@ -783,6 +792,65 @@ func resolveAWSProvider(commons ...v2.Common) (plan *AWSProvider, providers []AW
 	return
 }
 
+type customProviderTemplateContext struct {
+	AWS *AWSProvider
+}
+
+func resolveCustomProviderConfig(config map[string]any, ctx customProviderTemplateContext) (map[string]any, error) {
+	if config == nil {
+		return nil, nil
+	}
+	resolved := make(map[string]any, len(config))
+	for k, v := range config {
+		rv, err := resolveConfigValue(v, ctx)
+		if err != nil {
+			return nil, fmt.Errorf("resolving config key %q: %w", k, err)
+		}
+		resolved[k] = rv
+	}
+	return resolved, nil
+}
+
+func resolveConfigValue(val any, ctx customProviderTemplateContext) (any, error) {
+	switch v := val.(type) {
+	case string:
+		if !strings.Contains(v, "{{") {
+			return v, nil
+		}
+		t, err := template.New("").Parse(v)
+		if err != nil {
+			return nil, err
+		}
+		var buf bytes.Buffer
+		if err := t.Execute(&buf, ctx); err != nil {
+			return nil, err
+		}
+		return buf.String(), nil
+	case map[string]any:
+		resolved := make(map[string]any, len(v))
+		for mk, mv := range v {
+			rv, err := resolveConfigValue(mv, ctx)
+			if err != nil {
+				return nil, err
+			}
+			resolved[mk] = rv
+		}
+		return resolved, nil
+	case []any:
+		resolved := make([]any, len(v))
+		for i, item := range v {
+			rv, err := resolveConfigValue(item, ctx)
+			if err != nil {
+				return nil, err
+			}
+			resolved[i] = rv
+		}
+		return resolved, nil
+	default:
+		return val, nil
+	}
+}
+
 func resolveComponentCommon(commons ...v2.Common) (ComponentCommon, error) {
 	providerVersions := copyMap(utilityProviders)
 
@@ -1252,6 +1320,44 @@ func resolveComponentCommon(commons ...v2.Common) (ComponentCommon, error) {
 		}
 	}
 
+	tmplCtx := customProviderTemplateContext{AWS: awsPlan}
+
+	customPlans := map[string]*CustomProvider{}
+	customConfigs := v2.ResolveCustomProviders(commons...)
+	for name, cfg := range customConfigs {
+		if cfg.Enabled != nil && !*cfg.Enabled {
+			continue
+		}
+		if cfg.Source == nil {
+			continue
+		}
+
+		resolvedConfig, err := resolveCustomProviderConfig(cfg.Config, tmplCtx)
+		if err != nil {
+			return ComponentCommon{}, fmt.Errorf("resolving custom provider %q config: %w", name, err)
+		}
+
+		cp := &CustomProvider{
+			Source: *cfg.Source,
+			Config: resolvedConfig,
+			CommonProvider: CommonProvider{
+				Enabled: cfg.Enabled == nil || *cfg.Enabled,
+			},
+		}
+		if cfg.CustomProvider != nil {
+			cp.CustomProvider = *cfg.CustomProvider
+		}
+		if cfg.Version != nil {
+			cp.Version = *cfg.Version
+		}
+		customPlans[name] = cp
+
+		providerVersions[name] = ProviderVersion{
+			Source:  *cfg.Source,
+			Version: cfg.Version,
+		}
+	}
+
 	tflintConfig := v2.ResolveTfLint(commons...)
 
 	tfLintPlan := TfLint{
@@ -1394,6 +1500,7 @@ func resolveComponentCommon(commons ...v2.Common) (ComponentCommon, error) {
 			Sentry:                 sentryPlan,
 			Snowflake:              snowflakePlan,
 			Tfe:                    tfePlan,
+			Custom:                 customPlans,
 		},
 		ProviderVersions: providerVersions,
 		TfLint:           tfLintPlan,
