@@ -284,6 +284,7 @@ type CustomProvider struct {
 	CommonProvider `yaml:",inline"`
 	Source         *string        `yaml:"source,omitempty"`
 	Config         map[string]any `yaml:"config,omitempty"`
+	Objects        []string       `yaml:"objects,omitempty"`
 }
 
 // Backend is used to configure a terraform backend

@@ -308,6 +308,7 @@ type CustomProvider struct {
 	CommonProvider `yaml:",inline"`
 	Source         string         `yaml:"source"`
 	Config         map[string]any `yaml:"config,omitempty"`
+	Objects        []string       `yaml:"objects,omitempty"`
 }
 
 // BackendKind is a enum of backends we support
@@ -1338,8 +1339,9 @@ func resolveComponentCommon(commons ...v2.Common) (ComponentCommon, error) {
 		}
 
 		cp := &CustomProvider{
-			Source: *cfg.Source,
-			Config: resolvedConfig,
+			Source:  *cfg.Source,
+			Config:  resolvedConfig,
+			Objects: cfg.Objects,
 			CommonProvider: CommonProvider{
 				Enabled: cfg.Enabled == nil || *cfg.Enabled,
 			},

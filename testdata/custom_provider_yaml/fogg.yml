@@ -15,9 +15,43 @@ defaults:
       awscc:
         source: hashicorp/awscc
         version: "~> 1.0"
+        objects:
+          - assume_role
         config:
           region: us-east-1
           assume_role:
             role_arn: "{{ .AWS.RoleArn }}"
+      azurerm:
+        source: hashicorp/azurerm
+        version: "~> 4.0"
+        config:
+          resource_provider_registrations: none
+          features: {}
+      google:
+        source: hashicorp/google
+        version: "~> 6.0"
+        config:
+          project: my-project-id
+          region: "{{ .AWS.Region }}"
+      helm:
+        source: hashicorp/helm
+        version: "~> 3.0"
+        config:
+          kubernetes:
+            config_path: "~/.kube/config"
+          experiments:
+            manifest: true
+      dns:
+        source: hashicorp/dns
+        version: "~> 3.0"
+        config:
+          update:
+            server: "192.168.0.1"
+            port: 53
+            gssapi:
+              realm: EXAMPLE.COM
+      datadog:
+        source: DataDog/datadog
+        version: "~> 3.0"
   terraform_version: 1.1.1
 version: 2

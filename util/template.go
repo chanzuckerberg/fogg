@@ -40,9 +40,16 @@ func avail(name string, data interface{}) bool {
 }
 
 // RenderHCLBody renders a map of config values as HCL body content with sorted keys.
-func RenderHCLBody(config map[string]any, indent int) string {
+// Nested maps default to block syntax (key { ... }). Keys listed in objects render
+// as attribute objects (key = { ... }) instead. The objects list matches at any depth.
+func RenderHCLBody(config map[string]any, indent int, objects []string) string {
 	if len(config) == 0 {
 		return ""
+	}
+
+	objSet := make(map[string]bool, len(objects))
+	for _, o := range objects {
+		objSet[o] = true
 	}
 
 	keys := make([]string, 0, len(config))
@@ -54,16 +61,31 @@ func RenderHCLBody(config map[string]any, indent int) string {
 	var sb strings.Builder
 	prefix := strings.Repeat(" ", indent)
 	for _, k := range keys {
-		renderHCLEntry(&sb, k, config[k], prefix, indent)
+		renderHCLEntry(&sb, k, config[k], prefix, indent, objSet)
 	}
 	return sb.String()
 }
 
-func renderHCLEntry(sb *strings.Builder, key string, val any, prefix string, baseIndent int) {
+func renderHCLEntry(sb *strings.Builder, key string, val any, prefix string, baseIndent int, objSet map[string]bool) {
 	switch v := val.(type) {
 	case map[string]any:
-		fmt.Fprintf(sb, "%s%s {\n", prefix, key)
+		isObject := objSet[key]
 		innerPrefix := prefix + strings.Repeat(" ", baseIndent)
+
+		if len(v) == 0 {
+			if isObject {
+				fmt.Fprintf(sb, "%s%s = {}\n", prefix, key)
+			} else {
+				fmt.Fprintf(sb, "%s%s {}\n", prefix, key)
+			}
+			return
+		}
+
+		if isObject {
+			fmt.Fprintf(sb, "%s%s = {\n", prefix, key)
+		} else {
+			fmt.Fprintf(sb, "%s%s {\n", prefix, key)
+		}
 
 		innerKeys := make([]string, 0, len(v))
 		for k := range v {
@@ -71,7 +93,7 @@ func renderHCLEntry(sb *strings.Builder, key string, val any, prefix string, bas
 		}
 		sort.Strings(innerKeys)
 		for _, ik := range innerKeys {
-			renderHCLEntry(sb, ik, v[ik], innerPrefix, baseIndent)
+			renderHCLEntry(sb, ik, v[ik], innerPrefix, baseIndent, objSet)
 		}
 		fmt.Fprintf(sb, "%s}\n", prefix)
 	case []any:
