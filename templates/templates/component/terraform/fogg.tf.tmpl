@@ -74,7 +74,7 @@ variable "TFC_PROJECT_NAME" {
 
 {{ range $name, $p := .ProviderConfiguration.Custom }}{{ if not $p.CustomProvider }}
 provider "{{ $name }}" {
-{{ renderHCLBody $p.Config 2 }}}
+{{ renderHCLBody $p.Config 2 $p.Objects }}}
 {{ end }}{{ end }}
 
 terraform {

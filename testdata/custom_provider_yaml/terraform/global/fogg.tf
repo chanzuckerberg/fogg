@@ -52,10 +52,37 @@ provider "aws" {
 
 provider "assert" {}
 provider "awscc" {
-  assume_role {
+  assume_role = {
     role_arn = "arn:aws:iam::123456789:role/tfe-si"
   }
   region = "us-east-1"
+}
+provider "azurerm" {
+  features {}
+  resource_provider_registrations = "none"
+}
+provider "datadog" {
+}
+provider "dns" {
+  update {
+    gssapi {
+      realm = "EXAMPLE.COM"
+    }
+    port   = 53
+    server = "192.168.0.1"
+  }
+}
+provider "google" {
+  project = "my-project-id"
+  region  = "us-west-2"
+}
+provider "helm" {
+  experiments {
+    manifest = true
+  }
+  kubernetes {
+    config_path = "~/.kube/config"
+  }
 }
 terraform {
   required_version = "=1.1.1"
@@ -98,6 +125,41 @@ terraform {
       source = "hashicorp/awscc"
 
       version = "~> 1.0"
+
+    }
+
+    azurerm = {
+      source = "hashicorp/azurerm"
+
+      version = "~> 4.0"
+
+    }
+
+    datadog = {
+      source = "DataDog/datadog"
+
+      version = "~> 3.0"
+
+    }
+
+    dns = {
+      source = "hashicorp/dns"
+
+      version = "~> 3.0"
+
+    }
+
+    google = {
+      source = "hashicorp/google"
+
+      version = "~> 6.0"
+
+    }
+
+    helm = {
+      source = "hashicorp/helm"
+
+      version = "~> 3.0"
 
     }
 
