@@ -1338,10 +1338,15 @@ func resolveComponentCommon(commons ...v2.Common) (ComponentCommon, error) {
 			return ComponentCommon{}, fmt.Errorf("resolving custom provider %q config: %w", name, err)
 		}
 
+		var objectsCopy []string
+		if cfg.Objects != nil {
+			objectsCopy = append([]string{}, cfg.Objects...)
+		}
+
 		cp := &CustomProvider{
 			Source:  *cfg.Source,
 			Config:  resolvedConfig,
-			Objects: cfg.Objects,
+			Objects: objectsCopy,
 			CommonProvider: CommonProvider{
 				Enabled: cfg.Enabled == nil || *cfg.Enabled,
 			},

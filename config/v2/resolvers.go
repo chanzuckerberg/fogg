@@ -1347,6 +1347,9 @@ func ResolveCustomProviders(commons ...Common) map[string]*CustomProvider {
 					}
 					cp.Config = cfgCopy
 				}
+				if cp.Objects != nil {
+					cp.Objects = append([]string{}, cp.Objects...)
+				}
 				resolved[name] = &cp
 			}
 		}

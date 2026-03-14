@@ -214,10 +214,10 @@ func TestRenderHCLBody(t *testing.T) {
 			want:    "  assume_role = {\n    role_arn = \"arn\"\n  }\n  features {\n    flag = true\n  }\n  tags = {\n    env = \"prod\"\n  }\n",
 		},
 		{
-			name: "object with nested map inside renders nested as block",
+			name: "object propagates object syntax to nested maps",
 			config: map[string]any{
 				"outer_obj": map[string]any{
-					"nested_block": map[string]any{
+					"nested": map[string]any{
 						"key": "val",
 					},
 					"scalar": "hello",
@@ -225,7 +225,7 @@ func TestRenderHCLBody(t *testing.T) {
 			},
 			indent:  2,
 			objects: []string{"outer_obj"},
-			want:    "  outer_obj = {\n    nested_block {\n      key = \"val\"\n    }\n    scalar = \"hello\"\n  }\n",
+			want:    "  outer_obj = {\n    nested = {\n      key = \"val\"\n    }\n    scalar = \"hello\"\n  }\n",
 		},
 		{
 			name: "block with attribute object inside",

@@ -42,6 +42,7 @@ func avail(name string, data interface{}) bool {
 // RenderHCLBody renders a map of config values as HCL body content with sorted keys.
 // Nested maps default to block syntax (key { ... }). Keys listed in objects render
 // as attribute objects (key = { ... }) instead. The objects list matches at any depth.
+// Once inside an attribute object, all descendant maps also render as objects.
 func RenderHCLBody(config map[string]any, indent int, objects []string) string {
 	if len(config) == 0 {
 		return ""
@@ -61,15 +62,15 @@ func RenderHCLBody(config map[string]any, indent int, objects []string) string {
 	var sb strings.Builder
 	prefix := strings.Repeat(" ", indent)
 	for _, k := range keys {
-		renderHCLEntry(&sb, k, config[k], prefix, indent, objSet)
+		renderHCLEntry(&sb, k, config[k], prefix, indent, objSet, false)
 	}
 	return sb.String()
 }
 
-func renderHCLEntry(sb *strings.Builder, key string, val any, prefix string, baseIndent int, objSet map[string]bool) {
+func renderHCLEntry(sb *strings.Builder, key string, val any, prefix string, baseIndent int, objSet map[string]bool, inObject bool) {
 	switch v := val.(type) {
 	case map[string]any:
-		isObject := objSet[key]
+		isObject := inObject || objSet[key]
 		innerPrefix := prefix + strings.Repeat(" ", baseIndent)
 
 		if len(v) == 0 {
@@ -93,7 +94,7 @@ func renderHCLEntry(sb *strings.Builder, key string, val any, prefix string, bas
 		}
 		sort.Strings(innerKeys)
 		for _, ik := range innerKeys {
-			renderHCLEntry(sb, ik, v[ik], innerPrefix, baseIndent, objSet)
+			renderHCLEntry(sb, ik, v[ik], innerPrefix, baseIndent, objSet, isObject)
 		}
 		fmt.Fprintf(sb, "%s}\n", prefix)
 	case []any:
