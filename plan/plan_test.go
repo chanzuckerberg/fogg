@@ -327,4 +327,82 @@ func TestResolveCustomProviderConfig(t *testing.T) {
 		r.Equal(true, result["enabled"])
 		r.Equal([]any{"a", "b"}, result["items"])
 	})
+
+	t.Run("template with AWS AccountID", func(t *testing.T) {
+		r := require.New(t)
+		config := map[string]any{"account": "{{ .AWS.AccountID }}"}
+		result, err := resolveCustomProviderConfig(config, customProviderTemplateContext{AWS: awsPlan})
+		r.NoError(err)
+		r.Equal("123456789", result["account"])
+	})
+
+	t.Run("mixed templates and literals in nested map", func(t *testing.T) {
+		r := require.New(t)
+		config := map[string]any{
+			"region": "eu-west-1",
+			"assume_role": map[string]any{
+				"role_arn":     "{{ .AWS.RoleArn }}",
+				"session_name": "my-session",
+			},
+		}
+		result, err := resolveCustomProviderConfig(config, customProviderTemplateContext{AWS: awsPlan})
+		r.NoError(err)
+		r.Equal("eu-west-1", result["region"])
+		nested := result["assume_role"].(map[string]any)
+		r.Equal("arn:aws:iam::123456789:role/tfe-si", nested["role_arn"])
+		r.Equal("my-session", nested["session_name"])
+	})
+
+	t.Run("template in list elements", func(t *testing.T) {
+		r := require.New(t)
+		config := map[string]any{
+			"regions": []any{"{{ .AWS.Region }}", "eu-west-1"},
+		}
+		result, err := resolveCustomProviderConfig(config, customProviderTemplateContext{AWS: awsPlan})
+		r.NoError(err)
+		r.Equal([]any{"us-west-2", "eu-west-1"}, result["regions"])
+	})
+
+	t.Run("deeply nested template", func(t *testing.T) {
+		r := require.New(t)
+		config := map[string]any{
+			"outer": map[string]any{
+				"inner": map[string]any{
+					"value": "{{ .AWS.Region }}",
+				},
+			},
+		}
+		result, err := resolveCustomProviderConfig(config, customProviderTemplateContext{AWS: awsPlan})
+		r.NoError(err)
+		outer := result["outer"].(map[string]any)
+		inner := outer["inner"].(map[string]any)
+		r.Equal("us-west-2", inner["value"])
+	})
+
+	t.Run("empty config returns empty map", func(t *testing.T) {
+		r := require.New(t)
+		config := map[string]any{}
+		result, err := resolveCustomProviderConfig(config, customProviderTemplateContext{AWS: awsPlan})
+		r.NoError(err)
+		r.NotNil(result)
+		r.Len(result, 0)
+	})
+
+	t.Run("empty map values preserved", func(t *testing.T) {
+		r := require.New(t)
+		config := map[string]any{
+			"features": map[string]any{},
+		}
+		result, err := resolveCustomProviderConfig(config, customProviderTemplateContext{AWS: awsPlan})
+		r.NoError(err)
+		features := result["features"].(map[string]any)
+		r.Len(features, 0)
+	})
+
+	t.Run("invalid template syntax returns error", func(t *testing.T) {
+		r := require.New(t)
+		config := map[string]any{"region": "{{ .Invalid"}
+		_, err := resolveCustomProviderConfig(config, customProviderTemplateContext{AWS: awsPlan})
+		r.Error(err)
+	})
 }
