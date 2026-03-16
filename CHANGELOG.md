@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.92.41](https://github.com/chanzuckerberg/fogg/compare/v0.92.40...v0.92.41) (2026-03-16)
+
+
+### Features
+
+* support block and attribute object syntax in custom providers ([#1175](https://github.com/chanzuckerberg/fogg/issues/1175)) ([cf7c5d7](https://github.com/chanzuckerberg/fogg/commit/cf7c5d79aa0adec445cac9656c4c8356085c216c))
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go-v2 from 1.41.3 to 1.41.4 ([#1176](https://github.com/chanzuckerberg/fogg/issues/1176)) ([c2f3649](https://github.com/chanzuckerberg/fogg/commit/c2f3649bd1e35ce49ac5079c4504184f882d5df6))
+
 ## [0.92.40](https://github.com/chanzuckerberg/fogg/compare/v0.92.39...v0.92.40) (2026-03-13)
 
 
