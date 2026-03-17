@@ -3,6 +3,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/chanzuckerberg/fogg/apply"
 	"github.com/chanzuckerberg/fogg/templates"
@@ -59,7 +60,11 @@ var applyCmd = &cobra.Command{
 		}
 
 		if dryRun {
-			diff, hasChanges, e := apply.ApplyDryRun(fs, config, templates.Templates, upgrade)
+			repoRoot, e := os.Getwd()
+			if e != nil {
+				return e
+			}
+			diff, hasChanges, e := apply.ApplyDryRun(fs, repoRoot, config, templates.Templates, upgrade)
 			if e != nil {
 				return e
 			}

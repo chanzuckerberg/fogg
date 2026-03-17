@@ -23,7 +23,7 @@ var foggManagedRoots = []string{
 	".terraform.d", "terraform.d",
 }
 
-func ApplyDryRun(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool) (diff string, hasChanges bool, err error) {
+func ApplyDryRun(fs afero.Fs, repoRoot string, conf *v2.Config, tmpl *templates.T, upgrade bool) (diff string, hasChanges bool, err error) {
 	tempDir, err := os.MkdirTemp("", "fogg-dryrun-")
 	if err != nil {
 		return "", false, errs.WrapInternal(err, "unable to create temp dir for dry-run")
@@ -39,11 +39,6 @@ func ApplyDryRun(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool) 
 		return "", false, err
 	}
 
-	repoRoot, err := getRepoRoot(fs)
-	if err != nil {
-		return "", false, err
-	}
-
 	diffOutput, hasChanges, err := diffFoggManagedPaths(repoRoot, tempDir)
 	if err != nil {
 		return "", false, errs.WrapUser(err, "unable to compute diff")
@@ -52,11 +47,22 @@ func ApplyDryRun(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool) 
 	return diffOutput, hasChanges, nil
 }
 
-func getRepoRoot(fs afero.Fs) (string, error) {
-	if baseFs, ok := fs.(*afero.BasePathFs); ok {
-		return afero.FullBaseFsPath(baseFs, "."), nil
+var copySkipPrefixes = []string{
+	".terraform.d/plugin-cache",
+	".terraform.d/versions",
+}
+
+func shouldSkipCopy(path string) bool {
+	path = filepath.ToSlash(path)
+	for _, prefix := range copySkipPrefixes {
+		if path == prefix || strings.HasPrefix(path, prefix+"/") {
+			return true
+		}
 	}
-	return "", errs.NewInternal("expected BasePathFs for dry-run")
+	if strings.Contains(path, "/.terraform/") {
+		return true
+	}
+	return false
 }
 
 func copyFoggManagedPaths(src afero.Fs, destDir string) error {
@@ -89,6 +95,12 @@ func copyDir(src afero.Fs, srcPath, destPath string) error {
 	return afero.Walk(src, srcPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
+		}
+		if shouldSkipCopy(path) {
+			if info.IsDir() {
+				return filepath.SkipDir
+			}
+			return nil
 		}
 		if info.Mode()&os.ModeSymlink != 0 {
 			return nil
@@ -224,6 +236,12 @@ func collectPaths(baseDir, root string, out map[string]struct{}) error {
 		if err != nil {
 			return err
 		}
+		if shouldSkipCopy(rel) {
+			if d.IsDir() {
+				return filepath.SkipDir
+			}
+			return nil
+		}
 		if !d.IsDir() {
 			out[rel] = struct{}{}
 		}
@@ -251,6 +269,12 @@ func collectPathsFromOS(baseDir, root string, out map[string]struct{}) error {
 		rel, err := filepath.Rel(baseDir, path)
 		if err != nil {
 			return err
+		}
+		if shouldSkipCopy(rel) {
+			if d.IsDir() {
+				return filepath.SkipDir
+			}
+			return nil
 		}
 		if !d.IsDir() {
 			out[rel] = struct{}{}
