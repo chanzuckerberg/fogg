@@ -123,8 +123,12 @@ func diffFoggManagedPaths(currentDir, plannedDir string) (string, bool, error) {
 	plannedFiles := make(map[string]struct{})
 
 	for _, root := range foggManagedRoots {
-		collectPaths(currentDir, root, currentFiles)
-		collectPathsFromOS(plannedDir, root, plannedFiles)
+		if err := collectPaths(currentDir, root, currentFiles); err != nil {
+			return "", false, err
+		}
+		if err := collectPathsFromOS(plannedDir, root, plannedFiles); err != nil {
+			return "", false, err
+		}
 	}
 
 	allPaths := make(map[string]struct{})
@@ -197,16 +201,16 @@ func inSet(m map[string]struct{}, key string) bool {
 	return ok
 }
 
-func collectPaths(baseDir, root string, out map[string]struct{}) {
+func collectPaths(baseDir, root string, out map[string]struct{}) error {
 	fullPath := filepath.Join(baseDir, root)
 	info, err := os.Stat(fullPath)
 	if err != nil || !info.IsDir() {
 		if err == nil {
 			out[root] = struct{}{}
 		}
-		return
+		return nil
 	}
-	filepath.WalkDir(fullPath, func(path string, d os.DirEntry, err error) error {
+	return filepath.WalkDir(fullPath, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -221,16 +225,16 @@ func collectPaths(baseDir, root string, out map[string]struct{}) {
 	})
 }
 
-func collectPathsFromOS(baseDir, root string, out map[string]struct{}) {
+func collectPathsFromOS(baseDir, root string, out map[string]struct{}) error {
 	fullPath := filepath.Join(baseDir, root)
 	info, err := os.Stat(fullPath)
 	if err != nil || !info.IsDir() {
 		if err == nil {
 			out[root] = struct{}{}
 		}
-		return
+		return nil
 	}
-	filepath.WalkDir(fullPath, func(path string, d os.DirEntry, err error) error {
+	return filepath.WalkDir(fullPath, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
