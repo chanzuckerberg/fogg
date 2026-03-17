@@ -1126,6 +1126,7 @@ func TestApplyDryRun_NoChangesWhenUpToDate(t *testing.T) {
 	r := require.New(t)
 	fs, tempDir, e := util.TestFs()
 	r.NoError(e)
+	defer os.RemoveAll(tempDir)
 
 	configBytes, e := util.TestFile("v2_minimal_valid_yaml")
 	r.NoError(e)

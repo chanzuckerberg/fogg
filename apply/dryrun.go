@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -12,7 +13,6 @@ import (
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
 	"github.com/chanzuckerberg/fogg/templates"
-	"github.com/sergi/go-diff/diffmatchpatch"
 	"github.com/spf13/afero"
 )
 
@@ -48,6 +48,7 @@ func ApplyDryRun(fs afero.Fs, repoRoot string, conf *v2.Config, tmpl *templates.
 }
 
 var copySkipPrefixes = []string{
+	".git",
 	".terraform.d/plugin-cache",
 	".terraform.d/versions",
 }
@@ -59,7 +60,13 @@ func shouldSkipCopy(path string) bool {
 			return true
 		}
 	}
-	return strings.Contains(path, "/.terraform/")
+	if strings.Contains(path, "/.terraform/") {
+		return true
+	}
+	if strings.HasPrefix(path, "terraform.d/plugins") || strings.HasPrefix(path, "terraform.d/modules") {
+		return true
+	}
+	return false
 }
 
 func copyFoggManagedPaths(src afero.Fs, destDir string) error {
@@ -156,7 +163,6 @@ func diffFoggManagedPaths(currentDir, plannedDir string) (string, bool, error) {
 	}
 	sort.Strings(paths)
 
-	dmp := diffmatchpatch.New()
 	var sb strings.Builder
 	hasChanges := false
 
@@ -189,17 +195,17 @@ func diffFoggManagedPaths(currentDir, plannedDir string) (string, bool, error) {
 		if !inCurrent && inPlanned {
 			hasChanges = true
 			fmt.Fprintf(&sb, "--- /dev/null\n+++ %s\n", relPath)
-			sb.WriteString(formatUnifiedDiff(dmp, "", plannedContent))
+			sb.WriteString(formatUnifiedDiff("", plannedContent))
 			sb.WriteString("\n")
 		} else if inCurrent && !inPlanned {
 			hasChanges = true
 			fmt.Fprintf(&sb, "--- %s\n+++ /dev/null\n", relPath)
-			sb.WriteString(formatUnifiedDiff(dmp, currentContent, ""))
+			sb.WriteString(formatUnifiedDiff(currentContent, ""))
 			sb.WriteString("\n")
 		} else if inCurrent && inPlanned && currentContent != plannedContent {
 			hasChanges = true
 			fmt.Fprintf(&sb, "--- %s\n+++ %s\n", relPath, relPath)
-			sb.WriteString(formatUnifiedDiff(dmp, currentContent, plannedContent))
+			sb.WriteString(formatUnifiedDiff(currentContent, plannedContent))
 			sb.WriteString("\n")
 		}
 	}
@@ -280,45 +286,66 @@ func collectPathsFromOS(baseDir, root string, out map[string]struct{}) error {
 	})
 }
 
-func formatUnifiedDiff(dmp *diffmatchpatch.DiffMatchPatch, oldText, newText string) string {
-	diffs := dmp.DiffMain(oldText, newText, true)
-	dmp.DiffCleanupSemantic(diffs)
+func formatUnifiedDiff(oldText, newText string) string {
+	oldFile, err := os.CreateTemp("", "fogg-diff-old-")
+	if err != nil {
+		return fallbackUnifiedDiff(oldText, newText)
+	}
+	defer os.Remove(oldFile.Name())
+	defer oldFile.Close()
 
-	var sb strings.Builder
-	oldCount, newCount := 0, 0
+	newFile, err := os.CreateTemp("", "fogg-diff-new-")
+	if err != nil {
+		return fallbackUnifiedDiff(oldText, newText)
+	}
+	defer os.Remove(newFile.Name())
+	defer newFile.Close()
 
-	for _, d := range diffs {
-		lines := strings.Split(d.Text, "\n")
-		if len(lines) > 1 && lines[len(lines)-1] == "" {
-			lines = lines[:len(lines)-1]
-		}
-		for _, line := range lines {
-			switch d.Type {
-			case diffmatchpatch.DiffDelete:
-				fmt.Fprintf(&sb, "-%s\n", line)
-				oldCount++
-			case diffmatchpatch.DiffInsert:
-				fmt.Fprintf(&sb, "+%s\n", line)
-				newCount++
-			case diffmatchpatch.DiffEqual:
-				fmt.Fprintf(&sb, " %s\n", line)
-				oldCount++
-				newCount++
-			}
+	if _, err := oldFile.WriteString(oldText); err != nil {
+		return fallbackUnifiedDiff(oldText, newText)
+	}
+	if _, err := newFile.WriteString(newText); err != nil {
+		return fallbackUnifiedDiff(oldText, newText)
+	}
+	if err := oldFile.Close(); err != nil {
+		return fallbackUnifiedDiff(oldText, newText)
+	}
+	if err := newFile.Close(); err != nil {
+		return fallbackUnifiedDiff(oldText, newText)
+	}
+
+	cmd := exec.Command("git", "diff", "--no-index", "--no-color", oldFile.Name(), newFile.Name())
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		var exitErr *exec.ExitError
+		if !errors.As(err, &exitErr) || exitErr.ExitCode() != 1 {
+			return fallbackUnifiedDiff(oldText, newText)
 		}
 	}
 
+	diff := string(out)
+	if idx := strings.Index(diff, "@@"); idx >= 0 {
+		return diff[idx:]
+	}
+	return fallbackUnifiedDiff(oldText, newText)
+}
+
+func fallbackUnifiedDiff(oldText, newText string) string {
+	oldLines := strings.Split(oldText, "\n")
+	newLines := strings.Split(newText, "\n")
+	var sb strings.Builder
+	for _, line := range oldLines {
+		if line != "" || len(oldLines) > 1 {
+			fmt.Fprintf(&sb, "-%s\n", line)
+		}
+	}
+	for _, line := range newLines {
+		if line != "" || len(newLines) > 1 {
+			fmt.Fprintf(&sb, "+%s\n", line)
+		}
+	}
 	if sb.Len() == 0 {
 		return ""
 	}
-
-	var header string
-	if oldCount == 0 {
-		header = fmt.Sprintf("@@ -0,0 +1,%d @@\n", newCount)
-	} else if newCount == 0 {
-		header = fmt.Sprintf("@@ -1,%d +0,0 @@\n", oldCount)
-	} else {
-		header = fmt.Sprintf("@@ -1,%d +1,%d @@\n", oldCount, newCount)
-	}
-	return header + sb.String()
+	return fmt.Sprintf("@@ -1,%d +1,%d @@\n", len(oldLines), len(newLines)) + sb.String()
 }

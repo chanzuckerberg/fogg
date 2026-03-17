@@ -78,6 +78,7 @@ func Execute() {
 			os.Exit(1)
 		case *errs.Internal:
 			fmt.Printf("%s:\nThis may be a bug, please report it.\n\n %s", red("INTERNAL ERROR"), e.Error())
+			os.Exit(1)
 		default:
 			fmt.Printf("%s: %s", red("UNKNOWN ERROR"), err)
 			os.Exit(1)
