@@ -59,10 +59,7 @@ func shouldSkipCopy(path string) bool {
 			return true
 		}
 	}
-	if strings.Contains(path, "/.terraform/") {
-		return true
-	}
-	return false
+	return strings.Contains(path, "/.terraform/")
 }
 
 func copyFoggManagedPaths(src afero.Fs, destDir string) error {
