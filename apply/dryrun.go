@@ -291,15 +291,25 @@ func formatUnifiedDiff(oldText, newText string) string {
 	if err != nil {
 		return fallbackUnifiedDiff(oldText, newText)
 	}
-	defer os.Remove(oldFile.Name())
-	defer oldFile.Close()
+	oldPath := oldFile.Name()
+	defer os.Remove(oldPath)
+	defer func() {
+		if err := oldFile.Close(); err != nil {
+			// best-effort close on defer; error cannot propagate
+		}
+	}()
 
 	newFile, err := os.CreateTemp("", "fogg-diff-new-")
 	if err != nil {
 		return fallbackUnifiedDiff(oldText, newText)
 	}
-	defer os.Remove(newFile.Name())
-	defer newFile.Close()
+	newPath := newFile.Name()
+	defer os.Remove(newPath)
+	defer func() {
+		if err := newFile.Close(); err != nil {
+			// best-effort close on defer; error cannot propagate
+		}
+	}()
 
 	if _, err := oldFile.WriteString(oldText); err != nil {
 		return fallbackUnifiedDiff(oldText, newText)
@@ -314,7 +324,7 @@ func formatUnifiedDiff(oldText, newText string) string {
 		return fallbackUnifiedDiff(oldText, newText)
 	}
 
-	cmd := exec.Command("git", "diff", "--no-index", "--no-color", oldFile.Name(), newFile.Name())
+	cmd := exec.Command("git", "diff", "--no-index", "--no-color", oldPath, newPath)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		var exitErr *exec.ExitError
