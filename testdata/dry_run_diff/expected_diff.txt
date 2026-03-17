@@ -6,3 +6,5 @@
  # Make improvements in fogg, so that everyone can benefit.
  variable "TFC_WORKSPACE_NAME" {
    type    = string
+
+new file mode 100644

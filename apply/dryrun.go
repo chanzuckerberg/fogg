@@ -43,7 +43,7 @@ func DryRun(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool) (diff
 		return "", false, errs.WrapUser(err, "unable to copy current state for dry-run")
 	}
 	if err := copyFoggManagedPaths(fs, plannedDir); err != nil {
-		return "", false, errs.WrapUser(err, "unable to copy current state for dry-run")
+		return "", false, errs.WrapUser(err, "unable to copy planned state for dry-run")
 	}
 
 	tempFs := afero.NewBasePathFs(afero.NewOsFs(), plannedDir)
@@ -111,7 +111,9 @@ func filterGitDiffToFoggPaths(fullDiff, currentPrefix, plannedPrefix string) str
 							} else {
 								fmt.Fprintf(&sb, "+++ %s\n", relPath)
 							}
-						} else if strings.HasPrefix(l, "@@") || strings.HasPrefix(l, "-") || strings.HasPrefix(l, "+") || strings.HasPrefix(l, " ") {
+						} else if strings.HasPrefix(l, "@@") || strings.HasPrefix(l, "-") || strings.HasPrefix(l, "+") || strings.HasPrefix(l, " ") ||
+							strings.HasPrefix(l, "old mode ") || strings.HasPrefix(l, "new mode ") || strings.HasPrefix(l, "new file mode ") || strings.HasPrefix(l, "deleted file mode ") ||
+							strings.HasPrefix(l, "Binary files ") || strings.HasPrefix(l, "\\ No newline") {
 							sb.WriteString(l)
 							sb.WriteString("\n")
 						}
@@ -213,7 +215,7 @@ func copyDir(src afero.Fs, srcPath, destPath string) error {
 			return copySymlink(src, path, target)
 		}
 		if info.IsDir() {
-			return os.MkdirAll(target, info.Mode())
+			return os.MkdirAll(target, info.Mode().Perm()|0700)
 		}
 		return copyFile(src, path, target)
 	})
