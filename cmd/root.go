@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"runtime/pprof"
@@ -67,7 +68,10 @@ var rootCmd = &cobra.Command{
 func Execute() {
 	red := color.New(color.FgRed).SprintFunc()
 
-	if err := rootCmd.Execute(); err != nil {
+		if err := rootCmd.Execute(); err != nil {
+		if errors.Is(err, errDryRunChanges) {
+			os.Exit(1)
+		}
 		switch e := err.(type) {
 		case *errs.User:
 			fmt.Printf("%s: %s\n", red("ERROR"), e.Error())

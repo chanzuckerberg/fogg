@@ -1,13 +1,15 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
-	"os"
 
 	"github.com/chanzuckerberg/fogg/apply"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/spf13/cobra"
 )
+
+var errDryRunChanges = errors.New("dry run: changes detected")
 
 func init() {
 	applyCmd.Flags().StringP("config", "c", "fogg.yml", "Use this to override the fogg config file.")
@@ -65,7 +67,7 @@ var applyCmd = &cobra.Command{
 				fmt.Println("fogg apply would make the following changes (run without --dry-run to apply):")
 				fmt.Println()
 				fmt.Print(diff)
-				os.Exit(1)
+				return errDryRunChanges
 			}
 			fmt.Println("No changes. fogg apply would not modify any files.")
 			return nil

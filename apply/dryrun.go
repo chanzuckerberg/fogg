@@ -1,11 +1,13 @@
 package apply
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
+	"syscall"
 
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/errs"
@@ -106,7 +108,7 @@ func copyDir(src afero.Fs, srcPath, destPath string) error {
 func copyFile(src afero.Fs, srcPath, destPath string) error {
 	data, err := afero.ReadFile(src, srcPath)
 	if err != nil {
-		if strings.Contains(err.Error(), "is a directory") {
+		if errors.Is(err, syscall.EISDIR) {
 			return nil
 		}
 		return err
@@ -157,7 +159,7 @@ func diffFoggManagedPaths(currentDir, plannedDir string) (string, bool, error) {
 		if inCurrent {
 			data, err := os.ReadFile(filepath.Join(currentDir, relPath))
 			if err != nil {
-				if strings.Contains(err.Error(), "is a directory") {
+				if errors.Is(err, syscall.EISDIR) {
 					continue
 				}
 				return "", false, err
@@ -167,7 +169,7 @@ func diffFoggManagedPaths(currentDir, plannedDir string) (string, bool, error) {
 		if inPlanned {
 			data, err := os.ReadFile(filepath.Join(plannedDir, relPath))
 			if err != nil {
-				if strings.Contains(err.Error(), "is a directory") {
+				if errors.Is(err, syscall.EISDIR) {
 					continue
 				}
 				return "", false, err
@@ -204,10 +206,14 @@ func inSet(m map[string]struct{}, key string) bool {
 func collectPaths(baseDir, root string, out map[string]struct{}) error {
 	fullPath := filepath.Join(baseDir, root)
 	info, err := os.Stat(fullPath)
-	if err != nil || !info.IsDir() {
-		if err == nil {
-			out[root] = struct{}{}
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
 		}
+		return err
+	}
+	if !info.IsDir() {
+		out[root] = struct{}{}
 		return nil
 	}
 	return filepath.WalkDir(fullPath, func(path string, d os.DirEntry, err error) error {
@@ -228,10 +234,14 @@ func collectPaths(baseDir, root string, out map[string]struct{}) error {
 func collectPathsFromOS(baseDir, root string, out map[string]struct{}) error {
 	fullPath := filepath.Join(baseDir, root)
 	info, err := os.Stat(fullPath)
-	if err != nil || !info.IsDir() {
-		if err == nil {
-			out[root] = struct{}{}
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
 		}
+		return err
+	}
+	if !info.IsDir() {
+		out[root] = struct{}{}
 		return nil
 	}
 	return filepath.WalkDir(fullPath, func(path string, d os.DirEntry, err error) error {
