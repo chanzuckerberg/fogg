@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/chanzuckerberg/fogg/apply"
 	"github.com/chanzuckerberg/fogg/templates"
 	"github.com/spf13/cobra"
@@ -9,6 +12,7 @@ import (
 func init() {
 	applyCmd.Flags().StringP("config", "c", "fogg.yml", "Use this to override the fogg config file.")
 	applyCmd.Flags().BoolP("upgrade", "u", false, "Use this when running a new version of fogg")
+	applyCmd.Flags().Bool("dry-run", false, "Show what would change without writing")
 	rootCmd.AddCommand(applyCmd)
 }
 
@@ -36,6 +40,11 @@ var applyCmd = &cobra.Command{
 			return e
 		}
 
+		dryRun, e := cmd.Flags().GetBool("dry-run")
+		if e != nil {
+			return e
+		}
+
 		// check that we are at root of initialized git repo
 		openGitOrExit(fs)
 
@@ -47,7 +56,21 @@ var applyCmd = &cobra.Command{
 			return e
 		}
 
-		// apply
+		if dryRun {
+			diff, hasChanges, e := apply.ApplyDryRun(fs, config, templates.Templates, upgrade)
+			if e != nil {
+				return e
+			}
+			if hasChanges {
+				fmt.Println("fogg apply would make the following changes (run without --dry-run to apply):")
+				fmt.Println()
+				fmt.Print(diff)
+				os.Exit(1)
+			}
+			fmt.Println("No changes. fogg apply would not modify any files.")
+			return nil
+		}
+
 		e = apply.Apply(fs, config, templates.Templates, upgrade)
 
 		return e
