@@ -23,7 +23,7 @@ var foggManagedRoots = []string{
 	".terraform.d", "terraform.d",
 }
 
-func ApplyDryRun(fs afero.Fs, repoRoot string, conf *v2.Config, tmpl *templates.T, upgrade bool) (diff string, hasChanges bool, err error) {
+func ApplyDryRun(fs afero.Fs, conf *v2.Config, tmpl *templates.T, upgrade bool) (diff string, hasChanges bool, err error) {
 	tempDir, err := os.MkdirTemp("", "fogg-dryrun-")
 	if err != nil {
 		return "", false, errs.WrapInternal(err, "unable to create temp dir for dry-run")
@@ -39,7 +39,7 @@ func ApplyDryRun(fs afero.Fs, repoRoot string, conf *v2.Config, tmpl *templates.
 		return "", false, err
 	}
 
-	diffOutput, hasChanges, err := diffFoggManagedPaths(repoRoot, tempDir)
+	diffOutput, hasChanges, err := diffFoggManagedPaths(fs, tempDir)
 	if err != nil {
 		return "", false, errs.WrapUser(err, "unable to compute diff")
 	}
@@ -49,12 +49,17 @@ func ApplyDryRun(fs afero.Fs, repoRoot string, conf *v2.Config, tmpl *templates.
 
 var copySkipPrefixes = []string{
 	".git",
-	".terraform.d/plugin-cache",
 	".terraform.d/versions",
 }
 
 func shouldSkipCopy(path string) bool {
 	path = filepath.ToSlash(path)
+	if path == ".terraform.d/plugin-cache/.gitignore" {
+		return false
+	}
+	if path == ".terraform.d/plugin-cache" || strings.HasPrefix(path, ".terraform.d/plugin-cache/") {
+		return true
+	}
 	for _, prefix := range copySkipPrefixes {
 		if path == prefix || strings.HasPrefix(path, prefix+"/") {
 			return true
@@ -136,15 +141,15 @@ func copyFile(src afero.Fs, srcPath, destPath string) error {
 	return os.WriteFile(destPath, data, 0644)
 }
 
-func diffFoggManagedPaths(currentDir, plannedDir string) (string, bool, error) {
+func diffFoggManagedPaths(currentFs afero.Fs, plannedDir string) (string, bool, error) {
 	currentFiles := make(map[string]struct{})
 	plannedFiles := make(map[string]struct{})
 
 	for _, root := range foggManagedRoots {
-		if err := collectPaths(currentDir, root, currentFiles); err != nil {
+		if err := collectPathsFromFs(currentFs, root, currentFiles); err != nil {
 			return "", false, err
 		}
-		if err := collectPathsFromOS(plannedDir, root, plannedFiles); err != nil {
+		if err := collectPathsOS(plannedDir, root, plannedFiles); err != nil {
 			return "", false, err
 		}
 	}
@@ -172,7 +177,7 @@ func diffFoggManagedPaths(currentDir, plannedDir string) (string, bool, error) {
 
 		var currentContent, plannedContent string
 		if inCurrent {
-			data, err := os.ReadFile(filepath.Join(currentDir, relPath))
+			data, err := afero.ReadFile(currentFs, relPath)
 			if err != nil {
 				if errors.Is(err, syscall.EISDIR) {
 					continue
@@ -218,9 +223,8 @@ func inSet(m map[string]struct{}, key string) bool {
 	return ok
 }
 
-func collectPaths(baseDir, root string, out map[string]struct{}) error {
-	fullPath := filepath.Join(baseDir, root)
-	info, err := os.Stat(fullPath)
+func collectPathsFromFs(fs afero.Fs, root string, out map[string]struct{}) error {
+	info, err := fs.Stat(root)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil
@@ -231,28 +235,27 @@ func collectPaths(baseDir, root string, out map[string]struct{}) error {
 		out[root] = struct{}{}
 		return nil
 	}
-	return filepath.WalkDir(fullPath, func(path string, d os.DirEntry, err error) error {
+	return afero.Walk(fs, root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
-		rel, err := filepath.Rel(baseDir, path)
-		if err != nil {
-			return err
-		}
-		if shouldSkipCopy(rel) {
-			if d.IsDir() {
+		if shouldSkipCopy(path) {
+			if info.IsDir() {
 				return filepath.SkipDir
 			}
 			return nil
 		}
-		if !d.IsDir() {
-			out[rel] = struct{}{}
+		if info.Mode()&os.ModeSymlink != 0 {
+			return nil
+		}
+		if !info.IsDir() {
+			out[path] = struct{}{}
 		}
 		return nil
 	})
 }
 
-func collectPathsFromOS(baseDir, root string, out map[string]struct{}) error {
+func collectPathsOS(baseDir, root string, out map[string]struct{}) error {
 	fullPath := filepath.Join(baseDir, root)
 	info, err := os.Stat(fullPath)
 	if err != nil {
