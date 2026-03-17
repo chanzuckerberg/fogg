@@ -139,7 +139,7 @@ func TestIntegrationDryRunDiff(t *testing.T) {
 	r.NoError(e)
 	r.Len(w, 0)
 
-	diff, hasChanges, e := apply.ApplyDryRun(testdataFs, conf, templates.Templates, true)
+	diff, hasChanges, e := apply.DryRun(testdataFs, conf, templates.Templates, true)
 	r.NoError(e)
 	r.True(hasChanges, "dry_run_diff fixture has intentional drift, ApplyDryRun should detect changes")
 

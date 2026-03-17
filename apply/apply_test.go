@@ -1122,7 +1122,7 @@ func Test_filepathRel(t *testing.T) {
 	}
 }
 
-func TestApplyDryRun_NoChangesWhenUpToDate(t *testing.T) {
+func TestDryRun_NoChangesWhenUpToDate(t *testing.T) {
 	r := require.New(t)
 	fs, tempDir, e := util.TestFs()
 	r.NoError(e)
@@ -1140,12 +1140,12 @@ func TestApplyDryRun_NoChangesWhenUpToDate(t *testing.T) {
 
 	r.NoError(Apply(fs, conf, templates.Templates, true))
 
-	_, hasChanges, e := ApplyDryRun(fs, conf, templates.Templates, true)
+	_, hasChanges, e := DryRun(fs, conf, templates.Templates, true)
 	r.NoError(e)
-	r.False(hasChanges, "ApplyDryRun should report no changes when repo is up to date")
+	r.False(hasChanges, "DryRun should report no changes when repo is up to date")
 }
 
-func TestApplyDryRun_DetectsChanges(t *testing.T) {
+func TestDryRun_DetectsChanges(t *testing.T) {
 	r := require.New(t)
 	fs, tempDir, e := util.TestFs()
 	r.NoError(e)
@@ -1165,9 +1165,9 @@ func TestApplyDryRun_DetectsChanges(t *testing.T) {
 
 	r.NoError(afero.WriteFile(fs, "terraform/global/fogg.tf", []byte("modified content"), 0644))
 
-	_, hasChanges, e := ApplyDryRun(fs, conf, templates.Templates, true)
+	_, hasChanges, e := DryRun(fs, conf, templates.Templates, true)
 	r.NoError(e)
-	r.True(hasChanges, "ApplyDryRun should detect changes when generated file was modified")
+	r.True(hasChanges, "DryRun should detect changes when generated file was modified")
 }
 
 func TestDestRemoveUsedForRmExtension(t *testing.T) {

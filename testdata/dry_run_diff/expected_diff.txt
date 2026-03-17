@@ -1,6 +1,3 @@
---- /dev/null
-+++ terraform.d/.keep
-
 --- terraform/global/fogg.tf
 +++ terraform/global/fogg.tf
 @@ -1,5 +1,4 @@
@@ -9,4 +6,3 @@
  # Make improvements in fogg, so that everyone can benefit.
  variable "TFC_WORKSPACE_NAME" {
    type    = string
-

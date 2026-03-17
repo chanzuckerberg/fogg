@@ -59,7 +59,7 @@ var applyCmd = &cobra.Command{
 		}
 
 		if dryRun {
-			diff, hasChanges, e := apply.ApplyDryRun(fs, config, templates.Templates, upgrade)
+			diff, hasChanges, e := apply.DryRun(fs, config, templates.Templates, upgrade)
 			if e != nil {
 				return e
 			}
