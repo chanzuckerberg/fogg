@@ -68,7 +68,7 @@ var rootCmd = &cobra.Command{
 func Execute() {
 	red := color.New(color.FgRed).SprintFunc()
 
-		if err := rootCmd.Execute(); err != nil {
+	if err := rootCmd.Execute(); err != nil {
 		if errors.Is(err, errDryRunChanges) {
 			os.Exit(1)
 		}
