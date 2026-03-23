@@ -36,6 +36,7 @@ func TestIntegration(t *testing.T) {
 		{"remote_backend_yaml"},
 		{"tfe_config"},
 		{"custom_provider_yaml"},
+		{"extra_gitignore_yaml"},
 	}
 
 	for _, test := range testCases {
