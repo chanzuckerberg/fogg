@@ -33,6 +33,7 @@ type Plan struct {
 	GitHubActionsCI GitHubActionsCIConfig `yaml:"github_actions_ci"`
 	Version         string                `yaml:"version"`
 	TFE             *TFEConfig            `yaml:"tfe"`
+	ExtraGitignore  []string              `yaml:"extra_gitignore"`
 }
 
 // Common represents common fields
@@ -418,6 +419,9 @@ func Eval(c *v2.Config) (*Plan, error) {
 	p.TFE, err = p.buildTFE(c)
 	if err != nil {
 		return p, err
+	}
+	if c.Defaults.ExtraGitignore != nil {
+		p.ExtraGitignore = c.Defaults.ExtraGitignore
 	}
 	return p, nil
 }

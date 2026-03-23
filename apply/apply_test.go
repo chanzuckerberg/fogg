@@ -684,6 +684,44 @@ version: 2
 	r.NoError(e)
 }
 
+func TestApplyExtraGitignore(t *testing.T) {
+	r := require.New(t)
+	fs, d, err := util.TestFs()
+	r.NoError(err)
+	defer os.RemoveAll(d)
+
+	yml := `
+defaults:
+  owner: foo
+  project: bar
+  terraform_version: 0
+  backend:
+    bucket: baz
+    region: qux
+    profile: quux
+  extra_gitignore:
+    - "*.log"
+    - "secrets/"
+version: 2
+`
+	err = afero.WriteFile(fs, "fogg.yml", []byte(yml), 0644)
+	r.NoError(err)
+	c, err := v2.ReadConfig(fs, []byte(yml), "fogg.yml")
+	r.NoError(err)
+
+	w, err := c.Validate()
+	r.NoError(err)
+	r.Len(w, 0)
+
+	err = Apply(fs, c, templates.Templates, true)
+	r.NoError(err)
+
+	content, err := afero.ReadFile(fs, ".gitignore")
+	r.NoError(err)
+	r.Contains(string(content), "*.log")
+	r.Contains(string(content), "secrets/")
+}
+
 func TestApplyModuleInvocation(t *testing.T) {
 	r := require.New(t)
 	testFs, d, err := util.TestFs()

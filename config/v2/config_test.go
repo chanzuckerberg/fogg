@@ -44,6 +44,25 @@ func TestReadConfigYaml(t *testing.T) {
 	r.Len(w, 0)
 }
 
+func TestReadExtraGitignoreConfig(t *testing.T) {
+	r := require.New(t)
+
+	b, e := util.TestFile("extra_gitignore_yaml")
+	r.NoError(e)
+	r.NotNil(b)
+
+	fs, _, e := util.TestFs()
+	r.NoError(e)
+	e = afero.WriteFile(fs, "fogg.yml", b, 0644)
+	r.NoError(e)
+	c, e := ReadConfig(fs, b, "fogg.yml")
+	r.NoError(e)
+	r.NotNil(c)
+
+	r.NotNil(c.Defaults.ExtraGitignore)
+	r.Equal([]string{"*.log", "secrets/", ".env.local"}, c.Defaults.ExtraGitignore)
+}
+
 func TestReadSnowflakeProviderYaml(t *testing.T) {
 	r := require.New(t)
 

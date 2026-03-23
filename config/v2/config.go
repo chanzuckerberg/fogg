@@ -91,6 +91,7 @@ type Common struct {
 	NeedsAWSAccountsVariable *bool                     `yaml:"needs_aws_accounts_variable,omitempty"`
 	NeedsDefaultTFProviders  *[]string                 `yaml:"needs_default_tf_providers,omitempty"`
 	ExtraTemplates           *map[string]ExtraTemplate `yaml:"extra_templates,omitempty"`
+	ExtraGitignore           []string                  `yaml:"extra_gitignore,omitempty"`
 }
 
 type Defaults struct {

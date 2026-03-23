@@ -36,3 +36,8 @@ buildevents.plan
 check-plan.output
 
 venv
+{{ if .ExtraGitignore }}
+{{ range .ExtraGitignore }}
+{{ . }}
+{{ end }}
+{{ end -}}
