@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.92.42](https://github.com/chanzuckerberg/fogg/compare/v0.92.41...v0.92.42) (2026-03-24)
+
+
+### Features
+
+* add extra_gitignore config for custom .gitignore patterns ([#1182](https://github.com/chanzuckerberg/fogg/issues/1182)) ([47ca45c](https://github.com/chanzuckerberg/fogg/commit/47ca45c43fcd41d8a18a48cbf0c543dfe38f2930))
+
+
+### Misc
+
+* Bump github.com/fatih/color from 1.18.0 to 1.19.0 ([#1181](https://github.com/chanzuckerberg/fogg/issues/1181)) ([d975f4d](https://github.com/chanzuckerberg/fogg/commit/d975f4d4de2eaa77ddbb77604e29c6b4f99e5a32))
+* Bump google.golang.org/grpc from 1.57.1 to 1.79.3 ([#1179](https://github.com/chanzuckerberg/fogg/issues/1179)) ([ef4295c](https://github.com/chanzuckerberg/fogg/commit/ef4295ccfe3c41a4840f51317b893dca39cb50cf))
+
 ## [0.92.41](https://github.com/chanzuckerberg/fogg/compare/v0.92.40...v0.92.41) (2026-03-16)
 
 
