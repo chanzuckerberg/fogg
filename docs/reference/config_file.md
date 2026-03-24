@@ -104,6 +104,7 @@ The following config paths all accept a standard `workspace` configuration spec:
 
 - `backend` - Configure the terraform remote state backend
 - `extra_vars` - Any extra terraform variables to add to the workspace
+- `extra_gitignore` - Additional patterns to append to the root `.gitignore` (list of strings, under `defaults` only)
 - `owner` - Set the `var.owner` terraform variable to this string (email address recommended)
 - `project` - Set the `var.project` terraform variable to this string
 - `providers` - Preconfigure any terraform providers
