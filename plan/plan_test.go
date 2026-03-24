@@ -135,6 +135,15 @@ func TestPlanBasicV2Yaml(t *testing.T) {
 	r.True(plan.GitHubActionsCI.Enabled)
 }
 
+func TestExtraGitignorePlan(t *testing.T) {
+	r := require.New(t)
+
+	plan := buildPlan(t, "extra_gitignore_yaml")
+
+	r.NotNil(plan.ExtraGitignore)
+	r.Equal([]string{"*.log", "secrets/", ".env.local"}, plan.ExtraGitignore)
+}
+
 func TestRemoteBackendPlan(t *testing.T) {
 	r := require.New(t)
 

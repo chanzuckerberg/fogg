@@ -25,7 +25,7 @@ import (
 //go:embed templates/repo/scripts/*
 //go:embed templates/repo/.fogg-version.tmpl
 //go:embed templates/repo/.gitattributes
-//go:embed templates/repo/.gitignore
+//go:embed templates/repo/.gitignore.tmpl
 //go:embed templates/repo/.terraformignore.tmpl
 //go:embed templates/repo/terraform.d/.keep.touch
 //go:embed templates/repo/.terraform.d/plugin-cache/.gitignore

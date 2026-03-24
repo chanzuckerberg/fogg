@@ -36,3 +36,11 @@ buildevents.plan
 check-plan.output
 
 venv
+
+
+*.log
+
+secrets/
+
+.env.local
+
