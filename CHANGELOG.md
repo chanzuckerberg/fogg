@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.92.43](https://github.com/chanzuckerberg/fogg/compare/v0.92.42...v0.92.43) (2026-04-06)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go-v2 from 1.41.4 to 1.41.5 ([#1185](https://github.com/chanzuckerberg/fogg/issues/1185)) ([43a90a5](https://github.com/chanzuckerberg/fogg/commit/43a90a5666fa175ce74c61789a12e9bbffb549a9))
+* Bump github.com/go-git/go-git/v5 from 5.17.0 to 5.17.1 ([#1183](https://github.com/chanzuckerberg/fogg/issues/1183)) ([3865817](https://github.com/chanzuckerberg/fogg/commit/3865817fd3530d20fc1fe2477f4b9bc397661e57))
+* Bump github.com/go-git/go-git/v5 from 5.17.1 to 5.17.2 ([#1187](https://github.com/chanzuckerberg/fogg/issues/1187)) ([f4a9450](https://github.com/chanzuckerberg/fogg/commit/f4a945001050f0aa1c121955990cdd5a0152ffbf))
+* Bump github.com/hashicorp/go-version from 1.8.0 to 1.9.0 ([#1184](https://github.com/chanzuckerberg/fogg/issues/1184)) ([a29864d](https://github.com/chanzuckerberg/fogg/commit/a29864daf353cb9619ef48dfab79b5aab53ace2b))
+* upgrade GitHub Actions from node20 to node24 ([#1188](https://github.com/chanzuckerberg/fogg/issues/1188)) ([6c8390b](https://github.com/chanzuckerberg/fogg/commit/6c8390b1bbf11fc8109e7dbcaeeac88cfabd7a1b))
+
 ## [0.92.42](https://github.com/chanzuckerberg/fogg/compare/v0.92.41...v0.92.42) (2026-03-24)
 
 
