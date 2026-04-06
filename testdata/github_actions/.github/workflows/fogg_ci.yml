@@ -14,12 +14,12 @@ jobs:
     steps:
       - name: Generate token
         id: generate_token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.GH_ACTIONS_HELPER_APP_ID }}
           private-key: ${{ secrets.GH_ACTIONS_HELPER_PK }}
           owner: ${{ github.repository_owner }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
         with:
           token: ${{ steps.generate_token.outputs.token }}
       - name: Get Git refs hash
@@ -29,7 +29,7 @@ jobs:
           echo "hash=$hash" >> $GITHUB_OUTPUT
       - name: Cache Fogg
         id: cache-fogg
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.fogg/cache
           key: fogg-cache-${{ hashFiles('**/.fogg-version') }}-${{ steps.git-refs-hash.outputs.hash }}
@@ -50,8 +50,8 @@ jobs:
     outputs:
       allChanges: ${{ steps.changedDirs.outputs.allChanges }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: dorny/paths-filter@v2.10.2
+      - uses: actions/checkout@v6
+      - uses: dorny/paths-filter@v4
         id: filter
         with:
           initial-fetch-depth: '1'
@@ -59,7 +59,7 @@ jobs:
           filters: |
             changed:
               - added|modified: 'terraform/**'
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v8
         id: changedDirs
         with:
           script: |
@@ -85,12 +85,12 @@ jobs:
     steps:
       - name: Generate token
         id: generate_token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.GH_ACTIONS_HELPER_APP_ID }}
           private-key: ${{ secrets.GH_ACTIONS_HELPER_PK }}
           owner: ${{ github.repository_owner }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
         with:
           token: ${{ steps.generate_token.outputs.token }}
       - name: fix terraform docs
