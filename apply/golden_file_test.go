@@ -127,3 +127,30 @@ func TestIntegration(t *testing.T) {
 		})
 	}
 }
+
+func TestIntegrationDryRunDiff(t *testing.T) {
+	r := require.New(t)
+
+	testdataDir := filepath.Join(util.ProjectRoot(), "testdata", "dry_run_diff")
+	testdataFs := afero.NewBasePathFs(afero.NewOsFs(), testdataDir)
+
+	conf, e := config.FindAndReadConfig(testdataFs, "fogg.yml")
+	r.NoError(e)
+	w, e := conf.Validate()
+	r.NoError(e)
+	r.Len(w, 0)
+
+	diff, hasChanges, e := apply.DryRun(testdataFs, conf, templates.Templates, true)
+	r.NoError(e)
+	r.True(hasChanges, "dry_run_diff fixture has intentional drift, ApplyDryRun should detect changes")
+
+	expectedPath := filepath.Join(testdataDir, "expected_diff.txt")
+	if *updateGoldenFiles {
+		r.NoError(os.WriteFile(expectedPath, []byte(diff), 0644))
+		return
+	}
+
+	expected, e := os.ReadFile(expectedPath)
+	r.NoError(e)
+	r.Equal(string(expected), diff, "ApplyDryRun diff should match expected_diff.txt")
+}

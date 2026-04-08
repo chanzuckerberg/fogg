@@ -496,7 +496,7 @@ func applyTree(dest afero.Fs, source fs.FS, common fs.FS, targetBasePath string,
 				return errs.WrapUserf(e, "unable to create file %s", target)
 			}
 		} else if extension == ".rm" {
-			e = os.Remove(target)
+			e = dest.Remove(target)
 			if e != nil && !os.IsNotExist(e) {
 				return errs.WrapUserf(e, "unable to remove %s", target)
 			}
