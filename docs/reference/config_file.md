@@ -189,6 +189,7 @@ The currently supported CI tools are:
   - `command` -
   - `enabled` - boolean, enable this CI tool
   - `ssh_key_secrets` - list of strings, github actions secrets containing ssh keys for pulling code from private repos
+  - `skip_fogg_apply_paths` - optional list of path globs; when set, the generated `fogg-apply` GitHub Actions job is skipped if every changed file matches only these subtrees (see generated workflow). Entries without `*` or `?` are treated as directory prefixes and normalized to subtree globs in the workflow.
 - `tflint`
   - `enabled` - boolean, enable this CI tool
 

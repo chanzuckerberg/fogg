@@ -1,0 +1,20 @@
+defaults:
+  backend:
+    bucket: bucket
+    profile: foo
+    region: region
+  owner: foo@example.com
+  project: foo
+  providers: {}
+  terraform_version: 1.1.1
+  tools:
+    github_actions_ci:
+      aws_iam_role_name: infraci
+      command: lint
+      enabled: true
+      test_buckets: 7
+      runs_on:
+        - ARM64
+      skip_fogg_apply_paths:
+        - argocd/**
+version: 2

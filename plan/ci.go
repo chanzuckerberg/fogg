@@ -30,8 +30,9 @@ type CircleCIConfig struct {
 
 type GitHubActionsCIConfig struct {
 	CIConfig
-	SSHKeySecrets []string
-	RunsOn        []string
+	SSHKeySecrets      []string
+	RunsOn             []string
+	SkipFoggApplyPaths []string
 }
 
 type TravisCIConfig struct {
@@ -337,8 +338,9 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 	}
 
 	var (
-		sshKeySecrets []string
-		runsOn        []string
+		sshKeySecrets      []string
+		runsOn             []string
+		skipFoggApplyPaths []string
 	)
 
 	if c.Defaults.Tools != nil && c.Defaults.Tools.GitHubActionsCI != nil {
@@ -351,10 +353,15 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 		runsOn = *c.Defaults.Tools.GitHubActionsCI.RunsOn
 	}
 
+	if c.Defaults.Tools != nil && c.Defaults.Tools.GitHubActionsCI != nil {
+		skipFoggApplyPaths = c.Defaults.Tools.GitHubActionsCI.SkipFoggApplyPaths
+	}
+
 	ciConfig = ciConfig.populateBuckets(numBuckets)
 	return GitHubActionsCIConfig{
-		CIConfig:      *ciConfig,
-		SSHKeySecrets: sshKeySecrets,
-		RunsOn:        runsOn,
+		CIConfig:           *ciConfig,
+		SSHKeySecrets:      sshKeySecrets,
+		RunsOn:             runsOn,
+		SkipFoggApplyPaths: skipFoggApplyPaths,
 	}
 }
