@@ -118,8 +118,9 @@ type CircleCI struct {
 type GitHubActionsCI struct {
 	CommonCI `yaml:",inline"`
 
-	SSHKeySecrets []string  `yaml:"ssh_key_secrets"`
-	RunsOn        *[]string `yaml:"runs_on,omitempty"`
+	SSHKeySecrets      []string  `yaml:"ssh_key_secrets"`
+	RunsOn             *[]string `yaml:"runs_on,omitempty"`
+	SkipFoggApplyPaths []string  `yaml:"skip_fogg_apply_paths,omitempty"`
 }
 
 type Env struct {

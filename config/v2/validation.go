@@ -306,6 +306,25 @@ func (c *Config) ValidateGithubActionsCI() error {
 		}
 	})
 
+	errs = multierror.Append(errs, c.validateSkipFoggApplyPaths())
+
+	return errs
+}
+
+func (c *Config) validateSkipFoggApplyPaths() error {
+	if c.Defaults.Tools == nil || c.Defaults.Tools.GitHubActionsCI == nil {
+		return nil
+	}
+	var errs *multierror.Error
+	for i, p := range c.Defaults.Tools.GitHubActionsCI.SkipFoggApplyPaths {
+		if strings.TrimSpace(p) == "" {
+			errs = multierror.Append(errs, fmt.Errorf("github_actions_ci skip_fogg_apply_paths[%d] must be non-empty", i))
+			continue
+		}
+		if strings.Contains(p, "\n") {
+			errs = multierror.Append(errs, fmt.Errorf("github_actions_ci skip_fogg_apply_paths[%d] must not contain newlines", i))
+		}
+	}
 	return errs
 }
 
