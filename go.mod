@@ -11,7 +11,7 @@ replace github.com/hashicorp/go-getter => github.com/hashicorp/go-getter v1.7.8
 require (
 	github.com/Masterminds/sprig v2.22.0+incompatible
 	github.com/antzucaro/matchr v0.0.0-20221106193745-7bed6ef61ef9
-	github.com/aws/aws-sdk-go-v2 v1.41.5
+	github.com/aws/aws-sdk-go-v2 v1.41.6
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/chanzuckerberg/go-misc v1.11.1
 	github.com/davecgh/go-spew v1.1.1
@@ -60,7 +60,7 @@ require (
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/apparentlymart/go-versions v1.0.1 // indirect
 	github.com/aws/aws-sdk-go v1.55.8 // indirect
-	github.com/aws/smithy-go v1.24.2 // indirect
+	github.com/aws/smithy-go v1.25.0 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/bmatcuk/doublestar v1.3.4 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
