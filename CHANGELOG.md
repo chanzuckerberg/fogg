@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.92.47](https://github.com/chanzuckerberg/fogg/compare/v0.92.46...v0.92.47) (2026-06-15)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go-v2 from 1.41.10 to 1.41.12 ([#1203](https://github.com/chanzuckerberg/fogg/issues/1203)) ([8f357ae](https://github.com/chanzuckerberg/fogg/commit/8f357aec8c5d2d446e57ec469b7675e62a5c80b1))
+* Bump github.com/aws/aws-sdk-go-v2 from 1.41.12 to 1.42.0 ([#1204](https://github.com/chanzuckerberg/fogg/issues/1204)) ([f5ac61f](https://github.com/chanzuckerberg/fogg/commit/f5ac61fd144c6e4dea2ac58b3cc6f2e0a2d1a2ae))
+* Bump github.com/aws/aws-sdk-go-v2 from 1.41.7 to 1.41.10 ([#1200](https://github.com/chanzuckerberg/fogg/issues/1200)) ([8348f97](https://github.com/chanzuckerberg/fogg/commit/8348f97293830653f88cee9e72df024cffec48c0))
+* Bump gopkg.in/ini.v1 from 1.67.2 to 1.67.3 ([#1202](https://github.com/chanzuckerberg/fogg/issues/1202)) ([4031459](https://github.com/chanzuckerberg/fogg/commit/40314594c188a8961ecdcdb23d42abd8c048a766))
+
 ## [0.92.46](https://github.com/chanzuckerberg/fogg/compare/v0.92.45...v0.92.46) (2026-05-19)
 
 
