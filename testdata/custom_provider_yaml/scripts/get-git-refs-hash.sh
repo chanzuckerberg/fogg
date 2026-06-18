@@ -1,4 +1,3 @@
-# Created by Cursor
 #!/bin/bash
 set -euo pipefail
 

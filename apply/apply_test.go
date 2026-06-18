@@ -11,6 +11,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/chanzuckerberg/fogg/config"
 	v2 "github.com/chanzuckerberg/fogg/config/v2"
 	"github.com/chanzuckerberg/fogg/plan"
 	"github.com/chanzuckerberg/fogg/templates"
@@ -1157,4 +1158,70 @@ func Test_filepathRel(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestDryRun_NoChangesWhenUpToDate(t *testing.T) {
+	r := require.New(t)
+	fs, tempDir, e := util.TestFs()
+	r.NoError(e)
+	defer os.RemoveAll(tempDir)
+
+	configBytes, e := util.TestFile("v2_minimal_valid_yaml")
+	r.NoError(e)
+	r.NoError(afero.WriteFile(fs, "fogg.yml", configBytes, 0644))
+
+	conf, e := config.FindAndReadConfig(fs, "fogg.yml")
+	r.NoError(e)
+	w, e := conf.Validate()
+	r.NoError(e)
+	r.Len(w, 0)
+
+	r.NoError(Apply(fs, conf, templates.Templates, true))
+
+	_, hasChanges, e := DryRun(fs, conf, templates.Templates, true)
+	r.NoError(e)
+	r.False(hasChanges, "DryRun should report no changes when repo is up to date")
+}
+
+func TestDryRun_DetectsChanges(t *testing.T) {
+	r := require.New(t)
+	fs, tempDir, e := util.TestFs()
+	r.NoError(e)
+	defer os.RemoveAll(tempDir)
+
+	configBytes, e := util.TestFile("v2_minimal_valid_yaml")
+	r.NoError(e)
+	r.NoError(afero.WriteFile(fs, "fogg.yml", configBytes, 0644))
+
+	conf, e := config.FindAndReadConfig(fs, "fogg.yml")
+	r.NoError(e)
+	w, e := conf.Validate()
+	r.NoError(e)
+	r.Len(w, 0)
+
+	r.NoError(Apply(fs, conf, templates.Templates, true))
+
+	r.NoError(afero.WriteFile(fs, "terraform/global/fogg.tf", []byte("modified content"), 0644))
+
+	_, hasChanges, e := DryRun(fs, conf, templates.Templates, true)
+	r.NoError(e)
+	r.True(hasChanges, "DryRun should detect changes when generated file was modified")
+}
+
+func TestDestRemoveUsedForRmExtension(t *testing.T) {
+	r := require.New(t)
+	memFs := afero.NewMemMapFs()
+	r.NoError(memFs.MkdirAll("terraform/modules/foo", 0755))
+	r.NoError(afero.WriteFile(memFs, "terraform/modules/foo/.update-readme.sh", []byte("x"), 0644))
+
+	moduleBox := templates.Templates.Module
+	commonBox := templates.Templates.Common
+
+	err := applyTree(memFs, moduleBox, commonBox, "terraform/modules/foo", plan.Module{
+		Common: plan.Common{TerraformVersion: "1.0.0"},
+	})
+	r.NoError(err)
+
+	_, err = memFs.Stat("terraform/modules/foo/.update-readme.sh")
+	r.True(os.IsNotExist(err), ".rm extension should remove file via dest.Remove, not os.Remove")
 }
