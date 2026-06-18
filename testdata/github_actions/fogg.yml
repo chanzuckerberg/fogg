@@ -13,6 +13,7 @@ defaults:
       command: lint
       enabled: true
       test_buckets: 7
+      terraform_docs_version: v1.4.1
       runs_on:
         - ARM64
 version: 2
