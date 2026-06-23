@@ -30,8 +30,9 @@ type CircleCIConfig struct {
 
 type GitHubActionsCIConfig struct {
 	CIConfig
-	SSHKeySecrets []string
-	RunsOn        []string
+	SSHKeySecrets        []string
+	RunsOn               []string
+	TerraformDocsVersion string
 }
 
 type TravisCIConfig struct {
@@ -351,10 +352,20 @@ func (p *Plan) buildGitHubActionsConfig(c *v2.Config, foggVersion string) GitHub
 		runsOn = *c.Defaults.Tools.GitHubActionsCI.RunsOn
 	}
 
+	// Default kept at v1.0.0 for backwards compatibility; repos opt into a newer
+	// terraform-docs (e.g. for provider-defined functions) via terraform_docs_version.
+	terraformDocsVersion := "v1.0.0"
+	if c.Defaults.Tools != nil &&
+		c.Defaults.Tools.GitHubActionsCI != nil &&
+		c.Defaults.Tools.GitHubActionsCI.TerraformDocsVersion != nil {
+		terraformDocsVersion = *c.Defaults.Tools.GitHubActionsCI.TerraformDocsVersion
+	}
+
 	ciConfig = ciConfig.populateBuckets(numBuckets)
 	return GitHubActionsCIConfig{
-		CIConfig:      *ciConfig,
-		SSHKeySecrets: sshKeySecrets,
-		RunsOn:        runsOn,
+		CIConfig:             *ciConfig,
+		SSHKeySecrets:        sshKeySecrets,
+		RunsOn:               runsOn,
+		TerraformDocsVersion: terraformDocsVersion,
 	}
 }

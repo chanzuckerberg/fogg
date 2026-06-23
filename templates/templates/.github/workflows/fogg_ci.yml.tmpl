@@ -124,7 +124,7 @@ jobs:
         with:
           token: {{`${{ steps.generate_token.outputs.token }}`}}
       - name: fix terraform docs
-        uses: terraform-docs/gh-actions@v1.0.0
+        uses: terraform-docs/gh-actions@{{ $githubActionsCI.TerraformDocsVersion }}
         if: contains(matrix.tfmodule, 'modules') # only need to make docs on the modules
         with:
           working-dir: {{`${{matrix.tfmodule}}`}}
