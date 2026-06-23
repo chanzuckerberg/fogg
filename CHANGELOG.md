@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.48](https://github.com/chanzuckerberg/fogg/compare/v0.92.47...v0.92.48) (2026-06-23)
+
+
+### Features
+
+* **ci:** make terraform-docs gh-actions version configurable (default v1.0.0) ([#1205](https://github.com/chanzuckerberg/fogg/issues/1205)) ([ac22f03](https://github.com/chanzuckerberg/fogg/commit/ac22f03cd3404540a6188eeb9d755b25a0f4583a))
+
 ## [0.92.47](https://github.com/chanzuckerberg/fogg/compare/v0.92.46...v0.92.47) (2026-06-15)
 
 
