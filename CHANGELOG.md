@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.92.49](https://github.com/chanzuckerberg/fogg/compare/v0.92.48...v0.92.49) (2026-08-03)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go-v2 from 1.42.0 to 1.42.1 ([#1209](https://github.com/chanzuckerberg/fogg/issues/1209)) ([528ebec](https://github.com/chanzuckerberg/fogg/commit/528ebeceb5563a4eff79ec2cf15da57888003c49))
+* Bump github.com/aws/aws-sdk-go-v2 from 1.42.1 to 1.43.0 ([#1212](https://github.com/chanzuckerberg/fogg/issues/1212)) ([87dc835](https://github.com/chanzuckerberg/fogg/commit/87dc8350a154afcffaba0100fb42602396abb563))
+* Bump github.com/aws/aws-sdk-go-v2 from 1.43.0 to 1.43.2 ([#1214](https://github.com/chanzuckerberg/fogg/issues/1214)) ([86db378](https://github.com/chanzuckerberg/fogg/commit/86db3784226c1094b7cd3b709beea1f1186e49a7))
+* Bump github.com/go-git/go-git/v5 from 5.19.1 to 5.19.2 ([#1213](https://github.com/chanzuckerberg/fogg/issues/1213)) ([5c5c1f3](https://github.com/chanzuckerberg/fogg/commit/5c5c1f32ea2fc78a0c77c1e9ea9b25c3eacb98a3))
+* Bump golang.org/x/crypto from 0.51.0 to 0.52.0 ([#1210](https://github.com/chanzuckerberg/fogg/issues/1210)) ([03f0af8](https://github.com/chanzuckerberg/fogg/commit/03f0af854fdd7a6ce74aa1cc22d723b7365c21a3))
+* Bump golang.org/x/net from 0.53.0 to 0.55.0 ([#1207](https://github.com/chanzuckerberg/fogg/issues/1207)) ([798ef44](https://github.com/chanzuckerberg/fogg/commit/798ef44e080cf14189a9bdad18abf63cf6af7184))
+* Bump google.golang.org/grpc from 1.79.3 to 1.82.1 ([#1211](https://github.com/chanzuckerberg/fogg/issues/1211)) ([30e322a](https://github.com/chanzuckerberg/fogg/commit/30e322a179fd3d9f7f1d8776ecb5dec015d5443f))
+
 ## [0.92.48](https://github.com/chanzuckerberg/fogg/compare/v0.92.47...v0.92.48) (2026-06-23)
 
 
