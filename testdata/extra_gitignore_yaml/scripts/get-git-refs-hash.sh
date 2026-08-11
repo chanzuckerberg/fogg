@@ -10,7 +10,7 @@ cd "$(dirname "$0")/.."
 git_refs=$(grep -E "module_source:.*\?ref=" fogg.yml | \
     sed -E 's/.*module_source: *//' | \
     grep -E "\?ref=" | \
-    sort -u)
+    sort -u || true)
 
 if [ -z "$git_refs" ]; then
     echo "No Git refs found in fogg.yml" >&2
