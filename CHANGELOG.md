@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.51](https://github.com/chanzuckerberg/fogg/compare/v0.92.50...v0.92.51) (2026-08-11)
+
+
+### BugFixes
+
+* **codegen:** make generated shell scripts executable and stop get-git-refs-hash.sh failing with no refs ([#1217](https://github.com/chanzuckerberg/fogg/issues/1217)) ([46489b3](https://github.com/chanzuckerberg/fogg/commit/46489b3b0fb5a8919a4ceb9c26e6e67ed17a6e9e))
+
 ## [0.92.50](https://github.com/chanzuckerberg/fogg/compare/v0.92.49...v0.92.50) (2026-08-10)
 
 
