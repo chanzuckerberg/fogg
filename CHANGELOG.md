@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.52](https://github.com/chanzuckerberg/fogg/compare/v0.92.51...v0.92.52) (2026-08-11)
+
+
+### BugFixes
+
+* **codegen:** stop get-git-refs-hash.sh dying under set -e when no refs match ([#1219](https://github.com/chanzuckerberg/fogg/issues/1219)) ([0065edc](https://github.com/chanzuckerberg/fogg/commit/0065edc51efe39eff82f0e8e2626ad4e85bd64ae))
+
 ## [0.92.51](https://github.com/chanzuckerberg/fogg/compare/v0.92.50...v0.92.51) (2026-08-11)
 
 
