@@ -1,4 +1,3 @@
-# Created by Cursor
 #!/bin/bash
 set -euo pipefail
 
@@ -14,8 +13,9 @@ git_refs=$(grep -E "module_source:.*\?ref=" fogg.yml | \
     sort -u)
 
 if [ -z "$git_refs" ]; then
-    echo "No Git refs found in fogg.yml"
-    exit 1
+    echo "No Git refs found in fogg.yml" >&2
+    printf '' | sha256sum | cut -d' ' -f1
+    exit 0
 fi
 
 # For each Git ref, resolve to commit SHA

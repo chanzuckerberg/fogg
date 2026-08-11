@@ -518,6 +518,12 @@ func applyTree(dest afero.Fs, source fs.FS, common fs.FS, targetBasePath string,
 			if e != nil {
 				return errs.WrapUser(e, "unable to copy file")
 			}
+			if strings.HasSuffix(target, ".sh") {
+				e = dest.Chmod(target, 0755)
+				if e != nil {
+					return errs.WrapUserf(e, "unable to make %s executable", target)
+				}
+			}
 		}
 
 		return nil
