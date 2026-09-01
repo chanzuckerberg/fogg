@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.92.53](https://github.com/chanzuckerberg/fogg/compare/v0.92.52...v0.92.53) (2026-08-31)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go-v2 from 1.43.4 to 1.43.5 ([#1222](https://github.com/chanzuckerberg/fogg/issues/1222)) ([a3e627e](https://github.com/chanzuckerberg/fogg/commit/a3e627e8cc21ba2e169e3cfd4deee8b6a1d14e00))
+* Bump github.com/aws/aws-sdk-go-v2 from 1.43.5 to 1.43.7 ([#1226](https://github.com/chanzuckerberg/fogg/issues/1226)) ([963fecf](https://github.com/chanzuckerberg/fogg/commit/963fecf50171c38e8a97241847c588e3db43e01a))
+* Bump github.com/aws/aws-sdk-go-v2 from 1.43.7 to 1.45.1 ([#1229](https://github.com/chanzuckerberg/fogg/issues/1229)) ([0fe995b](https://github.com/chanzuckerberg/fogg/commit/0fe995b1ae8ffe75e01f842689cf363fc8ee7b00))
+* Bump github.com/sirupsen/logrus from 1.10.1 to 1.10.2 ([#1228](https://github.com/chanzuckerberg/fogg/issues/1228)) ([730f938](https://github.com/chanzuckerberg/fogg/commit/730f938edb7772bbbaae0d7f0410b45fb20b2d74))
+* Bump github.com/sirupsen/logrus from 1.9.4 to 1.10.1 ([#1224](https://github.com/chanzuckerberg/fogg/issues/1224)) ([2089bec](https://github.com/chanzuckerberg/fogg/commit/2089bec595eb38040ba9a601ee0463d566a32276))
+* Bump github.com/stretchr/testify from 1.11.1 to 1.12.1 ([#1225](https://github.com/chanzuckerberg/fogg/issues/1225)) ([147f3a2](https://github.com/chanzuckerberg/fogg/commit/147f3a2abf99221d474df90380a80d65104e0ff9))
+
 ## [0.92.52](https://github.com/chanzuckerberg/fogg/compare/v0.92.51...v0.92.52) (2026-08-11)
 
 
