@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.54](https://github.com/chanzuckerberg/fogg/compare/v0.92.53...v0.92.54) (2026-09-02)
+
+
+### Misc
+
+* Bump google.golang.org/grpc from 1.82.1 to 1.83.1 ([#1230](https://github.com/chanzuckerberg/fogg/issues/1230)) ([f697404](https://github.com/chanzuckerberg/fogg/commit/f69740461cfe3ef81f6bd0f61ae7c3d6ce262c35))
+
 ## [0.92.53](https://github.com/chanzuckerberg/fogg/compare/v0.92.52...v0.92.53) (2026-08-31)
 
 
