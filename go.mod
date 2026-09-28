@@ -22,7 +22,7 @@ require (
 	github.com/hashicorp/go-getter v1.7.8
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-version v1.9.0
-	github.com/hashicorp/hcl/v2 v2.24.0
+	github.com/hashicorp/hcl/v2 v2.25.0
 	github.com/hashicorp/hcl2 v0.0.0-20191002203319-fb75b3253c80
 	github.com/hashicorp/terraform v1.3.7
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20221020162138-81db043ad408
@@ -63,6 +63,7 @@ require (
 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
 	github.com/apparentlymart/go-textseg v1.0.0 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
+	github.com/apparentlymart/go-textseg/v17 v17.0.1 // indirect
 	github.com/apparentlymart/go-versions v1.0.1 // indirect
 	github.com/aws/aws-sdk-go v1.55.8 // indirect
 	github.com/aws/smithy-go v1.28.1 // indirect
@@ -123,7 +124,7 @@ require (
 	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
-	github.com/zclconf/go-cty v1.16.3 // indirect
+	github.com/zclconf/go-cty v1.19.0 // indirect
 	github.com/zclconf/go-cty-yaml v1.0.3 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/contrib/detectors/gcp v1.44.0 // indirect
