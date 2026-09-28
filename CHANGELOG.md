@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.92.55](https://github.com/chanzuckerberg/fogg/compare/v0.92.54...v0.92.55) (2026-09-28)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go-v2 from 1.45.1 to 1.47.0 ([#1234](https://github.com/chanzuckerberg/fogg/issues/1234)) ([34b9302](https://github.com/chanzuckerberg/fogg/commit/34b9302e8dce681d97d68936b7359feeab916753))
+* Bump github.com/aws/aws-sdk-go-v2 from 1.47.0 to 1.47.1 ([#1237](https://github.com/chanzuckerberg/fogg/issues/1237)) ([f03b315](https://github.com/chanzuckerberg/fogg/commit/f03b315182e08988fee5b61860f9f999a42a4b49))
+* Bump github.com/hashicorp/hcl/v2 from 2.24.0 to 2.25.0 ([#1236](https://github.com/chanzuckerberg/fogg/issues/1236)) ([8f7fb5d](https://github.com/chanzuckerberg/fogg/commit/8f7fb5dd1c3cceab1d0c6326298d0919f9eda07f))
+* Bump go.opentelemetry.io/otel/sdk from 1.44.0 to 1.45.0 ([#1235](https://github.com/chanzuckerberg/fogg/issues/1235)) ([8783471](https://github.com/chanzuckerberg/fogg/commit/87834711ca05713e936a8fea150ecaeb862d4873))
+* Bump google.golang.org/grpc from 1.83.1 to 1.83.2 ([#1232](https://github.com/chanzuckerberg/fogg/issues/1232)) ([a07644f](https://github.com/chanzuckerberg/fogg/commit/a07644f049cadd287ff0dba1675df02249673bf5))
+
 ## [0.92.54](https://github.com/chanzuckerberg/fogg/compare/v0.92.53...v0.92.54) (2026-09-02)
 
 
