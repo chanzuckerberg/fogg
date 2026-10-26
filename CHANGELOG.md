@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.92.55](https://github.com/chanzuckerberg/fogg/compare/v0.92.54...v0.92.55) (2026-10-26)
+
+
+### Misc
+
+* bump GitHub Actions in fogg_ci workflow template ([#1241](https://github.com/chanzuckerberg/fogg/issues/1241)) ([eafe54d](https://github.com/chanzuckerberg/fogg/commit/eafe54dd560db04d9992e69d75c1eaf126ffeebc))
+* Bump github.com/aws/aws-sdk-go-v2 from 1.45.1 to 1.47.0 ([#1234](https://github.com/chanzuckerberg/fogg/issues/1234)) ([34b9302](https://github.com/chanzuckerberg/fogg/commit/34b9302e8dce681d97d68936b7359feeab916753))
+* Bump github.com/aws/aws-sdk-go-v2 from 1.47.0 to 1.47.1 ([#1237](https://github.com/chanzuckerberg/fogg/issues/1237)) ([f03b315](https://github.com/chanzuckerberg/fogg/commit/f03b315182e08988fee5b61860f9f999a42a4b49))
+* Bump github.com/aws/aws-sdk-go-v2 from 1.47.1 to 1.47.3 ([#1239](https://github.com/chanzuckerberg/fogg/issues/1239)) ([6b89791](https://github.com/chanzuckerberg/fogg/commit/6b8979176e6fa20c3745cbb1d71393becf935120))
+* Bump github.com/aws/aws-sdk-go-v2 from 1.47.3 to 1.47.4 ([#1242](https://github.com/chanzuckerberg/fogg/issues/1242)) ([94fc49d](https://github.com/chanzuckerberg/fogg/commit/94fc49d0322efc028f528a10da6d06449f23fdae))
+* Bump github.com/go-git/go-git/v5 from 5.19.2 to 5.19.3 ([#1238](https://github.com/chanzuckerberg/fogg/issues/1238)) ([455d3ca](https://github.com/chanzuckerberg/fogg/commit/455d3ca912d5397823c418fbdbfb1b211bce2e21))
+* Bump github.com/hashicorp/hcl/v2 from 2.24.0 to 2.25.0 ([#1236](https://github.com/chanzuckerberg/fogg/issues/1236)) ([8f7fb5d](https://github.com/chanzuckerberg/fogg/commit/8f7fb5dd1c3cceab1d0c6326298d0919f9eda07f))
+* Bump github.com/klauspost/compress from 1.17.3 to 1.18.7 ([#1240](https://github.com/chanzuckerberg/fogg/issues/1240)) ([fd026cc](https://github.com/chanzuckerberg/fogg/commit/fd026cc232a24431e8844f2e5ed357c471bc4bfa))
+* Bump go.opentelemetry.io/otel/sdk from 1.44.0 to 1.45.0 ([#1235](https://github.com/chanzuckerberg/fogg/issues/1235)) ([8783471](https://github.com/chanzuckerberg/fogg/commit/87834711ca05713e936a8fea150ecaeb862d4873))
+* Bump google.golang.org/grpc from 1.83.1 to 1.83.2 ([#1232](https://github.com/chanzuckerberg/fogg/issues/1232)) ([a07644f](https://github.com/chanzuckerberg/fogg/commit/a07644f049cadd287ff0dba1675df02249673bf5))
+
 ## [0.92.54](https://github.com/chanzuckerberg/fogg/compare/v0.92.53...v0.92.54) (2026-09-02)
 
 
