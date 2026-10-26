@@ -19,7 +19,7 @@ jobs:
           app-id: ${{ secrets.GH_ACTIONS_HELPER_APP_ID }}
           private-key: ${{ secrets.GH_ACTIONS_HELPER_PK }}
           owner: ${{ github.repository_owner }}
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           token: ${{ steps.generate_token.outputs.token }}
       - name: Get Git refs hash
@@ -29,7 +29,7 @@ jobs:
           echo "hash=$hash" >> $GITHUB_OUTPUT
       - name: Cache Fogg
         id: cache-fogg
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.fogg/cache
           key: fogg-cache-${{ hashFiles('**/.fogg-version') }}-${{ steps.git-refs-hash.outputs.hash }}
@@ -45,7 +45,7 @@ jobs:
             ${{ secrets.SHARED_INFRA_DEPLOY_KEY2 }}
             
       - run: .fogg/bin/fogg apply
-      - uses: EndBug/add-and-commit@v9
+      - uses: EndBug/add-and-commit@v11
         with:
           add: -A
           message: |
@@ -55,7 +55,7 @@ jobs:
     outputs:
       allChanges: ${{ steps.changedDirs.outputs.allChanges }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: dorny/paths-filter@v4
         id: filter
         with:
@@ -64,7 +64,7 @@ jobs:
           filters: |
             changed:
               - added|modified: 'terraform/**'
-      - uses: actions/github-script@v8
+      - uses: actions/github-script@v9
         id: changedDirs
         with:
           script: |
@@ -95,7 +95,7 @@ jobs:
           app-id: ${{ secrets.GH_ACTIONS_HELPER_APP_ID }}
           private-key: ${{ secrets.GH_ACTIONS_HELPER_PK }}
           owner: ${{ github.repository_owner }}
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           token: ${{ steps.generate_token.outputs.token }}
       - name: fix terraform docs
@@ -112,7 +112,7 @@ jobs:
         run: |
           cd ${{matrix.tfmodule}}
           make fmt
-      - uses: EndBug/add-and-commit@v9
+      - uses: EndBug/add-and-commit@v11
         with:
           add: -A
           message: |
