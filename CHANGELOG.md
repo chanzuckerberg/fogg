@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.56](https://github.com/chanzuckerberg/fogg/compare/v0.92.55...v0.92.56) (2026-11-14)
+
+
+### Misc
+
+* Bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 ([#1247](https://github.com/chanzuckerberg/fogg/issues/1247)) ([2a178fc](https://github.com/chanzuckerberg/fogg/commit/2a178fc126a5fae3187f276aca0b6652c9ca6049))
+
 ## [0.92.55](https://github.com/chanzuckerberg/fogg/compare/v0.92.54...v0.92.55) (2026-11-09)
 
 
