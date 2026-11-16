@@ -38,7 +38,7 @@ require (
 	github.com/spf13/pflag v1.1.0
 	github.com/stretchr/testify v1.12.1
 	gopkg.in/go-playground/validator.v9 v9.31.0
-	gopkg.in/ini.v1 v1.67.3
+	gopkg.in/ini.v1 v1.68.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
