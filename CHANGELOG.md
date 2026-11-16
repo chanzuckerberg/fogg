@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.92.56](https://github.com/chanzuckerberg/fogg/compare/v0.92.55...v0.92.56) (2026-11-16)
+
+
+### Misc
+
+* Bump github.com/aws/aws-sdk-go-v2 from 1.47.7 to 1.48.0 ([#1250](https://github.com/chanzuckerberg/fogg/issues/1250)) ([e4ce87d](https://github.com/chanzuckerberg/fogg/commit/e4ce87d1e2bc90d6b2ac35736ff1f370c36ae76f))
+* Bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 ([#1247](https://github.com/chanzuckerberg/fogg/issues/1247)) ([2a178fc](https://github.com/chanzuckerberg/fogg/commit/2a178fc126a5fae3187f276aca0b6652c9ca6049))
+* Bump gopkg.in/ini.v1 from 1.67.3 to 1.68.0 ([#1249](https://github.com/chanzuckerberg/fogg/issues/1249)) ([cbf15b8](https://github.com/chanzuckerberg/fogg/commit/cbf15b81556b4e6fd660a5d4cfbf29d6ce10931f))
+
 ## [0.92.55](https://github.com/chanzuckerberg/fogg/compare/v0.92.54...v0.92.55) (2026-11-09)
 
 
